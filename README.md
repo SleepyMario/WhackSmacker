@@ -1,0 +1,3 @@
+# WhackSmacker
+
+Initial project repository.
