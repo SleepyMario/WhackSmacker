@@ -1,3 +1,3 @@
 # WhackSmacker
 
-This Thing Is Going To Smack Some Whack In Your Brains.
+This Thing Is Going To Smack Some Whack Into Your Brains.
