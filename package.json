@@ -13,6 +13,7 @@
   },
   "files": [
     "dist",
+    "packages/geography/data/continents.provenance.md",
     "COPYING",
     "README.md"
   ],

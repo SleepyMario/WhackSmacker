@@ -48,7 +48,7 @@ export interface Terminal {
 
 export interface MenuItem {
   readonly label: string;
-  readonly kind: "language" | "placeholder" | "back";
+  readonly kind: "language" | "geography" | "placeholder" | "back";
   readonly moduleId?: string;
 }
 
@@ -66,7 +66,7 @@ export const whackSmackerBanner = `██╗    ██╗███████�
 ╚███╔███╔╝███████║██║ ╚═╝ ██║
  ╚══╝╚══╝ ╚══════╝╚═╝     ╚═╝`;
 
-export const whackSmackerSubtitle = "WhackSmacker Will Smack Some Whack Into Your Brains";
+export const whackSmackerSubtitle = "WhackSmacker Will Whack That Smack Into Your Brains";
 
 export function renderWhackSmackerHeader(colorsEnabled: boolean): string {
   const banner = colorsEnabled ? colorizeWsmBanner(whackSmackerBanner) : whackSmackerBanner;
@@ -82,7 +82,7 @@ export function shouldUseTerminalColors(outputIsTty: boolean, env: Record<string
 const mainMenuItems: readonly MenuItem[] = [
   { label: "Language", kind: "language", moduleId: "language" },
   { label: "Chess", kind: "placeholder", moduleId: "chess" },
-  { label: "Geography", kind: "placeholder", moduleId: "geography" },
+  { label: "Geography", kind: "geography", moduleId: "geography" },
   { label: "Mathematics", kind: "placeholder", moduleId: "mathematics" }
 ];
 
@@ -93,12 +93,21 @@ const languageMenuItems: readonly MenuItem[] = [
   { label: "Back", kind: "back" }
 ];
 
+const geographyMenuItems: readonly MenuItem[] = [
+  { label: "Continents", kind: "geography", moduleId: "geography" },
+  { label: "Back", kind: "back" }
+];
+
 export function getMainMenuItems(): readonly MenuItem[] {
   return mainMenuItems;
 }
 
 export function getLanguageMenuItems(): readonly MenuItem[] {
   return languageMenuItems;
+}
+
+export function getGeographyMenuItems(): readonly MenuItem[] {
+  return geographyMenuItems;
 }
 
 export function createNodeTerminal(): Terminal {
@@ -197,6 +206,11 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
           if (quit) {
             return;
           }
+        } else if (item.kind === "geography") {
+          const quit = await runGeographyMenu(registry, terminal);
+          if (quit) {
+            return;
+          }
         } else {
           const quit = await runPlaceholderScreen(terminal, item.label);
           if (quit) {
@@ -212,6 +226,73 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
       process.exitCode = 130;
     }
   }
+}
+
+async function runGeographyMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+  let selection = 0;
+
+  while (true) {
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nGeography\n`, geographyMenuItems, selection);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+
+    if (isEscape(key)) {
+      return false;
+    }
+
+    if (isQuit(key)) {
+      return true;
+    }
+
+    if (isUp(key)) {
+      selection = wrapSelection(selection - 1, geographyMenuItems.length);
+      continue;
+    }
+
+    if (isDown(key)) {
+      selection = wrapSelection(selection + 1, geographyMenuItems.length);
+      continue;
+    }
+
+    if (!isEnter(key)) {
+      continue;
+    }
+
+    const item = geographyMenuItems[selection];
+    if (item.kind === "back") {
+      return false;
+    }
+
+    const quit = await runGeographyAction(registry, terminal);
+    if (quit) {
+      return true;
+    }
+  }
+}
+
+async function runGeographyAction(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+  const commandPath = ["geography", "continents"];
+  const command = registry.find(commandPath);
+
+  if (command === null) {
+    return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
+  }
+
+  terminal.restore();
+  try {
+    await command.run([]);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(message);
+  } finally {
+    terminal.enter();
+  }
+
+  return showMessage(terminal, "Press Escape or Enter to return.", { clear: false });
 }
 
 async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {

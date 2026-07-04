@@ -4,6 +4,7 @@ import { test } from "node:test";
 
 import { resolveCliCommand } from "../dist/apps/cli/main.js";
 import {
+  getGeographyMenuItems,
   getLanguageMenuItems,
   getMainMenuItems,
   renderWhackSmackerHeader,
@@ -53,14 +54,17 @@ function createStubRegistry(calls) {
   for (const path of [
     ["language", "status"],
     ["language", "decks"],
-    ["language", "review"]
+    ["language", "review"],
+    ["geography", "continents"]
   ]) {
     registry.register({
       path,
       summary: path.join(" "),
       run: async (args) => {
         calls.push({ path: path.join(" "), args: [...args] });
-        console.log(`${path.join(" ")} output`);
+        if (path[0] === "language") {
+          console.log(`${path.join(" ")} output`);
+        }
       }
     });
   }
@@ -112,7 +116,14 @@ test("placeholder modules expose no unfinished commands in the menu", () => {
 
   assert.deepEqual(
     placeholderItems.map((item) => item.label),
-    ["Chess", "Geography", "Mathematics"]
+    ["Chess", "Mathematics"]
+  );
+});
+
+test("geography menu exposes continents and back", () => {
+  assert.deepEqual(
+    getGeographyMenuItems().map((item) => item.label),
+    ["Continents", "Back"]
   );
 });
 
@@ -129,7 +140,7 @@ test("menu selection routes to the selected language command", async () => {
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
   assert.deepEqual(calls, [{ path: "language status", args: [] }]);
-  assert.match(terminal.output, /WhackSmacker Will Smack Some Whack Into Your Brains/);
+  assert.match(terminal.output, /WhackSmacker Will Whack That Smack Into Your Brains/);
   assert.match(terminal.output, /Status\n\nlanguage status output\n\nPress Escape or Enter to return\./);
   assert.equal(terminal.restoreCount, 2);
 });
@@ -165,6 +176,25 @@ test("placeholder module screen returns without running a command", async () => 
   assert.deepEqual(calls, []);
   assert.match(terminal.output, /Chess/);
   assert.match(terminal.output, /This module is not implemented yet/);
+});
+
+test("geography menu routes continents to the registered command", async () => {
+  const calls = [];
+  const terminal = new FakeTerminal([
+    key("down"),
+    key("down"),
+    key("return"),
+    key("return"),
+    key("return"),
+    key("escape"),
+    key("escape")
+  ]);
+
+  await runInteractiveMenu(createStubRegistry(calls), terminal);
+
+  assert.deepEqual(calls, [{ path: "geography continents", args: [] }]);
+  assert.match(terminal.output, /Geography/);
+  assert.match(terminal.output, /Continents/);
 });
 
 test("quitting restores terminal state", async () => {
@@ -251,7 +281,7 @@ test("main menu separates the subtitle from module choices with one blank line",
 
   await runInteractiveMenu(createStubRegistry([]), terminal);
 
-  assert.match(stripAnsi(terminal.output), /WhackSmacker Will Smack Some Whack Into Your Brains\n\n> Language/);
+  assert.match(stripAnsi(terminal.output), /WhackSmacker Will Whack That Smack Into Your Brains\n\n> Language/);
 });
 
 function stripAnsi(text) {

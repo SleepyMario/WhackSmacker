@@ -1,4 +1,5 @@
 import type { DomainModule } from "../core";
+import { runContinentReview } from "./continent-review";
 
 export interface GeographyDataset {
   readonly id: string;
@@ -19,7 +20,16 @@ export const geographyModule: DomainModule = {
   id: "geography",
   displayName: "Geography",
   providerFeatures: [],
-  register() {
-    // No user-facing commands are exposed until geography workflows exist.
+  register(context) {
+    context.cli.register({
+      path: ["geography", "continents"],
+      summary: "Six-continent terminal map review",
+      run: async () => {
+        await runContinentReview();
+      }
+    });
   }
 };
+
+export { getContinentDefinitions, renderContinentMap } from "./continent-renderer";
+export { getContinentReviewCards, runContinentReview } from "./continent-review";

@@ -54,10 +54,15 @@ Domain-prefixed language commands:
   wsm language decks
   wsm language review <deck-name>
 
+Geography commands:
+  whacksmacker geography continents
+  wsm geography continents
+      Six-continent terminal map review.
+
 Modules:
   Language      Available through AnkiConnect
   Chess         Placeholder
-  Geography     Placeholder
+  Geography     Continents review available
   Mathematics   Placeholder
 
 Interactive controls:

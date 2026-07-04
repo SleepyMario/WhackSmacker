@@ -169,9 +169,12 @@ test("help prints concise WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker review <deck-name>/);
   assert.match(result.stdout, /whacksmacker language review <deck-name>/);
   assert.match(result.stdout, /wsm language review <deck-name>/);
+  assert.match(result.stdout, /whacksmacker geography continents/);
+  assert.match(result.stdout, /wsm geography continents/);
+  assert.match(result.stdout, /Six-continent terminal map review/);
   assert.match(result.stdout, /Language\s+Available through AnkiConnect/);
   assert.match(result.stdout, /Chess\s+Placeholder/);
-  assert.match(result.stdout, /Geography\s+Placeholder/);
+  assert.match(result.stdout, /Geography\s+Continents review available/);
   assert.match(result.stdout, /Mathematics\s+Placeholder/);
   assert.match(result.stdout, /Up\/Down arrows\s+Move selection/);
   assert.match(result.stdout, /Ctrl-C\s+Exit/);
@@ -250,6 +253,19 @@ test("unknown commands print usage as a failure", async () => {
   assert.equal(result.stdout, "");
   assert.match(result.stderr, /Unknown command: unknown/);
   assert.match(result.stderr, /--help/);
+});
+
+test("geography continents runs without contacting AnkiConnect", async () => {
+  await withMockAnki([], async (endpoint, requests) => {
+    const result = await runCli(["geography", "continents"], { endpoint, input: "q\n" });
+
+    assert.equal(result.exitCode, 0);
+    assert.match(result.stdout, /Geography — Continents/);
+    assert.match(result.stdout, /Question 1 of 6/);
+    assert.match(result.stdout, /Cards reviewed: 0/);
+    assert.equal(result.stderr, "");
+    assert.deepEqual(requests, []);
+  });
 });
 
 test("decks lists sorted deck names", async () => {

@@ -21,10 +21,10 @@ function registeredPaths(registry) {
   return registry.list().map((command) => command.path.join(" ")).sort();
 }
 
-test("application CLI registry exposes only language user commands", () => {
+test("application CLI registry exposes language commands and the geography prototype", () => {
   const registry = createCommandRegistry();
 
-  assert.deepEqual(registeredPaths(registry), ["language decks", "language review", "language status"]);
+  assert.deepEqual(registeredPaths(registry), ["geography continents", "language decks", "language review", "language status"]);
 });
 
 test("legacy language aliases resolve to language command paths", () => {
@@ -64,10 +64,18 @@ test("placeholder domains expose no user commands yet", () => {
   const context = createRegistrationContext(cli);
 
   chessModule.register(context);
-  geographyModule.register(context);
   mathematicsModule.register(context);
 
   assert.deepEqual(cli.list(), []);
+});
+
+test("geography registers the continents prototype command", () => {
+  const cli = new InMemoryCliCommandRegistry();
+  const context = createRegistrationContext(cli);
+
+  geographyModule.register(context);
+
+  assert.deepEqual(registeredPaths(cli), ["geography continents"]);
 });
 
 test("duplicate module identifiers are rejected clearly", () => {
