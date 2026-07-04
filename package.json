@@ -8,7 +8,8 @@
     "node": ">=18"
   },
   "bin": {
-    "whacksmacker": "dist/main.js"
+    "whacksmacker": "dist/main.js",
+    "wsm": "dist/main.js"
   },
   "files": [
     "dist",

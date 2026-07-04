@@ -11,6 +11,7 @@ import {
 import { geographyModule } from "../../packages/geography";
 import { languageModule } from "../../packages/language";
 import { mathematicsModule } from "../../packages/mathematics";
+import { runInteractiveMenu } from "./interactive-menu";
 
 declare const process: {
   argv: string[];
@@ -67,6 +68,12 @@ async function dispatch(command: CliCommand, args: readonly string[]): Promise<v
 
 export async function main(argv = process.argv.slice(2)): Promise<void> {
   const registry = createCommandRegistry();
+
+  if (argv.length === 0) {
+    await runInteractiveMenu(registry);
+    return;
+  }
+
   const resolved = resolveCliCommand(registry, argv);
 
   if (resolved === null) {
