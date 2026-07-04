@@ -1,4 +1,4 @@
-export type DomainFeature = "language" | "chess" | "geography";
+export type DomainFeature = "language" | "chess" | "geography" | "mathematics";
 
 export type ProviderFeature = "anki" | "lichess" | "stockfish" | "syzygy";
 
@@ -31,7 +31,7 @@ export function createEnabledFeatures(features: Iterable<WhackSmackerFeature>): 
 }
 
 export function isDomainFeature(feature: WhackSmackerFeature): feature is DomainFeature {
-  return feature === "language" || feature === "chess" || feature === "geography";
+  return feature === "language" || feature === "chess" || feature === "geography" || feature === "mathematics";
 }
 
 export function isProviderFeature(feature: WhackSmackerFeature): feature is ProviderFeature {

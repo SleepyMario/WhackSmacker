@@ -12,6 +12,10 @@ export class InMemoryCliCommandRegistry implements CliCommandRegistry {
   private readonly commands: CliCommand[] = [];
 
   register(command: CliCommand): void {
+    if (this.find(command.path) !== null) {
+      throw new Error(`CLI command path is already registered: ${command.path.join(" ")}`);
+    }
+
     this.commands.push(command);
   }
 

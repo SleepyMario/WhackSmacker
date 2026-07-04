@@ -10,6 +10,7 @@ import {
 } from "../../packages/core";
 import { geographyModule } from "../../packages/geography";
 import { languageModule } from "../../packages/language";
+import { mathematicsModule } from "../../packages/mathematics";
 
 declare const process: {
   argv: string[];
@@ -31,10 +32,16 @@ const legacyAliases = new Map<string, readonly string[]>([
   ["review", ["language", "review"]]
 ]);
 
-function createCommandRegistry(): InMemoryCliCommandRegistry {
+export interface ResolvedCliCommand {
+  readonly command: CliCommand;
+  readonly args: readonly string[];
+  readonly path: readonly string[];
+}
+
+export function createCommandRegistry(): InMemoryCliCommandRegistry {
   const cli = new InMemoryCliCommandRegistry();
   const context = {
-    features: createEnabledFeatures(["cli", "language", "anki", "chess", "geography"]),
+    features: createEnabledFeatures(["cli", "language", "anki", "chess", "geography", "mathematics"]),
     paths: createDefaultAppPaths(),
     logger: consoleLogger,
     cli
@@ -43,6 +50,7 @@ function createCommandRegistry(): InMemoryCliCommandRegistry {
   languageModule.register(context);
   chessModule.register(context);
   geographyModule.register(context);
+  mathematicsModule.register(context);
 
   return cli;
 }
@@ -59,33 +67,39 @@ async function dispatch(command: CliCommand, args: readonly string[]): Promise<v
 
 export async function main(argv = process.argv.slice(2)): Promise<void> {
   const registry = createCommandRegistry();
-  const commandName = argv[0];
+  const resolved = resolveCliCommand(registry, argv);
 
-  if (commandName === undefined) {
+  if (resolved === null) {
     console.error(usage);
     process.exitCode = 1;
     return;
+  }
+
+  await dispatch(resolved.command, resolved.args);
+}
+
+export function resolveCliCommand(registry: InMemoryCliCommandRegistry, argv: readonly string[]): ResolvedCliCommand | null {
+  const commandName = argv[0];
+
+  if (commandName === undefined) {
+    return null;
   }
 
   const aliasPath = legacyAliases.get(commandName);
   if (aliasPath !== undefined) {
     const command = registry.find(aliasPath);
     if (command === null) {
-      console.error(usage);
-      process.exitCode = 1;
-      return;
+      return null;
     }
 
-    await dispatch(command, argv.slice(1));
-    return;
+    return { command, args: argv.slice(1), path: aliasPath };
   }
 
-  const command = registry.find(argv.slice(0, 2));
+  const path = argv.slice(0, 2);
+  const command = registry.find(path);
   if (command === null) {
-    console.error(usage);
-    process.exitCode = 1;
-    return;
+    return null;
   }
 
-  await dispatch(command, argv.slice(2));
+  return { command, args: argv.slice(2), path };
 }

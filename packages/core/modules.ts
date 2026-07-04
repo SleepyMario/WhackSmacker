@@ -19,3 +19,19 @@ export interface DomainModule {
   readonly providerFeatures: readonly ProviderFeature[];
   register(context: ModuleRegistrationContext): void;
 }
+
+export class DomainModuleRegistry {
+  private readonly modules = new Map<DomainFeature, DomainModule>();
+
+  register(module: DomainModule): void {
+    if (this.modules.has(module.id)) {
+      throw new Error(`Domain module is already registered: ${module.id}`);
+    }
+
+    this.modules.set(module.id, module);
+  }
+
+  list(): readonly DomainModule[] {
+    return [...this.modules.values()];
+  }
+}
