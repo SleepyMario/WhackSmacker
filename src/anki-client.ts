@@ -34,4 +34,8 @@ export class AnkiClient {
   version(): Promise<number> {
     return this.invoke<number>("version");
   }
+
+  deckNames(): Promise<string[]> {
+    return this.invoke<string[]>("deckNames");
+  }
 }
