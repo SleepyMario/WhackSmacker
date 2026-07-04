@@ -3,6 +3,15 @@ export interface AnkiConnectResponse<T> {
   error: string | null;
 }
 
+export interface CurrentCard {
+  cardId: number;
+  deckName: string;
+  question: string;
+  answer: string;
+  buttons: number[];
+  nextReviews: string[];
+}
+
 export class AnkiClient {
   constructor(private readonly endpoint = "http://127.0.0.1:8765") {}
 
@@ -37,5 +46,13 @@ export class AnkiClient {
 
   deckNames(): Promise<string[]> {
     return this.invoke<string[]>("deckNames");
+  }
+
+  guiDeckReview(name: string): Promise<boolean> {
+    return this.invoke<boolean>("guiDeckReview", { name });
+  }
+
+  guiCurrentCard(): Promise<CurrentCard | null> {
+    return this.invoke<CurrentCard | null>("guiCurrentCard");
   }
 }

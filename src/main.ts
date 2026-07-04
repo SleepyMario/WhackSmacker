@@ -9,7 +9,8 @@ declare const process: {
 
 const usage = `Usage:
 whacksmacker status
-whacksmacker decks`;
+whacksmacker decks
+whacksmacker review <deck-name>`;
 
 function printConnectionError(error: unknown): void {
   const message = error instanceof Error ? error.message : String(error);
@@ -50,6 +51,37 @@ async function decks(): Promise<void> {
   }
 }
 
+async function review(deckName: string): Promise<void> {
+  const client = new AnkiClient();
+
+  try {
+    const started = await client.guiDeckReview(deckName);
+    if (!started) {
+      console.error(`Unable to start review for deck: ${deckName}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    const card = await client.guiCurrentCard();
+    if (card === null) {
+      console.log("No cards are currently available for review in this deck.");
+      return;
+    }
+
+    console.log(`Deck: ${deckName}`);
+    console.log("");
+    console.log(`   ${card.question}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message.toLowerCase().includes("review") && message.toLowerCase().includes("active")) {
+      console.log("No cards are currently available for review in this deck.");
+      return;
+    }
+
+    printConnectionError(error);
+  }
+}
+
 async function main(): Promise<void> {
   const command = process.argv[2];
 
@@ -60,6 +92,17 @@ async function main(): Promise<void> {
     case "decks":
       await decks();
       return;
+    case "review": {
+      const deckName = process.argv.slice(3).join(" ");
+      if (deckName.length === 0) {
+        console.error(usage);
+        process.exitCode = 1;
+        return;
+      }
+
+      await review(deckName);
+      return;
+    }
     default:
       console.error(usage);
       process.exitCode = 1;
