@@ -8,6 +8,7 @@ yarn-error.log*
 *.tgz
 node_modules/
 dist/
+apps/chess-desktop/dist-electron/
 .dev-dist/
 coverage/
 .nyc_output/

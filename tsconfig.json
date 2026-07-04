@@ -7,10 +7,12 @@
     "rootDir": ".",
     "outDir": "dist",
     "strict": true,
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "ignoreDeprecations": "6.0"
   },
-  "include": ["apps/**/*.ts", "packages/**/*.ts", "src/**/*.ts"]
+  "include": ["apps/cli/**/*.ts", "apps/chess-desktop/src/ChessApp.tsx", "packages/**/*.ts", "src/**/*.ts"],
+  "exclude": ["apps/chess-desktop/dist-electron"]
 }

@@ -12,13 +12,20 @@
     "wsm": "dist/main.js"
   },
   "files": [
-    "dist",
+    "dist/apps/cli",
+    "dist/packages",
+    "dist/src",
+    "dist/main.js",
+    "dist/anki-client.js",
     "packages/geography/data/continents.provenance.md",
     "COPYING",
     "README.md"
   ],
   "scripts": {
     "build": "tsc && node scripts/copy-compat-build.mjs",
+    "chess:build": "rm -rf apps/chess-desktop/dist-electron && vite build --config apps/chess-desktop/vite.config.ts && tsc -p apps/chess-desktop/tsconfig.json",
+    "chess:dev": "node scripts/chess-dev.mjs",
+    "chess:test": "npm run build && node --test test/chess-core.test.mjs test/chess-desktop.test.mjs",
     "dev": "tsc --outDir .dev-dist && node .dev-dist/main.js",
     "prepack": "npm run build",
     "start": "node dist/main.js",
