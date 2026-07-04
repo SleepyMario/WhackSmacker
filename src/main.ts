@@ -2,20 +2,26 @@
 
 import { AnkiClient } from "./anki-client";
 
+declare function require(name: "node:readline"): {
+  createInterface(options: { input: unknown; crlfDelay: number }): {
+    on(event: "line", listener: (line: string) => void): void;
+    on(event: "close", listener: () => void): void;
+    close(): void;
+  };
+};
+
 declare const process: {
   argv: string[];
-  stdin: {
-    setEncoding(encoding: string): void;
-    on(event: "data", listener: (chunk: string) => void): void;
-    on(event: "end", listener: () => void): void;
-    resume(): void;
-    pause(): void;
-  };
+  stdin: unknown;
   stdout: {
     write(text: string): void;
   };
   exitCode?: number;
 };
+
+type ReadlineInterface = ReturnType<typeof readline.createInterface>;
+
+const readline = require("node:readline");
 
 const usage = `Usage:
 whacksmacker status
@@ -29,61 +35,54 @@ const ratingLabels: Record<number, string> = {
   4: "Easy"
 };
 
-const queuedInputLines: string[] = [];
-const pendingInputResolvers: Array<(value: string | null) => void> = [];
-let inputBuffer = "";
-let inputEnded = false;
-let inputStarted = false;
+class LineReader {
+  private readonly reader: ReadlineInterface;
+  private readonly lines: string[] = [];
+  private readonly resolvers: Array<(value: string | null) => void> = [];
+  private closed = false;
 
-function startInput(): void {
-  if (inputStarted) {
-    return;
+  constructor() {
+    this.reader = readline.createInterface({
+      input: process.stdin,
+      crlfDelay: Infinity
+    });
+
+    this.reader.on("line", (line) => {
+      this.lines.push(line);
+      this.flush();
+    });
+
+    this.reader.on("close", () => {
+      this.closed = true;
+      this.flush();
+    });
   }
 
-  inputStarted = true;
-  process.stdin.setEncoding("utf8");
-  process.stdin.on("data", (chunk) => {
-    inputBuffer += chunk;
-    const parts = inputBuffer.split(/\r?\n/);
-    inputBuffer = parts.pop() ?? "";
-    queuedInputLines.push(...parts);
-    flushInputResolvers();
-  });
-  process.stdin.on("end", () => {
-    inputEnded = true;
-    if (inputBuffer.length > 0) {
-      queuedInputLines.push(inputBuffer);
-      inputBuffer = "";
+  prompt(prompt: string): Promise<string | null> {
+    process.stdout.write(prompt);
+
+    if (this.lines.length > 0 || this.closed) {
+      return Promise.resolve(this.lines.shift() ?? null);
     }
-    flushInputResolvers();
-  });
-  process.stdin.resume();
-}
 
-function flushInputResolvers(): void {
-  while (pendingInputResolvers.length > 0 && (queuedInputLines.length > 0 || inputEnded)) {
-    const resolve = pendingInputResolvers.shift();
-    if (resolve === undefined) {
-      return;
+    return new Promise((resolve) => {
+      this.resolvers.push(resolve);
+    });
+  }
+
+  close(): void {
+    this.reader.close();
+  }
+
+  private flush(): void {
+    while (this.resolvers.length > 0 && (this.lines.length > 0 || this.closed)) {
+      const resolve = this.resolvers.shift();
+      if (resolve === undefined) {
+        return;
+      }
+
+      resolve(this.lines.shift() ?? null);
     }
-    resolve(queuedInputLines.shift() ?? null);
-  }
-}
-
-function promptLine(prompt: string): Promise<string | null> {
-  startInput();
-  process.stdout.write(prompt);
-  if (queuedInputLines.length > 0 || inputEnded) {
-    return Promise.resolve(queuedInputLines.shift() ?? null);
-  }
-  return new Promise((resolve) => {
-    pendingInputResolvers.push(resolve);
-  });
-}
-
-function stopInput(): void {
-  if (inputStarted) {
-    process.stdin.pause();
   }
 }
 
@@ -128,6 +127,8 @@ async function decks(): Promise<void> {
 
 async function review(deckName: string): Promise<void> {
   const client = new AnkiClient();
+  const reader = new LineReader();
+  let answeredCount = 0;
 
   try {
     const started = await client.guiDeckReview(deckName);
@@ -137,78 +138,126 @@ async function review(deckName: string): Promise<void> {
       return;
     }
 
-    const card = await client.guiCurrentCard();
-    if (card === null) {
-      console.log("No cards are currently available for review in this deck.");
-      return;
-    }
-
-    console.log(`Deck: ${deckName}`);
-    console.log("");
-    console.log(`   ${card.question}`);
-
-    const revealInput = await promptLine("\nPress Enter to reveal the answer...");
-    if (revealInput === null) {
-      console.error("Review cancelled.");
-      process.exitCode = 1;
-      return;
-    }
-
-    const revealed = await client.guiShowAnswer();
-    if (!revealed) {
-      console.error("Unable to reveal the current card.");
-      process.exitCode = 1;
-      return;
-    }
-
-    console.log("");
-    console.log(`   ${card.answer}`);
-    console.log("");
-
-    const validButtons = new Set(card.buttons);
-    for (const [index, button] of card.buttons.entries()) {
-      const label = ratingLabels[button] ?? String(button);
-      const nextReview = card.nextReviews[index];
-      const reviewText = nextReview === undefined ? "" : ` (${nextReview})`;
-      console.log(`[${button}] ${label}${reviewText}`);
-    }
-    console.log("");
+    let displayedDeck = false;
 
     while (true) {
-      const ratingInput = await promptLine("Rating: ");
-      if (ratingInput === null) {
-        console.error("Review cancelled.");
+      const card = await client.guiCurrentCard();
+      if (card === null) {
+        if (answeredCount === 0) {
+          console.log("No cards are currently available for review in this deck.");
+          return;
+        }
+
+        console.log("Review complete.");
+        console.log(`Cards answered: ${answeredCount}`);
+        return;
+      }
+
+      if (!displayedDeck) {
+        console.log(`Deck: ${deckName}`);
+        displayedDeck = true;
+      } else {
+        console.log("");
+        console.log("---");
+      }
+
+      console.log("");
+      console.log(`   ${card.question}`);
+
+      while (true) {
+        const revealInput = await reader.prompt("\nPress Enter to reveal, or q to quit: ");
+        if (revealInput === null) {
+          console.error("Review cancelled.");
+          process.exitCode = 1;
+          return;
+        }
+
+        const normalizedRevealInput = revealInput.trim();
+        if (normalizedRevealInput.length === 0) {
+          break;
+        }
+
+        if (normalizedRevealInput.toLowerCase() === "q") {
+          console.log("");
+          console.log("Review stopped.");
+          console.log(`Cards answered: ${answeredCount}`);
+          return;
+        }
+
+        console.log("Press Enter to reveal, or q to quit.");
+      }
+
+      const revealed = await client.guiShowAnswer();
+      if (!revealed) {
+        console.error("Unable to reveal the current card.");
         process.exitCode = 1;
         return;
       }
 
-      const rating = Number(ratingInput.trim());
-      if (!Number.isInteger(rating) || !validButtons.has(rating)) {
-        console.log(`Invalid rating. Choose one of: ${card.buttons.join(", ")}`);
-        continue;
-      }
+      console.log("");
+      console.log(`   ${card.answer}`);
+      console.log("");
 
-      const answered = await client.guiAnswerCard(rating);
-      if (!answered) {
-        console.error("Anki did not accept the answer.");
-        process.exitCode = 1;
-        return;
+      const validButtons = new Set(card.buttons);
+      for (const [index, button] of card.buttons.entries()) {
+        const label = ratingLabels[button] ?? String(button);
+        const nextReview = card.nextReviews[index];
+        const reviewText = nextReview === undefined ? "" : ` (${nextReview})`;
+        console.log(`[${button}] ${label}${reviewText}`);
       }
+      console.log("");
 
-      const label = ratingLabels[rating] ?? String(rating);
-      console.log(`Card answered: ${label}`);
-      return;
+      while (true) {
+        const ratingInput = await reader.prompt("Rating: ");
+        if (ratingInput === null) {
+          console.error("Review cancelled.");
+          process.exitCode = 1;
+          return;
+        }
+
+        const trimmedRatingInput = ratingInput.trim();
+        if (trimmedRatingInput.toLowerCase() === "q") {
+          console.log("");
+          console.log("Review stopped.");
+          console.log(`Cards answered: ${answeredCount}`);
+          return;
+        }
+
+        const rating = Number(trimmedRatingInput);
+        if (!Number.isInteger(rating) || !validButtons.has(rating)) {
+          console.log(`Invalid rating. Choose one of: ${card.buttons.join(", ")}`);
+          continue;
+        }
+
+        const answered = await client.guiAnswerCard(rating);
+        if (!answered) {
+          console.error("Anki did not accept the answer.");
+          process.exitCode = 1;
+          return;
+        }
+
+        answeredCount += 1;
+        const label = ratingLabels[rating] ?? String(rating);
+        console.log(`Card answered: ${label}`);
+        break;
+      }
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (message.toLowerCase().includes("review") && message.toLowerCase().includes("active")) {
-      console.log("No cards are currently available for review in this deck.");
+      if (answeredCount === 0) {
+        console.log("No cards are currently available for review in this deck.");
+        return;
+      }
+
+      console.log("Review complete.");
+      console.log(`Cards answered: ${answeredCount}`);
       return;
     }
 
     printConnectionError(error);
   } finally {
-    stopInput();
+    reader.close();
   }
 }
 
