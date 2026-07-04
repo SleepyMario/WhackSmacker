@@ -55,4 +55,12 @@ export class AnkiClient {
   guiCurrentCard(): Promise<CurrentCard | null> {
     return this.invoke<CurrentCard | null>("guiCurrentCard");
   }
+
+  guiShowAnswer(): Promise<boolean> {
+    return this.invoke<boolean>("guiShowAnswer");
+  }
+
+  guiAnswerCard(ease: number): Promise<boolean> {
+    return this.invoke<boolean>("guiAnswerCard", { ease });
+  }
 }
