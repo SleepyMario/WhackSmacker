@@ -194,8 +194,8 @@ test("review progresses through a card and completes", async () => {
   const card = {
     cardId: 1,
     deckName: "Default",
-    question: "Front",
-    answer: "Back",
+    question: "<style>.card { font-family: PMingLiU; }</style><p>Front</p>",
+    answer: "<div>Back</div>",
     buttons: [1, 3],
     nextReviews: ["1m", "10m"]
   };
@@ -213,14 +213,51 @@ test("review progresses through a card and completes", async () => {
 
       assert.equal(result.exitCode, 0);
       assert.match(result.stdout, /Deck: Default/);
+      assert.match(result.stdout, /Question\n\nFront/);
+      assert.match(result.stdout, /Answer\n\nBack/);
       assert.match(result.stdout, /Front/);
       assert.match(result.stdout, /Back/);
+      assert.match(result.stdout, /1 Again — 1m/);
+      assert.match(result.stdout, /3 Good — 10m/);
+      assert.doesNotMatch(result.stdout, /2 Hard/);
+      assert.doesNotMatch(result.stdout, /4 Easy/);
+      assert.doesNotMatch(result.stdout, /font-family|PMingLiU|<style>|<\/div>/u);
       assert.match(result.stdout, /Invalid rating\. Choose one of: 1, 3/);
       assert.match(result.stdout, /Cards answered: 1/);
       assert.deepEqual(
         requests.map((request) => request.action),
         ["guiDeckReview", "guiCurrentCard", "guiShowAnswer", "guiAnswerCard", "guiCurrentCard"]
       );
+      assert.deepEqual(requests[3].params, { ease: 3 });
+    }
+  );
+});
+
+test("review reveals the answer with Space", async () => {
+  const card = {
+    cardId: 1,
+    deckName: "Default",
+    question: "<p>日本語</p>",
+    answer: "<p>Japanese language</p>",
+    buttons: [3],
+    nextReviews: ["10m"]
+  };
+
+  await withMockAnki(
+    [
+      { body: { result: true, error: null } },
+      { body: { result: card, error: null } },
+      { body: { result: true, error: null } },
+      { body: { result: true, error: null } },
+      { body: { result: null, error: null } }
+    ],
+    async (endpoint, requests) => {
+      const result = await runCli(["review", "Default"], { endpoint, input: " 3\n" });
+
+      assert.equal(result.exitCode, 0);
+      assert.match(result.stdout, /Question\n\n日本語/);
+      assert.match(result.stdout, /Press Enter or Space to reveal the answer/);
+      assert.match(result.stdout, /Answer\n\nJapanese language/);
       assert.deepEqual(requests[3].params, { ease: 3 });
     }
   );
@@ -249,12 +286,43 @@ test("language review progresses through a card and completes", async () => {
 
       assert.equal(result.exitCode, 0);
       assert.match(result.stdout, /Deck: Default/);
+      assert.match(result.stdout, /Question\n\nFront/);
+      assert.match(result.stdout, /Answer\n\nBack/);
       assert.match(result.stdout, /Cards answered: 1/);
       assert.deepEqual(
         requests.map((request) => request.action),
         ["guiDeckReview", "guiCurrentCard", "guiShowAnswer", "guiAnswerCard", "guiCurrentCard"]
       );
       assert.deepEqual(requests[3].params, { ease: 3 });
+    }
+  );
+});
+
+test("review renders reverse cards exactly as Anki supplies them", async () => {
+  const card = {
+    cardId: 2,
+    deckName: "Default",
+    question: "<p>Japanese language</p>",
+    answer: "<p>日本語</p>",
+    buttons: [1, 2, 3, 4],
+    nextReviews: ["1m", "6m", "10m", "4d"]
+  };
+
+  await withMockAnki(
+    [
+      { body: { result: true, error: null } },
+      { body: { result: card, error: null } },
+      { body: { result: true, error: null } },
+      { body: { result: true, error: null } },
+      { body: { result: null, error: null } }
+    ],
+    async (endpoint) => {
+      const result = await runCli(["review", "Default"], { endpoint, input: "\n4\n" });
+
+      assert.equal(result.exitCode, 0);
+      assert.match(result.stdout, /Question\n\nJapanese language/);
+      assert.match(result.stdout, /Answer\n\n日本語/);
+      assert.match(result.stdout, /4 Easy — 4d/);
     }
   );
 });
@@ -283,6 +351,37 @@ test("review quits without answering when requested before reveal", async () => 
       assert.deepEqual(
         requests.map((request) => request.action),
         ["guiDeckReview", "guiCurrentCard"]
+      );
+    }
+  );
+});
+
+test("review quits without answering at the rating stage", async () => {
+  const card = {
+    cardId: 1,
+    deckName: "Default",
+    question: "Front",
+    answer: "Back",
+    buttons: [1, 2, 3, 4],
+    nextReviews: ["1m", "5m", "10m", "4d"]
+  };
+
+  await withMockAnki(
+    [
+      { body: { result: true, error: null } },
+      { body: { result: card, error: null } },
+      { body: { result: true, error: null } }
+    ],
+    async (endpoint, requests) => {
+      const result = await runCli(["review", "Default"], { endpoint, input: "\nq\n" });
+
+      assert.equal(result.exitCode, 0);
+      assert.match(result.stdout, /Answer\n\nBack/);
+      assert.match(result.stdout, /Review stopped/);
+      assert.match(result.stdout, /Cards answered: 0/);
+      assert.deepEqual(
+        requests.map((request) => request.action),
+        ["guiDeckReview", "guiCurrentCard", "guiShowAnswer"]
       );
     }
   );
@@ -322,7 +421,7 @@ test("SIGINT interrupts review with exit code 130", async () => {
     async (endpoint) => {
       const result = await runCli(["review", "Default"], {
         endpoint,
-        waitForStdout: "Press Enter to reveal",
+        waitForStdout: "Press Enter or Space to reveal",
         signal: "SIGINT"
       });
 

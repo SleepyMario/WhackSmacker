@@ -5,17 +5,10 @@ import {
   AnkiConnectMalformedResponseError,
   assertValidDeckName
 } from "./anki-client";
-
-declare function require(name: "node:readline"): {
-  createInterface(options: { input: unknown; crlfDelay: number }): {
-    on(event: "line", listener: (line: string) => void): void;
-    on(event: "close", listener: () => void): void;
-    close(): void;
-  };
-};
+import { renderAnkiCardHtml } from "./card-renderer";
 
 declare const process: {
-  stdin: unknown;
+  stdin: ReviewStdin;
   stdout: {
     write(text: string): void;
   };
@@ -26,9 +19,17 @@ declare const process: {
   off(event: "SIGINT", listener: () => void): void;
 };
 
-type ReadlineInterface = ReturnType<typeof readline.createInterface>;
-
-const readline = require("node:readline");
+interface ReviewStdin {
+  isTTY?: boolean;
+  on(event: "data", listener: (chunk: unknown) => void): void;
+  on(event: "end" | "close", listener: () => void): void;
+  off(event: "data", listener: (chunk: unknown) => void): void;
+  off(event: "end" | "close", listener: () => void): void;
+  pause(): void;
+  resume(): void;
+  setEncoding?(encoding: "utf8"): void;
+  setRawMode?(enabled: boolean): void;
+}
 
 const ratingLabels: Record<number, string> = {
   1: "Again",
@@ -37,62 +38,183 @@ const ratingLabels: Record<number, string> = {
   4: "Easy"
 };
 
-class LineReader {
-  private readonly reader: ReadlineInterface;
-  private readonly lines: string[] = [];
-  private readonly resolvers: Array<(value: string | null) => void> = [];
+type RevealAction = "reveal" | "quit" | "interrupt";
+
+class ReviewInput {
+  private buffer = "";
+  private readonly resolvers: Array<PendingRead> = [];
   private closed = false;
+  private rawModeEnabled = false;
+
+  private readonly onData = (chunk: unknown): void => {
+    this.buffer += String(chunk);
+    this.flush();
+  };
+
+  private readonly onClose = (): void => {
+    this.closed = true;
+    this.flush();
+  };
 
   constructor() {
-    this.reader = readline.createInterface({
-      input: process.stdin,
-      crlfDelay: Infinity
-    });
-
-    this.reader.on("line", (line) => {
-      this.lines.push(line);
-      this.flush();
-    });
-
-    this.reader.on("close", () => {
-      this.closed = true;
-      this.flush();
-    });
+    process.stdin.setEncoding?.("utf8");
+    process.stdin.on("data", this.onData);
+    process.stdin.on("end", this.onClose);
+    process.stdin.on("close", this.onClose);
+    process.stdin.resume();
   }
 
-  prompt(prompt: string): Promise<string | null> {
+  promptLine(prompt: string): Promise<string | null> {
     process.stdout.write(prompt);
 
-    if (this.lines.length > 0 || this.closed) {
-      return Promise.resolve(this.lines.shift() ?? null);
-    }
-
     return new Promise((resolve) => {
-      this.resolvers.push(resolve);
+      this.resolvers.push({ kind: "line", resolve });
+      this.flush();
     });
   }
 
-  close(): void {
-    this.reader.close();
+  readRevealAction(prompt: string): Promise<RevealAction | null> {
+    process.stdout.write(prompt);
+    this.enableRawMode();
+
+    return new Promise((resolve) => {
+      this.resolvers.push({
+        kind: "reveal",
+        resolve: (action) => {
+          this.disableRawMode();
+          resolve(action);
+        }
+      });
+      this.flush();
+    });
   }
 
   interrupt(): void {
     this.closed = true;
-    this.reader.close();
     this.flush();
   }
 
+  close(): void {
+    this.disableRawMode();
+    process.stdin.off("data", this.onData);
+    process.stdin.off("end", this.onClose);
+    process.stdin.off("close", this.onClose);
+    process.stdin.pause();
+  }
+
   private flush(): void {
-    while (this.resolvers.length > 0 && (this.lines.length > 0 || this.closed)) {
-      const resolve = this.resolvers.shift();
-      if (resolve === undefined) {
+    while (this.resolvers.length > 0) {
+      const pending = this.resolvers[0];
+      if (pending === undefined) {
         return;
       }
 
-      resolve(this.lines.shift() ?? null);
+      if (pending.kind === "line") {
+        const line = this.readLine();
+        if (line !== undefined) {
+          this.resolvers.shift();
+          pending.resolve(line);
+          continue;
+        }
+
+        if (this.closed) {
+          this.resolvers.shift();
+          pending.resolve(this.buffer.length === 0 ? null : this.takeRemainingBuffer());
+          continue;
+        }
+
+        return;
+      }
+
+      const action = this.readRevealActionFromBuffer();
+      if (action !== undefined) {
+        this.resolvers.shift();
+        pending.resolve(action);
+        continue;
+      }
+
+      if (this.closed) {
+        this.resolvers.shift();
+        pending.resolve(null);
+        continue;
+      }
+
+      return;
+    }
+  }
+
+  private readLine(): string | undefined {
+    const newlineIndex = this.buffer.search(/\r?\n/u);
+    if (newlineIndex === -1) {
+      return undefined;
+    }
+
+    const line = this.buffer.slice(0, newlineIndex);
+    const newlineLength = this.buffer[newlineIndex] === "\r" && this.buffer[newlineIndex + 1] === "\n" ? 2 : 1;
+    this.buffer = this.buffer.slice(newlineIndex + newlineLength);
+    return line;
+  }
+
+  private readRevealActionFromBuffer(): RevealAction | undefined {
+    while (this.buffer.length > 0) {
+      const char = this.buffer[0];
+      this.buffer = this.buffer.slice(1);
+
+      if (char === "\u0003") {
+        return "interrupt";
+      }
+
+      if (char === "\r" || char === "\n") {
+        if (char === "\r" && this.buffer.startsWith("\n")) {
+          this.buffer = this.buffer.slice(1);
+        }
+        return "reveal";
+      }
+
+      if (char === " ") {
+        return "reveal";
+      }
+
+      if (char.toLowerCase() === "q") {
+        return "quit";
+      }
+
+      process.stdout.write("\nPress Enter or Space to reveal the answer. Press q to stop.");
+    }
+
+    return undefined;
+  }
+
+  private takeRemainingBuffer(): string {
+    const remaining = this.buffer;
+    this.buffer = "";
+    return remaining;
+  }
+
+  private enableRawMode(): void {
+    if (process.stdin.isTTY === true && this.rawModeEnabled === false) {
+      process.stdin.setRawMode?.(true);
+      this.rawModeEnabled = true;
+    }
+  }
+
+  private disableRawMode(): void {
+    if (this.rawModeEnabled) {
+      process.stdin.setRawMode?.(false);
+      this.rawModeEnabled = false;
     }
   }
 }
+
+type PendingRead =
+  | {
+      readonly kind: "line";
+      readonly resolve: (value: string | null) => void;
+    }
+  | {
+      readonly kind: "reveal";
+      readonly resolve: (value: RevealAction | null) => void;
+    };
 
 function createClient(): AnkiClient {
   return new AnkiClient(process.env.ANKICONNECT_URL);
@@ -156,14 +278,15 @@ export async function languageReview(deckName: string): Promise<void> {
   }
 
   const client = createClient();
-  const reader = new LineReader();
+  const input = new ReviewInput();
   let answeredCount = 0;
   let interrupted = false;
 
   const onSigint = (): void => {
     interrupted = true;
     process.stdout.write("\n");
-    reader.interrupt();
+    input.interrupt();
+    input.close();
     console.log("Review interrupted.");
     process.exit(130);
   };
@@ -202,11 +325,15 @@ export async function languageReview(deckName: string): Promise<void> {
       }
 
       console.log("");
-      console.log(`   ${card.question}`);
+      console.log("Question");
+      console.log("");
+      console.log(renderCardSection(card.question));
 
       while (true) {
-        const revealInput = await reader.prompt("\nPress Enter to reveal, or q to quit: ");
-        if (revealInput === null) {
+        const revealAction = await input.readRevealAction("\nPress Enter or Space to reveal the answer. Press q to stop.");
+        process.stdout.write("\n");
+
+        if (revealAction === null) {
           if (interrupted) {
             console.log("Review interrupted.");
             process.exitCode = 130;
@@ -218,19 +345,22 @@ export async function languageReview(deckName: string): Promise<void> {
           return;
         }
 
-        const normalizedRevealInput = revealInput.trim();
-        if (normalizedRevealInput.length === 0) {
+        if (revealAction === "interrupt") {
+          console.log("Review interrupted.");
+          process.exitCode = 130;
+          return;
+        }
+
+        if (revealAction === "reveal") {
           break;
         }
 
-        if (normalizedRevealInput.toLowerCase() === "q") {
+        if (revealAction === "quit") {
           console.log("");
           console.log("Review stopped.");
           console.log(`Cards answered: ${answeredCount}`);
           return;
         }
-
-        console.log("Press Enter to reveal, or q to quit.");
       }
 
       const revealed = await client.guiShowAnswer();
@@ -241,20 +371,22 @@ export async function languageReview(deckName: string): Promise<void> {
       }
 
       console.log("");
-      console.log(`   ${card.answer}`);
+      console.log("Answer");
+      console.log("");
+      console.log(renderCardSection(card.answer));
       console.log("");
 
       const validButtons = new Set(card.buttons);
       for (const [index, button] of card.buttons.entries()) {
         const label = ratingLabels[button] ?? String(button);
         const nextReview = card.nextReviews[index];
-        const reviewText = nextReview === undefined ? "" : ` (${nextReview})`;
-        console.log(`[${button}] ${label}${reviewText}`);
+        const reviewText = nextReview === undefined ? "" : ` — ${nextReview}`;
+        console.log(`${button} ${label}${reviewText}`);
       }
       console.log("");
 
       while (true) {
-        const ratingInput = await reader.prompt("Rating: ");
+        const ratingInput = await input.promptLine("Choose a rating: ");
         if (ratingInput === null) {
           if (interrupted) {
             console.log("Review interrupted.");
@@ -309,6 +441,11 @@ export async function languageReview(deckName: string): Promise<void> {
     printLanguageCliError(error);
   } finally {
     process.off("SIGINT", onSigint);
-    reader.close();
+    input.close();
   }
+}
+
+function renderCardSection(html: string): string {
+  const rendered = renderAnkiCardHtml(html);
+  return rendered.length > 0 ? rendered : "[empty]";
 }
