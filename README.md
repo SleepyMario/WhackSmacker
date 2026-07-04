@@ -1,6 +1,6 @@
 # WhackSmacker
 
-WhackSmacker is a Node.js command-line application for reviewing Anki cards from a terminal. It talks to a locally running Anki instance through the AnkiConnect add-on.
+WhackSmacker is a modular learning and utility application. The current v0.001 surface is a Node.js command-line application for reviewing Anki cards from a terminal through the AnkiConnect add-on.
 
 Milestone: `v0.001`
 
@@ -46,6 +46,22 @@ Do not publish this milestone to npm.
 
 ## Usage
 
+The v0.001 language commands are available through the new domain-prefixed shape:
+
+```sh
+whacksmacker language status
+whacksmacker language decks
+whacksmacker language review <deck-name>
+```
+
+The original v0.001 commands remain supported as aliases:
+
+```sh
+whacksmacker status
+whacksmacker decks
+whacksmacker review <deck-name>
+```
+
 Check whether AnkiConnect is reachable and usable:
 
 ```sh
@@ -74,6 +90,66 @@ During review:
 - Press Ctrl-C to interrupt the session.
 
 The review command continues until the Anki review queue is empty or you quit.
+
+## Architecture
+
+WhackSmacker is structured as an umbrella application with application surfaces in `apps/` and reusable packages in `packages/`.
+
+```text
+apps/
+  cli/
+  desktop/
+packages/
+  core/
+  language/
+  chess/
+  geography/
+  storage/
+```
+
+Only `apps/cli` exists today. `apps/desktop` is a planned application surface and is not implemented in v0.001.
+
+Domain modules and provider integrations are separate concepts:
+
+- `language` is the domain for decks, cards, review sessions, scheduling interfaces, and language-learning providers.
+- `anki` is the current language provider integration through AnkiConnect.
+- `chess` is the domain for future board, move, FEN, PGN, engine, tablebase, and opening interfaces.
+- `stockfish`, `syzygy`, and `lichess` are future chess provider features.
+- `geography` is the domain for future datasets, locations, maps, and quiz interfaces.
+
+Feature names follow a Gentoo USE-style model:
+
+- Domain features: `language`, `chess`, `geography`
+- Provider and integration features: `anki`, `lichess`, `stockfish`, `syzygy`
+- Application surfaces: `cli`, `desktop`
+
+Dependency boundaries:
+
+- Apps may depend on packages.
+- Domain packages may depend on `packages/core` and `packages/storage` contracts.
+- `packages/core` contains only shared contracts and must not depend on domain packages.
+- Domain packages must not depend directly on one another.
+- Provider integrations live behind their owning domain package, not in the application shell.
+
+Current package responsibilities:
+
+- `packages/core`: module registration contracts, feature configuration types, profile/application-data paths, logging interfaces, CLI command registration contracts, and shared UI contracts.
+- `packages/language`: language decks/cards/review contracts plus the current AnkiConnect adapter and CLI commands.
+- `packages/chess`: placeholder chess interfaces and clean module registration; no user commands yet.
+- `packages/geography`: placeholder geography interfaces and clean module registration; no user commands yet.
+- `packages/storage`: shared storage/path abstractions only; no domain schemas.
+
+Potential future local data layout:
+
+```text
+~/.local/share/whacksmacker/
+  profile.sqlite
+  language.sqlite
+  chess.sqlite
+  geography.sqlite
+```
+
+The shared profile database may eventually contain enabled modules, general application settings, and profile metadata. Each domain database remains independently owned and migrated by its domain module.
 
 ## Troubleshooting
 
