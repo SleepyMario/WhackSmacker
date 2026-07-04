@@ -56,9 +56,7 @@ const ansi = {
   reset: "\x1b[0m",
   bold: "\x1b[1m",
   cyan: "\x1b[36m",
-  green: "\x1b[32m",
-  magenta: "\x1b[35m",
-  yellow: "\x1b[33m"
+  green: "\x1b[32m"
 };
 
 export const whackSmackerBanner = `██╗    ██╗███████╗███╗   ███╗
@@ -390,7 +388,7 @@ function renderMenu(terminal: Terminal, heading: string, items: readonly MenuIte
 function colorizeWsmBanner(banner: string): string {
   return banner
     .split("\n")
-    .map((line) => `${ansi.bold}${ansi.cyan}${line.slice(0, 10)}${ansi.magenta}${line.slice(10, 19)}${ansi.yellow}${line.slice(19)}${ansi.reset}`)
+    .map((line) => `${ansi.bold}${ansi.cyan}${line}${ansi.reset}`)
     .join("\n");
 }
 
