@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 
-import { AnkiClient } from "./anki-client";
+import {
+  AnkiClient,
+  AnkiConnectApiError,
+  AnkiConnectConnectionError,
+  AnkiConnectMalformedResponseError,
+  assertValidDeckName
+} from "./anki-client";
 
 declare function require(name: "node:readline"): {
   createInterface(options: { input: unknown; crlfDelay: number }): {
@@ -16,7 +22,11 @@ declare const process: {
   stdout: {
     write(text: string): void;
   };
+  env: Record<string, string | undefined>;
   exitCode?: number;
+  exit(code?: number): never;
+  on(event: "SIGINT", listener: () => void): void;
+  off(event: "SIGINT", listener: () => void): void;
 };
 
 type ReadlineInterface = ReturnType<typeof readline.createInterface>;
@@ -74,6 +84,12 @@ class LineReader {
     this.reader.close();
   }
 
+  interrupt(): void {
+    this.closed = true;
+    this.reader.close();
+    this.flush();
+  }
+
   private flush(): void {
     while (this.resolvers.length > 0 && (this.lines.length > 0 || this.closed)) {
       const resolve = this.resolvers.shift();
@@ -86,27 +102,41 @@ class LineReader {
   }
 }
 
-function printConnectionError(error: unknown): void {
+function createClient(): AnkiClient {
+  return new AnkiClient(process.env.ANKICONNECT_URL);
+}
+
+function printCliError(error: unknown): void {
   const message = error instanceof Error ? error.message : String(error);
-  console.error(`Unable to reach AnkiConnect: ${message}`);
-  console.error("Anki must be running and AnkiConnect must be installed.");
+
+  if (error instanceof AnkiConnectConnectionError) {
+    console.error(`Unable to reach AnkiConnect: ${message}`);
+    console.error("Anki must be running and AnkiConnect must be installed.");
+  } else if (error instanceof AnkiConnectApiError) {
+    console.error(`AnkiConnect API error: ${message}`);
+  } else if (error instanceof AnkiConnectMalformedResponseError) {
+    console.error(`Malformed AnkiConnect response: ${message}`);
+  } else {
+    console.error(`Unexpected error: ${message}`);
+  }
+
   process.exitCode = 1;
 }
 
 async function status(): Promise<void> {
-  const client = new AnkiClient();
+  const client = createClient();
 
   try {
     const apiVersion = await client.version();
     console.log("AnkiConnect is available.");
     console.log(`API version: ${apiVersion}`);
   } catch (error) {
-    printConnectionError(error);
+    printCliError(error);
   }
 }
 
 async function decks(): Promise<void> {
-  const client = new AnkiClient();
+  const client = createClient();
 
   try {
     const deckNames = await client.deckNames();
@@ -121,14 +151,32 @@ async function decks(): Promise<void> {
       console.log(deckName);
     }
   } catch (error) {
-    printConnectionError(error);
+    printCliError(error);
   }
 }
 
 async function review(deckName: string): Promise<void> {
-  const client = new AnkiClient();
+  try {
+    assertValidDeckName(deckName);
+  } catch (error) {
+    printCliError(error);
+    return;
+  }
+
+  const client = createClient();
   const reader = new LineReader();
   let answeredCount = 0;
+  let interrupted = false;
+
+  const onSigint = (): void => {
+    interrupted = true;
+    process.stdout.write("\n");
+    reader.interrupt();
+    console.log("Review interrupted.");
+    process.exit(130);
+  };
+
+  process.on("SIGINT", onSigint);
 
   try {
     const started = await client.guiDeckReview(deckName);
@@ -167,8 +215,14 @@ async function review(deckName: string): Promise<void> {
       while (true) {
         const revealInput = await reader.prompt("\nPress Enter to reveal, or q to quit: ");
         if (revealInput === null) {
-          console.error("Review cancelled.");
-          process.exitCode = 1;
+          if (interrupted) {
+            console.log("Review interrupted.");
+            process.exitCode = 130;
+          } else {
+            console.error("Review cancelled.");
+            process.exitCode = 1;
+          }
+
           return;
         }
 
@@ -210,8 +264,14 @@ async function review(deckName: string): Promise<void> {
       while (true) {
         const ratingInput = await reader.prompt("Rating: ");
         if (ratingInput === null) {
-          console.error("Review cancelled.");
-          process.exitCode = 1;
+          if (interrupted) {
+            console.log("Review interrupted.");
+            process.exitCode = 130;
+          } else {
+            console.error("Review cancelled.");
+            process.exitCode = 1;
+          }
+
           return;
         }
 
@@ -243,8 +303,7 @@ async function review(deckName: string): Promise<void> {
       }
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (message.toLowerCase().includes("review") && message.toLowerCase().includes("active")) {
+    if (error instanceof AnkiConnectApiError && error.message.toLowerCase().includes("review") && error.message.toLowerCase().includes("active")) {
       if (answeredCount === 0) {
         console.log("No cards are currently available for review in this deck.");
         return;
@@ -255,8 +314,9 @@ async function review(deckName: string): Promise<void> {
       return;
     }
 
-    printConnectionError(error);
+    printCliError(error);
   } finally {
+    process.off("SIGINT", onSigint);
     reader.close();
   }
 }
@@ -266,14 +326,26 @@ async function main(): Promise<void> {
 
   switch (command) {
     case "status":
+      if (process.argv.length !== 3) {
+        console.error(usage);
+        process.exitCode = 1;
+        return;
+      }
+
       await status();
       return;
     case "decks":
+      if (process.argv.length !== 3) {
+        console.error(usage);
+        process.exitCode = 1;
+        return;
+      }
+
       await decks();
       return;
     case "review": {
       const deckName = process.argv.slice(3).join(" ");
-      if (deckName.length === 0) {
+      if (process.argv.length < 4) {
         console.error(usage);
         process.exitCode = 1;
         return;
