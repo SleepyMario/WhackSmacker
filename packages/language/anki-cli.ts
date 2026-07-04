@@ -38,6 +38,15 @@ const ratingLabels: Record<number, string> = {
   4: "Easy"
 };
 
+const ansi = {
+  reset: "\x1b[0m",
+  blue: "\x1b[34m",
+  brightBlack: "\x1b[90m",
+  green: "\x1b[32m",
+  orange: "\x1b[38;5;208m",
+  red: "\x1b[31m"
+};
+
 type RevealAction = "reveal" | "quit" | "interrupt";
 
 class ReviewInput {
@@ -381,12 +390,12 @@ export async function languageReview(deckName: string): Promise<void> {
         const label = ratingLabels[button] ?? String(button);
         const nextReview = card.nextReviews[index];
         const reviewText = nextReview === undefined ? "" : ` — ${nextReview}`;
-        console.log(`${button} ${label}${reviewText}`);
+        console.log(colorRatingLine(button, `${button} ${label}${reviewText}`));
       }
       console.log("");
 
       while (true) {
-        const ratingInput = await input.promptLine("Choose a rating: ");
+        const ratingInput = await input.promptLine(colorText("Choose a rating: ", ansi.blue));
         if (ratingInput === null) {
           if (interrupted) {
             console.log("Review interrupted.");
@@ -448,4 +457,28 @@ export async function languageReview(deckName: string): Promise<void> {
 function renderCardSection(html: string): string {
   const rendered = renderAnkiCardHtml(html);
   return rendered.length > 0 ? rendered : "[empty]";
+}
+
+function colorRatingLine(button: number, line: string): string {
+  if (button === 1) {
+    return colorText(line, ansi.brightBlack);
+  }
+
+  if (button === 2) {
+    return colorText(line, ansi.red);
+  }
+
+  if (button === 3) {
+    return colorText(line, ansi.orange);
+  }
+
+  if (button === 4) {
+    return colorText(line, ansi.green);
+  }
+
+  return colorText(line, ansi.blue);
+}
+
+function colorText(text: string, color: string): string {
+  return `${color}${text}${ansi.reset}`;
 }

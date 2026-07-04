@@ -50,14 +50,24 @@ export interface MenuItem {
   readonly moduleId?: string;
 }
 
-export const whackSmackerLogo = String.raw`
-__        ___    ____ _  ______  __  __    _    ____ _  _______ ____
-\ \      / / \  / ___| |/ / ___||  \/  |  / \  / ___| |/ / ____|  _ \
- \ \ /\ / / _ \| |   | ' /\___ \| |\/| | / _ \| |   | ' /|  _| | |_) |
-  \ V  V / ___ \ |___| . \ ___) | |  | |/ ___ \ |___| . \| |___|  _ <
-   \_/\_/_/   \_\____|_|\_\____/|_|  |_/_/   \_\____|_|\_\_____|_| \_\
+const ansi = {
+  reset: "\x1b[0m",
+  bold: "\x1b[1m",
+  cyan: "\x1b[36m",
+  green: "\x1b[32m",
+  orange: "\x1b[38;5;208m",
+  red: "\x1b[31m"
+};
 
-     This Thing Will Whack Some Smack Into Your Brains
+export const whackSmackerLogo = `${ansi.bold}${ansi.red}
+##      ##   ####    ######  ##  ##   ######  ##     ##   ####    ######  ##  ##  #######  ######
+##  ##  ##  ##  ##  ##       ## ##   ##       ###   ###  ##  ##  ##       ## ##   ##       ##   ##
+##  ##  ##  ######  ##       ####     ####    ## ### ##  ######  ##       ####    #####    ######
+##  ##  ##  ##  ##  ##       ## ##       ##   ##  #  ##  ##  ##  ##       ## ##   ##       ##  ##
+ ###  ###   ##  ##   ######  ##  ##  ######   ##     ##  ##  ##   ######  ##  ##  #######  ##   ##
+${ansi.orange}===============================================================================================${ansi.reset}
+${ansi.bold}${ansi.cyan}This Thing Will Whack Some Smack Into Your Brains${ansi.reset}
+${ansi.green}===============================================================================================${ansi.reset}
 `;
 
 const mainMenuItems: readonly MenuItem[] = [

@@ -211,7 +211,13 @@ test("noninteractive menu execution does not hang", async () => {
 
 test("ASCII logo is fixed and includes the WhackSmacker subtitle", () => {
   assert.match(whackSmackerLogo, /This Thing Will Whack Some Smack Into Your Brains/);
+  assert.match(whackSmackerLogo, /\x1b\[[0-9;]+m/);
+  assert.match(stripAnsi(whackSmackerLogo), /######  ##  ##/);
 });
+
+function stripAnsi(text) {
+  return text.replace(/\x1b\[[0-9;]*m/g, "");
+}
 
 async function runNode(args) {
   const { spawn } = await import("node:child_process");
