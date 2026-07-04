@@ -104,6 +104,7 @@ packages/
   language/
   chess/
   geography/
+  mathematics/
   storage/
 ```
 
@@ -116,10 +117,11 @@ Domain modules and provider integrations are separate concepts:
 - `chess` is the domain for future board, move, FEN, PGN, engine, tablebase, and opening interfaces.
 - `stockfish`, `syzygy`, and `lichess` are future chess provider features.
 - `geography` is the domain for future datasets, locations, maps, and quiz interfaces.
+- `mathematics` is the domain for future topics, exercises, proofs, and quiz interfaces.
 
 Feature names follow a Gentoo USE-style model:
 
-- Domain features: `language`, `chess`, `geography`
+- Domain features: `language`, `chess`, `geography`, `mathematics`
 - Provider and integration features: `anki`, `lichess`, `stockfish`, `syzygy`
 - Application surfaces: `cli`, `desktop`
 
@@ -137,6 +139,7 @@ Current package responsibilities:
 - `packages/language`: language decks/cards/review contracts plus the current AnkiConnect adapter and CLI commands.
 - `packages/chess`: placeholder chess interfaces and clean module registration; no user commands yet.
 - `packages/geography`: placeholder geography interfaces and clean module registration; no user commands yet.
+- `packages/mathematics`: placeholder mathematics interfaces and clean module registration; no user commands yet.
 - `packages/storage`: shared storage/path abstractions only; no domain schemas.
 
 Potential future local data layout:
@@ -147,6 +150,7 @@ Potential future local data layout:
   language.sqlite
   chess.sqlite
   geography.sqlite
+  mathematics.sqlite
 ```
 
 The shared profile database may eventually contain enabled modules, general application settings, and profile metadata. Each domain database remains independently owned and migrated by its domain module.
