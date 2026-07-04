@@ -31,6 +31,7 @@ After linking, the executable is:
 
 ```sh
 whacksmacker
+wsm
 ```
 
 For a no-publish package smoke test:
@@ -45,6 +46,21 @@ npm uninstall -g whacksmacker
 Do not publish this milestone to npm.
 
 ## Usage
+
+Open the interactive module menu:
+
+```sh
+whacksmacker
+wsm
+```
+
+Print command usage:
+
+```sh
+whacksmacker help
+whacksmacker --help
+wsm help
+```
 
 The v0.001 language commands are available through the new domain-prefixed shape:
 

@@ -124,7 +124,7 @@ test("menu selection routes to the selected language command", async () => {
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
   assert.deepEqual(calls, [{ path: "language status", args: [] }]);
-  assert.match(terminal.output, /WACKSMACKER/);
+  assert.match(terminal.output, /This Thing Will Whack Some Smack Into Your Brains/);
   assert.equal(terminal.restoreCount, 2);
 });
 
@@ -190,8 +190,8 @@ test("noninteractive menu execution does not hang", async () => {
   }
 });
 
-test("ASCII logo is fixed and names WACKSMACKER", () => {
-  assert.match(whackSmackerLogo, /WACKSMACKER/);
+test("ASCII logo is fixed and includes the WhackSmacker subtitle", () => {
+  assert.match(whackSmackerLogo, /This Thing Will Whack Some Smack Into Your Brains/);
 });
 
 async function runNode(args) {

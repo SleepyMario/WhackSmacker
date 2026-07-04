@@ -57,7 +57,7 @@ __        ___    ____ _  ______  __  __    _    ____ _  _______ ____
   \ V  V / ___ \ |___| . \ ___) | |  | |/ ___ \ |___| . \| |___|  _ <
    \_/\_/_/   \_\____|_|\_\____/|_|  |_/_/   \_\____|_|\_\_____|_| \_\
 
-                 WACKSMACKER
+     This Thing Will Whack Some Smack Into Your Brains
 `;
 
 const mainMenuItems: readonly MenuItem[] = [

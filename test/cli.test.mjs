@@ -101,6 +101,26 @@ test("language status reports reachable AnkiConnect", async () => {
   });
 });
 
+test("help prints interactive and direct CLI usage", async () => {
+  const result = await runCli(["help"]);
+
+  assert.equal(result.exitCode, 0);
+  assert.match(result.stdout, /^Usage:/);
+  assert.match(result.stdout, /whacksmacker$/m);
+  assert.match(result.stdout, /wsm$/m);
+  assert.match(result.stdout, /whacksmacker language review <deck-name>/);
+  assert.match(result.stdout, /interactive module menu/);
+  assert.equal(result.stderr, "");
+});
+
+test("unknown commands print usage as a failure", async () => {
+  const result = await runCli(["unknown"]);
+
+  assert.equal(result.exitCode, 1);
+  assert.equal(result.stdout, "");
+  assert.match(result.stderr, /^Usage:/);
+});
+
 test("decks lists sorted deck names", async () => {
   await withMockAnki(
     [{ body: { result: ["Languages::Japanese", "Default"], error: null } }],

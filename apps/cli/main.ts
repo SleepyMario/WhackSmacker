@@ -18,14 +18,20 @@ declare const process: {
   exitCode?: number;
 };
 
-const usage = `Usage:
+export const usage = `Usage:
+whacksmacker
+wsm
+whacksmacker help
+
 whacksmacker status
 whacksmacker decks
 whacksmacker review <deck-name>
 
 whacksmacker language status
 whacksmacker language decks
-whacksmacker language review <deck-name>`;
+whacksmacker language review <deck-name>
+
+Run without arguments to open the interactive module menu.`;
 
 const legacyAliases = new Map<string, readonly string[]>([
   ["status", ["language", "status"]],
@@ -74,6 +80,11 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
     return;
   }
 
+  if (isHelpRequest(argv)) {
+    console.log(usage);
+    return;
+  }
+
   const resolved = resolveCliCommand(registry, argv);
 
   if (resolved === null) {
@@ -83,6 +94,10 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   }
 
   await dispatch(resolved.command, resolved.args);
+}
+
+function isHelpRequest(argv: readonly string[]): boolean {
+  return argv.length === 1 && (argv[0] === "help" || argv[0] === "--help" || argv[0] === "-h");
 }
 
 export function resolveCliCommand(registry: InMemoryCliCommandRegistry, argv: readonly string[]): ResolvedCliCommand | null {
