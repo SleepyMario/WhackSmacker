@@ -1,4 +1,5 @@
 import type { DomainModule } from "../core";
+import { languageDecks, languageReview, languageStatus } from "./anki-cli";
 
 export * from "./anki-client";
 
@@ -21,7 +22,41 @@ export const languageModule: DomainModule = {
   id: "language",
   displayName: "Language",
   providerFeatures: ["anki"],
-  register() {
-    // Anki CLI commands are wired in a later restructuring chunk.
+  register(context) {
+    context.cli.register({
+      path: ["language", "status"],
+      summary: "Check whether the Anki provider is reachable",
+      run: async (args) => {
+        if (args.length !== 0) {
+          throw new Error("Usage: whacksmacker language status");
+        }
+
+        await languageStatus();
+      }
+    });
+
+    context.cli.register({
+      path: ["language", "decks"],
+      summary: "List Anki-backed language decks",
+      run: async (args) => {
+        if (args.length !== 0) {
+          throw new Error("Usage: whacksmacker language decks");
+        }
+
+        await languageDecks();
+      }
+    });
+
+    context.cli.register({
+      path: ["language", "review"],
+      summary: "Review an Anki-backed language deck",
+      run: async (args) => {
+        if (args.length === 0) {
+          throw new Error("Usage: whacksmacker language review <deck-name>");
+        }
+
+        await languageReview(args.join(" "));
+      }
+    });
   }
 };

@@ -89,11 +89,36 @@ test("status reports reachable AnkiConnect", async () => {
   });
 });
 
+test("language status reports reachable AnkiConnect", async () => {
+  await withMockAnki([{ body: { result: 6, error: null } }], async (endpoint, requests) => {
+    const result = await runCli(["language", "status"], { endpoint });
+
+    assert.equal(result.exitCode, 0);
+    assert.match(result.stdout, /AnkiConnect is available/);
+    assert.match(result.stdout, /API version: 6/);
+    assert.equal(result.stderr, "");
+    assert.equal(requests[0].action, "version");
+  });
+});
+
 test("decks lists sorted deck names", async () => {
   await withMockAnki(
     [{ body: { result: ["Languages::Japanese", "Default"], error: null } }],
     async (endpoint) => {
       const result = await runCli(["decks"], { endpoint });
+
+      assert.equal(result.exitCode, 0);
+      assert.equal(result.stdout, "Default\nLanguages::Japanese\n");
+      assert.equal(result.stderr, "");
+    }
+  );
+});
+
+test("language decks lists sorted deck names", async () => {
+  await withMockAnki(
+    [{ body: { result: ["Languages::Japanese", "Default"], error: null } }],
+    async (endpoint) => {
+      const result = await runCli(["language", "decks"], { endpoint });
 
       assert.equal(result.exitCode, 0);
       assert.equal(result.stdout, "Default\nLanguages::Japanese\n");
@@ -171,6 +196,39 @@ test("review progresses through a card and completes", async () => {
       assert.match(result.stdout, /Front/);
       assert.match(result.stdout, /Back/);
       assert.match(result.stdout, /Invalid rating\. Choose one of: 1, 3/);
+      assert.match(result.stdout, /Cards answered: 1/);
+      assert.deepEqual(
+        requests.map((request) => request.action),
+        ["guiDeckReview", "guiCurrentCard", "guiShowAnswer", "guiAnswerCard", "guiCurrentCard"]
+      );
+      assert.deepEqual(requests[3].params, { ease: 3 });
+    }
+  );
+});
+
+test("language review progresses through a card and completes", async () => {
+  const card = {
+    cardId: 1,
+    deckName: "Default",
+    question: "Front",
+    answer: "Back",
+    buttons: [1, 3],
+    nextReviews: ["1m", "10m"]
+  };
+
+  await withMockAnki(
+    [
+      { body: { result: true, error: null } },
+      { body: { result: card, error: null } },
+      { body: { result: true, error: null } },
+      { body: { result: true, error: null } },
+      { body: { result: null, error: null } }
+    ],
+    async (endpoint, requests) => {
+      const result = await runCli(["language", "review", "Default"], { endpoint, input: "\n3\n" });
+
+      assert.equal(result.exitCode, 0);
+      assert.match(result.stdout, /Deck: Default/);
       assert.match(result.stdout, /Cards answered: 1/);
       assert.deepEqual(
         requests.map((request) => request.action),

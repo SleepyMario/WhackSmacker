@@ -16,7 +16,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/copy-compat-build.mjs",
     "dev": "tsc --outDir .dev-dist && node .dev-dist/main.js",
     "prepack": "npm run build",
     "start": "node dist/main.js",
