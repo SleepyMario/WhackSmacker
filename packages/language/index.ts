@@ -1,5 +1,7 @@
 import type { DomainModule } from "../core";
 
+export * from "./anki-client";
+
 export interface LanguageDeck {
   readonly name: string;
 }
