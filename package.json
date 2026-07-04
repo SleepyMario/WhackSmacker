@@ -1,0 +1,16 @@
+{
+  "name": "whacksmacker",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "whacksmacker": "dist/main.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --outDir .dev-dist && node .dev-dist/main.js",
+    "start": "node dist/main.js"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

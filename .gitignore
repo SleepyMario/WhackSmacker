@@ -3,6 +3,7 @@
 *.swo
 node_modules/
 dist/
+.dev-dist/
 build/
 target/
 .env
