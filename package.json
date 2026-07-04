@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Terminal review sessions for Anki through AnkiConnect.",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "GPL-3.0-or-later",
   "engines": {
     "node": ">=18"
   },
@@ -12,6 +12,7 @@
   },
   "files": [
     "dist",
+    "COPYING",
     "README.md"
   ],
   "scripts": {
