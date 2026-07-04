@@ -469,7 +469,7 @@ function colorRatingLine(button: number, line: string): string {
   }
 
   if (button === 3) {
-    return colorText(line, ansi.orange);
+    return colorText(line, ansi.blue);
   }
 
   if (button === 4) {

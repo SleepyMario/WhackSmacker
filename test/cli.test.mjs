@@ -220,7 +220,7 @@ test("review progresses through a card and completes", async () => {
       assert.match(result.stdout, /1 Again — 1m/);
       assert.match(result.stdout, /3 Good — 10m/);
       assert.match(result.stdout, /\x1b\[90m1 Again — 1m\x1b\[0m/);
-      assert.match(result.stdout, /\x1b\[38;5;208m3 Good — 10m\x1b\[0m/);
+      assert.match(result.stdout, /\x1b\[34m3 Good — 10m\x1b\[0m/);
       assert.match(result.stdout, /\x1b\[34mChoose a rating: \x1b\[0m/);
       assert.doesNotMatch(result.stdout, /2 Hard/);
       assert.doesNotMatch(result.stdout, /4 Easy/);
