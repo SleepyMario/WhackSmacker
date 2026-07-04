@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { mkdtemp, readFile, rm, symlink } from "node:fs/promises";
 import { createServer } from "node:http";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { test } from "node:test";
 
 async function withMockAnki(responses, run) {
@@ -77,6 +80,56 @@ async function runCli(args, { endpoint, input = "", waitForStdout, signal } = {}
   return { exitCode, stdout, stderr };
 }
 
+async function runInstalledName(executableName, args, options) {
+  const directory = await mkdtemp(join(tmpdir(), "whacksmacker-bin-test-"));
+  const executablePath = join(directory, executableName);
+
+  try {
+    await symlink(resolve("dist/main.js"), executablePath);
+    return await runExecutable(executablePath, args, options);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+}
+
+async function runExecutable(executablePath, args, { endpoint, env = {} } = {}) {
+  const child = spawn(executablePath, args, {
+    cwd: process.cwd(),
+    env: {
+      ...process.env,
+      ...env,
+      ANKICONNECT_URL: endpoint ?? "http://127.0.0.1:1"
+    },
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+
+  let stdout = "";
+  let stderr = "";
+  child.stdout.setEncoding("utf8");
+  child.stderr.setEncoding("utf8");
+  child.stdout.on("data", (chunk) => {
+    stdout += chunk;
+  });
+  child.stderr.on("data", (chunk) => {
+    stderr += chunk;
+  });
+
+  const exitCode = await new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      child.kill("SIGKILL");
+      reject(new Error(`CLI timed out: ${executablePath} ${args.join(" ")}`));
+    }, 5000);
+
+    child.on("error", reject);
+    child.on("close", (code) => {
+      clearTimeout(timeout);
+      resolve(code);
+    });
+  });
+
+  return { exitCode, stdout, stderr };
+}
+
 test("status reports reachable AnkiConnect", async () => {
   await withMockAnki([{ body: { result: 6, error: null } }], async (endpoint, requests) => {
     const result = await runCli(["status"], { endpoint });
@@ -101,16 +154,93 @@ test("language status reports reachable AnkiConnect", async () => {
   });
 });
 
-test("help prints interactive and direct CLI usage", async () => {
-  const result = await runCli(["help"]);
+test("help prints concise WhackSmacker usage", async () => {
+  const result = await runCli(["--help"]);
 
   assert.equal(result.exitCode, 0);
-  assert.match(result.stdout, /^Usage:/);
-  assert.match(result.stdout, /whacksmacker$/m);
+  assert.match(result.stdout, /^WhackSmacker/);
+  assert.match(result.stdout, /A modular terminal application/);
   assert.match(result.stdout, /wsm$/m);
+  assert.match(result.stdout, /whacksmacker$/m);
+  assert.match(result.stdout, /wsm <command>/);
+  assert.match(result.stdout, /whacksmacker <command>/);
+  assert.match(result.stdout, /whacksmacker status/);
+  assert.match(result.stdout, /whacksmacker decks/);
+  assert.match(result.stdout, /whacksmacker review <deck-name>/);
   assert.match(result.stdout, /whacksmacker language review <deck-name>/);
-  assert.match(result.stdout, /interactive module menu/);
+  assert.match(result.stdout, /wsm language review <deck-name>/);
+  assert.match(result.stdout, /Language\s+Available through AnkiConnect/);
+  assert.match(result.stdout, /Chess\s+Placeholder/);
+  assert.match(result.stdout, /Geography\s+Placeholder/);
+  assert.match(result.stdout, /Mathematics\s+Placeholder/);
+  assert.match(result.stdout, /Up\/Down arrows\s+Move selection/);
+  assert.match(result.stdout, /Ctrl-C\s+Exit/);
+  assert.match(result.stdout, /Enter or Space\s+Reveal the answer/);
+  assert.match(result.stdout, /1\s+Again/);
+  assert.match(result.stdout, /4\s+Easy/);
+  assert.match(result.stdout, /Anki must be running/);
+  assert.match(result.stdout, /http:\/\/127\.0\.0\.1:8765/);
   assert.equal(result.stderr, "");
+});
+
+test("help aliases and executable aliases produce equivalent substantive help", async () => {
+  const results = [
+    await runInstalledName("whacksmacker", ["--help"]),
+    await runInstalledName("whacksmacker", ["-h"]),
+    await runInstalledName("wsm", ["--help"]),
+    await runInstalledName("wsm", ["-h"])
+  ];
+
+  for (const result of results) {
+    assert.equal(result.exitCode, 0);
+    assert.equal(result.stderr, "");
+    assert.match(result.stdout, /Legacy language commands:/);
+    assert.match(result.stdout, /Domain-prefixed language commands:/);
+  }
+
+  assert.deepEqual(results.map((result) => result.stdout), [
+    results[0].stdout,
+    results[0].stdout,
+    results[0].stdout,
+    results[0].stdout
+  ]);
+});
+
+test("help does not contact AnkiConnect and works without an interactive terminal", async () => {
+  await withMockAnki([], async (endpoint, requests) => {
+    const result = await runCli(["--help"], { endpoint });
+
+    assert.equal(result.exitCode, 0);
+    assert.equal(result.stderr, "");
+    assert.deepEqual(requests, []);
+  });
+});
+
+test("help output has no ANSI escapes when NO_COLOR is set or output is non-TTY", async () => {
+  const noColor = await runInstalledName("wsm", ["--help"], { env: { NO_COLOR: "1" } });
+  const nonTty = await runCli(["--help"]);
+
+  assert.doesNotMatch(noColor.stdout, /\x1b\[[0-9;]*m/);
+  assert.doesNotMatch(nonTty.stdout, /\x1b\[[0-9;]*m/);
+});
+
+test("version aliases print package version without contacting AnkiConnect", async () => {
+  const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+
+  await withMockAnki([], async (endpoint, requests) => {
+    const results = [
+      await runInstalledName("whacksmacker", ["--version"], { endpoint }),
+      await runInstalledName("wsm", ["-v"], { endpoint })
+    ];
+
+    for (const result of results) {
+      assert.equal(result.exitCode, 0);
+      assert.equal(result.stdout, `${packageJson.version}\n`);
+      assert.equal(result.stderr, "");
+    }
+
+    assert.deepEqual(requests, []);
+  });
 });
 
 test("unknown commands print usage as a failure", async () => {
@@ -118,7 +248,8 @@ test("unknown commands print usage as a failure", async () => {
 
   assert.equal(result.exitCode, 1);
   assert.equal(result.stdout, "");
-  assert.match(result.stderr, /^Usage:/);
+  assert.match(result.stderr, /Unknown command: unknown/);
+  assert.match(result.stderr, /--help/);
 });
 
 test("decks lists sorted deck names", async () => {
