@@ -11,6 +11,7 @@ declare function require(name: "node:readline"): {
 declare const process: {
   stdin: NodeInput;
   stdout: NodeOutput;
+  env: Record<string, string | undefined>;
   exitCode?: number;
   on(event: "SIGINT", listener: () => void): void;
   off(event: "SIGINT", listener: () => void): void;
@@ -38,6 +39,7 @@ export interface KeyPress {
 
 export interface Terminal {
   readonly isInteractive: boolean;
+  readonly colorsEnabled: boolean;
   write(text: string): void;
   readKey(): Promise<KeyPress>;
   enter(): void;
@@ -55,20 +57,29 @@ const ansi = {
   bold: "\x1b[1m",
   cyan: "\x1b[36m",
   green: "\x1b[32m",
-  orange: "\x1b[38;5;208m",
-  red: "\x1b[31m"
+  magenta: "\x1b[35m",
+  yellow: "\x1b[33m"
 };
 
-export const whackSmackerLogo = `${ansi.bold}${ansi.red}
-##      ##   ####    ######  ##  ##   ######  ##     ##   ####    ######  ##  ##  #######  ######
-##  ##  ##  ##  ##  ##       ## ##   ##       ###   ###  ##  ##  ##       ## ##   ##       ##   ##
-##  ##  ##  ######  ##       ####     ####    ## ### ##  ######  ##       ####    #####    ######
-##  ##  ##  ##  ##  ##       ## ##       ##   ##  #  ##  ##  ##  ##       ## ##   ##       ##  ##
- ###  ###   ##  ##   ######  ##  ##  ######   ##     ##  ##  ##   ######  ##  ##  #######  ##   ##
-${ansi.orange}===============================================================================================${ansi.reset}
-${ansi.bold}${ansi.cyan}This Thing Will Whack Some Smack Into Your Brains${ansi.reset}
-${ansi.green}===============================================================================================${ansi.reset}
-`;
+export const whackSmackerBanner = `██╗    ██╗███████╗███╗   ███╗
+██║    ██║██╔════╝████╗ ████║
+██║ █╗ ██║███████╗██╔████╔██║
+██║███╗██║╚════██║██║╚██╔╝██║
+╚███╔███╔╝███████║██║ ╚═╝ ██║
+ ╚══╝╚══╝ ╚══════╝╚═╝     ╚═╝`;
+
+export const whackSmackerSubtitle = "WhackSmacker Will Smack Some Whack Into Your Brains";
+
+export function renderWhackSmackerHeader(colorsEnabled: boolean): string {
+  const banner = colorsEnabled ? colorizeWsmBanner(whackSmackerBanner) : whackSmackerBanner;
+  const subtitle = colorsEnabled ? `${ansi.bold}${ansi.green}${whackSmackerSubtitle}${ansi.reset}` : whackSmackerSubtitle;
+
+  return `${banner}\n${subtitle}\n`;
+}
+
+export function shouldUseTerminalColors(outputIsTty: boolean, env: Record<string, string | undefined>): boolean {
+  return outputIsTty && env.NO_COLOR === undefined;
+}
 
 const mainMenuItems: readonly MenuItem[] = [
   { label: "Language", kind: "language", moduleId: "language" },
@@ -100,6 +111,9 @@ export function createNodeTerminal(): Terminal {
   return {
     get isInteractive() {
       return process.stdin.isTTY === true && process.stdout.isTTY === true;
+    },
+    get colorsEnabled() {
+      return shouldUseTerminalColors(process.stdout.isTTY === true, process.env);
     },
     write(text) {
       process.stdout.write(text);
@@ -156,7 +170,7 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
     let selection = 0;
 
     while (!interrupted) {
-      renderMenu(terminal, whackSmackerLogo, mainMenuItems, selection);
+      renderMenu(terminal, renderWhackSmackerHeader(terminal.colorsEnabled), mainMenuItems, selection);
       const key = await terminal.readKey();
 
       if (isCtrlC(key)) {
@@ -206,7 +220,7 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
   let selection = 0;
 
   while (true) {
-    renderMenu(terminal, `${whackSmackerLogo}\nLanguage\n`, languageMenuItems, selection);
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nLanguage\n`, languageMenuItems, selection);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -371,6 +385,13 @@ function renderMenu(terminal: Terminal, heading: string, items: readonly MenuIte
     .join("\n");
 
   terminal.write(`\x1b[2J\x1b[H${heading}\n${renderedItems}\n\nUse ↑/↓, Enter, Escape, or q.`);
+}
+
+function colorizeWsmBanner(banner: string): string {
+  return banner
+    .split("\n")
+    .map((line) => `${ansi.bold}${ansi.cyan}${line.slice(0, 10)}${ansi.magenta}${line.slice(10, 19)}${ansi.yellow}${line.slice(19)}${ansi.reset}`)
+    .join("\n");
 }
 
 function wrapSelection(selection: number, count: number): number {

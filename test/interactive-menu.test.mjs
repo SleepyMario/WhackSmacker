@@ -6,8 +6,11 @@ import { resolveCliCommand } from "../dist/apps/cli/main.js";
 import {
   getLanguageMenuItems,
   getMainMenuItems,
+  renderWhackSmackerHeader,
   runInteractiveMenu,
-  whackSmackerLogo
+  shouldUseTerminalColors,
+  whackSmackerBanner,
+  whackSmackerSubtitle
 } from "../dist/apps/cli/interactive-menu.js";
 import { InMemoryCliCommandRegistry } from "../dist/packages/core/index.js";
 
@@ -15,6 +18,7 @@ class FakeTerminal {
   constructor(keys, { interactive = true } = {}) {
     this.keys = [...keys];
     this.isInteractive = interactive;
+    this.colorsEnabled = interactive;
     this.output = "";
     this.enterCount = 0;
     this.restoreCount = 0;
@@ -125,7 +129,7 @@ test("menu selection routes to the selected language command", async () => {
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
   assert.deepEqual(calls, [{ path: "language status", args: [] }]);
-  assert.match(terminal.output, /This Thing Will Whack Some Smack Into Your Brains/);
+  assert.match(terminal.output, /WhackSmacker Will Smack Some Whack Into Your Brains/);
   assert.match(terminal.output, /Status\n\nlanguage status output\n\nPress Escape or Enter to return\./);
   assert.equal(terminal.restoreCount, 2);
 });
@@ -209,14 +213,53 @@ test("noninteractive menu execution does not hang", async () => {
   }
 });
 
-test("ASCII logo is fixed and includes the WhackSmacker subtitle", () => {
-  assert.match(whackSmackerLogo, /This Thing Will Whack Some Smack Into Your Brains/);
-  assert.match(whackSmackerLogo, /\x1b\[[0-9;]+m/);
-  assert.match(stripAnsi(whackSmackerLogo), /######  ##  ##/);
+test("compact WSM header is fixed and includes the exact subtitle", () => {
+  const header = renderWhackSmackerHeader(false);
+
+  assert.match(header, /██╗    ██╗███████╗███╗   ███╗/);
+  assert.match(header, new RegExp(escapeRegExp(whackSmackerBanner)));
+  assert.match(header, new RegExp(escapeRegExp(whackSmackerSubtitle)));
+  assert.doesNotMatch(header, /\x1b\[[0-9;]*m/);
+});
+
+test("compact WSM header uses ANSI colors in a color-capable terminal", () => {
+  const header = renderWhackSmackerHeader(true);
+
+  assert.match(header, /\x1b\[[0-9;]+m/);
+  assert.match(stripAnsi(header), new RegExp(escapeRegExp(whackSmackerBanner)));
+  assert.match(stripAnsi(header), new RegExp(escapeRegExp(whackSmackerSubtitle)));
+});
+
+test("compact WSM header omits ANSI colors when NO_COLOR is set", () => {
+  const colorsEnabled = shouldUseTerminalColors(true, { NO_COLOR: "1" });
+  const header = renderWhackSmackerHeader(colorsEnabled);
+
+  assert.equal(colorsEnabled, false);
+  assert.doesNotMatch(header, /\x1b\[[0-9;]*m/);
+});
+
+test("compact WSM header omits ANSI colors for non-TTY output", () => {
+  const colorsEnabled = shouldUseTerminalColors(false, {});
+  const header = renderWhackSmackerHeader(colorsEnabled);
+
+  assert.equal(colorsEnabled, false);
+  assert.doesNotMatch(header, /\x1b\[[0-9;]*m/);
+});
+
+test("main menu separates the subtitle from module choices with one blank line", async () => {
+  const terminal = new FakeTerminal([key("q", { sequence: "q" })]);
+
+  await runInteractiveMenu(createStubRegistry([]), terminal);
+
+  assert.match(stripAnsi(terminal.output), /WhackSmacker Will Smack Some Whack Into Your Brains\n\n> Language/);
 });
 
 function stripAnsi(text) {
   return text.replace(/\x1b\[[0-9;]*m/g, "");
+}
+
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 async function runNode(args) {
