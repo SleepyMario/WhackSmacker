@@ -1,13 +1,23 @@
 {
   "name": "whacksmacker",
-  "version": "0.1.0",
+  "version": "0.0.1",
+  "description": "Terminal review sessions for Anki through AnkiConnect.",
   "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  },
   "bin": {
     "whacksmacker": "dist/main.js"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --outDir .dev-dist && node .dev-dist/main.js",
+    "prepack": "npm run build",
     "start": "node dist/main.js",
     "test": "npm run build && node --test test/*.test.mjs"
   },
