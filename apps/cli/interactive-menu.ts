@@ -246,18 +246,18 @@ async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal:
     return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
   }
 
-  terminal.restore();
+  if (label !== "Review") {
+    const output = await runCapturedLanguageCommand(terminal, command, []);
+    return showMessage(terminal, renderLanguageActionResult(label, output));
+  }
 
+  terminal.restore();
   try {
-    if (label === "Review") {
-      const deckName = await promptLine("Deck name: ");
-      if (deckName.trim().length === 0) {
-        console.error("Deck name is required.");
-      } else {
-        await command.run([deckName]);
-      }
+    const deckName = await promptLine("Deck name: ");
+    if (deckName.trim().length === 0) {
+      console.error("Deck name is required.");
     } else {
-      await command.run([]);
+      await command.run([deckName]);
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -267,6 +267,52 @@ async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal:
   }
 
   return showMessage(terminal, "Press Escape or Enter to return.", { clear: false });
+}
+
+async function runCapturedLanguageCommand(terminal: Terminal, command: CliCommand, args: readonly string[]): Promise<string> {
+  terminal.restore();
+
+  try {
+    return await captureConsoleOutput(async () => {
+      await command.run(args);
+    });
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  } finally {
+    terminal.enter();
+  }
+}
+
+async function captureConsoleOutput(run: () => Promise<void>): Promise<string> {
+  const originalLog = console.log;
+  const originalError = console.error;
+  const lines: string[] = [];
+
+  console.log = (...args: unknown[]): void => {
+    lines.push(formatConsoleLine(args));
+  };
+  console.error = (...args: unknown[]): void => {
+    lines.push(formatConsoleLine(args));
+  };
+
+  try {
+    await run();
+  } finally {
+    console.log = originalLog;
+    console.error = originalError;
+  }
+
+  return lines.join("\n").trimEnd();
+}
+
+function formatConsoleLine(args: readonly unknown[]): string {
+  return args.map((arg) => (typeof arg === "string" ? arg : String(arg))).join(" ");
+}
+
+function renderLanguageActionResult(label: string, output: string): string {
+  const body = output.trim().length > 0 ? output : "No output.";
+
+  return `${label}\n\n${body}\n\nPress Escape or Enter to return.`;
 }
 
 async function runPlaceholderScreen(terminal: Terminal, moduleName: string): Promise<boolean> {

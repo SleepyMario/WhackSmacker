@@ -56,6 +56,7 @@ function createStubRegistry(calls) {
       summary: path.join(" "),
       run: async (args) => {
         calls.push({ path: path.join(" "), args: [...args] });
+        console.log(`${path.join(" ")} output`);
       }
     });
   }
@@ -125,8 +126,25 @@ test("menu selection routes to the selected language command", async () => {
 
   assert.deepEqual(calls, [{ path: "language status", args: [] }]);
   assert.match(terminal.output, /This Thing Will Whack Some Smack Into Your Brains/);
-  assert.match(terminal.output, /\n\nPress Escape or Enter to return\./);
+  assert.match(terminal.output, /Status\n\nlanguage status output\n\nPress Escape or Enter to return\./);
   assert.equal(terminal.restoreCount, 2);
+});
+
+test("language deck menu renders output from the registered deck command", async () => {
+  const calls = [];
+  const terminal = new FakeTerminal([
+    key("return"),
+    key("down"),
+    key("return"),
+    key("return"),
+    key("escape"),
+    key("escape")
+  ]);
+
+  await runInteractiveMenu(createStubRegistry(calls), terminal);
+
+  assert.deepEqual(calls, [{ path: "language decks", args: [] }]);
+  assert.match(terminal.output, /Decks\n\nlanguage decks output\n\nPress Escape or Enter to return\./);
 });
 
 test("placeholder module screen returns without running a command", async () => {
