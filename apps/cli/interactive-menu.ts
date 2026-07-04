@@ -266,7 +266,7 @@ async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal:
     terminal.enter();
   }
 
-  return showMessage(terminal, "Press Escape or Enter to return.");
+  return showMessage(terminal, "Press Escape or Enter to return.", { clear: false });
 }
 
 async function runPlaceholderScreen(terminal: Terminal, moduleName: string): Promise<boolean> {
@@ -289,9 +289,9 @@ async function runPlaceholderScreen(terminal: Terminal, moduleName: string): Pro
   }
 }
 
-async function showMessage(terminal: Terminal, message: string): Promise<boolean> {
+async function showMessage(terminal: Terminal, message: string, options: { clear: boolean } = { clear: true }): Promise<boolean> {
   while (true) {
-    terminal.write(`\x1b[2J\x1b[H${message}`);
+    terminal.write(`${options.clear ? "\x1b[2J\x1b[H" : "\n\n"}${message}`);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {

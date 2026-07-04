@@ -125,6 +125,7 @@ test("menu selection routes to the selected language command", async () => {
 
   assert.deepEqual(calls, [{ path: "language status", args: [] }]);
   assert.match(terminal.output, /This Thing Will Whack Some Smack Into Your Brains/);
+  assert.match(terminal.output, /\n\nPress Escape or Enter to return\./);
   assert.equal(terminal.restoreCount, 2);
 });
 
