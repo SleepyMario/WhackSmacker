@@ -24,7 +24,13 @@ function registeredPaths(registry) {
 test("application CLI registry exposes language commands and the geography prototype", () => {
   const registry = createCommandRegistry();
 
-  assert.deepEqual(registeredPaths(registry), ["geography continents", "language decks", "language review", "language status"]);
+  assert.deepEqual(registeredPaths(registry), [
+    "geography continents",
+    "language decks",
+    "language review",
+    "language status",
+    "mathematics one-two-three"
+  ]);
 });
 
 test("legacy language aliases resolve to language command paths", () => {
@@ -59,14 +65,14 @@ test("current domain modules register successfully", () => {
   );
 });
 
-test("placeholder domains expose no user commands yet", () => {
+test("chess remains a placeholder while mathematics exposes its workbook command", () => {
   const cli = new InMemoryCliCommandRegistry();
   const context = createRegistrationContext(cli);
 
   chessModule.register(context);
   mathematicsModule.register(context);
 
-  assert.deepEqual(cli.list(), []);
+  assert.deepEqual(registeredPaths(cli), ["mathematics one-two-three"]);
 });
 
 test("geography registers the continents prototype command", () => {

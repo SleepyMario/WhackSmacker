@@ -59,11 +59,19 @@ Geography commands:
   wsm geography continents
       Six-continent terminal map review.
 
+Mathematics commands:
+  whacksmacker mathematics one-two-three [--output ./one-two-three-workbook.pdf] [--seed 184726]
+  wsm mathematics one-two-three [--output ./one-two-three-workbook.pdf] [--seed 184726]
+      Generate the 50-page introductory counting workbook.
+      Default output filename: ./one-two-three-workbook.pdf
+      The workbook contains 200 exercises.
+      No database or network connection is used.
+
 Modules:
   Language      Available through AnkiConnect
   Chess         Placeholder
   Geography     Continents review available
-  Mathematics   Placeholder
+  Mathematics   One, Two, Three workbook generator
 
 Interactive controls:
   Up/Down arrows  Move selection
@@ -85,6 +93,8 @@ Anki requirement:
   AnkiConnect must be installed and reachable at http://127.0.0.1:8765.
 
 Options:
+  --output PATH  Workbook output path for mathematics one-two-three.
+  --seed N       Reproducible workbook seed for mathematics one-two-three.
   -h, --help      Show this help.
   -v, --version   Show the WhackSmacker version.`;
 

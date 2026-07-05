@@ -7,6 +7,8 @@ import {
   getGeographyMenuItems,
   getLanguageMenuItems,
   getMainMenuItems,
+  getMathematicsMenuItems,
+  getOneTwoThreeMenuItems,
   renderWhackSmackerHeader,
   runInteractiveMenu,
   shouldUseTerminalColors,
@@ -55,7 +57,8 @@ function createStubRegistry(calls) {
     ["language", "status"],
     ["language", "decks"],
     ["language", "review"],
-    ["geography", "continents"]
+    ["geography", "continents"],
+    ["mathematics", "one-two-three"]
   ]) {
     registry.register({
       path,
@@ -111,12 +114,12 @@ test("language menu exposes status, decks, review, and back", () => {
   );
 });
 
-test("placeholder modules expose no unfinished commands in the menu", () => {
+test("only chess remains a placeholder in the menu", () => {
   const placeholderItems = getMainMenuItems().filter((item) => item.kind === "placeholder");
 
   assert.deepEqual(
     placeholderItems.map((item) => item.label),
-    ["Chess", "Mathematics"]
+    ["Chess"]
   );
 });
 
@@ -124,6 +127,20 @@ test("geography menu exposes continents and back", () => {
   assert.deepEqual(
     getGeographyMenuItems().map((item) => item.label),
     ["Continents", "Back"]
+  );
+});
+
+test("mathematics menu exposes One, Two, Three and back", () => {
+  assert.deepEqual(
+    getMathematicsMenuItems().map((item) => item.label),
+    ["One, Two, Three", "Back"]
+  );
+});
+
+test("One, Two, Three submenu exposes workbook generation and back", () => {
+  assert.deepEqual(
+    getOneTwoThreeMenuItems().map((item) => item.label),
+    ["Generate workbook", "Back"]
   );
 });
 

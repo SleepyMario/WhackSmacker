@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtemp, readFile, rm, symlink } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, symlink } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -172,10 +172,18 @@ test("help prints concise WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker geography continents/);
   assert.match(result.stdout, /wsm geography continents/);
   assert.match(result.stdout, /Six-continent terminal map review/);
+  assert.match(result.stdout, /whacksmacker mathematics one-two-three/);
+  assert.match(result.stdout, /wsm mathematics one-two-three/);
+  assert.match(result.stdout, /Generate the 50-page introductory counting workbook/);
+  assert.match(result.stdout, /--output/);
+  assert.match(result.stdout, /--seed/);
+  assert.match(result.stdout, /Default output filename: \.\/one-two-three-workbook\.pdf/);
+  assert.match(result.stdout, /The workbook contains 200 exercises/);
+  assert.match(result.stdout, /No database or network connection is used/);
   assert.match(result.stdout, /Language\s+Available through AnkiConnect/);
   assert.match(result.stdout, /Chess\s+Placeholder/);
   assert.match(result.stdout, /Geography\s+Continents review available/);
-  assert.match(result.stdout, /Mathematics\s+Placeholder/);
+  assert.match(result.stdout, /Mathematics\s+One, Two, Three workbook generator/);
   assert.match(result.stdout, /Up\/Down arrows\s+Move selection/);
   assert.match(result.stdout, /Ctrl-C\s+Exit/);
   assert.match(result.stdout, /Enter or Space\s+Reveal the answer/);
@@ -266,6 +274,65 @@ test("geography continents runs without contacting AnkiConnect", async () => {
     assert.equal(result.stderr, "");
     assert.deepEqual(requests, []);
   });
+});
+
+test("mathematics one-two-three generates a workbook without contacting AnkiConnect", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "whacksmacker-math-cli-test-"));
+  const outputPath = join(directory, "one-two-three-workbook.pdf");
+
+  try {
+    await withMockAnki([], async (endpoint, requests) => {
+      const result = await runCli(["mathematics", "one-two-three", "--output", outputPath, "--seed", "184726"], { endpoint });
+
+      assert.equal(result.exitCode, 0);
+      assert.match(result.stdout, /Workbook created/);
+      assert.match(result.stdout, /Pages: 50/);
+      assert.match(result.stdout, /Exercises: 200/);
+      assert.match(result.stdout, /Seed: 184726/);
+      assert.match(result.stdout, new RegExp(escapeRegExp(`File: ${outputPath}`)));
+      assert.equal(result.stderr, "");
+      assert.deepEqual(requests, []);
+
+      const file = await readFile(outputPath);
+      assert.ok(file.length > 100_000);
+      assert.deepEqual((await readdir(directory)).filter((name) => /\.db$/u.test(name)), []);
+    });
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("wsm mathematics one-two-three supports the same arguments", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-math-cli-test-"));
+  const outputPath = join(directory, "workbook.pdf");
+
+  try {
+    const result = await runInstalledName("wsm", ["mathematics", "one-two-three", "--output", outputPath, "--seed", "184726"]);
+
+    assert.equal(result.exitCode, 0);
+    assert.match(result.stdout, /Workbook created/);
+    assert.match(result.stdout, /Seed: 184726/);
+    assert.match(result.stdout, new RegExp(escapeRegExp(`File: ${outputPath}`)));
+    assert.equal(result.stderr, "");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("mathematics one-two-three does not silently overwrite an existing destination", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "whacksmacker-math-overwrite-test-"));
+  const outputPath = join(directory, "workbook.pdf");
+
+  try {
+    const first = await runCli(["mathematics", "one-two-three", "--output", outputPath, "--seed", "1"]);
+    const second = await runCli(["mathematics", "one-two-three", "--output", outputPath, "--seed", "1"]);
+
+    assert.equal(first.exitCode, 0);
+    assert.equal(second.exitCode, 1);
+    assert.match(second.stderr, /Output file already exists/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("decks lists sorted deck names", async () => {
@@ -582,3 +649,7 @@ test("SIGINT interrupts review with exit code 130", async () => {
     }
   );
 });
+
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}

@@ -1,4 +1,9 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
+import { defaultOneTwoThreeOutputPath } from "../../packages/mathematics";
+
+declare function require(name: "node:fs/promises"): {
+  stat(path: string): Promise<unknown>;
+};
 
 declare function require(name: "node:readline"): {
   emitKeypressEvents(input: NodeInput): void;
@@ -48,7 +53,7 @@ export interface Terminal {
 
 export interface MenuItem {
   readonly label: string;
-  readonly kind: "language" | "geography" | "placeholder" | "back";
+  readonly kind: "language" | "geography" | "mathematics" | "placeholder" | "back";
   readonly moduleId?: string;
 }
 
@@ -83,7 +88,7 @@ const mainMenuItems: readonly MenuItem[] = [
   { label: "Language", kind: "language", moduleId: "language" },
   { label: "Chess", kind: "placeholder", moduleId: "chess" },
   { label: "Geography", kind: "geography", moduleId: "geography" },
-  { label: "Mathematics", kind: "placeholder", moduleId: "mathematics" }
+  { label: "Mathematics", kind: "mathematics", moduleId: "mathematics" }
 ];
 
 const languageMenuItems: readonly MenuItem[] = [
@@ -98,6 +103,16 @@ const geographyMenuItems: readonly MenuItem[] = [
   { label: "Back", kind: "back" }
 ];
 
+const mathematicsMenuItems: readonly MenuItem[] = [
+  { label: "One, Two, Three", kind: "mathematics", moduleId: "mathematics" },
+  { label: "Back", kind: "back" }
+];
+
+const oneTwoThreeMenuItems: readonly MenuItem[] = [
+  { label: "Generate workbook", kind: "mathematics", moduleId: "mathematics" },
+  { label: "Back", kind: "back" }
+];
+
 export function getMainMenuItems(): readonly MenuItem[] {
   return mainMenuItems;
 }
@@ -108,6 +123,14 @@ export function getLanguageMenuItems(): readonly MenuItem[] {
 
 export function getGeographyMenuItems(): readonly MenuItem[] {
   return geographyMenuItems;
+}
+
+export function getMathematicsMenuItems(): readonly MenuItem[] {
+  return mathematicsMenuItems;
+}
+
+export function getOneTwoThreeMenuItems(): readonly MenuItem[] {
+  return oneTwoThreeMenuItems;
 }
 
 export function createNodeTerminal(): Terminal {
@@ -211,6 +234,11 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
           if (quit) {
             return;
           }
+        } else if (item.kind === "mathematics") {
+          const quit = await runMathematicsMenu(registry, terminal);
+          if (quit) {
+            return;
+          }
         } else {
           const quit = await runPlaceholderScreen(terminal, item.label);
           if (quit) {
@@ -226,6 +254,140 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
       process.exitCode = 130;
     }
   }
+}
+
+async function runMathematicsMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+  let selection = 0;
+
+  while (true) {
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nMathematics\n`, mathematicsMenuItems, selection);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+
+    if (isEscape(key)) {
+      return false;
+    }
+
+    if (isQuit(key)) {
+      return true;
+    }
+
+    if (isUp(key)) {
+      selection = wrapSelection(selection - 1, mathematicsMenuItems.length);
+      continue;
+    }
+
+    if (isDown(key)) {
+      selection = wrapSelection(selection + 1, mathematicsMenuItems.length);
+      continue;
+    }
+
+    if (!isEnter(key)) {
+      continue;
+    }
+
+    const item = mathematicsMenuItems[selection];
+    if (item.kind === "back") {
+      return false;
+    }
+
+    const quit = await runOneTwoThreeMenu(registry, terminal);
+    if (quit) {
+      return true;
+    }
+  }
+}
+
+async function runOneTwoThreeMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+  let selection = 0;
+
+  while (true) {
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nOne, Two, Three\n`, oneTwoThreeMenuItems, selection);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+
+    if (isEscape(key)) {
+      return false;
+    }
+
+    if (isQuit(key)) {
+      return true;
+    }
+
+    if (isUp(key)) {
+      selection = wrapSelection(selection - 1, oneTwoThreeMenuItems.length);
+      continue;
+    }
+
+    if (isDown(key)) {
+      selection = wrapSelection(selection + 1, oneTwoThreeMenuItems.length);
+      continue;
+    }
+
+    if (!isEnter(key)) {
+      continue;
+    }
+
+    const item = oneTwoThreeMenuItems[selection];
+    if (item.kind === "back") {
+      return false;
+    }
+
+    const quit = await runOneTwoThreeAction(registry, terminal);
+    if (quit) {
+      return true;
+    }
+  }
+}
+
+async function runOneTwoThreeAction(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+  const commandPath = ["mathematics", "one-two-three"];
+  const command = registry.find(commandPath);
+
+  if (command === null) {
+    return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
+  }
+
+  terminal.restore();
+  try {
+    const answer = await promptLine(`Output path [${defaultOneTwoThreeOutputPath}]: `);
+    const outputPath = answer.trim().length > 0 ? answer.trim() : defaultOneTwoThreeOutputPath;
+    const overwrite = await shouldOverwrite(outputPath);
+    if (overwrite === null) {
+      console.error("Choose another path or confirm overwrite.");
+    } else {
+      const args = overwrite ? ["--output", outputPath, "--overwrite"] : ["--output", outputPath];
+      await command.run(args);
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(message);
+  } finally {
+    terminal.enter();
+  }
+
+  return showMessage(terminal, "Press Escape or Enter to return.", { clear: false });
+}
+
+async function shouldOverwrite(outputPath: string): Promise<boolean | null> {
+  const fs = require("node:fs/promises");
+
+  try {
+    await fs.stat(outputPath);
+  } catch {
+    return false;
+  }
+
+  const answer = await promptLine("File exists. Overwrite? [y/N]: ");
+  return answer.trim().toLowerCase() === "y" || answer.trim().toLowerCase() === "yes" ? true : null;
 }
 
 async function runGeographyMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
