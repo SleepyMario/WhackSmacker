@@ -1,5 +1,5 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
-import { defaultOneTwoThreeOutputPath } from "../../packages/mathematics";
+import { defaultBeginnerVolumeOneOutputPath, defaultOneTwoThreeOutputPath } from "../../packages/mathematics";
 
 declare function require(name: "node:fs/promises"): {
   stat(path: string): Promise<unknown>;
@@ -104,12 +104,18 @@ const geographyMenuItems: readonly MenuItem[] = [
 ];
 
 const mathematicsMenuItems: readonly MenuItem[] = [
-  { label: "One, Two, Three", kind: "mathematics", moduleId: "mathematics" },
+  { label: "Beginner Mathematics", kind: "mathematics", moduleId: "mathematics" },
   { label: "Back", kind: "back" }
 ];
 
 const oneTwoThreeMenuItems: readonly MenuItem[] = [
   { label: "Generate workbook", kind: "mathematics", moduleId: "mathematics" },
+  { label: "Back", kind: "back" }
+];
+
+const beginnerMathematicsMenuItems: readonly MenuItem[] = [
+  { label: "Generate complete Volume 1", kind: "mathematics", moduleId: "mathematics" },
+  { label: "Generate Unit 1 - One, Two, Three", kind: "mathematics", moduleId: "mathematics" },
   { label: "Back", kind: "back" }
 ];
 
@@ -131,6 +137,10 @@ export function getMathematicsMenuItems(): readonly MenuItem[] {
 
 export function getOneTwoThreeMenuItems(): readonly MenuItem[] {
   return oneTwoThreeMenuItems;
+}
+
+export function getBeginnerMathematicsMenuItems(): readonly MenuItem[] {
+  return beginnerMathematicsMenuItems;
 }
 
 export function createNodeTerminal(): Terminal {
@@ -295,7 +305,62 @@ async function runMathematicsMenu(registry: InMemoryCliCommandRegistry, terminal
       return false;
     }
 
-    const quit = await runOneTwoThreeMenu(registry, terminal);
+    const quit = await runBeginnerMathematicsMenu(registry, terminal);
+    if (quit) {
+      return true;
+    }
+  }
+}
+
+async function runBeginnerMathematicsMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+  let selection = 0;
+
+  while (true) {
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nBeginner Mathematics\n`, beginnerMathematicsMenuItems, selection);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+
+    if (isEscape(key)) {
+      return false;
+    }
+
+    if (isQuit(key)) {
+      return true;
+    }
+
+    if (isUp(key)) {
+      selection = wrapSelection(selection - 1, beginnerMathematicsMenuItems.length);
+      continue;
+    }
+
+    if (isDown(key)) {
+      selection = wrapSelection(selection + 1, beginnerMathematicsMenuItems.length);
+      continue;
+    }
+
+    if (!isEnter(key)) {
+      continue;
+    }
+
+    const item = beginnerMathematicsMenuItems[selection];
+    if (item.kind === "back") {
+      return false;
+    }
+
+    const quit =
+      selection === 0
+        ? await runWorkbookAction(registry, terminal, {
+            commandPath: ["mathematics", "beginner-volume-one"],
+            defaultOutputPath: defaultBeginnerVolumeOneOutputPath
+          })
+        : await runWorkbookAction(registry, terminal, {
+            commandPath: ["mathematics", "one-two-three"],
+            defaultOutputPath: defaultOneTwoThreeOutputPath
+          });
     if (quit) {
       return true;
     }
@@ -341,15 +406,22 @@ async function runOneTwoThreeMenu(registry: InMemoryCliCommandRegistry, terminal
       return false;
     }
 
-    const quit = await runOneTwoThreeAction(registry, terminal);
+    const quit = await runWorkbookAction(registry, terminal, {
+      commandPath: ["mathematics", "one-two-three"],
+      defaultOutputPath: defaultOneTwoThreeOutputPath
+    });
     if (quit) {
       return true;
     }
   }
 }
 
-async function runOneTwoThreeAction(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
-  const commandPath = ["mathematics", "one-two-three"];
+async function runWorkbookAction(
+  registry: InMemoryCliCommandRegistry,
+  terminal: Terminal,
+  options: { commandPath: readonly string[]; defaultOutputPath: string }
+): Promise<boolean> {
+  const commandPath = options.commandPath;
   const command = registry.find(commandPath);
 
   if (command === null) {
@@ -358,8 +430,8 @@ async function runOneTwoThreeAction(registry: InMemoryCliCommandRegistry, termin
 
   terminal.restore();
   try {
-    const answer = await promptLine(`Output path [${defaultOneTwoThreeOutputPath}]: `);
-    const outputPath = answer.trim().length > 0 ? answer.trim() : defaultOneTwoThreeOutputPath;
+    const answer = await promptLine(`Output path [${options.defaultOutputPath}]: `);
+    const outputPath = answer.trim().length > 0 ? answer.trim() : options.defaultOutputPath;
     const overwrite = await shouldOverwrite(outputPath);
     if (overwrite === null) {
       console.error("Choose another path or confirm overwrite.");

@@ -172,18 +172,23 @@ test("help prints concise WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker geography continents/);
   assert.match(result.stdout, /wsm geography continents/);
   assert.match(result.stdout, /Six-continent terminal map review/);
+  assert.match(result.stdout, /whacksmacker mathematics beginner-volume-one/);
+  assert.match(result.stdout, /wsm mathematics beginner-volume-one/);
   assert.match(result.stdout, /whacksmacker mathematics one-two-three/);
   assert.match(result.stdout, /wsm mathematics one-two-three/);
-  assert.match(result.stdout, /Generate the 50-page introductory counting workbook/);
+  assert.match(result.stdout, /Generate the complete beginner mathematics Volume 1 workbook/);
+  assert.match(result.stdout, /Generate the standalone 50-page Unit 1 introductory counting workbook/);
   assert.match(result.stdout, /--output/);
   assert.match(result.stdout, /--seed/);
+  assert.match(result.stdout, /Default output filename: \.\/beginner-mathematics-volume-one\.pdf/);
   assert.match(result.stdout, /Default output filename: \.\/one-two-three-workbook\.pdf/);
+  assert.match(result.stdout, /130 exercise pages, and 520 exercises/);
   assert.match(result.stdout, /The workbook contains 200 exercises/);
   assert.match(result.stdout, /No database or network connection is used/);
   assert.match(result.stdout, /Language\s+Available through AnkiConnect/);
   assert.match(result.stdout, /Chess\s+Placeholder/);
   assert.match(result.stdout, /Geography\s+Continents review available/);
-  assert.match(result.stdout, /Mathematics\s+One, Two, Three workbook generator/);
+  assert.match(result.stdout, /Mathematics\s+Beginner mathematics workbook generators/);
   assert.match(result.stdout, /Up\/Down arrows\s+Move selection/);
   assert.match(result.stdout, /Ctrl-C\s+Exit/);
   assert.match(result.stdout, /Enter or Space\s+Reveal the answer/);
@@ -319,6 +324,55 @@ test("wsm mathematics one-two-three supports the same arguments", async () => {
   }
 });
 
+test("mathematics beginner-volume-one generates the complete workbook without contacting AnkiConnect", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "whacksmacker-math-volume-cli-test-"));
+  const outputPath = join(directory, "beginner-volume-one.pdf");
+
+  try {
+    await withMockAnki([], async (endpoint, requests) => {
+      const result = await runCli(["mathematics", "beginner-volume-one", "--output", outputPath, "--seed", "184726"], { endpoint });
+
+      assert.equal(result.exitCode, 0);
+      assert.match(result.stdout, /Workbook created/);
+      assert.match(result.stdout, /Introduction pages: 1/);
+      assert.match(result.stdout, /Unit title pages: 3/);
+      assert.match(result.stdout, /Exercise pages: 130/);
+      assert.match(result.stdout, /Exercises: 520/);
+      assert.match(result.stdout, /Unit 1 One, Two, Three: 200 exercises/);
+      assert.match(result.stdout, /Unit 2 Four and Five: 120 exercises/);
+      assert.match(result.stdout, /Unit 3 One to Five: 200 exercises/);
+      assert.match(result.stdout, /Seed: 184726/);
+      assert.match(result.stdout, new RegExp(escapeRegExp(`File: ${outputPath}`)));
+      assert.equal(result.stderr, "");
+      assert.deepEqual(requests, []);
+
+      const file = await readFile(outputPath);
+      assert.ok(file.length > 250_000);
+      assert.deepEqual((await readdir(directory)).filter((name) => /\.db$/u.test(name)), []);
+    });
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("wsm mathematics beginner-volume-one supports the same arguments", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-math-volume-cli-test-"));
+  const outputPath = join(directory, "volume.pdf");
+
+  try {
+    const result = await runInstalledName("wsm", ["mathematics", "beginner-volume-one", "--output", outputPath, "--seed", "184726"]);
+
+    assert.equal(result.exitCode, 0);
+    assert.match(result.stdout, /Workbook created/);
+    assert.match(result.stdout, /Exercise pages: 130/);
+    assert.match(result.stdout, /Seed: 184726/);
+    assert.match(result.stdout, new RegExp(escapeRegExp(`File: ${outputPath}`)));
+    assert.equal(result.stderr, "");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("mathematics one-two-three does not silently overwrite an existing destination", async () => {
   const directory = await mkdtemp(join(tmpdir(), "whacksmacker-math-overwrite-test-"));
   const outputPath = join(directory, "workbook.pdf");
@@ -326,6 +380,22 @@ test("mathematics one-two-three does not silently overwrite an existing destinat
   try {
     const first = await runCli(["mathematics", "one-two-three", "--output", outputPath, "--seed", "1"]);
     const second = await runCli(["mathematics", "one-two-three", "--output", outputPath, "--seed", "1"]);
+
+    assert.equal(first.exitCode, 0);
+    assert.equal(second.exitCode, 1);
+    assert.match(second.stderr, /Output file already exists/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("mathematics beginner-volume-one does not silently overwrite an existing destination", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "whacksmacker-math-volume-overwrite-test-"));
+  const outputPath = join(directory, "workbook.pdf");
+
+  try {
+    const first = await runCli(["mathematics", "beginner-volume-one", "--output", outputPath, "--seed", "1"]);
+    const second = await runCli(["mathematics", "beginner-volume-one", "--output", outputPath, "--seed", "1"]);
 
     assert.equal(first.exitCode, 0);
     assert.equal(second.exitCode, 1);

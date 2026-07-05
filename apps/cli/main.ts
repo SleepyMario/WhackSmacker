@@ -60,18 +60,24 @@ Geography commands:
       Six-continent terminal map review.
 
 Mathematics commands:
+  whacksmacker mathematics beginner-volume-one [--output ./beginner-mathematics-volume-one.pdf] [--seed 184726]
+  wsm mathematics beginner-volume-one [--output ./beginner-mathematics-volume-one.pdf] [--seed 184726]
+      Generate the complete beginner mathematics Volume 1 workbook.
+      Default output filename: ./beginner-mathematics-volume-one.pdf
+      The workbook contains 1 introduction page, 3 unit title pages, 130 exercise pages, and 520 exercises.
+
   whacksmacker mathematics one-two-three [--output ./one-two-three-workbook.pdf] [--seed 184726]
   wsm mathematics one-two-three [--output ./one-two-three-workbook.pdf] [--seed 184726]
-      Generate the 50-page introductory counting workbook.
+      Generate the standalone 50-page Unit 1 introductory counting workbook.
       Default output filename: ./one-two-three-workbook.pdf
       The workbook contains 200 exercises.
-      No database or network connection is used.
+      No database or network connection is used by mathematics workbook generation.
 
 Modules:
   Language      Available through AnkiConnect
   Chess         Placeholder
   Geography     Continents review available
-  Mathematics   One, Two, Three workbook generator
+  Mathematics   Beginner mathematics workbook generators
 
 Interactive controls:
   Up/Down arrows  Move selection
@@ -93,8 +99,8 @@ Anki requirement:
   AnkiConnect must be installed and reachable at http://127.0.0.1:8765.
 
 Options:
-  --output PATH  Workbook output path for mathematics one-two-three.
-  --seed N       Reproducible workbook seed for mathematics one-two-three.
+  --output PATH  Workbook output path for mathematics workbook generation.
+  --seed N       Reproducible workbook seed for mathematics workbook generation.
   -h, --help      Show this help.
   -v, --version   Show the WhackSmacker version.`;
 

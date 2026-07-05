@@ -29,6 +29,7 @@ test("application CLI registry exposes language commands and the geography proto
     "language decks",
     "language review",
     "language status",
+    "mathematics beginner-volume-one",
     "mathematics one-two-three"
   ]);
 });
@@ -65,14 +66,14 @@ test("current domain modules register successfully", () => {
   );
 });
 
-test("chess remains a placeholder while mathematics exposes its workbook command", () => {
+test("chess remains a placeholder while mathematics exposes workbook commands", () => {
   const cli = new InMemoryCliCommandRegistry();
   const context = createRegistrationContext(cli);
 
   chessModule.register(context);
   mathematicsModule.register(context);
 
-  assert.deepEqual(registeredPaths(cli), ["mathematics one-two-three"]);
+  assert.deepEqual(registeredPaths(cli), ["mathematics beginner-volume-one", "mathematics one-two-three"]);
 });
 
 test("geography registers the continents prototype command", () => {

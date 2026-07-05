@@ -1,4 +1,4 @@
-import type { OneTwoThreeQuantity, OneTwoThreeVariation } from "./workbook-model";
+import type { CountingQuantity, CountingVariation } from "./workbook-model";
 
 export interface Bounds {
   readonly x: number;
@@ -25,12 +25,12 @@ export interface DrawingContext {
 export interface ObjectRenderer {
   readonly id: string;
   readonly displayName: string;
-  draw(context: DrawingContext, bounds: Bounds, variation: OneTwoThreeVariation): void;
+  draw(context: DrawingContext, bounds: Bounds, variation: CountingVariation): void;
 }
 
 export interface ObjectRenderPlan {
   readonly familyId: string;
-  readonly quantity: OneTwoThreeQuantity;
+  readonly quantity: CountingQuantity;
   readonly bounds: Bounds;
   readonly objectBounds: readonly Bounds[];
   readonly remoteAssetReferences: readonly string[];
@@ -78,12 +78,12 @@ export function findObjectRenderer(familyId: string): ObjectRenderer {
 export function drawTargetObjects(
   context: DrawingContext,
   familyId: string,
-  quantity: OneTwoThreeQuantity,
+  quantity: CountingQuantity,
   bounds: Bounds,
-  variation: OneTwoThreeVariation
+  variation: CountingVariation
 ): ObjectRenderPlan {
   const renderer = findObjectRenderer(familyId);
-  const objectBounds = createObjectBounds(quantity, bounds, variation.scale);
+  const objectBounds = createObjectBounds(quantity, bounds, variation.scale, variation.layout, variation.variant);
 
   for (const objectBound of objectBounds) {
     renderer.draw(context, objectBound, variation);
@@ -92,13 +92,13 @@ export function drawTargetObjects(
   return { familyId, quantity, bounds, objectBounds, remoteAssetReferences: [] };
 }
 
-export function inspectObjectRenderPlan(familyId: string, quantity: OneTwoThreeQuantity, bounds: Bounds): ObjectRenderPlan {
+export function inspectObjectRenderPlan(familyId: string, quantity: CountingQuantity, bounds: Bounds): ObjectRenderPlan {
   findObjectRenderer(familyId);
   return {
     familyId,
     quantity,
     bounds,
-    objectBounds: createObjectBounds(quantity, bounds, 0.95),
+    objectBounds: createObjectBounds(quantity, bounds, 0.95, "two-row", 0),
     remoteAssetReferences: []
   };
 }
@@ -107,7 +107,13 @@ function createRenderer(id: string, displayName: string, draw: ObjectRenderer["d
   return { id, displayName, draw };
 }
 
-function createObjectBounds(quantity: OneTwoThreeQuantity, bounds: Bounds, scale: number): Bounds[] {
+function createObjectBounds(
+  quantity: CountingQuantity,
+  bounds: Bounds,
+  scale: number,
+  layout: CountingVariation["layout"],
+  variant: number
+): Bounds[] {
   const padding = Math.min(bounds.width, bounds.height) * 0.06;
   const usable = {
     x: bounds.x + padding,
@@ -115,30 +121,138 @@ function createObjectBounds(quantity: OneTwoThreeQuantity, bounds: Bounds, scale
     width: bounds.width - padding * 2,
     height: bounds.height - padding * 2
   };
-  const columns = quantity === 1 ? 1 : quantity;
-  const slotWidth = usable.width / columns;
-  const size = Math.min(slotWidth * 0.78, usable.height * 0.82) * scale;
-  const centerY = usable.y + usable.height * 0.52;
+  const selectedLayout = normalizeLayoutForQuantity(quantity, layout);
+  const centers = createObjectCenters(quantity, usable, selectedLayout, variant);
+  const minimumGap = Math.min(usable.width, usable.height) * 0.05;
+  const minCenterDistance = centers.length <= 1 ? Math.min(usable.width, usable.height) : findMinimumCenterDistance(centers);
+  const size = Math.min(
+    minCenterDistance * 0.68,
+    usable.width * (quantity <= 3 ? 0.54 : 0.42),
+    usable.height * (quantity <= 3 ? 0.62 : 0.36)
+  ) * scale;
+  const clampedSize = Math.max(28, Math.min(size, Math.min(usable.width, usable.height) - minimumGap));
 
-  return Array.from({ length: quantity }, (_, index) => {
-    const centerX = usable.x + slotWidth * (index + 0.5);
-    return {
-      x: centerX - size / 2,
-      y: centerY - size / 2,
-      width: size,
-      height: size
-    };
-  });
+  return centers.map((center) => ({
+    x: clamp(center.x - clampedSize / 2, usable.x, usable.x + usable.width - clampedSize),
+    y: clamp(center.y - clampedSize / 2, usable.y, usable.y + usable.height - clampedSize),
+    width: clampedSize,
+    height: clampedSize
+  }));
 }
 
-function drawApple(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function createObjectCenters(quantity: CountingQuantity, bounds: Bounds, layout: CountingVariation["layout"], variant: number): Point[] {
+  const centerX = bounds.x + bounds.width / 2;
+  const centerY = bounds.y + bounds.height / 2;
+  const jitter = ((variant % 9) - 4) / 4;
+
+  if (quantity === 1) {
+    return [{ x: centerX, y: centerY }];
+  }
+
+  if (layout === "row") {
+    const step = bounds.width / (quantity + 1);
+    return Array.from({ length: quantity }, (_, index) => ({
+      x: bounds.x + step * (index + 1),
+      y: centerY + Math.sin(index + variant) * bounds.height * 0.05
+    }));
+  }
+
+  if (layout === "arc") {
+    const step = bounds.width / (quantity + 1);
+    return Array.from({ length: quantity }, (_, index) => {
+      const distance = Math.abs(index - (quantity - 1) / 2);
+      return {
+        x: bounds.x + step * (index + 1),
+        y: centerY + distance * bounds.height * 0.12 - bounds.height * 0.06
+      };
+    });
+  }
+
+  if (layout === "cluster") {
+    const presets: Record<CountingQuantity, readonly Point[]> = {
+      1: [{ x: 0.5, y: 0.5 }],
+      2: [{ x: 0.34, y: 0.5 }, { x: 0.66, y: 0.5 }],
+      3: [{ x: 0.5, y: 0.29 }, { x: 0.33, y: 0.68 }, { x: 0.67, y: 0.68 }],
+      4: [{ x: 0.32, y: 0.32 }, { x: 0.68, y: 0.32 }, { x: 0.3, y: 0.7 }, { x: 0.7, y: 0.68 }],
+      5: [{ x: 0.5, y: 0.25 }, { x: 0.28, y: 0.5 }, { x: 0.72, y: 0.48 }, { x: 0.36, y: 0.76 }, { x: 0.66, y: 0.74 }]
+    };
+    return presets[quantity].map((point, index) => ({
+      x: bounds.x + bounds.width * point.x + Math.sin(variant + index) * bounds.width * 0.018,
+      y: bounds.y + bounds.height * point.y + Math.cos(variant + index) * bounds.height * 0.018
+    }));
+  }
+
+  if (layout === "symmetric") {
+    const presets: Record<CountingQuantity, readonly Point[]> = {
+      1: [{ x: 0.5, y: 0.5 }],
+      2: [{ x: 0.35, y: 0.5 }, { x: 0.65, y: 0.5 }],
+      3: [{ x: 0.5, y: 0.25 }, { x: 0.32, y: 0.68 }, { x: 0.68, y: 0.68 }],
+      4: [{ x: 0.32, y: 0.32 }, { x: 0.68, y: 0.32 }, { x: 0.32, y: 0.68 }, { x: 0.68, y: 0.68 }],
+      5: [{ x: 0.5, y: 0.25 }, { x: 0.3, y: 0.47 }, { x: 0.7, y: 0.47 }, { x: 0.36, y: 0.75 }, { x: 0.64, y: 0.75 }]
+    };
+    return presets[quantity].map((point) => ({
+      x: bounds.x + bounds.width * point.x,
+      y: bounds.y + bounds.height * point.y
+    }));
+  }
+
+  const topCount = quantity === 4 ? 2 : 3;
+  const bottomCount = quantity - topCount;
+  const top = rowCenters(topCount, bounds.x, bounds.width, bounds.y + bounds.height * (quantity === 4 ? 0.34 : 0.32), jitter);
+  const bottom = rowCenters(bottomCount, bounds.x, bounds.width, bounds.y + bounds.height * 0.7, -jitter);
+  return [...top, ...bottom];
+}
+
+function normalizeLayoutForQuantity(quantity: CountingQuantity, layout: CountingVariation["layout"]): CountingVariation["layout"] {
+  if (quantity <= 3 && layout === "two-row") {
+    return "arc";
+  }
+
+  if (quantity >= 4 && layout === "row") {
+    return "two-row";
+  }
+
+  if (quantity >= 4 && layout === "arc") {
+    return "cluster";
+  }
+
+  return layout;
+}
+
+function rowCenters(count: number, x: number, width: number, y: number, jitter: number): Point[] {
+  const step = width / (count + 1);
+  return Array.from({ length: count }, (_, index) => ({
+    x: x + step * (index + 1) + jitter * width * 0.015,
+    y
+  }));
+}
+
+function findMinimumCenterDistance(centers: readonly Point[]): number {
+  let minimum = Number.POSITIVE_INFINITY;
+
+  for (let outer = 0; outer < centers.length; outer += 1) {
+    for (let inner = outer + 1; inner < centers.length; inner += 1) {
+      const dx = centers[outer].x - centers[inner].x;
+      const dy = centers[outer].y - centers[inner].y;
+      minimum = Math.min(minimum, Math.hypot(dx, dy));
+    }
+  }
+
+  return minimum;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+function drawApple(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   context.circle(cx, b.y + b.height * 0.55, b.width * 0.3, v.color, "#8f2d2d", 2);
   context.line(cx, b.y + b.height * 0.28, cx + b.width * 0.08, b.y + b.height * 0.12, "#7f4f24", 4);
   context.ellipse(cx + b.width * 0.2, b.y + b.height * 0.16, b.width * 0.15, b.height * 0.08, v.accentColor, "#2b8a3e", 1);
 }
 
-function drawOrange(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawOrange(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.circle(b.x + b.width / 2, b.y + b.height / 2, b.width * 0.36, "#ff922b", "#e8590c", 2);
   context.circle(b.x + b.width * 0.38, b.y + b.height * 0.38, b.width * 0.06, "#ffd8a8");
 }
@@ -148,7 +262,7 @@ function drawBanana(context: DrawingContext, b: Bounds): void {
   context.ellipse(b.x + b.width * 0.5, b.y + b.height * 0.45, b.width * 0.34, b.height * 0.15, "#ffffff");
 }
 
-function drawFlower(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawFlower(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   const cy = b.y + b.height * 0.43;
   for (let i = 0; i < 6; i += 1) {
@@ -159,12 +273,12 @@ function drawFlower(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation)
   context.line(cx, cy + b.height * 0.12, cx, b.y + b.height * 0.92, "#2b8a3e", 3);
 }
 
-function drawTree(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawTree(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.rect(b.x + b.width * 0.43, b.y + b.height * 0.53, b.width * 0.14, b.height * 0.33, "#8b5e34");
   context.circle(b.x + b.width * 0.5, b.y + b.height * 0.38, b.width * 0.34, v.accentColor, "#2b8a3e", 2);
 }
 
-function drawStar(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawStar(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   const cy = b.y + b.height / 2;
   const points: Point[] = [];
@@ -192,7 +306,7 @@ function drawSun(context: DrawingContext, b: Bounds): void {
   context.circle(cx, cy, b.width * 0.28, "#ffd43b", "#f08c00", 2);
 }
 
-function drawBall(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawBall(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   const cy = b.y + b.height / 2;
   context.circle(cx, cy, b.width * 0.35, v.color, v.detailColor, 2);
@@ -200,45 +314,45 @@ function drawBall(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): 
   context.line(cx, cy - b.height * 0.28, cx, cy + b.height * 0.28, "#ffffff", 2);
 }
 
-function drawBalloon(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawBalloon(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   context.ellipse(cx, b.y + b.height * 0.38, b.width * 0.29, b.height * 0.34, v.color, v.detailColor, 2);
   context.polygon([{ x: cx - 5, y: b.y + b.height * 0.68 }, { x: cx + 5, y: b.y + b.height * 0.68 }, { x: cx, y: b.y + b.height * 0.76 }], v.color);
   context.line(cx, b.y + b.height * 0.75, cx - b.width * 0.08, b.y + b.height * 0.95, "#495057", 1);
 }
 
-function drawCar(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawCar(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.roundedRect(b.x + b.width * 0.12, b.y + b.height * 0.45, b.width * 0.76, b.height * 0.24, 7, v.color, v.detailColor, 2);
   context.polygon([{ x: b.x + b.width * 0.28, y: b.y + b.height * 0.45 }, { x: b.x + b.width * 0.42, y: b.y + b.height * 0.28 }, { x: b.x + b.width * 0.62, y: b.y + b.height * 0.28 }, { x: b.x + b.width * 0.75, y: b.y + b.height * 0.45 }], v.accentColor, v.detailColor, 2);
   context.circle(b.x + b.width * 0.3, b.y + b.height * 0.72, b.width * 0.08, "#343a40");
   context.circle(b.x + b.width * 0.7, b.y + b.height * 0.72, b.width * 0.08, "#343a40");
 }
 
-function drawBoat(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawBoat(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.polygon([{ x: b.x + b.width * 0.16, y: b.y + b.height * 0.58 }, { x: b.x + b.width * 0.84, y: b.y + b.height * 0.58 }, { x: b.x + b.width * 0.7, y: b.y + b.height * 0.78 }, { x: b.x + b.width * 0.3, y: b.y + b.height * 0.78 }], v.color, v.detailColor, 2);
   context.line(b.x + b.width * 0.48, b.y + b.height * 0.54, b.x + b.width * 0.48, b.y + b.height * 0.2, "#495057", 2);
   context.polygon([{ x: b.x + b.width * 0.5, y: b.y + b.height * 0.22 }, { x: b.x + b.width * 0.72, y: b.y + b.height * 0.5 }, { x: b.x + b.width * 0.5, y: b.y + b.height * 0.5 }], v.accentColor, v.detailColor, 1);
 }
 
-function drawHouse(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawHouse(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.rect(b.x + b.width * 0.23, b.y + b.height * 0.45, b.width * 0.54, b.height * 0.36, v.accentColor, v.detailColor, 2);
   context.polygon([{ x: b.x + b.width * 0.17, y: b.y + b.height * 0.45 }, { x: b.x + b.width * 0.5, y: b.y + b.height * 0.16 }, { x: b.x + b.width * 0.83, y: b.y + b.height * 0.45 }], v.color, v.detailColor, 2);
   context.rect(b.x + b.width * 0.45, b.y + b.height * 0.62, b.width * 0.12, b.height * 0.19, "#ffffff", v.detailColor, 1);
 }
 
-function drawFish(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawFish(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.ellipse(b.x + b.width * 0.48, b.y + b.height * 0.5, b.width * 0.29, b.height * 0.2, v.color, v.detailColor, 2);
   context.polygon([{ x: b.x + b.width * 0.18, y: b.y + b.height * 0.5 }, { x: b.x + b.width * 0.03, y: b.y + b.height * 0.34 }, { x: b.x + b.width * 0.03, y: b.y + b.height * 0.66 }], v.accentColor, v.detailColor, 2);
   context.circle(b.x + b.width * 0.62, b.y + b.height * 0.44, b.width * 0.025, "#212529");
 }
 
-function drawBird(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawBird(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.ellipse(b.x + b.width * 0.52, b.y + b.height * 0.52, b.width * 0.28, b.height * 0.2, v.color, v.detailColor, 2);
   context.circle(b.x + b.width * 0.72, b.y + b.height * 0.39, b.width * 0.13, v.color, v.detailColor, 2);
   context.polygon([{ x: b.x + b.width * 0.84, y: b.y + b.height * 0.39 }, { x: b.x + b.width * 0.96, y: b.y + b.height * 0.34 }, { x: b.x + b.width * 0.84, y: b.y + b.height * 0.46 }], "#ffd43b");
 }
 
-function drawCat(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawCat(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.circle(b.x + b.width * 0.5, b.y + b.height * 0.52, b.width * 0.3, v.color, v.detailColor, 2);
   context.polygon([{ x: b.x + b.width * 0.3, y: b.y + b.height * 0.32 }, { x: b.x + b.width * 0.38, y: b.y + b.height * 0.13 }, { x: b.x + b.width * 0.46, y: b.y + b.height * 0.32 }], v.color, v.detailColor, 2);
   context.polygon([{ x: b.x + b.width * 0.54, y: b.y + b.height * 0.32 }, { x: b.x + b.width * 0.62, y: b.y + b.height * 0.13 }, { x: b.x + b.width * 0.7, y: b.y + b.height * 0.32 }], v.color, v.detailColor, 2);
@@ -246,20 +360,20 @@ function drawCat(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): v
   context.circle(b.x + b.width * 0.6, b.y + b.height * 0.5, b.width * 0.025, "#212529");
 }
 
-function drawDog(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawDog(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.circle(b.x + b.width * 0.5, b.y + b.height * 0.52, b.width * 0.3, v.color, v.detailColor, 2);
   context.ellipse(b.x + b.width * 0.24, b.y + b.height * 0.46, b.width * 0.11, b.height * 0.19, v.accentColor, v.detailColor, 2);
   context.ellipse(b.x + b.width * 0.76, b.y + b.height * 0.46, b.width * 0.11, b.height * 0.19, v.accentColor, v.detailColor, 2);
   context.circle(b.x + b.width * 0.5, b.y + b.height * 0.58, b.width * 0.045, "#212529");
 }
 
-function drawDuck(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawDuck(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.ellipse(b.x + b.width * 0.47, b.y + b.height * 0.58, b.width * 0.32, b.height * 0.2, "#ffd43b", "#f08c00", 2);
   context.circle(b.x + b.width * 0.66, b.y + b.height * 0.39, b.width * 0.14, "#ffd43b", "#f08c00", 2);
   context.polygon([{ x: b.x + b.width * 0.78, y: b.y + b.height * 0.39 }, { x: b.x + b.width * 0.94, y: b.y + b.height * 0.33 }, { x: b.x + b.width * 0.78, y: b.y + b.height * 0.45 }], v.color);
 }
 
-function drawButterfly(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawButterfly(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   context.ellipse(cx - b.width * 0.16, b.y + b.height * 0.42, b.width * 0.18, b.height * 0.24, v.color, v.detailColor, 2);
   context.ellipse(cx + b.width * 0.16, b.y + b.height * 0.42, b.width * 0.18, b.height * 0.24, v.accentColor, v.detailColor, 2);
@@ -268,7 +382,7 @@ function drawButterfly(context: DrawingContext, b: Bounds, v: OneTwoThreeVariati
   context.line(cx, b.y + b.height * 0.33, cx + b.width * 0.12, b.y + b.height * 0.2, "#495057", 1);
 }
 
-function drawLadybug(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawLadybug(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   const cy = b.y + b.height / 2;
   context.circle(cx, cy, b.width * 0.32, "#e03131", "#212529", 2);
@@ -277,43 +391,43 @@ function drawLadybug(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation
   context.circle(cx + b.width * 0.13, cy + b.height * 0.08, b.width * 0.035, v.detailColor);
 }
 
-function drawKite(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawKite(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   context.polygon([{ x: cx, y: b.y + b.height * 0.12 }, { x: b.x + b.width * 0.78, y: b.y + b.height * 0.42 }, { x: cx, y: b.y + b.height * 0.73 }, { x: b.x + b.width * 0.22, y: b.y + b.height * 0.42 }], v.color, v.detailColor, 2);
   context.line(cx, b.y + b.height * 0.73, cx - b.width * 0.12, b.y + b.height * 0.95, "#495057", 1);
 }
 
-function drawBlock(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawBlock(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.roundedRect(b.x + b.width * 0.18, b.y + b.height * 0.2, b.width * 0.64, b.height * 0.64, 8, v.color, v.detailColor, 2);
   context.line(b.x + b.width * 0.32, b.y + b.height * 0.42, b.x + b.width * 0.68, b.y + b.height * 0.42, "#ffffff", 3);
   context.line(b.x + b.width * 0.32, b.y + b.height * 0.58, b.x + b.width * 0.68, b.y + b.height * 0.58, "#ffffff", 3);
 }
 
-function drawHeart(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawHeart(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   const cx = b.x + b.width / 2;
   context.circle(cx - b.width * 0.14, b.y + b.height * 0.4, b.width * 0.17, v.color, v.detailColor, 1.5);
   context.circle(cx + b.width * 0.14, b.y + b.height * 0.4, b.width * 0.17, v.color, v.detailColor, 1.5);
   context.polygon([{ x: cx - b.width * 0.32, y: b.y + b.height * 0.48 }, { x: cx + b.width * 0.32, y: b.y + b.height * 0.48 }, { x: cx, y: b.y + b.height * 0.82 }], v.color, v.detailColor, 1.5);
 }
 
-function drawIceCream(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawIceCream(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.polygon([{ x: b.x + b.width * 0.34, y: b.y + b.height * 0.55 }, { x: b.x + b.width * 0.66, y: b.y + b.height * 0.55 }, { x: b.x + b.width * 0.5, y: b.y + b.height * 0.92 }], "#d8a45f", "#8f5f2a", 2);
   context.circle(b.x + b.width * 0.5, b.y + b.height * 0.39, b.width * 0.24, v.color, v.detailColor, 2);
 }
 
-function drawCupcake(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawCupcake(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.polygon([{ x: b.x + b.width * 0.28, y: b.y + b.height * 0.52 }, { x: b.x + b.width * 0.72, y: b.y + b.height * 0.52 }, { x: b.x + b.width * 0.64, y: b.y + b.height * 0.84 }, { x: b.x + b.width * 0.36, y: b.y + b.height * 0.84 }], v.accentColor, v.detailColor, 2);
   context.ellipse(b.x + b.width * 0.5, b.y + b.height * 0.42, b.width * 0.28, b.height * 0.16, v.color, v.detailColor, 2);
   context.circle(b.x + b.width * 0.5, b.y + b.height * 0.25, b.width * 0.04, "#e03131");
 }
 
-function drawPencil(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawPencil(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.rect(b.x + b.width * 0.2, b.y + b.height * 0.42, b.width * 0.52, b.height * 0.16, v.color, v.detailColor, 2);
   context.polygon([{ x: b.x + b.width * 0.72, y: b.y + b.height * 0.42 }, { x: b.x + b.width * 0.9, y: b.y + b.height * 0.5 }, { x: b.x + b.width * 0.72, y: b.y + b.height * 0.58 }], "#f1c27d", v.detailColor, 2);
   context.rect(b.x + b.width * 0.12, b.y + b.height * 0.42, b.width * 0.08, b.height * 0.16, "#f783ac", v.detailColor, 1);
 }
 
-function drawBook(context: DrawingContext, b: Bounds, v: OneTwoThreeVariation): void {
+function drawBook(context: DrawingContext, b: Bounds, v: CountingVariation): void {
   context.roundedRect(b.x + b.width * 0.2, b.y + b.height * 0.24, b.width * 0.28, b.height * 0.56, 4, v.color, v.detailColor, 2);
   context.roundedRect(b.x + b.width * 0.48, b.y + b.height * 0.24, b.width * 0.32, b.height * 0.56, 4, v.accentColor, v.detailColor, 2);
   context.line(b.x + b.width * 0.48, b.y + b.height * 0.26, b.x + b.width * 0.48, b.y + b.height * 0.78, "#ffffff", 2);

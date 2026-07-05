@@ -4,6 +4,7 @@ import { test } from "node:test";
 
 import { resolveCliCommand } from "../dist/apps/cli/main.js";
 import {
+  getBeginnerMathematicsMenuItems,
   getGeographyMenuItems,
   getLanguageMenuItems,
   getMainMenuItems,
@@ -58,6 +59,7 @@ function createStubRegistry(calls) {
     ["language", "decks"],
     ["language", "review"],
     ["geography", "continents"],
+    ["mathematics", "beginner-volume-one"],
     ["mathematics", "one-two-three"]
   ]) {
     registry.register({
@@ -130,10 +132,17 @@ test("geography menu exposes continents and back", () => {
   );
 });
 
-test("mathematics menu exposes One, Two, Three and back", () => {
+test("mathematics menu exposes Beginner Mathematics and back", () => {
   assert.deepEqual(
     getMathematicsMenuItems().map((item) => item.label),
-    ["One, Two, Three", "Back"]
+    ["Beginner Mathematics", "Back"]
+  );
+});
+
+test("Beginner Mathematics submenu exposes complete volume, Unit 1, and back", () => {
+  assert.deepEqual(
+    getBeginnerMathematicsMenuItems().map((item) => item.label),
+    ["Generate complete Volume 1", "Generate Unit 1 - One, Two, Three", "Back"]
   );
 });
 

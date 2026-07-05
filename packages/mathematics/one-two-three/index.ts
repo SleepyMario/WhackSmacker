@@ -1,4 +1,5 @@
 export {
+  generateBeginnerVolumeOneWorkbook,
   generateOneTwoThreeWorkbook,
   createSeededRandom,
   normalizeSeed,
@@ -6,15 +7,36 @@ export {
 } from "./workbook-generator";
 export {
   answerForQuantity,
+  beginnerVolumeOneUnits,
+  fourFiveAnswerChoices,
+  fourFiveUnitDefinition,
+  isCountingQuantity,
   isOneTwoThreeQuantity,
+  numberWords,
+  oneToFiveAnswerChoices,
+  oneToFiveUnitDefinition,
   oneTwoThreeAnswerChoices,
+  oneTwoThreeUnitDefinition,
+  workbookContent,
+  type BeginnerVolumeOneWorkbook,
+  type CountingExercise,
+  type CountingQuantity,
+  type CountingUnit,
+  type CountingUnitDefinition,
+  type CountingVariation,
+  type ExercisePage,
+  type IntroductionPage,
+  type NumberWord,
   type OneTwoThreeAnswer,
   type OneTwoThreeExercise,
   type OneTwoThreeGenerationOptions,
   type OneTwoThreePage,
   type OneTwoThreeQuantity,
   type OneTwoThreeVariation,
-  type OneTwoThreeWorkbook
+  type OneTwoThreeWorkbook,
+  type UnitTitlePage,
+  type WorkbookGenerationOptions,
+  type WorkbookPage
 } from "./workbook-model";
 export {
   drawTargetObjects,
@@ -28,13 +50,17 @@ export {
   type Point
 } from "./object-catalog";
 export {
+  createDocumentPageLayout,
+  createDocumentPageLayouts,
   a4Portrait,
   createPageLayout,
   createWorkbookPageLayouts,
+  type DocumentPageLayout,
   type ExerciseLayout,
   type PageLayout
 } from "./page-layout";
 export {
+  generateBeginnerVolumeOneWorkbookPdf,
   generateOneTwoThreeWorkbookPdf,
   renderWorkbookToPdfBuffer,
   type WorkbookRenderOptions,

@@ -1,7 +1,7 @@
 import { drawTargetObjects, type Bounds, type DrawingContext, type Point } from "./object-catalog";
-import { createWorkbookPageLayouts } from "./page-layout";
-import { generateOneTwoThreeWorkbook } from "./workbook-generator";
-import type { OneTwoThreeGenerationOptions, OneTwoThreeWorkbook } from "./workbook-model";
+import { a4Portrait, createDocumentPageLayouts } from "./page-layout";
+import { generateBeginnerVolumeOneWorkbook, generateOneTwoThreeWorkbook } from "./workbook-generator";
+import type { BeginnerVolumeOneWorkbook, OneTwoThreeGenerationOptions, OneTwoThreeWorkbook, WorkbookPage } from "./workbook-model";
 
 declare function require(name: "node:fs/promises"): {
   mkdir(path: string, options: { recursive: boolean }): Promise<void>;
@@ -33,9 +33,12 @@ export interface WorkbookRenderProgress {
 export interface WorkbookRenderResult {
   readonly outputPath: string;
   readonly pageCount: number;
+  readonly introductionPageCount?: number;
+  readonly unitTitlePageCount?: number;
+  readonly exercisePageCount?: number;
   readonly exerciseCount: number;
   readonly seed: number;
-  readonly workbook: OneTwoThreeWorkbook;
+  readonly workbook: BeginnerVolumeOneWorkbook | OneTwoThreeWorkbook;
 }
 
 export async function generateOneTwoThreeWorkbookPdf(options: WorkbookRenderOptions): Promise<WorkbookRenderResult> {
@@ -59,31 +62,90 @@ export async function generateOneTwoThreeWorkbookPdf(options: WorkbookRenderOpti
   };
 }
 
+export async function generateBeginnerVolumeOneWorkbookPdf(options: WorkbookRenderOptions): Promise<WorkbookRenderResult> {
+  const path = require("node:path");
+  const fs = require("node:fs/promises");
+  const outputPath = path.resolve(options.outputPath);
+  await assertCanWriteOutput(outputPath, options.overwrite === true);
+
+  const workbook = generateBeginnerVolumeOneWorkbook({ seed: options.seed });
+  const pdf = renderWorkbookToPdfBuffer(workbook, options.onProgress);
+
+  await fs.mkdir(path.dirname(outputPath), { recursive: true });
+  await fs.writeFile(outputPath, pdf);
+
+  return {
+    outputPath,
+    pageCount: workbook.pageCount,
+    introductionPageCount: workbook.introductionPageCount,
+    unitTitlePageCount: workbook.unitTitlePageCount,
+    exercisePageCount: workbook.exercisePageCount,
+    exerciseCount: workbook.exerciseCount,
+    seed: workbook.seed,
+    workbook
+  };
+}
+
 export function renderWorkbookToPdfBuffer(
-  workbook: OneTwoThreeWorkbook,
+  workbook: BeginnerVolumeOneWorkbook | OneTwoThreeWorkbook,
   onProgress?: (progress: WorkbookRenderProgress) => void
 ): Uint8Array {
   const document = new SimplePdfDocument();
-  const layouts = createWorkbookPageLayouts(workbook);
+  const layouts = createDocumentPageLayouts(workbook);
+  const pageCount = workbook.pageCount;
 
   for (const layout of layouts) {
     const canvas = new PdfCanvas(layout.width, layout.height);
     canvas.rect(0, 0, layout.width, layout.height, "#fffdf8");
-    canvas.text(workbook.title, layout.margin, 34, 22, "#243b53");
-
-    for (const exerciseLayout of layout.exercises) {
-      const { exercise, bounds, illustrationBounds, choicesBounds } = exerciseLayout;
-      canvas.roundedRect(bounds.x, bounds.y, bounds.width, bounds.height, 10, "#ffffff", "#d8dee9", 1);
-      canvas.rect(illustrationBounds.x, illustrationBounds.y, illustrationBounds.width, illustrationBounds.height, "#f8fbff", "#edf2ff", 0.8);
-      drawTargetObjects(canvas, exercise.objectFamily, exercise.quantity, illustrationBounds, exercise.variation);
-      renderChoices(canvas, choicesBounds);
-    }
+    renderDocumentPage(canvas, layout.page, layout);
 
     document.addPage(layout.width, layout.height, canvas.content());
-    onProgress?.({ page: layout.page.index + 1, pageCount: workbook.pageCount });
+    onProgress?.({ page: layout.page.index + 1, pageCount });
   }
 
   return document.toBuffer();
+}
+
+function renderDocumentPage(
+  canvas: PdfCanvas,
+  page: WorkbookPage,
+  layout: ReturnType<typeof createDocumentPageLayouts>[number]
+): void {
+  if (page.kind === "introduction") {
+    renderIntroductionPage(canvas, page.title, page.text);
+    return;
+  }
+
+  if (page.kind === "unit-title") {
+    renderUnitTitlePage(canvas, page.label, page.title);
+    return;
+  }
+
+  canvas.text(page.unitTitle, layout.margin, 34, 22, "#243b53");
+
+  for (const exerciseLayout of layout.exercises) {
+    const { exercise, bounds, illustrationBounds, choicesBounds } = exerciseLayout;
+    canvas.roundedRect(bounds.x, bounds.y, bounds.width, bounds.height, 8, "#ffffff", "#d8dee9", 1);
+    canvas.rect(illustrationBounds.x, illustrationBounds.y, illustrationBounds.width, illustrationBounds.height, "#f8fbff", "#edf2ff", 0.8);
+    drawTargetObjects(canvas, exercise.objectFamily, exercise.quantity, illustrationBounds, exercise.variation);
+    renderChoices(canvas, choicesBounds, exercise.answerChoices);
+  }
+}
+
+function renderIntroductionPage(canvas: PdfCanvas, title: string, text: string): void {
+  const margin = 58;
+  canvas.text(title, margin, 88, 34, "#243b53");
+  const lines = wrapText(text, 58);
+  let y = 150;
+  for (const line of lines) {
+    canvas.text(line, margin, y, 16, "#243b53");
+    y += 26;
+  }
+}
+
+function renderUnitTitlePage(canvas: PdfCanvas, label: string, title: string): void {
+  canvas.text(label, 88, a4Portrait.height * 0.42, 28, "#4263eb");
+  canvas.text(title, 88, a4Portrait.height * 0.49, 40, "#243b53");
 }
 
 async function assertCanWriteOutput(outputPath: string, overwrite: boolean): Promise<void> {
@@ -104,15 +166,37 @@ async function assertCanWriteOutput(outputPath: string, overwrite: boolean): Pro
   }
 }
 
-function renderChoices(canvas: PdfCanvas, bounds: Bounds): void {
-  const choices = ["one", "two", "three"] as const;
-  const lineHeight = bounds.height / 3;
+function renderChoices(canvas: PdfCanvas, bounds: Bounds, choices: readonly string[]): void {
+  const lineHeight = bounds.height / choices.length;
+  const fontSize = choices.length > 3 ? 18 : 21;
 
   choices.forEach((choice, index) => {
     const baseline = bounds.y + lineHeight * index + lineHeight * 0.68;
     canvas.circle(bounds.x + 10, baseline - 6, 3.8, "#243b53");
-    canvas.text(choice, bounds.x + 25, baseline, 21, "#243b53");
+    canvas.text(choice, bounds.x + 25, baseline, fontSize, "#243b53");
   });
+}
+
+function wrapText(text: string, maxLineLength: number): string[] {
+  const words = text.split(/\s+/u);
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const candidate = current.length === 0 ? word : `${current} ${word}`;
+    if (candidate.length > maxLineLength && current.length > 0) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = candidate;
+    }
+  }
+
+  if (current.length > 0) {
+    lines.push(current);
+  }
+
+  return lines;
 }
 
 class PdfCanvas implements DrawingContext {

@@ -1,5 +1,11 @@
 import type { Bounds } from "./object-catalog";
-import type { OneTwoThreeExercise, OneTwoThreePage, OneTwoThreeWorkbook } from "./workbook-model";
+import type {
+  BeginnerVolumeOneWorkbook,
+  CountingExercise,
+  ExercisePage,
+  OneTwoThreeWorkbook,
+  WorkbookPage
+} from "./workbook-model";
 
 export const a4Portrait = {
   width: 595.28,
@@ -7,14 +13,22 @@ export const a4Portrait = {
 } as const;
 
 export interface ExerciseLayout {
-  readonly exercise: OneTwoThreeExercise;
+  readonly exercise: CountingExercise;
   readonly bounds: Bounds;
   readonly illustrationBounds: Bounds;
   readonly choicesBounds: Bounds;
 }
 
 export interface PageLayout {
-  readonly page: OneTwoThreePage;
+  readonly page: ExercisePage;
+  readonly width: number;
+  readonly height: number;
+  readonly margin: number;
+  readonly exercises: readonly ExerciseLayout[];
+}
+
+export interface DocumentPageLayout {
+  readonly page: WorkbookPage;
   readonly width: number;
   readonly height: number;
   readonly margin: number;
@@ -25,7 +39,30 @@ export function createWorkbookPageLayouts(workbook: OneTwoThreeWorkbook): PageLa
   return workbook.pages.map((page) => createPageLayout(page));
 }
 
-export function createPageLayout(page: OneTwoThreePage): PageLayout {
+export function createDocumentPageLayouts(workbook: BeginnerVolumeOneWorkbook | OneTwoThreeWorkbook): DocumentPageLayout[] {
+  const pages = workbook.kind === "volume" ? workbook.pages : workbook.pages;
+  return pages.map((page) => createDocumentPageLayout(page));
+}
+
+export function createPageLayout(page: ExercisePage): PageLayout {
+  return createExercisePageLayout(page);
+}
+
+export function createDocumentPageLayout(page: WorkbookPage): DocumentPageLayout {
+  if (page.kind !== "exercise") {
+    return {
+      page,
+      width: a4Portrait.width,
+      height: a4Portrait.height,
+      margin: 54,
+      exercises: []
+    };
+  }
+
+  return createExercisePageLayout(page);
+}
+
+function createExercisePageLayout(page: ExercisePage): PageLayout {
   const margin = 36;
   const gutter = 18;
   const titleHeight = 34;
@@ -45,17 +82,20 @@ export function createPageLayout(page: OneTwoThreePage): PageLayout {
       height: cellHeight
     };
     const innerPadding = 18;
+    const choiceCount = exercise.answerChoices.length;
+    const choicesHeight = choiceCount <= 3 ? bounds.height * 0.27 : bounds.height * 0.33;
+    const illustrationHeight = choiceCount <= 3 ? bounds.height * 0.56 : bounds.height * 0.5;
     const illustrationBounds = {
       x: bounds.x + innerPadding,
       y: bounds.y + innerPadding,
       width: bounds.width - innerPadding * 2,
-      height: bounds.height * 0.56
+      height: illustrationHeight
     };
     const choicesBounds = {
       x: bounds.x + innerPadding + 8,
-      y: bounds.y + bounds.height * 0.64,
+      y: bounds.y + bounds.height * (choiceCount <= 3 ? 0.64 : 0.59),
       width: bounds.width - innerPadding * 2,
-      height: bounds.height * 0.27
+      height: choicesHeight
     };
 
     return { exercise, bounds, illustrationBounds, choicesBounds };

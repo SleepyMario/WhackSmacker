@@ -1,5 +1,5 @@
 import type { DomainModule } from "../core";
-import { generateOneTwoThreeWorkbookPdf, normalizeSeed } from "./one-two-three";
+import { generateBeginnerVolumeOneWorkbookPdf, generateOneTwoThreeWorkbookPdf, normalizeSeed } from "./one-two-three";
 
 export interface MathematicsTopic {
   readonly id: string;
@@ -23,16 +23,26 @@ export const mathematicsModule: DomainModule = {
         await runOneTwoThreeCommand(args);
       }
     });
+    context.cli.register({
+      path: ["mathematics", "beginner-volume-one"],
+      summary: "Generate the complete beginner mathematics volume one workbook",
+      run: async (args) => {
+        await runBeginnerVolumeOneCommand(args);
+      }
+    });
   }
 };
 
 export const defaultOneTwoThreeOutputPath = "./one-two-three-workbook.pdf";
+export const defaultBeginnerVolumeOneOutputPath = "./beginner-mathematics-volume-one.pdf";
 
 export interface OneTwoThreeCommandOptions {
   readonly outputPath: string;
   readonly seed?: number;
   readonly overwrite: boolean;
 }
+
+export type BeginnerVolumeOneCommandOptions = OneTwoThreeCommandOptions;
 
 export async function runOneTwoThreeCommand(args: readonly string[]): Promise<void> {
   const options = parseOneTwoThreeArgs(args);
@@ -61,7 +71,48 @@ export async function runOneTwoThreeCommand(args: readonly string[]): Promise<vo
 }
 
 export function parseOneTwoThreeArgs(args: readonly string[]): OneTwoThreeCommandOptions {
-  let outputPath = defaultOneTwoThreeOutputPath;
+  return parseWorkbookArgs(args, defaultOneTwoThreeOutputPath, "mathematics one-two-three");
+}
+
+export async function runBeginnerVolumeOneCommand(args: readonly string[]): Promise<void> {
+  const options = parseBeginnerVolumeOneArgs(args);
+  let lastReportedPage = 0;
+
+  console.log("Generating Beginner Mathematics Volume 1 workbook...");
+  const result = await generateBeginnerVolumeOneWorkbookPdf({
+    outputPath: options.outputPath,
+    seed: options.seed,
+    overwrite: options.overwrite,
+    onProgress(progress) {
+      if (progress.page === progress.pageCount || progress.page - lastReportedPage >= 10) {
+        lastReportedPage = progress.page;
+        console.log(`Rendered ${progress.page}/${progress.pageCount} pages...`);
+      }
+    }
+  });
+
+  const units = result.workbook.kind === "volume" ? result.workbook.units : [];
+
+  console.log("");
+  console.log("Workbook created.");
+  console.log("");
+  console.log(`Introduction pages: ${result.introductionPageCount ?? 0}`);
+  console.log(`Unit title pages: ${result.unitTitlePageCount ?? 0}`);
+  console.log(`Exercise pages: ${result.exercisePageCount ?? 0}`);
+  console.log(`Exercises: ${result.exerciseCount}`);
+  for (const unit of units) {
+    console.log(`${unit.definition.label} ${unit.definition.title}: ${unit.exerciseCount} exercises`);
+  }
+  console.log(`Seed: ${result.seed}`);
+  console.log(`File: ${result.outputPath}`);
+}
+
+export function parseBeginnerVolumeOneArgs(args: readonly string[]): BeginnerVolumeOneCommandOptions {
+  return parseWorkbookArgs(args, defaultBeginnerVolumeOneOutputPath, "mathematics beginner-volume-one");
+}
+
+function parseWorkbookArgs(args: readonly string[], defaultOutputPath: string, commandName: string): OneTwoThreeCommandOptions {
+  let outputPath = defaultOutputPath;
   let seed: number | undefined;
   let overwrite = false;
 
@@ -97,7 +148,7 @@ export function parseOneTwoThreeArgs(args: readonly string[]): OneTwoThreeComman
       continue;
     }
 
-    throw new Error(`Unknown mathematics one-two-three option: ${arg}`);
+    throw new Error(`Unknown ${commandName} option: ${arg}`);
   }
 
   return { outputPath, seed, overwrite };

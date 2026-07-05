@@ -6,6 +6,8 @@ import { join } from "node:path";
 import { test } from "node:test";
 
 import {
+  generateBeginnerVolumeOneWorkbook,
+  generateBeginnerVolumeOneWorkbookPdf,
   generateOneTwoThreeWorkbook,
   generateOneTwoThreeWorkbookPdf
 } from "../dist/packages/mathematics/index.js";
@@ -63,6 +65,73 @@ test("One, Two, Three PDF generation does not silently overwrite", async () => {
       /Output file already exists/
     );
     await generateOneTwoThreeWorkbookPdf({ outputPath, seed: 1, overwrite: true });
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("complete beginner volume PDF generation creates the full 134-page workbook", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "beginner-volume-one-pdf-test-"));
+  const outputPath = join(directory, "beginner-volume-one.pdf");
+
+  try {
+    const progress = [];
+    const result = await generateBeginnerVolumeOneWorkbookPdf({
+      outputPath,
+      seed: 184726,
+      onProgress: (entry) => progress.push(entry)
+    });
+
+    assert.equal(result.pageCount, 134);
+    assert.equal(result.introductionPageCount, 1);
+    assert.equal(result.unitTitlePageCount, 3);
+    assert.equal(result.exercisePageCount, 130);
+    assert.equal(result.exerciseCount, 520);
+    assert.equal(result.seed, 184726);
+    assert.equal(result.outputPath, outputPath);
+    assert.deepEqual(
+      result.workbook.pages.filter((page) => page.kind === "exercise").map((page) => page.exercises.map((exercise) => [exercise.quantity, exercise.objectFamily])),
+      generateBeginnerVolumeOneWorkbook({ seed: 184726 }).pages.filter((page) => page.kind === "exercise").map((page) => page.exercises.map((exercise) => [exercise.quantity, exercise.objectFamily]))
+    );
+    assert.equal(progress.length, 134);
+
+    const file = await readFile(outputPath);
+    assert.ok(file.length > 250_000);
+
+    const pdfInfo = await run("pdfinfo", [outputPath]);
+    assert.equal(pdfInfo.exitCode, 0, pdfInfo.stderr);
+    assert.match(pdfInfo.stdout, /^Pages:\s+134$/m);
+
+    const text = await run("pdftotext", [outputPath, "-"]);
+    assert.equal(text.exitCode, 0, text.stderr);
+    const normalizedText = text.stdout.replace(/\s+/gu, " ");
+    assert.match(normalizedText, /Introduction/);
+    assert.match(normalizedText, /This is going to be a \(way too\) comprehensive curriculum/);
+    assert.match(normalizedText, /math teachers/);
+    assert.match(normalizedText, /kindergarten level/);
+    assert.match(normalizedText, /robotic way on learning math/);
+    assert.match(normalizedText, /Unit 1 One, Two, Three/);
+    assert.match(normalizedText, /Unit 2 Four and Five/);
+    assert.match(normalizedText, /Unit 3 One to Five/);
+    for (const word of ["one", "two", "three", "four", "five"]) {
+      assert.ok(countWord(text.stdout, word) > 0);
+    }
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("complete beginner volume PDF generation does not silently overwrite", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "beginner-volume-overwrite-test-"));
+  const outputPath = join(directory, "workbook.pdf");
+
+  try {
+    await generateBeginnerVolumeOneWorkbookPdf({ outputPath, seed: 1 });
+    await assert.rejects(
+      () => generateBeginnerVolumeOneWorkbookPdf({ outputPath, seed: 1 }),
+      /Output file already exists/
+    );
+    await generateBeginnerVolumeOneWorkbookPdf({ outputPath, seed: 1, overwrite: true });
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
