@@ -1,5 +1,15 @@
 import type { DomainModule } from "../core";
-import { generateBeginnerVolumeOneWorkbookPdf, generateOneTwoThreeWorkbookPdf, normalizeSeed } from "./one-two-three";
+import {
+  beginnerVolumeOneUnits,
+  fourFiveUnitDefinition,
+  generateBeginnerVolumeOneWorkbookPdf,
+  generateCountingUnitWorkbookPdf,
+  normalizeSeed,
+  oneToFiveUnitDefinition,
+  oneTwoThreeUnitDefinition,
+  sixToNineUnitDefinition,
+  type CountingUnitDefinition
+} from "./one-two-three";
 
 export interface MathematicsTopic {
   readonly id: string;
@@ -18,9 +28,30 @@ export const mathematicsModule: DomainModule = {
   register(context) {
     context.cli.register({
       path: ["mathematics", "one-two-three"],
-      summary: "Generate the 50-page introductory counting workbook",
+      summary: "Generate the standalone Unit 1 introductory counting workbook",
       run: async (args) => {
-        await runOneTwoThreeCommand(args);
+        await runUnitCommand(args, oneTwoThreeUnitDefinition);
+      }
+    });
+    context.cli.register({
+      path: ["mathematics", "four-and-five"],
+      summary: "Generate the standalone Unit 2 four and five workbook",
+      run: async (args) => {
+        await runUnitCommand(args, fourFiveUnitDefinition);
+      }
+    });
+    context.cli.register({
+      path: ["mathematics", "one-to-five"],
+      summary: "Generate the standalone Unit 3 one to five workbook",
+      run: async (args) => {
+        await runUnitCommand(args, oneToFiveUnitDefinition);
+      }
+    });
+    context.cli.register({
+      path: ["mathematics", "six-to-nine"],
+      summary: "Generate the standalone Unit 4 six through nine workbook",
+      run: async (args) => {
+        await runUnitCommand(args, sixToNineUnitDefinition);
       }
     });
     context.cli.register({
@@ -34,6 +65,9 @@ export const mathematicsModule: DomainModule = {
 };
 
 export const defaultOneTwoThreeOutputPath = "./one-two-three-workbook.pdf";
+export const defaultFourAndFiveOutputPath = "./four-and-five-workbook.pdf";
+export const defaultOneToFiveOutputPath = "./one-to-five-workbook.pdf";
+export const defaultSixToNineOutputPath = "./six-to-nine-workbook.pdf";
 export const defaultBeginnerVolumeOneOutputPath = "./beginner-mathematics-volume-one.pdf";
 
 export interface OneTwoThreeCommandOptions {
@@ -45,11 +79,15 @@ export interface OneTwoThreeCommandOptions {
 export type BeginnerVolumeOneCommandOptions = OneTwoThreeCommandOptions;
 
 export async function runOneTwoThreeCommand(args: readonly string[]): Promise<void> {
-  const options = parseOneTwoThreeArgs(args);
+  await runUnitCommand(args, oneTwoThreeUnitDefinition);
+}
+
+export async function runUnitCommand(args: readonly string[], definition: CountingUnitDefinition): Promise<void> {
+  const options = parseWorkbookArgs(args, defaultOutputPathForUnit(definition), `mathematics ${definition.id}`);
   let lastReportedPage = 0;
 
-  console.log("Generating One, Two, Three workbook...");
-  const result = await generateOneTwoThreeWorkbookPdf({
+  console.log(`Generating ${definition.title} workbook...`);
+  const result = await generateCountingUnitWorkbookPdf({
     outputPath: options.outputPath,
     seed: options.seed,
     overwrite: options.overwrite,
@@ -59,12 +97,15 @@ export async function runOneTwoThreeCommand(args: readonly string[]): Promise<vo
         console.log(`Rendered ${progress.page}/${progress.pageCount} pages...`);
       }
     }
-  });
+  }, definition);
 
   console.log("");
   console.log("Workbook created.");
   console.log("");
-  console.log(`Pages: ${result.pageCount}`);
+  console.log(`Curriculum ID: ${definition.curriculumId}`);
+  console.log(`Unit: ${definition.title}`);
+  console.log(`Unit introduction pages: ${result.unitIntroductionPageCount ?? 0}`);
+  console.log(`Exercise pages: ${result.exercisePageCount ?? 0}`);
   console.log(`Exercises: ${result.exerciseCount}`);
   console.log(`Seed: ${result.seed}`);
   console.log(`File: ${result.outputPath}`);
@@ -96,12 +137,13 @@ export async function runBeginnerVolumeOneCommand(args: readonly string[]): Prom
   console.log("");
   console.log("Workbook created.");
   console.log("");
-  console.log(`Introduction pages: ${result.introductionPageCount ?? 0}`);
-  console.log(`Unit title pages: ${result.unitTitlePageCount ?? 0}`);
+  console.log(`Overall introduction pages: ${result.introductionPageCount ?? 0}`);
+  console.log(`Unit introduction pages: ${result.unitIntroductionPageCount ?? 0}`);
   console.log(`Exercise pages: ${result.exercisePageCount ?? 0}`);
   console.log(`Exercises: ${result.exerciseCount}`);
+  console.log(`Total PDF pages: ${result.pageCount}`);
   for (const unit of units) {
-    console.log(`${unit.definition.label} ${unit.definition.title}: ${unit.exerciseCount} exercises`);
+    console.log(`${unit.definition.label} ${unit.definition.title}: ${unit.definition.exercisePageCount} exercise pages, ${unit.exerciseCount} exercises`);
   }
   console.log(`Seed: ${result.seed}`);
   console.log(`File: ${result.outputPath}`);
@@ -152,6 +194,19 @@ function parseWorkbookArgs(args: readonly string[], defaultOutputPath: string, c
   }
 
   return { outputPath, seed, overwrite };
+}
+
+function defaultOutputPathForUnit(definition: CountingUnitDefinition): string {
+  if (definition.id === "one-two-three") {
+    return defaultOneTwoThreeOutputPath;
+  }
+  if (definition.id === "four-and-five") {
+    return defaultFourAndFiveOutputPath;
+  }
+  if (definition.id === "one-to-five") {
+    return defaultOneToFiveOutputPath;
+  }
+  return defaultSixToNineOutputPath;
 }
 
 export * from "./one-two-three";

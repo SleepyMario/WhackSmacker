@@ -127,8 +127,8 @@ function createObjectBounds(
   const minCenterDistance = centers.length <= 1 ? Math.min(usable.width, usable.height) : findMinimumCenterDistance(centers);
   const size = Math.min(
     minCenterDistance * 0.68,
-    usable.width * (quantity <= 3 ? 0.54 : 0.42),
-    usable.height * (quantity <= 3 ? 0.62 : 0.36)
+    usable.width * (quantity <= 3 ? 0.54 : quantity <= 5 ? 0.42 : 0.3),
+    usable.height * (quantity <= 3 ? 0.62 : quantity <= 5 ? 0.36 : 0.28)
   ) * scale;
   const clampedSize = Math.max(28, Math.min(size, Math.min(usable.width, usable.height) - minimumGap));
 
@@ -174,7 +174,11 @@ function createObjectCenters(quantity: CountingQuantity, bounds: Bounds, layout:
       2: [{ x: 0.34, y: 0.5 }, { x: 0.66, y: 0.5 }],
       3: [{ x: 0.5, y: 0.29 }, { x: 0.33, y: 0.68 }, { x: 0.67, y: 0.68 }],
       4: [{ x: 0.32, y: 0.32 }, { x: 0.68, y: 0.32 }, { x: 0.3, y: 0.7 }, { x: 0.7, y: 0.68 }],
-      5: [{ x: 0.5, y: 0.25 }, { x: 0.28, y: 0.5 }, { x: 0.72, y: 0.48 }, { x: 0.36, y: 0.76 }, { x: 0.66, y: 0.74 }]
+      5: [{ x: 0.5, y: 0.25 }, { x: 0.28, y: 0.5 }, { x: 0.72, y: 0.48 }, { x: 0.36, y: 0.76 }, { x: 0.66, y: 0.74 }],
+      6: [{ x: 0.28, y: 0.3 }, { x: 0.5, y: 0.28 }, { x: 0.72, y: 0.31 }, { x: 0.3, y: 0.69 }, { x: 0.52, y: 0.72 }, { x: 0.74, y: 0.68 }],
+      7: [{ x: 0.22, y: 0.28 }, { x: 0.42, y: 0.26 }, { x: 0.62, y: 0.29 }, { x: 0.82, y: 0.31 }, { x: 0.3, y: 0.7 }, { x: 0.52, y: 0.73 }, { x: 0.74, y: 0.69 }],
+      8: [{ x: 0.22, y: 0.3 }, { x: 0.42, y: 0.27 }, { x: 0.62, y: 0.3 }, { x: 0.82, y: 0.28 }, { x: 0.24, y: 0.7 }, { x: 0.44, y: 0.73 }, { x: 0.64, y: 0.69 }, { x: 0.84, y: 0.72 }],
+      9: [{ x: 0.2, y: 0.24 }, { x: 0.4, y: 0.22 }, { x: 0.6, y: 0.25 }, { x: 0.8, y: 0.23 }, { x: 0.3, y: 0.52 }, { x: 0.5, y: 0.55 }, { x: 0.7, y: 0.52 }, { x: 0.4, y: 0.8 }, { x: 0.62, y: 0.78 }]
     };
     return presets[quantity].map((point, index) => ({
       x: bounds.x + bounds.width * point.x + Math.sin(variant + index) * bounds.width * 0.018,
@@ -188,7 +192,11 @@ function createObjectCenters(quantity: CountingQuantity, bounds: Bounds, layout:
       2: [{ x: 0.35, y: 0.5 }, { x: 0.65, y: 0.5 }],
       3: [{ x: 0.5, y: 0.25 }, { x: 0.32, y: 0.68 }, { x: 0.68, y: 0.68 }],
       4: [{ x: 0.32, y: 0.32 }, { x: 0.68, y: 0.32 }, { x: 0.32, y: 0.68 }, { x: 0.68, y: 0.68 }],
-      5: [{ x: 0.5, y: 0.25 }, { x: 0.3, y: 0.47 }, { x: 0.7, y: 0.47 }, { x: 0.36, y: 0.75 }, { x: 0.64, y: 0.75 }]
+      5: [{ x: 0.5, y: 0.25 }, { x: 0.3, y: 0.47 }, { x: 0.7, y: 0.47 }, { x: 0.36, y: 0.75 }, { x: 0.64, y: 0.75 }],
+      6: [{ x: 0.28, y: 0.3 }, { x: 0.5, y: 0.3 }, { x: 0.72, y: 0.3 }, { x: 0.28, y: 0.7 }, { x: 0.5, y: 0.7 }, { x: 0.72, y: 0.7 }],
+      7: [{ x: 0.22, y: 0.3 }, { x: 0.42, y: 0.3 }, { x: 0.62, y: 0.3 }, { x: 0.82, y: 0.3 }, { x: 0.32, y: 0.7 }, { x: 0.52, y: 0.7 }, { x: 0.72, y: 0.7 }],
+      8: [{ x: 0.22, y: 0.3 }, { x: 0.42, y: 0.3 }, { x: 0.62, y: 0.3 }, { x: 0.82, y: 0.3 }, { x: 0.22, y: 0.7 }, { x: 0.42, y: 0.7 }, { x: 0.62, y: 0.7 }, { x: 0.82, y: 0.7 }],
+      9: [{ x: 0.25, y: 0.24 }, { x: 0.5, y: 0.24 }, { x: 0.75, y: 0.24 }, { x: 0.25, y: 0.52 }, { x: 0.5, y: 0.52 }, { x: 0.75, y: 0.52 }, { x: 0.25, y: 0.8 }, { x: 0.5, y: 0.8 }, { x: 0.75, y: 0.8 }]
     };
     return presets[quantity].map((point) => ({
       x: bounds.x + bounds.width * point.x,
@@ -196,11 +204,22 @@ function createObjectCenters(quantity: CountingQuantity, bounds: Bounds, layout:
     }));
   }
 
-  const topCount = quantity === 4 ? 2 : 3;
-  const bottomCount = quantity - topCount;
-  const top = rowCenters(topCount, bounds.x, bounds.width, bounds.y + bounds.height * (quantity === 4 ? 0.34 : 0.32), jitter);
-  const bottom = rowCenters(bottomCount, bounds.x, bounds.width, bounds.y + bounds.height * 0.7, -jitter);
-  return [...top, ...bottom];
+  const rowCountsByQuantity: Record<CountingQuantity, readonly number[]> = {
+    1: [1],
+    2: [2],
+    3: [3],
+    4: [2, 2],
+    5: [3, 2],
+    6: [3, 3],
+    7: [4, 3],
+    8: [4, 4],
+    9: [3, 3, 3]
+  };
+  const rowCounts = rowCountsByQuantity[quantity];
+  const rowY = rowCounts.length === 3 ? [0.24, 0.52, 0.8] : [0.32, 0.7];
+  return rowCounts.flatMap((count, rowIndex) =>
+    rowCenters(count, bounds.x, bounds.width, bounds.y + bounds.height * rowY[rowIndex], rowIndex % 2 === 0 ? jitter : -jitter)
+  );
 }
 
 function normalizeLayoutForQuantity(quantity: CountingQuantity, layout: CountingVariation["layout"]): CountingVariation["layout"] {

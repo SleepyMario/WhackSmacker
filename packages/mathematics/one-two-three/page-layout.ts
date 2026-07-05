@@ -36,7 +36,7 @@ export interface DocumentPageLayout {
 }
 
 export function createWorkbookPageLayouts(workbook: OneTwoThreeWorkbook): PageLayout[] {
-  return workbook.pages.map((page) => createPageLayout(page));
+  return workbook.pages.filter((page): page is ExercisePage => page.kind === "exercise").map((page) => createPageLayout(page));
 }
 
 export function createDocumentPageLayouts(workbook: BeginnerVolumeOneWorkbook | OneTwoThreeWorkbook): DocumentPageLayout[] {

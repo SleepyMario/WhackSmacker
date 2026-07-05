@@ -176,13 +176,20 @@ test("help prints concise WhackSmacker usage", async () => {
   assert.match(result.stdout, /wsm mathematics beginner-volume-one/);
   assert.match(result.stdout, /whacksmacker mathematics one-two-three/);
   assert.match(result.stdout, /wsm mathematics one-two-three/);
+  assert.match(result.stdout, /whacksmacker mathematics four-and-five/);
+  assert.match(result.stdout, /wsm mathematics four-and-five/);
+  assert.match(result.stdout, /whacksmacker mathematics one-to-five/);
+  assert.match(result.stdout, /wsm mathematics one-to-five/);
+  assert.match(result.stdout, /whacksmacker mathematics six-to-nine/);
+  assert.match(result.stdout, /wsm mathematics six-to-nine/);
   assert.match(result.stdout, /Generate the complete beginner mathematics Volume 1 workbook/);
-  assert.match(result.stdout, /Generate the standalone 50-page Unit 1 introductory counting workbook/);
+  assert.match(result.stdout, /Generate the standalone Unit 1 introductory counting workbook/);
+  assert.match(result.stdout, /Generate the standalone Unit 4 six through nine workbook/);
   assert.match(result.stdout, /--output/);
   assert.match(result.stdout, /--seed/);
   assert.match(result.stdout, /Default output filename: \.\/beginner-mathematics-volume-one\.pdf/);
   assert.match(result.stdout, /Default output filename: \.\/one-two-three-workbook\.pdf/);
-  assert.match(result.stdout, /130 exercise pages, and 520 exercises/);
+  assert.match(result.stdout, /190 exercise pages, and 760 exercises/);
   assert.match(result.stdout, /The workbook contains 200 exercises/);
   assert.match(result.stdout, /No database or network connection is used/);
   assert.match(result.stdout, /Language\s+Available through AnkiConnect/);
@@ -291,7 +298,10 @@ test("mathematics one-two-three generates a workbook without contacting AnkiConn
 
       assert.equal(result.exitCode, 0);
       assert.match(result.stdout, /Workbook created/);
-      assert.match(result.stdout, /Pages: 50/);
+      assert.match(result.stdout, /Curriculum ID: MATH-FOUNDATION-001/);
+      assert.match(result.stdout, /Unit: One, Two, Three/);
+      assert.match(result.stdout, /Unit introduction pages: 1/);
+      assert.match(result.stdout, /Exercise pages: 50/);
       assert.match(result.stdout, /Exercises: 200/);
       assert.match(result.stdout, /Seed: 184726/);
       assert.match(result.stdout, new RegExp(escapeRegExp(`File: ${outputPath}`)));
@@ -304,6 +314,43 @@ test("mathematics one-two-three generates a workbook without contacting AnkiConn
     });
   } finally {
     await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("mathematics unit commands generate Units 002 through 004 without contacting AnkiConnect", async () => {
+  const cases = [
+    ["four-and-five", "MATH-FOUNDATION-002", "Four and Five", 30, 120],
+    ["one-to-five", "MATH-FOUNDATION-003", "One to Five", 50, 200],
+    ["six-to-nine", "MATH-FOUNDATION-004", "Six, Seven, Eight, Nine", 60, 240]
+  ];
+
+  for (const [command, curriculumId, title, pages, exercises] of cases) {
+    const directory = await mkdtemp(join(tmpdir(), `whacksmacker-${command}-cli-test-`));
+    const outputPath = join(directory, `${command}.pdf`);
+
+    try {
+      await withMockAnki([], async (endpoint, requests) => {
+        const result = await runCli(["mathematics", command, "--output", outputPath, "--seed", "184726"], { endpoint });
+
+        assert.equal(result.exitCode, 0);
+        assert.match(result.stdout, /Workbook created/);
+        assert.match(result.stdout, new RegExp(`Curriculum ID: ${curriculumId}`));
+        assert.match(result.stdout, new RegExp(`Unit: ${escapeRegExp(title)}`));
+        assert.match(result.stdout, /Unit introduction pages: 1/);
+        assert.match(result.stdout, new RegExp(`Exercise pages: ${pages}`));
+        assert.match(result.stdout, new RegExp(`Exercises: ${exercises}`));
+        assert.match(result.stdout, /Seed: 184726/);
+        assert.match(result.stdout, new RegExp(escapeRegExp(`File: ${outputPath}`)));
+        assert.equal(result.stderr, "");
+        assert.deepEqual(requests, []);
+
+        const file = await readFile(outputPath);
+        assert.ok(file.length > 100_000);
+        assert.deepEqual((await readdir(directory)).filter((name) => /\.db$/u.test(name)), []);
+      });
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
   }
 });
 
@@ -334,13 +381,15 @@ test("mathematics beginner-volume-one generates the complete workbook without co
 
       assert.equal(result.exitCode, 0);
       assert.match(result.stdout, /Workbook created/);
-      assert.match(result.stdout, /Introduction pages: 1/);
-      assert.match(result.stdout, /Unit title pages: 3/);
-      assert.match(result.stdout, /Exercise pages: 130/);
-      assert.match(result.stdout, /Exercises: 520/);
-      assert.match(result.stdout, /Unit 1 One, Two, Three: 200 exercises/);
-      assert.match(result.stdout, /Unit 2 Four and Five: 120 exercises/);
-      assert.match(result.stdout, /Unit 3 One to Five: 200 exercises/);
+      assert.match(result.stdout, /Overall introduction pages: 1/);
+      assert.match(result.stdout, /Unit introduction pages: 4/);
+      assert.match(result.stdout, /Exercise pages: 190/);
+      assert.match(result.stdout, /Exercises: 760/);
+      assert.match(result.stdout, /Total PDF pages: 195/);
+      assert.match(result.stdout, /Unit 1 One, Two, Three: 50 exercise pages, 200 exercises/);
+      assert.match(result.stdout, /Unit 2 Four and Five: 30 exercise pages, 120 exercises/);
+      assert.match(result.stdout, /Unit 3 One to Five: 50 exercise pages, 200 exercises/);
+      assert.match(result.stdout, /Unit 4 Six, Seven, Eight, Nine: 60 exercise pages, 240 exercises/);
       assert.match(result.stdout, /Seed: 184726/);
       assert.match(result.stdout, new RegExp(escapeRegExp(`File: ${outputPath}`)));
       assert.equal(result.stderr, "");
@@ -364,7 +413,7 @@ test("wsm mathematics beginner-volume-one supports the same arguments", async ()
 
     assert.equal(result.exitCode, 0);
     assert.match(result.stdout, /Workbook created/);
-    assert.match(result.stdout, /Exercise pages: 130/);
+    assert.match(result.stdout, /Exercise pages: 190/);
     assert.match(result.stdout, /Seed: 184726/);
     assert.match(result.stdout, new RegExp(escapeRegExp(`File: ${outputPath}`)));
     assert.equal(result.stderr, "");

@@ -60,7 +60,10 @@ function createStubRegistry(calls) {
     ["language", "review"],
     ["geography", "continents"],
     ["mathematics", "beginner-volume-one"],
-    ["mathematics", "one-two-three"]
+    ["mathematics", "one-two-three"],
+    ["mathematics", "four-and-five"],
+    ["mathematics", "one-to-five"],
+    ["mathematics", "six-to-nine"]
   ]) {
     registry.register({
       path,
@@ -142,7 +145,14 @@ test("mathematics menu exposes Beginner Mathematics and back", () => {
 test("Beginner Mathematics submenu exposes complete volume, Unit 1, and back", () => {
   assert.deepEqual(
     getBeginnerMathematicsMenuItems().map((item) => item.label),
-    ["Generate complete Volume 1", "Generate Unit 1 - One, Two, Three", "Back"]
+    [
+      "Generate complete Volume 1",
+      "Generate Unit 1 - One, Two, Three",
+      "Generate Unit 2 - Four and Five",
+      "Generate Unit 3 - One to Five",
+      "Generate Unit 4 - Six, Seven, Eight, Nine",
+      "Back"
+    ]
   );
 });
 

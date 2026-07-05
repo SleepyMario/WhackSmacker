@@ -1,7 +1,14 @@
 import { drawTargetObjects, type Bounds, type DrawingContext, type Point } from "./object-catalog";
 import { a4Portrait, createDocumentPageLayouts } from "./page-layout";
-import { generateBeginnerVolumeOneWorkbook, generateOneTwoThreeWorkbook } from "./workbook-generator";
-import type { BeginnerVolumeOneWorkbook, OneTwoThreeGenerationOptions, OneTwoThreeWorkbook, WorkbookPage } from "./workbook-model";
+import { generateBeginnerVolumeOneWorkbook, generateCountingUnitWorkbook, generateOneTwoThreeWorkbook } from "./workbook-generator";
+import type {
+  BeginnerVolumeOneWorkbook,
+  CountingUnitDefinition,
+  OneTwoThreeGenerationOptions,
+  OneTwoThreeWorkbook,
+  UnitIntroductionPage,
+  WorkbookPage
+} from "./workbook-model";
 
 declare function require(name: "node:fs/promises"): {
   mkdir(path: string, options: { recursive: boolean }): Promise<void>;
@@ -34,7 +41,7 @@ export interface WorkbookRenderResult {
   readonly outputPath: string;
   readonly pageCount: number;
   readonly introductionPageCount?: number;
-  readonly unitTitlePageCount?: number;
+  readonly unitIntroductionPageCount?: number;
   readonly exercisePageCount?: number;
   readonly exerciseCount: number;
   readonly seed: number;
@@ -42,12 +49,20 @@ export interface WorkbookRenderResult {
 }
 
 export async function generateOneTwoThreeWorkbookPdf(options: WorkbookRenderOptions): Promise<WorkbookRenderResult> {
+  return generateCountingUnitWorkbookPdf(options, undefined);
+}
+
+export async function generateCountingUnitWorkbookPdf(
+  options: WorkbookRenderOptions,
+  definition: CountingUnitDefinition | undefined
+): Promise<WorkbookRenderResult> {
   const path = require("node:path");
   const fs = require("node:fs/promises");
   const outputPath = path.resolve(options.outputPath);
   await assertCanWriteOutput(outputPath, options.overwrite === true);
 
-  const workbook = generateOneTwoThreeWorkbook({ seed: options.seed });
+  const workbook =
+    definition === undefined ? generateOneTwoThreeWorkbook({ seed: options.seed }) : generateCountingUnitWorkbook(definition, { seed: options.seed });
   const pdf = renderWorkbookToPdfBuffer(workbook, options.onProgress);
 
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
@@ -56,6 +71,8 @@ export async function generateOneTwoThreeWorkbookPdf(options: WorkbookRenderOpti
   return {
     outputPath,
     pageCount: workbook.pageCount,
+    unitIntroductionPageCount: workbook.unitIntroductionPageCount,
+    exercisePageCount: workbook.exercisePageCount,
     exerciseCount: workbook.exerciseCount,
     seed: workbook.seed,
     workbook
@@ -78,7 +95,7 @@ export async function generateBeginnerVolumeOneWorkbookPdf(options: WorkbookRend
     outputPath,
     pageCount: workbook.pageCount,
     introductionPageCount: workbook.introductionPageCount,
-    unitTitlePageCount: workbook.unitTitlePageCount,
+    unitIntroductionPageCount: workbook.unitIntroductionPageCount,
     exercisePageCount: workbook.exercisePageCount,
     exerciseCount: workbook.exerciseCount,
     seed: workbook.seed,
@@ -116,8 +133,8 @@ function renderDocumentPage(
     return;
   }
 
-  if (page.kind === "unit-title") {
-    renderUnitTitlePage(canvas, page.label, page.title);
+  if (page.kind === "unit-introduction") {
+    renderUnitIntroductionPage(canvas, page);
     return;
   }
 
@@ -143,9 +160,20 @@ function renderIntroductionPage(canvas: PdfCanvas, title: string, text: string):
   }
 }
 
-function renderUnitTitlePage(canvas: PdfCanvas, label: string, title: string): void {
+function renderUnitIntroductionPage(canvas: PdfCanvas, page: UnitIntroductionPage): void {
+  const label = page.label;
+  const title = page.title;
   canvas.text(label, 88, a4Portrait.height * 0.42, 28, "#4263eb");
   canvas.text(title, 88, a4Portrait.height * 0.49, 40, "#243b53");
+
+  if (page.description.length > 0) {
+    const lines = wrapText(page.description, 58);
+    let y = a4Portrait.height * 0.57;
+    for (const line of lines) {
+      canvas.text(line, 88, y, 16, "#243b53");
+      y += 26;
+    }
+  }
 }
 
 async function assertCanWriteOutput(outputPath: string, overwrite: boolean): Promise<void> {
@@ -172,8 +200,8 @@ function renderChoices(canvas: PdfCanvas, bounds: Bounds, choices: readonly stri
 
   choices.forEach((choice, index) => {
     const baseline = bounds.y + lineHeight * index + lineHeight * 0.68;
-    canvas.circle(bounds.x + 10, baseline - 6, 3.8, "#243b53");
-    canvas.text(choice, bounds.x + 25, baseline, fontSize, "#243b53");
+    canvas.circle(bounds.x + 12, baseline - 7, 7, "#ffffff", "#243b53", 1.8);
+    canvas.text(choice, bounds.x + 31, baseline, fontSize, "#243b53");
   });
 }
 

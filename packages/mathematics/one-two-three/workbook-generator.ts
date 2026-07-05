@@ -35,19 +35,28 @@ const defaultPalette = [
 const layoutKinds = ["row", "arc", "two-row", "cluster", "symmetric"] as const;
 
 export function generateOneTwoThreeWorkbook(options: OneTwoThreeGenerationOptions = {}): OneTwoThreeWorkbook {
+  return generateCountingUnitWorkbook(oneTwoThreeUnitDefinition, options);
+}
+
+export function generateCountingUnitWorkbook(
+  definition: CountingUnitDefinition,
+  options: OneTwoThreeGenerationOptions = {}
+): OneTwoThreeWorkbook {
   const seed = normalizeSeed(options.seed ?? createDefaultSeed());
   const random = createSeededRandom(seed);
   const pageCounter = { pageIndex: 0, exercisePageIndex: 0 };
-  const unit = generateCountingUnit(oneTwoThreeUnitDefinition, random, pageCounter, { includeTitlePage: false });
+  const unit = generateCountingUnit(definition, random, pageCounter, { includeIntroductionPage: true });
+  const pages: WorkbookPage[] = [unit.introductionPage, ...unit.exercisePages];
 
   return {
     kind: "unit",
-    title: "One, Two, Three",
+    title: definition.title,
     seed,
-    pageCount: unit.exercisePages.length,
+    pageCount: pages.length,
+    unitIntroductionPageCount: 1,
     exercisePageCount: unit.exercisePages.length,
     exerciseCount: unit.exerciseCount,
-    pages: unit.exercisePages,
+    pages,
     unit
   };
 }
@@ -67,9 +76,9 @@ export function generateBeginnerVolumeOneWorkbook(options: WorkbookGenerationOpt
   const units: CountingUnit[] = [];
 
   for (const definition of beginnerVolumeOneUnits) {
-    const unit = generateCountingUnit(definition, random, pageCounter, { includeTitlePage: true });
+    const unit = generateCountingUnit(definition, random, pageCounter, { includeIntroductionPage: true });
     units.push(unit);
-    pages.push(unit.titlePage, ...unit.exercisePages);
+    pages.push(unit.introductionPage, ...unit.exercisePages);
   }
 
   return {
@@ -77,7 +86,7 @@ export function generateBeginnerVolumeOneWorkbook(options: WorkbookGenerationOpt
     title: workbookContent.volumeTitle,
     seed,
     introductionPageCount: 1,
-    unitTitlePageCount: units.length,
+    unitIntroductionPageCount: units.length,
     exercisePageCount: pages.filter((page) => page.kind === "exercise").length,
     exerciseCount: units.reduce((total, unit) => total + unit.exerciseCount, 0),
     pageCount: pages.length,
@@ -141,17 +150,18 @@ function generateCountingUnit(
   definition: CountingUnitDefinition,
   random: SeededRandom,
   pageCounter: { pageIndex: number; exercisePageIndex: number },
-  options: { includeTitlePage: boolean }
+  options: { includeIntroductionPage: boolean }
 ): CountingUnit {
-  const titlePage = {
-    kind: "unit-title" as const,
-    index: options.includeTitlePage ? pageCounter.pageIndex : -1,
+  const introductionPage = {
+    kind: "unit-introduction" as const,
+    index: options.includeIntroductionPage ? pageCounter.pageIndex : -1,
     unitId: definition.id,
     label: definition.label,
-    title: definition.title
+    title: definition.title,
+    description: definition.description
   };
 
-  if (options.includeTitlePage) {
+  if (options.includeIntroductionPage) {
     pageCounter.pageIndex += 1;
   }
 
@@ -196,14 +206,14 @@ function generateCountingUnit(
 
   return {
     definition,
-    titlePage,
+    introductionPage,
     exercisePages: pages,
     exerciseCount: pages.reduce((total, page) => total + page.exercises.length, 0)
   };
 }
 
 function createUnitQuantities(definition: CountingUnitDefinition, random: SeededRandom): CountingQuantity[] {
-  if (definition.id === "four-five") {
+  if (definition.id === "four-and-five") {
     const pages = Array.from({ length: definition.exercisePageCount }, () => random.shuffle<CountingQuantity>([4, 4, 5, 5]));
     return random.shuffle(pages).flat();
   }
@@ -215,6 +225,11 @@ function createUnitQuantities(definition: CountingUnitDefinition, random: Seeded
     }
 
     return random.shuffle(templates).flatMap((page) => random.shuffle(page));
+  }
+
+  if (definition.id === "six-to-nine") {
+    const pages = Array.from({ length: definition.exercisePageCount }, () => random.shuffle<CountingQuantity>([6, 7, 8, 9]));
+    return pages.flat();
   }
 
   const quantities: CountingQuantity[] = [];

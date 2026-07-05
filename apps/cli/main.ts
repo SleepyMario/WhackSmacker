@@ -64,14 +64,29 @@ Mathematics commands:
   wsm mathematics beginner-volume-one [--output ./beginner-mathematics-volume-one.pdf] [--seed 184726]
       Generate the complete beginner mathematics Volume 1 workbook.
       Default output filename: ./beginner-mathematics-volume-one.pdf
-      The workbook contains 1 introduction page, 3 unit title pages, 130 exercise pages, and 520 exercises.
+      The workbook contains 1 overall introduction page, 4 unit introduction pages, 190 exercise pages, and 760 exercises.
 
   whacksmacker mathematics one-two-three [--output ./one-two-three-workbook.pdf] [--seed 184726]
   wsm mathematics one-two-three [--output ./one-two-three-workbook.pdf] [--seed 184726]
-      Generate the standalone 50-page Unit 1 introductory counting workbook.
+      Generate the standalone Unit 1 introductory counting workbook.
       Default output filename: ./one-two-three-workbook.pdf
       The workbook contains 200 exercises.
       No database or network connection is used by mathematics workbook generation.
+
+  whacksmacker mathematics four-and-five [--output ./four-and-five-workbook.pdf] [--seed 184726]
+  wsm mathematics four-and-five [--output ./four-and-five-workbook.pdf] [--seed 184726]
+      Generate the standalone Unit 2 four and five workbook.
+      Default output filename: ./four-and-five-workbook.pdf
+
+  whacksmacker mathematics one-to-five [--output ./one-to-five-workbook.pdf] [--seed 184726]
+  wsm mathematics one-to-five [--output ./one-to-five-workbook.pdf] [--seed 184726]
+      Generate the standalone Unit 3 one to five workbook.
+      Default output filename: ./one-to-five-workbook.pdf
+
+  whacksmacker mathematics six-to-nine [--output ./six-to-nine-workbook.pdf] [--seed 184726]
+  wsm mathematics six-to-nine [--output ./six-to-nine-workbook.pdf] [--seed 184726]
+      Generate the standalone Unit 4 six through nine workbook.
+      Default output filename: ./six-to-nine-workbook.pdf
 
 Modules:
   Language      Available through AnkiConnect

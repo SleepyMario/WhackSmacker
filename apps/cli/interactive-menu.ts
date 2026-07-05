@@ -1,5 +1,11 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
-import { defaultBeginnerVolumeOneOutputPath, defaultOneTwoThreeOutputPath } from "../../packages/mathematics";
+import {
+  defaultBeginnerVolumeOneOutputPath,
+  defaultFourAndFiveOutputPath,
+  defaultOneToFiveOutputPath,
+  defaultOneTwoThreeOutputPath,
+  defaultSixToNineOutputPath
+} from "../../packages/mathematics";
 
 declare function require(name: "node:fs/promises"): {
   stat(path: string): Promise<unknown>;
@@ -116,6 +122,9 @@ const oneTwoThreeMenuItems: readonly MenuItem[] = [
 const beginnerMathematicsMenuItems: readonly MenuItem[] = [
   { label: "Generate complete Volume 1", kind: "mathematics", moduleId: "mathematics" },
   { label: "Generate Unit 1 - One, Two, Three", kind: "mathematics", moduleId: "mathematics" },
+  { label: "Generate Unit 2 - Four and Five", kind: "mathematics", moduleId: "mathematics" },
+  { label: "Generate Unit 3 - One to Five", kind: "mathematics", moduleId: "mathematics" },
+  { label: "Generate Unit 4 - Six, Seven, Eight, Nine", kind: "mathematics", moduleId: "mathematics" },
   { label: "Back", kind: "back" }
 ];
 
@@ -351,16 +360,14 @@ async function runBeginnerMathematicsMenu(registry: InMemoryCliCommandRegistry, 
       return false;
     }
 
-    const quit =
-      selection === 0
-        ? await runWorkbookAction(registry, terminal, {
-            commandPath: ["mathematics", "beginner-volume-one"],
-            defaultOutputPath: defaultBeginnerVolumeOneOutputPath
-          })
-        : await runWorkbookAction(registry, terminal, {
-            commandPath: ["mathematics", "one-two-three"],
-            defaultOutputPath: defaultOneTwoThreeOutputPath
-          });
+    const mathActions = [
+      { commandPath: ["mathematics", "beginner-volume-one"], defaultOutputPath: defaultBeginnerVolumeOneOutputPath },
+      { commandPath: ["mathematics", "one-two-three"], defaultOutputPath: defaultOneTwoThreeOutputPath },
+      { commandPath: ["mathematics", "four-and-five"], defaultOutputPath: defaultFourAndFiveOutputPath },
+      { commandPath: ["mathematics", "one-to-five"], defaultOutputPath: defaultOneToFiveOutputPath },
+      { commandPath: ["mathematics", "six-to-nine"], defaultOutputPath: defaultSixToNineOutputPath }
+    ] as const;
+    const quit = await runWorkbookAction(registry, terminal, mathActions[selection]);
     if (quit) {
       return true;
     }

@@ -1,5 +1,6 @@
 export {
   generateBeginnerVolumeOneWorkbook,
+  generateCountingUnitWorkbook,
   generateOneTwoThreeWorkbook,
   createSeededRandom,
   normalizeSeed,
@@ -17,6 +18,8 @@ export {
   oneToFiveUnitDefinition,
   oneTwoThreeAnswerChoices,
   oneTwoThreeUnitDefinition,
+  sixToNineAnswerChoices,
+  sixToNineUnitDefinition,
   workbookContent,
   type BeginnerVolumeOneWorkbook,
   type CountingExercise,
@@ -34,6 +37,7 @@ export {
   type OneTwoThreeQuantity,
   type OneTwoThreeVariation,
   type OneTwoThreeWorkbook,
+  type UnitIntroductionPage,
   type UnitTitlePage,
   type WorkbookGenerationOptions,
   type WorkbookPage
@@ -61,6 +65,7 @@ export {
 } from "./page-layout";
 export {
   generateBeginnerVolumeOneWorkbookPdf,
+  generateCountingUnitWorkbookPdf,
   generateOneTwoThreeWorkbookPdf,
   renderWorkbookToPdfBuffer,
   type WorkbookRenderOptions,
