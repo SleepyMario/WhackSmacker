@@ -4,6 +4,8 @@ Date: 2026-07-06
 
 This audit records the implemented state of the WhackSmacker content-package and native-review work after the 12-point roadmap. It is based on the current codebase, current tests, and the recent Git history.
 
+The first end-to-end installed-content validation is recorded in [Installed Content Package E2E Audit](installed-content-e2e.md).
+
 The current module workspace root is:
 
 ```text
@@ -120,7 +122,7 @@ The old deck-review command shape no longer resolves. `whacksmacker review` now 
 
 - The package generator currently covers the initial Linguistic Terminology and Korean Curriculum source snapshots only.
 - Generated source snapshot packages are readable but do not automatically produce memorization item files.
-- Installed Korean and installed Linguistic Terminology browsing paths exist, but the installed-package flows still need manual end-to-end verification outside unit tests.
+- Installed Korean and installed Linguistic Terminology browsing paths have been manually validated in the local end-to-end package flow, but they remain terminal-oriented and should still be covered by future release checklist runs.
 - The native review flow is terminal-oriented and command-oriented.
 - Answer grading is not implemented beyond explicit review ratings.
 - Dependency metadata exists, but full dependency resolution is not implemented.
@@ -131,8 +133,8 @@ The old deck-review command shape no longer resolves. `whacksmacker review` now 
 
 ## Next Cleanup Phase
 
-- Verify the installed Korean package flow end to end from package generation through catalogue generation, install, language browsing, content reading, and native review empty-state behavior.
-- Verify the installed Linguistic Terminology package flow end to end from package generation through catalogue generation, install, language browsing, group filtering, content reading, and native review empty-state behavior.
+- Repeat the installed Korean package flow during release checks.
+- Repeat the installed Linguistic Terminology package flow during release checks.
 - Remove or deprecate stale bundled snapshots only when installed-package replacements are safe for normal use.
 - Clean up old docs that imply Anki is still primary or that package work is still pending.
 - Ensure all content generators and documentation use `/home/ashwin/Projects/whacksmacker-modules` and no longer assume `/home/ashwin/Projects/languages`.
