@@ -245,6 +245,8 @@ whacksmacker content read com.sleepymario.language.korean --file units/hangul-fo
 
 Content packages may also declare reviewable memorization items using the v1 schema in `schemas/memorization-item-v1.schema.json`. WhackSmacker stores native review progress separately using `schemas/review-progress-v1.schema.json`; installed package content remains read-only.
 
+Terminal exercise renderers can display memorization items as separated prompt and answer text. They do not grade answers or create a full native review session yet.
+
 Tests use local mock HTTP servers and do not require a running Anki instance.
 
 ## Real-Anki Validation Checklist

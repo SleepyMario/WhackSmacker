@@ -61,9 +61,11 @@ This point does not add exercise renderers, interactive native review sessions, 
 
 ## Point 8 -- Exercise Renderers
 
-Status: not started
+Status: implemented
 
-Will render exercises from installed packages.
+Adds deterministic terminal-safe rendering for memorization item kinds: `basic-card`, `cloze`, `vocabulary`, `sentence`, and `concept`.
+
+This point does not add reading-to-review integration, a full interactive native review session, answer grading, web UI, Anki migration, or Anki removal.
 
 ## Point 9 -- Reading-to-Review Integration
 

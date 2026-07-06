@@ -1,8 +1,8 @@
 # Downloadable Content Packages
 
-Roadmap Points 1 through 7 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, and native review scheduling state.
+Roadmap Points 1 through 8 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, native review scheduling state, and terminal exercise rendering.
 
-It does not implement exercise rendering, reading-to-review integration, or Anki replacement.
+It does not implement reading-to-review integration or Anki replacement.
 
 ## Fundamental Rule
 
@@ -34,7 +34,8 @@ The application, downloaded package content, and user progress/settings remain s
 - local package fetch, install, update, remove, and registry management;
 - passive reading of installed package text content;
 - memorization item schema and validation helpers;
-- native review progress storage and deterministic scheduling helpers.
+- native review progress storage and deterministic scheduling helpers;
+- terminal-safe memorization item exercise rendering.
 
 ## Generator Targets
 
@@ -89,6 +90,8 @@ Point 6 defines package-authored reviewable item data.
 
 Point 7 stores WhackSmacker-owned review progress outside installed package directories and calculates deterministic next-review times.
 
+Point 8 renders memorization items into separated prompt and answer text for terminal review surfaces.
+
 ## Not Defined Yet
 
 - subject-specific content schemas;
@@ -104,6 +107,7 @@ Point 7 stores WhackSmacker-owned review progress outside installed package dire
 - [Reading Interface](reading-interface.md)
 - [Memorization Items](memorization-items.md)
 - [Native Review Scheduler](../review-scheduler.md)
+- [Exercise Renderers](../exercise-renderers.md)
 - [Memorization Item Schema](../../schemas/memorization-item-v1.schema.json)
 - [Review Progress Schema](../../schemas/review-progress-v1.schema.json)
 - [Manifest Schema](../../schemas/content-package-manifest-v1.schema.json)
