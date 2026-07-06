@@ -29,9 +29,11 @@ The local catalogue is not an installed-package registry and does not contain us
 
 ## Point 4 -- Download, Install, Update and Remove
 
-Status: not started
+Status: implemented
 
-Will add package acquisition, verification, installation, update, rollback, and removal behavior.
+Adds package acquisition from `file://` and `https://` catalogue URLs, archive size and SHA-256 verification, safe manifest inspection, safe extraction, immutable local installation, installed-package registry management, update detection, update installation, and package removal.
+
+This point does not add a reading interface or user-progress storage.
 
 ## Point 5 -- Reading Interface
 

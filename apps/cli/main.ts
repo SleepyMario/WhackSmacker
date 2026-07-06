@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { chessModule } from "../../packages/chess";
+import { contentModule } from "../../packages/content";
 import {
   consoleLogger,
   createDefaultAppPaths,
@@ -90,11 +91,20 @@ Mathematics commands:
       Generate the standalone Unit 4 six through nine workbook.
       Default output filename: ./six-to-nine-workbook.pdf
 
+Content package commands:
+  whacksmacker content available --catalogue <catalogue.json>
+  whacksmacker content install <package-id> --catalogue <catalogue.json> [--version <version>] [--data-dir <dir>] [--force]
+  whacksmacker content installed [--data-dir <dir>]
+  whacksmacker content updates --catalogue <catalogue.json> [--data-dir <dir>]
+  whacksmacker content update <package-id> --catalogue <catalogue.json> [--data-dir <dir>]
+  whacksmacker content remove <package-id> --version <version> [--data-dir <dir>]
+
 Modules:
   Language      AnkiConnect review and linguistic terminology
   Chess         Placeholder
   Geography     Continents review available
   Mathematics   Beginner mathematics workbook generators
+  Content       Downloadable content package management
 
 Interactive controls:
   Up/Down arrows  Move selection
@@ -136,7 +146,7 @@ export interface ResolvedCliCommand {
 export function createCommandRegistry(): InMemoryCliCommandRegistry {
   const cli = new InMemoryCliCommandRegistry();
   const context = {
-    features: createEnabledFeatures(["cli", "language", "anki", "chess", "geography", "mathematics"]),
+    features: createEnabledFeatures(["cli", "language", "anki", "chess", "geography", "mathematics", "content"]),
     paths: createDefaultAppPaths(),
     logger: consoleLogger,
     cli
@@ -146,6 +156,7 @@ export function createCommandRegistry(): InMemoryCliCommandRegistry {
   chessModule.register(context);
   geographyModule.register(context);
   mathematicsModule.register(context);
+  contentModule.register(context);
 
   return cli;
 }

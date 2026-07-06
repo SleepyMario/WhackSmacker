@@ -25,7 +25,7 @@ versioned .wspkg archive
         ↓
 local package catalogue
         ↓
-future WhackSmacker package manager
+WhackSmacker package manager
         ↓
 read-only installed content
 
@@ -41,6 +41,12 @@ The content schema defines the subject-specific data inside `content/`. Those sc
 The catalogue format describes available package archives and their archive-level size and SHA-256 checksum. It is not a package manifest, installed-package registry, download cache, source repository, or user-progress database.
 
 The progress schema will describe user state and learning history. It is not defined here.
+
+## Local Registry
+
+The local installed-package registry is stored as `registry.json` in the content data directory.
+
+The registry records installed package versions and installation metadata. It is not a catalogue and is not user progress.
 
 ## Immutability
 

@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import { createCommandRegistry, resolveCliCommand } from "../dist/apps/cli/main.js";
 import { chessModule } from "../dist/packages/chess/index.js";
+import { contentModule } from "../dist/packages/content/index.js";
 import { InMemoryCliCommandRegistry, DomainModuleRegistry, createDefaultAppPaths, createEnabledFeatures, consoleLogger } from "../dist/packages/core/index.js";
 import { geographyModule } from "../dist/packages/geography/index.js";
 import { languageModule } from "../dist/packages/language/index.js";
@@ -10,7 +11,7 @@ import { mathematicsModule } from "../dist/packages/mathematics/index.js";
 
 function createRegistrationContext(cli = new InMemoryCliCommandRegistry()) {
   return {
-    features: createEnabledFeatures(["cli", "language", "anki", "chess", "geography", "mathematics"]),
+    features: createEnabledFeatures(["cli", "language", "anki", "chess", "geography", "mathematics", "content"]),
     paths: createDefaultAppPaths(),
     logger: consoleLogger,
     cli
@@ -25,6 +26,12 @@ test("application CLI registry exposes language commands and the geography proto
   const registry = createCommandRegistry();
 
   assert.deepEqual(registeredPaths(registry), [
+    "content available",
+    "content install",
+    "content installed",
+    "content remove",
+    "content update",
+    "content updates",
     "geography continents",
     "language decks",
     "language review",
@@ -65,10 +72,11 @@ test("current domain modules register successfully", () => {
   registry.register(chessModule);
   registry.register(geographyModule);
   registry.register(mathematicsModule);
+  registry.register(contentModule);
 
   assert.deepEqual(
     registry.list().map((module) => module.id),
-    ["language", "chess", "geography", "mathematics"]
+    ["language", "chess", "geography", "mathematics", "content"]
   );
 });
 

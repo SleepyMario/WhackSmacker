@@ -223,6 +223,18 @@ npm run content:catalogue -- --packages-dir packages-output --output packages-ou
 
 This only lists available package archives. It does not download, install, extract, or read package content.
 
+Manage content packages from a catalogue:
+
+```sh
+whacksmacker content available --catalogue packages-output/catalogue.json
+whacksmacker content install com.sleepymario.language.korean --catalogue packages-output/catalogue.json
+whacksmacker content installed
+whacksmacker content updates --catalogue packages-output/catalogue.json
+whacksmacker content remove com.sleepymario.language.korean --version 0.1.0
+```
+
+Installed package content remains separate from user progress and settings.
+
 Tests use local mock HTTP servers and do not require a running Anki instance.
 
 ## Real-Anki Validation Checklist

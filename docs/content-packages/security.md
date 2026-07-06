@@ -2,11 +2,11 @@
 
 `.wspkg` files are untrusted input.
 
-Roadmap Point 1 documents security rules but does not implement a downloader, installer, extractor, catalogue, reader, or sanitizer.
+Roadmap Point 4 implements package fetching and safe local extraction. It still does not implement a reader or sanitizer.
 
-## Future Installer Rejections
+## Installer Rejections
 
-A future installer must reject:
+The installer rejects:
 
 - absolute paths;
 - `..` traversal;
@@ -30,3 +30,5 @@ Packages may contain static HTML or Markdown as data.
 WhackSmacker must sanitize rendered content and must not execute embedded scripts.
 
 Files in `assets/` are static media only. WhackSmacker must never execute package assets.
+
+Rendered-content sanitization remains a later roadmap point.
