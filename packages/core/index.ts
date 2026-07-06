@@ -4,6 +4,7 @@ export * from "./content-package-generator";
 export * from "./content-package-manager";
 export * from "./content-package-reader";
 export * from "./content-package-spec";
+export * from "./anki-parity-audit";
 export * from "./exercise-renderer";
 export * from "./features";
 export * from "./logging";

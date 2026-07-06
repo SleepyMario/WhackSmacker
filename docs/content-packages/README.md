@@ -1,8 +1,8 @@
 # Downloadable Content Packages
 
-Roadmap Points 1 through 10 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, native review scheduling state, terminal exercise rendering, reading-to-review integration, and user-data backups.
+Roadmap Points 1 through 11 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, native review scheduling state, terminal exercise rendering, reading-to-review integration, user-data backups, and Anki parity audit coverage.
 
-It does not implement reading-to-review integration or Anki replacement.
+It does not remove Anki or migrate existing Anki data.
 
 ## Fundamental Rule
 
@@ -37,7 +37,8 @@ The application, downloaded package content, and user progress/settings remain s
 - native review progress storage and deterministic scheduling helpers;
 - terminal-safe memorization item exercise rendering;
 - reading-source to review-item discovery and terminal review commands;
-- backup, restore, inspect, and migration support for user-owned state.
+- backup, restore, inspect, and migration support for user-owned state;
+- Anki parity audit tests for native memorization, rendering, scheduling, due-listing, and backup behavior.
 
 ## Generator Targets
 
@@ -98,6 +99,8 @@ Point 9 connects installed reading content to reviewable memorization items and 
 
 Point 10 backs up and restores user-owned state without including installed package content or caches.
 
+Point 11 verifies that legacy Anki front/back and simple cloze-like cards can be represented by native memorization items, rendered as terminal exercises, scheduled by native review state, surfaced as due items, and protected by user-data backups. It keeps the legacy Anki review command intact.
+
 ## Not Defined Yet
 
 - subject-specific content schemas;
@@ -116,6 +119,7 @@ Point 10 backs up and restores user-owned state without including installed pack
 - [Exercise Renderers](../exercise-renderers.md)
 - [Reading to Review](../reading-to-review.md)
 - [Backups and Migration](../backups-and-migration.md)
+- [Anki Parity](../anki-parity.md)
 - [Memorization Item Schema](../../schemas/memorization-item-v1.schema.json)
 - [Review Progress Schema](../../schemas/review-progress-v1.schema.json)
 - [User Data Backup Schema](../../schemas/user-data-backup-v1.schema.json)

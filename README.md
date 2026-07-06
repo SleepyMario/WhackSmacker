@@ -265,6 +265,12 @@ whacksmacker backup inspect whacksmacker-backup.json
 whacksmacker backup restore whacksmacker-backup.json --data-dir ~/.local/share/whacksmacker/content
 ```
 
+Anki parity audit coverage verifies that legacy front/back and simple cloze-like cards can be represented by native memorization items, rendered as terminal prompts and answers, scheduled in native review progress, surfaced as due items, and protected by user-data backups. The legacy Anki command remains available until the separate Anki-removal milestone:
+
+```sh
+whacksmacker review <deck-name>
+```
+
 Tests use local mock HTTP servers and do not require a running Anki instance.
 
 ## Real-Anki Validation Checklist

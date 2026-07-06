@@ -85,9 +85,11 @@ This point does not add Anki parity tests, Anki removal, package archive backups
 
 ## Point 11 -- Anki Parity Test
 
-Status: not started
+Status: implemented
 
-Will verify replacement behavior against current Anki-backed workflows.
+Adds an audit layer and automated tests that compare the legacy Anki deck/card workflow with native package-authored memorization items, terminal exercise rendering, native review progress, due listing, and user-data backup coverage.
+
+This point does not remove Anki, disable AnkiConnect, migrate Anki decks, change the legacy `whacksmacker review <deck-name>` command, or attempt exact Anki scheduler cloning.
 
 ## Point 12 -- Remove Anki
 
