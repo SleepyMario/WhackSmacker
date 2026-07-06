@@ -130,7 +130,7 @@ Current package responsibilities:
 
 - `packages/core`: module registration contracts, feature configuration types, profile/application-data paths, logging interfaces, CLI command registration contracts, and shared UI contracts.
 - `packages/language`: bundled linguistic terminology and language CLI commands.
-- `packages/chess`: placeholder chess interfaces and clean module registration; no user commands yet.
+- `packages/chess`: terminal-safe chessboard command backed by `packages/chess-core`.
 - `packages/geography`: placeholder geography interfaces and clean module registration; no user commands yet.
 - `packages/mathematics`: placeholder mathematics interfaces and clean module registration; no user commands yet.
 - `packages/storage`: shared storage/path abstractions only; no domain schemas.

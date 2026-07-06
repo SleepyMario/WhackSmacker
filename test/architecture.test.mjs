@@ -30,6 +30,7 @@ test("application CLI registry exposes language commands and the geography proto
     "backup inspect",
     "backup migrate",
     "backup restore",
+    "chess",
     "content available",
     "content files",
     "content install",
@@ -94,7 +95,7 @@ test("current domain modules register successfully", () => {
   );
 });
 
-test("chess remains a placeholder while mathematics exposes workbook commands", () => {
+test("chess and mathematics expose CLI commands", () => {
   const cli = new InMemoryCliCommandRegistry();
   const context = createRegistrationContext(cli);
 
@@ -102,6 +103,7 @@ test("chess remains a placeholder while mathematics exposes workbook commands", 
   mathematicsModule.register(context);
 
   assert.deepEqual(registeredPaths(cli), [
+    "chess",
     "mathematics beginner-volume-one",
     "mathematics four-and-five",
     "mathematics one-to-five",

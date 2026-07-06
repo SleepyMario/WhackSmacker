@@ -108,9 +108,11 @@ test("help prints native WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker review due/);
   assert.match(result.stdout, /whacksmacker review show <package-id> <item-id>/);
   assert.match(result.stdout, /whacksmacker review answer <package-id> <item-id>/);
+  assert.match(result.stdout, /whacksmacker chess \[e2e4 \.\.\.\] \[--legal <square>\]/);
   assert.match(result.stdout, /whacksmacker geography continents/);
   assert.match(result.stdout, /whacksmacker mathematics beginner-volume-one/);
   assert.match(result.stdout, /Language\s+Korean curriculum content and linguistic terminology glossary/);
+  assert.match(result.stdout, /Chess\s+Terminal chessboard available/);
   assert.match(result.stdout, /Content\s+Downloadable content package management/);
   assert.doesNotMatch(result.stdout, /Anki|AnkiConnect|deck-name|Decks|language review/u);
   assert.equal(result.stderr, "");

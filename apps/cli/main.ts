@@ -56,6 +56,11 @@ Geography commands:
   wsm geography continents
       Six-continent terminal map review.
 
+Chess commands:
+  whacksmacker chess [e2e4 ...] [--legal <square>]
+  wsm chess [e2e4 ...] [--legal <square>]
+      Show a terminal chessboard, apply UCI-style coordinate moves, and list legal destinations.
+
 Mathematics commands:
   whacksmacker mathematics beginner-volume-one [--output ./beginner-mathematics-volume-one.pdf] [--seed 184726]
   wsm mathematics beginner-volume-one [--output ./beginner-mathematics-volume-one.pdf] [--seed 184726]
@@ -110,7 +115,7 @@ Backup commands:
 
 Modules:
   Language      Korean curriculum content and linguistic terminology glossary
-  Chess         Placeholder
+  Chess         Terminal chessboard available
   Geography     Continents review available
   Mathematics   Beginner mathematics workbook generators
   Content       Downloadable content package management
@@ -200,17 +205,15 @@ function isVersionRequest(argv: readonly string[]): boolean {
 }
 
 export function resolveCliCommand(registry: InMemoryCliCommandRegistry, argv: readonly string[]): ResolvedCliCommand | null {
-  const commandName = argv[0];
-
-  if (commandName === undefined) {
-    return null;
-  }
-
-  const path = argv.slice(0, 2);
-  const command = registry.find(path);
-  if (command !== null) {
-    return { command, args: argv.slice(2), path };
+  for (const command of [...registry.list()].sort((left, right) => right.path.length - left.path.length)) {
+    if (argvStartsWith(argv, command.path)) {
+      return { command, args: argv.slice(command.path.length), path: command.path };
+    }
   }
 
   return null;
+}
+
+function argvStartsWith(argv: readonly string[], path: readonly string[]): boolean {
+  return argv.length >= path.length && path.every((segment, index) => argv[index] === segment);
 }

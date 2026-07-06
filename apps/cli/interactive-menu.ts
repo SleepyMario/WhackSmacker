@@ -59,7 +59,7 @@ export interface Terminal {
 
 export interface MenuItem {
   readonly label: string;
-  readonly kind: "language" | "geography" | "mathematics" | "placeholder" | "back";
+  readonly kind: "language" | "chess" | "geography" | "mathematics" | "placeholder" | "back";
   readonly moduleId?: string;
 }
 
@@ -92,7 +92,7 @@ export function shouldUseTerminalColors(outputIsTty: boolean, env: Record<string
 
 const mainMenuItems: readonly MenuItem[] = [
   { label: "Language", kind: "language", moduleId: "language" },
-  { label: "Chess", kind: "placeholder", moduleId: "chess" },
+  { label: "Chess", kind: "chess", moduleId: "chess" },
   { label: "Geography", kind: "geography", moduleId: "geography" },
   { label: "Mathematics", kind: "mathematics", moduleId: "mathematics" }
 ];
@@ -262,6 +262,11 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
           if (quit) {
             return;
           }
+        } else if (item.kind === "chess") {
+          const quit = await runChessAction(registry, terminal);
+          if (quit) {
+            return;
+          }
         } else if (item.kind === "mathematics") {
           const quit = await runMathematicsMenu(registry, terminal);
           if (quit) {
@@ -282,6 +287,18 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
       process.exitCode = 130;
     }
   }
+}
+
+async function runChessAction(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+  const commandPath = ["chess"];
+  const command = registry.find(commandPath);
+
+  if (command === null) {
+    return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
+  }
+
+  const output = await runCapturedLanguageCommand(terminal, command, []);
+  return showPagedMessage(terminal, output);
 }
 
 async function runMathematicsMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {

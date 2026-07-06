@@ -59,6 +59,7 @@ function createStubRegistry(calls) {
     ["language", "korean"],
     ["language", "terms"],
     ["language", "terminology"],
+    ["chess"],
     ["geography", "continents"],
     ["mathematics", "beginner-volume-one"],
     ["mathematics", "one-two-three"],
@@ -71,7 +72,7 @@ function createStubRegistry(calls) {
       summary: path.join(" "),
       run: async (args) => {
         calls.push({ path: path.join(" "), args: [...args] });
-        if (path[0] === "language") {
+        if (path[0] === "language" || path[0] === "chess") {
           console.log(`${path.join(" ")} output`);
         }
       }
@@ -130,13 +131,10 @@ test("Linguistic Terms menu exposes General before language groups", () => {
   );
 });
 
-test("only chess remains a placeholder in the menu", () => {
+test("no main menu items remain placeholders", () => {
   const placeholderItems = getMainMenuItems().filter((item) => item.kind === "placeholder");
 
-  assert.deepEqual(
-    placeholderItems.map((item) => item.label),
-    ["Chess"]
-  );
+  assert.deepEqual(placeholderItems, []);
 });
 
 test("geography menu exposes continents and back", () => {
@@ -213,7 +211,7 @@ test("language menu routes Linguistic Terms groups to the registered command", a
   assert.match(terminal.output, /Use Up\/Down or PageUp\/PageDown to scroll/);
 });
 
-test("placeholder module screen returns without running a command", async () => {
+test("chess menu item routes to the registered command", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
     key("down"),
@@ -224,9 +222,10 @@ test("placeholder module screen returns without running a command", async () => 
 
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
-  assert.deepEqual(calls, []);
+  assert.deepEqual(calls, [{ path: "chess", args: [] }]);
   assert.match(terminal.output, /Chess/);
-  assert.match(terminal.output, /This module is not implemented yet/);
+  assert.match(terminal.output, /chess output/);
+  assert.match(terminal.output, /Use Up\/Down or PageUp\/PageDown to scroll/);
 });
 
 test("geography menu routes continents to the registered command", async () => {
