@@ -1,6 +1,6 @@
 import type { DomainModule } from "../core";
 import { languageKorean } from "./korean";
-import { languageTerminology } from "./linguistic-terminology";
+import { languageTerminology, languageTerms } from "./linguistic-terminology";
 
 export * from "./korean";
 export * from "./linguistic-terminology";
@@ -37,6 +37,13 @@ export const languageModule: DomainModule = {
       summary: "Browse the bundled linguistic terminology glossary",
       run: async (args) => {
         await languageTerminology(args);
+      }
+    });
+    context.cli.register({
+      path: ["language", "terms"],
+      summary: "Browse installed Linguistic Terminology package content",
+      run: async (args) => {
+        await languageTerms(args);
       }
     });
   }

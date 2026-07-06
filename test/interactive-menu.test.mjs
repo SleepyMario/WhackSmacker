@@ -56,6 +56,7 @@ function createStubRegistry(calls) {
 
   for (const path of [
     ["language", "korean"],
+    ["language", "terms"],
     ["language", "terminology"],
     ["geography", "continents"],
     ["mathematics", "beginner-volume-one"],
@@ -103,6 +104,7 @@ test("arguments continue to select normal CLI routing", () => {
   assert.equal(resolveCliCommand(registry, ["status"]), null);
   assert.equal(resolveCliCommand(registry, ["language", "status"]), null);
   assert.equal(resolveCliCommand(registry, ["language", "korean"])?.path.join(" "), "language korean");
+  assert.equal(resolveCliCommand(registry, ["language", "terms"])?.path.join(" "), "language terms");
   assert.equal(resolveCliCommand(registry, ["language", "terminology"])?.path.join(" "), "language terminology");
 });
 
@@ -179,6 +181,7 @@ test("menu selection routes to Korean", async () => {
   assert.deepEqual(calls, [{ path: "language korean", args: [] }]);
   assert.match(terminal.output, /WhackSmacker Will Whack That Smack Into Your Brains/);
   assert.match(terminal.output, /Korean\n\nlanguage korean output\n\nPress Escape or Enter to return\./);
+  assert.match(terminal.output, /Use Up\/Down or PageUp\/PageDown to scroll/);
   assert.equal(terminal.restoreCount, 2);
 });
 
@@ -195,8 +198,9 @@ test("language menu routes linguistic terminology to the registered command", as
 
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
-  assert.deepEqual(calls, [{ path: "language terminology", args: [] }]);
-  assert.match(terminal.output, /Linguistic Terminology\n\nlanguage terminology output\n\nPress Escape or Enter to return\./);
+  assert.deepEqual(calls, [{ path: "language terms", args: [] }]);
+  assert.match(terminal.output, /Linguistic Terminology\n\nlanguage terms output\n\nPress Escape or Enter to return\./);
+  assert.match(terminal.output, /Use Up\/Down or PageUp\/PageDown to scroll/);
 });
 
 test("placeholder module screen returns without running a command", async () => {

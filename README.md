@@ -61,10 +61,13 @@ Installed Korean curriculum content and language terminology are available throu
 
 ```sh
 whacksmacker language korean [--file <path>] [--version <version>] [--data-dir <dir>]
+whacksmacker language terms [--file <path>] [--version <version>] [--data-dir <dir>]
 whacksmacker language terminology [--search <text>] [--category <name>] [--id <stable-id>]
 ```
 
 The Korean command discovers the installed `com.sleepymario.language.korean` content package and lists Hangul Foundation readable entries. If the package is not installed, it prints a native package-install message instead of using any Anki-backed state.
+
+The `language terms` command discovers the installed `com.sleepymario.language.linguistic-terminology` content package and lists readable glossary source files. Use `language terminology` for the bundled searchable snapshot.
 
 The linguistic terminology command displays a bundled snapshot from the standalone `linguistic-terminology` repository. The canonical glossary remains separate, and packaged WhackSmacker does not need the sibling repository or a network connection at runtime.
 
@@ -199,6 +202,8 @@ whacksmacker content files com.sleepymario.language.korean
 whacksmacker content read com.sleepymario.language.korean --file units/hangul-foundation/README.md
 whacksmacker language korean
 whacksmacker language korean --file units/hangul-foundation/README.md
+whacksmacker language terms
+whacksmacker language terms --file INDEX.md
 ```
 
 Content packages may also declare reviewable memorization items using the v1 schema in `schemas/memorization-item-v1.schema.json`. WhackSmacker stores native review progress separately using `schemas/review-progress-v1.schema.json`; installed package content remains read-only.

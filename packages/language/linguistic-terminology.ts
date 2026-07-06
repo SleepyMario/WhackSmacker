@@ -1,4 +1,13 @@
+import {
+  listInstalledReadablePackages,
+  listReadableContentEntries,
+  readInstalledContentEntry,
+  renderReadingContent,
+  type ReadableContentEntry
+} from "../core";
 import { linguisticTerminologySnapshot } from "./linguistic-terminology-snapshot";
+
+export const linguisticTerminologyPackageId = "com.sleepymario.language.linguistic-terminology";
 
 export interface RelatedLinguisticTerm {
   readonly label: string;
@@ -28,6 +37,20 @@ export interface RenderTerminologyOptions {
   readonly query?: string;
   readonly category?: string;
   readonly id?: string;
+}
+
+export interface LinguisticTermsOptions {
+  readonly dataDir?: string;
+  readonly packageVersion?: string;
+  readonly file?: string;
+}
+
+export interface LinguisticTermsOverview {
+  readonly installed: boolean;
+  readonly packageId: string;
+  readonly packageVersion?: string;
+  readonly displayName?: string;
+  readonly readableEntries: readonly ReadableContentEntry[];
 }
 
 export function getLinguisticTerminologySnapshot(): LinguisticTerminologySnapshot {
@@ -111,6 +134,106 @@ export function renderLinguisticTerminology(options: RenderTerminologyOptions = 
 export async function languageTerminology(args: readonly string[]): Promise<void> {
   const options = parseTerminologyArgs(args);
   console.log(renderLinguisticTerminology(options));
+}
+
+export async function getLinguisticTermsOverview(options: LinguisticTermsOptions = {}): Promise<LinguisticTermsOverview> {
+  const installedPackages = await listInstalledReadablePackages(options.dataDir);
+  const selected = installedPackages
+    .filter((contentPackage) => contentPackage.packageId === linguisticTerminologyPackageId)
+    .filter((contentPackage) => options.packageVersion === undefined || contentPackage.packageVersion === options.packageVersion)
+    .sort((left, right) => compareSemver(right.packageVersion, left.packageVersion))[0];
+
+  if (selected === undefined) {
+    return {
+      installed: false,
+      packageId: linguisticTerminologyPackageId,
+      packageVersion: options.packageVersion,
+      readableEntries: []
+    };
+  }
+
+  return {
+    installed: true,
+    packageId: selected.packageId,
+    packageVersion: selected.packageVersion,
+    displayName: selected.displayName,
+    readableEntries: await listReadableContentEntries(linguisticTerminologyPackageId, options.dataDir, selected.packageVersion)
+  };
+}
+
+export async function renderLinguisticTerms(options: LinguisticTermsOptions = {}): Promise<string> {
+  const overview = await getLinguisticTermsOverview(options);
+
+  if (!overview.installed) {
+    return renderLinguisticTermsOverview(overview);
+  }
+
+  if (options.file !== undefined) {
+    return renderReadingContent(
+      await readInstalledContentEntry({
+        dataDir: options.dataDir,
+        packageId: linguisticTerminologyPackageId,
+        packageVersion: overview.packageVersion,
+        path: options.file
+      })
+    );
+  }
+
+  return renderLinguisticTermsOverview(overview);
+}
+
+export function renderLinguisticTermsOverview(overview: LinguisticTermsOverview): string {
+  const lines = [
+    "Linguistic Terminology",
+    "",
+    "Native terminology content is loaded from the installed WhackSmacker terminology package.",
+    "",
+    `Package: ${overview.packageId}`
+  ];
+
+  if (!overview.installed) {
+    lines.push(
+      "Status: not installed",
+      "",
+      "Linguistic Terminology content is not installed.",
+      "Install the terminology content package before browsing terminology source files:",
+      "",
+      "  whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue <catalogue.json>",
+      "",
+      "After installation, rerun:",
+      "",
+      "  whacksmacker language terms"
+    );
+    return lines.join("\n");
+  }
+
+  lines.push(
+    "Status: installed",
+    `Version: ${overview.packageVersion ?? "unknown"}`,
+    `Title: ${overview.displayName ?? "Linguistic Terminology"}`,
+    "",
+    "Readable terminology entries"
+  );
+
+  if (overview.readableEntries.length === 0) {
+    lines.push("", "No readable terminology entries were found in the installed package.");
+    return lines.join("\n");
+  }
+
+  lines.push(
+    "",
+    ...prioritizedTermsEntries(overview.readableEntries).map((entry) => `- ${entry.path}`),
+    "",
+    "Open an entry with:",
+    "",
+    "  whacksmacker language terms --file <path>"
+  );
+
+  return lines.join("\n");
+}
+
+export async function languageTerms(args: readonly string[]): Promise<void> {
+  console.log(await renderLinguisticTerms(parseLinguisticTermsArgs(args)));
 }
 
 function selectTerms(options: RenderTerminologyOptions, snapshot: LinguisticTerminologySnapshot): readonly LinguisticTerm[] {
@@ -200,6 +323,36 @@ function parseTerminologyArgs(args: readonly string[]): RenderTerminologyOptions
   return options;
 }
 
+export function parseLinguisticTermsArgs(args: readonly string[]): LinguisticTermsOptions {
+  const options: { dataDir?: string; packageVersion?: string; file?: string } = {};
+
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+
+    if (arg === "--data-dir") {
+      options.dataDir = readValue(args, index, arg);
+      index += 1;
+      continue;
+    }
+
+    if (arg === "--version") {
+      options.packageVersion = readValue(args, index, arg);
+      index += 1;
+      continue;
+    }
+
+    if (arg === "--file") {
+      options.file = readValue(args, index, arg);
+      index += 1;
+      continue;
+    }
+
+    throw new Error("Usage: whacksmacker language terms [--file <path>] [--version <version>] [--data-dir <dir>]");
+  }
+
+  return options;
+}
+
 function readValue(args: readonly string[], index: number, option: string): string {
   const value = args[index + 1];
   if (value === undefined || value.trim().length === 0) {
@@ -229,4 +382,33 @@ function resolveRelatedTarget(sourceFile: string, target: string): string {
   }
 
   return `terms/${targetFile}#${anchor}`;
+}
+
+function prioritizedTermsEntries(entries: readonly ReadableContentEntry[]): readonly ReadableContentEntry[] {
+  return [...entries].sort((left, right) => entryPriority(left.path) - entryPriority(right.path) || left.path.localeCompare(right.path));
+}
+
+function entryPriority(path: string): number {
+  if (path === "INDEX.md") {
+    return 0;
+  }
+  if (path === "README.md") {
+    return 1;
+  }
+  if (path.startsWith("terms/")) {
+    return 2;
+  }
+  return 3;
+}
+
+function compareSemver(left: string, right: string): number {
+  const leftParts = left.split(".").map(Number);
+  const rightParts = right.split(".").map(Number);
+  for (let index = 0; index < 3; index += 1) {
+    const difference = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
+    if (difference !== 0) {
+      return difference;
+    }
+  }
+  return 0;
 }

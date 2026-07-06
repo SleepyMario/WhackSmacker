@@ -582,7 +582,7 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
 }
 
 async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal: Terminal, label: string): Promise<boolean> {
-  const commandPath = label === "Korean" ? ["language", "korean"] : ["language", "terminology"];
+  const commandPath = label === "Korean" ? ["language", "korean"] : ["language", "terms"];
   const command = registry.find(commandPath);
 
   if (command === null) {
@@ -590,7 +590,7 @@ async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal:
   }
 
   const output = await runCapturedLanguageCommand(terminal, command, []);
-  return showMessage(terminal, renderLanguageActionResult(label, output));
+  return showPagedMessage(terminal, renderLanguageActionResult(label, output));
 }
 
 async function runCapturedLanguageCommand(terminal: Terminal, command: CliCommand, args: readonly string[]): Promise<string> {
@@ -675,6 +675,52 @@ async function showMessage(terminal: Terminal, message: string, options: { clear
 
     if (isQuit(key)) {
       return true;
+    }
+  }
+}
+
+async function showPagedMessage(terminal: Terminal, message: string): Promise<boolean> {
+  const pageSize = 22;
+  const lines = message.split("\n");
+  let offset = 0;
+
+  while (true) {
+    const end = Math.min(offset + pageSize, lines.length);
+    const page = lines.slice(offset, end).join("\n");
+    const status = `\n\nLines ${offset + 1}-${end} of ${lines.length}. Use Up/Down or PageUp/PageDown to scroll. Enter/Escape returns. q quits.`;
+    terminal.write(`\x1b[2J\x1b[H${page}${status}`);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+
+    if (isEscape(key) || isEnter(key)) {
+      return false;
+    }
+
+    if (isQuit(key)) {
+      return true;
+    }
+
+    if (isUp(key)) {
+      offset = Math.max(0, offset - 1);
+      continue;
+    }
+
+    if (isDown(key)) {
+      offset = Math.min(Math.max(0, lines.length - pageSize), offset + 1);
+      continue;
+    }
+
+    if (key.name === "pageup") {
+      offset = Math.max(0, offset - pageSize);
+      continue;
+    }
+
+    if (key.name === "pagedown" || key.name === "space") {
+      offset = Math.min(Math.max(0, lines.length - pageSize), offset + pageSize);
     }
   }
 }
