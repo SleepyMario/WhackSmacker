@@ -98,6 +98,8 @@ Content package commands:
   whacksmacker content updates --catalogue <catalogue.json> [--data-dir <dir>]
   whacksmacker content update <package-id> --catalogue <catalogue.json> [--data-dir <dir>]
   whacksmacker content remove <package-id> --version <version> [--data-dir <dir>]
+  whacksmacker content read [<package-id>] [--file <path>] [--version <version>] [--data-dir <dir>]
+  whacksmacker content files <package-id> [--version <version>] [--data-dir <dir>]
 
 Modules:
   Language      AnkiConnect review and linguistic terminology

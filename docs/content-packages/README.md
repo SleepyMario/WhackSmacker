@@ -1,8 +1,8 @@
 # Downloadable Content Packages
 
-Roadmap Points 1 through 4 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, and local package management.
+Roadmap Points 1 through 5 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, and passive installed-content reading.
 
-It does not implement reading, memorization items, scheduling, or Anki replacement.
+It does not implement memorization items, scheduling, exercise rendering, reading-to-review integration, or Anki replacement.
 
 ## Fundamental Rule
 
@@ -31,7 +31,8 @@ The application, downloaded package content, and user progress/settings remain s
 - separation between package content and user progress;
 - local package catalogue format;
 - local catalogue generation from existing `.wspkg` archives;
-- local package fetch, install, update, remove, and registry management.
+- local package fetch, install, update, remove, and registry management;
+- passive reading of installed package text content.
 
 ## Generator Targets
 
@@ -80,6 +81,8 @@ The catalogue describes available package archives. It is not:
 
 Point 4 uses catalogues for local package fetch, install, update, and remove behavior. It still does not render or read installed content.
 
+Point 5 reads installed package text content without writing user progress.
+
 ## Not Defined Yet
 
 - subject-specific content schemas;
@@ -87,7 +90,7 @@ Point 4 uses catalogues for local package fetch, install, update, and remove beh
 - reader behavior;
 - memorization item schema;
 - native scheduler behavior;
-- package content reading.
+- memorization and review behavior.
 
 ## Files
 
@@ -96,6 +99,7 @@ Point 4 uses catalogues for local package fetch, install, update, and remove beh
 - [Package Format v1](package-format-v1.md)
 - [Security](security.md)
 - [Package Management](package-management.md)
+- [Reading Interface](reading-interface.md)
 - [Manifest Schema](../../schemas/content-package-manifest-v1.schema.json)
 - [Catalogue Schema](../../schemas/content-package-catalogue-v1.schema.json)
 - [Korean example manifest](examples/korean-manifest.example.json)

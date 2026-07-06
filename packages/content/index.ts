@@ -1,9 +1,13 @@
 import {
   detectContentPackageUpdates,
   installContentPackage,
+  listInstalledReadablePackages,
   listAvailableContentPackages,
   listInstalledContentPackages,
+  listReadableContentEntries,
+  readInstalledContentEntry,
   removeContentPackage,
+  renderReadingContent,
   updateContentPackage,
   type DomainModule,
   type InstalledPackageRecord
@@ -106,6 +110,57 @@ export const contentModule: DomainModule = {
         }
       }
     });
+
+    context.cli.register({
+      path: ["content", "files"],
+      summary: "List readable files in an installed content package",
+      run: async (args) => {
+        const parsed = parsePackageCommand(args, []);
+        const entries = await listReadableContentEntries(parsed.packageId, parsed.options.dataDir, parsed.options.version);
+        console.log(`Readable files for ${parsed.packageId}${parsed.options.version === undefined ? "" : ` ${parsed.options.version}`}:`);
+        for (const entry of entries) {
+          console.log(`- ${entry.path} ${entry.mediaType}`);
+        }
+      }
+    });
+
+    context.cli.register({
+      path: ["content", "read"],
+      summary: "Read installed package content",
+      run: async (args) => {
+        if (args.length === 0 || args[0]?.startsWith("--")) {
+          const options = parseOptions(args, []);
+          const packages = await listInstalledReadablePackages(options.dataDir);
+          if (packages.length === 0) {
+            console.log("No readable content packages installed.");
+            return;
+          }
+          console.log("Readable content packages:");
+          for (const contentPackage of packages) {
+            console.log(`- ${contentPackage.packageId} ${contentPackage.packageVersion} ${contentPackage.displayName}`);
+          }
+          return;
+        }
+
+        const parsed = parsePackageCommand(args, []);
+        if (parsed.options.file === undefined) {
+          const entries = await listReadableContentEntries(parsed.packageId, parsed.options.dataDir, parsed.options.version);
+          console.log(`Readable files for ${parsed.packageId}${parsed.options.version === undefined ? "" : ` ${parsed.options.version}`}:`);
+          for (const entry of entries) {
+            console.log(`- ${entry.path} ${entry.mediaType}`);
+          }
+          return;
+        }
+
+        const result = await readInstalledContentEntry({
+          dataDir: parsed.options.dataDir,
+          packageId: parsed.packageId,
+          packageVersion: parsed.options.version,
+          path: parsed.options.file
+        });
+        console.log(renderReadingContent(result));
+      }
+    });
   }
 };
 
@@ -115,6 +170,7 @@ interface ParsedOptions {
   readonly version?: string;
   readonly force?: boolean;
   readonly all?: boolean;
+  readonly file?: string;
 }
 
 function printInstalled(packages: readonly InstalledPackageRecord[]): void {
@@ -142,6 +198,7 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
   let version: string | undefined;
   let force = false;
   let all = false;
+  let file: string | undefined;
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -158,6 +215,9 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
       force = true;
     } else if (arg === "--all") {
       all = true;
+    } else if (arg === "--file") {
+      file = readValue(args, index, arg);
+      index += 1;
     } else {
       throw new Error(`Unknown content option: ${arg}`);
     }
@@ -169,7 +229,7 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
     }
   }
 
-  return { catalogue, dataDir, version, force, all };
+  return { catalogue, dataDir, version, force, all, file };
 }
 
 function readValue(args: readonly string[], index: number, option: string): string {

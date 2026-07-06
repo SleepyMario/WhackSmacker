@@ -235,6 +235,14 @@ whacksmacker content remove com.sleepymario.language.korean --version 0.1.0
 
 Installed package content remains separate from user progress and settings.
 
+Read installed package content:
+
+```sh
+whacksmacker content read
+whacksmacker content files com.sleepymario.language.korean
+whacksmacker content read com.sleepymario.language.korean --file units/hangul-foundation/README.md
+```
+
 Tests use local mock HTTP servers and do not require a running Anki instance.
 
 ## Real-Anki Validation Checklist

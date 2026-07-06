@@ -89,4 +89,4 @@ whacksmacker content remove <package-id> --version <version> [--data-dir <dir>]
 source repositories -> .wspkg files -> local catalogue JSON -> local installed packages
 ```
 
-Reading installed content begins in Roadmap Point 5.
+Reading installed content begins in Roadmap Point 5 and remains passive. Reading progress is not recorded in package directories.

@@ -27,8 +27,10 @@ test("application CLI registry exposes language commands and the geography proto
 
   assert.deepEqual(registeredPaths(registry), [
     "content available",
+    "content files",
     "content install",
     "content installed",
+    "content read",
     "content remove",
     "content update",
     "content updates",

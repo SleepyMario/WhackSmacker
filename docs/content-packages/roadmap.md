@@ -37,9 +37,11 @@ This point does not add a reading interface or user-progress storage.
 
 ## Point 5 -- Reading Interface
 
-Status: not started
+Status: implemented
 
-Will render installed package content for learner reading.
+Adds passive browsing and rendering of readable text content from installed packages.
+
+This point does not add memorization items, scheduling, exercise rendering, reading-to-review integration, or user-progress writes.
 
 ## Point 6 -- Memorization-Item Schema
 

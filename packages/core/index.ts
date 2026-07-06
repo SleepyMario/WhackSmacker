@@ -2,6 +2,7 @@ export * from "./cli";
 export * from "./content-package-catalogue";
 export * from "./content-package-generator";
 export * from "./content-package-manager";
+export * from "./content-package-reader";
 export * from "./content-package-spec";
 export * from "./features";
 export * from "./logging";
