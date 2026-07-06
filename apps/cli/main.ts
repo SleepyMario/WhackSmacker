@@ -44,8 +44,8 @@ Language commands:
   wsm language korean [--file <path>] [--version <version>] [--data-dir <dir>]
       Browse installed Korean curriculum content, including Hangul Foundation entries.
 
-  whacksmacker language terms [--file <path>] [--version <version>] [--data-dir <dir>]
-  wsm language terms [--file <path>] [--version <version>] [--data-dir <dir>]
+  whacksmacker language terms [<group>] [--file <path>] [--version <version>] [--data-dir <dir>]
+  wsm language terms [<group>] [--file <path>] [--version <version>] [--data-dir <dir>]
       Browse installed Linguistic Terminology package content.
 
   whacksmacker language terminology [--search <text>] [--category <name>] [--id <stable-id>]

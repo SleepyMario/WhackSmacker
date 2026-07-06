@@ -102,7 +102,7 @@ test("help prints native WhackSmacker usage", async () => {
   assert.match(result.stdout, /^WhackSmacker/);
   assert.match(result.stdout, /A modular terminal application/);
   assert.match(result.stdout, /whacksmacker language korean \[--file <path>\]/);
-  assert.match(result.stdout, /whacksmacker language terms \[--file <path>\]/);
+  assert.match(result.stdout, /whacksmacker language terms \[<group>\] \[--file <path>\]/);
   assert.match(result.stdout, /whacksmacker language terminology \[--search <text>\]/);
   assert.match(result.stdout, /whacksmacker review sources/);
   assert.match(result.stdout, /whacksmacker review due/);

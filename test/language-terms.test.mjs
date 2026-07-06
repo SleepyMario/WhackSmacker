@@ -12,6 +12,7 @@ import {
 } from "../dist/packages/core/index.js";
 import {
   getLinguisticTermsOverview,
+  groupLinguisticTermsEntries,
   linguisticTerminologyPackageId,
   renderLinguisticTerms
 } from "../dist/packages/language/index.js";
@@ -46,15 +47,29 @@ test("installed Linguistic Terminology package exposes readable glossary entries
     assert.equal(overview.installed, true);
     assert.equal(overview.packageId, linguisticTerminologyPackageId);
     assert.equal(overview.packageVersion, "0.1.0");
+    assert.deepEqual(overview.groups.map((group) => group.label), ["General", "Korean"]);
     assert.ok(overview.readableEntries.some((entry) => entry.path === "INDEX.md"));
     assert.ok(overview.readableEntries.some((entry) => entry.path === "terms/korean.md"));
-    assert.match(rendered, /Readable terminology entries/);
-    assert.match(rendered, /INDEX\.md/);
-    assert.match(rendered, /terms\/korean\.md/);
+    assert.match(rendered, /Groups/);
+    assert.match(rendered, /- General \(/);
+    assert.match(rendered, /- Korean \(/);
     assert.doesNotMatch(rendered, /Anki|deck/u);
   } finally {
     await fixture.cleanup();
   }
+});
+
+test("Linguistic Terms grouping pins General before alphabetized language groups", () => {
+  const groups = groupLinguisticTermsEntries([
+    readableEntry("terms/korean.md"),
+    readableEntry("terms/writing-systems.md"),
+    readableEntry("terms/japanese.md"),
+    readableEntry("INDEX.md"),
+    readableEntry("terms/arabic.md")
+  ]);
+
+  assert.deepEqual(groups.map((group) => group.label), ["General", "Arabic", "Japanese", "Korean"]);
+  assert.deepEqual(groups[0].entries.map((entry) => entry.path), ["INDEX.md", "terms/writing-systems.md"]);
 });
 
 test("Linguistic Terms command opens installed Markdown through the reading interface", async () => {
@@ -73,12 +88,38 @@ test("Linguistic Terms command opens installed Markdown through the reading inte
   }
 });
 
+test("Linguistic Terms groups filter readable entries", async () => {
+  const fixture = await createInstalledTermsFixture();
+  try {
+    const general = await renderLinguisticTerms({
+      dataDir: fixture.dataDir,
+      group: "general"
+    });
+    const korean = await renderLinguisticTerms({
+      dataDir: fixture.dataDir,
+      group: "korean"
+    });
+
+    assert.match(general, /^Linguistic Terms/u);
+    assert.match(general, /General\n\nReadable entries:/u);
+    assert.match(general, /INDEX\.md/u);
+    assert.doesNotMatch(general, /terms\/korean\.md/u);
+    assert.match(korean, /Korean\n\nReadable entries:/u);
+    assert.match(korean, /terms\/korean\.md/u);
+    assert.doesNotMatch(korean, /INDEX\.md/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("language terms CLI handles missing and installed package states", async () => {
   const fixture = await createInstalledTermsFixture();
   const missingRoot = await mkdtemp(join(tmpdir(), "wsm-terms-cli-missing-"));
   try {
     const missing = await runCli(["language", "terms", "--data-dir", join(missingRoot, "data")]);
     const overview = await runCli(["language", "terms", "--data-dir", fixture.dataDir]);
+    const general = await runCli(["language", "terms", "general", "--data-dir", fixture.dataDir]);
+    const korean = await runCli(["language", "terms", "korean", "--data-dir", fixture.dataDir]);
     const index = await runCli([
       "language",
       "terms",
@@ -91,7 +132,12 @@ test("language terms CLI handles missing and installed package states", async ()
     assert.equal(missing.exitCode, 0);
     assert.match(missing.stdout, /Linguistic Terminology content is not installed/);
     assert.equal(overview.exitCode, 0);
-    assert.match(overview.stdout, /terms\/korean\.md/);
+    assert.match(overview.stdout, /- General \(/);
+    assert.match(overview.stdout, /- Korean \(/);
+    assert.equal(general.exitCode, 0);
+    assert.match(general.stdout, /INDEX\.md/);
+    assert.equal(korean.exitCode, 0);
+    assert.match(korean.stdout, /terms\/korean\.md/);
     assert.equal(index.exitCode, 0);
     assert.match(index.stdout, /# Index/);
   } finally {
@@ -129,6 +175,15 @@ async function createInstalledTermsFixture() {
   };
 }
 
+function readableEntry(path) {
+  return {
+    path,
+    mediaType: "text/markdown",
+    title: path,
+    source: "snapshot"
+  };
+}
+
 async function runCli(args) {
   const child = spawn(process.execPath, ["dist/main.js", ...args], { cwd: process.cwd(), stdio: ["ignore", "pipe", "pipe"] });
   let stdout = "";
@@ -147,4 +202,3 @@ async function runCli(args) {
   });
   return { exitCode, stdout, stderr };
 }
-

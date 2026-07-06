@@ -7,6 +7,7 @@ import {
   getBeginnerMathematicsMenuItems,
   getGeographyMenuItems,
   getLanguageMenuItems,
+  getLinguisticTermsMenuItems,
   getMainMenuItems,
   getMathematicsMenuItems,
   getOneTwoThreeMenuItems,
@@ -115,10 +116,17 @@ test("main menu exposes all registered domain modules", () => {
   );
 });
 
-test("language menu exposes Korean, terminology, and back", () => {
+test("language menu exposes Korean, Linguistic Terms, and back", () => {
   assert.deepEqual(
     getLanguageMenuItems().map((item) => item.label),
-    ["Korean", "Linguistic Terminology", "Back"]
+    ["Korean", "Linguistic Terms", "Back"]
+  );
+});
+
+test("Linguistic Terms menu exposes General before language groups", () => {
+  assert.deepEqual(
+    getLinguisticTermsMenuItems().map((item) => item.label),
+    ["General", "Korean", "Back"]
   );
 });
 
@@ -185,7 +193,7 @@ test("menu selection routes to Korean", async () => {
   assert.equal(terminal.restoreCount, 2);
 });
 
-test("language menu routes linguistic terminology to the registered command", async () => {
+test("language menu routes Linguistic Terms groups to the registered command", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
@@ -193,13 +201,15 @@ test("language menu routes linguistic terminology to the registered command", as
     key("return"),
     key("return"),
     key("escape"),
+    key("escape"),
+    key("escape"),
     key("escape")
   ]);
 
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
-  assert.deepEqual(calls, [{ path: "language terms", args: [] }]);
-  assert.match(terminal.output, /Linguistic Terminology\n\nlanguage terms output\n\nPress Escape or Enter to return\./);
+  assert.deepEqual(calls, [{ path: "language terms", args: ["general"] }]);
+  assert.match(terminal.output, /General\n\nlanguage terms output\n\nPress Escape or Enter to return\./);
   assert.match(terminal.output, /Use Up\/Down or PageUp\/PageDown to scroll/);
 });
 

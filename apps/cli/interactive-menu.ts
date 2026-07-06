@@ -99,7 +99,13 @@ const mainMenuItems: readonly MenuItem[] = [
 
 const languageMenuItems: readonly MenuItem[] = [
   { label: "Korean", kind: "language", moduleId: "language" },
-  { label: "Linguistic Terminology", kind: "language", moduleId: "language" },
+  { label: "Linguistic Terms", kind: "language", moduleId: "language" },
+  { label: "Back", kind: "back" }
+];
+
+const linguisticTermsMenuItems: readonly MenuItem[] = [
+  { label: "General", kind: "language", moduleId: "language" },
+  { label: "Korean", kind: "language", moduleId: "language" },
   { label: "Back", kind: "back" }
 ];
 
@@ -133,6 +139,10 @@ export function getMainMenuItems(): readonly MenuItem[] {
 
 export function getLanguageMenuItems(): readonly MenuItem[] {
   return languageMenuItems;
+}
+
+export function getLinguisticTermsMenuItems(): readonly MenuItem[] {
+  return linguisticTermsMenuItems;
 }
 
 export function getGeographyMenuItems(): readonly MenuItem[] {
@@ -574,7 +584,55 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
       return false;
     }
 
-    const quit = await runLanguageAction(registry, terminal, item.label);
+    const quit = item.label === "Linguistic Terms"
+      ? await runLinguisticTermsMenu(registry, terminal)
+      : await runLanguageAction(registry, terminal, item.label);
+    if (quit) {
+      return true;
+    }
+  }
+}
+
+async function runLinguisticTermsMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+  let selection = 0;
+
+  while (true) {
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nLanguage\nLinguistic Terms\n`, linguisticTermsMenuItems, selection);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+
+    if (isEscape(key)) {
+      return false;
+    }
+
+    if (isQuit(key)) {
+      return true;
+    }
+
+    if (isUp(key)) {
+      selection = wrapSelection(selection - 1, linguisticTermsMenuItems.length);
+      continue;
+    }
+
+    if (isDown(key)) {
+      selection = wrapSelection(selection + 1, linguisticTermsMenuItems.length);
+      continue;
+    }
+
+    if (!isEnter(key)) {
+      continue;
+    }
+
+    const item = linguisticTermsMenuItems[selection];
+    if (item.kind === "back") {
+      return false;
+    }
+
+    const quit = await runLinguisticTermsAction(registry, terminal, item.label);
     if (quit) {
       return true;
     }
@@ -582,7 +640,7 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
 }
 
 async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal: Terminal, label: string): Promise<boolean> {
-  const commandPath = label === "Korean" ? ["language", "korean"] : ["language", "terms"];
+  const commandPath = ["language", "korean"];
   const command = registry.find(commandPath);
 
   if (command === null) {
@@ -590,6 +648,18 @@ async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal:
   }
 
   const output = await runCapturedLanguageCommand(terminal, command, []);
+  return showPagedMessage(terminal, renderLanguageActionResult(label, output));
+}
+
+async function runLinguisticTermsAction(registry: InMemoryCliCommandRegistry, terminal: Terminal, label: string): Promise<boolean> {
+  const commandPath = ["language", "terms"];
+  const command = registry.find(commandPath);
+
+  if (command === null) {
+    return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
+  }
+
+  const output = await runCapturedLanguageCommand(terminal, command, [label.toLocaleLowerCase()]);
   return showPagedMessage(terminal, renderLanguageActionResult(label, output));
 }
 

@@ -43,6 +43,7 @@ export interface LinguisticTermsOptions {
   readonly dataDir?: string;
   readonly packageVersion?: string;
   readonly file?: string;
+  readonly group?: string;
 }
 
 export interface LinguisticTermsOverview {
@@ -50,7 +51,14 @@ export interface LinguisticTermsOverview {
   readonly packageId: string;
   readonly packageVersion?: string;
   readonly displayName?: string;
+  readonly groups: readonly LinguisticTermsGroup[];
   readonly readableEntries: readonly ReadableContentEntry[];
+}
+
+export interface LinguisticTermsGroup {
+  readonly id: string;
+  readonly label: string;
+  readonly entries: readonly ReadableContentEntry[];
 }
 
 export function getLinguisticTerminologySnapshot(): LinguisticTerminologySnapshot {
@@ -148,16 +156,20 @@ export async function getLinguisticTermsOverview(options: LinguisticTermsOptions
       installed: false,
       packageId: linguisticTerminologyPackageId,
       packageVersion: options.packageVersion,
+      groups: [],
       readableEntries: []
     };
   }
+
+  const readableEntries = await listReadableContentEntries(linguisticTerminologyPackageId, options.dataDir, selected.packageVersion);
 
   return {
     installed: true,
     packageId: selected.packageId,
     packageVersion: selected.packageVersion,
     displayName: selected.displayName,
-    readableEntries: await listReadableContentEntries(linguisticTerminologyPackageId, options.dataDir, selected.packageVersion)
+    groups: groupLinguisticTermsEntries(readableEntries),
+    readableEntries
   };
 }
 
@@ -179,12 +191,16 @@ export async function renderLinguisticTerms(options: LinguisticTermsOptions = {}
     );
   }
 
+  if (options.group !== undefined) {
+    return renderLinguisticTermsGroup(overview, options.group);
+  }
+
   return renderLinguisticTermsOverview(overview);
 }
 
 export function renderLinguisticTermsOverview(overview: LinguisticTermsOverview): string {
   const lines = [
-    "Linguistic Terminology",
+    "Linguistic Terms",
     "",
     "Native terminology content is loaded from the installed WhackSmacker terminology package.",
     "",
@@ -202,7 +218,7 @@ export function renderLinguisticTermsOverview(overview: LinguisticTermsOverview)
       "",
       "After installation, rerun:",
       "",
-      "  whacksmacker language terms"
+    "  whacksmacker language terms"
     );
     return lines.join("\n");
   }
@@ -212,7 +228,7 @@ export function renderLinguisticTermsOverview(overview: LinguisticTermsOverview)
     `Version: ${overview.packageVersion ?? "unknown"}`,
     `Title: ${overview.displayName ?? "Linguistic Terminology"}`,
     "",
-    "Readable terminology entries"
+    "Groups"
   );
 
   if (overview.readableEntries.length === 0) {
@@ -222,11 +238,50 @@ export function renderLinguisticTermsOverview(overview: LinguisticTermsOverview)
 
   lines.push(
     "",
-    ...prioritizedTermsEntries(overview.readableEntries).map((entry) => `- ${entry.path}`),
+    ...overview.groups.map((group) => `- ${group.label} (${group.entries.length} entries)`),
+    "",
+    "Open a group with:",
+    "",
+    "  whacksmacker language terms <group>",
     "",
     "Open an entry with:",
     "",
     "  whacksmacker language terms --file <path>"
+  );
+
+  return lines.join("\n");
+}
+
+export function renderLinguisticTermsGroup(overview: LinguisticTermsOverview, groupName: string): string {
+  const normalizedGroup = normalizeGroupName(groupName);
+  const group = overview.groups.find((candidate) => candidate.id === normalizedGroup || normalizeGroupName(candidate.label) === normalizedGroup);
+  const lines = [
+    "Linguistic Terms",
+    "",
+    `Package: ${overview.packageId}`,
+    `Version: ${overview.packageVersion ?? "unknown"}`,
+    ""
+  ];
+
+  if (group === undefined) {
+    lines.push(
+      `Group not found: ${groupName}`,
+      "",
+      "Available groups:",
+      ...overview.groups.map((candidate) => `- ${candidate.label}`)
+    );
+    return lines.join("\n");
+  }
+
+  lines.push(
+    group.label,
+    "",
+    "Readable entries:",
+    ...group.entries.map((entry) => `- ${entry.path}`),
+    "",
+    "Open an entry with:",
+    "",
+    `  whacksmacker language terms ${group.id} --file <path>`
   );
 
   return lines.join("\n");
@@ -324,7 +379,7 @@ function parseTerminologyArgs(args: readonly string[]): RenderTerminologyOptions
 }
 
 export function parseLinguisticTermsArgs(args: readonly string[]): LinguisticTermsOptions {
-  const options: { dataDir?: string; packageVersion?: string; file?: string } = {};
+  const options: { dataDir?: string; packageVersion?: string; file?: string; group?: string } = {};
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -347,7 +402,12 @@ export function parseLinguisticTermsArgs(args: readonly string[]): LinguisticTer
       continue;
     }
 
-    throw new Error("Usage: whacksmacker language terms [--file <path>] [--version <version>] [--data-dir <dir>]");
+    if (!arg.startsWith("--") && options.group === undefined) {
+      options.group = arg;
+      continue;
+    }
+
+    throw new Error("Usage: whacksmacker language terms [<group>] [--file <path>] [--version <version>] [--data-dir <dir>]");
   }
 
   return options;
@@ -364,6 +424,10 @@ function readValue(args: readonly string[], index: number, option: string): stri
 
 function normalizeSearchText(value: string): string {
   return value.toLocaleLowerCase();
+}
+
+function normalizeGroupName(value: string): string {
+  return value.trim().toLocaleLowerCase().replace(/\s+/gu, "-");
 }
 
 function resolveRelatedTarget(sourceFile: string, target: string): string {
@@ -387,6 +451,64 @@ function resolveRelatedTarget(sourceFile: string, target: string): string {
 function prioritizedTermsEntries(entries: readonly ReadableContentEntry[]): readonly ReadableContentEntry[] {
   return [...entries].sort((left, right) => entryPriority(left.path) - entryPriority(right.path) || left.path.localeCompare(right.path));
 }
+
+export function groupLinguisticTermsEntries(entries: readonly ReadableContentEntry[]): readonly LinguisticTermsGroup[] {
+  const groups = new Map<string, { label: string; entries: ReadableContentEntry[] }>();
+  groups.set("general", { label: "General", entries: [] });
+
+  for (const entry of entries) {
+    const group = groupForTermsEntry(entry.path);
+    const existing = groups.get(group.id) ?? { label: group.label, entries: [] };
+    existing.entries.push(entry);
+    groups.set(group.id, existing);
+  }
+
+  return [...groups.entries()]
+    .map(([id, group]) => ({
+      id,
+      label: group.label,
+      entries: prioritizedTermsEntries(group.entries)
+    }))
+    .filter((group) => group.entries.length > 0)
+    .sort((left, right) => {
+      if (left.id === "general") {
+        return -1;
+      }
+      if (right.id === "general") {
+        return 1;
+      }
+      return left.label.localeCompare(right.label);
+    });
+}
+
+function groupForTermsEntry(path: string): { id: string; label: string } {
+  const match = /^terms\/([^/]+)\.md$/u.exec(path);
+  if (match === null) {
+    return { id: "general", label: "General" };
+  }
+
+  const language = knownLanguageSpecificTermFiles.get(match[1]);
+  if (language === undefined) {
+    return { id: "general", label: "General" };
+  }
+
+  return { id: match[1], label: language };
+}
+
+const knownLanguageSpecificTermFiles = new Map<string, string>([
+  ["arabic", "Arabic"],
+  ["chinese", "Chinese"],
+  ["dutch", "Dutch"],
+  ["french", "French"],
+  ["german", "German"],
+  ["hindi", "Hindi"],
+  ["japanese", "Japanese"],
+  ["korean", "Korean"],
+  ["russian", "Russian"],
+  ["spanish", "Spanish"],
+  ["vietnamese", "Vietnamese"],
+  ["zulu", "Zulu"]
+]);
 
 function entryPriority(path: string): number {
   if (path === "INDEX.md") {
