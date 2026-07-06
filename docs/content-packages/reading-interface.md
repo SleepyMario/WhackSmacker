@@ -4,7 +4,7 @@ Roadmap Point 5 adds passive reading for installed content packages.
 
 The reader discovers installed packages through the Point 4 installed-package registry and reads files from installed package directories.
 
-It does not store reading progress, create memorization items, schedule reviews, render exercises, or connect reading to review.
+It does not store reading progress, schedule reviews, render exercises, or connect reading to review.
 
 ## Commands
 

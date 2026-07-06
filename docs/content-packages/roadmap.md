@@ -45,9 +45,11 @@ This point does not add memorization items, scheduling, exercise rendering, read
 
 ## Point 6 -- Memorization-Item Schema
 
-Status: not started
+Status: implemented
 
-Will define package content for memorization items.
+Defines and validates package-authored memorization item data, including stable item IDs, item kinds, prompt/answer content, optional hints, notes, tags, source references, language metadata, and difficulty metadata.
+
+This point does not add review queues, scheduling, answer checking, exercise rendering, or Anki migration.
 
 ## Point 7 -- Native Review Scheduler
 

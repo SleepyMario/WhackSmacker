@@ -1,8 +1,8 @@
 # Downloadable Content Packages
 
-Roadmap Points 1 through 5 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, and passive installed-content reading.
+Roadmap Points 1 through 6 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, and the package-authored memorization item schema.
 
-It does not implement memorization items, scheduling, exercise rendering, reading-to-review integration, or Anki replacement.
+It does not implement scheduling, exercise rendering, reading-to-review integration, or Anki replacement.
 
 ## Fundamental Rule
 
@@ -32,7 +32,8 @@ The application, downloaded package content, and user progress/settings remain s
 - local package catalogue format;
 - local catalogue generation from existing `.wspkg` archives;
 - local package fetch, install, update, remove, and registry management;
-- passive reading of installed package text content.
+- passive reading of installed package text content;
+- memorization item schema and validation helpers.
 
 ## Generator Targets
 
@@ -83,14 +84,14 @@ Point 4 uses catalogues for local package fetch, install, update, and remove beh
 
 Point 5 reads installed package text content without writing user progress.
 
+Point 6 defines package-authored reviewable item data without implementing review sessions or scheduler state.
+
 ## Not Defined Yet
 
 - subject-specific content schemas;
 - progress schema;
-- reader behavior;
-- memorization item schema;
 - native scheduler behavior;
-- memorization and review behavior.
+- review scheduling and answer grading behavior.
 
 ## Files
 
@@ -100,6 +101,8 @@ Point 5 reads installed package text content without writing user progress.
 - [Security](security.md)
 - [Package Management](package-management.md)
 - [Reading Interface](reading-interface.md)
+- [Memorization Items](memorization-items.md)
+- [Memorization Item Schema](../../schemas/memorization-item-v1.schema.json)
 - [Manifest Schema](../../schemas/content-package-manifest-v1.schema.json)
 - [Catalogue Schema](../../schemas/content-package-catalogue-v1.schema.json)
 - [Korean example manifest](examples/korean-manifest.example.json)

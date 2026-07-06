@@ -6,6 +6,7 @@ export * from "./content-package-reader";
 export * from "./content-package-spec";
 export * from "./features";
 export * from "./logging";
+export * from "./memorization-item";
 export * from "./modules";
 export * from "./paths";
 export * from "./ui";
