@@ -47,8 +47,10 @@ Roadmap Point 2 supports these deterministic generator targets:
 
 | Target | Package ID | Source repository |
 |---|---|---|
-| `linguistic-terminology` | `com.sleepymario.language.linguistic-terminology` | `/home/ashwin/Projects/languages/linguistic-terminology` |
-| `korean-curriculum` | `com.sleepymario.language.korean` | `/home/ashwin/Projects/languages/korean-curriculum` |
+| `linguistic-terminology` | `com.sleepymario.language.linguistic-terminology` | `/home/ashwin/Projects/whacksmacker-modules/linguistic-terminology` |
+| `korean-curriculum` | `com.sleepymario.language.korean` | `/home/ashwin/Projects/whacksmacker-modules/korean-curriculum` |
+
+Do not assume the old source paths under `/home/ashwin/Projects/languages`.
 
 Run:
 
@@ -112,6 +114,7 @@ Point 12 removes the old Anki-backed review path. `whacksmacker review` now refe
 ## Files
 
 - [Roadmap](roadmap.md)
+- [Post-Roadmap Audit](post-roadmap-audit.md)
 - [Architecture](architecture.md)
 - [Package Format v1](package-format-v1.md)
 - [Security](security.md)

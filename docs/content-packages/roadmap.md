@@ -2,6 +2,8 @@
 
 This roadmap describes the migration from provider-backed review toward WhackSmacker-owned learning and package management.
 
+Points 1 through 12 are implemented. See [Post-Roadmap Content System Audit](post-roadmap-audit.md) for the current implementation state, rough edges, and cleanup phase.
+
 ## Point 1 -- Package Specification
 
 Status: implemented

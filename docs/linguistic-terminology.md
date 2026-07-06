@@ -3,7 +3,7 @@
 WhackSmacker displays linguistic terminology from the standalone canonical repository:
 
 ```text
-/home/ashwin/Projects/languages/linguistic-terminology
+/home/ashwin/Projects/whacksmacker-modules/linguistic-terminology
 ```
 
 The terminology repository remains the source of truth. It is not a language curriculum and is not WhackSmacker application source code.
