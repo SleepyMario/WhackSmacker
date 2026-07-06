@@ -69,9 +69,11 @@ This point does not add reading-to-review integration, a full interactive native
 
 ## Point 9 -- Reading-to-Review Integration
 
-Status: not started
+Status: implemented
 
-Will connect reading progress to review and exercises.
+Connects installed reading content to package-authored memorization items. WhackSmacker can list review sources, list items by source, sync items into native review progress, render prompts and answers, list due items, and record review ratings from the terminal.
+
+This point does not add backups or migration, Anki parity tests, Anki removal, web UI, fuzzy answer grading, or a full interactive native review session.
 
 ## Point 10 -- Backups and Migration
 

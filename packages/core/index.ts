@@ -10,6 +10,7 @@ export * from "./logging";
 export * from "./memorization-item";
 export * from "./modules";
 export * from "./paths";
+export * from "./reading-review-integration";
 export * from "./review-progress-store";
 export * from "./review-scheduler";
 export * from "./ui";

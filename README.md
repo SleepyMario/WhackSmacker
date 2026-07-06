@@ -247,6 +247,16 @@ Content packages may also declare reviewable memorization items using the v1 sch
 
 Terminal exercise renderers can display memorization items as separated prompt and answer text. They do not grade answers or create a full native review session yet.
 
+Connect installed reading content to native review items:
+
+```sh
+whacksmacker review sources --data-dir ~/.local/share/whacksmacker/content
+whacksmacker review items --package com.sleepymario.language.korean
+whacksmacker review due --package com.sleepymario.language.korean
+whacksmacker review show com.sleepymario.language.korean <item-id> --answer
+whacksmacker review answer com.sleepymario.language.korean <item-id> --rating good
+```
+
 Tests use local mock HTTP servers and do not require a running Anki instance.
 
 ## Real-Anki Validation Checklist

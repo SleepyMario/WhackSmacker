@@ -5,10 +5,17 @@ import {
   listAvailableContentPackages,
   listInstalledContentPackages,
   listReadableContentEntries,
+  listIntegratedDueReviewItems,
+  listReadingReviewItems,
+  listReadingReviewSources,
   readInstalledContentEntry,
+  recordReadingReviewAnswer,
   removeContentPackage,
+  renderReadingReviewItem,
   renderReadingContent,
+  syncReadingReviewItems,
   updateContentPackage,
+  isReviewRating,
   type DomainModule,
   type InstalledPackageRecord
 } from "../core";
@@ -161,6 +168,120 @@ export const contentModule: DomainModule = {
         console.log(renderReadingContent(result));
       }
     });
+
+    context.cli.register({
+      path: ["review", "sources"],
+      summary: "List reading files that have review items",
+      run: async (args) => {
+        const options = parseOptions(args, []);
+        const sources = await listReadingReviewSources({
+          dataDir: options.dataDir,
+          packageId: options.package,
+          packageVersion: options.version
+        });
+        if (sources.length === 0) {
+          console.log("No reading sources with review items found.");
+          return;
+        }
+        console.log("Reading review sources:");
+        for (const source of sources) {
+          console.log(`- ${source.packageId} ${source.packageVersion} ${source.sourcePath} (${source.itemCount} items${source.sourceExists ? "" : ", missing source"})`);
+        }
+      }
+    });
+
+    context.cli.register({
+      path: ["review", "items"],
+      summary: "List review items from installed content",
+      run: async (args) => {
+        const options = parseOptions(args, ["package"]);
+        const items = await listReadingReviewItems({
+          dataDir: options.dataDir,
+          packageId: options.package,
+          packageVersion: options.version,
+          sourcePath: options.source
+        });
+        if (items.length === 0) {
+          console.log("No review items found.");
+          return;
+        }
+        console.log("Review items:");
+        for (const item of items) {
+          console.log(`- ${item.packageId} ${item.packageVersion} ${item.item.id} ${item.item.kind}${item.sourcePath === undefined ? "" : ` source=${item.sourcePath}`}`);
+        }
+      }
+    });
+
+    context.cli.register({
+      path: ["review", "due"],
+      summary: "List due native review items",
+      run: async (args) => {
+        const options = parseOptions(args, []);
+        const now = options.now ?? currentTimestamp();
+        await syncReadingReviewItems({
+          dataDir: options.dataDir,
+          packageId: options.package,
+          packageVersion: options.version,
+          now
+        });
+        const due = await listIntegratedDueReviewItems({
+          dataDir: options.dataDir,
+          packageId: options.package,
+          packageVersion: options.version,
+          now,
+          limit: options.limit
+        });
+        if (due.length === 0) {
+          console.log("No native review items due.");
+          return;
+        }
+        console.log("Due review items:");
+        for (const item of due) {
+          console.log(`- ${item.packageId} ${item.packageVersion} ${item.itemId} next=${item.nextReviewAt} status=${item.status}`);
+        }
+      }
+    });
+
+    context.cli.register({
+      path: ["review", "show"],
+      summary: "Render a native review item",
+      run: async (args) => {
+        const parsed = parseReviewItemCommand(args, []);
+        const result = await renderReadingReviewItem({
+          dataDir: parsed.options.dataDir,
+          packageId: parsed.packageId,
+          packageVersion: parsed.options.version,
+          itemId: parsed.itemId,
+          answer: parsed.options.answer
+        });
+        console.log(result.text.trimEnd());
+      }
+    });
+
+    context.cli.register({
+      path: ["review", "answer"],
+      summary: "Record a native review rating",
+      run: async (args) => {
+        const parsed = parseReviewItemCommand(args, ["rating"]);
+        if (!isReviewRating(parsed.options.rating)) {
+          throw new Error("--rating must be one of: again, hard, good, easy.");
+        }
+        const result = await recordReadingReviewAnswer({
+          dataDir: parsed.options.dataDir,
+          packageId: parsed.packageId,
+          packageVersion: parsed.options.version,
+          itemId: parsed.itemId,
+          rating: parsed.options.rating,
+          reviewedAt: parsed.options.now ?? currentTimestamp()
+        });
+        console.log("Review rating recorded.");
+        console.log(`Package: ${result.state.packageId}`);
+        console.log(`Version: ${result.state.packageVersion}`);
+        console.log(`Item: ${result.state.itemId}`);
+        console.log(`Rating: ${result.event.rating}`);
+        console.log(`Next review: ${result.state.nextReviewAt}`);
+      }
+    });
   }
 };
 
@@ -168,9 +289,15 @@ interface ParsedOptions {
   readonly catalogue: string;
   readonly dataDir?: string;
   readonly version?: string;
+  readonly package?: string;
   readonly force?: boolean;
   readonly all?: boolean;
   readonly file?: string;
+  readonly source?: string;
+  readonly limit?: number;
+  readonly answer?: boolean;
+  readonly rating?: string;
+  readonly now?: string;
 }
 
 function printInstalled(packages: readonly InstalledPackageRecord[]): void {
@@ -192,13 +319,34 @@ function parsePackageCommand(args: readonly string[], required: readonly string[
   return { packageId, options: parseOptions(args.slice(1), required) };
 }
 
+function parseReviewItemCommand(
+  args: readonly string[],
+  required: readonly string[]
+): { readonly packageId: string; readonly itemId: string; readonly options: ParsedOptions } {
+  const packageId = args[0];
+  const itemId = args[1];
+  if (packageId === undefined || packageId.startsWith("--")) {
+    throw new Error("A package ID is required.");
+  }
+  if (itemId === undefined || itemId.startsWith("--")) {
+    throw new Error("An item ID is required.");
+  }
+  return { packageId, itemId, options: parseOptions(args.slice(2), required) };
+}
+
 function parseOptions(args: readonly string[], required: readonly string[]): ParsedOptions {
   let catalogue = "";
   let dataDir: string | undefined;
   let version: string | undefined;
+  let packageId: string | undefined;
   let force = false;
   let all = false;
   let file: string | undefined;
+  let source: string | undefined;
+  let limit: number | undefined;
+  let answer = false;
+  let rating: string | undefined;
+  let now: string | undefined;
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -211,12 +359,29 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
     } else if (arg === "--version") {
       version = readValue(args, index, arg);
       index += 1;
+    } else if (arg === "--package") {
+      packageId = readValue(args, index, arg);
+      index += 1;
     } else if (arg === "--force") {
       force = true;
     } else if (arg === "--all") {
       all = true;
     } else if (arg === "--file") {
       file = readValue(args, index, arg);
+      index += 1;
+    } else if (arg === "--source") {
+      source = readValue(args, index, arg);
+      index += 1;
+    } else if (arg === "--limit") {
+      limit = readPositiveInteger(readValue(args, index, arg), arg);
+      index += 1;
+    } else if (arg === "--answer") {
+      answer = true;
+    } else if (arg === "--rating") {
+      rating = readValue(args, index, arg);
+      index += 1;
+    } else if (arg === "--now") {
+      now = readValue(args, index, arg);
       index += 1;
     } else {
       throw new Error(`Unknown content option: ${arg}`);
@@ -227,9 +392,15 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
     if (option === "catalogue" && catalogue.length === 0) {
       throw new Error("--catalogue is required.");
     }
+    if (option === "package" && packageId === undefined) {
+      throw new Error("--package is required.");
+    }
+    if (option === "rating" && rating === undefined) {
+      throw new Error("--rating is required.");
+    }
   }
 
-  return { catalogue, dataDir, version, force, all, file };
+  return { catalogue, dataDir, version, package: packageId, force, all, file, source, limit, answer, rating, now };
 }
 
 function readValue(args: readonly string[], index: number, option: string): string {
@@ -238,4 +409,16 @@ function readValue(args: readonly string[], index: number, option: string): stri
     throw new Error(`Missing value for ${option}`);
   }
   return value;
+}
+
+function readPositiveInteger(value: string, option: string): number {
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed < 1) {
+    throw new Error(`${option} must be a positive integer.`);
+  }
+  return parsed;
+}
+
+function currentTimestamp(): string {
+  return new Date().toISOString().replace(/\.\d{3}Z$/u, "Z");
 }

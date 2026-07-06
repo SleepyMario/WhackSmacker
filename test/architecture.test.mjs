@@ -43,7 +43,12 @@ test("application CLI registry exposes language commands and the geography proto
     "mathematics four-and-five",
     "mathematics one-to-five",
     "mathematics one-two-three",
-    "mathematics six-to-nine"
+    "mathematics six-to-nine",
+    "review answer",
+    "review due",
+    "review items",
+    "review show",
+    "review sources"
   ]);
 });
 
@@ -54,6 +59,7 @@ test("legacy language aliases resolve to language command paths", () => {
   assert.equal(resolveCliCommand(registry, ["decks"])?.path.join(" "), "language decks");
   assert.equal(resolveCliCommand(registry, ["review", "Default"])?.path.join(" "), "language review");
   assert.deepEqual(resolveCliCommand(registry, ["review", "Deck With Spaces"])?.args, ["Deck With Spaces"]);
+  assert.equal(resolveCliCommand(registry, ["review", "sources"])?.path.join(" "), "review sources");
 });
 
 test("domain-prefixed language commands resolve directly", () => {

@@ -101,6 +101,13 @@ Content package commands:
   whacksmacker content read [<package-id>] [--file <path>] [--version <version>] [--data-dir <dir>]
   whacksmacker content files <package-id> [--version <version>] [--data-dir <dir>]
 
+Native review commands:
+  whacksmacker review sources [--package <package-id>] [--version <version>] [--data-dir <dir>]
+  whacksmacker review items --package <package-id> [--version <version>] [--source <path>] [--data-dir <dir>]
+  whacksmacker review due [--package <package-id>] [--version <version>] [--data-dir <dir>] [--limit <n>]
+  whacksmacker review show <package-id> <item-id> [--version <version>] [--data-dir <dir>] [--answer]
+  whacksmacker review answer <package-id> <item-id> --rating <again|hard|good|easy> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
+
 Modules:
   Language      AnkiConnect review and linguistic terminology
   Chess         Placeholder
@@ -217,21 +224,21 @@ export function resolveCliCommand(registry: InMemoryCliCommandRegistry, argv: re
     return null;
   }
 
+  const path = argv.slice(0, 2);
+  const command = registry.find(path);
+  if (command !== null) {
+    return { command, args: argv.slice(2), path };
+  }
+
   const aliasPath = legacyAliases.get(commandName);
   if (aliasPath !== undefined) {
-    const command = registry.find(aliasPath);
-    if (command === null) {
+    const aliasCommand = registry.find(aliasPath);
+    if (aliasCommand === null) {
       return null;
     }
 
-    return { command, args: argv.slice(1), path: aliasPath };
+    return { command: aliasCommand, args: argv.slice(1), path: aliasPath };
   }
 
-  const path = argv.slice(0, 2);
-  const command = registry.find(path);
-  if (command === null) {
-    return null;
-  }
-
-  return { command, args: argv.slice(2), path };
+  return null;
 }
