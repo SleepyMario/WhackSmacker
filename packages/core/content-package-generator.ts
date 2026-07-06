@@ -1,0 +1,420 @@
+import {
+  assertValidContentPackageManifest,
+  type ContentPackageFileRecord,
+  type ContentPackageManifest,
+  whackSmackerPackageExtension,
+  whackSmackerPackageFormatVersion
+} from "./content-package-spec";
+
+type BufferValue = {
+  readonly length: number;
+  [Symbol.iterator](): IterableIterator<number>;
+  toString(encoding: "utf8"): string;
+  writeUInt16LE(value: number, offset: number): void;
+  writeUInt32LE(value: number, offset: number): void;
+};
+
+declare function require(name: "../../../package.json"): { version: string };
+declare function require(name: "node:buffer"): {
+  Buffer: {
+    from(value: string, encoding: "utf8"): BufferValue;
+    alloc(size: number): BufferValue;
+    concat(buffers: readonly BufferValue[]): BufferValue;
+  };
+};
+declare function require(name: "node:crypto"): {
+  createHash(algorithm: "sha256"): {
+    update(data: BufferValue): { digest(encoding: "hex"): string };
+  };
+};
+declare function require(name: "node:child_process"): {
+  execFileSync(command: string, args: readonly string[], options: { cwd: string; encoding: "utf8" }): string;
+};
+declare function require(name: "node:fs/promises"): {
+  mkdir(path: string, options: { recursive: boolean }): Promise<void>;
+  readdir(path: string): Promise<string[]>;
+  readFile(path: string): Promise<BufferValue>;
+  stat(path: string): Promise<{ isDirectory(): boolean; isFile(): boolean }>;
+  writeFile(path: string, data: BufferValue): Promise<void>;
+};
+declare function require(name: "node:path"): {
+  dirname(path: string): string;
+  join(...paths: string[]): string;
+  relative(from: string, to: string): string;
+  resolve(...paths: string[]): string;
+  sep: string;
+};
+declare const process: {
+  cwd(): string;
+};
+
+const packageMetadata = require("../../../package.json");
+const whackSmackerApplicationVersion = packageMetadata.version;
+const { Buffer } = require("node:buffer");
+const { createHash } = require("node:crypto");
+const { execFileSync } = require("node:child_process");
+const { mkdir, readdir, readFile, stat, writeFile } = require("node:fs/promises");
+const { dirname, join, relative, resolve, sep } = require("node:path");
+
+export interface ContentPackageGeneratorTarget {
+  readonly id: string;
+  readonly packageId: string;
+  readonly displayName: string;
+  readonly description: string;
+  readonly contentType: ContentPackageManifest["contentType"];
+  readonly contentSchemaVersion: string;
+  readonly packageVersion: string;
+  readonly sourcePath: string;
+  readonly sourceRepository: string;
+  readonly languages?: readonly string[];
+  readonly subjects?: readonly string[];
+  readonly dependencies?: ContentPackageManifest["dependencies"];
+  readonly license?: ContentPackageManifest["license"];
+  readonly include: readonly string[];
+}
+
+export interface GenerateContentPackageOptions {
+  readonly targetId: string;
+  readonly outputDirectory: string;
+  readonly generatedAt: string;
+}
+
+export interface GeneratedContentPackageResult {
+  readonly targetId: string;
+  readonly packageId: string;
+  readonly packageVersion: string;
+  readonly filePath: string;
+  readonly manifest: ContentPackageManifest;
+  readonly archiveSha256: string;
+}
+
+export const contentPackageGeneratorName = "whacksmacker-content-builder";
+
+export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
+  {
+    id: "linguistic-terminology",
+    packageId: "com.sleepymario.language.linguistic-terminology",
+    displayName: "Linguistic Terminology",
+    description: "Technical linguistic glossary content generated from the canonical terminology repository.",
+    contentType: "linguistic-terminology",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../languages/linguistic-terminology",
+    sourceRepository: "https://github.com/SleepyMario/linguistic-terminology",
+    languages: ["en", "ko"],
+    subjects: ["language", "linguistics", "terminology"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "STYLE_GUIDE.md", "INDEX.md", "decisions.md", "backlog.md", "terms"]
+  },
+  {
+    id: "korean-curriculum",
+    packageId: "com.sleepymario.language.korean",
+    displayName: "Korean Curriculum",
+    description: "Korean language curriculum content generated from the canonical Korean curriculum repository.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../languages/korean-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/korean-curriculum",
+    languages: ["ko", "en"],
+    subjects: ["language", "korean"],
+    dependencies: [{ packageId: "com.sleepymario.language.linguistic-terminology", version: ">=0.1.0 <1.0.0", optional: true }],
+    license: { spdx: null, name: null, path: null },
+    include: [
+      "README.md",
+      "philosophy.md",
+      "scope.md",
+      "curriculum-map.md",
+      "progress.md",
+      "backlog.md",
+      "decisions.md",
+      "research",
+      "units"
+    ]
+  }
+];
+
+export async function generateContentPackage(options: GenerateContentPackageOptions): Promise<GeneratedContentPackageResult> {
+  const target = getContentPackageGeneratorTarget(options.targetId);
+  const sourceRoot = resolveSourcePath(target.sourcePath);
+  const sourceFiles = await collectSourceFiles(sourceRoot, target.include);
+  const sourceCommit = readGitValue(sourceRoot, ["rev-parse", "HEAD"]);
+  const sourceDirty = readGitValue(sourceRoot, ["status", "--short"]).trim().length > 0;
+  const generatorCommit = readGitValue(repositoryRoot, ["rev-parse", "HEAD"]);
+
+  const content = buildContentSnapshot(target, sourceRoot, sourceFiles, sourceCommit, sourceDirty);
+  const contentBuffer = Buffer.from(`${JSON.stringify(content, null, 2)}\n`, "utf8");
+  const contentFile = createFileRecord("content/content.json", "application/json", contentBuffer);
+
+  const manifest: ContentPackageManifest = {
+    packageFormatVersion: whackSmackerPackageFormatVersion,
+    packageId: target.packageId,
+    packageVersion: target.packageVersion,
+    displayName: target.displayName,
+    description: target.description,
+    contentType: target.contentType,
+    contentSchemaVersion: target.contentSchemaVersion,
+    minimumWhackSmackerVersion: whackSmackerApplicationVersion,
+    ...(target.languages === undefined ? {} : { languages: [...target.languages].sort() }),
+    ...(target.subjects === undefined ? {} : { subjects: [...target.subjects].sort() }),
+    source: {
+      repository: target.sourceRepository,
+      commit: sourceCommit,
+      ...(sourceDirty ? { dirty: true } : {})
+    },
+    generatedAt: options.generatedAt,
+    generator: {
+      name: contentPackageGeneratorName,
+      version: whackSmackerApplicationVersion,
+      commit: generatorCommit
+    },
+    entryPoints: [
+      {
+        id: "primary",
+        mediaType: "application/json",
+        path: contentFile.path,
+        role: "primary"
+      }
+    ],
+    ...(target.dependencies === undefined ? { dependencies: [] } : { dependencies: [...target.dependencies] }),
+    files: [contentFile],
+    ...(target.license === undefined ? {} : { license: target.license })
+  };
+
+  assertValidContentPackageManifest(manifest);
+
+  const manifestBuffer = Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  const archiveBuffer = createDeterministicZip([
+    { path: "manifest.json", data: manifestBuffer },
+    { path: contentFile.path, data: contentBuffer }
+  ]);
+  const filePath = join(options.outputDirectory, `${target.packageId}-${target.packageVersion}${whackSmackerPackageExtension}`);
+
+  await mkdir(dirname(filePath), { recursive: true });
+  await writeFile(filePath, archiveBuffer);
+
+  return {
+    targetId: target.id,
+    packageId: target.packageId,
+    packageVersion: target.packageVersion,
+    filePath,
+    manifest,
+    archiveSha256: sha256Hex(archiveBuffer)
+  };
+}
+
+export function getContentPackageGeneratorTarget(targetId: string): ContentPackageGeneratorTarget {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === targetId);
+  if (target === undefined) {
+    throw new Error(`Unknown content package target: ${targetId}`);
+  }
+
+  return target;
+}
+
+interface SourceFile {
+  readonly path: string;
+  readonly mediaType: string;
+  readonly size: number;
+  readonly sha256: string;
+  readonly text: string;
+}
+
+interface ArchiveEntry {
+  readonly path: string;
+  readonly data: BufferValue;
+}
+
+const repositoryRoot = process.cwd();
+
+async function collectSourceFiles(sourceRoot: string, includes: readonly string[]): Promise<readonly SourceFile[]> {
+  const files: SourceFile[] = [];
+
+  for (const include of includes) {
+    const absolute = resolve(sourceRoot, include);
+    if (!absolute.startsWith(sourceRoot)) {
+      throw new Error(`Source include escapes repository root: ${include}`);
+    }
+
+    await collectPath(sourceRoot, absolute, files);
+  }
+
+  return files.sort((left, right) => left.path.localeCompare(right.path));
+}
+
+async function collectPath(sourceRoot: string, absolutePath: string, files: SourceFile[]): Promise<void> {
+  const stats = await stat(absolutePath);
+
+  if (stats.isDirectory()) {
+    const entries = await readdir(absolutePath);
+    for (const entry of entries.sort()) {
+      if (entry === ".git") {
+        continue;
+      }
+      await collectPath(sourceRoot, join(absolutePath, entry), files);
+    }
+    return;
+  }
+
+  if (!stats.isFile()) {
+    return;
+  }
+
+  const relativePath = normalizeArchivePath(relative(sourceRoot, absolutePath));
+  if (!relativePath.endsWith(".md") && relativePath !== ".gitignore") {
+    return;
+  }
+
+  const buffer = await readFile(absolutePath);
+  files.push({
+    path: relativePath,
+    mediaType: mediaTypeForPath(relativePath),
+    size: buffer.length,
+    sha256: sha256Hex(buffer),
+    text: buffer.toString("utf8")
+  });
+}
+
+function buildContentSnapshot(
+  target: ContentPackageGeneratorTarget,
+  sourceRoot: string,
+  sourceFiles: readonly SourceFile[],
+  sourceCommit: string,
+  sourceDirty: boolean
+): unknown {
+  return {
+    contentSchema: "whacksmacker-source-markdown-snapshot-v1",
+    packageId: target.packageId,
+    source: {
+      repository: target.sourceRepository,
+      commit: sourceCommit,
+      dirty: sourceDirty
+    },
+    sourceRootName: sourceRoot.split(sep).at(-1) ?? target.id,
+    files: sourceFiles.map((file) => ({
+      path: file.path,
+      mediaType: file.mediaType,
+      size: file.size,
+      sha256: file.sha256,
+      text: file.text
+    }))
+  };
+}
+
+function createFileRecord(path: string, mediaType: string, data: BufferValue): ContentPackageFileRecord {
+  return {
+    path,
+    mediaType,
+    size: data.length,
+    sha256: sha256Hex(data)
+  };
+}
+
+function createDeterministicZip(entries: readonly ArchiveEntry[]): BufferValue {
+  const sortedEntries = [...entries].sort((left, right) => left.path.localeCompare(right.path));
+  const localParts: BufferValue[] = [];
+  const centralParts: BufferValue[] = [];
+  let offset = 0;
+
+  for (const entry of sortedEntries) {
+    const name = Buffer.from(entry.path, "utf8");
+    const crc = crc32(entry.data);
+    const localHeader = Buffer.alloc(30);
+    localHeader.writeUInt32LE(0x04034b50, 0);
+    localHeader.writeUInt16LE(20, 4);
+    localHeader.writeUInt16LE(0x0800, 6);
+    localHeader.writeUInt16LE(0, 8);
+    localHeader.writeUInt16LE(0, 10);
+    localHeader.writeUInt16LE(33, 12);
+    localHeader.writeUInt32LE(crc, 14);
+    localHeader.writeUInt32LE(entry.data.length, 18);
+    localHeader.writeUInt32LE(entry.data.length, 22);
+    localHeader.writeUInt16LE(name.length, 26);
+    localHeader.writeUInt16LE(0, 28);
+    localParts.push(localHeader, name, entry.data);
+
+    const centralHeader = Buffer.alloc(46);
+    centralHeader.writeUInt32LE(0x02014b50, 0);
+    centralHeader.writeUInt16LE(20, 4);
+    centralHeader.writeUInt16LE(20, 6);
+    centralHeader.writeUInt16LE(0x0800, 8);
+    centralHeader.writeUInt16LE(0, 10);
+    centralHeader.writeUInt16LE(0, 12);
+    centralHeader.writeUInt16LE(33, 14);
+    centralHeader.writeUInt32LE(crc, 16);
+    centralHeader.writeUInt32LE(entry.data.length, 20);
+    centralHeader.writeUInt32LE(entry.data.length, 24);
+    centralHeader.writeUInt16LE(name.length, 28);
+    centralHeader.writeUInt16LE(0, 30);
+    centralHeader.writeUInt16LE(0, 32);
+    centralHeader.writeUInt16LE(0, 34);
+    centralHeader.writeUInt16LE(0, 36);
+    centralHeader.writeUInt32LE(0, 38);
+    centralHeader.writeUInt32LE(offset, 42);
+    centralParts.push(centralHeader, name);
+
+    offset += localHeader.length + name.length + entry.data.length;
+  }
+
+  const centralDirectory = Buffer.concat(centralParts);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0);
+  end.writeUInt16LE(0, 4);
+  end.writeUInt16LE(0, 6);
+  end.writeUInt16LE(sortedEntries.length, 8);
+  end.writeUInt16LE(sortedEntries.length, 10);
+  end.writeUInt32LE(centralDirectory.length, 12);
+  end.writeUInt32LE(offset, 16);
+  end.writeUInt16LE(0, 20);
+
+  return Buffer.concat([...localParts, centralDirectory, end]);
+}
+
+function crc32(buffer: BufferValue): number {
+  let crc = 0xffffffff;
+  for (const byte of buffer) {
+    crc = (crc >>> 8) ^ crcTable[(crc ^ byte) & 0xff];
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+const crcTable = Array.from({ length: 256 }, (_value, index) => {
+  let c = index;
+  for (let bit = 0; bit < 8; bit += 1) {
+    c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  }
+  return c >>> 0;
+});
+
+function sha256Hex(data: BufferValue): string {
+  return createHash("sha256").update(data).digest("hex");
+}
+
+function resolveSourcePath(sourcePath: string): string {
+  return resolve(repositoryRoot, sourcePath);
+}
+
+function readGitValue(cwd: string, args: readonly string[]): string {
+  try {
+    return execFileSync("git", [...args], { cwd, encoding: "utf8" }).trim();
+  } catch (error) {
+    if (typeof error === "object" && error !== null && "stdout" in error && typeof error.stdout === "string") {
+      return error.stdout.trim();
+    }
+    throw error;
+  }
+}
+
+function mediaTypeForPath(path: string): string {
+  if (path.endsWith(".md")) {
+    return "text/markdown";
+  }
+  if (path.endsWith(".json")) {
+    return "application/json";
+  }
+  return "text/plain";
+}
+
+function normalizeArchivePath(path: string): string {
+  return path.split(sep).join("/");
+}

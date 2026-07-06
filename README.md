@@ -207,6 +207,14 @@ Run the built CLI directly:
 node dist/main.js status
 ```
 
+Generate development `.wspkg` archives for the currently supported content-package targets:
+
+```sh
+npm run generate-content-package -- --target linguistic-terminology --target korean-curriculum --output-dir packages-output
+```
+
+This only creates package archives. It does not install, catalogue, download, or render package content.
+
 Tests use local mock HTTP servers and do not require a running Anki instance.
 
 ## Real-Anki Validation Checklist

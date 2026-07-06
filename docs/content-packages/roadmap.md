@@ -10,9 +10,14 @@ Defines the `.wspkg` package container, manifest schema, package identity, versi
 
 ## Point 2 -- Package Generator
 
-Status: not started
+Status: implemented
 
-Will generate deterministic `.wspkg` archives from canonical source repositories.
+Generates deterministic `.wspkg` archives from the canonical `linguistic-terminology` and `korean-curriculum` repositories.
+
+Supported targets:
+
+- `linguistic-terminology` -> `com.sleepymario.language.linguistic-terminology`
+- `korean-curriculum` -> `com.sleepymario.language.korean`
 
 ## Point 3 -- Local Package Catalogue
 

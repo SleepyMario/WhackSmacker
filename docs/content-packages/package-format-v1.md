@@ -24,7 +24,9 @@ com.sleepymario.language.korean-0.1.0.wspkg
 
 The archive is a data-only container. It must not contain executable scripts, native libraries, installers, hooks, or code that WhackSmacker executes.
 
-Archive creation and extraction are not implemented in Roadmap Point 1.
+Archive creation is implemented by Roadmap Point 2 for the initial Linguistic Terminology and Korean Curriculum targets.
+
+Archive extraction, installation, catalogue management, and content rendering are not implemented in Roadmap Point 2.
 
 ## Version-1 Layout
 

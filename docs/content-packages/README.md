@@ -1,8 +1,8 @@
 # Downloadable Content Packages
 
-Roadmap Point 1 defines the WhackSmacker downloadable content package specification.
+Roadmap Points 1 and 2 define the WhackSmacker downloadable content package specification and development package generator.
 
-It does not implement package generation, catalogues, download, installation, updates, removal, reading, memorization items, scheduling, or Anki replacement.
+It does not implement catalogues, download, installation, updates, removal, reading, memorization items, scheduling, or Anki replacement.
 
 ## Fundamental Rule
 
@@ -30,6 +30,23 @@ The application, downloaded package content, and user progress/settings remain s
 - deterministic-generation requirements;
 - separation between package content and user progress.
 
+## Generator Targets
+
+Roadmap Point 2 supports these deterministic generator targets:
+
+| Target | Package ID | Source repository |
+|---|---|---|
+| `linguistic-terminology` | `com.sleepymario.language.linguistic-terminology` | `/home/ashwin/Projects/languages/linguistic-terminology` |
+| `korean-curriculum` | `com.sleepymario.language.korean` | `/home/ashwin/Projects/languages/korean-curriculum` |
+
+Run:
+
+```sh
+npm run generate-content-package -- --target linguistic-terminology --target korean-curriculum --output-dir packages-output
+```
+
+The generator emits `.wspkg` archives only. It does not install packages or create a package catalogue.
+
 ## Not Defined Yet
 
 - package catalogue format;
@@ -38,7 +55,6 @@ The application, downloaded package content, and user progress/settings remain s
 - reader behavior;
 - memorization item schema;
 - native scheduler behavior;
-- package generation;
 - package download or installation.
 
 ## Files

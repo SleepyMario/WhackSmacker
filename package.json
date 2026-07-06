@@ -29,10 +29,12 @@
     "chess:dev": "node scripts/chess-dev.mjs",
     "chess:test": "npm run build && node --test test/chess-core.test.mjs test/chess-desktop.test.mjs",
     "dev": "tsc --outDir .dev-dist && node .dev-dist/main.js",
+    "generate-content-package": "npm run build && node dist/packages/core/content-package-generator-cli.js",
     "prepack": "npm run build",
+    "pretest": "npm run build",
     "start": "node dist/main.js",
     "sync-linguistic-terminology": "node scripts/sync-linguistic-terminology.mjs",
-    "test": "npm run build && node --test test/*.test.mjs"
+    "test": "node --test --test-concurrency=1 test/*.test.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
