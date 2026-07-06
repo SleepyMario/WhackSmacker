@@ -55,6 +55,7 @@ function createStubRegistry(calls) {
   const registry = new InMemoryCliCommandRegistry();
 
   for (const path of [
+    ["language", "korean"],
     ["language", "terminology"],
     ["geography", "continents"],
     ["mathematics", "beginner-volume-one"],
@@ -101,6 +102,7 @@ test("arguments continue to select normal CLI routing", () => {
 
   assert.equal(resolveCliCommand(registry, ["status"]), null);
   assert.equal(resolveCliCommand(registry, ["language", "status"]), null);
+  assert.equal(resolveCliCommand(registry, ["language", "korean"])?.path.join(" "), "language korean");
   assert.equal(resolveCliCommand(registry, ["language", "terminology"])?.path.join(" "), "language terminology");
 });
 
@@ -111,10 +113,10 @@ test("main menu exposes all registered domain modules", () => {
   );
 });
 
-test("language menu exposes terminology and back", () => {
+test("language menu exposes Korean, terminology, and back", () => {
   assert.deepEqual(
     getLanguageMenuItems().map((item) => item.label),
-    ["Linguistic Terminology", "Back"]
+    ["Korean", "Linguistic Terminology", "Back"]
   );
 });
 
@@ -162,7 +164,7 @@ test("One, Two, Three submenu exposes workbook generation and back", () => {
   );
 });
 
-test("menu selection routes to linguistic terminology", async () => {
+test("menu selection routes to Korean", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
@@ -174,9 +176,9 @@ test("menu selection routes to linguistic terminology", async () => {
 
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
-  assert.deepEqual(calls, [{ path: "language terminology", args: [] }]);
+  assert.deepEqual(calls, [{ path: "language korean", args: [] }]);
   assert.match(terminal.output, /WhackSmacker Will Whack That Smack Into Your Brains/);
-  assert.match(terminal.output, /Linguistic Terminology\n\nlanguage terminology output\n\nPress Escape or Enter to return\./);
+  assert.match(terminal.output, /Korean\n\nlanguage korean output\n\nPress Escape or Enter to return\./);
   assert.equal(terminal.restoreCount, 2);
 });
 
@@ -184,6 +186,7 @@ test("language menu routes linguistic terminology to the registered command", as
   const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
+    key("down"),
     key("return"),
     key("return"),
     key("escape"),

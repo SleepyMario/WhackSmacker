@@ -98,6 +98,7 @@ const mainMenuItems: readonly MenuItem[] = [
 ];
 
 const languageMenuItems: readonly MenuItem[] = [
+  { label: "Korean", kind: "language", moduleId: "language" },
   { label: "Linguistic Terminology", kind: "language", moduleId: "language" },
   { label: "Back", kind: "back" }
 ];
@@ -581,7 +582,7 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
 }
 
 async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal: Terminal, label: string): Promise<boolean> {
-  const commandPath = ["language", "terminology"];
+  const commandPath = label === "Korean" ? ["language", "korean"] : ["language", "terminology"];
   const command = registry.find(commandPath);
 
   if (command === null) {

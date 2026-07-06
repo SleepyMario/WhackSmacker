@@ -1,6 +1,8 @@
 import type { DomainModule } from "../core";
+import { languageKorean } from "./korean";
 import { languageTerminology } from "./linguistic-terminology";
 
+export * from "./korean";
 export * from "./linguistic-terminology";
 
 export interface LanguageDeck {
@@ -23,6 +25,13 @@ export const languageModule: DomainModule = {
   displayName: "Language",
   providerFeatures: [],
   register(context) {
+    context.cli.register({
+      path: ["language", "korean"],
+      summary: "Browse installed Korean curriculum content",
+      run: async (args) => {
+        await languageKorean(args);
+      }
+    });
     context.cli.register({
       path: ["language", "terminology"],
       summary: "Browse the bundled linguistic terminology glossary",

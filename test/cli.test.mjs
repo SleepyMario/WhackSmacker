@@ -101,6 +101,7 @@ test("help prints native WhackSmacker usage", async () => {
   assert.equal(result.exitCode, 0);
   assert.match(result.stdout, /^WhackSmacker/);
   assert.match(result.stdout, /A modular terminal application/);
+  assert.match(result.stdout, /whacksmacker language korean \[--file <path>\]/);
   assert.match(result.stdout, /whacksmacker language terminology \[--search <text>\]/);
   assert.match(result.stdout, /whacksmacker review sources/);
   assert.match(result.stdout, /whacksmacker review due/);
@@ -108,7 +109,7 @@ test("help prints native WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker review answer <package-id> <item-id>/);
   assert.match(result.stdout, /whacksmacker geography continents/);
   assert.match(result.stdout, /whacksmacker mathematics beginner-volume-one/);
-  assert.match(result.stdout, /Language\s+Linguistic terminology glossary/);
+  assert.match(result.stdout, /Language\s+Korean curriculum content and linguistic terminology glossary/);
   assert.match(result.stdout, /Content\s+Downloadable content package management/);
   assert.doesNotMatch(result.stdout, /Anki|AnkiConnect|deck-name|Decks|language review/u);
   assert.equal(result.stderr, "");

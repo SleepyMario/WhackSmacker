@@ -40,6 +40,10 @@ Interactive mode:
   whacksmacker
 
 Language commands:
+  whacksmacker language korean [--file <path>] [--version <version>] [--data-dir <dir>]
+  wsm language korean [--file <path>] [--version <version>] [--data-dir <dir>]
+      Browse installed Korean curriculum content, including Hangul Foundation entries.
+
   whacksmacker language terminology [--search <text>] [--category <name>] [--id <stable-id>]
   wsm language terminology [--search <text>] [--category <name>] [--id <stable-id>]
 
@@ -101,7 +105,7 @@ Backup commands:
   whacksmacker backup migrate <backup.json> --output <new-backup.json>
 
 Modules:
-  Language      Linguistic terminology glossary
+  Language      Korean curriculum content and linguistic terminology glossary
   Chess         Placeholder
   Geography     Continents review available
   Mathematics   Beginner mathematics workbook generators
