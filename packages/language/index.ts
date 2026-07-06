@@ -1,7 +1,9 @@
 import type { DomainModule } from "../core";
 import { languageDecks, languageReview, languageStatus } from "./anki-cli";
+import { languageTerminology } from "./linguistic-terminology";
 
 export * from "./anki-client";
+export * from "./linguistic-terminology";
 
 export interface LanguageDeck {
   readonly name: string;
@@ -56,6 +58,14 @@ export const languageModule: DomainModule = {
         }
 
         await languageReview(args.join(" "));
+      }
+    });
+
+    context.cli.register({
+      path: ["language", "terminology"],
+      summary: "Browse the bundled linguistic terminology glossary",
+      run: async (args) => {
+        await languageTerminology(args);
       }
     });
   }

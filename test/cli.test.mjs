@@ -168,7 +168,9 @@ test("help prints concise WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker decks/);
   assert.match(result.stdout, /whacksmacker review <deck-name>/);
   assert.match(result.stdout, /whacksmacker language review <deck-name>/);
+  assert.match(result.stdout, /whacksmacker language terminology \[--search <text>\]/);
   assert.match(result.stdout, /wsm language review <deck-name>/);
+  assert.match(result.stdout, /wsm language terminology \[--search <text>\]/);
   assert.match(result.stdout, /whacksmacker geography continents/);
   assert.match(result.stdout, /wsm geography continents/);
   assert.match(result.stdout, /Six-continent terminal map review/);
@@ -192,7 +194,7 @@ test("help prints concise WhackSmacker usage", async () => {
   assert.match(result.stdout, /190 exercise pages, and 760 exercises/);
   assert.match(result.stdout, /The workbook contains 200 exercises/);
   assert.match(result.stdout, /No database or network connection is used/);
-  assert.match(result.stdout, /Language\s+Available through AnkiConnect/);
+  assert.match(result.stdout, /Language\s+AnkiConnect review and linguistic terminology/);
   assert.match(result.stdout, /Chess\s+Placeholder/);
   assert.match(result.stdout, /Geography\s+Continents review available/);
   assert.match(result.stdout, /Mathematics\s+Beginner mathematics workbook generators/);
@@ -284,6 +286,36 @@ test("geography continents runs without contacting AnkiConnect", async () => {
     assert.match(result.stdout, /Question 1 of 6/);
     assert.match(result.stdout, /Cards reviewed: 0/);
     assert.equal(result.stderr, "");
+    assert.deepEqual(requests, []);
+  });
+});
+
+test("language terminology renders the bundled glossary without contacting AnkiConnect", async () => {
+  await withMockAnki([], async (endpoint, requests) => {
+    const result = await runCli(["language", "terminology", "--search", "semivowel"], { endpoint });
+
+    assert.equal(result.exitCode, 0);
+    assert.match(result.stdout, /Linguistic Terminology/);
+    assert.match(result.stdout, /Technical glossary used across WhackSmacker language curricula/);
+    assert.match(result.stdout, /## Semivowel/);
+    assert.match(result.stdout, /ID: phonology\.semivowel/);
+    assert.match(result.stdout, /Related terms:/);
+    assert.equal(result.stderr, "");
+    assert.deepEqual(requests, []);
+  });
+});
+
+test("language terminology searches Korean script and stable IDs", async () => {
+  await withMockAnki([], async (endpoint, requests) => {
+    const batchim = await runCli(["language", "terminology", "--search", "받침"], { endpoint });
+    const id = await runCli(["language", "terminology", "--id", "korean.initial-ieung"], { endpoint });
+
+    assert.equal(batchim.exitCode, 0);
+    assert.match(batchim.stdout, /## 받침/);
+    assert.match(batchim.stdout, /ID: korean\.batchim/);
+    assert.equal(id.exitCode, 0);
+    assert.match(id.stdout, /## Initial ㅇ/);
+    assert.match(id.stdout, /ID: korean\.initial-ieung/);
     assert.deepEqual(requests, []);
   });
 });

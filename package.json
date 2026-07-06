@@ -30,6 +30,7 @@
     "dev": "tsc --outDir .dev-dist && node .dev-dist/main.js",
     "prepack": "npm run build",
     "start": "node dist/main.js",
+    "sync-linguistic-terminology": "node scripts/sync-linguistic-terminology.mjs",
     "test": "npm run build && node --test test/*.test.mjs"
   },
   "devDependencies": {

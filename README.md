@@ -68,6 +68,7 @@ The v0.001 language commands are available through the new domain-prefixed shape
 whacksmacker language status
 whacksmacker language decks
 whacksmacker language review <deck-name>
+whacksmacker language terminology [--search <text>] [--category <name>] [--id <stable-id>]
 ```
 
 The original v0.001 commands remain supported as aliases:
@@ -77,6 +78,8 @@ whacksmacker status
 whacksmacker decks
 whacksmacker review <deck-name>
 ```
+
+The linguistic terminology command displays a bundled snapshot from the standalone `linguistic-terminology` repository. The canonical glossary remains separate, and packaged WhackSmacker does not need the sibling repository or a network connection at runtime.
 
 Check whether AnkiConnect is reachable and usable:
 
@@ -152,7 +155,7 @@ Dependency boundaries:
 Current package responsibilities:
 
 - `packages/core`: module registration contracts, feature configuration types, profile/application-data paths, logging interfaces, CLI command registration contracts, and shared UI contracts.
-- `packages/language`: language decks/cards/review contracts plus the current AnkiConnect adapter and CLI commands.
+- `packages/language`: language decks/cards/review contracts, the current AnkiConnect adapter, bundled linguistic terminology, and CLI commands.
 - `packages/chess`: placeholder chess interfaces and clean module registration; no user commands yet.
 - `packages/geography`: placeholder geography interfaces and clean module registration; no user commands yet.
 - `packages/mathematics`: placeholder mathematics interfaces and clean module registration; no user commands yet.

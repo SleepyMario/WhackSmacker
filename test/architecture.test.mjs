@@ -29,6 +29,7 @@ test("application CLI registry exposes language commands and the geography proto
     "language decks",
     "language review",
     "language status",
+    "language terminology",
     "mathematics beginner-volume-one",
     "mathematics four-and-five",
     "mathematics one-to-five",
@@ -53,6 +54,8 @@ test("domain-prefixed language commands resolve directly", () => {
   assert.equal(resolveCliCommand(registry, ["language", "decks"])?.path.join(" "), "language decks");
   assert.equal(resolveCliCommand(registry, ["language", "review", "Default"])?.path.join(" "), "language review");
   assert.deepEqual(resolveCliCommand(registry, ["language", "review", "Default"])?.args, ["Default"]);
+  assert.equal(resolveCliCommand(registry, ["language", "terminology"])?.path.join(" "), "language terminology");
+  assert.deepEqual(resolveCliCommand(registry, ["language", "terminology", "--search", "semivowel"])?.args, ["--search", "semivowel"]);
 });
 
 test("current domain modules register successfully", () => {

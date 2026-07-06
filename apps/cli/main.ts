@@ -50,9 +50,11 @@ Domain-prefixed language commands:
   whacksmacker language status
   whacksmacker language decks
   whacksmacker language review <deck-name>
+  whacksmacker language terminology [--search <text>] [--category <name>] [--id <stable-id>]
   wsm language status
   wsm language decks
   wsm language review <deck-name>
+  wsm language terminology [--search <text>] [--category <name>] [--id <stable-id>]
 
 Geography commands:
   whacksmacker geography continents
@@ -89,7 +91,7 @@ Mathematics commands:
       Default output filename: ./six-to-nine-workbook.pdf
 
 Modules:
-  Language      Available through AnkiConnect
+  Language      AnkiConnect review and linguistic terminology
   Chess         Placeholder
   Geography     Continents review available
   Mathematics   Beginner mathematics workbook generators
