@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sleepymario.com/whacksmacker/schemas/review-progress-v1.schema.json",
+  "title": "WhackSmacker Review Progress v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["reviewProgressFormatVersion", "updatedAt", "items", "events"],
+  "properties": {
+    "reviewProgressFormatVersion": {
+      "const": 1
+    },
+    "updatedAt": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/itemState"
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reviewEvent"
+      }
+    }
+  },
+  "$defs": {
+    "identityFields": {
+      "type": "object",
+      "required": ["packageId", "packageVersion", "itemId"],
+      "properties": {
+        "packageId": {
+          "$ref": "#/$defs/packageId"
+        },
+        "packageVersion": {
+          "$ref": "#/$defs/semver"
+        },
+        "itemId": {
+          "$ref": "#/$defs/itemId"
+        }
+      }
+    },
+    "itemState": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/identityFields"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "packageId",
+            "packageVersion",
+            "itemId",
+            "firstSeenAt",
+            "nextReviewAt",
+            "reviewCount",
+            "lapseCount",
+            "intervalDays",
+            "easeFactor",
+            "status"
+          ],
+          "properties": {
+            "packageId": {
+              "$ref": "#/$defs/packageId"
+            },
+            "packageVersion": {
+              "$ref": "#/$defs/semver"
+            },
+            "itemId": {
+              "$ref": "#/$defs/itemId"
+            },
+            "firstSeenAt": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "lastReviewedAt": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "nextReviewAt": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "reviewCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "lapseCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "intervalDays": {
+              "type": "number",
+              "minimum": 0
+            },
+            "easeFactor": {
+              "type": "number",
+              "minimum": 0
+            },
+            "status": {
+              "$ref": "#/$defs/status"
+            }
+          }
+        }
+      ]
+    },
+    "reviewEvent": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/identityFields"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["packageId", "packageVersion", "itemId", "reviewedAt", "rating", "previousState", "nextState"],
+          "properties": {
+            "packageId": {
+              "$ref": "#/$defs/packageId"
+            },
+            "packageVersion": {
+              "$ref": "#/$defs/semver"
+            },
+            "itemId": {
+              "$ref": "#/$defs/itemId"
+            },
+            "reviewedAt": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "rating": {
+              "enum": ["again", "hard", "good", "easy"]
+            },
+            "previousState": {
+              "$ref": "#/$defs/stateSummary"
+            },
+            "nextState": {
+              "$ref": "#/$defs/stateSummary"
+            }
+          }
+        }
+      ]
+    },
+    "stateSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nextReviewAt", "reviewCount", "lapseCount", "intervalDays", "easeFactor", "status"],
+      "properties": {
+        "nextReviewAt": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "reviewCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lapseCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "intervalDays": {
+          "type": "number",
+          "minimum": 0
+        },
+        "easeFactor": {
+          "type": "number",
+          "minimum": 0
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        }
+      }
+    },
+    "status": {
+      "enum": ["new", "learning", "review", "suspended"]
+    },
+    "packageId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*(?:\\.[a-z0-9][a-z0-9-]*){2,}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    },
+    "itemId": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//)[a-z0-9](?:[a-z0-9._/-]*[a-z0-9])?$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    }
+  }
+}

@@ -243,7 +243,7 @@ whacksmacker content files com.sleepymario.language.korean
 whacksmacker content read com.sleepymario.language.korean --file units/hangul-foundation/README.md
 ```
 
-Content packages may also declare reviewable memorization items using the v1 schema in `schemas/memorization-item-v1.schema.json`. This is package content only; WhackSmacker does not schedule or grade those items yet.
+Content packages may also declare reviewable memorization items using the v1 schema in `schemas/memorization-item-v1.schema.json`. WhackSmacker stores native review progress separately using `schemas/review-progress-v1.schema.json`; installed package content remains read-only.
 
 Tests use local mock HTTP servers and do not require a running Anki instance.
 

@@ -1,8 +1,8 @@
 # Downloadable Content Packages
 
-Roadmap Points 1 through 6 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, and the package-authored memorization item schema.
+Roadmap Points 1 through 7 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, and native review scheduling state.
 
-It does not implement scheduling, exercise rendering, reading-to-review integration, or Anki replacement.
+It does not implement exercise rendering, reading-to-review integration, or Anki replacement.
 
 ## Fundamental Rule
 
@@ -33,7 +33,8 @@ The application, downloaded package content, and user progress/settings remain s
 - local catalogue generation from existing `.wspkg` archives;
 - local package fetch, install, update, remove, and registry management;
 - passive reading of installed package text content;
-- memorization item schema and validation helpers.
+- memorization item schema and validation helpers;
+- native review progress storage and deterministic scheduling helpers.
 
 ## Generator Targets
 
@@ -84,14 +85,14 @@ Point 4 uses catalogues for local package fetch, install, update, and remove beh
 
 Point 5 reads installed package text content without writing user progress.
 
-Point 6 defines package-authored reviewable item data without implementing review sessions or scheduler state.
+Point 6 defines package-authored reviewable item data.
+
+Point 7 stores WhackSmacker-owned review progress outside installed package directories and calculates deterministic next-review times.
 
 ## Not Defined Yet
 
 - subject-specific content schemas;
-- progress schema;
-- native scheduler behavior;
-- review scheduling and answer grading behavior.
+- answer grading behavior.
 
 ## Files
 
@@ -102,7 +103,9 @@ Point 6 defines package-authored reviewable item data without implementing revie
 - [Package Management](package-management.md)
 - [Reading Interface](reading-interface.md)
 - [Memorization Items](memorization-items.md)
+- [Native Review Scheduler](../review-scheduler.md)
 - [Memorization Item Schema](../../schemas/memorization-item-v1.schema.json)
+- [Review Progress Schema](../../schemas/review-progress-v1.schema.json)
 - [Manifest Schema](../../schemas/content-package-manifest-v1.schema.json)
 - [Catalogue Schema](../../schemas/content-package-catalogue-v1.schema.json)
 - [Korean example manifest](examples/korean-manifest.example.json)

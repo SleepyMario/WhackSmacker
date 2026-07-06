@@ -53,9 +53,11 @@ This point does not add review queues, scheduling, answer checking, exercise ren
 
 ## Point 7 -- Native Review Scheduler
 
-Status: not started
+Status: implemented
 
-Will add WhackSmacker-owned scheduling and review state.
+Adds WhackSmacker-owned review progress and scheduler state for package-authored memorization items. Progress is stored separately from installed package directories and is keyed by package ID, package version, and item ID.
+
+This point does not add exercise renderers, interactive native review sessions, answer grading, reading-to-review integration, Anki migration, or Anki removal.
 
 ## Point 8 -- Exercise Renderers
 
