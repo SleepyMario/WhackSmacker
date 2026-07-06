@@ -1,0 +1,55 @@
+{
+  "packageFormatVersion": 1,
+  "packageId": "com.sleepymario.language.linguistic-terminology",
+  "packageVersion": "0.1.0",
+  "displayName": "Linguistic Terminology",
+  "description": "Technical linguistic glossary content package example.",
+  "contentType": "linguistic-terminology",
+  "contentSchemaVersion": "1.0.0",
+  "minimumWhackSmackerVersion": "0.1.0",
+  "languages": ["en", "ko"],
+  "subjects": ["language", "linguistics", "terminology"],
+  "source": {
+    "repository": "https://github.com/SleepyMario/linguistic-terminology",
+    "commit": "0000000000000000000000000000000000000000"
+  },
+  "generatedAt": "2026-07-06T00:00:00Z",
+  "generator": {
+    "name": "whacksmacker-content-builder",
+    "version": "0.1.0"
+  },
+  "entryPoints": [
+    {
+      "id": "primary",
+      "mediaType": "application/json",
+      "path": "content/terms.json",
+      "role": "primary"
+    },
+    {
+      "id": "search",
+      "mediaType": "application/json",
+      "path": "content/search-index.json",
+      "role": "search-index"
+    }
+  ],
+  "dependencies": [],
+  "files": [
+    {
+      "path": "content/terms.json",
+      "mediaType": "application/json",
+      "size": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "path": "content/search-index.json",
+      "mediaType": "application/json",
+      "size": 0,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "license": {
+    "spdx": null,
+    "name": null,
+    "path": null
+  }
+}

@@ -18,6 +18,7 @@
     "dist/main.js",
     "dist/anki-client.js",
     "docs",
+    "schemas",
     "packages/geography/data/continents.provenance.md",
     "COPYING",
     "README.md"

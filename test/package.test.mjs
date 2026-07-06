@@ -21,6 +21,8 @@ test("npm tarball includes geography map provenance data", async () => {
     assert.equal(listing.exitCode, 0, listing.stderr);
     assert.match(listing.stdout, /package\/packages\/geography\/data\/continents\.provenance\.md/);
     assert.match(listing.stdout, /package\/dist\/packages\/geography\/data\/continents\.js/);
+    assert.match(listing.stdout, /package\/docs\/content-packages\/package-format-v1\.md/);
+    assert.match(listing.stdout, /package\/schemas\/content-package-manifest-v1\.schema\.json/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
