@@ -29,6 +29,7 @@ test("Korean language overview reports a clear native missing-package state", as
     assert.equal(overview.installed, false);
     assert.equal(overview.packageId, koreanPackageId);
     assert.match(rendered, /Korean content is not installed/);
+    assert.match(rendered, /Generate content packages, generate a local catalogue, then install the Korean content package/);
     assert.match(renderedFileRequest, /Korean content is not installed/);
     assert.match(rendered, /whacksmacker content install com\.sleepymario\.language\.korean/);
     assert.doesNotMatch(rendered, /Anki|deck/u);

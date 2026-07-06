@@ -4,6 +4,8 @@ Roadmap Points 1 through 12 define the WhackSmacker downloadable content package
 
 Native package-based review is now the only active review workflow.
 
+Installed content packages are the documented primary path for WhackSmacker curriculum and terminology content. Canonical source repositories remain the source of truth, generated `.wspkg` files are installable artifacts, installed packages are local read-only content, and user progress/settings remain separate.
+
 ## Fundamental Rule
 
 WhackSmacker owns the learning engine, package management, user settings, and user progress. Downloadable content packages own learning content.
@@ -52,10 +54,14 @@ Roadmap Point 2 supports these deterministic generator targets:
 
 Do not assume the old source paths under `/home/ashwin/Projects/languages`.
 
-Run:
+For local development, generate packages into a temporary output directory:
 
 ```sh
-npm run generate-content-package -- --target linguistic-terminology --target korean-curriculum --output-dir packages-output
+npm run generate-content-package -- \
+  --target linguistic-terminology \
+  --target korean-curriculum \
+  --output-dir /tmp/whacksmacker-packages \
+  --generated-at 2026-07-06T00:00:00Z
 ```
 
 The generator emits `.wspkg` archives only. It does not install packages.
@@ -66,8 +72,21 @@ Roadmap Point 3 supports local catalogue generation from existing package archiv
 
 ```sh
 npm run content:catalogue -- \
-  --packages-dir packages-output \
-  --output packages-output/catalogue.json
+  --packages-dir /tmp/whacksmacker-packages \
+  --output /tmp/whacksmacker-catalogue/catalogue.json
+```
+
+Then install and read content through the WhackSmacker CLI:
+
+```sh
+whacksmacker content available --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.korean --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content installed
+whacksmacker language korean
+whacksmacker language korean --file units/hangul-foundation/README.md
+whacksmacker language terms
+whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```
 
 Development flow:
@@ -87,6 +106,8 @@ The catalogue describes available package archives. It is not:
 - a user-progress database;
 - a download cache;
 - a canonical curriculum or terminology repository.
+
+Bundled/static content that remains in the repository is a temporary fallback, compatibility layer, historical bridge, or emergency offline path. It is not canonical and should not be treated as the primary content flow.
 
 Point 4 uses catalogues for local package fetch, install, update, and remove behavior. It still does not render or read installed content.
 

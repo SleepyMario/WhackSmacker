@@ -86,7 +86,7 @@ export function renderKoreanLanguageOverview(overview: KoreanLanguageOverview): 
       "Status: not installed",
       "",
       "Korean content is not installed.",
-      "Install the Korean content package before browsing Hangul Foundation content:",
+      "Generate content packages, generate a local catalogue, then install the Korean content package before browsing Hangul Foundation content:",
       "",
       "  whacksmacker content install com.sleepymario.language.korean --catalogue <catalogue.json>",
       "",

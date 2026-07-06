@@ -67,11 +67,11 @@ whacksmacker language terminology [--search <text>] [--category <name>] [--id <s
 
 The Korean command discovers the installed `com.sleepymario.language.korean` content package and lists Hangul Foundation readable entries. If the package is not installed, it prints a native package-install message instead of using any Anki-backed state.
 
-The `language terms` command discovers the installed `com.sleepymario.language.linguistic-terminology` content package and lists readable glossary source files. Use `language terminology` for the bundled searchable snapshot.
+The `language terms` command discovers the installed `com.sleepymario.language.linguistic-terminology` content package and lists readable glossary source files. This installed package path is the documented primary runtime path for terminology content.
 
 The interactive Language menu groups this content under `Linguistic Terms`, with `General` first and language-specific groups below it.
 
-The linguistic terminology command displays a bundled snapshot from the standalone `linguistic-terminology` repository. The canonical glossary remains separate, and packaged WhackSmacker does not need the sibling repository or a network connection at runtime.
+The `language terminology` command remains as a bundled searchable snapshot for compatibility and emergency offline access. The canonical glossary remains the standalone source repository, and the installed package is the preferred runtime content path.
 
 Native review uses installed content packages:
 
@@ -129,7 +129,7 @@ Dependency boundaries:
 Current package responsibilities:
 
 - `packages/core`: module registration contracts, feature configuration types, profile/application-data paths, logging interfaces, CLI command registration contracts, and shared UI contracts.
-- `packages/language`: bundled linguistic terminology and language CLI commands.
+- `packages/language`: installed language content surfaces, bundled terminology fallback, and language CLI commands.
 - `packages/chess`: terminal-safe chessboard command backed by `packages/chess-core`.
 - `packages/geography`: placeholder geography interfaces and clean module registration; no user commands yet.
 - `packages/mathematics`: on-demand beginner workbook PDF generators. Generated math PDFs are local artifacts; see `docs/mathematics-artifacts.md`.
@@ -168,10 +168,20 @@ Run the built CLI directly:
 node dist/main.js --help
 ```
 
+The documented primary local content flow is:
+
+```text
+canonical source repositories -> generated .wspkg packages -> generated local catalogue -> installed read-only packages -> read/review installed content
+```
+
 Generate development `.wspkg` archives for the currently supported content-package targets:
 
 ```sh
-npm run generate-content-package -- --target linguistic-terminology --target korean-curriculum --output-dir packages-output
+npm run generate-content-package -- \
+  --target linguistic-terminology \
+  --target korean-curriculum \
+  --output-dir /tmp/whacksmacker-packages \
+  --generated-at 2026-07-06T00:00:00Z
 ```
 
 This only creates package archives. It does not install, catalogue, download, or render package content.
@@ -179,7 +189,9 @@ This only creates package archives. It does not install, catalogue, download, or
 Generate a local package catalogue from existing `.wspkg` archives:
 
 ```sh
-npm run content:catalogue -- --packages-dir packages-output --output packages-output/catalogue.json
+npm run content:catalogue -- \
+  --packages-dir /tmp/whacksmacker-packages \
+  --output /tmp/whacksmacker-catalogue/catalogue.json
 ```
 
 This only lists available package archives. It does not download, install, extract, or read package content.
@@ -187,10 +199,11 @@ This only lists available package archives. It does not download, install, extra
 Manage content packages from a catalogue:
 
 ```sh
-whacksmacker content available --catalogue packages-output/catalogue.json
-whacksmacker content install com.sleepymario.language.korean --catalogue packages-output/catalogue.json
+whacksmacker content available --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.korean --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content installed
-whacksmacker content updates --catalogue packages-output/catalogue.json
+whacksmacker content updates --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content remove com.sleepymario.language.korean --version 0.1.0
 ```
 
@@ -207,7 +220,7 @@ whacksmacker language korean --file units/hangul-foundation/README.md
 whacksmacker language terms
 whacksmacker language terms general
 whacksmacker language terms korean
-whacksmacker language terms --file INDEX.md
+whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```
 
 Content packages may also declare reviewable memorization items using the v1 schema in `schemas/memorization-item-v1.schema.json`. WhackSmacker stores native review progress separately using `schemas/review-progress-v1.schema.json`; installed package content remains read-only.

@@ -93,11 +93,10 @@ Only remove these after an explicit cleanup task:
 
 ## Recommended Next Cleanup Order
 
-1. Make installed packages the documented primary path in user-facing docs.
-2. Keep bundled terminology only as an explicit fallback while installed package search/navigation improves.
-3. Add clearer CLI messages for missing packages, including catalogue-generation or catalogue-location guidance.
-4. Fix the stale `scripts/sync-linguistic-terminology.mjs` default source path.
-5. Deprecate stale bundled snapshot paths after installed package UX covers search, IDs, categories, and related links.
-6. Remove the bundled terminology snapshot only after package install UX is good and a release checklist verifies installed terminology.
-7. Shorten or archive remaining Anki docs/references only after native review is fully documented.
-8. Add a release checklist for post-Anki package-based WhackSmacker.
+1. Keep bundled terminology only as an explicit fallback while installed package search/navigation improves.
+2. Add clearer CLI messages for missing packages, including catalogue location guidance.
+3. Fix the stale `scripts/sync-linguistic-terminology.mjs` default source path.
+4. Deprecate stale bundled snapshot paths after installed package UX covers search, IDs, categories, and related links.
+5. Remove the bundled terminology snapshot only after package install UX is good and a release checklist verifies installed terminology.
+6. Shorten or archive remaining Anki docs/references only after native review is fully documented.
+7. Add a release checklist for post-Anki package-based WhackSmacker.

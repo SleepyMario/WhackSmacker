@@ -212,7 +212,7 @@ export function renderLinguisticTermsOverview(overview: LinguisticTermsOverview)
       "Status: not installed",
       "",
       "Linguistic Terminology content is not installed.",
-      "Install the terminology content package before browsing terminology source files:",
+      "Generate content packages, generate a local catalogue, then install the terminology content package before browsing terminology source files:",
       "",
       "  whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue <catalogue.json>",
       "",

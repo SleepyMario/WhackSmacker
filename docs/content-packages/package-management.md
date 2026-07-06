@@ -4,6 +4,8 @@ Roadmap Point 4 adds local management for `.wspkg` archives described by a conte
 
 It does not add a reader, memorization schema, scheduler, progress database, or Anki migration.
 
+Installed packages are now the documented primary runtime path for WhackSmacker curriculum and terminology content. Source repositories remain canonical, `.wspkg` files are generated artifacts, installed package directories are read-only local content, and user progress/settings remain outside package directories.
+
 ## Storage Layout
 
 By default on Linux, WhackSmacker stores content package data in:
@@ -90,3 +92,24 @@ source repositories -> .wspkg files -> local catalogue JSON -> local installed p
 ```
 
 Reading installed content begins in Roadmap Point 5 and remains passive. Reading progress is not recorded in package directories.
+
+Local development example:
+
+```sh
+npm run generate-content-package -- \
+  --target linguistic-terminology \
+  --target korean-curriculum \
+  --output-dir /tmp/whacksmacker-packages \
+  --generated-at 2026-07-06T00:00:00Z
+
+npm run content:catalogue -- \
+  --packages-dir /tmp/whacksmacker-packages \
+  --output /tmp/whacksmacker-catalogue/catalogue.json
+
+whacksmacker content available --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.korean --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content installed
+whacksmacker language korean --file units/hangul-foundation/README.md
+whacksmacker language terms --file terms/phonetics-and-phonology.md
+```

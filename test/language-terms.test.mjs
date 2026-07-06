@@ -30,6 +30,7 @@ test("Linguistic Terms overview reports a clear native missing-package state", a
     assert.equal(overview.installed, false);
     assert.equal(overview.packageId, linguisticTerminologyPackageId);
     assert.match(rendered, /Linguistic Terminology content is not installed/);
+    assert.match(rendered, /Generate content packages, generate a local catalogue, then install the terminology content package/);
     assert.match(renderedFileRequest, /Linguistic Terminology content is not installed/);
     assert.match(rendered, /whacksmacker content install com\.sleepymario\.language\.linguistic-terminology/);
     assert.doesNotMatch(rendered, /Anki|deck/u);

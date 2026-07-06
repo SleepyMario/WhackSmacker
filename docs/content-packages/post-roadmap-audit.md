@@ -4,6 +4,8 @@ Date: 2026-07-06
 
 This audit records the implemented state of the WhackSmacker content-package and native-review work after the 12-point roadmap. It is based on the current codebase, current tests, and the recent Git history.
 
+Installed content packages are now the documented primary path for curriculum and terminology content. Bundled/static paths that remain are compatibility and fallback paths, not canonical content ownership.
+
 The first end-to-end installed-content validation is recorded in [Installed Content Package E2E Audit](installed-content-e2e.md).
 
 Remaining bundled/static/compatibility paths are inventoried in [Remaining Bundled Content Audit](remaining-bundled-content-audit.md).
@@ -137,6 +139,7 @@ The old deck-review command shape no longer resolves. `whacksmacker review` now 
 
 - Repeat the installed Korean package flow during release checks.
 - Repeat the installed Linguistic Terminology package flow during release checks.
+- Improve missing-package guidance with catalogue location and install workflow details.
 - Remove or deprecate stale bundled snapshots only when installed-package replacements are safe for normal use.
 - Clean up old docs that imply Anki is still primary or that package work is still pending.
 - Ensure all content generators and documentation use `/home/ashwin/Projects/whacksmacker-modules` and no longer assume `/home/ashwin/Projects/languages`.
