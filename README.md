@@ -257,6 +257,14 @@ whacksmacker review show com.sleepymario.language.korean <item-id> --answer
 whacksmacker review answer com.sleepymario.language.korean <item-id> --rating good
 ```
 
+Back up user-owned state without copying installed package content:
+
+```sh
+whacksmacker backup create --output whacksmacker-backup.json
+whacksmacker backup inspect whacksmacker-backup.json
+whacksmacker backup restore whacksmacker-backup.json --data-dir ~/.local/share/whacksmacker/content
+```
+
 Tests use local mock HTTP servers and do not require a running Anki instance.
 
 ## Real-Anki Validation Checklist

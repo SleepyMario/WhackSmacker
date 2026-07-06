@@ -13,4 +13,6 @@ export * from "./paths";
 export * from "./reading-review-integration";
 export * from "./review-progress-store";
 export * from "./review-scheduler";
+export * from "./user-data-backup";
+export * from "./user-data-migration";
 export * from "./ui";

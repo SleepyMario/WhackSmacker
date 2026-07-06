@@ -26,6 +26,10 @@ test("application CLI registry exposes language commands and the geography proto
   const registry = createCommandRegistry();
 
   assert.deepEqual(registeredPaths(registry), [
+    "backup create",
+    "backup inspect",
+    "backup migrate",
+    "backup restore",
     "content available",
     "content files",
     "content install",

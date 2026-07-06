@@ -1,5 +1,6 @@
 import {
   detectContentPackageUpdates,
+  inspectUserDataBackup,
   installContentPackage,
   listInstalledReadablePackages,
   listAvailableContentPackages,
@@ -8,13 +9,16 @@ import {
   listIntegratedDueReviewItems,
   listReadingReviewItems,
   listReadingReviewSources,
+  migrateUserDataBackupFile,
   readInstalledContentEntry,
+  restoreUserDataBackup,
   recordReadingReviewAnswer,
   removeContentPackage,
   renderReadingReviewItem,
   renderReadingContent,
   syncReadingReviewItems,
   updateContentPackage,
+  writeUserDataBackup,
   isReviewRating,
   type DomainModule,
   type InstalledPackageRecord
@@ -282,6 +286,86 @@ export const contentModule: DomainModule = {
         console.log(`Next review: ${result.state.nextReviewAt}`);
       }
     });
+
+    context.cli.register({
+      path: ["backup", "create"],
+      summary: "Create a user data backup",
+      run: async (args) => {
+        const options = parseOptions(args, ["output"]);
+        const backup = await writeUserDataBackup({
+          dataDir: options.dataDir,
+          outputPath: options.output,
+          createdAt: options.now ?? currentTimestamp()
+        });
+        console.log("Backup created.");
+        console.log(`File: ${options.output}`);
+        console.log(`Sections: ${backup.includedSections.join(", ") || "none"}`);
+        console.log(`Installed package hints: ${backup.restoreHints.installedPackages.length}`);
+      }
+    });
+
+    context.cli.register({
+      path: ["backup", "inspect"],
+      summary: "Inspect a user data backup",
+      run: async (args) => {
+        const backupPath = args[0];
+        if (backupPath === undefined || backupPath.startsWith("--")) {
+          throw new Error("A backup path is required.");
+        }
+        const inspection = await inspectUserDataBackup(backupPath);
+        if (!inspection.valid) {
+          console.log("Backup invalid.");
+          for (const error of inspection.errors) {
+            console.log(`- ${error}`);
+          }
+          return;
+        }
+        console.log("Backup valid.");
+        console.log(`Format: ${inspection.backupFormatVersion}`);
+        console.log(`Created: ${inspection.createdAt}`);
+        console.log(`WhackSmacker: ${inspection.whackSmackerVersion}`);
+        console.log(`Sections: ${inspection.includedSections.join(", ") || "none"}`);
+        console.log(`Installed package hints: ${inspection.installedPackages.length}`);
+      }
+    });
+
+    context.cli.register({
+      path: ["backup", "restore"],
+      summary: "Restore a user data backup",
+      run: async (args) => {
+        const backupPath = args[0];
+        if (backupPath === undefined || backupPath.startsWith("--")) {
+          throw new Error("A backup path is required.");
+        }
+        const options = parseOptions(args.slice(1), []);
+        const result = await restoreUserDataBackup({
+          backupPath,
+          dataDir: options.dataDir,
+          force: options.force
+        });
+        console.log("Backup restored.");
+        console.log(`Sections: ${result.restored.join(", ") || "none"}`);
+        for (const path of result.paths) {
+          console.log(`- ${path}`);
+        }
+      }
+    });
+
+    context.cli.register({
+      path: ["backup", "migrate"],
+      summary: "Migrate a user data backup to the latest format",
+      run: async (args) => {
+        const backupPath = args[0];
+        if (backupPath === undefined || backupPath.startsWith("--")) {
+          throw new Error("A backup path is required.");
+        }
+        const options = parseOptions(args.slice(1), ["output"]);
+        const backup = await migrateUserDataBackupFile(backupPath, options.output);
+        console.log("Backup migrated.");
+        console.log(`File: ${options.output}`);
+        console.log(`Format: ${backup.backupFormatVersion}`);
+      }
+    });
   }
 };
 
@@ -298,6 +382,7 @@ interface ParsedOptions {
   readonly answer?: boolean;
   readonly rating?: string;
   readonly now?: string;
+  readonly output: string;
 }
 
 function printInstalled(packages: readonly InstalledPackageRecord[]): void {
@@ -347,6 +432,7 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
   let answer = false;
   let rating: string | undefined;
   let now: string | undefined;
+  let output = "";
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -383,6 +469,9 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
     } else if (arg === "--now") {
       now = readValue(args, index, arg);
       index += 1;
+    } else if (arg === "--output") {
+      output = readValue(args, index, arg);
+      index += 1;
     } else {
       throw new Error(`Unknown content option: ${arg}`);
     }
@@ -398,9 +487,12 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
     if (option === "rating" && rating === undefined) {
       throw new Error("--rating is required.");
     }
+    if (option === "output" && output.length === 0) {
+      throw new Error("--output is required.");
+    }
   }
 
-  return { catalogue, dataDir, version, package: packageId, force, all, file, source, limit, answer, rating, now };
+  return { catalogue, dataDir, version, package: packageId, force, all, file, source, limit, answer, rating, now, output };
 }
 
 function readValue(args: readonly string[], index: number, option: string): string {

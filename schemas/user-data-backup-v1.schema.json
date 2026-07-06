@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sleepymario.com/whacksmacker/schemas/user-data-backup-v1.schema.json",
+  "title": "WhackSmacker User Data Backup v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["backupFormatVersion", "createdAt", "whackSmackerVersion", "includedSections", "sections", "restoreHints"],
+  "properties": {
+    "backupFormatVersion": {
+      "const": 1
+    },
+    "createdAt": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "whackSmackerVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "includedSections": {
+      "type": "array",
+      "items": {
+        "enum": ["installedPackageRegistry", "reviewProgress", "settings"]
+      },
+      "uniqueItems": true
+    },
+    "sections": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "installedPackageRegistry": {
+          "$ref": "#/$defs/section"
+        },
+        "reviewProgress": {
+          "$ref": "#/$defs/section"
+        },
+        "settings": {
+          "$ref": "#/$defs/section"
+        }
+      }
+    },
+    "restoreHints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installedPackages"],
+      "properties": {
+        "installedPackages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["packageId", "packageVersion", "displayName", "sourceRepository", "sourceCommit"],
+            "properties": {
+              "packageId": {
+                "$ref": "#/$defs/packageId"
+              },
+              "packageVersion": {
+                "$ref": "#/$defs/semver"
+              },
+              "displayName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sourceRepository": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sourceCommit": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "data"],
+      "properties": {
+        "path": {
+          "enum": ["content/registry.json", "progress/review-progress.json", "settings/settings.json"]
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "data": true
+      }
+    },
+    "packageId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*(?:\\.[a-z0-9][a-z0-9-]*){2,}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    }
+  }
+}

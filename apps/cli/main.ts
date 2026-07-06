@@ -108,6 +108,12 @@ Native review commands:
   whacksmacker review show <package-id> <item-id> [--version <version>] [--data-dir <dir>] [--answer]
   whacksmacker review answer <package-id> <item-id> --rating <again|hard|good|easy> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
 
+Backup commands:
+  whacksmacker backup create --output <backup.json> [--data-dir <dir>]
+  whacksmacker backup inspect <backup.json>
+  whacksmacker backup restore <backup.json> [--data-dir <dir>] [--force]
+  whacksmacker backup migrate <backup.json> --output <new-backup.json>
+
 Modules:
   Language      AnkiConnect review and linguistic terminology
   Chess         Placeholder

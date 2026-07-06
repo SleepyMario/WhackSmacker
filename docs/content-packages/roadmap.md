@@ -77,9 +77,11 @@ This point does not add backups or migration, Anki parity tests, Anki removal, w
 
 ## Point 10 -- Backups and Migration
 
-Status: not started
+Status: implemented
 
-Will define backup and migration behavior for user-owned data.
+Adds backup, restore, inspect, and migration support for WhackSmacker-owned user data, including installed-package registry data, native review progress, optional settings, deterministic section checksums, and restore hints.
+
+This point does not add Anki parity tests, Anki removal, package archive backups, web UI, or package-content mutation.
 
 ## Point 11 -- Anki Parity Test
 

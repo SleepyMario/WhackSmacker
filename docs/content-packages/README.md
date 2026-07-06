@@ -1,6 +1,6 @@
 # Downloadable Content Packages
 
-Roadmap Points 1 through 9 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, native review scheduling state, terminal exercise rendering, and reading-to-review integration.
+Roadmap Points 1 through 10 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, native review scheduling state, terminal exercise rendering, reading-to-review integration, and user-data backups.
 
 It does not implement reading-to-review integration or Anki replacement.
 
@@ -36,7 +36,8 @@ The application, downloaded package content, and user progress/settings remain s
 - memorization item schema and validation helpers;
 - native review progress storage and deterministic scheduling helpers;
 - terminal-safe memorization item exercise rendering;
-- reading-source to review-item discovery and terminal review commands.
+- reading-source to review-item discovery and terminal review commands;
+- backup, restore, inspect, and migration support for user-owned state.
 
 ## Generator Targets
 
@@ -95,6 +96,8 @@ Point 8 renders memorization items into separated prompt and answer text for ter
 
 Point 9 connects installed reading content to reviewable memorization items and native review progress.
 
+Point 10 backs up and restores user-owned state without including installed package content or caches.
+
 ## Not Defined Yet
 
 - subject-specific content schemas;
@@ -112,8 +115,10 @@ Point 9 connects installed reading content to reviewable memorization items and 
 - [Native Review Scheduler](../review-scheduler.md)
 - [Exercise Renderers](../exercise-renderers.md)
 - [Reading to Review](../reading-to-review.md)
+- [Backups and Migration](../backups-and-migration.md)
 - [Memorization Item Schema](../../schemas/memorization-item-v1.schema.json)
 - [Review Progress Schema](../../schemas/review-progress-v1.schema.json)
+- [User Data Backup Schema](../../schemas/user-data-backup-v1.schema.json)
 - [Manifest Schema](../../schemas/content-package-manifest-v1.schema.json)
 - [Catalogue Schema](../../schemas/content-package-catalogue-v1.schema.json)
 - [Korean example manifest](examples/korean-manifest.example.json)
