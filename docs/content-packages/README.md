@@ -115,6 +115,7 @@ Point 12 removes the old Anki-backed review path. `whacksmacker review` now refe
 
 - [Roadmap](roadmap.md)
 - [Post-Roadmap Audit](post-roadmap-audit.md)
+- [Remaining Bundled Content Audit](remaining-bundled-content-audit.md)
 - [Architecture](architecture.md)
 - [Package Format v1](package-format-v1.md)
 - [Security](security.md)

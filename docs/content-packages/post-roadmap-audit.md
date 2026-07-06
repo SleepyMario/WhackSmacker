@@ -6,6 +6,8 @@ This audit records the implemented state of the WhackSmacker content-package and
 
 The first end-to-end installed-content validation is recorded in [Installed Content Package E2E Audit](installed-content-e2e.md).
 
+Remaining bundled/static/compatibility paths are inventoried in [Remaining Bundled Content Audit](remaining-bundled-content-audit.md).
+
 The current module workspace root is:
 
 ```text
