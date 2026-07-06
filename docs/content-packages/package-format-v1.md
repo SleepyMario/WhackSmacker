@@ -28,6 +28,8 @@ Archive creation is implemented by Roadmap Point 2 for the initial Linguistic Te
 
 Archive extraction, installation, catalogue management, and content rendering are not implemented in Roadmap Point 2.
 
+Roadmap Point 3 adds local catalogue generation from existing `.wspkg` archives. It still does not extract, install, download, or render package content.
+
 ## Version-1 Layout
 
 ```text

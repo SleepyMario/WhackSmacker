@@ -19,9 +19,11 @@ Canonical curriculum and content repositories remain separate from both WhackSma
 ```text
 canonical source repository
         ↓
-future deterministic package generator
+deterministic package generator
         ↓
 versioned .wspkg archive
+        ↓
+local package catalogue
         ↓
 future WhackSmacker package manager
         ↓
@@ -36,7 +38,7 @@ The package format defines how generated content is transported and verified.
 
 The content schema defines the subject-specific data inside `content/`. Those schemas are later roadmap points.
 
-The catalogue format will describe available package archives and their downloadable checksums. It is not defined here.
+The catalogue format describes available package archives and their archive-level size and SHA-256 checksum. It is not a package manifest, installed-package registry, download cache, source repository, or user-progress database.
 
 The progress schema will describe user state and learning history. It is not defined here.
 

@@ -21,9 +21,11 @@ Supported targets:
 
 ## Point 3 -- Local Package Catalogue
 
-Status: not started
+Status: implemented
 
-Will define local package indexes and installed package metadata.
+Defines and validates a local package catalogue that lists available `.wspkg` archives, including package identity, source provenance, archive URLs, archive size, and archive SHA-256 checksums.
+
+The local catalogue is not an installed-package registry and does not contain user progress.
 
 ## Point 4 -- Download, Install, Update and Remove
 

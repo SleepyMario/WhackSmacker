@@ -28,6 +28,7 @@
     "chess:build": "rm -rf apps/chess-desktop/dist-electron && vite build --config apps/chess-desktop/vite.config.ts && tsc -p apps/chess-desktop/tsconfig.json",
     "chess:dev": "node scripts/chess-dev.mjs",
     "chess:test": "npm run build && node --test test/chess-core.test.mjs test/chess-desktop.test.mjs",
+    "content:catalogue": "npm run build && node dist/packages/core/content-package-catalogue-cli.js",
     "dev": "tsc --outDir .dev-dist && node .dev-dist/main.js",
     "generate-content-package": "npm run build && node dist/packages/core/content-package-generator-cli.js",
     "prepack": "npm run build",

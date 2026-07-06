@@ -1,4 +1,5 @@
 export * from "./cli";
+export * from "./content-package-catalogue";
 export * from "./content-package-generator";
 export * from "./content-package-spec";
 export * from "./features";

@@ -1,0 +1,59 @@
+{
+  "catalogueFormatVersion": 1,
+  "catalogueId": "com.sleepymario.local",
+  "displayName": "Sleepy Mario Local Content Catalogue",
+  "description": "Local development catalogue for WhackSmacker content packages.",
+  "generatedAt": "2026-07-06T00:00:00Z",
+  "packages": [
+    {
+      "packageId": "com.sleepymario.language.korean",
+      "packageVersion": "0.1.0",
+      "displayName": "Korean Curriculum",
+      "description": "Korean language curriculum content.",
+      "contentType": "language-curriculum",
+      "contentSchemaVersion": "1.0.0",
+      "minimumWhackSmackerVersion": "0.1.0",
+      "languages": ["en", "ko"],
+      "subjects": ["korean", "language"],
+      "source": {
+        "repository": "https://github.com/SleepyMario/korean-curriculum",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      "package": {
+        "url": "file:///tmp/whacksmacker-example/com.sleepymario.language.korean-0.1.0.wspkg",
+        "mediaType": "application/vnd.whacksmacker.package+zip",
+        "size": 0,
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "dependencies": [
+        {
+          "packageId": "com.sleepymario.language.linguistic-terminology",
+          "version": ">=0.1.0 <1.0.0",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "packageId": "com.sleepymario.language.linguistic-terminology",
+      "packageVersion": "0.1.0",
+      "displayName": "Linguistic Terminology",
+      "description": "Technical linguistic glossary content.",
+      "contentType": "linguistic-terminology",
+      "contentSchemaVersion": "1.0.0",
+      "minimumWhackSmackerVersion": "0.1.0",
+      "languages": ["en", "ko"],
+      "subjects": ["language", "linguistics", "terminology"],
+      "source": {
+        "repository": "https://github.com/SleepyMario/linguistic-terminology",
+        "commit": "0000000000000000000000000000000000000000"
+      },
+      "package": {
+        "url": "https://example.invalid/whacksmacker/com.sleepymario.language.linguistic-terminology-0.1.0.wspkg",
+        "mediaType": "application/vnd.whacksmacker.package+zip",
+        "size": 0,
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      "dependencies": []
+    }
+  ]
+}

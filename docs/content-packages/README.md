@@ -1,8 +1,8 @@
 # Downloadable Content Packages
 
-Roadmap Points 1 and 2 define the WhackSmacker downloadable content package specification and development package generator.
+Roadmap Points 1 through 3 define the WhackSmacker downloadable content package specification, development package generator, and local package catalogue.
 
-It does not implement catalogues, download, installation, updates, removal, reading, memorization items, scheduling, or Anki replacement.
+It does not implement download, installation, updates, removal, reading, memorization items, scheduling, or Anki replacement.
 
 ## Fundamental Rule
 
@@ -28,7 +28,9 @@ The application, downloaded package content, and user progress/settings remain s
 - update compatibility expectations;
 - security restrictions;
 - deterministic-generation requirements;
-- separation between package content and user progress.
+- separation between package content and user progress;
+- local package catalogue format;
+- local catalogue generation from existing `.wspkg` archives.
 
 ## Generator Targets
 
@@ -45,11 +47,40 @@ Run:
 npm run generate-content-package -- --target linguistic-terminology --target korean-curriculum --output-dir packages-output
 ```
 
-The generator emits `.wspkg` archives only. It does not install packages or create a package catalogue.
+The generator emits `.wspkg` archives only. It does not install packages.
+
+## Local Catalogue
+
+Roadmap Point 3 supports local catalogue generation from existing package archives:
+
+```sh
+npm run content:catalogue -- \
+  --packages-dir packages-output \
+  --output packages-output/catalogue.json
+```
+
+Development flow:
+
+```text
+Point 2:
+source repositories -> .wspkg files
+
+Point 3:
+.wspkg files -> local catalogue JSON
+```
+
+The catalogue describes available package archives. It is not:
+
+- a package manifest;
+- an installed-package registry;
+- a user-progress database;
+- a download cache;
+- a canonical curriculum or terminology repository.
+
+Point 4 will later use catalogues for download, install, update, and remove behavior.
 
 ## Not Defined Yet
 
-- package catalogue format;
 - subject-specific content schemas;
 - progress schema;
 - reader behavior;
@@ -64,5 +95,7 @@ The generator emits `.wspkg` archives only. It does not install packages or crea
 - [Package Format v1](package-format-v1.md)
 - [Security](security.md)
 - [Manifest Schema](../../schemas/content-package-manifest-v1.schema.json)
+- [Catalogue Schema](../../schemas/content-package-catalogue-v1.schema.json)
 - [Korean example manifest](examples/korean-manifest.example.json)
 - [Linguistic Terminology example manifest](examples/linguistic-terminology-manifest.example.json)
+- [Local catalogue example](examples/local-catalogue.example.json)

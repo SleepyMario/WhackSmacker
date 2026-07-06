@@ -215,6 +215,14 @@ npm run generate-content-package -- --target linguistic-terminology --target kor
 
 This only creates package archives. It does not install, catalogue, download, or render package content.
 
+Generate a local package catalogue from existing `.wspkg` archives:
+
+```sh
+npm run content:catalogue -- --packages-dir packages-output --output packages-output/catalogue.json
+```
+
+This only lists available package archives. It does not download, install, extract, or read package content.
+
 Tests use local mock HTTP servers and do not require a running Anki instance.
 
 ## Real-Anki Validation Checklist
