@@ -11,7 +11,7 @@ import { mathematicsModule } from "../dist/packages/mathematics/index.js";
 
 function createRegistrationContext(cli = new InMemoryCliCommandRegistry()) {
   return {
-    features: createEnabledFeatures(["cli", "language", "anki", "chess", "geography", "mathematics", "content"]),
+    features: createEnabledFeatures(["cli", "language", "chess", "geography", "mathematics", "content"]),
     paths: createDefaultAppPaths(),
     logger: consoleLogger,
     cli
@@ -39,9 +39,6 @@ test("application CLI registry exposes language commands and the geography proto
     "content update",
     "content updates",
     "geography continents",
-    "language decks",
-    "language review",
-    "language status",
     "language terminology",
     "mathematics beginner-volume-one",
     "mathematics four-and-five",
@@ -56,23 +53,22 @@ test("application CLI registry exposes language commands and the geography proto
   ]);
 });
 
-test("legacy language aliases resolve to language command paths", () => {
+test("removed Anki language aliases no longer resolve while native review commands do", () => {
   const registry = createCommandRegistry();
 
-  assert.equal(resolveCliCommand(registry, ["status"])?.path.join(" "), "language status");
-  assert.equal(resolveCliCommand(registry, ["decks"])?.path.join(" "), "language decks");
-  assert.equal(resolveCliCommand(registry, ["review", "Default"])?.path.join(" "), "language review");
-  assert.deepEqual(resolveCliCommand(registry, ["review", "Deck With Spaces"])?.args, ["Deck With Spaces"]);
+  assert.equal(resolveCliCommand(registry, ["status"]), null);
+  assert.equal(resolveCliCommand(registry, ["decks"]), null);
+  assert.equal(resolveCliCommand(registry, ["review", "Default"]), null);
   assert.equal(resolveCliCommand(registry, ["review", "sources"])?.path.join(" "), "review sources");
+  assert.equal(resolveCliCommand(registry, ["review", "due"])?.path.join(" "), "review due");
 });
 
 test("domain-prefixed language commands resolve directly", () => {
   const registry = createCommandRegistry();
 
-  assert.equal(resolveCliCommand(registry, ["language", "status"])?.path.join(" "), "language status");
-  assert.equal(resolveCliCommand(registry, ["language", "decks"])?.path.join(" "), "language decks");
-  assert.equal(resolveCliCommand(registry, ["language", "review", "Default"])?.path.join(" "), "language review");
-  assert.deepEqual(resolveCliCommand(registry, ["language", "review", "Default"])?.args, ["Default"]);
+  assert.equal(resolveCliCommand(registry, ["language", "status"]), null);
+  assert.equal(resolveCliCommand(registry, ["language", "decks"]), null);
+  assert.equal(resolveCliCommand(registry, ["language", "review", "Default"]), null);
   assert.equal(resolveCliCommand(registry, ["language", "terminology"])?.path.join(" "), "language terminology");
   assert.deepEqual(resolveCliCommand(registry, ["language", "terminology", "--search", "semivowel"])?.args, ["--search", "semivowel"]);
 });

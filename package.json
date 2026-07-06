@@ -1,7 +1,7 @@
 {
   "name": "whacksmacker",
   "version": "0.0.1",
-  "description": "Terminal review sessions for Anki through AnkiConnect.",
+  "description": "Native terminal learning workflows for WhackSmacker content packages.",
   "private": true,
   "license": "GPL-3.0-or-later",
   "engines": {
@@ -16,7 +16,6 @@
     "dist/packages",
     "dist/src",
     "dist/main.js",
-    "dist/anki-client.js",
     "docs",
     "schemas",
     "packages/geography/data/continents.provenance.md",

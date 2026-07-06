@@ -1,8 +1,8 @@
 # Downloadable Content Packages
 
-Roadmap Points 1 through 11 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, native review scheduling state, terminal exercise rendering, reading-to-review integration, user-data backups, and Anki parity audit coverage.
+Roadmap Points 1 through 12 define the WhackSmacker downloadable content package specification, development package generator, local package catalogue, local package management, passive installed-content reading, the package-authored memorization item schema, native review scheduling state, terminal exercise rendering, reading-to-review integration, user-data backups, Anki parity audit coverage, and removal of the old Anki-backed review path.
 
-It does not remove Anki or migrate existing Anki data.
+Native package-based review is now the only active review workflow.
 
 ## Fundamental Rule
 
@@ -38,7 +38,8 @@ The application, downloaded package content, and user progress/settings remain s
 - terminal-safe memorization item exercise rendering;
 - reading-source to review-item discovery and terminal review commands;
 - backup, restore, inspect, and migration support for user-owned state;
-- Anki parity audit tests for native memorization, rendering, scheduling, due-listing, and backup behavior.
+- Anki parity audit history for native memorization, rendering, scheduling, due-listing, and backup behavior;
+- native-only review routing with the old Anki deck command removed.
 
 ## Generator Targets
 
@@ -99,7 +100,9 @@ Point 9 connects installed reading content to reviewable memorization items and 
 
 Point 10 backs up and restores user-owned state without including installed package content or caches.
 
-Point 11 verifies that legacy Anki front/back and simple cloze-like cards can be represented by native memorization items, rendered as terminal exercises, scheduled by native review state, surfaced as due items, and protected by user-data backups. It keeps the legacy Anki review command intact.
+Point 11 verified that legacy Anki front/back and simple cloze-like cards could be represented by native memorization items, rendered as terminal exercises, scheduled by native review state, surfaced as due items, and protected by user-data backups.
+
+Point 12 removes the old Anki-backed review path. `whacksmacker review` now refers only to native package review subcommands.
 
 ## Not Defined Yet
 

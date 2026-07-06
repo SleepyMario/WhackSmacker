@@ -1,14 +1,14 @@
 # Anki Parity Audit
 
-Roadmap Point 11 verifies that the native WhackSmacker package, memorization, rendering, scheduling, and backup layers can cover the essential behavior that the legacy Anki-backed path currently provides.
+Roadmap Point 11 verified that the native WhackSmacker package, memorization, rendering, scheduling, and backup layers could cover the essential behavior that the legacy Anki-backed path provided.
 
-This point is verification only. It does not remove Anki, disable AnkiConnect, migrate existing Anki data, or change the legacy command:
+Roadmap Point 12 has now removed the old Anki-backed command:
 
 ```sh
 whacksmacker review <deck-name>
 ```
 
-That command continues to route to the Anki-backed language review workflow until Roadmap Point 12.
+The `review` namespace now belongs to native package review commands only.
 
 ## Parity Criteria
 
@@ -36,7 +36,7 @@ itemId
 
 ## What Is Tested
 
-The automated parity tests verify that:
+The Point 11 automated parity tests verified that:
 
 - a legacy front/back card can be represented as a valid native `basic-card`;
 - a simple cloze-like card can be represented by the native `cloze` renderer;
@@ -44,17 +44,16 @@ The automated parity tests verify that:
 - native due listing can surface an equivalent item;
 - native review outcome recording creates scheduler state outside installed package content;
 - user-data backup captures installed-package registry and native review progress;
-- legacy Anki card HTML rendering still sanitizes display content;
-- `whacksmacker review <deck-name>` remains routed to the legacy Anki-backed command;
+- legacy Anki card HTML rendering sanitized display content before removal;
+- `whacksmacker review <deck-name>` could remain separate from native `review due` before removal;
 - native `review due` remains routed to the native review command.
 
-The tests do not require a running Anki instance or network access.
+Those tests did not require a running Anki instance or network access. After Point 12, active tests assert that the old command shape no longer routes.
 
 ## Explicit Non-Goals
 
-Point 11 does not implement:
+This historical audit did not implement:
 
-- Anki removal;
 - automatic Anki deck migration;
 - package generation from Anki exports;
 - answer grading or fuzzy matching;

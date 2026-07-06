@@ -93,6 +93,8 @@ This point does not remove Anki, disable AnkiConnect, migrate Anki decks, change
 
 ## Point 12 -- Remove Anki
 
-Status: not started
+Status: implemented
 
-Will remove the Anki dependency after native behavior reaches parity.
+Removes the old AnkiConnect-backed status, deck listing, and deck review commands. `whacksmacker review` now resolves only to native package review subcommands.
+
+This point does not remove package management, reading, memorization-item schemas, native scheduling, exercise rendering, reading-to-review integration, backups, or migration.

@@ -238,7 +238,7 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
   validateDifficulty(value.difficulty, `${field}.difficulty`, errors);
   validateTimestamp(value.createdAt, `${field}.createdAt`, errors);
   validateTimestamp(value.updatedAt, `${field}.updatedAt`, errors);
-  for (const forbidden of ["dueAt", "interval", "easeFactor", "reviewHistory", "progress", "settings", "ankiDeck", "ankiNoteId"]) {
+  for (const forbidden of ["dueAt", "interval", "easeFactor", "reviewHistory", "progress", "settings", "providerDeck", "providerNoteId"]) {
     if (forbidden in value) {
       errors.push(`${field}.${forbidden} is user progress, scheduler state, settings, or provider-specific data and is not allowed.`);
     }

@@ -98,9 +98,6 @@ const mainMenuItems: readonly MenuItem[] = [
 ];
 
 const languageMenuItems: readonly MenuItem[] = [
-  { label: "Status", kind: "language", moduleId: "language" },
-  { label: "Decks", kind: "language", moduleId: "language" },
-  { label: "Review", kind: "language", moduleId: "language" },
   { label: "Linguistic Terminology", kind: "language", moduleId: "language" },
   { label: "Back", kind: "back" }
 ];
@@ -584,41 +581,15 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
 }
 
 async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal: Terminal, label: string): Promise<boolean> {
-  const commandPath =
-    label === "Status"
-      ? ["language", "status"]
-      : label === "Decks"
-        ? ["language", "decks"]
-        : label === "Linguistic Terminology"
-          ? ["language", "terminology"]
-          : ["language", "review"];
+  const commandPath = ["language", "terminology"];
   const command = registry.find(commandPath);
 
   if (command === null) {
     return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
   }
 
-  if (label !== "Review") {
-    const output = await runCapturedLanguageCommand(terminal, command, []);
-    return showMessage(terminal, renderLanguageActionResult(label, output));
-  }
-
-  terminal.restore();
-  try {
-    const deckName = await promptLine("Deck name: ");
-    if (deckName.trim().length === 0) {
-      console.error("Deck name is required.");
-    } else {
-      await command.run([deckName]);
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(message);
-  } finally {
-    terminal.enter();
-  }
-
-  return showMessage(terminal, "Press Escape or Enter to return.", { clear: false });
+  const output = await runCapturedLanguageCommand(terminal, command, []);
+  return showMessage(terminal, renderLanguageActionResult(label, output));
 }
 
 async function runCapturedLanguageCommand(terminal: Terminal, command: CliCommand, args: readonly string[]): Promise<string> {

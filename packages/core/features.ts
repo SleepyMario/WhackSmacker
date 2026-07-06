@@ -1,6 +1,6 @@
 export type DomainFeature = "language" | "chess" | "geography" | "mathematics" | "content";
 
-export type ProviderFeature = "anki" | "lichess" | "stockfish" | "syzygy";
+export type ProviderFeature = "lichess" | "stockfish" | "syzygy";
 
 export type SurfaceFeature = "cli" | "desktop";
 
@@ -35,5 +35,5 @@ export function isDomainFeature(feature: WhackSmackerFeature): feature is Domain
 }
 
 export function isProviderFeature(feature: WhackSmackerFeature): feature is ProviderFeature {
-  return feature === "anki" || feature === "lichess" || feature === "stockfish" || feature === "syzygy";
+  return feature === "lichess" || feature === "stockfish" || feature === "syzygy";
 }

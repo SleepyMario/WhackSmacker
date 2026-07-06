@@ -52,13 +52,7 @@ Record a rating:
 whacksmacker review answer <package-id> <item-id> --rating <again|hard|good|easy> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
 ```
 
-The legacy command:
-
-```sh
-whacksmacker review <deck-name>
-```
-
-continues to route to the Anki-backed language review command.
+The removed legacy command shape `whacksmacker review <deck-name>` no longer routes. Use the native package review subcommands listed above.
 
 ## Progress Separation
 
@@ -68,7 +62,7 @@ When `--data-dir` is used for content during development or tests, WhackSmacker 
 
 ## Boundaries
 
-This point does not implement:
+This point did not implement:
 
 - backup or migration behavior;
 - Anki parity tests;

@@ -39,22 +39,8 @@ Interactive mode:
   wsm
   whacksmacker
 
-Legacy language commands:
-  whacksmacker status
-  whacksmacker decks
-  whacksmacker review <deck-name>
-  wsm status
-  wsm decks
-  wsm review <deck-name>
-
-Domain-prefixed language commands:
-  whacksmacker language status
-  whacksmacker language decks
-  whacksmacker language review <deck-name>
+Language commands:
   whacksmacker language terminology [--search <text>] [--category <name>] [--id <stable-id>]
-  wsm language status
-  wsm language decks
-  wsm language review <deck-name>
   wsm language terminology [--search <text>] [--category <name>] [--id <stable-id>]
 
 Geography commands:
@@ -115,7 +101,7 @@ Backup commands:
   whacksmacker backup migrate <backup.json> --output <new-backup.json>
 
 Modules:
-  Language      AnkiConnect review and linguistic terminology
+  Language      Linguistic terminology glossary
   Chess         Placeholder
   Geography     Continents review available
   Mathematics   Beginner mathematics workbook generators
@@ -128,29 +114,11 @@ Interactive controls:
   q               Quit
   Ctrl-C          Exit
 
-Review controls:
-  Enter or Space  Reveal the answer
-  1               Again
-  2               Hard
-  3               Good
-  4               Easy
-  q               Stop the review
-
-Anki requirement:
-  Anki must be running.
-  AnkiConnect must be installed and reachable at http://127.0.0.1:8765.
-
 Options:
   --output PATH  Workbook output path for mathematics workbook generation.
   --seed N       Reproducible workbook seed for mathematics workbook generation.
   -h, --help      Show this help.
   -v, --version   Show the WhackSmacker version.`;
-
-const legacyAliases = new Map<string, readonly string[]>([
-  ["status", ["language", "status"]],
-  ["decks", ["language", "decks"]],
-  ["review", ["language", "review"]]
-]);
 
 export interface ResolvedCliCommand {
   readonly command: CliCommand;
@@ -161,7 +129,7 @@ export interface ResolvedCliCommand {
 export function createCommandRegistry(): InMemoryCliCommandRegistry {
   const cli = new InMemoryCliCommandRegistry();
   const context = {
-    features: createEnabledFeatures(["cli", "language", "anki", "chess", "geography", "mathematics", "content"]),
+    features: createEnabledFeatures(["cli", "language", "chess", "geography", "mathematics", "content"]),
     paths: createDefaultAppPaths(),
     logger: consoleLogger,
     cli
@@ -234,16 +202,6 @@ export function resolveCliCommand(registry: InMemoryCliCommandRegistry, argv: re
   const command = registry.find(path);
   if (command !== null) {
     return { command, args: argv.slice(2), path };
-  }
-
-  const aliasPath = legacyAliases.get(commandName);
-  if (aliasPath !== undefined) {
-    const aliasCommand = registry.find(aliasPath);
-    if (aliasCommand === null) {
-      return null;
-    }
-
-    return { command: aliasCommand, args: argv.slice(1), path: aliasPath };
   }
 
   return null;

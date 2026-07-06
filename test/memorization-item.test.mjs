@@ -64,7 +64,7 @@ test("unsafe source path fails", () => {
 });
 
 test("scheduler progress and provider-specific fields are rejected", () => {
-  for (const field of ["dueAt", "interval", "easeFactor", "reviewHistory", "progress", "settings", "ankiDeck", "ankiNoteId"]) {
+  for (const field of ["dueAt", "interval", "easeFactor", "reviewHistory", "progress", "settings", "providerDeck", "providerNoteId"]) {
     const item = validItem();
     item[field] = "not allowed";
 

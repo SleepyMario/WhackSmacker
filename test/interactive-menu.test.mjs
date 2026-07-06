@@ -55,9 +55,6 @@ function createStubRegistry(calls) {
   const registry = new InMemoryCliCommandRegistry();
 
   for (const path of [
-    ["language", "status"],
-    ["language", "decks"],
-    ["language", "review"],
     ["language", "terminology"],
     ["geography", "continents"],
     ["mathematics", "beginner-volume-one"],
@@ -102,8 +99,9 @@ test("no arguments select interactive mode and fail clearly when not interactive
 test("arguments continue to select normal CLI routing", () => {
   const registry = createStubRegistry([]);
 
-  assert.equal(resolveCliCommand(registry, ["status"])?.path.join(" "), "language status");
-  assert.equal(resolveCliCommand(registry, ["language", "status"])?.path.join(" "), "language status");
+  assert.equal(resolveCliCommand(registry, ["status"]), null);
+  assert.equal(resolveCliCommand(registry, ["language", "status"]), null);
+  assert.equal(resolveCliCommand(registry, ["language", "terminology"])?.path.join(" "), "language terminology");
 });
 
 test("main menu exposes all registered domain modules", () => {
@@ -113,10 +111,10 @@ test("main menu exposes all registered domain modules", () => {
   );
 });
 
-test("language menu exposes status, decks, review, terminology, and back", () => {
+test("language menu exposes terminology and back", () => {
   assert.deepEqual(
     getLanguageMenuItems().map((item) => item.label),
-    ["Status", "Decks", "Review", "Linguistic Terminology", "Back"]
+    ["Linguistic Terminology", "Back"]
   );
 });
 
@@ -164,7 +162,7 @@ test("One, Two, Three submenu exposes workbook generation and back", () => {
   );
 });
 
-test("menu selection routes to the selected language command", async () => {
+test("menu selection routes to linguistic terminology", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
@@ -176,36 +174,16 @@ test("menu selection routes to the selected language command", async () => {
 
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
-  assert.deepEqual(calls, [{ path: "language status", args: [] }]);
+  assert.deepEqual(calls, [{ path: "language terminology", args: [] }]);
   assert.match(terminal.output, /WhackSmacker Will Whack That Smack Into Your Brains/);
-  assert.match(terminal.output, /Status\n\nlanguage status output\n\nPress Escape or Enter to return\./);
+  assert.match(terminal.output, /Linguistic Terminology\n\nlanguage terminology output\n\nPress Escape or Enter to return\./);
   assert.equal(terminal.restoreCount, 2);
-});
-
-test("language deck menu renders output from the registered deck command", async () => {
-  const calls = [];
-  const terminal = new FakeTerminal([
-    key("return"),
-    key("down"),
-    key("return"),
-    key("return"),
-    key("escape"),
-    key("escape")
-  ]);
-
-  await runInteractiveMenu(createStubRegistry(calls), terminal);
-
-  assert.deepEqual(calls, [{ path: "language decks", args: [] }]);
-  assert.match(terminal.output, /Decks\n\nlanguage decks output\n\nPress Escape or Enter to return\./);
 });
 
 test("language menu routes linguistic terminology to the registered command", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
-    key("down"),
-    key("down"),
-    key("down"),
     key("return"),
     key("return"),
     key("escape"),
