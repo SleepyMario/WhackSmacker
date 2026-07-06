@@ -6,6 +6,8 @@ The curriculum repository is the canonical source for curriculum design. WhackSm
 
 Local absolute paths, such as `/home/ashwin/Projects/math-curriculum`, are development information only. They are not runtime dependencies.
 
+Generated PDF workbooks are currently on-demand artifacts. See [Mathematics Artifact Policy](mathematics-artifacts.md) for the local output, commit, naming, and future package policy.
+
 ## Unit Mapping
 
 | Curriculum ID | Curriculum document | WhackSmacker command |

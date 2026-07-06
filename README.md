@@ -132,7 +132,7 @@ Current package responsibilities:
 - `packages/language`: bundled linguistic terminology and language CLI commands.
 - `packages/chess`: terminal-safe chessboard command backed by `packages/chess-core`.
 - `packages/geography`: placeholder geography interfaces and clean module registration; no user commands yet.
-- `packages/mathematics`: placeholder mathematics interfaces and clean module registration; no user commands yet.
+- `packages/mathematics`: on-demand beginner workbook PDF generators. Generated math PDFs are local artifacts; see `docs/mathematics-artifacts.md`.
 - `packages/storage`: shared storage/path abstractions only; no domain schemas.
 
 Potential future local data layout:

@@ -15,5 +15,11 @@ coverage/
 build/
 target/
 packages-output/
+math-artifacts/
+one-two-three-workbook.pdf
+four-and-five-workbook.pdf
+one-to-five-workbook.pdf
+six-to-nine-workbook.pdf
+beginner-mathematics-volume-one.pdf
 .env
 .env.*
