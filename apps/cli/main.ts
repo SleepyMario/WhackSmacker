@@ -38,6 +38,9 @@ Usage:
 Interactive mode:
   wsm
   whacksmacker
+  wsm --data-dir <dir>
+  whacksmacker --data-dir <dir>
+      Open the interactive menu. The Language menu discovers installed language packages from the selected content data directory.
 
 Language commands:
   whacksmacker language korean [--file <path>] [--version <version>] [--data-dir <dir>]
@@ -181,8 +184,9 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
 
   const registry = createCommandRegistry();
 
-  if (argv.length === 0) {
-    await runInteractiveMenu(registry);
+  const interactiveOptions = parseInteractiveOptions(argv);
+  if (interactiveOptions !== null) {
+    await runInteractiveMenu(registry, undefined, interactiveOptions);
     return;
   }
 
@@ -195,6 +199,16 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   }
 
   await dispatch(resolved.command, resolved.args);
+}
+
+function parseInteractiveOptions(argv: readonly string[]): { readonly dataDir?: string } | null {
+  if (argv.length === 0) {
+    return {};
+  }
+  if (argv.length === 2 && argv[0] === "--data-dir" && argv[1]?.trim().length > 0) {
+    return { dataDir: argv[1] };
+  }
+  return null;
 }
 
 function isHelpRequest(argv: readonly string[]): boolean {

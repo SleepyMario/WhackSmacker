@@ -1,23 +1,35 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "node:test";
 
-import { resolveCliCommand } from "../dist/apps/cli/main.js";
+import { createCommandRegistry, resolveCliCommand } from "../dist/apps/cli/main.js";
 import {
+  buildLanguageMenuItems,
+  getDynamicLanguageMenuItems,
   getBeginnerMathematicsMenuItems,
   getGeographyMenuItems,
+  getInstalledLanguagePackageActionItems,
   getLanguageMenuItems,
   getLinguisticTermsMenuItems,
   getMainMenuItems,
   getMathematicsMenuItems,
   getOneTwoThreeMenuItems,
+  installedLanguagePackagesToMenuItems,
+  languageMenuHeading,
   renderWhackSmackerHeader,
   runInteractiveMenu,
   shouldUseTerminalColors,
   whackSmackerBanner,
   whackSmackerSubtitle
 } from "../dist/apps/cli/interactive-menu.js";
-import { InMemoryCliCommandRegistry } from "../dist/packages/core/index.js";
+import {
+  generateContentPackage,
+  generateLocalContentPackageCatalogue,
+  installContentPackage,
+  InMemoryCliCommandRegistry
+} from "../dist/packages/core/index.js";
 
 class FakeTerminal {
   constructor(keys, { interactive = true } = {}) {
@@ -124,6 +136,47 @@ test("language menu exposes Korean, Linguistic Terms, and back", () => {
   );
 });
 
+test("installed language package discovery is generic and normalizes curriculum labels", () => {
+  const items = installedLanguagePackagesToMenuItems([
+    packageRecord("com.sleepymario.language.korean", "Korean Curriculum"),
+    packageRecord("com.sleepymario.language.chinese", "Chinese - Mandarin"),
+    packageRecord("com.sleepymario.language.vietnamese", "Vietnamese Curriculum"),
+    packageRecord("com.sleepymario.language.dutch", "Dutch"),
+    packageRecord("com.sleepymario.language.linguistic-terminology", "Linguistic Terminology"),
+    packageRecord("com.sleepymario.mathematics.curriculum", "Mathematics")
+  ]);
+
+  assert.deepEqual(items.map((item) => item.label), ["Chinese - Mandarin", "Dutch", "Korean", "Linguistic Terminology", "Vietnamese"]);
+  assert.deepEqual(items.map((item) => item.packageId), [
+    "com.sleepymario.language.chinese",
+    "com.sleepymario.language.dutch",
+    "com.sleepymario.language.korean",
+    "com.sleepymario.language.linguistic-terminology",
+    "com.sleepymario.language.vietnamese"
+  ]);
+});
+
+test("new language package IDs appear without hard-coded menu entries", () => {
+  const items = installedLanguagePackagesToMenuItems([
+    packageRecord("com.sleepymario.language.example", "Example Language")
+  ]);
+
+  assert.deepEqual(items.map((item) => item.label), ["Example Language"]);
+  assert.deepEqual(buildLanguageMenuItems(items).map((item) => item.label), ["Example Language", "Korean", "Linguistic Terms", "Back"]);
+});
+
+test("language menu heading explains missing installed packages", () => {
+  assert.match(languageMenuHeading(false, 0), /No installed language packages found/);
+  assert.match(languageMenuHeading(false, 0), /whacksmacker content install/);
+});
+
+test("installed package action menu exposes read review info and back", () => {
+  assert.deepEqual(
+    getInstalledLanguagePackageActionItems().map((item) => item.label),
+    ["Read content", "Review sources", "Package info", "Back"]
+  );
+});
+
 test("Linguistic Terms menu exposes General before language groups", () => {
   assert.deepEqual(
     getLinguisticTermsMenuItems().map((item) => item.label),
@@ -209,6 +262,42 @@ test("language menu routes Linguistic Terms groups to the registered command", a
   assert.deepEqual(calls, [{ path: "language terms", args: ["general"] }]);
   assert.match(terminal.output, /General\n\nlanguage terms output\n\nPress Escape or Enter to return\./);
   assert.match(terminal.output, /Use Up\/Down or PageUp\/PageDown to scroll/);
+});
+
+test("language menu discovers installed packages from the selected data dir", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const items = await getDynamicLanguageMenuItems(fixture.dataDir);
+
+    assert.deepEqual(items.map((item) => item.label), ["Dutch", "Korean", "Linguistic Terms", "Back"]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("installed language package menu can list readable content", async () => {
+  const fixture = await createInstalledDutchFixture();
+  const terminal = new FakeTerminal([
+    key("return"),
+    key("return"),
+    key("return"),
+    key("pagedown"),
+    key("escape"),
+    key("escape"),
+    key("escape"),
+    key("escape")
+  ]);
+
+  try {
+    await runInteractiveMenu(createCommandRegistry(), terminal, { dataDir: fixture.dataDir });
+
+    assert.match(terminal.output, /Installed Language Packages/);
+    assert.match(terminal.output, /Dutch/);
+    assert.match(terminal.output, /Readable files for com\.sleepymario\.language\.dutch/);
+    assert.match(terminal.output, /units\/dutch-core\/chapter-005-basic-sentences-5\/chapter\.md/);
+  } finally {
+    await fixture.cleanup();
+  }
 });
 
 test("chess menu item routes to the registered command", async () => {
@@ -340,6 +429,44 @@ function stripAnsi(text) {
 
 function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function packageRecord(packageId, displayName) {
+  return {
+    packageId,
+    packageVersion: "0.1.0",
+    displayName,
+    contentType: "language-curriculum"
+  };
+}
+
+async function createInstalledDutchFixture() {
+  const root = await mkdtemp(join(tmpdir(), "wsm-menu-dutch-"));
+  const packageDirectory = join(root, "packages");
+  const cataloguePath = join(root, "catalogue", "catalogue.json");
+  const dataDir = join(root, "data", "content");
+  await generateContentPackage({
+    targetId: "dutch-curriculum",
+    outputDirectory: packageDirectory,
+    generatedAt: "2026-07-06T00:00:00Z"
+  });
+  await generateLocalContentPackageCatalogue({
+    packagesDirectory: packageDirectory,
+    outputPath: cataloguePath,
+    generatedAt: "2026-07-06T00:00:00Z"
+  });
+  await installContentPackage({
+    cataloguePath,
+    dataDir,
+    packageId: "com.sleepymario.language.dutch",
+    installedAt: "2026-07-06T00:00:00Z"
+  });
+
+  return {
+    root,
+    dataDir,
+    cleanup: () => rm(root, { recursive: true, force: true })
+  };
 }
 
 async function runNode(args) {

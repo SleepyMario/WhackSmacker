@@ -1,5 +1,9 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
 import {
+  listInstalledReadablePackages,
+  type InstalledReadablePackage
+} from "../../packages/core";
+import {
   defaultBeginnerVolumeOneOutputPath,
   defaultFourAndFiveOutputPath,
   defaultOneToFiveOutputPath,
@@ -59,8 +63,11 @@ export interface Terminal {
 
 export interface MenuItem {
   readonly label: string;
-  readonly kind: "language" | "chess" | "geography" | "mathematics" | "placeholder" | "back";
+  readonly kind: "language" | "installed-language" | "language-fallback" | "language-package-action" | "chess" | "geography" | "mathematics" | "placeholder" | "back";
   readonly moduleId?: string;
+  readonly packageId?: string;
+  readonly packageVersion?: string;
+  readonly action?: "read-content" | "review-sources" | "package-info";
 }
 
 const ansi = {
@@ -98,8 +105,15 @@ const mainMenuItems: readonly MenuItem[] = [
 ];
 
 const languageMenuItems: readonly MenuItem[] = [
-  { label: "Korean", kind: "language", moduleId: "language" },
-  { label: "Linguistic Terms", kind: "language", moduleId: "language" },
+  { label: "Korean", kind: "language-fallback", moduleId: "language", packageId: "com.sleepymario.language.korean" },
+  { label: "Linguistic Terms", kind: "language-fallback", moduleId: "language", packageId: "com.sleepymario.language.linguistic-terminology" },
+  { label: "Back", kind: "back" }
+];
+
+const installedLanguagePackageActions: readonly MenuItem[] = [
+  { label: "Read content", kind: "language-package-action", action: "read-content" },
+  { label: "Review sources", kind: "language-package-action", action: "review-sources" },
+  { label: "Package info", kind: "language-package-action", action: "package-info" },
   { label: "Back", kind: "back" }
 ];
 
@@ -139,6 +153,49 @@ export function getMainMenuItems(): readonly MenuItem[] {
 
 export function getLanguageMenuItems(): readonly MenuItem[] {
   return languageMenuItems;
+}
+
+export function getInstalledLanguagePackageActionItems(): readonly MenuItem[] {
+  return installedLanguagePackageActions;
+}
+
+export async function getDynamicLanguageMenuItems(dataDir?: string): Promise<readonly MenuItem[]> {
+  const installed = await discoverInstalledLanguagePackageMenuItems(dataDir);
+  return buildLanguageMenuItems(installed);
+}
+
+export async function discoverInstalledLanguagePackageMenuItems(dataDir?: string): Promise<readonly MenuItem[]> {
+  const packages = await listInstalledReadablePackages(dataDir);
+  return installedLanguagePackagesToMenuItems(packages);
+}
+
+export function installedLanguagePackagesToMenuItems(packages: readonly InstalledReadablePackage[]): readonly MenuItem[] {
+  return packages
+    .filter((contentPackage) => isLanguageLikePackage(contentPackage.packageId))
+    .map((contentPackage) => ({
+      label: displayLabelForLanguagePackage(contentPackage.displayName),
+      kind: "installed-language" as const,
+      moduleId: "language",
+      packageId: contentPackage.packageId,
+      packageVersion: contentPackage.packageVersion
+    }))
+    .sort((left, right) => left.label.localeCompare(right.label));
+}
+
+export function buildLanguageMenuItems(installed: readonly MenuItem[]): readonly MenuItem[] {
+  const installedPackageIds = new Set(installed.map((item) => item.packageId).filter((packageId): packageId is string => packageId !== undefined));
+  const fallbackItems = languageMenuItems.filter(
+    (item) => item.kind === "language-fallback" && (item.packageId === undefined || !installedPackageIds.has(item.packageId))
+  );
+  return [...installed, ...fallbackItems, { label: "Back", kind: "back" }];
+}
+
+export function languageMenuHeading(colorsEnabled: boolean, installedCount: number): string {
+  const base = `${renderWhackSmackerHeader(colorsEnabled)}\nLanguage\n`;
+  if (installedCount > 0) {
+    return `${base}Installed Language Packages\n`;
+  }
+  return `${base}No installed language packages found.\nGenerate content packages, create a local catalogue, then install language packages with whacksmacker content install.\nLegacy/fallback entries are shown below.\n`;
 }
 
 export function getLinguisticTermsMenuItems(): readonly MenuItem[] {
@@ -209,7 +266,11 @@ export function createNodeTerminal(): Terminal {
   };
 }
 
-export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal()): Promise<void> {
+export interface InteractiveMenuOptions {
+  readonly dataDir?: string;
+}
+
+export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal(), options: InteractiveMenuOptions = {}): Promise<void> {
   if (!terminal.isInteractive) {
     console.error("Interactive menu requires an interactive terminal. Run a command directly instead.");
     process.exitCode = 1;
@@ -253,7 +314,7 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
       if (isEnter(key)) {
         const item = mainMenuItems[selection];
         if (item.kind === "language") {
-          const quit = await runLanguageMenu(registry, terminal);
+          const quit = await runLanguageMenu(registry, terminal, options);
           if (quit) {
             return;
           }
@@ -562,11 +623,14 @@ async function runGeographyAction(registry: InMemoryCliCommandRegistry, terminal
   return showMessage(terminal, "Press Escape or Enter to return.", { clear: false });
 }
 
-async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
+async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
   let selection = 0;
 
   while (true) {
-    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nLanguage\n`, languageMenuItems, selection);
+    const installed = await discoverInstalledLanguagePackageMenuItems(options.dataDir);
+    const items = buildLanguageMenuItems(installed);
+    selection = Math.min(selection, items.length - 1);
+    renderMenu(terminal, languageMenuHeading(terminal.colorsEnabled, installed.length), items, selection);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -583,12 +647,12 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
     }
 
     if (isUp(key)) {
-      selection = wrapSelection(selection - 1, languageMenuItems.length);
+      selection = wrapSelection(selection - 1, items.length);
       continue;
     }
 
     if (isDown(key)) {
-      selection = wrapSelection(selection + 1, languageMenuItems.length);
+      selection = wrapSelection(selection + 1, items.length);
       continue;
     }
 
@@ -596,18 +660,104 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
       continue;
     }
 
-    const item = languageMenuItems[selection];
+    const item = items[selection];
     if (item.kind === "back") {
       return false;
     }
 
-    const quit = item.label === "Linguistic Terms"
+    const quit = item.kind === "installed-language"
+      ? await runInstalledLanguagePackageMenu(registry, terminal, item, options)
+      : item.label.startsWith("Linguistic Terms")
       ? await runLinguisticTermsMenu(registry, terminal)
       : await runLanguageAction(registry, terminal, item.label);
     if (quit) {
       return true;
     }
   }
+}
+
+async function runInstalledLanguagePackageMenu(
+  registry: InMemoryCliCommandRegistry,
+  terminal: Terminal,
+  languagePackage: MenuItem,
+  options: InteractiveMenuOptions
+): Promise<boolean> {
+  let selection = 0;
+
+  while (true) {
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nLanguage\n${languagePackage.label}\n`, installedLanguagePackageActions, selection);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+
+    if (isEscape(key)) {
+      return false;
+    }
+
+    if (isQuit(key)) {
+      return true;
+    }
+
+    if (isUp(key)) {
+      selection = wrapSelection(selection - 1, installedLanguagePackageActions.length);
+      continue;
+    }
+
+    if (isDown(key)) {
+      selection = wrapSelection(selection + 1, installedLanguagePackageActions.length);
+      continue;
+    }
+
+    if (!isEnter(key)) {
+      continue;
+    }
+
+    const item = installedLanguagePackageActions[selection];
+    if (item.kind === "back") {
+      return false;
+    }
+
+    const quit = await runInstalledLanguagePackageAction(registry, terminal, languagePackage, item, options);
+    if (quit) {
+      return true;
+    }
+  }
+}
+
+async function runInstalledLanguagePackageAction(
+  registry: InMemoryCliCommandRegistry,
+  terminal: Terminal,
+  languagePackage: MenuItem,
+  action: MenuItem,
+  options: InteractiveMenuOptions
+): Promise<boolean> {
+  if (languagePackage.packageId === undefined) {
+    return showMessage(terminal, "Installed language package is missing a package ID.");
+  }
+
+  if (action.action === "package-info") {
+    return showPagedMessage(terminal, renderLanguageActionResult(languagePackage.label, [
+      `Package: ${languagePackage.packageId}`,
+      `Version: ${languagePackage.packageVersion ?? "latest installed"}`,
+      "",
+      "Installed package content is read-only. User progress and settings stay outside package directories."
+    ].join("\n")));
+  }
+
+  const commandPath = action.action === "review-sources" ? ["review", "sources"] : ["content", "read"];
+  const command = registry.find(commandPath);
+  if (command === null) {
+    return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
+  }
+
+  const args = action.action === "review-sources"
+    ? ["--package", languagePackage.packageId, ...packageActionArgs(languagePackage, options)]
+    : [languagePackage.packageId, ...packageActionArgs(languagePackage, options)];
+  const output = await runCapturedLanguageCommand(terminal, command, args);
+  return showPagedMessage(terminal, renderLanguageActionResult(action.label, output));
 }
 
 async function runLinguisticTermsMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
@@ -724,6 +874,25 @@ function renderLanguageActionResult(label: string, output: string): string {
   const body = output.trim().length > 0 ? output : "No output.";
 
   return `${label}\n\n${body}\n\nPress Escape or Enter to return.`;
+}
+
+function packageActionArgs(languagePackage: MenuItem, options: InteractiveMenuOptions): readonly string[] {
+  const args: string[] = [];
+  if (languagePackage.packageVersion !== undefined) {
+    args.push("--version", languagePackage.packageVersion);
+  }
+  if (options.dataDir !== undefined) {
+    args.push("--data-dir", options.dataDir);
+  }
+  return args;
+}
+
+function isLanguageLikePackage(packageId: string): boolean {
+  return packageId.startsWith("com.sleepymario.language.");
+}
+
+function displayLabelForLanguagePackage(displayName: string): string {
+  return displayName.endsWith(" Curriculum") ? displayName.slice(0, -" Curriculum".length) : displayName;
 }
 
 async function runPlaceholderScreen(terminal: Terminal, moduleName: string): Promise<boolean> {
