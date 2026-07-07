@@ -37,7 +37,7 @@ test("readable entries are listed from the installed source snapshot", async () 
     const entries = await listReadableContentEntries("com.sleepymario.language.korean", fixture.dataDir);
 
     assert.ok(entries.some((entry) => entry.path === "README.md"));
-    assert.ok(entries.some((entry) => entry.path === "units/hangul-foundation/README.md"));
+    assert.ok(entries.some((entry) => entry.path === "units/introduction-to-hangul/README.md"));
     assert.equal(entries.every((entry) => entry.source === "snapshot"), true);
   } finally {
     await fixture.cleanup();
@@ -50,14 +50,14 @@ test("installed content entry can be read and rendered", async () => {
     const result = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.korean",
-      path: "units/hangul-foundation/README.md"
+      path: "units/introduction-to-hangul/README.md"
     });
     const rendered = renderReadingContent(result);
 
     assert.equal(result.entry.mediaType, "text/markdown");
-    assert.match(result.text, /Hangul Foundation/);
+    assert.match(result.text, /Introduction to Hangul/);
     assert.match(rendered, /Korean Curriculum/);
-    assert.match(rendered, /units\/hangul-foundation\/README\.md/);
+    assert.match(rendered, /units\/introduction-to-hangul\/README\.md/);
   } finally {
     await fixture.cleanup();
   }
@@ -106,40 +106,40 @@ test("content read CLI lists packages files and renders selected content", async
       "read",
       "com.sleepymario.language.korean",
       "--file",
-      "units/hangul-foundation/README.md",
+      "units/introduction-to-hangul/README.md",
       "--data-dir",
       fixture.dataDir
     ]);
 
     assert.match(packages.stdout, /Readable content packages:/);
-    assert.match(files.stdout, /units\/hangul-foundation\/README\.md/);
-    assert.match(rendered.stdout, /Hangul Foundation/);
+    assert.match(files.stdout, /units\/introduction-to-hangul\/README\.md/);
+    assert.match(rendered.stdout, /Introduction to Hangul/);
   } finally {
     await fixture.cleanup();
   }
 });
 
-test("installed Korean package exposes Chapter 20 and split vocabulary review decks", async () => {
+test("installed Korean package exposes Chapter 15 and split vocabulary review decks", async () => {
   const fixture = await createInstalledReadingFixture();
   try {
     const expectedReviewDecks = [
       {
-        title: "Chapter 8-10",
-        sourcePath: "review-decks/chapter-008-010/cards.tsv",
-        itemPath: "content/memorization/review-decks/chapter-008-010.json",
-        itemCount: 50
+        title: "Chapter 1-5",
+        sourcePath: "review-decks/chapter-001-005/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-001-005.json",
+        itemCount: 78
+      },
+      {
+        title: "Chapter 6-10",
+        sourcePath: "review-decks/chapter-006-010/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-006-010.json",
+        itemCount: 84
       },
       {
         title: "Chapter 11-15",
         sourcePath: "review-decks/chapter-011-015/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-011-015.json",
-        itemCount: 76
-      },
-      {
-        title: "Chapter 16-20",
-        sourcePath: "review-decks/chapter-016-020/cards.tsv",
-        itemPath: "content/memorization/review-decks/chapter-016-020.json",
-        itemCount: 88
+        itemCount: 84
       }
     ];
     const installed = await listInstalledContentPackages(fixture.dataDir);
@@ -147,7 +147,7 @@ test("installed Korean package exposes Chapter 20 and split vocabulary review de
     const chapter20 = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.korean",
-      path: "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"
+      path: "units/korean-core/chapter-015-basic-life-sentences-15/chapter.md"
     });
     const itemFiles = await listInstalledMemorizationItemFiles("com.sleepymario.language.korean", fixture.dataDir);
     const sources = await listReadingReviewSources({
@@ -156,12 +156,14 @@ test("installed Korean package exposes Chapter 20 and split vocabulary review de
     });
 
     assert.deepEqual(installed.map((record) => record.packageId), ["com.sleepymario.language.korean"]);
-    assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"));
+    assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-015-basic-life-sentences-15/chapter.md"));
     for (const deck of expectedReviewDecks) {
       assert.ok(entries.some((entry) => entry.path === deck.sourcePath));
     }
     assert.equal(entries.some((entry) => entry.path === "review-decks/chapter-001-020/cards.tsv"), false);
-    assert.match(chapter20.text, /Chapter 20 -- Basic Life Sentences XIII/);
+    assert.equal(entries.some((entry) => entry.path === "review-decks/chapter-008-010/cards.tsv"), false);
+    assert.equal(entries.some((entry) => entry.path === "review-decks/chapter-016-020/cards.tsv"), false);
+    assert.match(chapter20.text, /Chapter 15 -- Basic Life Sentences XV/);
     assert.deepEqual(
       itemFiles.map((file) => file.path),
       expectedReviewDecks.map((deck) => deck.itemPath)
@@ -189,6 +191,8 @@ test("installed Korean package exposes Chapter 20 and split vocabulary review de
     }
 
     assert.equal(sources.some((source) => source.sourcePath === "review-decks/chapter-001-020/cards.tsv" || source.title === "Chapter 1-20"), false);
+    assert.equal(sources.some((source) => source.sourcePath === "review-decks/chapter-008-010/cards.tsv" || source.title === "Chapter 8-10"), false);
+    assert.equal(sources.some((source) => source.sourcePath === "review-decks/chapter-016-020/cards.tsv" || source.title === "Chapter 16-20"), false);
     assert.ok(allItems.some((item) => item.item.prompt.text === "안녕하세요" && item.item.answer.text === "hello"));
     assert.ok(allItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "안녕하세요"));
     assert.ok(allItems.some((item) => item.item.prompt.text === "은/는" && item.item.answer.text === "topic particle"));
@@ -207,7 +211,9 @@ test("installed Korean package exposes Chapter 20 and split vocabulary review de
       "N이/가 있습니다",
       "N이/가 없습니다",
       "N이/가 있어요",
-      "N이/가 없어요"
+      "N이/가 없어요",
+      "N이/가 있어",
+      "N이/가 없어"
     ];
     assert.equal(
       allItems.some((item) => forbiddenPatterns.includes(item.item.prompt.text) || forbiddenPatterns.includes(item.item.answer.text)),
@@ -226,7 +232,7 @@ test("installed Korean Chinese and Vietnamese packages expose expected reading a
     const koreanChapter20 = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.korean",
-      path: "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"
+      path: "units/korean-core/chapter-015-basic-life-sentences-15/chapter.md"
     });
     const vietnameseChapter5 = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
@@ -243,21 +249,23 @@ test("installed Korean Chinese and Vietnamese packages expose expected reading a
       installed.map((record) => record.packageId).sort(),
       ["com.sleepymario.language.chinese", "com.sleepymario.language.korean", "com.sleepymario.language.vietnamese"]
     );
-    assert.match(koreanChapter20.text, /Chapter 20 -- Basic Life Sentences XIII/);
+    assert.match(koreanChapter20.text, /Chapter 15 -- Basic Life Sentences XV/);
     assert.match(vietnameseChapter5.text, /Chapter 5 -- Basic Sentences V/);
     assert.match(chineseDeck.text, /^Pinyin-Zhuyin\tPinyin -> Zhuyin\tb\tㄅ/m);
 
-    const sourceNames = reviewSources.map((source) => source.title).sort();
-    assert.deepEqual(sourceNames, [
-      "Chapter 1-5",
-      "Chapter 11-15",
-      "Chapter 16-20",
-      "Chapter 8-10",
-      "Pinyin-Zhuyin",
-      "Pinyin-Zhuyin with Tones"
-    ]);
-    assert.equal(sourceNames.includes("Chapter 1-20"), false);
-    assert.equal(sourceNames.includes("Lessons 1-5"), false);
+    const koreanSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.korean");
+    assert.deepEqual(
+      koreanSources.map((source) => [source.title, source.sourcePath]).sort(),
+      [
+        ["Chapter 1-5", "review-decks/chapter-001-005/cards.tsv"],
+        ["Chapter 11-15", "review-decks/chapter-011-015/cards.tsv"],
+        ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"]
+      ]
+    );
+    assert.equal(reviewSources.some((source) => source.title === "Chapter 1-20"), false);
+    assert.equal(reviewSources.some((source) => source.title === "Chapter 8-10"), false);
+    assert.equal(reviewSources.some((source) => source.title === "Chapter 16-20"), false);
+    assert.equal(reviewSources.some((source) => source.title === "Lessons 1-5"), false);
 
     const chineseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.chinese");
     assert.deepEqual(chineseSources.map((source) => source.title).sort(), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
@@ -285,6 +293,8 @@ test("installed Korean Chinese and Vietnamese packages expose expected reading a
       "N이/가 없습니다",
       "N이/가 있어요",
       "N이/가 없어요",
+      "N이/가 있어",
+      "N이/가 없어",
       "Tôi là N",
       "Tên tôi là N",
       "Đây là N",

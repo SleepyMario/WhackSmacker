@@ -114,19 +114,19 @@ whacksmacker content install com.sleepymario.language.chinese --catalogue /tmp/w
 whacksmacker content install com.sleepymario.language.vietnamese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content installed
-whacksmacker language korean --file units/hangul-foundation/README.md
-whacksmacker content read com.sleepymario.language.korean --file units/korean-core/chapter-020-basic-life-sentences-13/chapter.md
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-008-010/cards.tsv
+whacksmacker language korean --file units/introduction-to-hangul/README.md
+whacksmacker content read com.sleepymario.language.korean --file units/korean-core/chapter-015-basic-life-sentences-15/chapter.md
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-001-005/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-006-010/cards.tsv
 whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-011-015/cards.tsv
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-016-020/cards.tsv
 whacksmacker content read com.sleepymario.language.chinese --file review-decks/pinyin-zhuyin/cards.tsv
 whacksmacker content read com.sleepymario.language.chinese --file review-decks/pinyin-zhuyin-with-tones/cards.tsv
 whacksmacker content read com.sleepymario.language.vietnamese --file units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md
 whacksmacker content read com.sleepymario.language.vietnamese --file review-decks/chapter-001-005/cards.tsv
 whacksmacker review sources --package com.sleepymario.language.korean
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-008-010/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-001-005/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-006-010/cards.tsv
 whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-011-015/cards.tsv
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-016-020/cards.tsv
 whacksmacker review sources --package com.sleepymario.language.chinese
 whacksmacker review items --package com.sleepymario.language.chinese --source review-decks/pinyin-zhuyin/cards.tsv
 whacksmacker review items --package com.sleepymario.language.chinese --source review-decks/pinyin-zhuyin-with-tones/cards.tsv
@@ -135,4 +135,4 @@ whacksmacker review items --package com.sleepymario.language.vietnamese --source
 whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```
 
-The installed Korean package exposes the Chapter 8-10, Chapter 11-15, and Chapter 16-20 review decks. The installed Chinese package exposes the Pinyin-Zhuyin and Pinyin-Zhuyin with Tones conversion decks. The installed Vietnamese package exposes the Chapter 1-5 review deck. Korean and Vietnamese packages do not generate full grammar-pattern cards into vocabulary/function-word review decks.
+The installed Korean package exposes the Chapter 1-5, Chapter 6-10, and Chapter 11-15 review decks. The installed Chinese package exposes the Pinyin-Zhuyin and Pinyin-Zhuyin with Tones conversion decks. The installed Vietnamese package exposes the Chapter 1-5 review deck. Korean and Vietnamese packages do not generate full grammar-pattern cards into vocabulary/function-word review decks.

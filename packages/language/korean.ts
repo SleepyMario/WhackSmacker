@@ -7,8 +7,8 @@ import {
 } from "../core";
 
 export const koreanPackageId = "com.sleepymario.language.korean";
-export const hangulFoundationRoot = "units/hangul-foundation/";
-export const hangulFoundationIndexPath = "units/hangul-foundation/README.md";
+export const introductionToHangulRoot = "units/introduction-to-hangul/";
+export const introductionToHangulIndexPath = "units/introduction-to-hangul/README.md";
 
 export interface KoreanLanguageOptions {
   readonly dataDir?: string;
@@ -21,7 +21,7 @@ export interface KoreanLanguageOverview {
   readonly packageId: string;
   readonly packageVersion?: string;
   readonly displayName?: string;
-  readonly hangulFoundationEntries: readonly ReadableContentEntry[];
+  readonly introductionToHangulEntries: readonly ReadableContentEntry[];
 }
 
 export async function getKoreanLanguageOverview(options: KoreanLanguageOptions = {}): Promise<KoreanLanguageOverview> {
@@ -36,7 +36,7 @@ export async function getKoreanLanguageOverview(options: KoreanLanguageOptions =
       installed: false,
       packageId: koreanPackageId,
       packageVersion: options.packageVersion,
-      hangulFoundationEntries: []
+      introductionToHangulEntries: []
     };
   }
 
@@ -47,7 +47,7 @@ export async function getKoreanLanguageOverview(options: KoreanLanguageOptions =
     packageId: selected.packageId,
     packageVersion: selected.packageVersion,
     displayName: selected.displayName,
-    hangulFoundationEntries: entries.filter(isHangulFoundationEntry)
+    introductionToHangulEntries: entries.filter(isIntroductionToHangulEntry)
   };
 }
 
@@ -86,7 +86,7 @@ export function renderKoreanLanguageOverview(overview: KoreanLanguageOverview): 
       "Status: not installed",
       "",
       "Korean content is not installed.",
-      "Generate content packages, generate a local catalogue, then install the Korean content package before browsing Hangul Foundation content:",
+      "Generate content packages, generate a local catalogue, then install the Korean content package before browsing Introduction to Hangul content:",
       "",
       "  whacksmacker content install com.sleepymario.language.korean --catalogue <catalogue.json>",
       "",
@@ -102,18 +102,18 @@ export function renderKoreanLanguageOverview(overview: KoreanLanguageOverview): 
     `Version: ${overview.packageVersion ?? "unknown"}`,
     `Title: ${overview.displayName ?? "Korean Curriculum"}`,
     "",
-    "Hangul Foundation"
+    "Introduction to Hangul"
   );
 
-  if (overview.hangulFoundationEntries.length === 0) {
-    lines.push("", "No Hangul Foundation readable entries were found in the installed package.");
+  if (overview.introductionToHangulEntries.length === 0) {
+    lines.push("", "No Introduction to Hangul readable entries were found in the installed package.");
     return lines.join("\n");
   }
 
   lines.push(
     "",
     "Readable entries:",
-    ...overview.hangulFoundationEntries.map((entry) => `- ${entry.path}`),
+    ...overview.introductionToHangulEntries.map((entry) => `- ${entry.path}`),
     "",
     "Open an entry with:",
     "",
@@ -165,8 +165,8 @@ function requireValue(args: readonly string[], index: number, option: string): s
   return value;
 }
 
-function isHangulFoundationEntry(entry: ReadableContentEntry): boolean {
-  return entry.path === hangulFoundationIndexPath || entry.path.startsWith(hangulFoundationRoot);
+function isIntroductionToHangulEntry(entry: ReadableContentEntry): boolean {
+  return entry.path === introductionToHangulIndexPath || entry.path.startsWith(introductionToHangulRoot);
 }
 
 function compareSemver(left: string, right: string): number {

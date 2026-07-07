@@ -23,7 +23,7 @@ test("Korean language overview reports a clear native missing-package state", as
     const rendered = await renderKoreanLanguage({ dataDir: join(root, "data") });
     const renderedFileRequest = await renderKoreanLanguage({
       dataDir: join(root, "data"),
-      file: "units/hangul-foundation/README.md"
+      file: "units/introduction-to-hangul/README.md"
     });
 
     assert.equal(overview.installed, false);
@@ -38,7 +38,7 @@ test("Korean language overview reports a clear native missing-package state", as
   }
 });
 
-test("installed Korean package exposes Hangul Foundation entries through the language surface", async () => {
+test("installed Korean package exposes Introduction to Hangul entries through the language surface", async () => {
   const fixture = await createInstalledKoreanFixture();
   try {
     const overview = await getKoreanLanguageOverview({ dataDir: fixture.dataDir });
@@ -47,27 +47,27 @@ test("installed Korean package exposes Hangul Foundation entries through the lan
     assert.equal(overview.installed, true);
     assert.equal(overview.packageId, koreanPackageId);
     assert.equal(overview.packageVersion, "0.1.0");
-    assert.ok(overview.hangulFoundationEntries.some((entry) => entry.path === "units/hangul-foundation/README.md"));
-    assert.ok(overview.hangulFoundationEntries.some((entry) => entry.path === "units/hangul-foundation/chapter-01-vowels/README.md"));
-    assert.match(rendered, /Hangul Foundation/);
-    assert.match(rendered, /units\/hangul-foundation\/README\.md/);
+    assert.ok(overview.introductionToHangulEntries.some((entry) => entry.path === "units/introduction-to-hangul/README.md"));
+    assert.ok(overview.introductionToHangulEntries.some((entry) => entry.path === "units/introduction-to-hangul/chapter-01-vowels/README.md"));
+    assert.match(rendered, /Introduction to Hangul/);
+    assert.match(rendered, /units\/introduction-to-hangul\/README\.md/);
     assert.doesNotMatch(rendered, /Anki|deck/u);
   } finally {
     await fixture.cleanup();
   }
 });
 
-test("Korean language command opens Hangul Foundation Markdown through the reading interface", async () => {
+test("Korean language command opens Introduction to Hangul Markdown through the reading interface", async () => {
   const fixture = await createInstalledKoreanFixture();
   try {
     const rendered = await renderKoreanLanguage({
       dataDir: fixture.dataDir,
-      file: "units/hangul-foundation/README.md"
+      file: "units/introduction-to-hangul/README.md"
     });
 
     assert.match(rendered, /Korean Curriculum/);
     assert.match(rendered, /com\.sleepymario\.language\.korean 0\.1\.0/);
-    assert.match(rendered, /# Hangul Foundation/);
+    assert.match(rendered, /# Introduction to Hangul/);
   } finally {
     await fixture.cleanup();
   }
@@ -85,15 +85,15 @@ test("language korean CLI handles missing and installed package states", async (
       "--data-dir",
       fixture.dataDir,
       "--file",
-      "units/hangul-foundation/README.md"
+      "units/introduction-to-hangul/README.md"
     ]);
 
     assert.equal(missing.exitCode, 0);
     assert.match(missing.stdout, /Korean content is not installed/);
     assert.equal(overview.exitCode, 0);
-    assert.match(overview.stdout, /units\/hangul-foundation\/chapter-01-vowels\/README\.md/);
+    assert.match(overview.stdout, /units\/introduction-to-hangul\/chapter-01-vowels\/README\.md/);
     assert.equal(readme.exitCode, 0);
-    assert.match(readme.stdout, /# Hangul Foundation/);
+    assert.match(readme.stdout, /# Introduction to Hangul/);
   } finally {
     await fixture.cleanup();
     await rm(missingRoot, { recursive: true, force: true });

@@ -34,7 +34,7 @@ test("vocabulary renders hints notes tags source language and difficulty", () =>
       notes: "This is package-authored explanation.",
       tags: ["hangul", "vowel"],
       source: {
-        path: "units/hangul-foundation/chapter-01-vowels/unit-01-simple-vowels.md",
+        path: "units/introduction-to-hangul/chapter-01-vowels/unit-01-simple-vowels.md",
         title: "Simple vowels"
       },
       language: {
@@ -53,7 +53,7 @@ test("vocabulary renders hints notes tags source language and difficulty", () =>
   assert.deepEqual(rendered.hintLines, ["Look at the vowel."]);
   assert.deepEqual(rendered.noteLines, ["This is package-authored explanation."]);
   assert.match(rendered.metadataLines.join("\n"), /Tags: hangul, vowel/);
-  assert.match(rendered.metadataLines.join("\n"), /Source: units\/hangul-foundation/);
+  assert.match(rendered.metadataLines.join("\n"), /Source: units\/introduction-to-hangul/);
   assert.match(rendered.metadataLines.join("\n"), /Language: target=ko, base=en, script=Hangul/);
   assert.match(rendered.metadataLines.join("\n"), /Difficulty: level=1, label=foundation/);
 });

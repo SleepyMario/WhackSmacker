@@ -65,7 +65,7 @@ whacksmacker language terms [<group>] [--file <path>] [--version <version>] [--d
 whacksmacker language terminology [--search <text>] [--category <name>] [--id <stable-id>]
 ```
 
-The Korean command discovers the installed `com.sleepymario.language.korean` content package and lists Hangul Foundation readable entries. If the package is not installed, it prints a native package-install message instead of using any Anki-backed state.
+The Korean command discovers the installed `com.sleepymario.language.korean` content package and lists Introduction to Hangul readable entries. If the package is not installed, it prints a native package-install message instead of using any Anki-backed state.
 
 The `language terms` command discovers the installed `com.sleepymario.language.linguistic-terminology` content package and lists readable glossary source files. This installed package path is the documented primary runtime path for terminology content.
 
@@ -218,17 +218,17 @@ Read installed package content:
 ```sh
 whacksmacker content read
 whacksmacker content files com.sleepymario.language.korean
-whacksmacker content read com.sleepymario.language.korean --file units/hangul-foundation/README.md
-whacksmacker content read com.sleepymario.language.korean --file units/korean-core/chapter-020-basic-life-sentences-13/chapter.md
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-008-010/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file units/introduction-to-hangul/README.md
+whacksmacker content read com.sleepymario.language.korean --file units/korean-core/chapter-015-basic-life-sentences-15/chapter.md
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-001-005/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-006-010/cards.tsv
 whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-011-015/cards.tsv
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-016-020/cards.tsv
 whacksmacker content read com.sleepymario.language.chinese --file review-decks/pinyin-zhuyin/cards.tsv
 whacksmacker content read com.sleepymario.language.chinese --file review-decks/pinyin-zhuyin-with-tones/cards.tsv
 whacksmacker content read com.sleepymario.language.vietnamese --file units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md
 whacksmacker content read com.sleepymario.language.vietnamese --file review-decks/chapter-001-005/cards.tsv
 whacksmacker language korean
-whacksmacker language korean --file units/hangul-foundation/README.md
+whacksmacker language korean --file units/introduction-to-hangul/README.md
 whacksmacker language terms
 whacksmacker language terms general
 whacksmacker language terms korean
@@ -244,9 +244,9 @@ Connect installed reading content to native review items:
 ```sh
 whacksmacker review sources --data-dir ~/.local/share/whacksmacker/content
 whacksmacker review items --package com.sleepymario.language.korean
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-008-010/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-001-005/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-006-010/cards.tsv
 whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-011-015/cards.tsv
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-016-020/cards.tsv
 whacksmacker review items --package com.sleepymario.language.chinese --source review-decks/pinyin-zhuyin/cards.tsv
 whacksmacker review items --package com.sleepymario.language.chinese --source review-decks/pinyin-zhuyin-with-tones/cards.tsv
 whacksmacker review items --package com.sleepymario.language.vietnamese --source review-decks/chapter-001-005/cards.tsv
@@ -255,7 +255,7 @@ whacksmacker review show com.sleepymario.language.korean <item-id> --answer
 whacksmacker review answer com.sleepymario.language.korean <item-id> --rating good
 ```
 
-For the current language packages, `review sources` lists Korean `Chapter 8-10`, `Chapter 11-15`, and `Chapter 16-20`; Chinese `Pinyin-Zhuyin` and `Pinyin-Zhuyin with Tones`; and Vietnamese `Chapter 1-5`. Korean and Vietnamese full grammar-pattern cards are not generated into vocabulary/function-word decks.
+For the current language packages, `review sources` lists Korean `Chapter 1-5`, `Chapter 6-10`, and `Chapter 11-15`; Chinese `Pinyin-Zhuyin` and `Pinyin-Zhuyin with Tones`; and Vietnamese `Chapter 1-5`. Korean and Vietnamese full grammar-pattern cards are not generated into vocabulary/function-word decks.
 
 Back up user-owned state without copying installed package content:
 

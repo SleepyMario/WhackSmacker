@@ -71,27 +71,27 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(manifest.dependencies[0].packageId, "com.sleepymario.language.linguistic-terminology");
     assert.equal(content.packageId, "com.sleepymario.language.korean");
-    assert.ok(content.files.some((file) => file.path === "units/hangul-foundation/README.md"));
-    assert.ok(content.files.some((file) => file.path === "units/hangul-foundation/chapter-01-vowels/unit-01-simple-vowels.md"));
-    assert.ok(content.files.some((file) => file.path === "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/introduction-to-hangul/README.md"));
+    assert.ok(content.files.some((file) => file.path === "units/introduction-to-hangul/chapter-01-vowels/unit-01-simple-vowels.md"));
+    assert.ok(content.files.some((file) => file.path === "units/korean-core/chapter-015-basic-life-sentences-15/chapter.md"));
     const expectedReviewDecks = [
       {
-        title: "Chapter 8-10",
-        sourcePath: "review-decks/chapter-008-010/cards.tsv",
-        itemPath: "content/memorization/review-decks/chapter-008-010.json",
-        itemCount: 50
+        title: "Chapter 1-5",
+        sourcePath: "review-decks/chapter-001-005/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-001-005.json",
+        itemCount: 78
+      },
+      {
+        title: "Chapter 6-10",
+        sourcePath: "review-decks/chapter-006-010/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-006-010.json",
+        itemCount: 84
       },
       {
         title: "Chapter 11-15",
         sourcePath: "review-decks/chapter-011-015/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-011-015.json",
-        itemCount: 76
-      },
-      {
-        title: "Chapter 16-20",
-        sourcePath: "review-decks/chapter-016-020/cards.tsv",
-        itemPath: "content/memorization/review-decks/chapter-016-020.json",
-        itemCount: 88
+        itemCount: 84
       }
     ];
 
@@ -100,7 +100,11 @@ test("content package generator creates a valid Korean Curriculum package", asyn
       assert.equal(archive.has(deck.itemPath), true);
     }
     assert.equal(content.files.some((file) => file.path === "review-decks/chapter-001-020/cards.tsv"), false);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-008-010/cards.tsv"), false);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-016-020/cards.tsv"), false);
     assert.equal(archive.has("content/memorization/review-decks/chapter-001-020.json"), false);
+    assert.equal(archive.has("content/memorization/review-decks/chapter-008-010.json"), false);
+    assert.equal(archive.has("content/memorization/review-decks/chapter-016-020.json"), false);
 
     const reviewCollections = expectedReviewDecks.map((deck) => ({
       deck,
@@ -120,6 +124,8 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     assert.ok(allReviewItems.some((item) => item.prompt.text === "topic particle" && item.answer.text === "은/는"));
     assert.ok(allReviewItems.some((item) => item.prompt.text === "이/가" && item.answer.text === "subject/existence marker"));
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 1-20"), false);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 8-10"), false);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 16-20"), false);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "저는 N입니다" || item.answer.text === "저는 N입니다"), false);
   } finally {
     await rm(directory, { recursive: true, force: true });

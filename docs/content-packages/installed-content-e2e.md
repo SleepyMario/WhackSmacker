@@ -93,19 +93,19 @@ node dist/main.js language korean --data-dir /tmp/whacksmacker-e2e-data
 
 node dist/main.js content read com.sleepymario.language.korean \
   --data-dir /tmp/whacksmacker-e2e-data \
-  --file units/hangul-foundation/README.md
+  --file units/introduction-to-hangul/README.md
 
 node dist/main.js language korean \
   --data-dir /tmp/whacksmacker-e2e-data \
-  --file units/hangul-foundation/README.md
+  --file units/introduction-to-hangul/README.md
 
 node dist/main.js content read com.sleepymario.language.korean \
   --data-dir /tmp/whacksmacker-e2e-data \
-  --file units/korean-core/chapter-020-basic-life-sentences-13/chapter.md
+  --file units/korean-core/chapter-015-basic-life-sentences-15/chapter.md
 
 node dist/main.js content read com.sleepymario.language.korean \
   --data-dir /tmp/whacksmacker-e2e-data \
-  --file review-decks/chapter-008-010/cards.tsv
+  --file review-decks/chapter-001-005/cards.tsv
 
 node dist/main.js content read com.sleepymario.language.korean \
   --data-dir /tmp/whacksmacker-e2e-data \
@@ -113,7 +113,7 @@ node dist/main.js content read com.sleepymario.language.korean \
 
 node dist/main.js content read com.sleepymario.language.korean \
   --data-dir /tmp/whacksmacker-e2e-data \
-  --file review-decks/chapter-016-020/cards.tsv
+  --file review-decks/chapter-006-010/cards.tsv
 
 node dist/main.js review sources \
   --package com.sleepymario.language.korean \
@@ -121,7 +121,7 @@ node dist/main.js review sources \
 
 node dist/main.js review items \
   --package com.sleepymario.language.korean \
-  --source review-decks/chapter-008-010/cards.tsv \
+  --source review-decks/chapter-001-005/cards.tsv \
   --data-dir /tmp/whacksmacker-e2e-data
 
 node dist/main.js review items \
@@ -131,7 +131,7 @@ node dist/main.js review items \
 
 node dist/main.js review items \
   --package com.sleepymario.language.korean \
-  --source review-decks/chapter-016-020/cards.tsv \
+  --source review-decks/chapter-006-010/cards.tsv \
   --data-dir /tmp/whacksmacker-e2e-data
 ```
 
@@ -160,7 +160,7 @@ find /tmp/whacksmacker-e2e-data/packages -type f -printf '%P %s\n' | sort > /tmp
 
 node dist/main.js content read com.sleepymario.language.korean \
   --data-dir /tmp/whacksmacker-e2e-data \
-  --file units/hangul-foundation/README.md
+  --file units/introduction-to-hangul/README.md
 
 node dist/main.js content read com.sleepymario.language.linguistic-terminology \
   --data-dir /tmp/whacksmacker-e2e-data \
@@ -252,24 +252,24 @@ Version: 0.1.0
 Title: Korean Curriculum
 ```
 
-It listed Hangul Foundation entries, including:
+It listed Introduction to Hangul entries, including:
 
 ```text
-units/hangul-foundation/README.md
-units/hangul-foundation/chapter-01-vowels/README.md
-units/hangul-foundation/chapter-04-basic-batchim/README.md
+units/introduction-to-hangul/README.md
+units/introduction-to-hangul/chapter-01-vowels/README.md
+units/introduction-to-hangul/chapter-04-basic-batchim/README.md
 ```
 
-Opening `units/hangul-foundation/README.md` through both `content read` and `language korean --file` rendered the installed Markdown. The missing-package message was not shown.
+Opening `units/introduction-to-hangul/README.md` through both `content read` and `language korean --file` rendered the installed Markdown. The missing-package message was not shown.
 
-Opening `units/korean-core/chapter-020-basic-life-sentences-13/chapter.md` rendered Chapter 20 from the installed Korean package.
+Opening `units/korean-core/chapter-015-basic-life-sentences-15/chapter.md` rendered Chapter 15 from the installed Korean package.
 
 Opening the three `review-decks/*/cards.tsv` files rendered the source TSV files for the vocabulary/function-word review decks. Native review source listing exposed those sources with the deck titles:
 
 ```text
-Chapter 8-10
+Chapter 1-5
+Chapter 6-10
 Chapter 11-15
-Chapter 16-20
 ```
 
 The generated native review items were bidirectional vocabulary/function-word cards. Full grammar-pattern cards such as `저는 N입니다`, `N이에요/예요`, and `N이/가 있어요` were not present as vocabulary review cards.

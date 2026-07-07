@@ -131,7 +131,7 @@ function validItem(id = "hangul/vowels/a") {
     notes: "Package-authored explanation only.",
     tags: ["hangul", "vowel"],
     source: {
-      path: "units/hangul-foundation/chapter-01-vowels/unit-01-simple-vowels.md",
+      path: "units/introduction-to-hangul/chapter-01-vowels/unit-01-simple-vowels.md",
       title: "Simple vowels"
     },
     language: {

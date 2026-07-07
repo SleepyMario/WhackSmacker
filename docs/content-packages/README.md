@@ -90,7 +90,7 @@ whacksmacker content install com.sleepymario.language.vietnamese --catalogue /tm
 whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content installed
 whacksmacker language korean
-whacksmacker language korean --file units/hangul-foundation/README.md
+whacksmacker language korean --file units/introduction-to-hangul/README.md
 whacksmacker language terms
 whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```
