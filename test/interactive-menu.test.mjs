@@ -154,6 +154,7 @@ test("installed language package discovery is generic and normalizes curriculum 
   const items = installedLanguagePackagesToMenuItems([
     packageRecord("com.sleepymario.language.korean", "Korean Curriculum"),
     packageRecord("com.sleepymario.language.chinese", "Chinese - Mandarin"),
+    packageRecord("com.sleepymario.language.japanese", "Japanese"),
     packageRecord("com.sleepymario.language.vietnamese", "Vietnamese Curriculum"),
     packageRecord("com.sleepymario.language.dutch", "Dutch"),
     packageRecord("com.sleepymario.language.german", "German"),
@@ -163,12 +164,13 @@ test("installed language package discovery is generic and normalizes curriculum 
     packageRecord("com.sleepymario.mathematics.curriculum", "Mathematics")
   ]);
 
-  assert.deepEqual(items.map((item) => item.label), ["Chinese - Mandarin", "Dutch", "French", "German", "Korean", "Linguistic Terminology", "Spanish", "Vietnamese"]);
+  assert.deepEqual(items.map((item) => item.label), ["Chinese - Mandarin", "Dutch", "French", "German", "Japanese", "Korean", "Linguistic Terminology", "Spanish", "Vietnamese"]);
   assert.deepEqual(items.map((item) => item.packageId), [
     "com.sleepymario.language.chinese",
     "com.sleepymario.language.dutch",
     "com.sleepymario.language.french",
     "com.sleepymario.language.german",
+    "com.sleepymario.language.japanese",
     "com.sleepymario.language.korean",
     "com.sleepymario.language.linguistic-terminology",
     "com.sleepymario.language.spanish",
@@ -271,10 +273,11 @@ test("interactive menu opens the module two-pane tree", async () => {
 
 test("module tree lists top-level categories and installed language packages", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["korean-curriculum", "chinese-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
     [
       "com.sleepymario.language.korean",
       "com.sleepymario.language.chinese",
+      "com.sleepymario.language.japanese",
       "com.sleepymario.language.vietnamese",
       "com.sleepymario.language.dutch",
       "com.sleepymario.language.german",
@@ -290,12 +293,13 @@ test("module tree lists top-level categories and installed language packages", a
     assert.equal(tree.label, "WhackSmacker");
     assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
     assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
-    assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin", "Dutch", "French", "German", "Korean", "Spanish", "Vietnamese"]);
+    assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin", "Dutch", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
       "com.sleepymario.language.chinese",
       "com.sleepymario.language.dutch",
       "com.sleepymario.language.french",
       "com.sleepymario.language.german",
+      "com.sleepymario.language.japanese",
       "com.sleepymario.language.korean",
       "com.sleepymario.language.spanish",
       "com.sleepymario.language.vietnamese"
@@ -375,10 +379,11 @@ test("language menu discovers installed packages from the selected data dir", as
 
 test("language tree lists installed packages and package sections", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["korean-curriculum", "chinese-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
     [
       "com.sleepymario.language.korean",
       "com.sleepymario.language.chinese",
+      "com.sleepymario.language.japanese",
       "com.sleepymario.language.vietnamese",
       "com.sleepymario.language.dutch",
       "com.sleepymario.language.german",
@@ -390,7 +395,7 @@ test("language tree lists installed packages and package sections", async () => 
     const tree = await buildLanguageTree(fixture.dataDir);
 
     assert.equal(tree.label, "Languages");
-    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese - Mandarin", "Dutch", "French", "German", "Korean", "Spanish", "Vietnamese"]);
+    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese - Mandarin", "Dutch", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
     for (const languagePackage of tree.children) {
       assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Review decks", "Package info"]);
     }
@@ -456,6 +461,25 @@ test("language tree exposes French and Spanish content and review deck labels", 
   }
 });
 
+test("language tree exposes Japanese writing placeholders and no review deck", async () => {
+  const fixture = await createInstalledLanguageFixture(["japanese-curriculum"], ["com.sleepymario.language.japanese"]);
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const japanese = tree.children.find((node) => node.label === "Japanese");
+    const readContent = japanese.children.find((node) => node.label === "Read content");
+    const reviewDecks = japanese.children.find((node) => node.label === "Review decks");
+
+    assert.ok(readContent.children.some((node) => node.label === "Hiragana"));
+    assert.ok(readContent.children.some((node) => node.label === "Katakana"));
+    assert.ok(readContent.children.some((node) => node.label === "An Introduction to Kanji"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Basic Sentences I: Greeting and Identity"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- Basic Sentences V: How Are You?"));
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["No review decks"]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("language tree exposes Korean and Chinese review deck labels cleanly", async () => {
   const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-curriculum"], [
     "com.sleepymario.language.korean",
@@ -479,7 +503,7 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
 
 test("module tree includes available modules from a catalogue with install status", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["korean-curriculum", "chinese-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
     ["com.sleepymario.language.korean"]
   );
   try {
@@ -493,6 +517,7 @@ test("module tree includes available modules from a catalogue with install statu
       "Dutch:available",
       "French:available",
       "German:available",
+      "Japanese:available",
       "Korean:installed",
       "Spanish:available",
       "Vietnamese:available"
@@ -502,6 +527,7 @@ test("module tree includes available modules from a catalogue with install statu
       "Dutch [available]",
       "French [available]",
       "German [available]",
+      "Japanese [available]",
       "Korean [installed]",
       "Spanish [available]",
       "Vietnamese [available]"
@@ -657,7 +683,7 @@ test("review section can be expanded without starting review", async () => {
 });
 
 test("Enter on an available module does not install but Space installs and refreshes installed modules", async () => {
-  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"], []);
+  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"], []);
   try {
     const enterOnly = new FakeTerminal([
       key("down"),

@@ -224,7 +224,7 @@ test("installed Korean package exposes Chapter 15 and split vocabulary review de
   }
 });
 
-test("installed Korean Chinese Vietnamese Dutch German French and Spanish packages expose expected reading and review sources", async () => {
+test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spanish packages expose expected reading and review sources", async () => {
   const fixture = await createInstalledLanguagePackageFixture();
   try {
     const installed = await listInstalledContentPackages(fixture.dataDir);
@@ -243,6 +243,16 @@ test("installed Korean Chinese Vietnamese Dutch German French and Spanish packag
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.chinese",
       path: "review-decks/pinyin-zhuyin/cards.tsv"
+    });
+    const japaneseHiragana = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.japanese",
+      path: "units/introduction-to-japanese-writing/hiragana/chapter.md"
+    });
+    const japaneseChapter1 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.japanese",
+      path: "units/japanese-core/chapter-001-basic-sentences-1/chapter.md"
     });
     const dutchChapter5 = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
@@ -277,6 +287,7 @@ test("installed Korean Chinese Vietnamese Dutch German French and Spanish packag
         ["com.sleepymario.language.dutch", "Dutch"],
         ["com.sleepymario.language.french", "French"],
         ["com.sleepymario.language.german", "German"],
+        ["com.sleepymario.language.japanese", "Japanese"],
         ["com.sleepymario.language.korean", "Korean Curriculum"],
         ["com.sleepymario.language.spanish", "Spanish"],
         ["com.sleepymario.language.vietnamese", "Vietnamese Curriculum"]
@@ -285,6 +296,12 @@ test("installed Korean Chinese Vietnamese Dutch German French and Spanish packag
     assert.match(koreanChapter20.text, /Chapter 15 -- Basic Life Sentences XV/);
     assert.match(vietnameseChapter5.text, /Chapter 5 -- Basic Sentences V/);
     assert.match(chineseDeck.text, /^Pinyin-Zhuyin\tPinyin -> Zhuyin\tb\tㄅ/m);
+    assert.match(japaneseHiragana.text, /future work/);
+    assert.match(japaneseChapter1.text, /アレックスです/);
+    assert.match(japaneseChapter1.text, /さくらです/);
+    assert.match(japaneseChapter1.text, /学生（がくせい）/);
+    assert.match(japaneseChapter1.text, /Meaning: I am a student\./);
+    assert.doesNotMatch(japaneseChapter1.text, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
     assert.match(dutchChapter5.text, /Chapter 5 -- Basic Sentences V/);
     assert.match(germanChapter1.text, /Chapter 1 -- Basic Sentences I/);
     assert.match(germanChapter1.text, /Ich bin Alex Chen/);
@@ -311,6 +328,9 @@ test("installed Korean Chinese Vietnamese Dutch German French and Spanish packag
 
     const chineseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.chinese");
     assert.deepEqual(chineseSources.map((source) => source.title).sort(), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    const japaneseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.japanese");
+    assert.deepEqual(japaneseSources, []);
+    assert.equal(reviewSources.some((source) => source.packageId === "com.sleepymario.language.japanese" && source.title === "Chapter 1-5"), false);
 
     const vietnameseItems = await listReadingReviewItems({
       dataDir: fixture.dataDir,
@@ -432,6 +452,10 @@ test("installed Korean Chinese Vietnamese Dutch German French and Spanish packag
       /ENOENT/
     );
     await assert.rejects(
+      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.japanese", "0.1.0", "progress.json")),
+      /ENOENT/
+    );
+    await assert.rejects(
       () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.dutch", "0.1.0", "progress.json")),
       /ENOENT/
     );
@@ -489,6 +513,7 @@ async function createInstalledLanguagePackageFixture() {
   for (const targetId of [
     "korean-curriculum",
     "chinese-curriculum",
+    "japanese-curriculum",
     "vietnamese-curriculum",
     "dutch-curriculum",
     "german-curriculum",
@@ -509,6 +534,7 @@ async function createInstalledLanguagePackageFixture() {
   for (const packageId of [
     "com.sleepymario.language.korean",
     "com.sleepymario.language.chinese",
+    "com.sleepymario.language.japanese",
     "com.sleepymario.language.vietnamese",
     "com.sleepymario.language.dutch",
     "com.sleepymario.language.german",

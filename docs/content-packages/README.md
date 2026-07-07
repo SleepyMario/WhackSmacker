@@ -52,6 +52,7 @@ Roadmap Point 2 supports these deterministic generator targets:
 | `linguistic-terminology` | `com.sleepymario.language.linguistic-terminology` | `/home/ashwin/Projects/whacksmacker-modules/linguistic-terminology` |
 | `korean-curriculum` | `com.sleepymario.language.korean` | `/home/ashwin/Projects/whacksmacker-modules/korean-curriculum` |
 | `chinese-curriculum` | `com.sleepymario.language.chinese` | `/home/ashwin/Projects/whacksmacker-modules/chinese-curriculum` |
+| `japanese-curriculum` | `com.sleepymario.language.japanese` | `/home/ashwin/Projects/whacksmacker-modules/japanese-curriculum` |
 | `vietnamese-curriculum` | `com.sleepymario.language.vietnamese` | `/home/ashwin/Projects/whacksmacker-modules/vietnamese-curriculum` |
 | `dutch-curriculum` | `com.sleepymario.language.dutch` | `/home/ashwin/Projects/whacksmacker-modules/dutch-curriculum` |
 | `german-curriculum` | `com.sleepymario.language.german` | `/home/ashwin/Projects/whacksmacker-modules/german-curriculum` |
@@ -67,6 +68,7 @@ npm run generate-content-package -- \
   --target linguistic-terminology \
   --target korean-curriculum \
   --target chinese-curriculum \
+  --target japanese-curriculum \
   --target vietnamese-curriculum \
   --target dutch-curriculum \
   --target german-curriculum \
@@ -94,6 +96,7 @@ Then install and read content through the WhackSmacker CLI:
 whacksmacker content available --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.korean --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.chinese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.japanese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.vietnamese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.dutch --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.german --catalogue /tmp/whacksmacker-catalogue/catalogue.json

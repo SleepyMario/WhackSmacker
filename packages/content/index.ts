@@ -827,6 +827,7 @@ function contentPackageTargetForModuleId(moduleId: string): string | undefined {
   const targets: Record<string, string> = {
     korean: "korean-curriculum",
     chinese: "chinese-curriculum",
+    japanese: "japanese-curriculum",
     vietnamese: "vietnamese-curriculum",
     dutch: "dutch-curriculum",
     german: "german-curriculum",

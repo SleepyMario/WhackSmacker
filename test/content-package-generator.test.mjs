@@ -19,6 +19,7 @@ test("content package generator exposes the supported local package targets", ()
       ["linguistic-terminology", "com.sleepymario.language.linguistic-terminology"],
       ["korean-curriculum", "com.sleepymario.language.korean"],
       ["chinese-curriculum", "com.sleepymario.language.chinese"],
+      ["japanese-curriculum", "com.sleepymario.language.japanese"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
       ["german-curriculum", "com.sleepymario.language.german"],
@@ -186,6 +187,47 @@ test("content package generator creates a valid Chinese - Mandarin package with 
     assert.ok(allItems.some((item) => item.prompt.text === "mā" && item.answer.text === "ㄇㄚ"));
     assert.ok(allItems.some((item) => item.prompt.text === "ㄇㄚˊ" && item.answer.text === "má"));
     assert.equal(allItems.some((item) => item.kind === "sentence" || item.kind === "concept"), false);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("content package generator creates a valid Japanese package without Core review deck", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-japanese-package-"));
+
+  try {
+    const result = await generateContentPackage({
+      targetId: "japanese-curriculum",
+      outputDirectory: directory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
+    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+
+    assert.equal(result.packageId, "com.sleepymario.language.japanese");
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.japanese-0.1.0.wspkg"), true);
+    assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+    assert.equal(manifest.displayName, "Japanese");
+    assert.equal(manifest.contentType, "language-curriculum");
+    assert.equal(content.packageId, "com.sleepymario.language.japanese");
+    assert.ok(content.files.some((file) => file.path === "units/introduction-to-japanese-writing/hiragana/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/introduction-to-japanese-writing/katakana/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/introduction-to-japanese-writing/introduction-to-kanji/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-001-basic-sentences-1/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-005-basic-sentences-5/chapter.md"));
+    assert.equal(content.files.some((file) => file.path === "units/japanese-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"), false);
+    assert.equal([...archive.keys()].some((path) => path.startsWith("content/memorization/")), false);
+    assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/hiragana/chapter.md").text, /future work/);
+    assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/katakana/chapter.md").text, /future work/);
+    assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/introduction-to-kanji/chapter.md").text, /future work/);
+    const chapter1 = content.files.find((file) => file.path === "units/japanese-core/chapter-001-basic-sentences-1/chapter.md").text;
+    assert.match(chapter1, /アレックスです/);
+    assert.match(chapter1, /さくらです/);
+    assert.match(chapter1, /学生（がくせい）/);
+    assert.match(chapter1, /Meaning: I am a student\./);
+    assert.doesNotMatch(chapter1, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -421,6 +463,8 @@ test("content package generator CLI can build all local test targets", async () 
       "--target",
       "chinese-curriculum",
       "--target",
+      "japanese-curriculum",
+      "--target",
       "vietnamese-curriculum",
       "--target",
       "dutch-curriculum",
@@ -436,6 +480,7 @@ test("content package generator CLI can build all local test targets", async () 
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.linguistic-terminology/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.korean/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.chinese/);
+    assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.japanese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.vietnamese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.dutch/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.german/);
