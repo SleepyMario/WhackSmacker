@@ -189,7 +189,8 @@ export const contentModule: DomainModule = {
         }
         console.log("Reading review sources:");
         for (const source of sources) {
-          console.log(`- ${source.packageId} ${source.packageVersion} ${source.sourcePath} (${source.itemCount} items${source.sourceExists ? "" : ", missing source"})`);
+          const title = source.title === undefined ? "" : ` ${source.title}`;
+          console.log(`- ${source.packageId} ${source.packageVersion} ${source.sourcePath}${title} (${source.itemCount} items${source.sourceExists ? "" : ", missing source"})`);
         }
       }
     });

@@ -9,9 +9,14 @@ import {
   generateContentPackage,
   generateLocalContentPackageCatalogue,
   installContentPackage,
+  listInstalledContentPackages,
+  listInstalledMemorizationItemFiles,
   listInstalledReadablePackages,
   listReadableContentEntries,
+  listReadingReviewItems,
+  listReadingReviewSources,
   readInstalledContentEntry,
+  readInstalledMemorizationItems,
   renderReadingContent
 } from "../dist/packages/core/index.js";
 
@@ -109,6 +114,76 @@ test("content read CLI lists packages files and renders selected content", async
     assert.match(packages.stdout, /Readable content packages:/);
     assert.match(files.stdout, /units\/hangul-foundation\/README\.md/);
     assert.match(rendered.stdout, /Hangul Foundation/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("installed Korean package exposes Chapter 20 and Chapter 1-20 vocabulary review deck", async () => {
+  const fixture = await createInstalledReadingFixture();
+  try {
+    const installed = await listInstalledContentPackages(fixture.dataDir);
+    const entries = await listReadableContentEntries("com.sleepymario.language.korean", fixture.dataDir);
+    const chapter20 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.korean",
+      path: "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"
+    });
+    const deckSource = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.korean",
+      path: "review-decks/chapter-001-020/cards.tsv"
+    });
+    const itemFiles = await listInstalledMemorizationItemFiles("com.sleepymario.language.korean", fixture.dataDir);
+    const collection = await readInstalledMemorizationItems(
+      "com.sleepymario.language.korean",
+      "content/memorization/review-decks/chapter-001-020.json",
+      fixture.dataDir
+    );
+    const sources = await listReadingReviewSources({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.korean"
+    });
+    const items = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.korean",
+      sourcePath: "review-decks/chapter-001-020/cards.tsv"
+    });
+
+    assert.deepEqual(installed.map((record) => record.packageId), ["com.sleepymario.language.korean"]);
+    assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"));
+    assert.ok(entries.some((entry) => entry.path === "review-decks/chapter-001-020/cards.tsv"));
+    assert.match(chapter20.text, /Chapter 20 -- Basic Life Sentences XIII/);
+    assert.match(deckSource.text, /^Chapter 1-20\tKorean -> English\t안녕하세요\t/m);
+    assert.deepEqual(itemFiles.map((file) => file.path), ["content/memorization/review-decks/chapter-001-020.json"]);
+    assert.equal(collection.items.length, 214);
+
+    assert.equal(sources.some((source) => source.sourcePath === "review-decks/chapter-001-020/cards.tsv" && source.title === "Chapter 1-20"), true);
+    assert.equal(items.length, 214);
+    assert.ok(items.some((item) => item.item.prompt.text === "안녕하세요" && item.item.answer.text === "hello"));
+    assert.ok(items.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "안녕하세요"));
+    assert.ok(items.some((item) => item.item.prompt.text === "은/는" && item.item.answer.text === "topic particle"));
+    assert.ok(items.some((item) => item.item.prompt.text === "subject/existence marker" && item.item.answer.text === "이/가"));
+
+    const forbiddenPatterns = [
+      "저는 N입니다",
+      "제 이름은 N입니다",
+      "N입니까?",
+      "N이에요/예요",
+      "N이에요/예요?",
+      "N이야/야",
+      "N이야/야?",
+      "N이다",
+      "N인가?",
+      "N이/가 있습니다",
+      "N이/가 없습니다",
+      "N이/가 있어요",
+      "N이/가 없어요"
+    ];
+    assert.equal(
+      items.some((item) => forbiddenPatterns.includes(item.item.prompt.text) || forbiddenPatterns.includes(item.item.answer.text)),
+      false
+    );
   } finally {
     await fixture.cleanup();
   }

@@ -71,6 +71,19 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     assert.equal(content.packageId, "com.sleepymario.language.korean");
     assert.ok(content.files.some((file) => file.path === "units/hangul-foundation/README.md"));
     assert.ok(content.files.some((file) => file.path === "units/hangul-foundation/chapter-01-vowels/unit-01-simple-vowels.md"));
+    assert.ok(content.files.some((file) => file.path === "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-020/cards.tsv"));
+    assert.equal(archive.has("content/memorization/review-decks/chapter-001-020.json"), true);
+
+    const reviewItems = JSON.parse(archive.get("content/memorization/review-decks/chapter-001-020.json").toString("utf8"));
+    assert.equal(reviewItems.schemaVersion, 1);
+    assert.equal(reviewItems.items.length, 214);
+    assert.equal(reviewItems.items[0].source.title, "Chapter 1-20");
+    assert.equal(reviewItems.items[0].prompt.text, "안녕하세요");
+    assert.equal(reviewItems.items[0].answer.text, "hello");
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "topic particle" && item.answer.text === "은/는"));
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "이/가" && item.answer.text === "subject/existence marker"));
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "저는 N입니다" || item.answer.text === "저는 N입니다"), false);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

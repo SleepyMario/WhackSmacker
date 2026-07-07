@@ -57,6 +57,7 @@ export interface ReadingReviewSource {
   readonly packageId: string;
   readonly packageVersion: string;
   readonly sourcePath: string;
+  readonly title?: string;
   readonly sourceExists: boolean;
   readonly itemCount: number;
 }
@@ -92,6 +93,7 @@ export async function listReadingReviewSources(options: ReadingReviewOptions = {
       packageId: item.packageId,
       packageVersion: item.packageVersion,
       sourcePath: item.sourcePath,
+      ...(item.item.source?.title === undefined ? {} : { title: item.item.source.title }),
       sourceExists: item.sourceExists === true,
       itemCount: (existing?.itemCount ?? 0) + 1
     });

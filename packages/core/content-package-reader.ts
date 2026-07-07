@@ -187,7 +187,7 @@ function isSnapshot(value: unknown): value is SourceMarkdownSnapshot {
 }
 
 function isReadableMediaType(mediaType: string): boolean {
-  return mediaType === "text/markdown" || mediaType === "text/plain" || mediaType === "application/json";
+  return mediaType === "text/markdown" || mediaType === "text/plain" || mediaType === "application/json" || mediaType === "text/tab-separated-values";
 }
 
 function toReadablePackage(record: InstalledPackageRecord): InstalledReadablePackage {

@@ -5,6 +5,12 @@ import {
   whackSmackerPackageExtension,
   whackSmackerPackageFormatVersion
 } from "./content-package-spec";
+import {
+  assertValidMemorizationItemCollection,
+  memorizationItemFileMediaType,
+  type MemorizationItem,
+  type MemorizationItemCollection
+} from "./memorization-item";
 
 type BufferValue = {
   readonly length: number;
@@ -128,6 +134,7 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "progress.md",
       "backlog.md",
       "decisions.md",
+      "review-decks",
       "research",
       "units"
     ]
@@ -145,6 +152,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const content = buildContentSnapshot(target, sourceRoot, sourceFiles, sourceCommit, sourceDirty);
   const contentBuffer = Buffer.from(`${JSON.stringify(content, null, 2)}\n`, "utf8");
   const contentFile = createFileRecord("content/content.json", "application/json", contentBuffer);
+  const memorizationFiles = buildMemorizationFiles(sourceFiles, options.generatedAt);
 
   const manifest: ContentPackageManifest = {
     packageFormatVersion: whackSmackerPackageFormatVersion,
@@ -177,7 +185,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
       }
     ],
     ...(target.dependencies === undefined ? { dependencies: [] } : { dependencies: [...target.dependencies] }),
-    files: [contentFile],
+    files: [contentFile, ...memorizationFiles.map((file) => file.record)],
     ...(target.license === undefined ? {} : { license: target.license })
   };
 
@@ -186,7 +194,8 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const manifestBuffer = Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`, "utf8");
   const archiveBuffer = createDeterministicZip([
     { path: "manifest.json", data: manifestBuffer },
-    { path: contentFile.path, data: contentBuffer }
+    { path: contentFile.path, data: contentBuffer },
+    ...memorizationFiles.map((file) => ({ path: file.record.path, data: file.buffer }))
   ]);
   const filePath = join(options.outputDirectory, `${target.packageId}-${target.packageVersion}${whackSmackerPackageExtension}`);
 
@@ -225,6 +234,11 @@ interface ArchiveEntry {
   readonly data: BufferValue;
 }
 
+interface GeneratedMemorizationFile {
+  readonly record: ContentPackageFileRecord;
+  readonly buffer: BufferValue;
+}
+
 const repositoryRoot = process.cwd();
 
 async function collectSourceFiles(sourceRoot: string, includes: readonly string[]): Promise<readonly SourceFile[]> {
@@ -261,7 +275,7 @@ async function collectPath(sourceRoot: string, absolutePath: string, files: Sour
   }
 
   const relativePath = normalizeArchivePath(relative(sourceRoot, absolutePath));
-  if (!relativePath.endsWith(".md") && relativePath !== ".gitignore") {
+  if (!relativePath.endsWith(".md") && !relativePath.endsWith(".tsv") && relativePath !== ".gitignore") {
     return;
   }
 
@@ -308,6 +322,107 @@ function createFileRecord(path: string, mediaType: string, data: BufferValue): C
     size: data.length,
     sha256: sha256Hex(data)
   };
+}
+
+function buildMemorizationFiles(sourceFiles: readonly SourceFile[], generatedAt: string): readonly GeneratedMemorizationFile[] {
+  return sourceFiles
+    .filter((file) => isReviewDeckCardsPath(file.path))
+    .map((file) => {
+      const collection = parseReviewDeckCards(file, generatedAt);
+      assertValidMemorizationItemCollection(collection);
+      const buffer = Buffer.from(`${JSON.stringify(collection, null, 2)}\n`, "utf8");
+      const outputPath = `content/memorization/${file.path.replace(/\/cards\.tsv$/u, ".json")}`;
+      return {
+        record: createFileRecord(outputPath, memorizationItemFileMediaType, buffer),
+        buffer
+      };
+    });
+}
+
+function parseReviewDeckCards(file: SourceFile, generatedAt: string): MemorizationItemCollection {
+  const rows = parseTabSeparatedRows(file.text);
+  if (rows.length === 0) {
+    throw new Error(`Review deck cards file is empty: ${file.path}`);
+  }
+  const [header, ...body] = rows;
+  const expectedHeader = ["deck", "direction", "front", "back", "source_chapter", "entry_type", "notes"];
+  if (header.length !== expectedHeader.length || header.some((field, index) => field !== expectedHeader[index])) {
+    throw new Error(`Review deck cards file has unsupported header: ${file.path}`);
+  }
+
+  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(file.path, row, index + 1, generatedAt));
+  return { schemaVersion: 1, items };
+}
+
+function reviewDeckRowToItem(sourcePath: string, row: readonly string[], rowNumber: number, generatedAt: string): MemorizationItem {
+  if (row.length !== 7) {
+    throw new Error(`Review deck row ${rowNumber + 1} must have 7 tab-separated fields in ${sourcePath}`);
+  }
+  const [deck, direction, front, back, sourceChapter, entryType, notes] = row;
+  if (deck.trim().length === 0 || direction.trim().length === 0 || front.trim().length === 0 || back.trim().length === 0) {
+    throw new Error(`Review deck row ${rowNumber + 1} has an empty required field in ${sourcePath}`);
+  }
+  if (direction !== "Korean -> English" && direction !== "English -> Korean") {
+    throw new Error(`Review deck row ${rowNumber + 1} has unsupported direction: ${direction}`);
+  }
+
+  const koreanPrompt = direction === "Korean -> English";
+  const deckSlug = slugForPath(sourcePath.replace(/^review-decks\//u, "").replace(/\/cards\.tsv$/u, ""));
+  const entrySlug = slugForPath(entryType);
+  const directionSlug = koreanPrompt ? "ko-en" : "en-ko";
+  const itemId = `review-decks/${deckSlug}/${String(rowNumber).padStart(4, "0")}-${directionSlug}-${entrySlug}`;
+
+  return {
+    schemaVersion: 1,
+    id: itemId,
+    kind: "vocabulary",
+    prompt: {
+      text: front,
+      plainText: front,
+      language: koreanPrompt ? "ko" : "en",
+      mediaType: "text/plain"
+    },
+    answer: {
+      text: back,
+      plainText: back,
+      language: koreanPrompt ? "en" : "ko",
+      mediaType: "text/plain"
+    },
+    notes: `Deck: ${deck}. ${notes}`,
+    tags: ["korean", "review-deck", deckSlug, entrySlug],
+    source: {
+      path: sourcePath,
+      title: deck
+    },
+    language: {
+      target: "ko",
+      base: "en",
+      script: "Hangul"
+    },
+    createdAt: generatedAt,
+    updatedAt: generatedAt
+  };
+}
+
+function parseTabSeparatedRows(text: string): readonly (readonly string[])[] {
+  return text
+    .trimEnd()
+    .split(/\r?\n/u)
+    .filter((line) => line.trim().length > 0)
+    .map((line) => line.split("\t"));
+}
+
+function isReviewDeckCardsPath(path: string): boolean {
+  return /^review-decks\/[^/]+\/cards\.tsv$/u.test(path);
+}
+
+function slugForPath(value: string): string {
+  const slug = value
+    .toLowerCase()
+    .replace(/[^a-z0-9._/-]+/gu, "-")
+    .replace(/^-+|-+$/gu, "")
+    .replace(/\/-+|-+\//gu, "/");
+  return slug.length === 0 ? "deck" : slug;
 }
 
 function createDeterministicZip(entries: readonly ArchiveEntry[]): BufferValue {
@@ -408,6 +523,9 @@ function readGitValue(cwd: string, args: readonly string[]): string {
 function mediaTypeForPath(path: string): string {
   if (path.endsWith(".md")) {
     return "text/markdown";
+  }
+  if (path.endsWith(".tsv")) {
+    return "text/tab-separated-values";
   }
   if (path.endsWith(".json")) {
     return "application/json";
