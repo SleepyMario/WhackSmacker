@@ -1,6 +1,12 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
 import {
+  listReadableContentEntries,
   listInstalledReadablePackages,
+  listReadingReviewSources,
+  readInstalledContentEntry,
+  renderReadingContent,
+  type ReadableContentEntry,
+  type ReadingReviewSource,
   type InstalledReadablePackage
 } from "../../packages/core";
 import {
@@ -63,11 +69,14 @@ export interface Terminal {
 
 export interface MenuItem {
   readonly label: string;
-  readonly kind: "language" | "installed-language" | "language-fallback" | "language-package-action" | "chess" | "geography" | "mathematics" | "placeholder" | "back";
+  readonly kind: "language" | "installed-language" | "language-fallback" | "language-package-action" | "review-source" | "readable-content" | "chess" | "geography" | "mathematics" | "placeholder" | "back";
   readonly moduleId?: string;
   readonly packageId?: string;
   readonly packageVersion?: string;
   readonly action?: "read-content" | "review-sources" | "package-info";
+  readonly sourcePath?: string;
+  readonly filePath?: string;
+  readonly itemCount?: number;
 }
 
 const ansi = {
@@ -196,6 +205,27 @@ export function languageMenuHeading(colorsEnabled: boolean, installedCount: numb
     return `${base}Installed Language Packages\n`;
   }
   return `${base}No installed language packages found.\nGenerate content packages, create a local catalogue, then install language packages with whacksmacker content install.\nLegacy/fallback entries are shown below.\n`;
+}
+
+export function reviewSourcesToMenuItems(sources: readonly ReadingReviewSource[]): readonly MenuItem[] {
+  return sources.map((source) => ({
+    label: source.title ?? cleanContentPathLabel(source.sourcePath),
+    kind: "review-source" as const,
+    packageId: source.packageId,
+    packageVersion: source.packageVersion,
+    sourcePath: source.sourcePath,
+    itemCount: source.itemCount
+  })).sort((left, right) => compareMenuLabels(left.label, right.label));
+}
+
+export function readableContentEntriesToMenuItems(entries: readonly ReadableContentEntry[]): readonly MenuItem[] {
+  return entries
+    .filter((entry) => entry.mediaType === "text/markdown" || entry.mediaType === "text/tab-separated-values" || entry.mediaType === "text/plain")
+    .map((entry) => ({
+      label: cleanContentPathLabel(entry.path),
+      kind: "readable-content" as const,
+      filePath: entry.path
+    }));
 }
 
 export function getLinguisticTermsMenuItems(): readonly MenuItem[] {
@@ -747,17 +777,164 @@ async function runInstalledLanguagePackageAction(
     ].join("\n")));
   }
 
-  const commandPath = action.action === "review-sources" ? ["review", "sources"] : ["content", "read"];
+  if (action.action === "review-sources") {
+    return runReviewSourcesMenu(registry, terminal, languagePackage, options);
+  }
+
+  return runReadableContentMenu(registry, terminal, languagePackage, options);
+}
+
+async function runReviewSourcesMenu(
+  registry: InMemoryCliCommandRegistry,
+  terminal: Terminal,
+  languagePackage: MenuItem,
+  options: InteractiveMenuOptions
+): Promise<boolean> {
+  if (languagePackage.packageId === undefined) {
+    return showMessage(terminal, "Installed language package is missing a package ID.");
+  }
+  const sources = await listReadingReviewSources({
+    dataDir: options.dataDir,
+    packageId: languagePackage.packageId,
+    packageVersion: languagePackage.packageVersion
+  });
+  const items = [...reviewSourcesToMenuItems(sources), { label: "Back", kind: "back" as const }];
+  if (sources.length === 0) {
+    return showMessage(terminal, "No review decks are available for this package.");
+  }
+
+  let selection = 0;
+  while (true) {
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nLanguage\n${languagePackage.label}\nReview sources\n`, items, selection);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+    if (isEscape(key)) {
+      return false;
+    }
+    if (isQuit(key)) {
+      return true;
+    }
+    if (isUp(key)) {
+      selection = wrapSelection(selection - 1, items.length);
+      continue;
+    }
+    if (isDown(key)) {
+      selection = wrapSelection(selection + 1, items.length);
+      continue;
+    }
+    if (!isEnter(key)) {
+      continue;
+    }
+
+    const item = items[selection];
+    if (item.kind === "back") {
+      return false;
+    }
+    const quit = await runReviewSourceAction(registry, terminal, item, options);
+    if (quit) {
+      return true;
+    }
+  }
+}
+
+async function runReviewSourceAction(
+  registry: InMemoryCliCommandRegistry,
+  terminal: Terminal,
+  source: MenuItem,
+  options: InteractiveMenuOptions
+): Promise<boolean> {
+  if (source.packageId === undefined || source.sourcePath === undefined) {
+    return showMessage(terminal, "Review source is missing package metadata.");
+  }
+  const commandPath = ["review", "run"];
   const command = registry.find(commandPath);
   if (command === null) {
     return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
   }
+  const output = await runCapturedLanguageCommand(terminal, command, [
+    "--package",
+    source.packageId,
+    "--source",
+    source.sourcePath,
+    ...packageActionArgs(source, options)
+  ]);
+  return showPagedMessage(terminal, renderLanguageActionResult(source.label, output));
+}
 
-  const args = action.action === "review-sources"
-    ? ["--package", languagePackage.packageId, ...packageActionArgs(languagePackage, options)]
-    : [languagePackage.packageId, ...packageActionArgs(languagePackage, options)];
-  const output = await runCapturedLanguageCommand(terminal, command, args);
-  return showPagedMessage(terminal, renderLanguageActionResult(action.label, output));
+async function runReadableContentMenu(
+  _registry: InMemoryCliCommandRegistry,
+  terminal: Terminal,
+  languagePackage: MenuItem,
+  options: InteractiveMenuOptions
+): Promise<boolean> {
+  if (languagePackage.packageId === undefined) {
+    return showMessage(terminal, "Installed language package is missing a package ID.");
+  }
+  const entries = await listReadableContentEntries(languagePackage.packageId, options.dataDir, languagePackage.packageVersion);
+  const labeledEntries = await labelReadableContentEntries(languagePackage, entries, options);
+  const items = [...labeledEntries, { label: "Back", kind: "back" as const }];
+  if (labeledEntries.length === 0) {
+    return showMessage(terminal, "No readable content is available for this package.");
+  }
+
+  let selection = 0;
+  while (true) {
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nLanguage\n${languagePackage.label}\nRead content\n`, items, selection);
+    const key = await terminal.readKey();
+
+    if (isCtrlC(key)) {
+      process.exitCode = 130;
+      return true;
+    }
+    if (isEscape(key)) {
+      return false;
+    }
+    if (isQuit(key)) {
+      return true;
+    }
+    if (isUp(key)) {
+      selection = wrapSelection(selection - 1, items.length);
+      continue;
+    }
+    if (isDown(key)) {
+      selection = wrapSelection(selection + 1, items.length);
+      continue;
+    }
+    if (!isEnter(key)) {
+      continue;
+    }
+
+    const item = items[selection];
+    if (item.kind === "back") {
+      return false;
+    }
+    const quit = await runReadableContentAction(terminal, languagePackage, item, options);
+    if (quit) {
+      return true;
+    }
+  }
+}
+
+async function runReadableContentAction(
+  terminal: Terminal,
+  languagePackage: MenuItem,
+  item: MenuItem,
+  options: InteractiveMenuOptions
+): Promise<boolean> {
+  if (languagePackage.packageId === undefined || item.filePath === undefined) {
+    return showMessage(terminal, "Readable content item is missing package metadata.");
+  }
+  const result = await readInstalledContentEntry({
+    dataDir: options.dataDir,
+    packageId: languagePackage.packageId,
+    packageVersion: languagePackage.packageVersion,
+    path: item.filePath
+  });
+  return showPagedMessage(terminal, renderReadingContent(result));
 }
 
 async function runLinguisticTermsMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
@@ -887,12 +1064,59 @@ function packageActionArgs(languagePackage: MenuItem, options: InteractiveMenuOp
   return args;
 }
 
+async function labelReadableContentEntries(
+  languagePackage: MenuItem,
+  entries: readonly ReadableContentEntry[],
+  options: InteractiveMenuOptions
+): Promise<readonly MenuItem[]> {
+  const baseItems = readableContentEntriesToMenuItems(entries);
+  if (languagePackage.packageId === undefined) {
+    return baseItems;
+  }
+  const labeled: MenuItem[] = [];
+  for (const item of baseItems) {
+    if (item.filePath === undefined || !item.filePath.endsWith(".md")) {
+      labeled.push(item);
+      continue;
+    }
+    try {
+      const content = await readInstalledContentEntry({
+        dataDir: options.dataDir,
+        packageId: languagePackage.packageId,
+        packageVersion: languagePackage.packageVersion,
+        path: item.filePath
+      });
+      labeled.push({ ...item, label: markdownContentLabel(content.text, item.filePath) });
+    } catch {
+      labeled.push(item);
+    }
+  }
+  return labeled;
+}
+
 function isLanguageLikePackage(packageId: string): boolean {
   return packageId.startsWith("com.sleepymario.language.");
 }
 
 function displayLabelForLanguagePackage(displayName: string): string {
   return displayName.endsWith(" Curriculum") ? displayName.slice(0, -" Curriculum".length) : displayName;
+}
+
+function compareMenuLabels(left: string, right: string): number {
+  return left.localeCompare(right, undefined, { numeric: true });
+}
+
+function cleanContentPathLabel(path: string): string {
+  const basename = path.split("/").at(-1) ?? path;
+  return basename
+    .replace(/\.(md|tsv|txt|json)$/u, "")
+    .replace(/[-_]+/gu, " ")
+    .replace(/\b\w/gu, (letter) => letter.toUpperCase());
+}
+
+function markdownContentLabel(text: string, fallbackPath: string): string {
+  const heading = text.match(/^#\s+(.+)$/mu)?.[1]?.trim();
+  return heading === undefined || heading.length === 0 ? cleanContentPathLabel(fallbackPath) : heading;
 }
 
 async function runPlaceholderScreen(terminal: Terminal, moduleName: string): Promise<boolean> {

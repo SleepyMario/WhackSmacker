@@ -19,6 +19,7 @@ import {
   installedLanguagePackagesToMenuItems,
   languageMenuHeading,
   renderWhackSmackerHeader,
+  reviewSourcesToMenuItems,
   runInteractiveMenu,
   shouldUseTerminalColors,
   whackSmackerBanner,
@@ -28,7 +29,8 @@ import {
   generateContentPackage,
   generateLocalContentPackageCatalogue,
   installContentPackage,
-  InMemoryCliCommandRegistry
+  InMemoryCliCommandRegistry,
+  listReadingReviewSources
 } from "../dist/packages/core/index.js";
 
 class FakeTerminal {
@@ -71,6 +73,7 @@ function createStubRegistry(calls) {
     ["language", "korean"],
     ["language", "terms"],
     ["language", "terminology"],
+    ["review", "run"],
     ["chess"],
     ["geography", "continents"],
     ["mathematics", "beginner-volume-one"],
@@ -254,6 +257,8 @@ test("language menu routes Linguistic Terms groups to the registered command", a
     key("escape"),
     key("escape"),
     key("escape"),
+    key("escape"),
+    key("escape"),
     key("escape")
   ]);
 
@@ -275,13 +280,92 @@ test("language menu discovers installed packages from the selected data dir", as
   }
 });
 
-test("installed language package menu can list readable content", async () => {
+test("Dutch review sources submenu uses clean selectable deck labels", async () => {
   const fixture = await createInstalledDutchFixture();
+  try {
+    const sources = await listReadingReviewSources({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.dutch"
+    });
+    const items = reviewSourcesToMenuItems(sources);
+
+    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5"]);
+    assert.equal(items.some((item) => item.label.includes("com.sleepymario.language.dutch")), false);
+    assert.equal(items.some((item) => item.label.includes("cards.tsv")), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Korean and Chinese review source menus use clean deck names", async () => {
+  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-curriculum"], [
+    "com.sleepymario.language.korean",
+    "com.sleepymario.language.chinese"
+  ]);
+  try {
+    const korean = reviewSourcesToMenuItems(await listReadingReviewSources({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.korean"
+    }));
+    const chinese = reviewSourcesToMenuItems(await listReadingReviewSources({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.chinese"
+    }));
+
+    assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
+    assert.deepEqual(chinese.map((item) => item.label), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("selecting an installed review source runs the existing review flow with package and source", async () => {
+  const fixture = await createInstalledDutchFixture();
+  const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
     key("return"),
+    key("down"),
     key("return"),
-    key("pagedown"),
+    key("return"),
+    key("escape"),
+    key("escape"),
+    key("escape"),
+    key("escape"),
+    key("escape")
+  ]);
+
+  try {
+    await runInteractiveMenu(createStubRegistry(calls), terminal, { dataDir: fixture.dataDir });
+
+    assert.deepEqual(calls, [{
+      path: "review run",
+      args: [
+        "--package",
+        "com.sleepymario.language.dutch",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--version",
+        "0.1.0",
+        "--data-dir",
+        fixture.dataDir
+      ]
+    }]);
+    assert.match(terminal.output, /Review sources/);
+    assert.match(terminal.output, /> Chapter 1-5/);
+    assert.doesNotMatch(terminal.output, /> com\.sleepymario\.language\.dutch 0\.1\.0 review-decks\/chapter-001-005\/cards\.tsv Chapter 1-5 \(80 items\)/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("installed package without review sources shows a helpful message", async () => {
+  const fixture = await createInstalledLanguageFixture(["linguistic-terminology"], ["com.sleepymario.language.linguistic-terminology"]);
+  const terminal = new FakeTerminal([
+    key("return"),
+    key("return"),
+    key("down"),
+    key("return"),
     key("escape"),
     key("escape"),
     key("escape"),
@@ -291,10 +375,30 @@ test("installed language package menu can list readable content", async () => {
   try {
     await runInteractiveMenu(createCommandRegistry(), terminal, { dataDir: fixture.dataDir });
 
-    assert.match(terminal.output, /Installed Language Packages/);
-    assert.match(terminal.output, /Dutch/);
-    assert.match(terminal.output, /Readable files for com\.sleepymario\.language\.dutch/);
-    assert.match(terminal.output, /units\/dutch-core\/chapter-005-basic-sentences-5\/chapter\.md/);
+    assert.match(terminal.output, /No review decks are available for this package\./);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("installed language package read content menu uses selectable content labels", async () => {
+  const fixture = await createInstalledDutchFixture();
+  const terminal = new FakeTerminal([
+    key("return"),
+    key("return"),
+    key("return"),
+    key("escape"),
+    key("escape"),
+    key("escape"),
+    key("escape")
+  ]);
+
+  try {
+    await runInteractiveMenu(createCommandRegistry(), terminal, { dataDir: fixture.dataDir });
+
+    assert.match(terminal.output, /Read content/);
+    assert.match(terminal.output, /Chapter 5 -- Basic Sentences V: There Is N/);
+    assert.doesNotMatch(terminal.output, /> units\/dutch-core\/chapter-005-basic-sentences-5\/chapter\.md/);
   } finally {
     await fixture.cleanup();
   }
@@ -441,26 +545,34 @@ function packageRecord(packageId, displayName) {
 }
 
 async function createInstalledDutchFixture() {
+  return createInstalledLanguageFixture(["dutch-curriculum"], ["com.sleepymario.language.dutch"]);
+}
+
+async function createInstalledLanguageFixture(targetIds, packageIds) {
   const root = await mkdtemp(join(tmpdir(), "wsm-menu-dutch-"));
   const packageDirectory = join(root, "packages");
   const cataloguePath = join(root, "catalogue", "catalogue.json");
   const dataDir = join(root, "data", "content");
-  await generateContentPackage({
-    targetId: "dutch-curriculum",
-    outputDirectory: packageDirectory,
-    generatedAt: "2026-07-06T00:00:00Z"
-  });
+  for (const targetId of targetIds) {
+    await generateContentPackage({
+      targetId,
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+  }
   await generateLocalContentPackageCatalogue({
     packagesDirectory: packageDirectory,
     outputPath: cataloguePath,
     generatedAt: "2026-07-06T00:00:00Z"
   });
-  await installContentPackage({
-    cataloguePath,
-    dataDir,
-    packageId: "com.sleepymario.language.dutch",
-    installedAt: "2026-07-06T00:00:00Z"
-  });
+  for (const packageId of packageIds) {
+    await installContentPackage({
+      cataloguePath,
+      dataDir,
+      packageId,
+      installedAt: "2026-07-06T00:00:00Z"
+    });
+  }
 
   return {
     root,
