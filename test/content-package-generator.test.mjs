@@ -19,7 +19,8 @@ test("content package generator exposes the supported local package targets", ()
       ["linguistic-terminology", "com.sleepymario.language.linguistic-terminology"],
       ["korean-curriculum", "com.sleepymario.language.korean"],
       ["chinese-curriculum", "com.sleepymario.language.chinese"],
-      ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"]
+      ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
+      ["dutch-curriculum", "com.sleepymario.language.dutch"]
     ]
   );
 });
@@ -224,6 +225,43 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
   }
 });
 
+test("content package generator creates a valid Dutch package", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-dutch-package-"));
+
+  try {
+    const result = await generateContentPackage({
+      targetId: "dutch-curriculum",
+      outputDirectory: directory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
+    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const itemPath = "content/memorization/review-decks/chapter-001-005.json";
+    const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
+
+    assert.equal(result.packageId, "com.sleepymario.language.dutch");
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.dutch-0.1.0.wspkg"), true);
+    assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+    assert.equal(manifest.displayName, "Dutch");
+    assert.equal(manifest.contentType, "language-curriculum");
+    assert.equal(content.packageId, "com.sleepymario.language.dutch");
+    assert.ok(content.files.some((file) => file.path === "name-pools/initial-name-pools.md"));
+    assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-005-basic-sentences-5/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
+    assert.equal(content.files.some((file) => file.path === "units/dutch-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(archive.has(itemPath), true);
+    assert.equal(reviewItems.items.length, 80);
+    assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "hallo" && item.answer.text === "hello"));
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "hallo"));
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "${FOREIGN-NAME-1}" || item.answer.text === "${FOREIGN-NAME-1}"), false);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("content package generation is deterministic for identical inputs", async () => {
   const firstDirectory = await mkdtemp(join(tmpdir(), "wsm-package-first-"));
   const secondDirectory = await mkdtemp(join(tmpdir(), "wsm-package-second-"));
@@ -263,7 +301,9 @@ test("content package generator CLI can build all local test targets", async () 
       "--target",
       "chinese-curriculum",
       "--target",
-      "vietnamese-curriculum"
+      "vietnamese-curriculum",
+      "--target",
+      "dutch-curriculum"
     ]);
 
     assert.equal(result.exitCode, 0);
@@ -271,6 +311,7 @@ test("content package generator CLI can build all local test targets", async () 
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.korean/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.chinese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.vietnamese/);
+    assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.dutch/);
     assert.equal(result.stderr, "");
   } finally {
     await rm(directory, { recursive: true, force: true });
