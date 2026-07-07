@@ -125,7 +125,7 @@ export async function syncReviewProgressFromInstalledMemorizationItems(options: 
     for (const file of await listInstalledMemorizationItemFiles(contentPackage.packageId, options.contentDataDir, contentPackage.packageVersion)) {
       const collection = await readInstalledMemorizationItems(contentPackage.packageId, file.path, options.contentDataDir, contentPackage.packageVersion);
       for (const item of collection.items) {
-        const identity = toIdentity(contentPackage, item.id);
+        const identity = toIdentity(contentPackage, item.id, item.source?.path);
         if (store.items.some((state) => reviewIdentityKey(state) === reviewIdentityKey(identity))) {
           continue;
         }
@@ -153,6 +153,7 @@ export async function recordStoredReviewOutcome(options: RecordStoredReviewOutco
   const identity: ReviewItemIdentity = {
     packageId: options.packageId,
     packageVersion: options.packageVersion,
+    ...(options.sourcePath === undefined ? {} : { sourcePath: options.sourcePath }),
     itemId: options.itemId
   };
   const current = store.items.find((state) => reviewIdentityKey(state) === reviewIdentityKey(identity)) ?? createInitialReviewState(identity, options.reviewedAt);
@@ -162,10 +163,11 @@ export async function recordStoredReviewOutcome(options: RecordStoredReviewOutco
   return { ...outcome, progressPath };
 }
 
-function toIdentity(contentPackage: InstalledPackageRecord, itemId: string): ReviewItemIdentity {
+function toIdentity(contentPackage: InstalledPackageRecord, itemId: string, sourcePath?: string): ReviewItemIdentity {
   return {
     packageId: contentPackage.packageId,
     packageVersion: contentPackage.packageVersion,
+    ...(sourcePath === undefined ? {} : { sourcePath }),
     itemId
   };
 }

@@ -1,4 +1,4 @@
-import { isContentPackageId, isSemver } from "./content-package-spec";
+import { isContentPackageId, isSafeContentPackagePath, isSemver } from "./content-package-spec";
 
 export const reviewProgressFormatVersion = 1;
 export const reviewRatings = ["again", "hard", "good", "easy"] as const;
@@ -10,6 +10,7 @@ export type ReviewStatus = (typeof reviewStatuses)[number];
 export interface ReviewItemIdentity {
   readonly packageId: string;
   readonly packageVersion: string;
+  readonly sourcePath?: string;
   readonly itemId: string;
 }
 
@@ -105,6 +106,7 @@ export function recordReviewOutcome(state: ReviewItemState, rating: ReviewRating
     event: {
       packageId: state.packageId,
       packageVersion: state.packageVersion,
+      ...(state.sourcePath === undefined ? {} : { sourcePath: state.sourcePath }),
       itemId: state.itemId,
       reviewedAt,
       rating,
@@ -162,7 +164,7 @@ export function upsertReviewItemState(
 }
 
 export function reviewIdentityKey(identity: ReviewItemIdentity): string {
-  return `${identity.packageId}@${identity.packageVersion}#${identity.itemId}`;
+  return `${identity.packageId}@${identity.packageVersion}#${identity.sourcePath ?? ""}#${identity.itemId}`;
 }
 
 export function isReviewRating(value: unknown): value is ReviewRating {
@@ -240,6 +242,7 @@ function validateStates(value: unknown, errors: string[]): void {
       const key = reviewIdentityKey({
         packageId: readString(state.packageId),
         packageVersion: readString(state.packageVersion),
+        sourcePath: state.sourcePath === undefined ? undefined : readString(state.sourcePath),
         itemId: readString(state.itemId)
       });
       if (keys.has(key)) {
@@ -339,6 +342,9 @@ function validateIdentity(value: Record<string, unknown> | ReviewItemIdentity, f
   }
   if (!isSemver(readString(value.packageVersion))) {
     errors.push(`${field}.packageVersion must use MAJOR.MINOR.PATCH Semantic Versioning.`);
+  }
+  if (value.sourcePath !== undefined && !isSafeContentPackagePath(readString(value.sourcePath))) {
+    errors.push(`${field}.sourcePath must be package-relative and safe.`);
   }
   if (!isSafeReviewItemId(readString(value.itemId))) {
     errors.push(`${field}.itemId must be stable, package-relative, and safe.`);

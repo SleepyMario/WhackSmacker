@@ -207,6 +207,51 @@ test("installing the same package twice is clearly idempotent", async () => {
   }
 });
 
+test("reinstalling the same package does not delete review progress", async () => {
+  const fixture = await createPackageFixture();
+  try {
+    await installContentPackage({
+      cataloguePath: fixture.cataloguePath,
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.korean"
+    });
+    const progressPath = join(fixture.dataDir, "..", "progress", "review-progress.json");
+    const progress = {
+      reviewProgressFormatVersion: 1,
+      updatedAt: "2026-07-06T00:00:00Z",
+      items: [
+        {
+          packageId: "com.sleepymario.language.korean",
+          packageVersion: "0.1.0",
+          sourcePath: "review-decks/chapter-001-005/cards.tsv",
+          itemId: "chapter-001/card-001",
+          firstSeenAt: "2026-07-06T00:00:00Z",
+          lastReviewedAt: "2026-07-06T00:00:00Z",
+          nextReviewAt: "2026-07-08T00:00:00Z",
+          reviewCount: 1,
+          lapseCount: 0,
+          intervalDays: 2,
+          easeFactor: 2.5,
+          status: "review"
+        }
+      ],
+      events: []
+    };
+    await writeJson(progressPath, progress);
+
+    const second = await installContentPackage({
+      cataloguePath: fixture.cataloguePath,
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.korean"
+    });
+
+    assert.equal(second.installed, false);
+    assert.deepEqual(await readJson(progressPath), progress);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("installed packages can be listed", async () => {
   const fixture = await createPackageFixture();
   try {

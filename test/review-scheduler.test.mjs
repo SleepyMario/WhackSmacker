@@ -45,6 +45,14 @@ test("scheduler initializes deterministic state for new items", () => {
   assert.equal(state.status, "new");
 });
 
+test("scheduler identity can include review source path", () => {
+  const state = createInitialReviewState(identity("hangul/vowels/a", "review-decks/chapter-001-005/cards.tsv"), now);
+  const result = recordReviewOutcome(state, "good", now);
+
+  assert.equal(state.sourcePath, "review-decks/chapter-001-005/cards.tsv");
+  assert.equal(result.event.sourcePath, "review-decks/chapter-001-005/cards.tsv");
+});
+
 test("due-item filtering is deterministic", () => {
   const due = createInitialReviewState(identity("hangul/vowels/a"), now);
   const future = { ...createInitialReviewState(identity("hangul/vowels/eo"), now), nextReviewAt: "2026-07-07T00:00:00Z" };
@@ -187,10 +195,11 @@ test("stored due listing reads the progress store", async () => {
   }
 });
 
-function identity(itemId = "hangul/vowels/a") {
+function identity(itemId = "hangul/vowels/a", sourcePath) {
   return {
     packageId: "com.sleepymario.language.memory",
     packageVersion: "0.1.0",
+    ...(sourcePath === undefined ? {} : { sourcePath }),
     itemId
   };
 }

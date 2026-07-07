@@ -576,7 +576,7 @@ async function runSingleReviewSource(
     packageId: options.packageId,
     packageVersion: options.packageVersion,
     now: options.now
-  })).filter((item) => sourceItemIds.has(item.itemId));
+  })).filter((item) => sourceItemIds.has(item.itemId) && (item.sourcePath === undefined || item.sourcePath === options.sourcePath));
 
   if (due.length === 0) {
     console.log(`No due review items found for deck: ${label}`);
@@ -588,6 +588,7 @@ async function runSingleReviewSource(
       dataDir: options.dataDir,
       packageId: dueItem.packageId,
       packageVersion: dueItem.packageVersion,
+      ...(dueItem.sourcePath === undefined ? {} : { sourcePath: dueItem.sourcePath }),
       itemId: dueItem.itemId
     });
     console.log(prompt.text.trimEnd());
@@ -602,6 +603,7 @@ async function runSingleReviewSource(
       dataDir: options.dataDir,
       packageId: dueItem.packageId,
       packageVersion: dueItem.packageVersion,
+      ...(dueItem.sourcePath === undefined ? {} : { sourcePath: dueItem.sourcePath }),
       itemId: dueItem.itemId,
       answer: true
     });
@@ -616,6 +618,7 @@ async function runSingleReviewSource(
       dataDir: options.dataDir,
       packageId: dueItem.packageId,
       packageVersion: dueItem.packageVersion,
+      ...(dueItem.sourcePath === undefined ? {} : { sourcePath: dueItem.sourcePath }),
       itemId: dueItem.itemId,
       rating,
       reviewedAt: options.now

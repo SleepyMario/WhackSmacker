@@ -82,6 +82,8 @@ test("sync creates scheduler state for discovered items outside package director
     assert.equal(result.created.length, 4);
     assert.equal(store.items.length, 4);
     assert.ok(!result.progressPath.startsWith(fixture.packageRoot));
+    assert.equal(store.items.find((item) => item.itemId === "hangul/vowels/a")?.sourcePath, "README.md");
+    assert.equal(store.items.find((item) => item.itemId === "hangul/concept/no-source")?.sourcePath, undefined);
     await assert.rejects(() => stat(join(fixture.packageRoot, "review-progress.json")), /ENOENT/);
   } finally {
     await fixture.cleanup();
@@ -93,7 +95,7 @@ test("due review listing includes integrated items", async () => {
   try {
     const due = await listIntegratedDueReviewItems({ dataDir: fixture.dataDir, now, packageId: "com.sleepymario.language.memory", limit: 2 });
 
-    assert.deepEqual(due.map((item) => item.itemId), ["hangul/concept/no-source", "hangul/vowels/a"]);
+    assert.deepEqual(due.map((item) => item.itemId), ["hangul/concept/no-source", "hangul/vowels/missing-source"]);
   } finally {
     await fixture.cleanup();
   }
@@ -145,8 +147,13 @@ test("answer rating updates scheduler state", async () => {
 
     assert.equal(result.state.packageId, "com.sleepymario.language.memory");
     assert.equal(result.state.packageVersion, "0.1.0");
+    assert.equal(result.state.sourcePath, "README.md");
     assert.equal(result.state.itemId, "hangul/vowels/a");
+    assert.equal(result.state.lastReviewedAt, now);
+    assert.equal(result.state.reviewCount, 1);
     assert.equal(result.state.nextReviewAt, "2026-07-08T00:00:00Z");
+    assert.equal(result.event.sourcePath, "README.md");
+    assert.equal((await loadReviewProgressStore(fixture.progressDir)).events[0].rating, "good");
   } finally {
     await fixture.cleanup();
   }
@@ -409,6 +416,94 @@ test("review run accepts numeric ratings without breaking continuation", async (
   }
 });
 
+test("review run quit before rating creates no fake rating", async () => {
+  const fixture = await createContinuationReviewFixture();
+  try {
+    await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.sequence",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now,
+        "--no-shuffle"
+      ],
+      "q\n"
+    );
+    const store = await loadReviewProgressStore(join(fixture.root, "progress"));
+    const state = store.items.find((item) => item.itemId === "deck-001/card-001");
+
+    assert.equal(state?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
+    assert.equal(state?.reviewCount, 0);
+    assert.equal(state?.lastReviewedAt, undefined);
+    assert.deepEqual(store.events, []);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review run saves rated cards, preserves package files, and reloads state on the next session", async () => {
+  const fixture = await createShuffleReviewFixture();
+  const itemFilePath = join(fixture.packageRoot, "content", "memorization", "items.json");
+  try {
+    const beforeHash = await fileSha256(itemFilePath);
+    await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.shuffle",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now,
+        "--no-shuffle"
+      ],
+      "\n3\nq\n"
+    );
+    const afterHash = await fileSha256(itemFilePath);
+    const store = await loadReviewProgressStore(join(fixture.root, "progress"));
+    const reviewed = store.items.find((item) => item.itemId === "shuffle/card-001");
+
+    assert.equal(afterHash, beforeHash);
+    assert.equal(reviewed?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
+    assert.equal(reviewed?.reviewCount, 1);
+    assert.equal(reviewed?.lastReviewedAt, now);
+    assert.equal(reviewed?.nextReviewAt, "2026-07-08T00:00:00Z");
+    assert.equal(store.events.length, 1);
+    assert.equal(store.events[0].rating, "good");
+    assert.equal(store.events[0].sourcePath, "review-decks/chapter-001-005/cards.tsv");
+
+    const nextRun = await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.shuffle",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now,
+        "--no-shuffle"
+      ],
+      "q\n"
+    );
+
+    assert.equal(firstPromptValue(nextRun.stdout), "two");
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("review run stops cleanly when the user declines continuation", async () => {
   const fixture = await createContinuationReviewFixture();
   try {
@@ -638,6 +733,7 @@ async function createContinuationReviewFixture() {
   return {
     root,
     dataDir,
+    packageRoot,
     cleanup: () => rm(root, { recursive: true, force: true })
   };
 }
@@ -725,6 +821,7 @@ async function createShuffleReviewFixture() {
   return {
     root,
     dataDir,
+    packageRoot,
     cleanup: () => rm(root, { recursive: true, force: true })
   };
 }
@@ -747,6 +844,10 @@ async function writeJson(path, value) {
 async function writeFileEnsured(path, data) {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, data);
+}
+
+async function fileSha256(path) {
+  return sha256(await readFile(path));
 }
 
 function sha256(data) {

@@ -36,6 +36,9 @@
         "packageVersion": {
           "$ref": "#/$defs/semver"
         },
+        "sourcePath": {
+          "$ref": "#/$defs/packagePath"
+        },
         "itemId": {
           "$ref": "#/$defs/itemId"
         }
@@ -67,6 +70,9 @@
             },
             "packageVersion": {
               "$ref": "#/$defs/semver"
+            },
+            "sourcePath": {
+              "$ref": "#/$defs/packagePath"
             },
             "itemId": {
               "$ref": "#/$defs/itemId"
@@ -118,6 +124,9 @@
             },
             "packageVersion": {
               "$ref": "#/$defs/semver"
+            },
+            "sourcePath": {
+              "$ref": "#/$defs/packagePath"
             },
             "itemId": {
               "$ref": "#/$defs/itemId"
@@ -181,6 +190,10 @@
     "itemId": {
       "type": "string",
       "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//)[a-z0-9](?:[a-z0-9._/-]*[a-z0-9])?$"
+    },
+    "packagePath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//).+$"
     },
     "timestamp": {
       "type": "string",

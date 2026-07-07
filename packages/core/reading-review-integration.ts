@@ -47,12 +47,14 @@ export interface ListIntegratedDueReviewOptions extends ReadingReviewOptions {
 
 export interface RenderReadingReviewItemOptions extends ReadingReviewOptions {
   readonly packageId: string;
+  readonly sourcePath?: string;
   readonly itemId: string;
   readonly answer?: boolean;
 }
 
 export interface RecordReadingReviewAnswerOptions extends ReadingReviewOptions {
   readonly packageId: string;
+  readonly sourcePath?: string;
   readonly itemId: string;
   readonly rating: ReviewRating;
   readonly reviewedAt: string;
@@ -164,6 +166,7 @@ export async function syncReadingReviewItems(options: SyncReadingReviewOptions):
       {
         packageId: reviewItem.packageId,
         packageVersion: reviewItem.packageVersion,
+        ...(reviewItem.sourcePath === undefined ? {} : { sourcePath: reviewItem.sourcePath }),
         itemId: reviewItem.item.id
       },
       options.now
@@ -206,6 +209,7 @@ export async function recordReadingReviewAnswer(options: RecordReadingReviewAnsw
     progressDir,
     packageId: reviewItem.packageId,
     packageVersion: reviewItem.packageVersion,
+    ...(reviewItem.sourcePath === undefined ? {} : { sourcePath: reviewItem.sourcePath }),
     itemId: reviewItem.item.id,
     rating: options.rating,
     reviewedAt: options.reviewedAt
@@ -233,7 +237,12 @@ function resolveIntegrationProgressDir(dataDir?: string, progressDir?: string): 
 }
 
 async function findReadingReviewItem(options: RenderReadingReviewItemOptions | RecordReadingReviewAnswerOptions): Promise<ReadingReviewItem> {
-  const matches = (await listReadingReviewItems(options)).filter((item) => item.packageId === options.packageId && item.item.id === options.itemId);
+  const matches = (await listReadingReviewItems(options)).filter(
+    (item) =>
+      item.packageId === options.packageId &&
+      item.item.id === options.itemId &&
+      (options.sourcePath === undefined || item.sourcePath === options.sourcePath)
+  );
   if (matches.length === 0) {
     throw new Error(`Review item not found: ${options.packageId} ${options.itemId}`);
   }
