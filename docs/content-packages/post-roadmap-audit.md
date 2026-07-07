@@ -53,10 +53,12 @@ The package system separates the application, installed content, and user progre
 
 ### 2. Package Generation
 
-The generator can build deterministic `.wspkg` archives for the initial targets:
+The generator can build deterministic `.wspkg` archives for the local package targets:
 
 - `linguistic-terminology` -> `com.sleepymario.language.linguistic-terminology`
 - `korean-curriculum` -> `com.sleepymario.language.korean`
+- `chinese-curriculum` -> `com.sleepymario.language.chinese`
+- `vietnamese-curriculum` -> `com.sleepymario.language.vietnamese`
 
 Generation snapshots selected Markdown and repository files into `content/content.json` using the `whacksmacker-source-markdown-snapshot-v1` shape, records source commit and dirty-state metadata, records the WhackSmacker generator commit, validates the generated manifest, and writes a deterministic archive.
 

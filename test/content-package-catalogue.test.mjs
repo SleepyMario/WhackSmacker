@@ -130,7 +130,7 @@ test("duplicate dependencies fail", () => {
   assertInvalid(catalogue, /Duplicate dependency: com\.sleepymario\.language\.linguistic-terminology/);
 });
 
-test("generated catalogue from validation packages contains both expected packages", async () => {
+test("generated catalogue from validation packages contains expected local packages", async () => {
   const packageDirectory = await mkdtemp(join(tmpdir(), "wsm-catalogue-packages-"));
   const catalogueDirectory = await mkdtemp(join(tmpdir(), "wsm-catalogue-output-"));
 
@@ -142,6 +142,16 @@ test("generated catalogue from validation packages contains both expected packag
     });
     await generateContentPackage({
       targetId: "korean-curriculum",
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    await generateContentPackage({
+      targetId: "chinese-curriculum",
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    await generateContentPackage({
+      targetId: "vietnamese-curriculum",
       outputDirectory: packageDirectory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
@@ -158,13 +168,18 @@ test("generated catalogue from validation packages contains both expected packag
       generatedAt: "2026-07-06T00:00:00Z"
     });
 
-    assert.equal(first.packageCount, 2);
+    assert.equal(first.packageCount, 4);
     assert.equal(first.changed, true);
     assert.equal(second.changed, false);
     assertValid(first.catalogue);
     assert.deepEqual(
       first.catalogue.packages.map((entry) => entry.packageId),
-      ["com.sleepymario.language.korean", "com.sleepymario.language.linguistic-terminology"]
+      [
+        "com.sleepymario.language.chinese",
+        "com.sleepymario.language.korean",
+        "com.sleepymario.language.linguistic-terminology",
+        "com.sleepymario.language.vietnamese"
+      ]
     );
     assert.equal(first.catalogue.packages[0].package.mediaType, whackSmackerPackageMediaType);
     assert.equal(first.catalogue.packages.every((entry) => entry.package.url.startsWith("file://")), true);

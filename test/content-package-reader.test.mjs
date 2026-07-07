@@ -218,6 +218,104 @@ test("installed Korean package exposes Chapter 20 and split vocabulary review de
   }
 });
 
+test("installed Korean Chinese and Vietnamese packages expose expected reading and review sources", async () => {
+  const fixture = await createInstalledLanguagePackageFixture();
+  try {
+    const installed = await listInstalledContentPackages(fixture.dataDir);
+    const reviewSources = await listReadingReviewSources({ dataDir: fixture.dataDir });
+    const koreanChapter20 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.korean",
+      path: "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"
+    });
+    const vietnameseChapter5 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.vietnamese",
+      path: "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md"
+    });
+    const chineseDeck = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.chinese",
+      path: "review-decks/pinyin-zhuyin/cards.tsv"
+    });
+
+    assert.deepEqual(
+      installed.map((record) => record.packageId).sort(),
+      ["com.sleepymario.language.chinese", "com.sleepymario.language.korean", "com.sleepymario.language.vietnamese"]
+    );
+    assert.match(koreanChapter20.text, /Chapter 20 -- Basic Life Sentences XIII/);
+    assert.match(vietnameseChapter5.text, /Chapter 5 -- Basic Sentences V/);
+    assert.match(chineseDeck.text, /^Pinyin-Zhuyin\tPinyin -> Zhuyin\tb\tㄅ/m);
+
+    const sourceNames = reviewSources.map((source) => source.title).sort();
+    assert.deepEqual(sourceNames, [
+      "Chapter 1-5",
+      "Chapter 11-15",
+      "Chapter 16-20",
+      "Chapter 8-10",
+      "Pinyin-Zhuyin",
+      "Pinyin-Zhuyin with Tones"
+    ]);
+    assert.equal(sourceNames.includes("Chapter 1-20"), false);
+    assert.equal(sourceNames.includes("Lessons 1-5"), false);
+
+    const chineseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.chinese");
+    assert.deepEqual(chineseSources.map((source) => source.title).sort(), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+
+    const vietnameseItems = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.vietnamese",
+      sourcePath: "review-decks/chapter-001-005/cards.tsv"
+    });
+    assert.equal(vietnameseItems.length, 80);
+    assert.ok(vietnameseItems.some((item) => item.item.prompt.text === "xin chào" && item.item.answer.text === "hello"));
+    assert.ok(vietnameseItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "xin chào"));
+
+    const forbiddenPatterns = [
+      "저는 N입니다",
+      "제 이름은 N입니다",
+      "N입니까?",
+      "N이에요/예요",
+      "N이에요/예요?",
+      "N이야/야",
+      "N이야/야?",
+      "N이다",
+      "N인가?",
+      "N이/가 있습니다",
+      "N이/가 없습니다",
+      "N이/가 있어요",
+      "N이/가 없어요",
+      "Tôi là N",
+      "Tên tôi là N",
+      "Đây là N",
+      "Đây có phải là N không?",
+      "Có N"
+    ];
+    const koreanAndVietnameseItemFiles = [
+      ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.korean", fixture.dataDir)),
+      ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.vietnamese", fixture.dataDir))
+    ];
+    for (const file of koreanAndVietnameseItemFiles) {
+      const collection = await readInstalledMemorizationItems(file.packageId, file.path, fixture.dataDir);
+      assert.equal(
+        collection.items.some((item) => forbiddenPatterns.includes(item.prompt.text) || forbiddenPatterns.includes(item.answer.text)),
+        false
+      );
+    }
+
+    await assert.rejects(
+      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.vietnamese", "0.1.0", "progress.json")),
+      /ENOENT/
+    );
+    await assert.rejects(
+      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.chinese", "0.1.0", "progress.json")),
+      /ENOENT/
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 async function createInstalledReadingFixture() {
   const root = await mkdtemp(join(tmpdir(), "wsm-content-reader-"));
   const packageDirectory = join(root, "packages");
@@ -239,6 +337,43 @@ async function createInstalledReadingFixture() {
     packageId: "com.sleepymario.language.korean",
     installedAt: "2026-07-06T00:00:00Z"
   });
+
+  return {
+    root,
+    dataDir,
+    cleanup: () => rm(root, { recursive: true, force: true })
+  };
+}
+
+async function createInstalledLanguagePackageFixture() {
+  const root = await mkdtemp(join(tmpdir(), "wsm-language-packages-"));
+  const packageDirectory = join(root, "packages");
+  const cataloguePath = join(root, "catalogue", "catalogue.json");
+  const dataDir = join(root, "data", "content");
+  for (const targetId of ["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum"]) {
+    await generateContentPackage({
+      targetId,
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+  }
+  await generateLocalContentPackageCatalogue({
+    packagesDirectory: packageDirectory,
+    outputPath: cataloguePath,
+    generatedAt: "2026-07-06T00:00:00Z"
+  });
+  for (const packageId of [
+    "com.sleepymario.language.korean",
+    "com.sleepymario.language.chinese",
+    "com.sleepymario.language.vietnamese"
+  ]) {
+    await installContentPackage({
+      cataloguePath,
+      dataDir,
+      packageId,
+      installedAt: "2026-07-06T00:00:00Z"
+    });
+  }
 
   return {
     root,

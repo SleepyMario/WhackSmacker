@@ -138,6 +138,59 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "research",
       "units"
     ]
+  },
+  {
+    id: "chinese-curriculum",
+    packageId: "com.sleepymario.language.chinese",
+    displayName: "Chinese Curriculum",
+    description: "Chinese language curriculum content generated from the canonical Chinese curriculum repository.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../chinese-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/chinese-curriculum",
+    languages: ["zh", "en"],
+    subjects: ["language", "chinese"],
+    license: { spdx: null, name: null, path: null },
+    include: [
+      "README.md",
+      "philosophy.md",
+      "scope.md",
+      "curriculum-map.md",
+      "progress.md",
+      "backlog.md",
+      "decisions.md",
+      "review-decks",
+      "research",
+      "units"
+    ]
+  },
+  {
+    id: "vietnamese-curriculum",
+    packageId: "com.sleepymario.language.vietnamese",
+    displayName: "Vietnamese Curriculum",
+    description: "Vietnamese language curriculum content generated from the canonical Vietnamese curriculum repository.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../vietnamese-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
+    languages: ["vi", "en"],
+    subjects: ["language", "vietnamese"],
+    license: { spdx: null, name: null, path: null },
+    include: [
+      "README.md",
+      "philosophy.md",
+      "scope.md",
+      "curriculum-map.md",
+      "progress.md",
+      "backlog.md",
+      "decisions.md",
+      "name-pools",
+      "review-decks",
+      "research",
+      "units"
+    ]
   }
 ];
 
@@ -152,7 +205,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const content = buildContentSnapshot(target, sourceRoot, sourceFiles, sourceCommit, sourceDirty);
   const contentBuffer = Buffer.from(`${JSON.stringify(content, null, 2)}\n`, "utf8");
   const contentFile = createFileRecord("content/content.json", "application/json", contentBuffer);
-  const memorizationFiles = buildMemorizationFiles(sourceFiles, options.generatedAt);
+  const memorizationFiles = buildMemorizationFiles(target, sourceFiles, options.generatedAt);
 
   const manifest: ContentPackageManifest = {
     packageFormatVersion: whackSmackerPackageFormatVersion,
@@ -324,11 +377,15 @@ function createFileRecord(path: string, mediaType: string, data: BufferValue): C
   };
 }
 
-function buildMemorizationFiles(sourceFiles: readonly SourceFile[], generatedAt: string): readonly GeneratedMemorizationFile[] {
+function buildMemorizationFiles(
+  target: ContentPackageGeneratorTarget,
+  sourceFiles: readonly SourceFile[],
+  generatedAt: string
+): readonly GeneratedMemorizationFile[] {
   return sourceFiles
     .filter((file) => isReviewDeckCardsPath(file.path))
     .map((file) => {
-      const collection = parseReviewDeckCards(file, generatedAt);
+      const collection = parseReviewDeckCards(target, file, generatedAt);
       assertValidMemorizationItemCollection(collection);
       const buffer = Buffer.from(`${JSON.stringify(collection, null, 2)}\n`, "utf8");
       const outputPath = `content/memorization/${file.path.replace(/\/cards\.tsv$/u, ".json")}`;
@@ -339,7 +396,7 @@ function buildMemorizationFiles(sourceFiles: readonly SourceFile[], generatedAt:
     });
 }
 
-function parseReviewDeckCards(file: SourceFile, generatedAt: string): MemorizationItemCollection {
+function parseReviewDeckCards(target: ContentPackageGeneratorTarget, file: SourceFile, generatedAt: string): MemorizationItemCollection {
   const rows = parseTabSeparatedRows(file.text);
   if (rows.length === 0) {
     throw new Error(`Review deck cards file is empty: ${file.path}`);
@@ -350,11 +407,17 @@ function parseReviewDeckCards(file: SourceFile, generatedAt: string): Memorizati
     throw new Error(`Review deck cards file has unsupported header: ${file.path}`);
   }
 
-  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(file.path, row, index + 1, generatedAt));
+  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt));
   return { schemaVersion: 1, items };
 }
 
-function reviewDeckRowToItem(sourcePath: string, row: readonly string[], rowNumber: number, generatedAt: string): MemorizationItem {
+function reviewDeckRowToItem(
+  target: ContentPackageGeneratorTarget,
+  sourcePath: string,
+  row: readonly string[],
+  rowNumber: number,
+  generatedAt: string
+): MemorizationItem {
   if (row.length !== 7) {
     throw new Error(`Review deck row ${rowNumber + 1} must have 7 tab-separated fields in ${sourcePath}`);
   }
@@ -362,14 +425,18 @@ function reviewDeckRowToItem(sourcePath: string, row: readonly string[], rowNumb
   if (deck.trim().length === 0 || direction.trim().length === 0 || front.trim().length === 0 || back.trim().length === 0) {
     throw new Error(`Review deck row ${rowNumber + 1} has an empty required field in ${sourcePath}`);
   }
-  if (direction !== "Korean -> English" && direction !== "English -> Korean") {
+  const directionMatch = direction.match(/^(.+?) -> (.+?)$/u);
+  if (directionMatch === null) {
     throw new Error(`Review deck row ${rowNumber + 1} has unsupported direction: ${direction}`);
   }
+  const [, promptLabel, answerLabel] = directionMatch;
+  const promptLanguage = languageCodeForReviewLabel(promptLabel);
+  const answerLanguage = languageCodeForReviewLabel(answerLabel);
+  const targetLanguage = target.languages?.find((language) => language !== "en") ?? promptLanguage ?? answerLanguage;
 
-  const koreanPrompt = direction === "Korean -> English";
   const deckSlug = slugForPath(sourcePath.replace(/^review-decks\//u, "").replace(/\/cards\.tsv$/u, ""));
   const entrySlug = slugForPath(entryType);
-  const directionSlug = koreanPrompt ? "ko-en" : "en-ko";
+  const directionSlug = slugForPath(direction);
   const itemId = `review-decks/${deckSlug}/${String(rowNumber).padStart(4, "0")}-${directionSlug}-${entrySlug}`;
 
   return {
@@ -379,29 +446,59 @@ function reviewDeckRowToItem(sourcePath: string, row: readonly string[], rowNumb
     prompt: {
       text: front,
       plainText: front,
-      language: koreanPrompt ? "ko" : "en",
+      ...(promptLanguage === undefined ? {} : { language: promptLanguage }),
       mediaType: "text/plain"
     },
     answer: {
       text: back,
       plainText: back,
-      language: koreanPrompt ? "en" : "ko",
+      ...(answerLanguage === undefined ? {} : { language: answerLanguage }),
       mediaType: "text/plain"
     },
     notes: `Deck: ${deck}. ${notes}`,
-    tags: ["korean", "review-deck", deckSlug, entrySlug],
+    tags: [slugForPath(target.id), "review-deck", deckSlug, entrySlug],
     source: {
       path: sourcePath,
       title: deck
     },
     language: {
-      target: "ko",
+      ...(targetLanguage === undefined ? {} : { target: targetLanguage }),
       base: "en",
-      script: "Hangul"
+      script: scriptLabelForTarget(target)
     },
     createdAt: generatedAt,
     updatedAt: generatedAt
   };
+}
+
+function languageCodeForReviewLabel(label: string): string | undefined {
+  switch (label) {
+    case "English":
+      return "en";
+    case "Korean":
+      return "ko";
+    case "Vietnamese":
+      return "vi";
+    case "Pinyin":
+      return "zh-Latn-pinyin";
+    case "Zhuyin":
+      return "zh-Bopo";
+    default:
+      return undefined;
+  }
+}
+
+function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
+  switch (target.id) {
+    case "korean-curriculum":
+      return "Hangul";
+    case "chinese-curriculum":
+      return "Pinyin/Zhuyin";
+    case "vietnamese-curriculum":
+      return "Vietnamese";
+    default:
+      return "text";
+  }
 }
 
 function parseTabSeparatedRows(text: string): readonly (readonly string[])[] {
