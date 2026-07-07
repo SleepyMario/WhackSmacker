@@ -828,7 +828,8 @@ function contentPackageTargetForModuleId(moduleId: string): string | undefined {
     korean: "korean-curriculum",
     chinese: "chinese-curriculum",
     vietnamese: "vietnamese-curriculum",
-    dutch: "dutch-curriculum"
+    dutch: "dutch-curriculum",
+    german: "german-curriculum"
   };
   return targets[suffix];
 }

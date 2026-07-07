@@ -218,6 +218,33 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "research",
       "units"
     ]
+  },
+  {
+    id: "german-curriculum",
+    packageId: "com.sleepymario.language.german",
+    displayName: "German",
+    description: "German language curriculum content generated from the canonical German curriculum repository.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../german-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/german-curriculum",
+    languages: ["de", "en"],
+    subjects: ["language", "german"],
+    license: { spdx: null, name: null, path: null },
+    include: [
+      "README.md",
+      "philosophy.md",
+      "scope.md",
+      "curriculum-map.md",
+      "progress.md",
+      "backlog.md",
+      "decisions.md",
+      "name-pools",
+      "review-decks",
+      "research",
+      "units"
+    ]
   }
 ];
 
@@ -508,6 +535,8 @@ function languageCodeForReviewLabel(label: string): string | undefined {
       return "vi";
     case "Dutch":
       return "nl";
+    case "German":
+      return "de";
     case "Pinyin":
       return "zh-Latn-pinyin";
     case "Zhuyin":
@@ -527,6 +556,8 @@ function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
       return "Vietnamese";
     case "dutch-curriculum":
       return "Dutch";
+    case "german-curriculum":
+      return "German";
     default:
       return "text";
   }

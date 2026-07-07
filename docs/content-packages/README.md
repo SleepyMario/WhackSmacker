@@ -54,6 +54,7 @@ Roadmap Point 2 supports these deterministic generator targets:
 | `chinese-curriculum` | `com.sleepymario.language.chinese` | `/home/ashwin/Projects/whacksmacker-modules/chinese-curriculum` |
 | `vietnamese-curriculum` | `com.sleepymario.language.vietnamese` | `/home/ashwin/Projects/whacksmacker-modules/vietnamese-curriculum` |
 | `dutch-curriculum` | `com.sleepymario.language.dutch` | `/home/ashwin/Projects/whacksmacker-modules/dutch-curriculum` |
+| `german-curriculum` | `com.sleepymario.language.german` | `/home/ashwin/Projects/whacksmacker-modules/german-curriculum` |
 
 Do not assume the old source paths under `/home/ashwin/Projects/languages`.
 
@@ -66,6 +67,7 @@ npm run generate-content-package -- \
   --target chinese-curriculum \
   --target vietnamese-curriculum \
   --target dutch-curriculum \
+  --target german-curriculum \
   --output-dir /tmp/whacksmacker-packages \
   --generated-at 2026-07-06T00:00:00Z
 ```
@@ -90,6 +92,7 @@ whacksmacker content install com.sleepymario.language.korean --catalogue /tmp/wh
 whacksmacker content install com.sleepymario.language.chinese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.vietnamese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.dutch --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.german --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content installed
 whacksmacker language korean
