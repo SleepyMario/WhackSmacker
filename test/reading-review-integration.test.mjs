@@ -12,6 +12,7 @@ import {
   listReadingReviewItems,
   listReadingReviewSources,
   loadReviewProgressStore,
+  orderReviewItemsForSession,
   recordReadingReviewAnswer,
   renderReadingReviewItem,
   syncReadingReviewItems
@@ -96,6 +97,18 @@ test("due review listing includes integrated items", async () => {
   } finally {
     await fixture.cleanup();
   }
+});
+
+test("review session ordering shuffles without dropping or duplicating items", () => {
+  const items = ["one", "two", "three", "four"];
+  const shuffled = orderReviewItemsForSession(items, {
+    random: sequenceRandom([0.99, 0.01, 0.5])
+  });
+
+  assert.notDeepEqual(shuffled, items);
+  assert.deepEqual([...shuffled].sort(), [...items].sort());
+  assert.equal(new Set(shuffled).size, items.length);
+  assert.deepEqual(orderReviewItemsForSession(items, { shuffle: false }), items);
 });
 
 test("renderer output works for integrated items and preserves identity", async () => {
@@ -205,6 +218,70 @@ test("next review deck detection follows ordered sources in the same package", a
     assert.equal(second?.title, "Chapter 11-15");
     assert.equal(second?.sourcePath, "review-decks/chapter-011-015/cards.tsv");
     assert.equal(third, undefined);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review run uses shuffled order by default and keeps all cards available", async () => {
+  const fixture = await createShuffleReviewFixture();
+  try {
+    const sourceOrder = ["one", "two", "three", "four"];
+    const observedFirstPrompts = new Set();
+    for (let index = 0; index < 12; index += 1) {
+      const result = await runCli(
+        [
+          "review",
+          "run",
+          "--package",
+          "com.sleepymario.language.shuffle",
+          "--source",
+          "review-decks/chapter-001-005/cards.tsv",
+          "--data-dir",
+          fixture.dataDir,
+          "--now",
+          now
+        ],
+        "q\n"
+      );
+      observedFirstPrompts.add(firstPromptValue(result.stdout));
+    }
+
+    const allItems = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.shuffle",
+      sourcePath: "review-decks/chapter-001-005/cards.tsv"
+    });
+    assert.equal(allItems.length, 4);
+    assert.equal(new Set(allItems.map((item) => item.item.id)).size, 4);
+    assert.deepEqual(allItems.map((item) => item.item.prompt.text).sort(), [...sourceOrder].sort());
+    assert.equal(observedFirstPrompts.size > 1 || !observedFirstPrompts.has("one"), true);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review run can preserve source order with no-shuffle", async () => {
+  const fixture = await createShuffleReviewFixture();
+  try {
+    const result = await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.shuffle",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now,
+        "--no-shuffle"
+      ],
+      "q\n"
+    );
+
+    assert.equal(firstPromptValue(result.stdout), "one");
   } finally {
     await fixture.cleanup();
   }
@@ -565,6 +642,93 @@ async function createContinuationReviewFixture() {
   };
 }
 
+async function createShuffleReviewFixture() {
+  const root = await mkdtemp(join(tmpdir(), "wsm-review-shuffle-"));
+  const dataDir = join(root, "content");
+  const packageId = "com.sleepymario.language.shuffle";
+  const installPath = `packages/${packageId}/0.1.0`;
+  const packageRoot = join(dataDir, installPath);
+  const snapshotPath = "content/content.json";
+  const itemPath = "content/memorization/items.json";
+  const sourcePath = "review-decks/chapter-001-005/cards.tsv";
+  const snapshot = {
+    contentSchema: "whacksmacker-source-markdown-snapshot-v1",
+    files: [{ path: sourcePath, mediaType: "text/tab-separated-values", text: "deck\tdirection\tfront\tback\n" }]
+  };
+  const items = {
+    schemaVersion: 1,
+    items: [
+      memoryItem("shuffle/card-001", "one", "1", sourcePath, "Chapter 1-5"),
+      memoryItem("shuffle/card-002", "two", "2", sourcePath, "Chapter 1-5"),
+      memoryItem("shuffle/card-003", "three", "3", sourcePath, "Chapter 1-5"),
+      memoryItem("shuffle/card-004", "four", "4", sourcePath, "Chapter 1-5")
+    ]
+  };
+  const snapshotBuffer = Buffer.from(`${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
+  const itemBuffer = Buffer.from(`${JSON.stringify(items, null, 2)}\n`, "utf8");
+  const manifest = {
+    packageFormatVersion: 1,
+    packageId,
+    packageVersion: "0.1.0",
+    displayName: "Shuffle Package",
+    description: "Package with a multi-card review source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    minimumWhackSmackerVersion: "0.1.0",
+    source: {
+      repository: "https://example.invalid/shuffle",
+      commit: "0000000000000000000000000000000000000000"
+    },
+    generatedAt: now,
+    generator: {
+      name: "test",
+      version: "0.1.0"
+    },
+    entryPoints: [{ id: "primary", mediaType: "application/json", path: snapshotPath, role: "primary" }],
+    files: [
+      { path: snapshotPath, mediaType: "application/json", size: snapshotBuffer.length, sha256: sha256(snapshotBuffer) },
+      {
+        path: itemPath,
+        mediaType: "application/vnd.whacksmacker.memorization-items+json",
+        size: itemBuffer.length,
+        sha256: sha256(itemBuffer)
+      }
+    ]
+  };
+  const registry = {
+    registryFormatVersion: 1,
+    updatedAt: now,
+    packages: [
+      {
+        packageId,
+        packageVersion: "0.1.0",
+        displayName: "Shuffle Package",
+        contentType: "language-curriculum",
+        contentSchemaVersion: "1.0.0",
+        minimumWhackSmackerVersion: "0.1.0",
+        source: manifest.source,
+        installedAt: now,
+        installPath,
+        manifestSha256: "0".repeat(64),
+        archiveSha256: "1".repeat(64),
+        archiveSize: 1,
+        catalogueId: "com.sleepymario.local"
+      }
+    ]
+  };
+
+  await writeJson(join(dataDir, "registry.json"), registry);
+  await writeJson(join(packageRoot, "manifest.json"), manifest);
+  await writeFileEnsured(join(packageRoot, snapshotPath), snapshotBuffer);
+  await writeFileEnsured(join(packageRoot, itemPath), itemBuffer);
+
+  return {
+    root,
+    dataDir,
+    cleanup: () => rm(root, { recursive: true, force: true })
+  };
+}
+
 function memoryItem(id, prompt, answer, sourcePath, sourceTitle) {
   return {
     schemaVersion: 1,
@@ -587,6 +751,15 @@ async function writeFileEnsured(path, data) {
 
 function sha256(data) {
   return createHash("sha256").update(data).digest("hex");
+}
+
+function firstPromptValue(stdout) {
+  return stdout.match(/Prompt\n\s+(.+)/)?.[1]?.trim();
+}
+
+function sequenceRandom(values) {
+  let index = 0;
+  return () => values[index++ % values.length];
 }
 
 async function runCli(args, input = "") {

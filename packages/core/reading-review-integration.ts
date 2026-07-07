@@ -58,6 +58,11 @@ export interface RecordReadingReviewAnswerOptions extends ReadingReviewOptions {
   readonly reviewedAt: string;
 }
 
+export interface OrderReviewItemsForSessionOptions {
+  readonly shuffle?: boolean;
+  readonly random?: () => number;
+}
+
 export interface ReadingReviewSource {
   readonly packageId: string;
   readonly packageVersion: string;
@@ -205,6 +210,22 @@ export async function recordReadingReviewAnswer(options: RecordReadingReviewAnsw
     rating: options.rating,
     reviewedAt: options.reviewedAt
   });
+}
+
+export function orderReviewItemsForSession<T>(items: readonly T[], options: OrderReviewItemsForSessionOptions = {}): readonly T[] {
+  if (options.shuffle === false) {
+    return [...items];
+  }
+  return shuffleReviewItemsForSession(items, options.random ?? Math.random);
+}
+
+export function shuffleReviewItemsForSession<T>(items: readonly T[], random: () => number = Math.random): readonly T[] {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
 }
 
 function resolveIntegrationProgressDir(dataDir?: string, progressDir?: string): string | undefined {

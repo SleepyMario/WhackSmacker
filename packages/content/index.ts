@@ -11,6 +11,7 @@ import {
   listReadingReviewItems,
   listReadingReviewSources,
   migrateUserDataBackupFile,
+  orderReviewItemsForSession,
   readInstalledContentEntry,
   restoreUserDataBackup,
   recordReadingReviewAnswer,
@@ -328,7 +329,8 @@ export const contentModule: DomainModule = {
           packageId: options.package,
           packageVersion: options.version,
           sourcePath: options.source,
-          now: options.now ?? currentTimestamp()
+          now: options.now ?? currentTimestamp(),
+          shuffle: options.noShuffle !== true
         });
       }
     });
@@ -421,6 +423,7 @@ interface RunReviewSourceSessionOptions {
   readonly packageVersion?: string;
   readonly sourcePath?: string;
   readonly now: string;
+  readonly shuffle?: boolean;
 }
 
 interface ParsedOptions {
@@ -437,6 +440,7 @@ interface ParsedOptions {
   readonly rating?: string;
   readonly now?: string;
   readonly output: string;
+  readonly noShuffle?: boolean;
 }
 
 function printInstalled(packages: readonly InstalledPackageRecord[]): void {
@@ -530,7 +534,8 @@ async function runSingleReviewSource(
     console.log(`No due review items found for deck: ${label}`);
   }
 
-  for (const dueItem of due) {
+  const sessionItems = orderReviewItemsForSession(due, { shuffle: options.shuffle !== false });
+  for (const dueItem of sessionItems) {
     const prompt = await renderReadingReviewItem({
       dataDir: options.dataDir,
       packageId: dueItem.packageId,
@@ -718,6 +723,7 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
   let rating: string | undefined;
   let now: string | undefined;
   let output = "";
+  let noShuffle = false;
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -757,6 +763,8 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
     } else if (arg === "--output") {
       output = readValue(args, index, arg);
       index += 1;
+    } else if (arg === "--no-shuffle") {
+      noShuffle = true;
     } else {
       throw new Error(`Unknown content option: ${arg}`);
     }
@@ -777,7 +785,7 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
     }
   }
 
-  return { catalogue, dataDir, version, package: packageId, force, all, file, source, limit, answer, rating, now, output };
+  return { catalogue, dataDir, version, package: packageId, force, all, file, source, limit, answer, rating, now, output, noShuffle };
 }
 
 function readValue(args: readonly string[], index: number, option: string): string {
