@@ -104,6 +104,8 @@ test("help prints native WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker language korean \[--file <path>\]/);
   assert.match(result.stdout, /whacksmacker language terms \[<group>\] \[--file <path>\]/);
   assert.match(result.stdout, /whacksmacker language terminology \[--search <text>\]/);
+  assert.match(result.stdout, /whacksmacker --data-dir <dir> --catalogue <catalogue\.json>/);
+  assert.match(result.stdout, /Space\s+Install selected available module/);
   assert.match(result.stdout, /whacksmacker review sources/);
   assert.match(result.stdout, /whacksmacker review due/);
   assert.match(result.stdout, /whacksmacker review show <package-id> <item-id>/);

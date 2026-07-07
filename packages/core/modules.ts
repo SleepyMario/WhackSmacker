@@ -67,6 +67,7 @@ export interface FirstClassModuleDescriptor {
   readonly description: string;
   readonly readableContentCount?: number;
   readonly reviewSourceCount?: number;
+  readonly availableStatus?: "installed" | "available" | "update-available";
   readonly actions?: readonly FirstClassModuleAction[];
 }
 

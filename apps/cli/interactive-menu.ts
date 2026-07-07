@@ -4,13 +4,16 @@ import {
   formatFirstClassModuleInfo,
   getBuiltInFirstClassModules,
   installedPackageToFirstClassModuleDescriptor,
+  installContentPackage,
   isLanguageLikeModulePackage,
+  listAvailableContentPackages,
   listReadableContentEntries,
   listInstalledReadablePackages,
   listReadingReviewSources,
   readInstalledContentEntry,
   renderReadingContent,
   sortFirstClassModules,
+  type ContentPackageCatalogueEntry,
   type FirstClassModuleDescriptor,
   type ReadableContentEntry,
   type ReadingReviewSource,
@@ -88,8 +91,11 @@ export interface MenuItem {
 
 export type LanguageTreeNodeKind =
   | "root"
+  | "installed-root"
+  | "available-root"
   | "category"
   | "module"
+  | "available-module"
   | "command"
   | "package"
   | "read-section"
@@ -110,6 +116,8 @@ export interface LanguageTreeNode {
   readonly moduleId?: string;
   readonly moduleVersion?: string;
   readonly sourceKind?: string;
+  readonly availableStatus?: "installed" | "available" | "update-available";
+  readonly cataloguePath?: string;
   readonly filePath?: string;
   readonly sourcePath?: string;
   readonly itemCount?: number;
@@ -347,6 +355,7 @@ export function createNodeTerminal(): Terminal {
 
 export interface InteractiveMenuOptions {
   readonly dataDir?: string;
+  readonly cataloguePath?: string;
 }
 
 export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal(), options: InteractiveMenuOptions = {}): Promise<void> {
@@ -652,8 +661,8 @@ async function runGeographyAction(registry: InMemoryCliCommandRegistry, terminal
 }
 
 async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
-  let tree = await buildModuleTree(options.dataDir);
-  let expandedIds = new Set<string>(["whacksmacker"]);
+  let tree = await buildModuleTree(options);
+  let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let selectedReviewStartId: string | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
@@ -705,6 +714,24 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       continue;
     }
 
+    if (isSpace(key)) {
+      const selected = visible[selection];
+      if (selected === undefined) {
+        continue;
+      }
+      const result = await installAvailableModuleFromTreeNode(selected.node, options);
+      tree = await buildModuleTree(options);
+      expandedIds = keepExistingExpandedIds(tree, expandedIds);
+      const nextVisible = flattenVisibleLanguageTree(tree, expandedIds);
+      selection = Math.max(0, nextVisible.findIndex((entry) => entry.node.id === selected.node.id));
+      if (selection === -1) {
+        selection = Math.min(1, nextVisible.length - 1);
+      }
+      rightPaneText = result;
+      selectedReviewStartId = null;
+      continue;
+    }
+
     if (!isEnter(key)) {
       continue;
     }
@@ -717,7 +744,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       if (selectedReviewStartId === selected.node.id) {
         const quit = await runLanguageTreeReviewSourceAction(registry, terminal, selected.node, options);
         selectedReviewStartId = null;
-        tree = await buildModuleTree(options.dataDir);
+        tree = await buildModuleTree(options);
         expandedIds = keepExistingExpandedIds(tree, expandedIds);
         rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
         if (quit) {
@@ -747,19 +774,70 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   }
 }
 
-export async function buildModuleTree(dataDir?: string): Promise<LanguageTreeNode> {
-  const descriptors = await listFirstClassModuleDescriptors(dataDir);
+function normalizeTreeOptions(options: InteractiveMenuOptions | string | undefined): InteractiveMenuOptions {
+  if (typeof options === "string") {
+    return { dataDir: options };
+  }
+  return options ?? {};
+}
+
+export async function buildModuleTree(options: InteractiveMenuOptions | string | undefined = {}): Promise<LanguageTreeNode> {
+  const resolvedOptions = normalizeTreeOptions(options);
+  const descriptors = await listFirstClassModuleDescriptors(resolvedOptions.dataDir);
+  const availableDescriptors = await listAvailableModuleDescriptors(resolvedOptions.cataloguePath, resolvedOptions.dataDir);
   return {
     id: "whacksmacker",
-    label: "WhackSmacker / Modules",
+    label: "WhackSmacker",
     kind: "root",
     children: [
-      await buildLanguageTreeFromDescriptors(descriptors.filter((descriptor) => descriptor.category === "Languages"), dataDir),
-      buildModuleCategoryTree("Games", descriptors),
-      buildModuleCategoryTree("Geography", descriptors),
-      buildModuleCategoryTree("Mathematics", descriptors)
+      await buildInstalledModulesTree(descriptors, resolvedOptions.dataDir),
+      buildAvailableModulesTree(availableDescriptors, resolvedOptions.cataloguePath)
     ]
   };
+}
+
+async function installAvailableModuleFromTreeNode(node: LanguageTreeNode, options: InteractiveMenuOptions): Promise<string> {
+  if (node.kind !== "available-module") {
+    return "Space installs modules from the Modules available section.\n\nSelect an available content-package module and press Space.";
+  }
+  if (node.sourceKind !== "content-package" || node.packageId === undefined) {
+    return `${node.packageLabel ?? node.label}\n\nThis module is built in or native. No package install is required.`;
+  }
+  const cataloguePath = node.cataloguePath ?? options.cataloguePath;
+  if (cataloguePath === undefined) {
+    return "No catalogue path was supplied.\n\nLaunch with --catalogue <catalogue.json> to install available modules.";
+  }
+  if (node.availableStatus === "installed") {
+    return [
+      `${node.packageLabel ?? node.label}`,
+      "",
+      "Already installed.",
+      "",
+      "The same package version is already installed. Space does not reinstall it, so installed package data and user progress are not disturbed.",
+      "Use the noninteractive content install command with --force if a safe replacement is needed."
+    ].join("\n");
+  }
+
+  try {
+    const result = await installContentPackage({
+      cataloguePath,
+      dataDir: options.dataDir,
+      packageId: node.packageId,
+      packageVersion: node.packageVersion
+    });
+    return [
+      result.installed ? "Module installed." : "Module already installed.",
+      "",
+      `Package: ${result.record.packageId}`,
+      `Version: ${result.record.packageVersion}`,
+      `Display name: ${result.record.displayName}`,
+      `Path: ${result.installPath}`,
+      "",
+      "The installed modules tree has been refreshed. User progress remains outside installed package directories."
+    ].join("\n");
+  } catch (error) {
+    return `Install failed.\n\n${error instanceof Error ? error.message : String(error)}`;
+  }
 }
 
 export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeNode> {
@@ -793,6 +871,185 @@ export async function listFirstClassModuleDescriptors(dataDir?: string): Promise
   }
 
   return sortFirstClassModules([...installedDescriptors, ...getBuiltInFirstClassModules()]);
+}
+
+export async function listAvailableModuleDescriptors(
+  cataloguePath?: string,
+  dataDir?: string
+): Promise<readonly FirstClassModuleDescriptor[]> {
+  const installedRecords = await listInstalledReadablePackages(dataDir);
+  const installedByPackageId = new Map(installedRecords.map((record) => [record.packageId, record]));
+  const descriptors: FirstClassModuleDescriptor[] = [];
+
+  if (cataloguePath !== undefined) {
+    for (const entry of await listAvailableContentPackages(cataloguePath)) {
+      if (!entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
+        continue;
+      }
+      descriptors.push(catalogueEntryToModuleDescriptor(entry, installedByPackageId.get(entry.packageId)));
+    }
+  }
+
+  for (const descriptor of getBuiltInFirstClassModules()) {
+    descriptors.push({ ...descriptor, availableStatus: "installed" });
+  }
+
+  return sortFirstClassModules(descriptors);
+}
+
+function catalogueEntryToModuleDescriptor(
+  entry: ContentPackageCatalogueEntry,
+  installed: InstalledReadablePackage | undefined
+): FirstClassModuleDescriptor {
+  const status = installed === undefined
+    ? "available"
+    : installed.packageVersion === entry.packageVersion
+      ? "installed"
+      : "update-available";
+  return {
+    moduleId: entry.packageId,
+    displayName: displayLabelForModulePackage(entry.displayName),
+    category: "Languages",
+    version: entry.packageVersion,
+    sourceKind: "content-package",
+    packageId: entry.packageId,
+    packageVersion: entry.packageVersion,
+    description: entry.description,
+    availableStatus: status
+  };
+}
+
+function availableStatusForDescriptor(descriptor: FirstClassModuleDescriptor): "installed" | "available" | "update-available" {
+  return descriptor.availableStatus ?? (descriptor.sourceKind === "content-package" ? "available" : "installed");
+}
+
+function renderAvailableModuleInfo(
+  descriptor: FirstClassModuleDescriptor,
+  status: "installed" | "available" | "update-available",
+  cataloguePath: string
+): string {
+  const installHint = descriptor.sourceKind === "content-package"
+    ? status === "installed"
+      ? "Already installed. Space will not reinstall the same package version."
+      : "Press Space to install this module from the selected catalogue."
+    : "Built-in/native module. No package install is required.";
+  return [
+    `${descriptor.displayName} [${status}]`,
+    "",
+    `Module ID: ${descriptor.moduleId}`,
+    `Category: ${descriptor.category}`,
+    `Version: ${descriptor.version}`,
+    `Source kind: ${descriptor.sourceKind}`,
+    descriptor.packageId === undefined ? "" : `Package: ${descriptor.packageId}`,
+    descriptor.packageVersion === undefined ? "" : `Package version: ${descriptor.packageVersion}`,
+    `Catalogue: ${cataloguePath}`,
+    "",
+    descriptor.description,
+    "",
+    installHint,
+    "Enter shows this information only; it does not install."
+  ].filter((line) => line.length > 0).join("\n");
+}
+
+async function buildInstalledModulesTree(
+  descriptors: readonly FirstClassModuleDescriptor[],
+  dataDir?: string
+): Promise<LanguageTreeNode> {
+  return {
+    id: "installed-modules",
+    label: "Installed modules",
+    kind: "installed-root",
+    previewText: "Installed modules\n\nInstalled modules are usable/openable. Content packages are read-only; user progress stays outside package directories.",
+    children: [
+      await buildLanguageTreeFromDescriptors(descriptors.filter((descriptor) => descriptor.category === "Languages"), dataDir),
+      buildModuleCategoryTree("Games", descriptors),
+      buildModuleCategoryTree("Geography", descriptors),
+      buildModuleCategoryTree("Mathematics", descriptors)
+    ]
+  };
+}
+
+function buildAvailableModulesTree(
+  descriptors: readonly FirstClassModuleDescriptor[],
+  cataloguePath?: string
+): LanguageTreeNode {
+  return {
+    id: "available-modules",
+    label: "Modules available",
+    kind: "available-root",
+    previewText: cataloguePath === undefined
+      ? [
+        "Modules available",
+        "",
+        "No catalogue path was supplied.",
+        "",
+        "Launch with:",
+        "whacksmacker --data-dir <dir> --catalogue <catalogue.json>",
+        "",
+        "Enter shows module information. Space installs selected available content packages."
+      ].join("\n")
+      : [
+        "Modules available",
+        "",
+        `Catalogue: ${cataloguePath}`,
+        "",
+        "Enter opens module information. Space installs selected available content packages.",
+        "Selecting a module does not auto-install it."
+      ].join("\n"),
+    children: cataloguePath === undefined ? [{
+      id: "available-modules:none",
+      label: "No catalogue selected",
+      kind: "message",
+      previewText: "No catalogue path was supplied.\n\nLaunch with --catalogue <catalogue.json> to list installable modules."
+    }] : [
+      buildAvailableCategoryTree("Languages", descriptors, cataloguePath),
+      buildAvailableCategoryTree("Games", descriptors, cataloguePath),
+      buildAvailableCategoryTree("Geography", descriptors, cataloguePath),
+      buildAvailableCategoryTree("Mathematics", descriptors, cataloguePath)
+    ]
+  };
+}
+
+function buildAvailableCategoryTree(
+  category: FirstClassModuleDescriptor["category"],
+  descriptors: readonly FirstClassModuleDescriptor[],
+  cataloguePath: string
+): LanguageTreeNode {
+  const children = descriptors
+    .filter((descriptor) => descriptor.category === category)
+    .map((descriptor) => buildAvailableModuleTreeNode(descriptor, cataloguePath));
+
+  return {
+    id: `available:${category.toLowerCase()}`,
+    label: category,
+    kind: "category",
+    previewText: `${category}\n\nAvailable first-party modules from the selected catalogue or built-in registry.`,
+    children: children.length > 0 ? children : [{
+      id: `available:${category.toLowerCase()}:none`,
+      label: `No available ${category} modules`,
+      kind: "message",
+      previewText: `No available ${category} modules were found in the selected catalogue.`
+    }]
+  };
+}
+
+function buildAvailableModuleTreeNode(descriptor: FirstClassModuleDescriptor, cataloguePath: string): LanguageTreeNode {
+  const status = availableStatusForDescriptor(descriptor);
+  const label = `${descriptor.displayName} [${status}]`;
+  return {
+    id: `available:${descriptor.moduleId}`,
+    label,
+    kind: "available-module",
+    moduleId: descriptor.moduleId,
+    moduleVersion: descriptor.version,
+    sourceKind: descriptor.sourceKind,
+    packageId: descriptor.packageId,
+    packageVersion: descriptor.packageVersion,
+    packageLabel: descriptor.displayName,
+    availableStatus: status,
+    cataloguePath,
+    previewText: renderAvailableModuleInfo(descriptor, status, cataloguePath)
+  };
 }
 
 async function buildLanguageTreeFromDescriptors(
@@ -1004,7 +1261,18 @@ async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: Inte
     });
     return result.text;
   }
-  if (node.kind === "package-info" || node.kind === "package") {
+  if (node.kind === "package-info") {
+    return node.previewText ?? [
+      node.packageLabel ?? node.label,
+      "",
+      `Package: ${node.packageId ?? "unknown"}`,
+      `Version: ${node.packageVersion ?? "latest installed"}`,
+      "",
+      "Installed package content is read-only.",
+      "User progress and settings stay outside package directories."
+    ].join("\n");
+  }
+  if (node.kind === "package") {
     return [
       node.packageLabel ?? node.label,
       "",
@@ -1027,19 +1295,24 @@ async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: Inte
   if (node.kind === "message") {
     return node.previewText ?? node.label;
   }
-  if (node.kind === "category" || node.kind === "module" || node.kind === "command") {
+  if (node.kind === "available-module") {
+    return node.previewText ?? `${node.label}\n\nPress Space to install if this module is available. Enter does not install.`;
+  }
+  if (node.kind === "installed-root" || node.kind === "available-root" || node.kind === "category" || node.kind === "module" || node.kind === "command") {
     return node.previewText ?? `${node.label}\n\nSelect or expand items in the tree.`;
   }
   return [
     "WhackSmacker",
     "",
-    "Installed content packages and built-in modules appear in the tree on the left.",
+    "Installed modules and available first-party modules appear in separate tree sections.",
     "",
-    "Expand categories to read content, review decks, inspect package info, or launch built-in module commands.",
+    "Expand installed modules to read content, review decks, inspect package info, or launch built-in module commands.",
+    "Expand Modules available to inspect catalogue entries. Press Space to install an available content package.",
     "",
     "Controls:",
     "Up/Down move",
     "Enter opens or expands",
+    "Space installs available modules",
     "Escape collapses or backs out",
     "q quits"
   ].join("\n");
@@ -1670,7 +1943,7 @@ export function renderTwoPaneLanguageTree(
     lines.push(`| ${padRight(left, leftWidth)} | ${padRight(right, rightWidth)} |`);
   }
 
-  const footer = "Up/Down move  Enter open/start  Escape collapse/back  q quit";
+  const footer = "Up/Down move  Enter open/start  Space install available  Escape collapse/back  q quit";
   lines.push(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}+`);
   lines.push(colorsEnabled ? `${ansi.green}${footer}${ansi.reset}` : footer);
   return lines.join("\n");
@@ -1778,6 +2051,10 @@ function isDown(key: KeyPress): boolean {
 
 function isEnter(key: KeyPress): boolean {
   return key.name === "return" || key.name === "enter";
+}
+
+function isSpace(key: KeyPress): boolean {
+  return key.name === "space" || key.sequence === " ";
 }
 
 function isEscape(key: KeyPress): boolean {

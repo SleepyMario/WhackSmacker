@@ -21,6 +21,7 @@ import {
   getOneTwoThreeMenuItems,
   installedLanguagePackagesToMenuItems,
   languageMenuHeading,
+  listAvailableModuleDescriptors,
   renderTwoPaneLanguageTree,
   renderWhackSmackerHeader,
   reviewSourcesToMenuItems,
@@ -249,12 +250,14 @@ test("interactive menu opens the module two-pane tree", async () => {
 
     assert.match(terminal.output, /\+------------------------------------\+------------------------------------------------------------------------------\+/);
     assert.match(terminal.output, /WhackSmacker/);
+    assert.match(terminal.output, /Installed modules/);
+    assert.match(terminal.output, /Modules available/);
     assert.match(terminal.output, /Languages/);
     assert.match(terminal.output, /Games/);
     assert.match(terminal.output, /Geography/);
     assert.match(terminal.output, /Mathematics/);
     assert.doesNotMatch(terminal.output, /mouse/i);
-    assert.match(terminal.output, /Up\/Down move  Enter open\/start  Escape collapse\/back  q quit/);
+    assert.match(terminal.output, /Space install available/);
   } finally {
     await fixture.cleanup();
   }
@@ -272,10 +275,12 @@ test("module tree lists top-level categories and installed language packages", a
   );
   try {
     const tree = await buildModuleTree(fixture.dataDir);
-    const languages = tree.children.find((node) => node.label === "Languages");
+    const installed = tree.children.find((node) => node.label === "Installed modules");
+    const languages = installed.children.find((node) => node.label === "Languages");
 
-    assert.equal(tree.label, "WhackSmacker / Modules");
-    assert.deepEqual(tree.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
+    assert.equal(tree.label, "WhackSmacker");
+    assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
+    assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
     assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin", "Dutch", "Korean", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
       "com.sleepymario.language.chinese",
@@ -305,9 +310,10 @@ test("first-class module descriptors include built-ins and installed language pa
 
 test("module tree exposes Games Chess Geography and Mathematics entries", async () => {
   const tree = await buildModuleTree();
-  const games = tree.children.find((node) => node.label === "Games");
-  const geography = tree.children.find((node) => node.label === "Geography");
-  const mathematics = tree.children.find((node) => node.label === "Mathematics");
+  const installed = tree.children.find((node) => node.label === "Installed modules");
+  const games = installed.children.find((node) => node.label === "Games");
+  const geography = installed.children.find((node) => node.label === "Geography");
+  const mathematics = installed.children.find((node) => node.label === "Mathematics");
   const chess = games.children.find((node) => node.label === "Chess");
   const continents = geography.children.find((node) => node.label === "Continents");
   const beginnerMath = mathematics.children.find((node) => node.label === "Beginner Mathematics");
@@ -328,6 +334,7 @@ test("module tree exposes Games Chess Geography and Mathematics entries", async 
 test("language category can expand installed package nodes in the module tree", async () => {
   const fixture = await createInstalledDutchFixture();
   const terminal = new FakeTerminal([
+    key("down"),
     key("return"),
     key("q", { sequence: "q" })
   ]);
@@ -337,7 +344,7 @@ test("language category can expand installed package nodes in the module tree", 
 
     assert.match(terminal.output, /Languages/);
     assert.match(terminal.output, /Dutch/);
-    assert.match(terminal.output, /Up\/Down move  Enter open\/start  Escape collapse\/back  q quit/);
+    assert.match(terminal.output, /Space install available/);
   } finally {
     await fixture.cleanup();
   }
@@ -414,6 +421,34 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
   }
 });
 
+test("module tree includes available modules from a catalogue with install status", async () => {
+  const fixture = await createInstalledLanguageFixture(
+    ["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum"],
+    ["com.sleepymario.language.korean"]
+  );
+  try {
+    const descriptors = await listAvailableModuleDescriptors(fixture.cataloguePath, fixture.dataDir);
+    const tree = await buildModuleTree({ dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
+    const available = tree.children.find((node) => node.label === "Modules available");
+    const availableLanguages = available.children.find((node) => node.label === "Languages");
+
+    assert.deepEqual(descriptors.filter((descriptor) => descriptor.category === "Languages").map((descriptor) => `${descriptor.displayName}:${descriptor.availableStatus}`), [
+      "Chinese - Mandarin:available",
+      "Dutch:available",
+      "Korean:installed",
+      "Vietnamese:available"
+    ]);
+    assert.deepEqual(availableLanguages.children.map((node) => node.label), [
+      "Chinese - Mandarin [available]",
+      "Dutch [available]",
+      "Korean [installed]",
+      "Vietnamese [available]"
+    ]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("language tree flattening and renderer use deterministic keyboard state", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
@@ -426,7 +461,7 @@ test("language tree flattening and renderer use deterministic keyboard state", a
     assert.deepEqual(labels.slice(0, 5), ["Languages", "Dutch", "Read content", "Review decks", "Package info"]);
     assert.match(output, />     > Read content/);
     assert.match(output, /Preview text/);
-    assert.match(output, /Up\/Down move  Enter open\/start  Escape collapse\/back  q quit/);
+    assert.match(output, /Space install available/);
   } finally {
     await fixture.cleanup();
   }
@@ -475,6 +510,7 @@ test("selecting an installed review source runs the existing review flow live wi
   const fixture = await createInstalledDutchFixture();
   const calls = [];
   const terminal = new FakeTerminal([
+    key("down"),
     key("return"),
     key("down"),
     key("return"),
@@ -536,6 +572,7 @@ test("review section can be expanded without starting review", async () => {
   const fixture = await createInstalledDutchFixture();
   const calls = [];
   const terminal = new FakeTerminal([
+    key("down"),
     key("return"),
     key("down"),
     key("return"),
@@ -552,6 +589,71 @@ test("review section can be expanded without starting review", async () => {
     assert.deepEqual(calls, []);
     assert.match(terminal.output, /Review decks/);
     assert.match(terminal.output, /Chapter 1-5/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Enter on an available module does not install but Space installs and refreshes installed modules", async () => {
+  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum"], []);
+  try {
+    const enterOnly = new FakeTerminal([
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("q", { sequence: "q" })
+    ]);
+    await runInteractiveMenu(createStubRegistry([]), enterOnly, { dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
+    let tree = await buildModuleTree({ dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
+    let installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "Languages");
+
+    assert.equal(installedLanguages.children.some((node) => node.label === "Dutch"), false);
+    assert.match(enterOnly.output, /Enter shows this information only; it does not install/);
+
+    const install = new FakeTerminal([
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("down"),
+      key("down"),
+      key(" ", { name: "space", sequence: " " }),
+      key("q", { sequence: "q" })
+    ]);
+    await runInteractiveMenu(createStubRegistry([]), install, { dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
+    tree = await buildModuleTree({ dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
+    installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "Languages");
+    const availableLanguages = tree.children.find((node) => node.label === "Modules available").children.find((node) => node.label === "Languages");
+
+    assert.ok(installedLanguages.children.some((node) => node.label === "Dutch"));
+    assert.ok(availableLanguages.children.some((node) => node.label === "Dutch [installed]"));
+    assert.match(install.output, /Module installed\./);
+
+    const alreadyInstalled = new FakeTerminal([
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("down"),
+      key("down"),
+      key(" ", { name: "space", sequence: " " }),
+      key("q", { sequence: "q" })
+    ]);
+    await runInteractiveMenu(createStubRegistry([]), alreadyInstalled, { dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
+    assert.match(alreadyInstalled.output, /Already installed/);
   } finally {
     await fixture.cleanup();
   }
@@ -590,6 +692,7 @@ test("package without review sources can show a helpful message node", () => {
 test("installed language package read content menu uses selectable content labels", async () => {
   const fixture = await createInstalledDutchFixture();
   const terminal = new FakeTerminal([
+    key("down"),
     key("return"),
     key("down"),
     key("return"),
@@ -614,6 +717,7 @@ test("chess menu item routes to the registered command", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
     key("down"),
+    key("down"),
     key("return"),
     key("down"),
     key("return"),
@@ -634,6 +738,7 @@ test("chess menu item routes to the registered command", async () => {
 test("geography menu routes continents to the registered command", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
+    key("down"),
     key("down"),
     key("down"),
     key("return"),
@@ -737,7 +842,8 @@ test("interactive menu starts with the module tree", async () => {
   await runInteractiveMenu(createStubRegistry([]), terminal);
 
   assert.match(stripAnsi(terminal.output), /WhackSmacker/);
-  assert.match(stripAnsi(terminal.output), />   > Languages/);
+  assert.match(stripAnsi(terminal.output), />   v Installed modules/);
+  assert.match(stripAnsi(terminal.output), /Modules available/);
   assert.match(stripAnsi(terminal.output), /Games/);
   assert.match(stripAnsi(terminal.output), /Geography/);
   assert.match(stripAnsi(terminal.output), /Mathematics/);
@@ -792,6 +898,7 @@ async function createInstalledLanguageFixture(targetIds, packageIds) {
 
   return {
     root,
+    cataloguePath,
     dataDir,
     cleanup: () => rm(root, { recursive: true, force: true })
   };

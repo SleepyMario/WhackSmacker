@@ -40,7 +40,9 @@ Interactive mode:
   whacksmacker
   wsm --data-dir <dir>
   whacksmacker --data-dir <dir>
+  whacksmacker --data-dir <dir> --catalogue <catalogue.json>
       Open the interactive menu. The Language menu discovers installed language packages from the selected content data directory.
+      When --catalogue is supplied, Modules available lists first-party installable packages and Space installs the selected package.
 
 Language commands:
   whacksmacker language korean [--file <path>] [--version <version>] [--data-dir <dir>]
@@ -136,7 +138,8 @@ Modules:
 
 Interactive controls:
   Up/Down arrows  Move selection
-  Enter           Select
+  Enter           Select/open
+  Space           Install selected available module
   Escape          Return
   q               Quit
   Ctrl-C          Exit
@@ -211,12 +214,36 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   await dispatch(resolved.command, resolved.args);
 }
 
-function parseInteractiveOptions(argv: readonly string[]): { readonly dataDir?: string } | null {
+function parseInteractiveOptions(argv: readonly string[]): { readonly dataDir?: string; readonly cataloguePath?: string } | null {
   if (argv.length === 0) {
     return {};
   }
-  if (argv.length === 2 && argv[0] === "--data-dir" && argv[1]?.trim().length > 0) {
-    return { dataDir: argv[1] };
+  let dataDir: string | undefined;
+  let cataloguePath: string | undefined;
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg === "--data-dir") {
+      const value = argv[index + 1];
+      if (value === undefined || value.trim().length === 0) {
+        return null;
+      }
+      dataDir = value;
+      index += 1;
+      continue;
+    }
+    if (arg === "--catalogue") {
+      const value = argv[index + 1];
+      if (value === undefined || value.trim().length === 0) {
+        return null;
+      }
+      cataloguePath = value;
+      index += 1;
+      continue;
+    }
+    return null;
+  }
+  if (dataDir !== undefined || cataloguePath !== undefined) {
+    return { dataDir, cataloguePath };
   }
   return null;
 }
