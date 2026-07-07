@@ -165,6 +165,16 @@ test("generated catalogue from validation packages contains expected local packa
       outputDirectory: packageDirectory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
+    await generateContentPackage({
+      targetId: "french-curriculum",
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    await generateContentPackage({
+      targetId: "spanish-curriculum",
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
 
     const outputPath = join(catalogueDirectory, "catalogue.json");
     const first = await generateLocalContentPackageCatalogue({
@@ -178,7 +188,7 @@ test("generated catalogue from validation packages contains expected local packa
       generatedAt: "2026-07-06T00:00:00Z"
     });
 
-    assert.equal(first.packageCount, 6);
+    assert.equal(first.packageCount, 8);
     assert.equal(first.changed, true);
     assert.equal(second.changed, false);
     assertValid(first.catalogue);
@@ -187,9 +197,11 @@ test("generated catalogue from validation packages contains expected local packa
       [
         "com.sleepymario.language.chinese",
         "com.sleepymario.language.dutch",
+        "com.sleepymario.language.french",
         "com.sleepymario.language.german",
         "com.sleepymario.language.korean",
         "com.sleepymario.language.linguistic-terminology",
+        "com.sleepymario.language.spanish",
         "com.sleepymario.language.vietnamese"
       ]
     );

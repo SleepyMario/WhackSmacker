@@ -103,6 +103,8 @@ npm run generate-content-package -- \
   --target vietnamese-curriculum \
   --target dutch-curriculum \
   --target german-curriculum \
+  --target french-curriculum \
+  --target spanish-curriculum \
   --output-dir /tmp/whacksmacker-packages \
   --generated-at 2026-07-06T00:00:00Z
 
@@ -116,6 +118,8 @@ whacksmacker content install com.sleepymario.language.chinese --catalogue /tmp/w
 whacksmacker content install com.sleepymario.language.vietnamese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.dutch --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.german --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.french --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.spanish --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content installed
 whacksmacker
@@ -132,6 +136,10 @@ whacksmacker content read com.sleepymario.language.dutch --file units/dutch-core
 whacksmacker content read com.sleepymario.language.dutch --file review-decks/chapter-001-005/cards.tsv
 whacksmacker content read com.sleepymario.language.german --file units/german-core/chapter-005-basic-sentences-5/chapter.md
 whacksmacker content read com.sleepymario.language.german --file review-decks/chapter-001-005/cards.tsv
+whacksmacker content read com.sleepymario.language.french --file units/french-core/chapter-005-basic-sentences-5/chapter.md
+whacksmacker content read com.sleepymario.language.french --file review-decks/chapter-001-005/cards.tsv
+whacksmacker content read com.sleepymario.language.spanish --file units/spanish-core/chapter-005-basic-sentences-5/chapter.md
+whacksmacker content read com.sleepymario.language.spanish --file review-decks/chapter-001-005/cards.tsv
 whacksmacker review sources --package com.sleepymario.language.korean
 whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-001-005/cards.tsv
 whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-006-010/cards.tsv
@@ -145,9 +153,13 @@ whacksmacker review sources --package com.sleepymario.language.dutch
 whacksmacker review items --package com.sleepymario.language.dutch --source review-decks/chapter-001-005/cards.tsv
 whacksmacker review sources --package com.sleepymario.language.german
 whacksmacker review items --package com.sleepymario.language.german --source review-decks/chapter-001-005/cards.tsv
+whacksmacker review sources --package com.sleepymario.language.french
+whacksmacker review items --package com.sleepymario.language.french --source review-decks/chapter-001-005/cards.tsv
+whacksmacker review sources --package com.sleepymario.language.spanish
+whacksmacker review items --package com.sleepymario.language.spanish --source review-decks/chapter-001-005/cards.tsv
 whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```
 
 The interactive Language menu discovers installed readable packages whose package IDs start with `com.sleepymario.language.`. Those packages appear by display name, with `Curriculum` stripped from labels such as `Korean Curriculum` and `Vietnamese Curriculum`, and each installed package offers content reading, review source listing, and package info.
 
-The installed Korean package exposes the Chapter 1-5, Chapter 6-10, and Chapter 11-15 review decks. The installed Chinese - Mandarin package exposes the Pinyin-Zhuyin and Pinyin-Zhuyin with Tones conversion decks. The installed Vietnamese package exposes the Chapter 1-5 review deck. The installed Dutch package exposes the Chapter 1-5 review deck. The installed German package exposes the Chapter 1-5 review deck. Korean, Vietnamese, Dutch, and German packages do not generate full grammar-pattern cards into vocabulary/function-word review decks.
+The installed Korean package exposes the Chapter 1-5, Chapter 6-10, and Chapter 11-15 review decks. The installed Chinese - Mandarin package exposes the Pinyin-Zhuyin and Pinyin-Zhuyin with Tones conversion decks. The installed Vietnamese package exposes the Chapter 1-5 review deck. The installed Dutch package exposes the Chapter 1-5 review deck. The installed German package exposes the Chapter 1-5 review deck. The installed French package exposes the Chapter 1-5 review deck. The installed Spanish package exposes the Chapter 1-5 review deck. Korean, Vietnamese, Dutch, German, French, and Spanish packages do not generate full grammar-pattern cards into vocabulary/function-word review decks.

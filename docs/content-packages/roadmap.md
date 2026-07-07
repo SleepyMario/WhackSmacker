@@ -14,7 +14,7 @@ Defines the `.wspkg` package container, manifest schema, package identity, versi
 
 Status: implemented
 
-Generates deterministic `.wspkg` archives from the canonical `linguistic-terminology`, `korean-curriculum`, `chinese-curriculum`, `vietnamese-curriculum`, `dutch-curriculum`, and `german-curriculum` repositories.
+Generates deterministic `.wspkg` archives from the canonical `linguistic-terminology`, `korean-curriculum`, `chinese-curriculum`, `vietnamese-curriculum`, `dutch-curriculum`, `german-curriculum`, `french-curriculum`, and `spanish-curriculum` repositories.
 
 Supported targets:
 
@@ -24,6 +24,8 @@ Supported targets:
 - `vietnamese-curriculum` -> `com.sleepymario.language.vietnamese`
 - `dutch-curriculum` -> `com.sleepymario.language.dutch`
 - `german-curriculum` -> `com.sleepymario.language.german`
+- `french-curriculum` -> `com.sleepymario.language.french`
+- `spanish-curriculum` -> `com.sleepymario.language.spanish`
 
 ## Point 3 -- Local Package Catalogue
 

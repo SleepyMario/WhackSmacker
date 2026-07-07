@@ -224,7 +224,7 @@ test("installed Korean package exposes Chapter 15 and split vocabulary review de
   }
 });
 
-test("installed Korean Chinese Vietnamese Dutch and German packages expose expected reading and review sources", async () => {
+test("installed Korean Chinese Vietnamese Dutch German French and Spanish packages expose expected reading and review sources", async () => {
   const fixture = await createInstalledLanguagePackageFixture();
   try {
     const installed = await listInstalledContentPackages(fixture.dataDir);
@@ -259,14 +259,26 @@ test("installed Korean Chinese Vietnamese Dutch and German packages expose expec
       packageId: "com.sleepymario.language.german",
       path: "units/german-core/chapter-005-basic-sentences-5/chapter.md"
     });
+    const frenchChapter1 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.french",
+      path: "units/french-core/chapter-001-basic-sentences-1/chapter.md"
+    });
+    const spanishChapter1 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.spanish",
+      path: "units/spanish-core/chapter-001-basic-sentences-1/chapter.md"
+    });
 
     assert.deepEqual(
       installed.map((record) => [record.packageId, record.displayName]).sort(),
       [
         ["com.sleepymario.language.chinese", "Chinese - Mandarin"],
         ["com.sleepymario.language.dutch", "Dutch"],
+        ["com.sleepymario.language.french", "French"],
         ["com.sleepymario.language.german", "German"],
         ["com.sleepymario.language.korean", "Korean Curriculum"],
+        ["com.sleepymario.language.spanish", "Spanish"],
         ["com.sleepymario.language.vietnamese", "Vietnamese Curriculum"]
       ]
     );
@@ -278,6 +290,10 @@ test("installed Korean Chinese Vietnamese Dutch and German packages expose expec
     assert.match(germanChapter1.text, /Ich bin Alex Chen/);
     assert.match(germanChapter1.text, /Ich bin Lena Müller/);
     assert.match(germanChapter5.text, /Chapter 5 -- Basic Sentences V/);
+    assert.match(frenchChapter1.text, /Je suis Alex Chen/);
+    assert.match(frenchChapter1.text, /Je suis Camille Martin/);
+    assert.match(spanishChapter1.text, /Soy Alex Chen/);
+    assert.match(spanishChapter1.text, /Soy Lucía García/);
 
     const koreanSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.korean");
     assert.deepEqual(
@@ -327,6 +343,28 @@ test("installed Korean Chinese Vietnamese Dutch and German packages expose expec
     assert.ok(germanItems.some((item) => item.item.prompt.text === "hallo" && item.item.answer.text === "hello"));
     assert.ok(germanItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "hallo"));
 
+    const frenchSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.french");
+    assert.deepEqual(frenchSources.map((source) => [source.title, source.sourcePath]), [["Chapter 1-5", "review-decks/chapter-001-005/cards.tsv"]]);
+    const frenchItems = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.french",
+      sourcePath: "review-decks/chapter-001-005/cards.tsv"
+    });
+    assert.equal(frenchItems.length, 80);
+    assert.ok(frenchItems.some((item) => item.item.prompt.text === "bonjour" && item.item.answer.text === "hello; good day"));
+    assert.ok(frenchItems.some((item) => item.item.prompt.text === "hello; good day" && item.item.answer.text === "bonjour"));
+
+    const spanishSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.spanish");
+    assert.deepEqual(spanishSources.map((source) => [source.title, source.sourcePath]), [["Chapter 1-5", "review-decks/chapter-001-005/cards.tsv"]]);
+    const spanishItems = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.spanish",
+      sourcePath: "review-decks/chapter-001-005/cards.tsv"
+    });
+    assert.equal(spanishItems.length, 80);
+    assert.ok(spanishItems.some((item) => item.item.prompt.text === "hola" && item.item.answer.text === "hello; hi"));
+    assert.ok(spanishItems.some((item) => item.item.prompt.text === "hello; hi" && item.item.answer.text === "hola"));
+
     const forbiddenPatterns = [
       "저는 N입니다",
       "제 이름은 N입니다",
@@ -357,13 +395,25 @@ test("installed Korean Chinese Vietnamese Dutch and German packages expose expec
       "Ich heiße N",
       "Wie heißt du?",
       "Das ist N",
-      "Wie geht es dir?"
+      "Wie geht es dir?",
+      "Je suis N",
+      "Je m'appelle N",
+      "Comment tu t'appelles ?",
+      "C'est N",
+      "Ça va ?",
+      "Soy N",
+      "Me llamo N",
+      "¿Cómo te llamas?",
+      "Este es N / Esta es N",
+      "¿Cómo estás?"
     ];
     const languageReviewItemFiles = [
       ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.korean", fixture.dataDir)),
       ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.vietnamese", fixture.dataDir)),
       ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.dutch", fixture.dataDir)),
-      ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.german", fixture.dataDir))
+      ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.german", fixture.dataDir)),
+      ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.french", fixture.dataDir)),
+      ...(await listInstalledMemorizationItemFiles("com.sleepymario.language.spanish", fixture.dataDir))
     ];
     for (const file of languageReviewItemFiles) {
       const collection = await readInstalledMemorizationItems(file.packageId, file.path, fixture.dataDir);
@@ -387,6 +437,14 @@ test("installed Korean Chinese Vietnamese Dutch and German packages expose expec
     );
     await assert.rejects(
       () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.german", "0.1.0", "progress.json")),
+      /ENOENT/
+    );
+    await assert.rejects(
+      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.french", "0.1.0", "progress.json")),
+      /ENOENT/
+    );
+    await assert.rejects(
+      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.spanish", "0.1.0", "progress.json")),
       /ENOENT/
     );
   } finally {
@@ -428,7 +486,15 @@ async function createInstalledLanguagePackageFixture() {
   const packageDirectory = join(root, "packages");
   const cataloguePath = join(root, "catalogue", "catalogue.json");
   const dataDir = join(root, "data", "content");
-  for (const targetId of ["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum"]) {
+  for (const targetId of [
+    "korean-curriculum",
+    "chinese-curriculum",
+    "vietnamese-curriculum",
+    "dutch-curriculum",
+    "german-curriculum",
+    "french-curriculum",
+    "spanish-curriculum"
+  ]) {
     await generateContentPackage({
       targetId,
       outputDirectory: packageDirectory,
@@ -445,7 +511,9 @@ async function createInstalledLanguagePackageFixture() {
     "com.sleepymario.language.chinese",
     "com.sleepymario.language.vietnamese",
     "com.sleepymario.language.dutch",
-    "com.sleepymario.language.german"
+    "com.sleepymario.language.german",
+    "com.sleepymario.language.french",
+    "com.sleepymario.language.spanish"
   ]) {
     await installContentPackage({
       cataloguePath,

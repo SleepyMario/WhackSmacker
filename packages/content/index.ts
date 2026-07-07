@@ -829,7 +829,9 @@ function contentPackageTargetForModuleId(moduleId: string): string | undefined {
     chinese: "chinese-curriculum",
     vietnamese: "vietnamese-curriculum",
     dutch: "dutch-curriculum",
-    german: "german-curriculum"
+    german: "german-curriculum",
+    french: "french-curriculum",
+    spanish: "spanish-curriculum"
   };
   return targets[suffix];
 }

@@ -21,7 +21,9 @@ test("content package generator exposes the supported local package targets", ()
       ["chinese-curriculum", "com.sleepymario.language.chinese"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
-      ["german-curriculum", "com.sleepymario.language.german"]
+      ["german-curriculum", "com.sleepymario.language.german"],
+      ["french-curriculum", "com.sleepymario.language.french"],
+      ["spanish-curriculum", "com.sleepymario.language.spanish"]
     ]
   );
 });
@@ -302,6 +304,84 @@ test("content package generator creates a valid German package", async () => {
   }
 });
 
+test("content package generator creates a valid French package", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-french-package-"));
+
+  try {
+    const result = await generateContentPackage({
+      targetId: "french-curriculum",
+      outputDirectory: directory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
+    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const itemPath = "content/memorization/review-decks/chapter-001-005.json";
+    const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
+
+    assert.equal(result.packageId, "com.sleepymario.language.french");
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.french-0.1.0.wspkg"), true);
+    assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+    assert.equal(manifest.displayName, "French");
+    assert.equal(manifest.contentType, "language-curriculum");
+    assert.equal(content.packageId, "com.sleepymario.language.french");
+    assert.ok(content.files.some((file) => file.path === "name-pools/initial-name-pools.md"));
+    assert.ok(content.files.some((file) => file.path === "units/french-core/chapter-001-basic-sentences-1/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/french-core/chapter-005-basic-sentences-5/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
+    assert.equal(content.files.some((file) => file.path === "units/french-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(archive.has(itemPath), true);
+    assert.equal(reviewItems.items.length, 80);
+    assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day"));
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello; good day" && item.answer.text === "bonjour"));
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "Je suis N" || item.answer.text === "Je suis N"), false);
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "Ça va ?" || item.answer.text === "Ça va ?"), false);
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "Alex Chen" || item.answer.text === "Alex Chen"), false);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("content package generator creates a valid Spanish package", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-spanish-package-"));
+
+  try {
+    const result = await generateContentPackage({
+      targetId: "spanish-curriculum",
+      outputDirectory: directory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
+    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const itemPath = "content/memorization/review-decks/chapter-001-005.json";
+    const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
+
+    assert.equal(result.packageId, "com.sleepymario.language.spanish");
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.spanish-0.1.0.wspkg"), true);
+    assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+    assert.equal(manifest.displayName, "Spanish");
+    assert.equal(manifest.contentType, "language-curriculum");
+    assert.equal(content.packageId, "com.sleepymario.language.spanish");
+    assert.ok(content.files.some((file) => file.path === "name-pools/initial-name-pools.md"));
+    assert.ok(content.files.some((file) => file.path === "units/spanish-core/chapter-001-basic-sentences-1/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/spanish-core/chapter-005-basic-sentences-5/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
+    assert.equal(content.files.some((file) => file.path === "units/spanish-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(archive.has(itemPath), true);
+    assert.equal(reviewItems.items.length, 80);
+    assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "hola" && item.answer.text === "hello; hi"));
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello; hi" && item.answer.text === "hola"));
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "Soy N" || item.answer.text === "Soy N"), false);
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "¿Cómo estás?" || item.answer.text === "¿Cómo estás?"), false);
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "Alex Chen" || item.answer.text === "Alex Chen"), false);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("content package generation is deterministic for identical inputs", async () => {
   const firstDirectory = await mkdtemp(join(tmpdir(), "wsm-package-first-"));
   const secondDirectory = await mkdtemp(join(tmpdir(), "wsm-package-second-"));
@@ -345,7 +425,11 @@ test("content package generator CLI can build all local test targets", async () 
       "--target",
       "dutch-curriculum",
       "--target",
-      "german-curriculum"
+      "german-curriculum",
+      "--target",
+      "french-curriculum",
+      "--target",
+      "spanish-curriculum"
     ]);
 
     assert.equal(result.exitCode, 0);
@@ -355,6 +439,8 @@ test("content package generator CLI can build all local test targets", async () 
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.vietnamese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.dutch/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.german/);
+    assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.french/);
+    assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.spanish/);
     assert.equal(result.stderr, "");
   } finally {
     await rm(directory, { recursive: true, force: true });
