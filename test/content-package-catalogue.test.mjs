@@ -146,7 +146,12 @@ test("generated catalogue from validation packages contains expected local packa
       generatedAt: "2026-07-06T00:00:00Z"
     });
     await generateContentPackage({
-      targetId: "chinese-curriculum",
+      targetId: "chinese-mandarin-traditional-curriculum",
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    await generateContentPackage({
+      targetId: "chinese-mandarin-simplified-curriculum",
       outputDirectory: packageDirectory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
@@ -193,14 +198,15 @@ test("generated catalogue from validation packages contains expected local packa
       generatedAt: "2026-07-06T00:00:00Z"
     });
 
-    assert.equal(first.packageCount, 9);
+    assert.equal(first.packageCount, 10);
     assert.equal(first.changed, true);
     assert.equal(second.changed, false);
     assertValid(first.catalogue);
     assert.deepEqual(
       first.catalogue.packages.map((entry) => entry.packageId),
       [
-        "com.sleepymario.language.chinese",
+        "com.sleepymario.language.chinese.mandarin.simplified",
+        "com.sleepymario.language.chinese.mandarin.traditional",
         "com.sleepymario.language.dutch",
         "com.sleepymario.language.french",
         "com.sleepymario.language.german",

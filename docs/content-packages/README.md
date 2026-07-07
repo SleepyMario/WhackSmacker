@@ -51,7 +51,8 @@ Roadmap Point 2 supports these deterministic generator targets:
 |---|---|---|
 | `linguistic-terminology` | `com.sleepymario.language.linguistic-terminology` | `/home/ashwin/Projects/whacksmacker-modules/linguistic-terminology` |
 | `korean-curriculum` | `com.sleepymario.language.korean` | `/home/ashwin/Projects/whacksmacker-modules/korean-curriculum` |
-| `chinese-curriculum` | `com.sleepymario.language.chinese` | `/home/ashwin/Projects/whacksmacker-modules/chinese-curriculum` |
+| `chinese-mandarin-traditional-curriculum` | `com.sleepymario.language.chinese.mandarin.traditional` | `/home/ashwin/Projects/whacksmacker-modules/chinese-curriculum` |
+| `chinese-mandarin-simplified-curriculum` | `com.sleepymario.language.chinese.mandarin.simplified` | `/home/ashwin/Projects/whacksmacker-modules/chinese-curriculum` |
 | `japanese-curriculum` | `com.sleepymario.language.japanese` | `/home/ashwin/Projects/whacksmacker-modules/japanese-curriculum` |
 | `vietnamese-curriculum` | `com.sleepymario.language.vietnamese` | `/home/ashwin/Projects/whacksmacker-modules/vietnamese-curriculum` |
 | `dutch-curriculum` | `com.sleepymario.language.dutch` | `/home/ashwin/Projects/whacksmacker-modules/dutch-curriculum` |
@@ -67,7 +68,8 @@ For local development, generate packages into a temporary output directory:
 npm run generate-content-package -- \
   --target linguistic-terminology \
   --target korean-curriculum \
-  --target chinese-curriculum \
+  --target chinese-mandarin-traditional-curriculum \
+  --target chinese-mandarin-simplified-curriculum \
   --target japanese-curriculum \
   --target vietnamese-curriculum \
   --target dutch-curriculum \
@@ -95,7 +97,8 @@ Then install and read content through the WhackSmacker CLI:
 ```sh
 whacksmacker content available --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.korean --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.chinese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.chinese.mandarin.traditional --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.chinese.mandarin.simplified --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.japanese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.vietnamese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.dutch --catalogue /tmp/whacksmacker-catalogue/catalogue.json
@@ -106,8 +109,10 @@ whacksmacker content install com.sleepymario.language.linguistic-terminology --c
 whacksmacker content installed
 whacksmacker language korean
 whacksmacker language korean --file units/introduction-to-hangul/README.md
-whacksmacker content read com.sleepymario.language.chinese --file units/introduction-to-hanyu-pinyin/chapter.md
-whacksmacker content read com.sleepymario.language.chinese --file units/mandarin-core/chapter-001-basic-sentences-1/chapter.md
+whacksmacker content read com.sleepymario.language.chinese.mandarin.traditional --file units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md
+whacksmacker content read com.sleepymario.language.chinese.mandarin.traditional --file units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md
+whacksmacker content read com.sleepymario.language.chinese.mandarin.simplified --file units/mandarin-simplified/introduction-to-hanyu-pinyin/chapter.md
+whacksmacker content read com.sleepymario.language.chinese.mandarin.simplified --file units/mandarin-simplified/chapter-001-basic-sentences-1/chapter.md
 whacksmacker language terms
 whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```

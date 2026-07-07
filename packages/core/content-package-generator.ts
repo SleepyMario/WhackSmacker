@@ -140,17 +140,17 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
     ]
   },
   {
-    id: "chinese-curriculum",
-    packageId: "com.sleepymario.language.chinese",
-    displayName: "Chinese - Mandarin",
-    description: "Chinese - Mandarin language curriculum content generated from the canonical Chinese curriculum repository.",
+    id: "chinese-mandarin-traditional-curriculum",
+    packageId: "com.sleepymario.language.chinese.mandarin.traditional",
+    displayName: "Chinese - Mandarin (Traditional)",
+    description: "Chinese - Mandarin Traditional language curriculum content generated from the canonical Chinese curriculum repository.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
     sourcePath: "../chinese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/chinese-curriculum",
-    languages: ["zh", "en"],
-    subjects: ["language", "chinese"],
+    languages: ["zh-Hant", "en"],
+    subjects: ["language", "chinese", "mandarin", "traditional"],
     license: { spdx: null, name: null, path: null },
     include: [
       "README.md",
@@ -160,9 +160,38 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "progress.md",
       "backlog.md",
       "decisions.md",
+      "name-pools",
       "review-decks",
       "research",
-      "units"
+      "units/README.md",
+      "units/mandarin-traditional"
+    ]
+  },
+  {
+    id: "chinese-mandarin-simplified-curriculum",
+    packageId: "com.sleepymario.language.chinese.mandarin.simplified",
+    displayName: "Chinese - Mandarin (Simplified)",
+    description: "Chinese - Mandarin Simplified language curriculum content generated from the canonical Chinese curriculum repository.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../chinese-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/chinese-curriculum",
+    languages: ["zh-Hans", "en"],
+    subjects: ["language", "chinese", "mandarin", "simplified"],
+    license: { spdx: null, name: null, path: null },
+    include: [
+      "README.md",
+      "philosophy.md",
+      "scope.md",
+      "curriculum-map.md",
+      "progress.md",
+      "backlog.md",
+      "decisions.md",
+      "name-pools",
+      "research",
+      "units/README.md",
+      "units/mandarin-simplified"
     ]
   },
   {
@@ -637,8 +666,10 @@ function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
   switch (target.id) {
     case "korean-curriculum":
       return "Hangul";
-    case "chinese-curriculum":
+    case "chinese-mandarin-traditional-curriculum":
       return "Pinyin/Zhuyin";
+    case "chinese-mandarin-simplified-curriculum":
+      return "Pinyin";
     case "japanese-curriculum":
       return "Japanese";
     case "vietnamese-curriculum":

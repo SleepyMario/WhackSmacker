@@ -241,18 +241,28 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     });
     const chineseDeck = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.chinese",
+      packageId: "com.sleepymario.language.chinese.mandarin.traditional",
       path: "review-decks/pinyin-zhuyin/cards.tsv"
     });
-    const chinesePinyinIntro = await readInstalledContentEntry({
+    const chineseTraditionalPinyinIntro = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.chinese",
-      path: "units/introduction-to-hanyu-pinyin/chapter.md"
+      packageId: "com.sleepymario.language.chinese.mandarin.traditional",
+      path: "units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md"
     });
-    const chineseChapter1 = await readInstalledContentEntry({
+    const chineseTraditionalChapter1 = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.chinese",
-      path: "units/mandarin-core/chapter-001-basic-sentences-1/chapter.md"
+      packageId: "com.sleepymario.language.chinese.mandarin.traditional",
+      path: "units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md"
+    });
+    const chineseSimplifiedPinyinIntro = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.chinese.mandarin.simplified",
+      path: "units/mandarin-simplified/introduction-to-hanyu-pinyin/chapter.md"
+    });
+    const chineseSimplifiedChapter1 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.chinese.mandarin.simplified",
+      path: "units/mandarin-simplified/chapter-001-basic-sentences-1/chapter.md"
     });
     const japaneseHiragana = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
@@ -293,7 +303,8 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.deepEqual(
       installed.map((record) => [record.packageId, record.displayName]).sort(),
       [
-        ["com.sleepymario.language.chinese", "Chinese - Mandarin"],
+        ["com.sleepymario.language.chinese.mandarin.simplified", "Chinese - Mandarin (Simplified)"],
+        ["com.sleepymario.language.chinese.mandarin.traditional", "Chinese - Mandarin (Traditional)"],
         ["com.sleepymario.language.dutch", "Dutch"],
         ["com.sleepymario.language.french", "French"],
         ["com.sleepymario.language.german", "German"],
@@ -306,12 +317,20 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.match(koreanChapter20.text, /Chapter 15 -- Basic Life Sentences XV/);
     assert.match(vietnameseChapter5.text, /Chapter 5 -- Basic Sentences V/);
     assert.match(chineseDeck.text, /^Pinyin-Zhuyin\tPinyin -> Zhuyin\tb\tㄅ/m);
-    assert.match(chinesePinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
-    assert.match(chineseChapter1.text, /我是Alex Chen/);
-    assert.match(chineseChapter1.text, /我是林雅婷/);
-    assert.match(chineseChapter1.text, /Pinyin: Wǒ shì Lín Yǎtíng\./);
-    assert.match(chineseChapter1.text, /Meaning: I am Lin Yating\./);
-    assert.doesNotMatch(chineseChapter1.text, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
+    assert.match(chineseTraditionalPinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
+    assert.match(chineseTraditionalChapter1.text, /我是Alex Chen/);
+    assert.match(chineseTraditionalChapter1.text, /我是林雅婷/);
+    assert.match(chineseTraditionalChapter1.text, /我是學生/);
+    assert.match(chineseTraditionalChapter1.text, /\| 學生 \| xuéshēng \| ㄒㄩㄝˊ ㄕㄥ \| student \|/);
+    assert.match(chineseTraditionalChapter1.text, /Pinyin: Wǒ shì Lín Yǎtíng\./);
+    assert.match(chineseTraditionalChapter1.text, /Meaning: I am Lin Yating\./);
+    assert.doesNotMatch(chineseTraditionalChapter1.text, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
+    assert.match(chineseSimplifiedPinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
+    assert.match(chineseSimplifiedChapter1.text, /我是Alex Chen/);
+    assert.match(chineseSimplifiedChapter1.text, /我是林雅婷/);
+    assert.match(chineseSimplifiedChapter1.text, /我是学生/);
+    assert.match(chineseSimplifiedChapter1.text, /\| 学生 \| xuéshēng \| student \|/);
+    assert.doesNotMatch(chineseSimplifiedChapter1.text, /\$\{|FOREIGN-NAME|LOCAL-NAME|ㄒㄩㄝˊ/);
     assert.match(japaneseHiragana.text, /future work/);
     assert.match(japaneseChapter1.text, /アレックスです/);
     assert.match(japaneseChapter1.text, /さくらです/);
@@ -342,9 +361,11 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.equal(reviewSources.some((source) => source.title === "Chapter 16-20"), false);
     assert.equal(reviewSources.some((source) => source.title === "Lessons 1-5"), false);
 
-    const chineseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.chinese");
-    assert.deepEqual(chineseSources.map((source) => source.title).sort(), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
-    assert.equal(chineseSources.some((source) => source.title === "Chapter 1-5" || source.sourcePath === "review-decks/chapter-001-005/cards.tsv"), false);
+    const chineseTraditionalSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.chinese.mandarin.traditional");
+    assert.deepEqual(chineseTraditionalSources.map((source) => source.title).sort(), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.equal(chineseTraditionalSources.some((source) => source.title === "Chapter 1-5" || source.sourcePath === "review-decks/chapter-001-005/cards.tsv"), false);
+    const chineseSimplifiedSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.chinese.mandarin.simplified");
+    assert.deepEqual(chineseSimplifiedSources, []);
     const japaneseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.japanese");
     assert.deepEqual(japaneseSources, []);
     assert.equal(reviewSources.some((source) => source.packageId === "com.sleepymario.language.japanese" && source.title === "Chapter 1-5"), false);
@@ -465,7 +486,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       /ENOENT/
     );
     await assert.rejects(
-      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.chinese", "0.1.0", "progress.json")),
+      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.chinese.mandarin.traditional", "0.1.0", "progress.json")),
       /ENOENT/
     );
     await assert.rejects(
@@ -529,7 +550,8 @@ async function createInstalledLanguagePackageFixture() {
   const dataDir = join(root, "data", "content");
   for (const targetId of [
     "korean-curriculum",
-    "chinese-curriculum",
+    "chinese-mandarin-traditional-curriculum",
+    "chinese-mandarin-simplified-curriculum",
     "japanese-curriculum",
     "vietnamese-curriculum",
     "dutch-curriculum",
@@ -550,7 +572,8 @@ async function createInstalledLanguagePackageFixture() {
   });
   for (const packageId of [
     "com.sleepymario.language.korean",
-    "com.sleepymario.language.chinese",
+    "com.sleepymario.language.chinese.mandarin.traditional",
+    "com.sleepymario.language.chinese.mandarin.simplified",
     "com.sleepymario.language.japanese",
     "com.sleepymario.language.vietnamese",
     "com.sleepymario.language.dutch",

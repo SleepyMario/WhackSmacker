@@ -18,7 +18,8 @@ test("content package generator exposes the supported local package targets", ()
     [
       ["linguistic-terminology", "com.sleepymario.language.linguistic-terminology"],
       ["korean-curriculum", "com.sleepymario.language.korean"],
-      ["chinese-curriculum", "com.sleepymario.language.chinese"],
+      ["chinese-mandarin-traditional-curriculum", "com.sleepymario.language.chinese.mandarin.traditional"],
+      ["chinese-mandarin-simplified-curriculum", "com.sleepymario.language.chinese.mandarin.simplified"],
       ["japanese-curriculum", "com.sleepymario.language.japanese"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
@@ -137,12 +138,12 @@ test("content package generator creates a valid Korean Curriculum package", asyn
   }
 });
 
-test("content package generator creates a valid Chinese - Mandarin package with conversion decks", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "wsm-chinese-package-"));
+test("content package generator creates a valid Chinese - Mandarin Traditional package with conversion decks", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-chinese-traditional-package-"));
 
   try {
     const result = await generateContentPackage({
-      targetId: "chinese-curriculum",
+      targetId: "chinese-mandarin-traditional-curriculum",
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
@@ -164,17 +165,18 @@ test("content package generator creates a valid Chinese - Mandarin package with 
       }
     ];
 
-    assert.equal(result.packageId, "com.sleepymario.language.chinese");
-    assert.equal(result.filePath.endsWith("com.sleepymario.language.chinese-0.1.0.wspkg"), true);
+    assert.equal(result.packageId, "com.sleepymario.language.chinese.mandarin.traditional");
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.chinese.mandarin.traditional-0.1.0.wspkg"), true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
-    assert.equal(manifest.displayName, "Chinese - Mandarin");
-    assert.equal(manifest.description, "Chinese - Mandarin language curriculum content generated from the canonical Chinese curriculum repository.");
+    assert.equal(manifest.displayName, "Chinese - Mandarin (Traditional)");
+    assert.equal(manifest.description, "Chinese - Mandarin Traditional language curriculum content generated from the canonical Chinese curriculum repository.");
     assert.equal(manifest.contentType, "language-curriculum");
-    assert.equal(content.packageId, "com.sleepymario.language.chinese");
-    assert.ok(content.files.some((file) => file.path === "units/introduction-to-hanyu-pinyin/chapter.md"));
-    assert.ok(content.files.some((file) => file.path === "units/mandarin-core/chapter-001-basic-sentences-1/chapter.md"));
-    assert.ok(content.files.some((file) => file.path === "units/mandarin-core/chapter-005-basic-sentences-5/chapter.md"));
-    assert.equal(content.files.some((file) => file.path === "units/mandarin-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.packageId, "com.sleepymario.language.chinese.mandarin.traditional");
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-005-basic-sentences-5/chapter.md"));
+    assert.equal(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path.startsWith("units/mandarin-simplified/")), false);
     assert.equal(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"), false);
     assert.equal(archive.has("content/memorization/review-decks/chapter-001-005.json"), false);
 
@@ -194,14 +196,55 @@ test("content package generator creates a valid Chinese - Mandarin package with 
     assert.ok(allItems.some((item) => item.prompt.text === "ㄇㄚˊ" && item.answer.text === "má"));
     assert.equal(allItems.some((item) => item.kind === "sentence" || item.kind === "concept"), false);
     assert.equal(allItems.some((item) => item.source.title === "Chapter 1-5"), false);
-    const pinyinIntro = content.files.find((file) => file.path === "units/introduction-to-hanyu-pinyin/chapter.md").text;
-    const chapter1 = content.files.find((file) => file.path === "units/mandarin-core/chapter-001-basic-sentences-1/chapter.md").text;
+    const pinyinIntro = content.files.find((file) => file.path === "units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md").text;
+    const chapter1 = content.files.find((file) => file.path === "units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md").text;
     assert.match(pinyinIntro, /Hanyu Pinyin is the standard romanization system/);
     assert.match(chapter1, /我是Alex Chen/);
     assert.match(chapter1, /我是林雅婷/);
+    assert.match(chapter1, /\| 學生 \| xuéshēng \| ㄒㄩㄝˊ ㄕㄥ \| student \|/);
     assert.match(chapter1, /Pinyin: Wǒ shì Lín Yǎtíng\./);
     assert.match(chapter1, /Meaning: I am Lin Yating\./);
     assert.doesNotMatch(chapter1, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("content package generator creates a valid Chinese - Mandarin Simplified package without Core review deck", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-chinese-simplified-package-"));
+
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-mandarin-simplified-curriculum",
+      outputDirectory: directory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
+    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+
+    assert.equal(result.packageId, "com.sleepymario.language.chinese.mandarin.simplified");
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.chinese.mandarin.simplified-0.1.0.wspkg"), true);
+    assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+    assert.equal(manifest.displayName, "Chinese - Mandarin (Simplified)");
+    assert.equal(manifest.description, "Chinese - Mandarin Simplified language curriculum content generated from the canonical Chinese curriculum repository.");
+    assert.equal(manifest.contentType, "language-curriculum");
+    assert.equal(content.packageId, "com.sleepymario.language.chinese.mandarin.simplified");
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/introduction-to-hanyu-pinyin/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-001-basic-sentences-1/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-005-basic-sentences-5/chapter.md"));
+    assert.equal(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path.startsWith("units/mandarin-traditional/")), false);
+    assert.equal(content.files.some((file) => file.path.startsWith("review-decks/")), false);
+    assert.equal([...archive.keys()].some((path) => path.startsWith("content/memorization/")), false);
+    const chapter1 = content.files.find((file) => file.path === "units/mandarin-simplified/chapter-001-basic-sentences-1/chapter.md").text;
+    assert.match(chapter1, /我是Alex Chen/);
+    assert.match(chapter1, /我是林雅婷/);
+    assert.match(chapter1, /我是学生/);
+    assert.match(chapter1, /\| 学生 \| xuéshēng \| student \|/);
+    assert.match(chapter1, /Pinyin: Wǒ shì Lín Yǎtíng\./);
+    assert.match(chapter1, /Meaning: I am Lin Yating\./);
+    assert.doesNotMatch(chapter1, /\$\{|FOREIGN-NAME|LOCAL-NAME|ㄒㄩㄝˊ/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -476,7 +519,9 @@ test("content package generator CLI can build all local test targets", async () 
       "--target",
       "korean-curriculum",
       "--target",
-      "chinese-curriculum",
+      "chinese-mandarin-traditional-curriculum",
+      "--target",
+      "chinese-mandarin-simplified-curriculum",
       "--target",
       "japanese-curriculum",
       "--target",
@@ -494,7 +539,8 @@ test("content package generator CLI can build all local test targets", async () 
     assert.equal(result.exitCode, 0);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.linguistic-terminology/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.korean/);
-    assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.chinese/);
+    assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.chinese\.mandarin\.traditional/);
+    assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.chinese\.mandarin\.simplified/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.japanese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.vietnamese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.dutch/);

@@ -20,7 +20,8 @@ Supported targets:
 
 - `linguistic-terminology` -> `com.sleepymario.language.linguistic-terminology`
 - `korean-curriculum` -> `com.sleepymario.language.korean`
-- `chinese-curriculum` -> `com.sleepymario.language.chinese`
+- `chinese-mandarin-traditional-curriculum` -> `com.sleepymario.language.chinese.mandarin.traditional`
+- `chinese-mandarin-simplified-curriculum` -> `com.sleepymario.language.chinese.mandarin.simplified`
 - `japanese-curriculum` -> `com.sleepymario.language.japanese`
 - `vietnamese-curriculum` -> `com.sleepymario.language.vietnamese`
 - `dutch-curriculum` -> `com.sleepymario.language.dutch`

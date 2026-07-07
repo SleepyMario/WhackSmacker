@@ -826,7 +826,8 @@ function contentPackageTargetForModuleId(moduleId: string): string | undefined {
   const suffix = moduleId.replace(/^com\.sleepymario\.language\./u, "");
   const targets: Record<string, string> = {
     korean: "korean-curriculum",
-    chinese: "chinese-curriculum",
+    "chinese.mandarin.traditional": "chinese-mandarin-traditional-curriculum",
+    "chinese.mandarin.simplified": "chinese-mandarin-simplified-curriculum",
     japanese: "japanese-curriculum",
     vietnamese: "vietnamese-curriculum",
     dutch: "dutch-curriculum",

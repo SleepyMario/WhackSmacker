@@ -57,7 +57,8 @@ The generator can build deterministic `.wspkg` archives for the local package ta
 
 - `linguistic-terminology` -> `com.sleepymario.language.linguistic-terminology`
 - `korean-curriculum` -> `com.sleepymario.language.korean`
-- `chinese-curriculum` -> `com.sleepymario.language.chinese`
+- `chinese-mandarin-traditional-curriculum` -> `com.sleepymario.language.chinese.mandarin.traditional`
+- `chinese-mandarin-simplified-curriculum` -> `com.sleepymario.language.chinese.mandarin.simplified`
 - `vietnamese-curriculum` -> `com.sleepymario.language.vietnamese`
 
 Generation snapshots selected Markdown and repository files into `content/content.json` using the `whacksmacker-source-markdown-snapshot-v1` shape, records source commit and dirty-state metadata, records the WhackSmacker generator commit, validates the generated manifest, and writes a deterministic archive.
