@@ -132,7 +132,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
   }
 });
 
-test("content package generator creates a valid Chinese Curriculum package with conversion decks", async () => {
+test("content package generator creates a valid Chinese - Mandarin package with conversion decks", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-chinese-package-"));
 
   try {
@@ -162,6 +162,8 @@ test("content package generator creates a valid Chinese Curriculum package with 
     assert.equal(result.packageId, "com.sleepymario.language.chinese");
     assert.equal(result.filePath.endsWith("com.sleepymario.language.chinese-0.1.0.wspkg"), true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+    assert.equal(manifest.displayName, "Chinese - Mandarin");
+    assert.equal(manifest.description, "Chinese - Mandarin language curriculum content generated from the canonical Chinese curriculum repository.");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.chinese");
 

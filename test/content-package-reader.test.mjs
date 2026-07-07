@@ -246,8 +246,12 @@ test("installed Korean Chinese and Vietnamese packages expose expected reading a
     });
 
     assert.deepEqual(
-      installed.map((record) => record.packageId).sort(),
-      ["com.sleepymario.language.chinese", "com.sleepymario.language.korean", "com.sleepymario.language.vietnamese"]
+      installed.map((record) => [record.packageId, record.displayName]).sort(),
+      [
+        ["com.sleepymario.language.chinese", "Chinese - Mandarin"],
+        ["com.sleepymario.language.korean", "Korean Curriculum"],
+        ["com.sleepymario.language.vietnamese", "Vietnamese Curriculum"]
+      ]
     );
     assert.match(koreanChapter20.text, /Chapter 15 -- Basic Life Sentences XV/);
     assert.match(vietnameseChapter5.text, /Chapter 5 -- Basic Sentences V/);

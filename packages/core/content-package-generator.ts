@@ -142,8 +142,8 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
   {
     id: "chinese-curriculum",
     packageId: "com.sleepymario.language.chinese",
-    displayName: "Chinese Curriculum",
-    description: "Chinese language curriculum content generated from the canonical Chinese curriculum repository.",
+    displayName: "Chinese - Mandarin",
+    description: "Chinese - Mandarin language curriculum content generated from the canonical Chinese curriculum repository.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",

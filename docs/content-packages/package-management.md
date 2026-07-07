@@ -135,4 +135,4 @@ whacksmacker review items --package com.sleepymario.language.vietnamese --source
 whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```
 
-The installed Korean package exposes the Chapter 1-5, Chapter 6-10, and Chapter 11-15 review decks. The installed Chinese package exposes the Pinyin-Zhuyin and Pinyin-Zhuyin with Tones conversion decks. The installed Vietnamese package exposes the Chapter 1-5 review deck. Korean and Vietnamese packages do not generate full grammar-pattern cards into vocabulary/function-word review decks.
+The installed Korean package exposes the Chapter 1-5, Chapter 6-10, and Chapter 11-15 review decks. The installed Chinese - Mandarin package exposes the Pinyin-Zhuyin and Pinyin-Zhuyin with Tones conversion decks. The installed Vietnamese package exposes the Chapter 1-5 review deck. Korean and Vietnamese packages do not generate full grammar-pattern cards into vocabulary/function-word review decks.
