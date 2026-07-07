@@ -79,6 +79,37 @@ export interface MenuItem {
   readonly itemCount?: number;
 }
 
+export type LanguageTreeNodeKind =
+  | "root"
+  | "package"
+  | "read-section"
+  | "review-section"
+  | "package-info"
+  | "content"
+  | "review-source"
+  | "message";
+
+export interface LanguageTreeNode {
+  readonly id: string;
+  readonly label: string;
+  readonly kind: LanguageTreeNodeKind;
+  readonly children?: readonly LanguageTreeNode[];
+  readonly packageId?: string;
+  readonly packageVersion?: string;
+  readonly packageLabel?: string;
+  readonly filePath?: string;
+  readonly sourcePath?: string;
+  readonly itemCount?: number;
+  readonly previewText?: string;
+}
+
+export interface VisibleLanguageTreeNode {
+  readonly node: LanguageTreeNode;
+  readonly depth: number;
+  readonly expandable: boolean;
+  readonly expanded: boolean;
+}
+
 const ansi = {
   reset: "\x1b[0m",
   bold: "\x1b[1m",
@@ -221,11 +252,13 @@ export function reviewSourcesToMenuItems(sources: readonly ReadingReviewSource[]
 export function readableContentEntriesToMenuItems(entries: readonly ReadableContentEntry[]): readonly MenuItem[] {
   return entries
     .filter((entry) => entry.mediaType === "text/markdown" || entry.mediaType === "text/tab-separated-values" || entry.mediaType === "text/plain")
+    .filter((entry) => isUserFacingReadableContentPath(entry.path))
     .map((entry) => ({
       label: cleanContentPathLabel(entry.path),
       kind: "readable-content" as const,
       filePath: entry.path
-    }));
+    }))
+    .sort((left, right) => compareReadableContentLabels(left.filePath ?? left.label, right.filePath ?? right.label));
 }
 
 export function getLinguisticTermsMenuItems(): readonly MenuItem[] {
@@ -654,13 +687,16 @@ async function runGeographyAction(registry: InMemoryCliCommandRegistry, terminal
 }
 
 async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
-  let selection = 0;
+  let tree = await buildLanguageTree(options.dataDir);
+  let expandedIds = new Set<string>(["languages"]);
+  let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
+  let selectedReviewStartId: string | null = null;
+  let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
 
   while (true) {
-    const installed = await discoverInstalledLanguagePackageMenuItems(options.dataDir);
-    const items = buildLanguageMenuItems(installed);
-    selection = Math.min(selection, items.length - 1);
-    renderMenu(terminal, languageMenuHeading(terminal.colorsEnabled, installed.length), items, selection);
+    const visible = flattenVisibleLanguageTree(tree, expandedIds);
+    selection = Math.min(selection, visible.length - 1);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -669,6 +705,20 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
     }
 
     if (isEscape(key)) {
+      const selected = visible[selection];
+      if (selected?.expandable === true && selected.expanded) {
+        expandedIds = withoutExpandedId(expandedIds, selected.node.id);
+        rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+        continue;
+      }
+      const parent = selected === undefined ? null : findParentLanguageTreeNode(tree, selected.node.id);
+      if (parent !== null) {
+        expandedIds = withoutExpandedId(expandedIds, parent.id);
+        const nextVisible = flattenVisibleLanguageTree(tree, expandedIds);
+        selection = Math.max(0, nextVisible.findIndex((entry) => entry.node.id === parent.id));
+        rightPaneText = await renderLanguageTreeRightPane(parent, options);
+        continue;
+      }
       return false;
     }
 
@@ -677,12 +727,16 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
     }
 
     if (isUp(key)) {
-      selection = wrapSelection(selection - 1, items.length);
+      selection = wrapSelection(selection - 1, visible.length);
+      selectedReviewStartId = null;
+      rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
       continue;
     }
 
     if (isDown(key)) {
-      selection = wrapSelection(selection + 1, items.length);
+      selection = wrapSelection(selection + 1, visible.length);
+      selectedReviewStartId = null;
+      rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
       continue;
     }
 
@@ -690,20 +744,236 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
       continue;
     }
 
-    const item = items[selection];
-    if (item.kind === "back") {
-      return false;
+    const selected = visible[selection];
+    if (selected === undefined) {
+      continue;
     }
-
-    const quit = item.kind === "installed-language"
-      ? await runInstalledLanguagePackageMenu(registry, terminal, item, options)
-      : item.label.startsWith("Linguistic Terms")
-      ? await runLinguisticTermsMenu(registry, terminal)
-      : await runLanguageAction(registry, terminal, item.label);
-    if (quit) {
-      return true;
+    if (selected.node.kind === "review-source") {
+      if (selectedReviewStartId === selected.node.id) {
+        const quit = await runLanguageTreeReviewSourceAction(registry, terminal, selected.node, options);
+        selectedReviewStartId = null;
+        tree = await buildLanguageTree(options.dataDir);
+        expandedIds = keepExistingExpandedIds(tree, expandedIds);
+        rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+        if (quit) {
+          return true;
+        }
+      } else {
+        selectedReviewStartId = selected.node.id;
+        rightPaneText = renderReviewDeckPreview(selected.node, true);
+      }
+      continue;
     }
+    selectedReviewStartId = null;
+    if (selected.expandable) {
+      expandedIds = selected.expanded ? withoutExpandedId(expandedIds, selected.node.id) : withExpandedId(expandedIds, selected.node.id);
+      rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+      continue;
+    }
+    rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
   }
+}
+
+export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeNode> {
+  const installedPackages = await discoverInstalledLanguagePackageMenuItems(dataDir);
+  const packageNodes: LanguageTreeNode[] = [];
+
+  for (const languagePackage of installedPackages) {
+    if (languagePackage.packageId === undefined) {
+      continue;
+    }
+    const entries = await listReadableContentEntries(languagePackage.packageId, dataDir, languagePackage.packageVersion);
+    const labeledEntries = await labelReadableContentEntries(languagePackage, entries, { dataDir });
+    const reviewSources = reviewSourcesToMenuItems(await listReadingReviewSources({
+      dataDir,
+      packageId: languagePackage.packageId,
+      packageVersion: languagePackage.packageVersion
+    }));
+
+    const packageBase = languagePackage.packageId;
+    const contentChildren = labeledEntries.map((item) => ({
+      id: `${packageBase}:content:${item.filePath ?? item.label}`,
+      label: item.label,
+      kind: "content" as const,
+      packageId: languagePackage.packageId,
+      packageVersion: languagePackage.packageVersion,
+      packageLabel: languagePackage.label,
+      filePath: item.filePath
+    }));
+    const reviewChildren = reviewSources.map((item) => ({
+      id: `${packageBase}:review:${item.sourcePath ?? item.label}`,
+      label: item.label,
+      kind: "review-source" as const,
+      packageId: item.packageId,
+      packageVersion: item.packageVersion,
+      packageLabel: languagePackage.label,
+      sourcePath: item.sourcePath,
+      itemCount: item.itemCount
+    }));
+
+    packageNodes.push({
+      id: packageBase,
+      label: languagePackage.label,
+      kind: "package",
+      packageId: languagePackage.packageId,
+      packageVersion: languagePackage.packageVersion,
+      packageLabel: languagePackage.label,
+      children: [
+        {
+          id: `${packageBase}:read`,
+          label: "Read content",
+          kind: "read-section",
+          packageId: languagePackage.packageId,
+          packageVersion: languagePackage.packageVersion,
+          packageLabel: languagePackage.label,
+          children: contentChildren.length > 0 ? contentChildren : [{
+            id: `${packageBase}:read:none`,
+            label: "No readable content",
+            kind: "message",
+            previewText: "No readable content is available for this package."
+          }]
+        },
+        {
+          id: `${packageBase}:review`,
+          label: "Review decks",
+          kind: "review-section",
+          packageId: languagePackage.packageId,
+          packageVersion: languagePackage.packageVersion,
+          packageLabel: languagePackage.label,
+          children: reviewChildren.length > 0 ? reviewChildren : [{
+            id: `${packageBase}:review:none`,
+            label: "No review decks",
+            kind: "message",
+            previewText: "No review decks are available for this package."
+          }]
+        },
+        {
+          id: `${packageBase}:info`,
+          label: "Package info",
+          kind: "package-info",
+          packageId: languagePackage.packageId,
+          packageVersion: languagePackage.packageVersion,
+          packageLabel: languagePackage.label
+        }
+      ]
+    });
+  }
+
+  return {
+    id: "languages",
+    label: "Languages",
+    kind: "root",
+    children: packageNodes.length > 0 ? packageNodes : [{
+      id: "languages:none",
+      label: "No installed language packages",
+      kind: "message",
+      previewText: [
+        "No installed language packages were found.",
+        "",
+        "Generate content packages, create a local catalogue, then install language packages with whacksmacker content install.",
+        "Installed packages appear here automatically after installation."
+      ].join("\n")
+    }]
+  };
+}
+
+export function flattenVisibleLanguageTree(root: LanguageTreeNode, expandedIds: ReadonlySet<string>): readonly VisibleLanguageTreeNode[] {
+  const visible: VisibleLanguageTreeNode[] = [];
+  const walk = (node: LanguageTreeNode, depth: number): void => {
+    const expandable = (node.children?.length ?? 0) > 0;
+    const expanded = expandable && expandedIds.has(node.id);
+    visible.push({ node, depth, expandable, expanded });
+    if (!expanded) {
+      return;
+    }
+    for (const child of node.children ?? []) {
+      walk(child, depth + 1);
+    }
+  };
+  walk(root, 0);
+  return visible;
+}
+
+async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: InteractiveMenuOptions): Promise<string> {
+  if (node.kind === "content") {
+    if (node.packageId === undefined || node.filePath === undefined) {
+      return "Readable content item is missing package metadata.";
+    }
+    const result = await readInstalledContentEntry({
+      dataDir: options.dataDir,
+      packageId: node.packageId,
+      packageVersion: node.packageVersion,
+      path: node.filePath
+    });
+    return result.text;
+  }
+  if (node.kind === "package-info" || node.kind === "package") {
+    return [
+      node.packageLabel ?? node.label,
+      "",
+      `Package: ${node.packageId ?? "unknown"}`,
+      `Version: ${node.packageVersion ?? "latest installed"}`,
+      "",
+      "Installed package content is read-only.",
+      "User progress and settings stay outside package directories."
+    ].join("\n");
+  }
+  if (node.kind === "review-source") {
+    return renderReviewDeckPreview(node, false);
+  }
+  if (node.kind === "read-section") {
+    return `Read content\n\nSelect a content item to preview it here. Markdown is shown as plain text for now.`;
+  }
+  if (node.kind === "review-section") {
+    return `Review decks\n\nSelect a review deck to see details, then press Enter again to start review.`;
+  }
+  if (node.kind === "message") {
+    return node.previewText ?? node.label;
+  }
+  return [
+    "Languages",
+    "",
+    "Installed language packages appear in the tree on the left.",
+    "",
+    "Expand a package to read content, review decks, or inspect package info.",
+    "",
+    "Controls:",
+    "Up/Down move",
+    "Enter opens or expands",
+    "Escape collapses or backs out",
+    "q quits"
+  ].join("\n");
+}
+
+function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean): string {
+  return [
+    `Review deck: ${node.label}`,
+    `Package: ${node.packageLabel ?? node.packageId ?? "unknown"}`,
+    node.itemCount === undefined ? "" : `Items: ${node.itemCount}`,
+    "",
+    armed ? "Press Enter to start review." : "Press Enter once to select this deck, then press Enter again to start review."
+  ].filter((line) => line.length > 0).join("\n");
+}
+
+async function runLanguageTreeReviewSourceAction(
+  registry: InMemoryCliCommandRegistry,
+  terminal: Terminal,
+  node: LanguageTreeNode,
+  options: InteractiveMenuOptions
+): Promise<boolean> {
+  return runReviewSourceAction(registry, terminal, {
+    label: node.packageLabel ?? node.packageId ?? "Installed package",
+    kind: "installed-language",
+    packageId: node.packageId,
+    packageVersion: node.packageVersion
+  }, {
+    label: node.label,
+    kind: "review-source",
+    packageId: node.packageId,
+    packageVersion: node.packageVersion,
+    sourcePath: node.sourcePath,
+    itemCount: node.itemCount
+  }, options);
 }
 
 async function runInstalledLanguagePackageMenu(
@@ -1118,6 +1388,30 @@ function compareMenuLabels(left: string, right: string): number {
   return left.localeCompare(right, undefined, { numeric: true });
 }
 
+function compareReadableContentLabels(leftPath: string, rightPath: string): number {
+  return readableContentRank(leftPath) - readableContentRank(rightPath) || compareMenuLabels(leftPath, rightPath);
+}
+
+function readableContentRank(path: string): number {
+  if (/\/chapter\.md$/u.test(path)) {
+    return 0;
+  }
+  if (/\/README\.md$/u.test(path)) {
+    return 1;
+  }
+  return 2;
+}
+
+function isUserFacingReadableContentPath(path: string): boolean {
+  if (/\/ledger\.md$/u.test(path)) {
+    return false;
+  }
+  if (/^review-decks\/.+\/cards\.tsv$/u.test(path)) {
+    return false;
+  }
+  return true;
+}
+
 function cleanContentPathLabel(path: string): string {
   const basename = path.split("/").at(-1) ?? path;
   return basename
@@ -1223,6 +1517,127 @@ function renderMenu(terminal: Terminal, heading: string, items: readonly MenuIte
     .join("\n");
 
   terminal.write(`\x1b[2J\x1b[H${heading}\n${renderedItems}\n\nUse ↑/↓, Enter, Escape, or q.`);
+}
+
+function renderLanguageTreeMenu(
+  terminal: Terminal,
+  root: LanguageTreeNode,
+  expandedIds: ReadonlySet<string>,
+  selection: number,
+  rightPaneText: string
+): void {
+  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled)}`);
+}
+
+export function renderTwoPaneLanguageTree(
+  root: LanguageTreeNode,
+  expandedIds: ReadonlySet<string>,
+  selection: number,
+  rightPaneText: string,
+  colorsEnabled: boolean
+): string {
+  const visible = flattenVisibleLanguageTree(root, expandedIds);
+  const leftWidth = 34;
+  const rightWidth = 76;
+  const bodyHeight = 28;
+  const leftLines = visible.map((entry, index) => renderTreeLine(entry, index === selection, leftWidth));
+  const rightLines = wrapPaneText(rightPaneText, rightWidth);
+  const lines: string[] = [];
+  lines.push(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}+`);
+  lines.push(`| ${padRight("WhackSmacker", leftWidth)} | ${padRight("Output", rightWidth)} |`);
+  lines.push(`| ${" ".repeat(leftWidth)} | ${" ".repeat(rightWidth)} |`);
+
+  for (let index = 0; index < bodyHeight; index += 1) {
+    const left = leftLines[index] ?? "";
+    const right = rightLines[index] ?? "";
+    lines.push(`| ${padRight(left, leftWidth)} | ${padRight(right, rightWidth)} |`);
+  }
+
+  const footer = "Up/Down move  Enter open/start  Escape collapse/back  q quit";
+  lines.push(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}+`);
+  lines.push(colorsEnabled ? `${ansi.green}${footer}${ansi.reset}` : footer);
+  return lines.join("\n");
+}
+
+function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width: number): string {
+  const marker = selected ? "> " : "  ";
+  const expansion = entry.expandable ? (entry.expanded ? "v " : "> ") : "  ";
+  const indent = "  ".repeat(entry.depth);
+  return truncateText(`${marker}${indent}${expansion}${entry.node.label}`, width);
+}
+
+function wrapPaneText(text: string, width: number): readonly string[] {
+  const lines: string[] = [];
+  for (const rawLine of text.replace(/\t/gu, "  ").split("\n")) {
+    if (rawLine.length === 0) {
+      lines.push("");
+      continue;
+    }
+    let remaining = rawLine;
+    while (remaining.length > width) {
+      const breakAt = Math.max(1, remaining.lastIndexOf(" ", width));
+      lines.push(remaining.slice(0, breakAt));
+      remaining = remaining.slice(breakAt).trimStart();
+    }
+    lines.push(remaining);
+  }
+  return lines;
+}
+
+function padRight(text: string, width: number): string {
+  const truncated = truncateText(text, width);
+  return `${truncated}${" ".repeat(Math.max(0, width - strippedLength(truncated)))}`;
+}
+
+function truncateText(text: string, width: number): string {
+  if (strippedLength(text) <= width) {
+    return text;
+  }
+  if (width <= 3) {
+    return text.slice(0, width);
+  }
+  return `${text.slice(0, width - 3)}...`;
+}
+
+function strippedLength(text: string): number {
+  return text.replace(/\x1b\[[0-9;]*m/gu, "").length;
+}
+
+function withExpandedId(expandedIds: ReadonlySet<string>, id: string): Set<string> {
+  const next = new Set(expandedIds);
+  next.add(id);
+  return next;
+}
+
+function withoutExpandedId(expandedIds: ReadonlySet<string>, id: string): Set<string> {
+  const next = new Set(expandedIds);
+  next.delete(id);
+  return next;
+}
+
+function keepExistingExpandedIds(root: LanguageTreeNode, expandedIds: ReadonlySet<string>): Set<string> {
+  const existingIds = new Set<string>();
+  const walk = (node: LanguageTreeNode): void => {
+    existingIds.add(node.id);
+    for (const child of node.children ?? []) {
+      walk(child);
+    }
+  };
+  walk(root);
+  return new Set([...expandedIds].filter((id) => existingIds.has(id)));
+}
+
+function findParentLanguageTreeNode(root: LanguageTreeNode, childId: string): LanguageTreeNode | null {
+  for (const child of root.children ?? []) {
+    if (child.id === childId) {
+      return root;
+    }
+    const found = findParentLanguageTreeNode(child, childId);
+    if (found !== null) {
+      return found;
+    }
+  }
+  return null;
 }
 
 function colorizeWsmBanner(banner: string): string {

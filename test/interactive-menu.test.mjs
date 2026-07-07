@@ -6,7 +6,9 @@ import { test } from "node:test";
 
 import { createCommandRegistry, resolveCliCommand } from "../dist/apps/cli/main.js";
 import {
+  buildLanguageTree,
   buildLanguageMenuItems,
+  flattenVisibleLanguageTree,
   getDynamicLanguageMenuItems,
   getBeginnerMathematicsMenuItems,
   getGeographyMenuItems,
@@ -18,6 +20,7 @@ import {
   getOneTwoThreeMenuItems,
   installedLanguagePackagesToMenuItems,
   languageMenuHeading,
+  renderTwoPaneLanguageTree,
   renderWhackSmackerHeader,
   reviewSourcesToMenuItems,
   runInteractiveMenu,
@@ -232,45 +235,24 @@ test("One, Two, Three submenu exposes workbook generation and back", () => {
   );
 });
 
-test("menu selection routes to Korean", async () => {
-  const calls = [];
+test("language menu opens the installed-package two-pane tree", async () => {
+  const fixture = await createInstalledDutchFixture();
   const terminal = new FakeTerminal([
     key("return"),
-    key("return"),
-    key("return"),
-    key("escape"),
-    key("escape")
+    key("q", { sequence: "q" })
   ]);
 
-  await runInteractiveMenu(createStubRegistry(calls), terminal);
+  try {
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
 
-  assert.deepEqual(calls, [{ path: "language korean", args: [] }]);
-  assert.match(terminal.output, /WhackSmacker Will Whack That Smack Into Your Brains/);
-  assert.match(terminal.output, /Korean\n\nlanguage korean output\n\nPress Escape or Enter to return\./);
-  assert.match(terminal.output, /Use Up\/Down or PageUp\/PageDown to scroll/);
-  assert.equal(terminal.restoreCount, 2);
-});
-
-test("language menu routes Linguistic Terms groups to the registered command", async () => {
-  const calls = [];
-  const terminal = new FakeTerminal([
-    key("return"),
-    key("down"),
-    key("return"),
-    key("return"),
-    key("escape"),
-    key("escape"),
-    key("escape"),
-    key("escape"),
-    key("escape"),
-    key("escape")
-  ]);
-
-  await runInteractiveMenu(createStubRegistry(calls), terminal);
-
-  assert.deepEqual(calls, [{ path: "language terms", args: ["general"] }]);
-  assert.match(terminal.output, /General\n\nlanguage terms output\n\nPress Escape or Enter to return\./);
-  assert.match(terminal.output, /Use Up\/Down or PageUp\/PageDown to scroll/);
+    assert.match(terminal.output, /WhackSmacker Will Whack That Smack Into Your Brains/);
+    assert.match(terminal.output, /\+------------------------------------\+------------------------------------------------------------------------------\+/);
+    assert.match(terminal.output, /Languages/);
+    assert.match(terminal.output, /Dutch/);
+    assert.match(terminal.output, /Up\/Down move  Enter open\/start  Escape collapse\/back  q quit/);
+  } finally {
+    await fixture.cleanup();
+  }
 });
 
 test("language menu discovers installed packages from the selected data dir", async () => {
@@ -279,6 +261,84 @@ test("language menu discovers installed packages from the selected data dir", as
     const items = await getDynamicLanguageMenuItems(fixture.dataDir);
 
     assert.deepEqual(items.map((item) => item.label), ["Dutch", "Korean", "Linguistic Terms", "Back"]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("language tree lists installed packages and package sections", async () => {
+  const fixture = await createInstalledLanguageFixture(
+    ["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum"],
+    [
+      "com.sleepymario.language.korean",
+      "com.sleepymario.language.chinese",
+      "com.sleepymario.language.vietnamese",
+      "com.sleepymario.language.dutch"
+    ]
+  );
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+
+    assert.equal(tree.label, "Languages");
+    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese - Mandarin", "Dutch", "Korean", "Vietnamese"]);
+    for (const languagePackage of tree.children) {
+      assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Review decks", "Package info"]);
+    }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("language tree exposes Dutch content and review deck labels", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
+
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Basic Sentences I: Greeting and Identity"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- Basic Sentences V: There Is N"));
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("language tree exposes Korean and Chinese review deck labels cleanly", async () => {
+  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-curriculum"], [
+    "com.sleepymario.language.korean",
+    "com.sleepymario.language.chinese"
+  ]);
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const korean = tree.children.find((node) => node.label === "Korean");
+    const chinese = tree.children.find((node) => node.label === "Chinese - Mandarin");
+    const koreanReview = korean.children.find((node) => node.label === "Review decks");
+    const chineseReview = chinese.children.find((node) => node.label === "Review decks");
+
+    assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
+    assert.deepEqual(chineseReview.children.map((node) => node.label), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.equal(koreanReview.children.some((node) => node.label.includes("com.sleepymario")), false);
+    assert.equal(chineseReview.children.some((node) => node.label.includes("cards.tsv")), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("language tree flattening and renderer use deterministic keyboard state", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const expanded = new Set(["languages", "com.sleepymario.language.dutch"]);
+    const visible = flattenVisibleLanguageTree(tree, expanded);
+    const labels = visible.map((entry) => entry.node.label);
+    const output = renderTwoPaneLanguageTree(tree, expanded, labels.indexOf("Read content"), "Preview text", false);
+
+    assert.deepEqual(labels.slice(0, 5), ["Languages", "Dutch", "Read content", "Review decks", "Package info"]);
+    assert.match(output, />     > Read content/);
+    assert.match(output, /Preview text/);
+    assert.match(output, /Up\/Down move  Enter open\/start  Escape collapse\/back  q quit/);
   } finally {
     await fixture.cleanup();
   }
@@ -330,13 +390,13 @@ test("selecting an installed review source runs the existing review flow live wi
     key("return"),
     key("return"),
     key("down"),
+    key("down"),
+    key("return"),
+    key("down"),
     key("return"),
     key("return"),
     key("escape"),
-    key("escape"),
-    key("escape"),
-    key("escape"),
-    key("escape")
+    key("q", { sequence: "q" })
   ]);
 
   try {
@@ -367,8 +427,9 @@ test("selecting an installed review source runs the existing review flow live wi
     }]);
     assert.equal(terminal.restoreCount >= 1, true);
     assert.equal(terminal.enterCount >= 2, true);
-    assert.match(terminal.output, /Review sources/);
-    assert.match(terminal.output, /> Chapter 1-5/);
+    assert.match(terminal.output, /Review decks/);
+    assert.match(terminal.output, /Chapter 1-5/);
+    assert.match(terminal.output, /Press Enter to start review\./);
     assert.match(terminal.output, /Review: Dutch -- Chapter 1-5/);
     assert.match(terminal.output, /Prompt\nfront side/);
     assert.match(terminal.output, /Press Enter to show answer, or q to stop:/);
@@ -382,52 +443,58 @@ test("selecting an installed review source runs the existing review flow live wi
   }
 });
 
-test("review source back option does not start review", async () => {
+test("review section can be expanded without starting review", async () => {
   const fixture = await createInstalledDutchFixture();
   const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
     key("return"),
     key("down"),
-    key("return"),
     key("down"),
     key("return"),
-    key("escape"),
-    key("escape"),
-    key("escape")
+    key("down"),
+    key("q", { sequence: "q" })
   ]);
 
   try {
     await runInteractiveMenu(createStubRegistry(calls), terminal, { dataDir: fixture.dataDir });
 
     assert.deepEqual(calls, []);
-    assert.match(terminal.output, /Review sources/);
-    assert.match(terminal.output, /> Back/);
+    assert.match(terminal.output, /Review decks/);
+    assert.match(terminal.output, /Chapter 1-5/);
   } finally {
     await fixture.cleanup();
   }
 });
 
-test("installed package without review sources shows a helpful message", async () => {
-  const fixture = await createInstalledLanguageFixture(["linguistic-terminology"], ["com.sleepymario.language.linguistic-terminology"]);
-  const terminal = new FakeTerminal([
-    key("return"),
-    key("return"),
-    key("down"),
-    key("return"),
-    key("escape"),
-    key("escape"),
-    key("escape"),
-    key("escape")
-  ]);
+test("package without review sources can show a helpful message node", () => {
+  const tree = {
+    id: "languages",
+    label: "Languages",
+    kind: "root",
+    children: [{
+      id: "com.sleepymario.language.example",
+      label: "Example Language",
+      kind: "package",
+      children: [{
+        id: "com.sleepymario.language.example:review",
+        label: "Review decks",
+        kind: "review-section",
+        children: [{
+          id: "com.sleepymario.language.example:review:none",
+          label: "No review decks",
+          kind: "message",
+          previewText: "No review decks are available for this package."
+        }]
+      }]
+    }]
+  };
+  const expanded = new Set(["languages", "com.sleepymario.language.example", "com.sleepymario.language.example:review"]);
+  const visible = flattenVisibleLanguageTree(tree, expanded);
+  const output = renderTwoPaneLanguageTree(tree, expanded, visible.findIndex((entry) => entry.node.label === "No review decks"), "No review decks are available for this package.", false);
 
-  try {
-    await runInteractiveMenu(createCommandRegistry(), terminal, { dataDir: fixture.dataDir });
-
-    assert.match(terminal.output, /No review decks are available for this package\./);
-  } finally {
-    await fixture.cleanup();
-  }
+  assert.match(output, /No review decks/);
+  assert.match(output, /No review decks are available for this package\./);
 });
 
 test("installed language package read content menu uses selectable content labels", async () => {
@@ -435,18 +502,17 @@ test("installed language package read content menu uses selectable content label
   const terminal = new FakeTerminal([
     key("return"),
     key("return"),
+    key("down"),
     key("return"),
-    key("escape"),
-    key("escape"),
-    key("escape"),
-    key("escape")
+    key("down"),
+    key("q", { sequence: "q" })
   ]);
 
   try {
     await runInteractiveMenu(createCommandRegistry(), terminal, { dataDir: fixture.dataDir });
 
     assert.match(terminal.output, /Read content/);
-    assert.match(terminal.output, /Chapter 5 -- Basic Sentences V: There Is N/);
+    assert.match(terminal.output, /# Chapter 1 -- Basic Sentences I: Greeting and Identity/);
     assert.doesNotMatch(terminal.output, /> units\/dutch-core\/chapter-005-basic-sentences-5\/chapter\.md/);
   } finally {
     await fixture.cleanup();
