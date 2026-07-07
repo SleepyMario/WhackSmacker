@@ -8,6 +8,11 @@ import {
   listReadableContentEntries,
   listIntegratedDueReviewItems,
   findNextReadingReviewSource,
+  findFirstClassModule,
+  formatFirstClassModuleInfo,
+  getBuiltInFirstClassModules,
+  installedPackageToFirstClassModuleDescriptor,
+  isLanguageLikeModulePackage,
   listReadingReviewItems,
   listReadingReviewSources,
   migrateUserDataBackupFile,
@@ -19,10 +24,12 @@ import {
   renderReadingReviewItem,
   renderReadingContent,
   syncReadingReviewItems,
+  sortFirstClassModules,
   updateContentPackage,
   writeUserDataBackup,
   isReviewRating,
   type DomainModule,
+  type FirstClassModuleDescriptor,
   type InstalledPackageRecord,
   type ReviewRating
 } from "../core";
@@ -332,6 +339,47 @@ export const contentModule: DomainModule = {
           now: options.now ?? currentTimestamp(),
           shuffle: options.noShuffle !== true
         });
+      }
+    });
+
+    context.cli.register({
+      path: ["module", "list"],
+      summary: "List first-class WhackSmacker modules",
+      run: async (args) => {
+        const options = parseOptions(args, []);
+        const modules = await listFirstClassModulesForContentCli(options.dataDir);
+        console.log("WhackSmacker modules:");
+        for (const descriptor of modules) {
+          console.log(`- ${descriptor.moduleId} ${descriptor.version} ${descriptor.category} ${descriptor.sourceKind} ${descriptor.displayName}`);
+        }
+      }
+    });
+
+    context.cli.register({
+      path: ["module", "info"],
+      summary: "Show first-class WhackSmacker module metadata",
+      run: async (args) => {
+        const parsed = parseModuleCommand(args);
+        const modules = await listFirstClassModulesForContentCli(parsed.options.dataDir);
+        const descriptor = findFirstClassModule(modules, parsed.moduleId);
+        if (descriptor === undefined) {
+          throw new Error(`Unknown module: ${parsed.moduleId}`);
+        }
+        console.log(formatFirstClassModuleInfo(descriptor));
+      }
+    });
+
+    context.cli.register({
+      path: ["module", "build"],
+      summary: "Show how a first-class module is currently built or packaged",
+      run: async (args) => {
+        const parsed = parseModuleCommand(args);
+        const modules = await listFirstClassModulesForContentCli(parsed.options.dataDir);
+        const descriptor = findFirstClassModule(modules, parsed.moduleId);
+        if (descriptor === undefined) {
+          throw new Error(`Unknown module: ${parsed.moduleId}`);
+        }
+        console.log(renderModuleBuildStatus(descriptor));
       }
     });
 
@@ -707,6 +755,79 @@ function parseReviewItemCommand(
     throw new Error("An item ID is required.");
   }
   return { packageId, itemId, options: parseOptions(args.slice(2), required) };
+}
+
+function parseModuleCommand(args: readonly string[]): { readonly moduleId: string; readonly options: ParsedOptions } {
+  const moduleId = args[0];
+  if (moduleId === undefined || moduleId.startsWith("--")) {
+    throw new Error("A module ID is required.");
+  }
+  return { moduleId, options: parseOptions(args.slice(1), []) };
+}
+
+async function listFirstClassModulesForContentCli(dataDir?: string): Promise<readonly FirstClassModuleDescriptor[]> {
+  const installed = await listInstalledReadablePackages(dataDir);
+  const descriptors: FirstClassModuleDescriptor[] = [];
+
+  for (const contentPackage of installed) {
+    if (!isLanguageLikeModulePackage(contentPackage.packageId)) {
+      continue;
+    }
+    const [entries, sources] = await Promise.all([
+      listReadableContentEntries(contentPackage.packageId, dataDir, contentPackage.packageVersion),
+      listReadingReviewSources({
+        dataDir,
+        packageId: contentPackage.packageId,
+        packageVersion: contentPackage.packageVersion
+      })
+    ]);
+    const descriptor = installedPackageToFirstClassModuleDescriptor(contentPackage, {
+      readableContentCount: entries.length,
+      reviewSourceCount: sources.length
+    });
+    if (descriptor !== null) {
+      descriptors.push(descriptor);
+    }
+  }
+
+  return sortFirstClassModules([...descriptors, ...getBuiltInFirstClassModules()]);
+}
+
+function renderModuleBuildStatus(descriptor: FirstClassModuleDescriptor): string {
+  if (descriptor.sourceKind === "content-package") {
+    const target = contentPackageTargetForModuleId(descriptor.moduleId);
+    return [
+      descriptor.displayName,
+      "",
+      `Module ID: ${descriptor.moduleId}`,
+      "Build status: content package",
+      target === undefined ? "Package generator target: not known yet" : `Package generator target: ${target}`,
+      "",
+      "Use the content package generator workflow to build a .wspkg from the canonical source repository.",
+      "The installed package remains read-only; user progress stays outside installed package directories."
+    ].join("\n");
+  }
+
+  return [
+    descriptor.displayName,
+    "",
+    `Module ID: ${descriptor.moduleId}`,
+    `Build status: ${descriptor.sourceKind}`,
+    "",
+    "This module is represented in the first-class module registry.",
+    "A downloadable module artifact builder is not implemented for this built-in/native module yet."
+  ].join("\n");
+}
+
+function contentPackageTargetForModuleId(moduleId: string): string | undefined {
+  const suffix = moduleId.replace(/^com\.sleepymario\.language\./u, "");
+  const targets: Record<string, string> = {
+    korean: "korean-curriculum",
+    chinese: "chinese-curriculum",
+    vietnamese: "vietnamese-curriculum",
+    dutch: "dutch-curriculum"
+  };
+  return targets[suffix];
 }
 
 function parseOptions(args: readonly string[], required: readonly string[]): ParsedOptions {

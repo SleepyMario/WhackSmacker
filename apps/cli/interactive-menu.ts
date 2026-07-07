@@ -1,10 +1,17 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
 import {
+  displayLabelForModulePackage,
+  formatFirstClassModuleInfo,
+  getBuiltInFirstClassModules,
+  installedPackageToFirstClassModuleDescriptor,
+  isLanguageLikeModulePackage,
   listReadableContentEntries,
   listInstalledReadablePackages,
   listReadingReviewSources,
   readInstalledContentEntry,
   renderReadingContent,
+  sortFirstClassModules,
+  type FirstClassModuleDescriptor,
   type ReadableContentEntry,
   type ReadingReviewSource,
   type InstalledReadablePackage
@@ -100,6 +107,9 @@ export interface LanguageTreeNode {
   readonly packageId?: string;
   readonly packageVersion?: string;
   readonly packageLabel?: string;
+  readonly moduleId?: string;
+  readonly moduleVersion?: string;
+  readonly sourceKind?: string;
   readonly filePath?: string;
   readonly sourcePath?: string;
   readonly itemCount?: number;
@@ -219,7 +229,7 @@ export function installedLanguagePackagesToMenuItems(packages: readonly Installe
   return packages
     .filter((contentPackage) => isLanguageLikePackage(contentPackage.packageId))
     .map((contentPackage) => ({
-      label: displayLabelForLanguagePackage(contentPackage.displayName),
+      label: displayLabelForModulePackage(contentPackage.displayName),
       kind: "installed-language" as const,
       moduleId: "language",
       packageId: contentPackage.packageId,
@@ -738,72 +748,121 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 }
 
 export async function buildModuleTree(dataDir?: string): Promise<LanguageTreeNode> {
-  const languages = await buildLanguageTree(dataDir);
+  const descriptors = await listFirstClassModuleDescriptors(dataDir);
   return {
     id: "whacksmacker",
-    label: "WhackSmacker",
+    label: "WhackSmacker / Modules",
     kind: "root",
     children: [
-      languages,
-      buildGamesTree(),
-      buildGeographyTree(),
-      buildMathematicsTree()
+      await buildLanguageTreeFromDescriptors(descriptors.filter((descriptor) => descriptor.category === "Languages"), dataDir),
+      buildModuleCategoryTree("Games", descriptors),
+      buildModuleCategoryTree("Geography", descriptors),
+      buildModuleCategoryTree("Mathematics", descriptors)
     ]
   };
 }
 
 export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeNode> {
-  const installedPackages = await discoverInstalledLanguagePackageMenuItems(dataDir);
-  const packageNodes: LanguageTreeNode[] = [];
+  const descriptors = (await listFirstClassModuleDescriptors(dataDir)).filter((descriptor) => descriptor.category === "Languages");
+  return buildLanguageTreeFromDescriptors(descriptors, dataDir);
+}
 
-  for (const languagePackage of installedPackages) {
-    if (languagePackage.packageId === undefined) {
+export async function listFirstClassModuleDescriptors(dataDir?: string): Promise<readonly FirstClassModuleDescriptor[]> {
+  const installedPackages = await listInstalledReadablePackages(dataDir);
+  const installedDescriptors: FirstClassModuleDescriptor[] = [];
+
+  for (const contentPackage of installedPackages) {
+    if (!isLanguageLikePackage(contentPackage.packageId)) {
       continue;
     }
-    const entries = await listReadableContentEntries(languagePackage.packageId, dataDir, languagePackage.packageVersion);
+    const [entries, reviewSources] = await Promise.all([
+      listReadableContentEntries(contentPackage.packageId, dataDir, contentPackage.packageVersion),
+      listReadingReviewSources({
+        dataDir,
+        packageId: contentPackage.packageId,
+        packageVersion: contentPackage.packageVersion
+      })
+    ]);
+    const descriptor = installedPackageToFirstClassModuleDescriptor(contentPackage, {
+      readableContentCount: entries.filter((entry) => isUserFacingReadableContentPath(entry.path)).length,
+      reviewSourceCount: reviewSources.length
+    });
+    if (descriptor !== null) {
+      installedDescriptors.push(descriptor);
+    }
+  }
+
+  return sortFirstClassModules([...installedDescriptors, ...getBuiltInFirstClassModules()]);
+}
+
+async function buildLanguageTreeFromDescriptors(
+  descriptors: readonly FirstClassModuleDescriptor[],
+  dataDir?: string
+): Promise<LanguageTreeNode> {
+  const packageNodes: LanguageTreeNode[] = [];
+
+  for (const descriptor of descriptors) {
+    if (descriptor.packageId === undefined) {
+      continue;
+    }
+    const languagePackage = moduleDescriptorToMenuItem(descriptor);
+    const entries = await listReadableContentEntries(descriptor.packageId, dataDir, descriptor.packageVersion);
     const labeledEntries = await labelReadableContentEntries(languagePackage, entries, { dataDir });
     const reviewSources = reviewSourcesToMenuItems(await listReadingReviewSources({
       dataDir,
-      packageId: languagePackage.packageId,
-      packageVersion: languagePackage.packageVersion
+      packageId: descriptor.packageId,
+      packageVersion: descriptor.packageVersion
     }));
 
-    const packageBase = languagePackage.packageId;
+    const packageBase = descriptor.packageId;
     const contentChildren = labeledEntries.map((item) => ({
       id: `${packageBase}:content:${item.filePath ?? item.label}`,
       label: item.label,
       kind: "content" as const,
-      packageId: languagePackage.packageId,
-      packageVersion: languagePackage.packageVersion,
-      packageLabel: languagePackage.label,
+      moduleId: descriptor.moduleId,
+      moduleVersion: descriptor.version,
+      sourceKind: descriptor.sourceKind,
+      packageId: descriptor.packageId,
+      packageVersion: descriptor.packageVersion,
+      packageLabel: descriptor.displayName,
       filePath: item.filePath
     }));
     const reviewChildren = reviewSources.map((item) => ({
       id: `${packageBase}:review:${item.sourcePath ?? item.label}`,
       label: item.label,
       kind: "review-source" as const,
+      moduleId: descriptor.moduleId,
+      moduleVersion: descriptor.version,
+      sourceKind: descriptor.sourceKind,
       packageId: item.packageId,
       packageVersion: item.packageVersion,
-      packageLabel: languagePackage.label,
+      packageLabel: descriptor.displayName,
       sourcePath: item.sourcePath,
       itemCount: item.itemCount
     }));
 
     packageNodes.push({
       id: packageBase,
-      label: languagePackage.label,
+      label: descriptor.displayName,
       kind: "package",
-      packageId: languagePackage.packageId,
-      packageVersion: languagePackage.packageVersion,
-      packageLabel: languagePackage.label,
+      moduleId: descriptor.moduleId,
+      moduleVersion: descriptor.version,
+      sourceKind: descriptor.sourceKind,
+      packageId: descriptor.packageId,
+      packageVersion: descriptor.packageVersion,
+      packageLabel: descriptor.displayName,
+      previewText: formatFirstClassModuleInfo(descriptor),
       children: [
         {
           id: `${packageBase}:read`,
           label: "Read content",
           kind: "read-section",
-          packageId: languagePackage.packageId,
-          packageVersion: languagePackage.packageVersion,
-          packageLabel: languagePackage.label,
+          moduleId: descriptor.moduleId,
+          moduleVersion: descriptor.version,
+          sourceKind: descriptor.sourceKind,
+          packageId: descriptor.packageId,
+          packageVersion: descriptor.packageVersion,
+          packageLabel: descriptor.displayName,
           children: contentChildren.length > 0 ? contentChildren : [{
             id: `${packageBase}:read:none`,
             label: "No readable content",
@@ -815,9 +874,12 @@ export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeN
           id: `${packageBase}:review`,
           label: "Review decks",
           kind: "review-section",
-          packageId: languagePackage.packageId,
-          packageVersion: languagePackage.packageVersion,
-          packageLabel: languagePackage.label,
+          moduleId: descriptor.moduleId,
+          moduleVersion: descriptor.version,
+          sourceKind: descriptor.sourceKind,
+          packageId: descriptor.packageId,
+          packageVersion: descriptor.packageVersion,
+          packageLabel: descriptor.displayName,
           children: reviewChildren.length > 0 ? reviewChildren : [{
             id: `${packageBase}:review:none`,
             label: "No review decks",
@@ -829,9 +891,13 @@ export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeN
           id: `${packageBase}:info`,
           label: "Package info",
           kind: "package-info",
-          packageId: languagePackage.packageId,
-          packageVersion: languagePackage.packageVersion,
-          packageLabel: languagePackage.label
+          moduleId: descriptor.moduleId,
+          moduleVersion: descriptor.version,
+          sourceKind: descriptor.sourceKind,
+          packageId: descriptor.packageId,
+          packageVersion: descriptor.packageVersion,
+          packageLabel: descriptor.displayName,
+          previewText: formatFirstClassModuleInfo(descriptor)
         }
       ]
     });
@@ -855,121 +921,56 @@ export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeN
   };
 }
 
-function buildGamesTree(): LanguageTreeNode {
+function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): MenuItem {
   return {
-    id: "games",
-    label: "Games",
+    label: descriptor.displayName,
+    kind: "installed-language",
+    moduleId: "language",
+    packageId: descriptor.packageId,
+    packageVersion: descriptor.packageVersion
+  };
+}
+
+function buildModuleCategoryTree(category: FirstClassModuleDescriptor["category"], descriptors: readonly FirstClassModuleDescriptor[]): LanguageTreeNode {
+  const children = descriptors
+    .filter((descriptor) => descriptor.category === category)
+    .map((descriptor) => buildBuiltInModuleTreeNode(descriptor));
+
+  return {
+    id: category.toLowerCase(),
+    label: category,
     kind: "category",
-    previewText: "Games\n\nBuilt-in game modules live here.",
-    children: [{
-      id: "games:chess",
-      label: "Chess",
-      kind: "module",
-      previewText: [
-        "Chess",
-        "",
-        "Terminal chessboard module.",
-        "",
-        "Available commands:",
-        "whacksmacker chess",
-        "whacksmacker chess e2e4 e7e5",
-        "whacksmacker chess --legal e2"
-      ].join("\n"),
-      children: [
-        {
-          id: "games:chess:board",
-          label: "Play / Board",
-          kind: "command",
-          commandPath: ["chess"],
-          commandArgs: [],
-          launchTitle: "Chess",
-          previewText: "Play / Board\n\nPress Enter to launch the existing terminal chessboard flow.\n\nEquivalent command:\nwhacksmacker chess"
-        },
-        {
-          id: "games:chess:legal",
-          label: "Legal moves",
-          kind: "message",
-          previewText: "Legal moves\n\nUse the command form for now:\nwhacksmacker chess --legal e2\n\nThis tree node is guidance only until a square prompt exists."
-        },
-        {
-          id: "games:chess:info",
-          label: "Module info",
-          kind: "message",
-          previewText: "Chess\n\nBuilt-in terminal chess module.\nUser state is not stored in installed content packages."
-        }
-      ]
+    previewText: `${category}\n\nFirst-class WhackSmacker modules in this category.`,
+    children: children.length > 0 ? children : [{
+      id: `${category.toLowerCase()}:none`,
+      label: `No ${category} modules`,
+      kind: "message",
+      previewText: `No ${category} modules are available yet.`
     }]
   };
 }
 
-function buildGeographyTree(): LanguageTreeNode {
+function buildBuiltInModuleTreeNode(descriptor: FirstClassModuleDescriptor): LanguageTreeNode {
   return {
-    id: "geography",
-    label: "Geography",
-    kind: "category",
-    previewText: "Geography\n\nBuilt-in geography review modules live here.",
-    children: [{
-      id: "geography:continents",
-      label: "Continents",
-      kind: "command",
-      commandPath: ["geography", "continents"],
-      commandArgs: [],
-      launchTitle: "Geography -- Continents",
-      previewText: "Continents\n\nPress Enter to launch the existing six-continent terminal map review.\n\nEquivalent command:\nwhacksmacker geography continents"
-    }]
-  };
-}
-
-function buildMathematicsTree(): LanguageTreeNode {
-  return {
-    id: "mathematics",
-    label: "Mathematics",
-    kind: "category",
-    previewText: "Mathematics\n\nBuilt-in mathematics workbook generators live here.",
-    children: [{
-      id: "mathematics:beginner",
-      label: "Beginner Mathematics",
-      kind: "module",
-      previewText: [
-        "Beginner Mathematics",
-        "",
-        "On-demand workbook generators. These are not installed content packages yet.",
-        "",
-        "Select a generator to run it, or use the command line directly."
-      ].join("\n"),
-      children: [
-        {
-          id: "mathematics:beginner:volume-one",
-          label: "Generate complete Volume 1",
-          kind: "message",
-          previewText: `Generate complete Volume 1\n\nUse the command form for now:\nwhacksmacker mathematics beginner-volume-one --output ${defaultBeginnerVolumeOneOutputPath}\n\nThe tree keeps this as guidance to avoid opening an output-path prompt inside the pane.`
-        },
-        {
-          id: "mathematics:beginner:unit-1",
-          label: "Generate Unit 1 - One, Two, Three",
-          kind: "message",
-          previewText: `Generate Unit 1 - One, Two, Three\n\nUse the command form for now:\nwhacksmacker mathematics one-two-three --output ${defaultOneTwoThreeOutputPath}`
-        },
-        {
-          id: "mathematics:beginner:unit-2",
-          label: "Generate Unit 2 - Four and Five",
-          kind: "message",
-          previewText: `Generate Unit 2 - Four and Five\n\nUse the command form for now:\nwhacksmacker mathematics four-and-five --output ${defaultFourAndFiveOutputPath}`
-        },
-        {
-          id: "mathematics:beginner:unit-3",
-          label: "Generate Unit 3 - One to Five",
-          kind: "message",
-          previewText: `Generate Unit 3 - One to Five\n\nUse the command form for now:\nwhacksmacker mathematics one-to-five --output ${defaultOneToFiveOutputPath}`
-        },
-        {
-          id: "mathematics:beginner:unit-4",
-          label: "Generate Unit 4 - Six, Seven, Eight, Nine",
-          kind: "message",
-          previewText: `Generate Unit 4 - Six, Seven, Eight, Nine\n\nUse the command form for now:\nwhacksmacker mathematics six-to-nine --output ${defaultSixToNineOutputPath}`
-        }
-      ]
-    }]
+    id: descriptor.moduleId,
+    label: descriptor.displayName,
+    kind: "module",
+    moduleId: descriptor.moduleId,
+    moduleVersion: descriptor.version,
+    sourceKind: descriptor.sourceKind,
+    previewText: formatFirstClassModuleInfo(descriptor),
+    children: (descriptor.actions ?? []).map((action) => ({
+      id: `${descriptor.moduleId}:${action.id}`,
+      label: action.label,
+      kind: action.kind,
+      moduleId: descriptor.moduleId,
+      moduleVersion: descriptor.version,
+      sourceKind: descriptor.sourceKind,
+      commandPath: action.commandPath,
+      commandArgs: action.commandArgs,
+      launchTitle: action.launchTitle,
+      previewText: action.previewText
+    }))
   };
 }
 
@@ -1493,11 +1494,11 @@ async function labelReadableContentEntries(
 }
 
 function isLanguageLikePackage(packageId: string): boolean {
-  return packageId.startsWith("com.sleepymario.language.");
+  return isLanguageLikeModulePackage(packageId);
 }
 
 function displayLabelForLanguagePackage(displayName: string): string {
-  return displayName.endsWith(" Curriculum") ? displayName.slice(0, -" Curriculum".length) : displayName;
+  return displayLabelForModulePackage(displayName);
 }
 
 function compareMenuLabels(left: string, right: string): number {

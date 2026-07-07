@@ -109,11 +109,14 @@ test("help prints native WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker review show <package-id> <item-id>/);
   assert.match(result.stdout, /whacksmacker review answer <package-id> <item-id>/);
   assert.match(result.stdout, /whacksmacker review run --package <package-id> --source <path>/);
+  assert.match(result.stdout, /whacksmacker module list/);
+  assert.match(result.stdout, /whacksmacker module info <module-id>/);
+  assert.match(result.stdout, /whacksmacker module build <module-id>/);
   assert.match(result.stdout, /whacksmacker chess \[e2e4 \.\.\.\] \[--legal <square>\]/);
   assert.match(result.stdout, /whacksmacker geography continents/);
   assert.match(result.stdout, /whacksmacker mathematics beginner-volume-one/);
-  assert.match(result.stdout, /Language\s+Korean curriculum content and linguistic terminology glossary/);
-  assert.match(result.stdout, /Chess\s+Terminal chessboard available/);
+  assert.match(result.stdout, /Languages\s+Installed language content packages/);
+  assert.match(result.stdout, /Games\s+Chess native module/);
   assert.match(result.stdout, /Content\s+Downloadable content package management/);
   assert.doesNotMatch(result.stdout, /Anki|AnkiConnect|deck-name|Decks|language review/u);
   assert.equal(result.stderr, "");
@@ -187,6 +190,29 @@ test("geography continents runs without external services", async () => {
   assert.match(result.stdout, /Question 1 of 6/);
   assert.match(result.stdout, /Cards reviewed: 0/);
   assert.equal(result.stderr, "");
+});
+
+test("module commands expose first-class built-in module metadata", async () => {
+  const list = await runCli(["module", "list"]);
+  const info = await runCli(["module", "info", "com.sleepymario.game.chess"]);
+  const build = await runCli(["module", "build", "com.sleepymario.geography"]);
+
+  assert.equal(list.exitCode, 0);
+  assert.match(list.stdout, /com\.sleepymario\.game\.chess 0\.1\.0 Games native-module Chess/);
+  assert.match(list.stdout, /com\.sleepymario\.geography 0\.1\.0 Geography built-in-module Continents/);
+  assert.match(list.stdout, /com\.sleepymario\.mathematics 0\.1\.0 Mathematics built-in-module Beginner Mathematics/);
+  assert.equal(list.stderr, "");
+
+  assert.equal(info.exitCode, 0);
+  assert.match(info.stdout, /Module ID: com\.sleepymario\.game\.chess/);
+  assert.match(info.stdout, /Source kind: native-module/);
+  assert.match(info.stdout, /Actions:/);
+  assert.equal(info.stderr, "");
+
+  assert.equal(build.exitCode, 0);
+  assert.match(build.stdout, /Module ID: com\.sleepymario\.geography/);
+  assert.match(build.stdout, /A downloadable module artifact builder is not implemented/);
+  assert.equal(build.stderr, "");
 });
 
 test("language terminology renders the bundled glossary", async () => {

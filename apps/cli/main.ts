@@ -111,6 +111,16 @@ Native review commands:
   whacksmacker review answer <package-id> <item-id> --rating <again|hard|good|easy> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
   whacksmacker review run --package <package-id> --source <path> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>] [--no-shuffle]
 
+Module commands:
+  whacksmacker module list [--data-dir <dir>]
+      List first-class modules from installed content packages and built-in/native modules.
+
+  whacksmacker module info <module-id> [--data-dir <dir>]
+      Show module metadata.
+
+  whacksmacker module build <module-id> [--data-dir <dir>]
+      Show the current build/package route for a module.
+
 Backup commands:
   whacksmacker backup create --output <backup.json> [--data-dir <dir>]
   whacksmacker backup inspect <backup.json>
@@ -118,10 +128,10 @@ Backup commands:
   whacksmacker backup migrate <backup.json> --output <new-backup.json>
 
 Modules:
-  Language      Korean curriculum content and linguistic terminology glossary
-  Chess         Terminal chessboard available
-  Geography     Continents review available
-  Mathematics   Beginner mathematics workbook generators
+  Languages     Installed language content packages
+  Games         Chess native module
+  Geography     Built-in continents review module
+  Mathematics   Built-in beginner mathematics workbook generators
   Content       Downloadable content package management
 
 Interactive controls:

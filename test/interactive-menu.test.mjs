@@ -32,8 +32,10 @@ import {
 import {
   generateContentPackage,
   generateLocalContentPackageCatalogue,
+  getBuiltInFirstClassModules,
   installContentPackage,
   InMemoryCliCommandRegistry,
+  installedPackageToFirstClassModuleDescriptor,
   listReadingReviewSources
 } from "../dist/packages/core/index.js";
 
@@ -272,12 +274,33 @@ test("module tree lists top-level categories and installed language packages", a
     const tree = await buildModuleTree(fixture.dataDir);
     const languages = tree.children.find((node) => node.label === "Languages");
 
-    assert.equal(tree.label, "WhackSmacker");
+    assert.equal(tree.label, "WhackSmacker / Modules");
     assert.deepEqual(tree.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
     assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin", "Dutch", "Korean", "Vietnamese"]);
+    assert.deepEqual(languages.children.map((node) => node.moduleId), [
+      "com.sleepymario.language.chinese",
+      "com.sleepymario.language.dutch",
+      "com.sleepymario.language.korean",
+      "com.sleepymario.language.vietnamese"
+    ]);
   } finally {
     await fixture.cleanup();
   }
+});
+
+test("first-class module descriptors include built-ins and installed language packages", () => {
+  const builtIns = getBuiltInFirstClassModules();
+  const installed = installedPackageToFirstClassModuleDescriptor(packageRecord("com.sleepymario.language.example", "Example Curriculum"));
+
+  assert.deepEqual(builtIns.map((descriptor) => descriptor.moduleId), [
+    "com.sleepymario.game.chess",
+    "com.sleepymario.geography",
+    "com.sleepymario.mathematics"
+  ]);
+  assert.equal(installed.moduleId, "com.sleepymario.language.example");
+  assert.equal(installed.displayName, "Example");
+  assert.equal(installed.category, "Languages");
+  assert.equal(installed.sourceKind, "content-package");
 });
 
 test("module tree exposes Games Chess Geography and Mathematics entries", async () => {
@@ -286,14 +309,20 @@ test("module tree exposes Games Chess Geography and Mathematics entries", async 
   const geography = tree.children.find((node) => node.label === "Geography");
   const mathematics = tree.children.find((node) => node.label === "Mathematics");
   const chess = games.children.find((node) => node.label === "Chess");
+  const continents = geography.children.find((node) => node.label === "Continents");
+  const beginnerMath = mathematics.children.find((node) => node.label === "Beginner Mathematics");
 
   assert.deepEqual(games.children.map((node) => node.label), ["Chess"]);
+  assert.equal(chess.moduleId, "com.sleepymario.game.chess");
   assert.deepEqual(chess.children.map((node) => node.label), ["Play / Board", "Legal moves", "Module info"]);
   assert.deepEqual(geography.children.map((node) => node.label), ["Continents"]);
+  assert.equal(continents.moduleId, "com.sleepymario.geography");
+  assert.deepEqual(continents.children.map((node) => node.label), ["Continents"]);
   assert.deepEqual(mathematics.children.map((node) => node.label), ["Beginner Mathematics"]);
+  assert.equal(beginnerMath.moduleId, "com.sleepymario.mathematics");
   assert.match(chess.previewText, /whacksmacker chess/);
-  assert.match(geography.children[0].previewText, /whacksmacker geography continents/);
-  assert.match(mathematics.children[0].previewText, /workbook generators/);
+  assert.match(continents.children[0].previewText, /whacksmacker geography continents/);
+  assert.match(beginnerMath.previewText, /workbook generators/);
 });
 
 test("language category can expand installed package nodes in the module tree", async () => {
@@ -606,6 +635,8 @@ test("geography menu routes continents to the registered command", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
     key("down"),
+    key("down"),
+    key("return"),
     key("down"),
     key("return"),
     key("down"),
