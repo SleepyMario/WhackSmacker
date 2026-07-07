@@ -22,7 +22,8 @@ import {
   writeUserDataBackup,
   isReviewRating,
   type DomainModule,
-  type InstalledPackageRecord
+  type InstalledPackageRecord,
+  type ReviewRating
 } from "../core";
 
 declare const process: {
@@ -554,6 +555,10 @@ async function runSingleReviewSource(
     console.log(answer.text.trimEnd());
 
     const rating = await promptForRating(reader);
+    if (rating === null) {
+      console.log("Review stopped.");
+      return false;
+    }
     await recordReadingReviewAnswer({
       dataDir: options.dataDir,
       packageId: dueItem.packageId,
@@ -568,14 +573,40 @@ async function runSingleReviewSource(
   return true;
 }
 
-async function promptForRating(reader: LineReader) {
+async function promptForRating(reader: LineReader): Promise<ReviewRating | null> {
   while (true) {
-    const rating = ((await reader.promptLine("Choose a rating (again/hard/good/easy): ")) ?? "").trim().toLowerCase();
+    const line = await reader.promptLine("Choose a rating (1 again / 2 hard / 3 good / 4 easy, or q to stop): ");
+    if (line === null) {
+      return null;
+    }
+    const rating = normalizeReviewRating(line.trim().toLowerCase());
+    if (rating === null) {
+      return null;
+    }
     if (isReviewRating(rating)) {
       return rating;
     }
-    console.log("Rating must be one of: again, hard, good, easy.");
+    console.log("Rating must be one of: 1, 2, 3, 4, again, hard, good, easy, or q.");
   }
+}
+
+function normalizeReviewRating(value: string): ReviewRating | string | null {
+  if (value === "q" || value === "quit") {
+    return null;
+  }
+  if (value === "1") {
+    return "again";
+  }
+  if (value === "2") {
+    return "hard";
+  }
+  if (value === "3") {
+    return "good";
+  }
+  if (value === "4") {
+    return "easy";
+  }
+  return value;
 }
 
 function reviewSourceLabel(title: string | undefined, sourcePath: string): string {

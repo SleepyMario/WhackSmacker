@@ -240,6 +240,98 @@ test("review run prompts after a completed deck and continues when the user answ
   }
 });
 
+test("review run shows the front side before reveal prompt and q stops there", async () => {
+  const fixture = await createContinuationReviewFixture();
+  try {
+    const result = await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.sequence",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now
+      ],
+      "q\n"
+    );
+
+    assert.match(result.stdout, /Prompt\n\s+one/);
+    assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
+    assert.match(result.stdout, /Review stopped\./);
+    assert.doesNotMatch(result.stdout, /Answer\n\s+1/);
+    assert.doesNotMatch(result.stdout, /Choose a rating/);
+    assert.doesNotMatch(result.stdout, /q\.Press Enter/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review run shows answer before rating prompt and q stops at rating", async () => {
+  const fixture = await createContinuationReviewFixture();
+  try {
+    const result = await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.sequence",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now
+      ],
+      "\nq\n"
+    );
+
+    const answerIndex = result.stdout.indexOf("Answer\n  1");
+    const ratingIndex = result.stdout.indexOf("Choose a rating");
+    assert.match(result.stdout, /Prompt\n\s+one/);
+    assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
+    assert.notEqual(answerIndex, -1);
+    assert.notEqual(ratingIndex, -1);
+    assert.equal(answerIndex < ratingIndex, true);
+    assert.match(result.stdout, /Review stopped\./);
+    assert.doesNotMatch(result.stdout, /Completed review deck: Chapter 1-5/);
+    assert.doesNotMatch(result.stdout, /q\.Press Enter/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review run accepts numeric ratings without breaking continuation", async () => {
+  const fixture = await createContinuationReviewFixture();
+  try {
+    const result = await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.sequence",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now
+      ],
+      "\n3\nn\n"
+    );
+
+    assert.match(result.stdout, /Answer\n\s+1/);
+    assert.match(result.stdout, /Choose a rating \(1 again \/ 2 hard \/ 3 good \/ 4 easy, or q to stop\):/);
+    assert.match(result.stdout, /Completed review deck: Chapter 1-5/);
+    assert.match(result.stdout, /Review stopped\./);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("review run stops cleanly when the user declines continuation", async () => {
   const fixture = await createContinuationReviewFixture();
   try {

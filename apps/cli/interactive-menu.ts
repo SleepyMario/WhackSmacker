@@ -834,7 +834,7 @@ async function runReviewSourcesMenu(
     if (item.kind === "back") {
       return false;
     }
-    const quit = await runReviewSourceAction(registry, terminal, item, options);
+    const quit = await runReviewSourceAction(registry, terminal, languagePackage, item, options);
     if (quit) {
       return true;
     }
@@ -844,6 +844,7 @@ async function runReviewSourcesMenu(
 async function runReviewSourceAction(
   registry: InMemoryCliCommandRegistry,
   terminal: Terminal,
+  languagePackage: MenuItem,
   source: MenuItem,
   options: InteractiveMenuOptions
 ): Promise<boolean> {
@@ -855,14 +856,25 @@ async function runReviewSourceAction(
   if (command === null) {
     return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
   }
-  const output = await runCapturedLanguageCommand(terminal, command, [
-    "--package",
-    source.packageId,
-    "--source",
-    source.sourcePath,
-    ...packageActionArgs(source, options)
-  ]);
-  return showPagedMessage(terminal, renderLanguageActionResult(source.label, output));
+
+  terminal.restore();
+  terminal.write(`\x1b[2J\x1b[HReview: ${languagePackage.label} -- ${source.label}\n\n`);
+  try {
+    await command.run([
+      "--package",
+      source.packageId,
+      "--source",
+      source.sourcePath,
+      ...packageActionArgs(source, options)
+    ]);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(message);
+  } finally {
+    terminal.enter();
+  }
+
+  return showMessage(terminal, "Review session ended. Press Escape or Enter to return.", { clear: false });
 }
 
 async function runReadableContentMenu(

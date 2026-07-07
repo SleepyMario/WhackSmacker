@@ -66,7 +66,7 @@ function key(name, extra = {}) {
   return { name, ...extra };
 }
 
-function createStubRegistry(calls) {
+function createStubRegistry(calls, options = {}) {
   const registry = new InMemoryCliCommandRegistry();
 
   for (const path of [
@@ -86,6 +86,10 @@ function createStubRegistry(calls) {
       path,
       summary: path.join(" "),
       run: async (args) => {
+        if (path.join(" ") === "review run" && options.reviewRun !== undefined) {
+          await options.reviewRun(args);
+          return;
+        }
         calls.push({ path: path.join(" "), args: [...args] });
         if (path[0] === "language" || path[0] === "chess") {
           console.log(`${path.join(" ")} output`);
@@ -319,7 +323,7 @@ test("Korean and Chinese review source menus use clean deck names", async () => 
   }
 });
 
-test("selecting an installed review source runs the existing review flow with package and source", async () => {
+test("selecting an installed review source runs the existing review flow live with package and source", async () => {
   const fixture = await createInstalledDutchFixture();
   const calls = [];
   const terminal = new FakeTerminal([
@@ -336,7 +340,17 @@ test("selecting an installed review source runs the existing review flow with pa
   ]);
 
   try {
-    await runInteractiveMenu(createStubRegistry(calls), terminal, { dataDir: fixture.dataDir });
+    const registry = createStubRegistry(calls, {
+      reviewRun: async (args) => {
+        calls.push({ path: "review run", args: [...args] });
+        terminal.write("Prompt\nfront side\n");
+        terminal.write("Press Enter to show answer, or q to stop: ");
+        terminal.write("Answer\nback side\n");
+        terminal.write("Choose a rating (1 again / 2 hard / 3 good / 4 easy, or q to stop): ");
+        terminal.write("Review stopped.\n");
+      }
+    });
+    await runInteractiveMenu(registry, terminal, { dataDir: fixture.dataDir });
 
     assert.deepEqual(calls, [{
       path: "review run",
@@ -351,9 +365,44 @@ test("selecting an installed review source runs the existing review flow with pa
         fixture.dataDir
       ]
     }]);
+    assert.equal(terminal.restoreCount >= 1, true);
+    assert.equal(terminal.enterCount >= 2, true);
     assert.match(terminal.output, /Review sources/);
     assert.match(terminal.output, /> Chapter 1-5/);
+    assert.match(terminal.output, /Review: Dutch -- Chapter 1-5/);
+    assert.match(terminal.output, /Prompt\nfront side/);
+    assert.match(terminal.output, /Press Enter to show answer, or q to stop:/);
+    assert.match(terminal.output, /Answer\nback side/);
+    assert.match(terminal.output, /Choose a rating/);
+    assert.equal(terminal.output.indexOf("Answer\nback side") < terminal.output.indexOf("Choose a rating"), true);
     assert.doesNotMatch(terminal.output, /> com\.sleepymario\.language\.dutch 0\.1\.0 review-decks\/chapter-001-005\/cards\.tsv Chapter 1-5 \(80 items\)/);
+    assert.doesNotMatch(terminal.output, /q\.Press Enter/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review source back option does not start review", async () => {
+  const fixture = await createInstalledDutchFixture();
+  const calls = [];
+  const terminal = new FakeTerminal([
+    key("return"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("escape"),
+    key("escape"),
+    key("escape")
+  ]);
+
+  try {
+    await runInteractiveMenu(createStubRegistry(calls), terminal, { dataDir: fixture.dataDir });
+
+    assert.deepEqual(calls, []);
+    assert.match(terminal.output, /Review sources/);
+    assert.match(terminal.output, /> Back/);
   } finally {
     await fixture.cleanup();
   }
