@@ -119,9 +119,29 @@ test("content read CLI lists packages files and renders selected content", async
   }
 });
 
-test("installed Korean package exposes Chapter 20 and Chapter 1-20 vocabulary review deck", async () => {
+test("installed Korean package exposes Chapter 20 and split vocabulary review decks", async () => {
   const fixture = await createInstalledReadingFixture();
   try {
+    const expectedReviewDecks = [
+      {
+        title: "Chapter 8-10",
+        sourcePath: "review-decks/chapter-008-010/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-008-010.json",
+        itemCount: 50
+      },
+      {
+        title: "Chapter 11-15",
+        sourcePath: "review-decks/chapter-011-015/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-011-015.json",
+        itemCount: 76
+      },
+      {
+        title: "Chapter 16-20",
+        sourcePath: "review-decks/chapter-016-020/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-016-020.json",
+        itemCount: 88
+      }
+    ];
     const installed = await listInstalledContentPackages(fixture.dataDir);
     const entries = await listReadableContentEntries("com.sleepymario.language.korean", fixture.dataDir);
     const chapter20 = await readInstalledContentEntry({
@@ -129,41 +149,50 @@ test("installed Korean package exposes Chapter 20 and Chapter 1-20 vocabulary re
       packageId: "com.sleepymario.language.korean",
       path: "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"
     });
-    const deckSource = await readInstalledContentEntry({
-      dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean",
-      path: "review-decks/chapter-001-020/cards.tsv"
-    });
     const itemFiles = await listInstalledMemorizationItemFiles("com.sleepymario.language.korean", fixture.dataDir);
-    const collection = await readInstalledMemorizationItems(
-      "com.sleepymario.language.korean",
-      "content/memorization/review-decks/chapter-001-020.json",
-      fixture.dataDir
-    );
     const sources = await listReadingReviewSources({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.korean"
     });
-    const items = await listReadingReviewItems({
-      dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean",
-      sourcePath: "review-decks/chapter-001-020/cards.tsv"
-    });
 
     assert.deepEqual(installed.map((record) => record.packageId), ["com.sleepymario.language.korean"]);
     assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-020-basic-life-sentences-13/chapter.md"));
-    assert.ok(entries.some((entry) => entry.path === "review-decks/chapter-001-020/cards.tsv"));
+    for (const deck of expectedReviewDecks) {
+      assert.ok(entries.some((entry) => entry.path === deck.sourcePath));
+    }
+    assert.equal(entries.some((entry) => entry.path === "review-decks/chapter-001-020/cards.tsv"), false);
     assert.match(chapter20.text, /Chapter 20 -- Basic Life Sentences XIII/);
-    assert.match(deckSource.text, /^Chapter 1-20\tKorean -> English\t안녕하세요\t/m);
-    assert.deepEqual(itemFiles.map((file) => file.path), ["content/memorization/review-decks/chapter-001-020.json"]);
-    assert.equal(collection.items.length, 214);
+    assert.deepEqual(
+      itemFiles.map((file) => file.path),
+      expectedReviewDecks.map((deck) => deck.itemPath)
+    );
 
-    assert.equal(sources.some((source) => source.sourcePath === "review-decks/chapter-001-020/cards.tsv" && source.title === "Chapter 1-20"), true);
-    assert.equal(items.length, 214);
-    assert.ok(items.some((item) => item.item.prompt.text === "안녕하세요" && item.item.answer.text === "hello"));
-    assert.ok(items.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "안녕하세요"));
-    assert.ok(items.some((item) => item.item.prompt.text === "은/는" && item.item.answer.text === "topic particle"));
-    assert.ok(items.some((item) => item.item.prompt.text === "subject/existence marker" && item.item.answer.text === "이/가"));
+    const allItems = [];
+    for (const deck of expectedReviewDecks) {
+      const deckSource = await readInstalledContentEntry({
+        dataDir: fixture.dataDir,
+        packageId: "com.sleepymario.language.korean",
+        path: deck.sourcePath
+      });
+      const collection = await readInstalledMemorizationItems("com.sleepymario.language.korean", deck.itemPath, fixture.dataDir);
+      const items = await listReadingReviewItems({
+        dataDir: fixture.dataDir,
+        packageId: "com.sleepymario.language.korean",
+        sourcePath: deck.sourcePath
+      });
+
+      assert.match(deckSource.text, new RegExp(`^${deck.title}\\t`, "m"));
+      assert.equal(collection.items.length, deck.itemCount);
+      assert.equal(sources.some((source) => source.sourcePath === deck.sourcePath && source.title === deck.title), true);
+      assert.equal(items.length, deck.itemCount);
+      allItems.push(...items);
+    }
+
+    assert.equal(sources.some((source) => source.sourcePath === "review-decks/chapter-001-020/cards.tsv" || source.title === "Chapter 1-20"), false);
+    assert.ok(allItems.some((item) => item.item.prompt.text === "안녕하세요" && item.item.answer.text === "hello"));
+    assert.ok(allItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "안녕하세요"));
+    assert.ok(allItems.some((item) => item.item.prompt.text === "은/는" && item.item.answer.text === "topic particle"));
+    assert.ok(allItems.some((item) => item.item.prompt.text === "subject/existence marker" && item.item.answer.text === "이/가"));
 
     const forbiddenPatterns = [
       "저는 N입니다",
@@ -181,7 +210,7 @@ test("installed Korean package exposes Chapter 20 and Chapter 1-20 vocabulary re
       "N이/가 없어요"
     ];
     assert.equal(
-      items.some((item) => forbiddenPatterns.includes(item.item.prompt.text) || forbiddenPatterns.includes(item.item.answer.text)),
+      allItems.some((item) => forbiddenPatterns.includes(item.item.prompt.text) || forbiddenPatterns.includes(item.item.answer.text)),
       false
     );
   } finally {

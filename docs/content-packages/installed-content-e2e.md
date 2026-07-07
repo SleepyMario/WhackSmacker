@@ -105,7 +105,15 @@ node dist/main.js content read com.sleepymario.language.korean \
 
 node dist/main.js content read com.sleepymario.language.korean \
   --data-dir /tmp/whacksmacker-e2e-data \
-  --file review-decks/chapter-001-020/cards.tsv
+  --file review-decks/chapter-008-010/cards.tsv
+
+node dist/main.js content read com.sleepymario.language.korean \
+  --data-dir /tmp/whacksmacker-e2e-data \
+  --file review-decks/chapter-011-015/cards.tsv
+
+node dist/main.js content read com.sleepymario.language.korean \
+  --data-dir /tmp/whacksmacker-e2e-data \
+  --file review-decks/chapter-016-020/cards.tsv
 
 node dist/main.js review sources \
   --package com.sleepymario.language.korean \
@@ -113,7 +121,17 @@ node dist/main.js review sources \
 
 node dist/main.js review items \
   --package com.sleepymario.language.korean \
-  --source review-decks/chapter-001-020/cards.tsv \
+  --source review-decks/chapter-008-010/cards.tsv \
+  --data-dir /tmp/whacksmacker-e2e-data
+
+node dist/main.js review items \
+  --package com.sleepymario.language.korean \
+  --source review-decks/chapter-011-015/cards.tsv \
+  --data-dir /tmp/whacksmacker-e2e-data
+
+node dist/main.js review items \
+  --package com.sleepymario.language.korean \
+  --source review-decks/chapter-016-020/cards.tsv \
   --data-dir /tmp/whacksmacker-e2e-data
 ```
 
@@ -246,10 +264,12 @@ Opening `units/hangul-foundation/README.md` through both `content read` and `lan
 
 Opening `units/korean-core/chapter-020-basic-life-sentences-13/chapter.md` rendered Chapter 20 from the installed Korean package.
 
-Opening `review-decks/chapter-001-020/cards.tsv` rendered the source TSV for the vocabulary/function-word review deck. Native review source listing exposed that source with the deck title:
+Opening the three `review-decks/*/cards.tsv` files rendered the source TSV files for the vocabulary/function-word review decks. Native review source listing exposed those sources with the deck titles:
 
 ```text
-Chapter 1-20
+Chapter 8-10
+Chapter 11-15
+Chapter 16-20
 ```
 
 The generated native review items were bidirectional vocabulary/function-word cards. Full grammar-pattern cards such as `저는 N입니다`, `N이에요/예요`, and `N이/가 있어요` were not present as vocabulary review cards.

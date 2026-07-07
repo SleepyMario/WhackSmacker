@@ -216,7 +216,9 @@ whacksmacker content read
 whacksmacker content files com.sleepymario.language.korean
 whacksmacker content read com.sleepymario.language.korean --file units/hangul-foundation/README.md
 whacksmacker content read com.sleepymario.language.korean --file units/korean-core/chapter-020-basic-life-sentences-13/chapter.md
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-001-020/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-008-010/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-011-015/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-016-020/cards.tsv
 whacksmacker language korean
 whacksmacker language korean --file units/hangul-foundation/README.md
 whacksmacker language terms
@@ -234,13 +236,15 @@ Connect installed reading content to native review items:
 ```sh
 whacksmacker review sources --data-dir ~/.local/share/whacksmacker/content
 whacksmacker review items --package com.sleepymario.language.korean
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-001-020/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-008-010/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-011-015/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-016-020/cards.tsv
 whacksmacker review due --package com.sleepymario.language.korean
 whacksmacker review show com.sleepymario.language.korean <item-id> --answer
 whacksmacker review answer com.sleepymario.language.korean <item-id> --rating good
 ```
 
-For the Korean milestone package, `review sources --package com.sleepymario.language.korean` lists the vocabulary/function-word deck source as `Chapter 1-20`. Full grammar-pattern cards are not generated into that deck.
+For the Korean milestone package, `review sources --package com.sleepymario.language.korean` lists the vocabulary/function-word deck sources as `Chapter 8-10`, `Chapter 11-15`, and `Chapter 16-20`. Full grammar-pattern cards are not generated into those decks.
 
 Back up user-owned state without copying installed package content:
 

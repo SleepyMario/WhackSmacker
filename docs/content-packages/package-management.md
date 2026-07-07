@@ -112,10 +112,14 @@ whacksmacker content install com.sleepymario.language.linguistic-terminology --c
 whacksmacker content installed
 whacksmacker language korean --file units/hangul-foundation/README.md
 whacksmacker content read com.sleepymario.language.korean --file units/korean-core/chapter-020-basic-life-sentences-13/chapter.md
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-001-020/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-008-010/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-011-015/cards.tsv
+whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-016-020/cards.tsv
 whacksmacker review sources --package com.sleepymario.language.korean
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-001-020/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-008-010/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-011-015/cards.tsv
+whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-016-020/cards.tsv
 whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```
 
-The installed Korean package exposes the Chapter 1-20 review deck as native vocabulary/function-word memorization items generated from `review-decks/chapter-001-020/cards.tsv` in the canonical Korean curriculum repository. It does not generate full grammar-pattern cards.
+The installed Korean package exposes the Chapter 8-10, Chapter 11-15, and Chapter 16-20 review decks as native vocabulary/function-word memorization items generated from `review-decks/*/cards.tsv` in the canonical Korean curriculum repository. It does not generate full grammar-pattern cards.
