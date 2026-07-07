@@ -106,6 +106,7 @@ Native review commands:
   whacksmacker review due [--package <package-id>] [--version <version>] [--data-dir <dir>] [--limit <n>]
   whacksmacker review show <package-id> <item-id> [--version <version>] [--data-dir <dir>] [--answer]
   whacksmacker review answer <package-id> <item-id> --rating <again|hard|good|easy> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
+  whacksmacker review run --package <package-id> --source <path> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
 
 Backup commands:
   whacksmacker backup create --output <backup.json> [--data-dir <dir>]

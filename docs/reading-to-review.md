@@ -52,6 +52,22 @@ Record a rating:
 whacksmacker review answer <package-id> <item-id> --rating <again|hard|good|easy> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
 ```
 
+Run a source/deck review session:
+
+```sh
+whacksmacker review run --package <package-id> --source <path> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
+```
+
+After a source is completed, WhackSmacker checks the ordered review sources for the same package. If another source exists, it prompts:
+
+```text
+Do you want to continue with the next deck? (y/n)
+```
+
+Answering `y` starts the next source immediately. Answering `n` stops cleanly. If there is no next source, WhackSmacker reports that no next review deck is available.
+
+Small review decks should remain stable package sources. Progressive review flow is handled by WhackSmacker, not by merging decks or migrating card IDs.
+
 The removed legacy command shape `whacksmacker review <deck-name>` no longer routes. Use the native package review subcommands listed above.
 
 ## Progress Separation
@@ -68,5 +84,4 @@ This point did not implement:
 - Anki parity tests;
 - Anki removal;
 - web UI;
-- fuzzy answer grading;
-- complex interactive terminal review sessions.
+- fuzzy answer grading.

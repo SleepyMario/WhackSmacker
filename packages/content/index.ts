@@ -7,6 +7,7 @@ import {
   listInstalledContentPackages,
   listReadableContentEntries,
   listIntegratedDueReviewItems,
+  findNextReadingReviewSource,
   listReadingReviewItems,
   listReadingReviewSources,
   migrateUserDataBackupFile,
@@ -23,6 +24,34 @@ import {
   type DomainModule,
   type InstalledPackageRecord
 } from "../core";
+
+declare const process: {
+  stdin: NodeInput;
+  stdout: NodeOutput;
+};
+
+interface NodeInput {
+  setEncoding?(encoding: string): void;
+  on(event: "data", listener: (chunk: unknown) => void): void;
+  on(event: "end" | "close", listener: () => void): void;
+  off(event: "data", listener: (chunk: unknown) => void): void;
+  off(event: "end" | "close", listener: () => void): void;
+  resume(): void;
+  pause(): void;
+}
+
+interface NodeOutput {
+  write(text: string): void;
+}
+
+interface LineReader {
+  promptLine(prompt: string): Promise<string | null>;
+  close(): void;
+}
+
+interface PendingLineRead {
+  readonly resolve: (line: string | null) => void;
+}
 
 export const contentModule: DomainModule = {
   id: "content",
@@ -289,6 +318,21 @@ export const contentModule: DomainModule = {
     });
 
     context.cli.register({
+      path: ["review", "run"],
+      summary: "Run a native review session for a review source",
+      run: async (args) => {
+        const options = parseOptions(args, ["package", "source"]);
+        await runReviewSourceSession({
+          dataDir: options.dataDir,
+          packageId: options.package,
+          packageVersion: options.version,
+          sourcePath: options.source,
+          now: options.now ?? currentTimestamp()
+        });
+      }
+    });
+
+    context.cli.register({
       path: ["backup", "create"],
       summary: "Create a user data backup",
       run: async (args) => {
@@ -370,6 +414,14 @@ export const contentModule: DomainModule = {
   }
 };
 
+interface RunReviewSourceSessionOptions {
+  readonly dataDir?: string;
+  readonly packageId?: string;
+  readonly packageVersion?: string;
+  readonly sourcePath?: string;
+  readonly now: string;
+}
+
 interface ParsedOptions {
   readonly catalogue: string;
   readonly dataDir?: string;
@@ -394,6 +446,207 @@ function printInstalled(packages: readonly InstalledPackageRecord[]): void {
   console.log("Installed packages:");
   for (const record of packages) {
     console.log(`- ${record.packageId} ${record.packageVersion} ${record.displayName}`);
+  }
+}
+
+async function runReviewSourceSession(options: RunReviewSourceSessionOptions): Promise<void> {
+  if (options.packageId === undefined) {
+    throw new Error("--package is required.");
+  }
+  if (options.sourcePath === undefined) {
+    throw new Error("--source is required.");
+  }
+
+  const reader = new ReviewLineInput();
+  try {
+    let sourcePath = options.sourcePath;
+    while (true) {
+      const completed = await runSingleReviewSource(reader, { ...options, packageId: options.packageId, sourcePath });
+      if (!completed) {
+        return;
+      }
+
+      const next = await findNextReadingReviewSource({
+        dataDir: options.dataDir,
+        packageId: options.packageId,
+        packageVersion: options.packageVersion,
+        sourcePath
+      });
+
+      if (next === undefined) {
+        console.log("No next review deck is available.");
+        return;
+      }
+
+      const answer = ((await reader.promptLine("Do you want to continue with the next deck? (y/n) ")) ?? "").trim().toLowerCase();
+      if (answer !== "y" && answer !== "yes") {
+        console.log("Review stopped.");
+        return;
+      }
+
+      console.log(`Starting next review deck: ${reviewSourceLabel(next.title, next.sourcePath)}`);
+      sourcePath = next.sourcePath;
+    }
+  } finally {
+    reader.close();
+  }
+}
+
+async function runSingleReviewSource(
+  reader: LineReader,
+  options: RunReviewSourceSessionOptions & { readonly packageId: string; readonly sourcePath: string }
+): Promise<boolean> {
+  const sources = await listReadingReviewSources({
+    dataDir: options.dataDir,
+    packageId: options.packageId,
+    packageVersion: options.packageVersion
+  });
+  const source = sources.find((candidate) => candidate.sourcePath === options.sourcePath);
+  const label = reviewSourceLabel(source?.title, options.sourcePath);
+
+  await syncReadingReviewItems({
+    dataDir: options.dataDir,
+    packageId: options.packageId,
+    packageVersion: options.packageVersion,
+    now: options.now
+  });
+
+  const sourceItems = await listReadingReviewItems({
+    dataDir: options.dataDir,
+    packageId: options.packageId,
+    packageVersion: options.packageVersion,
+    sourcePath: options.sourcePath
+  });
+  const sourceItemIds = new Set(sourceItems.map((item) => item.item.id));
+  const due = (await listIntegratedDueReviewItems({
+    dataDir: options.dataDir,
+    packageId: options.packageId,
+    packageVersion: options.packageVersion,
+    now: options.now
+  })).filter((item) => sourceItemIds.has(item.itemId));
+
+  if (due.length === 0) {
+    console.log(`No due review items found for deck: ${label}`);
+  }
+
+  for (const dueItem of due) {
+    const prompt = await renderReadingReviewItem({
+      dataDir: options.dataDir,
+      packageId: dueItem.packageId,
+      packageVersion: dueItem.packageVersion,
+      itemId: dueItem.itemId
+    });
+    console.log(prompt.text.trimEnd());
+
+    const reveal = ((await reader.promptLine("Press Enter to show answer, or q to stop: ")) ?? "q").trim().toLowerCase();
+    if (reveal === "q" || reveal === "quit") {
+      console.log("Review stopped.");
+      return false;
+    }
+
+    const answer = await renderReadingReviewItem({
+      dataDir: options.dataDir,
+      packageId: dueItem.packageId,
+      packageVersion: dueItem.packageVersion,
+      itemId: dueItem.itemId,
+      answer: true
+    });
+    console.log(answer.text.trimEnd());
+
+    const rating = await promptForRating(reader);
+    await recordReadingReviewAnswer({
+      dataDir: options.dataDir,
+      packageId: dueItem.packageId,
+      packageVersion: dueItem.packageVersion,
+      itemId: dueItem.itemId,
+      rating,
+      reviewedAt: options.now
+    });
+  }
+
+  console.log(`Completed review deck: ${label}`);
+  return true;
+}
+
+async function promptForRating(reader: LineReader) {
+  while (true) {
+    const rating = ((await reader.promptLine("Choose a rating (again/hard/good/easy): ")) ?? "").trim().toLowerCase();
+    if (isReviewRating(rating)) {
+      return rating;
+    }
+    console.log("Rating must be one of: again, hard, good, easy.");
+  }
+}
+
+function reviewSourceLabel(title: string | undefined, sourcePath: string): string {
+  return title ?? sourcePath;
+}
+
+class ReviewLineInput implements LineReader {
+  private buffer = "";
+  private readonly resolvers: PendingLineRead[] = [];
+  private closed = false;
+
+  private readonly onData = (chunk: unknown): void => {
+    this.buffer += String(chunk);
+    this.flush();
+  };
+
+  private readonly onClose = (): void => {
+    this.closed = true;
+    this.flush();
+  };
+
+  constructor() {
+    process.stdin.setEncoding?.("utf8");
+    process.stdin.on("data", this.onData);
+    process.stdin.on("end", this.onClose);
+    process.stdin.on("close", this.onClose);
+    process.stdin.resume();
+  }
+
+  promptLine(prompt: string): Promise<string | null> {
+    process.stdout.write(prompt);
+
+    return new Promise((resolve) => {
+      this.resolvers.push({ resolve });
+      this.flush();
+    });
+  }
+
+  close(): void {
+    process.stdin.off("data", this.onData);
+    process.stdin.off("end", this.onClose);
+    process.stdin.off("close", this.onClose);
+    process.stdin.pause();
+  }
+
+  private flush(): void {
+    while (this.resolvers.length > 0) {
+      const line = this.readLine();
+      if (line !== undefined) {
+        this.resolvers.shift()?.resolve(line);
+        continue;
+      }
+
+      if (this.closed) {
+        this.resolvers.shift()?.resolve(null);
+        continue;
+      }
+
+      return;
+    }
+  }
+
+  private readLine(): string | undefined {
+    const newlineIndex = this.buffer.indexOf("\n");
+    if (newlineIndex === -1) {
+      return undefined;
+    }
+
+    const line = this.buffer.slice(0, newlineIndex).replace(/\r$/u, "");
+    this.buffer = this.buffer.slice(newlineIndex + 1);
+    return line;
   }
 }
 

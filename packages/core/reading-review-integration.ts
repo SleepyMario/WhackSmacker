@@ -31,6 +31,11 @@ export interface ListReadingReviewItemsOptions extends ReadingReviewOptions {
   readonly sourcePath?: string;
 }
 
+export interface NextReadingReviewSourceOptions extends ReadingReviewOptions {
+  readonly packageId: string;
+  readonly sourcePath: string;
+}
+
 export interface SyncReadingReviewOptions extends ReadingReviewOptions {
   readonly now: string;
 }
@@ -99,6 +104,21 @@ export async function listReadingReviewSources(options: ReadingReviewOptions = {
     });
   }
   return [...groups.values()].sort(compareSources);
+}
+
+export async function findNextReadingReviewSource(options: NextReadingReviewSourceOptions): Promise<ReadingReviewSource | undefined> {
+  const sources = (await listReadingReviewSources({
+    dataDir: options.dataDir,
+    packageId: options.packageId,
+    packageVersion: options.packageVersion
+  })).filter((source) => source.packageId === options.packageId);
+  const currentIndex = sources.findIndex(
+    (source) =>
+      source.sourcePath === options.sourcePath &&
+      (options.packageVersion === undefined || source.packageVersion === options.packageVersion)
+  );
+
+  return currentIndex < 0 ? undefined : sources[currentIndex + 1];
 }
 
 export async function listReadingReviewItems(options: ListReadingReviewItemsOptions = {}): Promise<readonly ReadingReviewItem[]> {

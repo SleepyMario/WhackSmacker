@@ -108,6 +108,7 @@ test("help prints native WhackSmacker usage", async () => {
   assert.match(result.stdout, /whacksmacker review due/);
   assert.match(result.stdout, /whacksmacker review show <package-id> <item-id>/);
   assert.match(result.stdout, /whacksmacker review answer <package-id> <item-id>/);
+  assert.match(result.stdout, /whacksmacker review run --package <package-id> --source <path>/);
   assert.match(result.stdout, /whacksmacker chess \[e2e4 \.\.\.\] \[--legal <square>\]/);
   assert.match(result.stdout, /whacksmacker geography continents/);
   assert.match(result.stdout, /whacksmacker mathematics beginner-volume-one/);

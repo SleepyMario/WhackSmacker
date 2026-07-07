@@ -7,6 +7,7 @@ import { spawn } from "node:child_process";
 import { test } from "node:test";
 
 import {
+  findNextReadingReviewSource,
   listIntegratedDueReviewItems,
   listReadingReviewItems,
   listReadingReviewSources,
@@ -180,6 +181,120 @@ test("review integration CLI supports sources items due show and answer", async 
   }
 });
 
+test("next review deck detection follows ordered sources in the same package", async () => {
+  const fixture = await createContinuationReviewFixture();
+  try {
+    const first = await findNextReadingReviewSource({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.sequence",
+      sourcePath: "review-decks/chapter-001-005/cards.tsv"
+    });
+    const second = await findNextReadingReviewSource({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.sequence",
+      sourcePath: "review-decks/chapter-006-010/cards.tsv"
+    });
+    const third = await findNextReadingReviewSource({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.sequence",
+      sourcePath: "review-decks/chapter-011-015/cards.tsv"
+    });
+
+    assert.equal(first?.title, "Chapter 6-10");
+    assert.equal(first?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
+    assert.equal(second?.title, "Chapter 11-15");
+    assert.equal(second?.sourcePath, "review-decks/chapter-011-015/cards.tsv");
+    assert.equal(third, undefined);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review run prompts after a completed deck and continues when the user answers yes", async () => {
+  const fixture = await createContinuationReviewFixture();
+  try {
+    const result = await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.sequence",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now
+      ],
+      "\ngood\ny\n\ngood\nn\n"
+    );
+
+    assert.match(result.stdout, /Completed review deck: Chapter 1-5/);
+    assert.match(result.stdout, /Do you want to continue with the next deck\? \(y\/n\)/);
+    assert.match(result.stdout, /Starting next review deck: Chapter 6-10/);
+    assert.match(result.stdout, /Completed review deck: Chapter 6-10/);
+    assert.match(result.stdout, /Review stopped\./);
+    assert.doesNotMatch(result.stdout, /Starting next review deck: Chapter 11-15/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review run stops cleanly when the user declines continuation", async () => {
+  const fixture = await createContinuationReviewFixture();
+  try {
+    const result = await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.sequence",
+        "--source",
+        "review-decks/chapter-001-005/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now
+      ],
+      "\ngood\nn\n"
+    );
+
+    assert.match(result.stdout, /Completed review deck: Chapter 1-5/);
+    assert.match(result.stdout, /Do you want to continue with the next deck\? \(y\/n\)/);
+    assert.match(result.stdout, /Review stopped\./);
+    assert.doesNotMatch(result.stdout, /Starting next review deck: Chapter 6-10/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review run reports no next deck without prompting after the final source", async () => {
+  const fixture = await createContinuationReviewFixture();
+  try {
+    const result = await runCli(
+      [
+        "review",
+        "run",
+        "--package",
+        "com.sleepymario.language.sequence",
+        "--source",
+        "review-decks/chapter-011-015/cards.tsv",
+        "--data-dir",
+        fixture.dataDir,
+        "--now",
+        now
+      ],
+      "\ngood\n"
+    );
+
+    assert.match(result.stdout, /Completed review deck: Chapter 11-15/);
+    assert.match(result.stdout, /No next review deck is available\./);
+    assert.doesNotMatch(result.stdout, /Do you want to continue with the next deck/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 async function createReadingReviewFixture() {
   const root = await mkdtemp(join(tmpdir(), "wsm-reading-review-"));
   const dataDir = join(root, "content");
@@ -268,14 +383,104 @@ async function createReadingReviewFixture() {
   };
 }
 
-function memoryItem(id, prompt, answer, sourcePath) {
+async function createContinuationReviewFixture() {
+  const root = await mkdtemp(join(tmpdir(), "wsm-review-continuation-"));
+  const dataDir = join(root, "content");
+  const packageId = "com.sleepymario.language.sequence";
+  const installPath = `packages/${packageId}/0.1.0`;
+  const packageRoot = join(dataDir, installPath);
+  const snapshotPath = "content/content.json";
+  const itemPath = "content/memorization/items.json";
+  const sourcePaths = [
+    "review-decks/chapter-001-005/cards.tsv",
+    "review-decks/chapter-006-010/cards.tsv",
+    "review-decks/chapter-011-015/cards.tsv"
+  ];
+  const snapshot = {
+    contentSchema: "whacksmacker-source-markdown-snapshot-v1",
+    files: sourcePaths.map((path) => ({ path, mediaType: "text/tab-separated-values", text: "deck\tdirection\tfront\tback\n" }))
+  };
+  const items = {
+    schemaVersion: 1,
+    items: [
+      memoryItem("deck-001/card-001", "one", "1", sourcePaths[0], "Chapter 1-5"),
+      memoryItem("deck-006/card-001", "six", "6", sourcePaths[1], "Chapter 6-10"),
+      memoryItem("deck-011/card-001", "eleven", "11", sourcePaths[2], "Chapter 11-15")
+    ]
+  };
+  const snapshotBuffer = Buffer.from(`${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
+  const itemBuffer = Buffer.from(`${JSON.stringify(items, null, 2)}\n`, "utf8");
+  const manifest = {
+    packageFormatVersion: 1,
+    packageId,
+    packageVersion: "0.1.0",
+    displayName: "Sequence Package",
+    description: "Package with ordered review sources.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    minimumWhackSmackerVersion: "0.1.0",
+    source: {
+      repository: "https://example.invalid/sequence",
+      commit: "0000000000000000000000000000000000000000"
+    },
+    generatedAt: now,
+    generator: {
+      name: "test",
+      version: "0.1.0"
+    },
+    entryPoints: [{ id: "primary", mediaType: "application/json", path: snapshotPath, role: "primary" }],
+    files: [
+      { path: snapshotPath, mediaType: "application/json", size: snapshotBuffer.length, sha256: sha256(snapshotBuffer) },
+      {
+        path: itemPath,
+        mediaType: "application/vnd.whacksmacker.memorization-items+json",
+        size: itemBuffer.length,
+        sha256: sha256(itemBuffer)
+      }
+    ]
+  };
+  const registry = {
+    registryFormatVersion: 1,
+    updatedAt: now,
+    packages: [
+      {
+        packageId,
+        packageVersion: "0.1.0",
+        displayName: "Sequence Package",
+        contentType: "language-curriculum",
+        contentSchemaVersion: "1.0.0",
+        minimumWhackSmackerVersion: "0.1.0",
+        source: manifest.source,
+        installedAt: now,
+        installPath,
+        manifestSha256: "0".repeat(64),
+        archiveSha256: "1".repeat(64),
+        archiveSize: 1,
+        catalogueId: "com.sleepymario.local"
+      }
+    ]
+  };
+
+  await writeJson(join(dataDir, "registry.json"), registry);
+  await writeJson(join(packageRoot, "manifest.json"), manifest);
+  await writeFileEnsured(join(packageRoot, snapshotPath), snapshotBuffer);
+  await writeFileEnsured(join(packageRoot, itemPath), itemBuffer);
+
+  return {
+    root,
+    dataDir,
+    cleanup: () => rm(root, { recursive: true, force: true })
+  };
+}
+
+function memoryItem(id, prompt, answer, sourcePath, sourceTitle) {
   return {
     schemaVersion: 1,
     id,
     kind: "basic-card",
     prompt: { text: prompt, mediaType: "text/plain" },
     answer: { text: answer, mediaType: "text/plain" },
-    ...(sourcePath === undefined ? {} : { source: { path: sourcePath } })
+    ...(sourcePath === undefined ? {} : { source: { path: sourcePath, ...(sourceTitle === undefined ? {} : { title: sourceTitle }) } })
   };
 }
 
@@ -292,10 +497,11 @@ function sha256(data) {
   return createHash("sha256").update(data).digest("hex");
 }
 
-async function runCli(args) {
-  const child = spawn(process.execPath, ["dist/main.js", ...args], { cwd: process.cwd(), stdio: ["ignore", "pipe", "pipe"] });
+async function runCli(args, input = "") {
+  const child = spawn(process.execPath, ["dist/main.js", ...args], { cwd: process.cwd(), stdio: ["pipe", "pipe", "pipe"] });
   let stdout = "";
   let stderr = "";
+  child.stdin.end(input);
   child.stdout.setEncoding("utf8");
   child.stderr.setEncoding("utf8");
   child.stdout.on("data", (chunk) => {

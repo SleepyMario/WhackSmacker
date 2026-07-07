@@ -81,9 +81,10 @@ whacksmacker review items --package com.sleepymario.language.korean
 whacksmacker review due --package com.sleepymario.language.korean
 whacksmacker review show com.sleepymario.language.korean <item-id> --answer
 whacksmacker review answer com.sleepymario.language.korean <item-id> --rating good
+whacksmacker review run --package com.sleepymario.language.korean --source review-decks/chapter-001-005/cards.tsv
 ```
 
-The old Anki-backed `whacksmacker review <deck-name>` shape has been removed. Reviewable content now comes from installed packages, and review progress is stored separately from package content.
+The old Anki-backed `whacksmacker review <deck-name>` shape has been removed. Reviewable content now comes from installed packages, and review progress is stored separately from package content. Small package review sources stay stable; after `review run` completes one source, WhackSmacker can offer to continue with the next source for the same package.
 
 ## Architecture
 
@@ -237,7 +238,7 @@ whacksmacker language terms --file terms/phonetics-and-phonology.md
 
 Content packages may also declare reviewable memorization items using the v1 schema in `schemas/memorization-item-v1.schema.json`. WhackSmacker stores native review progress separately using `schemas/review-progress-v1.schema.json`; installed package content remains read-only.
 
-Terminal exercise renderers can display memorization items as separated prompt and answer text. They do not grade answers or create a full native review session yet.
+Terminal exercise renderers can display memorization items as separated prompt and answer text. The native `review run` command reviews one package source at a time and can offer to continue with the next source after completion.
 
 Connect installed reading content to native review items:
 
@@ -253,9 +254,10 @@ whacksmacker review items --package com.sleepymario.language.vietnamese --source
 whacksmacker review due --package com.sleepymario.language.korean
 whacksmacker review show com.sleepymario.language.korean <item-id> --answer
 whacksmacker review answer com.sleepymario.language.korean <item-id> --rating good
+whacksmacker review run --package com.sleepymario.language.korean --source review-decks/chapter-001-005/cards.tsv
 ```
 
-For the current language packages, `review sources` lists Korean `Chapter 1-5`, `Chapter 6-10`, and `Chapter 11-15`; Chinese - Mandarin `Pinyin-Zhuyin` and `Pinyin-Zhuyin with Tones`; and Vietnamese `Chapter 1-5`. Korean and Vietnamese full grammar-pattern cards are not generated into vocabulary/function-word decks.
+For the current language packages, `review sources` lists Korean `Chapter 1-5`, `Chapter 6-10`, and `Chapter 11-15`; Chinese - Mandarin `Pinyin-Zhuyin` and `Pinyin-Zhuyin with Tones`; and Vietnamese `Chapter 1-5`. Korean and Vietnamese full grammar-pattern cards are not generated into vocabulary/function-word decks. After finishing a deck, `review run` prompts `Do you want to continue with the next deck? (y/n)` when another source exists for the same package. Continuing starts the next source in the ordered package source list without merging decks or changing card IDs.
 
 Back up user-owned state without copying installed package content:
 

@@ -51,6 +51,7 @@ test("application CLI registry exposes language commands and the geography proto
     "review answer",
     "review due",
     "review items",
+    "review run",
     "review show",
     "review sources"
   ]);
@@ -64,6 +65,7 @@ test("removed Anki language aliases no longer resolve while native review comman
   assert.equal(resolveCliCommand(registry, ["review", "Default"]), null);
   assert.equal(resolveCliCommand(registry, ["review", "sources"])?.path.join(" "), "review sources");
   assert.equal(resolveCliCommand(registry, ["review", "due"])?.path.join(" "), "review due");
+  assert.equal(resolveCliCommand(registry, ["review", "run"])?.path.join(" "), "review run");
 });
 
 test("domain-prefixed language commands resolve directly", () => {
