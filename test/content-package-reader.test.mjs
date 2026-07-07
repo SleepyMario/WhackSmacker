@@ -244,6 +244,16 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.chinese",
       path: "review-decks/pinyin-zhuyin/cards.tsv"
     });
+    const chinesePinyinIntro = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.chinese",
+      path: "units/introduction-to-hanyu-pinyin/chapter.md"
+    });
+    const chineseChapter1 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.chinese",
+      path: "units/mandarin-core/chapter-001-basic-sentences-1/chapter.md"
+    });
     const japaneseHiragana = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.japanese",
@@ -296,6 +306,12 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.match(koreanChapter20.text, /Chapter 15 -- Basic Life Sentences XV/);
     assert.match(vietnameseChapter5.text, /Chapter 5 -- Basic Sentences V/);
     assert.match(chineseDeck.text, /^Pinyin-Zhuyin\tPinyin -> Zhuyin\tb\tㄅ/m);
+    assert.match(chinesePinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
+    assert.match(chineseChapter1.text, /我是Alex Chen/);
+    assert.match(chineseChapter1.text, /我是林雅婷/);
+    assert.match(chineseChapter1.text, /Pinyin: Wǒ shì Lín Yǎtíng\./);
+    assert.match(chineseChapter1.text, /Meaning: I am Lin Yating\./);
+    assert.doesNotMatch(chineseChapter1.text, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
     assert.match(japaneseHiragana.text, /future work/);
     assert.match(japaneseChapter1.text, /アレックスです/);
     assert.match(japaneseChapter1.text, /さくらです/);
@@ -328,6 +344,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
 
     const chineseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.chinese");
     assert.deepEqual(chineseSources.map((source) => source.title).sort(), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.equal(chineseSources.some((source) => source.title === "Chapter 1-5" || source.sourcePath === "review-decks/chapter-001-005/cards.tsv"), false);
     const japaneseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.japanese");
     assert.deepEqual(japaneseSources, []);
     assert.equal(reviewSources.some((source) => source.packageId === "com.sleepymario.language.japanese" && source.title === "Chapter 1-5"), false);

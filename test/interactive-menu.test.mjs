@@ -501,6 +501,24 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
   }
 });
 
+test("language tree exposes Mandarin readable content without Core review deck", async () => {
+  const fixture = await createInstalledLanguageFixture(["chinese-curriculum"], ["com.sleepymario.language.chinese"]);
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const chinese = tree.children.find((node) => node.label === "Chinese - Mandarin");
+    const readContent = chinese.children.find((node) => node.label === "Read content");
+    const reviewDecks = chinese.children.find((node) => node.label === "Review decks");
+
+    assert.ok(readContent.children.some((node) => node.label === "Introduction to Hanyu Pinyin"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Basic Sentences I: Greeting and Identity"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- Basic Sentences V: How Are You?"));
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 1-5"), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("module tree includes available modules from a catalogue with install status", async () => {
   const fixture = await createInstalledLanguageFixture(
     ["korean-curriculum", "chinese-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],

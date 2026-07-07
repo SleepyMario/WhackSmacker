@@ -106,6 +106,8 @@ whacksmacker content install com.sleepymario.language.linguistic-terminology --c
 whacksmacker content installed
 whacksmacker language korean
 whacksmacker language korean --file units/introduction-to-hangul/README.md
+whacksmacker content read com.sleepymario.language.chinese --file units/introduction-to-hanyu-pinyin/chapter.md
+whacksmacker content read com.sleepymario.language.chinese --file units/mandarin-core/chapter-001-basic-sentences-1/chapter.md
 whacksmacker language terms
 whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```

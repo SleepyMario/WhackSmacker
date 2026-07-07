@@ -171,6 +171,12 @@ test("content package generator creates a valid Chinese - Mandarin package with 
     assert.equal(manifest.description, "Chinese - Mandarin language curriculum content generated from the canonical Chinese curriculum repository.");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.chinese");
+    assert.ok(content.files.some((file) => file.path === "units/introduction-to-hanyu-pinyin/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-core/chapter-001-basic-sentences-1/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-core/chapter-005-basic-sentences-5/chapter.md"));
+    assert.equal(content.files.some((file) => file.path === "units/mandarin-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"), false);
+    assert.equal(archive.has("content/memorization/review-decks/chapter-001-005.json"), false);
 
     for (const deck of expectedReviewDecks) {
       assert.ok(content.files.some((file) => file.path === deck.sourcePath));
@@ -187,6 +193,15 @@ test("content package generator creates a valid Chinese - Mandarin package with 
     assert.ok(allItems.some((item) => item.prompt.text === "mā" && item.answer.text === "ㄇㄚ"));
     assert.ok(allItems.some((item) => item.prompt.text === "ㄇㄚˊ" && item.answer.text === "má"));
     assert.equal(allItems.some((item) => item.kind === "sentence" || item.kind === "concept"), false);
+    assert.equal(allItems.some((item) => item.source.title === "Chapter 1-5"), false);
+    const pinyinIntro = content.files.find((file) => file.path === "units/introduction-to-hanyu-pinyin/chapter.md").text;
+    const chapter1 = content.files.find((file) => file.path === "units/mandarin-core/chapter-001-basic-sentences-1/chapter.md").text;
+    assert.match(pinyinIntro, /Hanyu Pinyin is the standard romanization system/);
+    assert.match(chapter1, /我是Alex Chen/);
+    assert.match(chapter1, /我是林雅婷/);
+    assert.match(chapter1, /Pinyin: Wǒ shì Lín Yǎtíng\./);
+    assert.match(chapter1, /Meaning: I am Lin Yating\./);
+    assert.doesNotMatch(chapter1, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
