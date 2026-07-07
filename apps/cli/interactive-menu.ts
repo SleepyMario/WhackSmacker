@@ -81,6 +81,9 @@ export interface MenuItem {
 
 export type LanguageTreeNodeKind =
   | "root"
+  | "category"
+  | "module"
+  | "command"
   | "package"
   | "read-section"
   | "review-section"
@@ -101,6 +104,9 @@ export interface LanguageTreeNode {
   readonly sourcePath?: string;
   readonly itemCount?: number;
   readonly previewText?: string;
+  readonly commandPath?: readonly string[];
+  readonly commandArgs?: readonly string[];
+  readonly launchTitle?: string;
 }
 
 export interface VisibleLanguageTreeNode {
@@ -349,60 +355,9 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
   terminal.enter();
 
   try {
-    let selection = 0;
-
-    while (!interrupted) {
-      renderMenu(terminal, renderWhackSmackerHeader(terminal.colorsEnabled), mainMenuItems, selection);
-      const key = await terminal.readKey();
-
-      if (isCtrlC(key)) {
-        process.exitCode = 130;
-        return;
-      }
-
-      if (isQuit(key) || isEscape(key)) {
-        return;
-      }
-
-      if (isUp(key)) {
-        selection = wrapSelection(selection - 1, mainMenuItems.length);
-        continue;
-      }
-
-      if (isDown(key)) {
-        selection = wrapSelection(selection + 1, mainMenuItems.length);
-        continue;
-      }
-
-      if (isEnter(key)) {
-        const item = mainMenuItems[selection];
-        if (item.kind === "language") {
-          const quit = await runLanguageMenu(registry, terminal, options);
-          if (quit) {
-            return;
-          }
-        } else if (item.kind === "geography") {
-          const quit = await runGeographyMenu(registry, terminal);
-          if (quit) {
-            return;
-          }
-        } else if (item.kind === "chess") {
-          const quit = await runChessAction(registry, terminal);
-          if (quit) {
-            return;
-          }
-        } else if (item.kind === "mathematics") {
-          const quit = await runMathematicsMenu(registry, terminal);
-          if (quit) {
-            return;
-          }
-        } else {
-          const quit = await runPlaceholderScreen(terminal, item.label);
-          if (quit) {
-            return;
-          }
-        }
-      }
+    const quit = await runModuleTreeMenu(registry, terminal, options);
+    if (quit) {
+      return;
     }
   } finally {
     process.off("SIGINT", onSigint);
@@ -686,9 +641,9 @@ async function runGeographyAction(registry: InMemoryCliCommandRegistry, terminal
   return showMessage(terminal, "Press Escape or Enter to return.", { clear: false });
 }
 
-async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
-  let tree = await buildLanguageTree(options.dataDir);
-  let expandedIds = new Set<string>(["languages"]);
+async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
+  let tree = await buildModuleTree(options.dataDir);
+  let expandedIds = new Set<string>(["whacksmacker"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let selectedReviewStartId: string | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
@@ -752,7 +707,7 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
       if (selectedReviewStartId === selected.node.id) {
         const quit = await runLanguageTreeReviewSourceAction(registry, terminal, selected.node, options);
         selectedReviewStartId = null;
-        tree = await buildLanguageTree(options.dataDir);
+        tree = await buildModuleTree(options.dataDir);
         expandedIds = keepExistingExpandedIds(tree, expandedIds);
         rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
         if (quit) {
@@ -765,6 +720,14 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
       continue;
     }
     selectedReviewStartId = null;
+    if (selected.node.kind === "command") {
+      const quit = await runModuleTreeCommandAction(registry, terminal, selected.node);
+      rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+      if (quit) {
+        return true;
+      }
+      continue;
+    }
     if (selected.expandable) {
       expandedIds = selected.expanded ? withoutExpandedId(expandedIds, selected.node.id) : withExpandedId(expandedIds, selected.node.id);
       rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
@@ -772,6 +735,21 @@ async function runLanguageMenu(registry: InMemoryCliCommandRegistry, terminal: T
     }
     rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
   }
+}
+
+export async function buildModuleTree(dataDir?: string): Promise<LanguageTreeNode> {
+  const languages = await buildLanguageTree(dataDir);
+  return {
+    id: "whacksmacker",
+    label: "WhackSmacker",
+    kind: "root",
+    children: [
+      languages,
+      buildGamesTree(),
+      buildGeographyTree(),
+      buildMathematicsTree()
+    ]
+  };
 }
 
 export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeNode> {
@@ -862,7 +840,7 @@ export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeN
   return {
     id: "languages",
     label: "Languages",
-    kind: "root",
+    kind: "category",
     children: packageNodes.length > 0 ? packageNodes : [{
       id: "languages:none",
       label: "No installed language packages",
@@ -873,6 +851,124 @@ export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeN
         "Generate content packages, create a local catalogue, then install language packages with whacksmacker content install.",
         "Installed packages appear here automatically after installation."
       ].join("\n")
+    }]
+  };
+}
+
+function buildGamesTree(): LanguageTreeNode {
+  return {
+    id: "games",
+    label: "Games",
+    kind: "category",
+    previewText: "Games\n\nBuilt-in game modules live here.",
+    children: [{
+      id: "games:chess",
+      label: "Chess",
+      kind: "module",
+      previewText: [
+        "Chess",
+        "",
+        "Terminal chessboard module.",
+        "",
+        "Available commands:",
+        "whacksmacker chess",
+        "whacksmacker chess e2e4 e7e5",
+        "whacksmacker chess --legal e2"
+      ].join("\n"),
+      children: [
+        {
+          id: "games:chess:board",
+          label: "Play / Board",
+          kind: "command",
+          commandPath: ["chess"],
+          commandArgs: [],
+          launchTitle: "Chess",
+          previewText: "Play / Board\n\nPress Enter to launch the existing terminal chessboard flow.\n\nEquivalent command:\nwhacksmacker chess"
+        },
+        {
+          id: "games:chess:legal",
+          label: "Legal moves",
+          kind: "message",
+          previewText: "Legal moves\n\nUse the command form for now:\nwhacksmacker chess --legal e2\n\nThis tree node is guidance only until a square prompt exists."
+        },
+        {
+          id: "games:chess:info",
+          label: "Module info",
+          kind: "message",
+          previewText: "Chess\n\nBuilt-in terminal chess module.\nUser state is not stored in installed content packages."
+        }
+      ]
+    }]
+  };
+}
+
+function buildGeographyTree(): LanguageTreeNode {
+  return {
+    id: "geography",
+    label: "Geography",
+    kind: "category",
+    previewText: "Geography\n\nBuilt-in geography review modules live here.",
+    children: [{
+      id: "geography:continents",
+      label: "Continents",
+      kind: "command",
+      commandPath: ["geography", "continents"],
+      commandArgs: [],
+      launchTitle: "Geography -- Continents",
+      previewText: "Continents\n\nPress Enter to launch the existing six-continent terminal map review.\n\nEquivalent command:\nwhacksmacker geography continents"
+    }]
+  };
+}
+
+function buildMathematicsTree(): LanguageTreeNode {
+  return {
+    id: "mathematics",
+    label: "Mathematics",
+    kind: "category",
+    previewText: "Mathematics\n\nBuilt-in mathematics workbook generators live here.",
+    children: [{
+      id: "mathematics:beginner",
+      label: "Beginner Mathematics",
+      kind: "module",
+      previewText: [
+        "Beginner Mathematics",
+        "",
+        "On-demand workbook generators. These are not installed content packages yet.",
+        "",
+        "Select a generator to run it, or use the command line directly."
+      ].join("\n"),
+      children: [
+        {
+          id: "mathematics:beginner:volume-one",
+          label: "Generate complete Volume 1",
+          kind: "message",
+          previewText: `Generate complete Volume 1\n\nUse the command form for now:\nwhacksmacker mathematics beginner-volume-one --output ${defaultBeginnerVolumeOneOutputPath}\n\nThe tree keeps this as guidance to avoid opening an output-path prompt inside the pane.`
+        },
+        {
+          id: "mathematics:beginner:unit-1",
+          label: "Generate Unit 1 - One, Two, Three",
+          kind: "message",
+          previewText: `Generate Unit 1 - One, Two, Three\n\nUse the command form for now:\nwhacksmacker mathematics one-two-three --output ${defaultOneTwoThreeOutputPath}`
+        },
+        {
+          id: "mathematics:beginner:unit-2",
+          label: "Generate Unit 2 - Four and Five",
+          kind: "message",
+          previewText: `Generate Unit 2 - Four and Five\n\nUse the command form for now:\nwhacksmacker mathematics four-and-five --output ${defaultFourAndFiveOutputPath}`
+        },
+        {
+          id: "mathematics:beginner:unit-3",
+          label: "Generate Unit 3 - One to Five",
+          kind: "message",
+          previewText: `Generate Unit 3 - One to Five\n\nUse the command form for now:\nwhacksmacker mathematics one-to-five --output ${defaultOneToFiveOutputPath}`
+        },
+        {
+          id: "mathematics:beginner:unit-4",
+          label: "Generate Unit 4 - Six, Seven, Eight, Nine",
+          kind: "message",
+          previewText: `Generate Unit 4 - Six, Seven, Eight, Nine\n\nUse the command form for now:\nwhacksmacker mathematics six-to-nine --output ${defaultSixToNineOutputPath}`
+        }
+      ]
     }]
   };
 }
@@ -930,12 +1026,15 @@ async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: Inte
   if (node.kind === "message") {
     return node.previewText ?? node.label;
   }
+  if (node.kind === "category" || node.kind === "module" || node.kind === "command") {
+    return node.previewText ?? `${node.label}\n\nSelect or expand items in the tree.`;
+  }
   return [
-    "Languages",
+    "WhackSmacker",
     "",
-    "Installed language packages appear in the tree on the left.",
+    "Installed content packages and built-in modules appear in the tree on the left.",
     "",
-    "Expand a package to read content, review decks, or inspect package info.",
+    "Expand categories to read content, review decks, inspect package info, or launch built-in module commands.",
     "",
     "Controls:",
     "Up/Down move",
@@ -943,6 +1042,23 @@ async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: Inte
     "Escape collapses or backs out",
     "q quits"
   ].join("\n");
+}
+
+async function runModuleTreeCommandAction(
+  registry: InMemoryCliCommandRegistry,
+  terminal: Terminal,
+  node: LanguageTreeNode
+): Promise<boolean> {
+  if (node.commandPath === undefined) {
+    return showMessage(terminal, node.previewText ?? "This item does not have a launch action yet.");
+  }
+  const command = registry.find(node.commandPath);
+  if (command === null) {
+    return showMessage(terminal, `Command is not registered: ${node.commandPath.join(" ")}`);
+  }
+
+  const output = await runCapturedLanguageCommand(terminal, command, node.commandArgs ?? []);
+  return showPagedMessage(terminal, renderLanguageActionResult(node.launchTitle ?? node.label, output));
 }
 
 function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean): string {

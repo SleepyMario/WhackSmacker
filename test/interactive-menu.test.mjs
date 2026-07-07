@@ -8,6 +8,7 @@ import { createCommandRegistry, resolveCliCommand } from "../dist/apps/cli/main.
 import {
   buildLanguageTree,
   buildLanguageMenuItems,
+  buildModuleTree,
   flattenVisibleLanguageTree,
   getDynamicLanguageMenuItems,
   getBeginnerMathematicsMenuItems,
@@ -235,7 +236,67 @@ test("One, Two, Three submenu exposes workbook generation and back", () => {
   );
 });
 
-test("language menu opens the installed-package two-pane tree", async () => {
+test("interactive menu opens the module two-pane tree", async () => {
+  const fixture = await createInstalledDutchFixture();
+  const terminal = new FakeTerminal([
+    key("q", { sequence: "q" })
+  ]);
+
+  try {
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+
+    assert.match(terminal.output, /\+------------------------------------\+------------------------------------------------------------------------------\+/);
+    assert.match(terminal.output, /WhackSmacker/);
+    assert.match(terminal.output, /Languages/);
+    assert.match(terminal.output, /Games/);
+    assert.match(terminal.output, /Geography/);
+    assert.match(terminal.output, /Mathematics/);
+    assert.doesNotMatch(terminal.output, /mouse/i);
+    assert.match(terminal.output, /Up\/Down move  Enter open\/start  Escape collapse\/back  q quit/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("module tree lists top-level categories and installed language packages", async () => {
+  const fixture = await createInstalledLanguageFixture(
+    ["korean-curriculum", "chinese-curriculum", "vietnamese-curriculum", "dutch-curriculum"],
+    [
+      "com.sleepymario.language.korean",
+      "com.sleepymario.language.chinese",
+      "com.sleepymario.language.vietnamese",
+      "com.sleepymario.language.dutch"
+    ]
+  );
+  try {
+    const tree = await buildModuleTree(fixture.dataDir);
+    const languages = tree.children.find((node) => node.label === "Languages");
+
+    assert.equal(tree.label, "WhackSmacker");
+    assert.deepEqual(tree.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
+    assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin", "Dutch", "Korean", "Vietnamese"]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("module tree exposes Games Chess Geography and Mathematics entries", async () => {
+  const tree = await buildModuleTree();
+  const games = tree.children.find((node) => node.label === "Games");
+  const geography = tree.children.find((node) => node.label === "Geography");
+  const mathematics = tree.children.find((node) => node.label === "Mathematics");
+  const chess = games.children.find((node) => node.label === "Chess");
+
+  assert.deepEqual(games.children.map((node) => node.label), ["Chess"]);
+  assert.deepEqual(chess.children.map((node) => node.label), ["Play / Board", "Legal moves", "Module info"]);
+  assert.deepEqual(geography.children.map((node) => node.label), ["Continents"]);
+  assert.deepEqual(mathematics.children.map((node) => node.label), ["Beginner Mathematics"]);
+  assert.match(chess.previewText, /whacksmacker chess/);
+  assert.match(geography.children[0].previewText, /whacksmacker geography continents/);
+  assert.match(mathematics.children[0].previewText, /workbook generators/);
+});
+
+test("language category can expand installed package nodes in the module tree", async () => {
   const fixture = await createInstalledDutchFixture();
   const terminal = new FakeTerminal([
     key("return"),
@@ -245,8 +306,6 @@ test("language menu opens the installed-package two-pane tree", async () => {
   try {
     await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
 
-    assert.match(terminal.output, /WhackSmacker Will Whack That Smack Into Your Brains/);
-    assert.match(terminal.output, /\+------------------------------------\+------------------------------------------------------------------------------\+/);
     assert.match(terminal.output, /Languages/);
     assert.match(terminal.output, /Dutch/);
     assert.match(terminal.output, /Up\/Down move  Enter open\/start  Escape collapse\/back  q quit/);
@@ -388,6 +447,7 @@ test("selecting an installed review source runs the existing review flow live wi
   const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
+    key("down"),
     key("return"),
     key("down"),
     key("down"),
@@ -448,6 +508,7 @@ test("review section can be expanded without starting review", async () => {
   const calls = [];
   const terminal = new FakeTerminal([
     key("return"),
+    key("down"),
     key("return"),
     key("down"),
     key("down"),
@@ -501,6 +562,7 @@ test("installed language package read content menu uses selectable content label
   const fixture = await createInstalledDutchFixture();
   const terminal = new FakeTerminal([
     key("return"),
+    key("down"),
     key("return"),
     key("down"),
     key("return"),
@@ -524,8 +586,12 @@ test("chess menu item routes to the registered command", async () => {
   const terminal = new FakeTerminal([
     key("down"),
     key("return"),
+    key("down"),
     key("return"),
-    key("escape")
+    key("down"),
+    key("return"),
+    key("escape"),
+    key("q", { sequence: "q" })
   ]);
 
   await runInteractiveMenu(createStubRegistry(calls), terminal);
@@ -542,10 +608,10 @@ test("geography menu routes continents to the registered command", async () => {
     key("down"),
     key("down"),
     key("return"),
-    key("return"),
+    key("down"),
     key("return"),
     key("escape"),
-    key("escape")
+    key("q", { sequence: "q" })
   ]);
 
   await runInteractiveMenu(createStubRegistry(calls), terminal);
@@ -634,12 +700,16 @@ test("compact WSM header omits ANSI colors for non-TTY output", () => {
   assert.doesNotMatch(header, /\x1b\[[0-9;]*m/);
 });
 
-test("main menu separates the subtitle from module choices with one blank line", async () => {
+test("interactive menu starts with the module tree", async () => {
   const terminal = new FakeTerminal([key("q", { sequence: "q" })]);
 
   await runInteractiveMenu(createStubRegistry([]), terminal);
 
-  assert.match(stripAnsi(terminal.output), /WhackSmacker Will Whack That Smack Into Your Brains\n\n> Language/);
+  assert.match(stripAnsi(terminal.output), /WhackSmacker/);
+  assert.match(stripAnsi(terminal.output), />   > Languages/);
+  assert.match(stripAnsi(terminal.output), /Games/);
+  assert.match(stripAnsi(terminal.output), /Geography/);
+  assert.match(stripAnsi(terminal.output), /Mathematics/);
 });
 
 function stripAnsi(text) {
