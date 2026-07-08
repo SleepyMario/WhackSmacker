@@ -19,6 +19,8 @@ import {
   getMainMenuItems,
   getMathematicsMenuItems,
   getOneTwoThreeMenuItems,
+  formatEmbeddedReviewReveal,
+  isEmbeddedReviewItemUsable,
   installedLanguagePackagesToMenuItems,
   languageMenuHeading,
   listAvailableModuleDescriptors,
@@ -784,6 +786,84 @@ test("embedded review controls render plainly when terminal colors are disabled"
   }
 });
 
+test("Chinese A prompt reveals pronunciation and characters", () => {
+  const output = formatEmbeddedReviewReveal(chineseExercise({
+    promptLanguage: "en",
+    answerLanguage: "zh-Hant",
+    promptLines: ["hello"],
+    answerLines: ["Pinyin: nǐ hǎo", "Zhuyin: ㄋㄧˇ ㄏㄠˇ", "Characters: 你好"]
+  }), chineseExercise({
+    promptLanguage: "en",
+    answerLanguage: "zh-Hant",
+    promptLines: ["hello"],
+    answerLines: ["Pinyin: nǐ hǎo", "Zhuyin: ㄋㄧˇ ㄏㄠˇ", "Characters: 你好"]
+  }), false, "com.sleepymario.language.chinese.mandarin.traditional");
+
+  assert.match(output, /Review Prompt[\s\S]+hello/);
+  assert.match(output, /Review Answer[\s\S]+Pinyin: nǐ hǎo/);
+  assert.match(output, /Zhuyin: ㄋㄧˇ ㄏㄠˇ/);
+  assert.match(output, /Characters: 你好/);
+  assert.doesNotMatch(output, /com\.sleepymario/);
+  assert.doesNotMatch(output, /review-decks\//);
+  assert.doesNotMatch(output, /^Prompt$/m);
+  assert.doesNotMatch(output, /^Answer$/m);
+});
+
+test("Chinese C prompt reveals meaning and pronunciation", () => {
+  const exercise = chineseExercise({
+    promptLanguage: "zh-Hant",
+    answerLanguage: "en",
+    promptLines: ["你好"],
+    answerLines: ["Meaning: hello", "Pinyin: nǐ hǎo", "Zhuyin: ㄋㄧˇ ㄏㄠˇ"]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.chinese.mandarin.traditional");
+
+  assert.match(output, /Review Prompt[\s\S]+你好/);
+  assert.match(output, /Review Answer[\s\S]+Meaning: hello/);
+  assert.match(output, /Pinyin: nǐ hǎo/);
+  assert.match(output, /Zhuyin: ㄋㄧˇ ㄏㄠˇ/);
+});
+
+test("Chinese compound B prompt reveals meaning and characters", () => {
+  const exercise = chineseExercise({
+    promptLanguage: "zh-Latn-pinyin",
+    answerLanguage: "zh-Hant",
+    promptLines: ["Pinyin: nǐ hǎo", "Zhuyin: ㄋㄧˇ ㄏㄠˇ"],
+    answerLines: ["Meaning: hello", "Characters: 你好"]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.chinese.mandarin.simplified");
+
+  assert.match(output, /Review Prompt[\s\S]+nǐ hǎo[\s\S]+ㄋㄧˇ ㄏㄠˇ/);
+  assert.match(output, /Review Answer[\s\S]+Meaning: hello/);
+  assert.match(output, /Characters: 你好/);
+});
+
+test("Chinese non-compound structured B prompt is not used in embedded review sessions", () => {
+  const item = chineseReviewItem({
+    promptLanguage: "zh-Latn-pinyin",
+    answerLanguage: "zh-Hant",
+    prompt: "Pinyin: mā\nZhuyin: ㄇㄚ",
+    answer: "Meaning: mother\nCharacters: 媽"
+  });
+
+  assert.equal(isEmbeddedReviewItemUsable(item), false);
+});
+
+test("non-Chinese embedded review rendering remains unchanged", () => {
+  const exercise = chineseExercise({
+    promptLanguage: "nl",
+    answerLanguage: "en",
+    promptLines: ["hallo"],
+    answerLines: ["hello"]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.dutch");
+
+  assert.match(output, /Review Prompt[\s\S]+hallo/);
+  assert.match(output, /Review Answer[\s\S]+hello/);
+  assert.doesNotMatch(output, /Pinyin:/);
+  assert.doesNotMatch(output, /Characters:/);
+});
+
 test("review section can be expanded without starting review", async () => {
   const fixture = await createInstalledDutchFixture();
   const calls = [];
@@ -1178,6 +1258,66 @@ function embeddedDutchReviewKeys(ratingKey) {
     key("q", { sequence: "q" }),
     key("q", { sequence: "q" })
   ];
+}
+
+function chineseExercise({
+  promptLanguage,
+  answerLanguage,
+  promptLines,
+  answerLines
+}) {
+  return {
+    itemIdentity: {
+      packageId: "com.sleepymario.language.chinese.mandarin.traditional",
+      packageVersion: "0.1.0",
+      itemId: "review-decks/test/0001"
+    },
+    kind: "vocabulary",
+    title: "Test deck",
+    promptLanguage,
+    answerLanguage,
+    promptLines,
+    answerLines,
+    hintLines: [],
+    noteLines: [],
+    metadataLines: [],
+    warnings: []
+  };
+}
+
+function chineseReviewItem({
+  promptLanguage,
+  answerLanguage,
+  prompt,
+  answer
+}) {
+  return {
+    packageId: "com.sleepymario.language.chinese.mandarin.traditional",
+    packageVersion: "0.1.0",
+    sourcePath: "review-decks/test/cards.tsv",
+    sourceExists: true,
+    item: {
+      schemaVersion: 1,
+      id: "review-decks/test/0001",
+      kind: "vocabulary",
+      prompt: {
+        text: prompt,
+        plainText: prompt,
+        language: promptLanguage,
+        mediaType: "text/plain"
+      },
+      answer: {
+        text: answer,
+        plainText: answer,
+        language: answerLanguage,
+        mediaType: "text/plain"
+      },
+      source: {
+        path: "review-decks/test/cards.tsv",
+        title: "Test deck"
+      }
+    }
+  };
 }
 
 async function createInstalledDutchFixture() {

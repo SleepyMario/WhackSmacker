@@ -25,6 +25,7 @@ import {
   type FirstClassModuleDescriptor,
   type ReadableContentEntry,
   type RenderedExercise,
+  type ReadingReviewItem,
   type ReviewItemState,
   type ReviewRating,
   type ReadingReviewSource,
@@ -1679,7 +1680,7 @@ async function startEmbeddedReviewSession(node: LanguageTreeNode, options: Inter
     packageVersion: node.packageVersion,
     sourcePath: node.sourcePath
   });
-  const sourceItemIds = new Set(sourceItems.map((item) => item.item.id));
+  const sourceItemIds = new Set(sourceItems.filter(isEmbeddedReviewItemUsable).map((item) => item.item.id));
   const due = (await listIntegratedDueReviewItems({
     dataDir: options.dataDir,
     packageId: node.packageId,
@@ -1817,8 +1818,8 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
     return [...header, "Loading review card..."].join("\n");
   }
   const cards = session.side === "prompt"
-    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled)]
-    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled)];
+    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled, session.node.packageId)]
+    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled, session.node.packageId)];
   const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled);
   return [
     ...header,
@@ -1829,16 +1830,16 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
   ].filter((line) => line.length > 0).join("\n");
 }
 
-function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean): string {
+export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean, packageId?: string): string {
+  const chineseLines = isChineseMandarinPackage(packageId) ? formatChineseEmbeddedExerciseLines(exercise, side) : undefined;
   const title = side === "prompt" ? "Review Prompt" : "Review Answer";
   const width = 64;
   const border = "-".repeat(width);
   const lines = [
     reviewCardColor(border, side, colorsEnabled),
     reviewCardColor(centerText(title, width), side, colorsEnabled),
-    reviewCardColor(centerText(exercise.title, width), side, colorsEnabled),
     reviewCardColor(border, side, colorsEnabled),
-    ...prefixReviewCardLines(side === "prompt" ? exercise.promptLines : exercise.answerLines)
+    ...prefixReviewCardLines(chineseLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines))
   ];
   if (side === "prompt" && exercise.hintLines.length > 0) {
     lines.push("", "Hints", ...prefixReviewCardLines(exercise.hintLines));
@@ -1850,19 +1851,19 @@ function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt"
   return lines.join("\n");
 }
 
-function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean): string {
+export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string): string {
   const width = 64;
   const border = "-".repeat(width);
+  const chineseReveal = isChineseMandarinPackage(packageId) ? formatChineseEmbeddedRevealLines(prompt) : undefined;
   const noteLines = cleanEmbeddedReviewNoteLines(answer.noteLines);
   const lines = [
     reviewCardColor(border, "answer", colorsEnabled),
     reviewCardColor(centerText("Review Prompt", width), "prompt", colorsEnabled),
-    reviewCardColor(centerText(prompt.title, width), "prompt", colorsEnabled),
     reviewCardColor(border, "prompt", colorsEnabled),
-    ...prefixReviewCardLines(prompt.promptLines),
+    ...prefixReviewCardLines(chineseReveal?.promptLines ?? prompt.promptLines),
     reviewCardColor(border, "answer", colorsEnabled),
     reviewCardColor(centerText("Review Answer", width), "answer", colorsEnabled),
-    ...prefixReviewCardLines(answer.answerLines)
+    ...prefixReviewCardLines(chineseReveal?.answerLines ?? answer.answerLines)
   ];
   if (noteLines.length > 0) {
     lines.push("Notes", ...prefixReviewCardLines(noteLines));
@@ -1875,6 +1876,260 @@ function cleanEmbeddedReviewNoteLines(lines: readonly string[]): readonly string
   return lines
     .map((line) => line.replace(/^Deck:\s*[^.]+\.?\s*/u, "").trimEnd())
     .filter((line) => line.length > 0);
+}
+
+type ChineseReviewSide = "meaning" | "pronunciation" | "characters" | "unknown";
+
+interface ChineseReviewFields {
+  readonly meaning?: string;
+  readonly pinyin?: string;
+  readonly zhuyin?: string;
+  readonly characters?: string;
+}
+
+interface ChineseReviewView {
+  readonly promptSide: ChineseReviewSide;
+  readonly fields: ChineseReviewFields;
+}
+
+export function isEmbeddedReviewItemUsable(item: ReadingReviewItem): boolean {
+  if (!isChineseMandarinPackage(item.packageId)) {
+    return true;
+  }
+  const view = chineseReviewViewFromBlocks({
+    promptLines: normalizeReviewTextLines(item.item.prompt.plainText ?? item.item.prompt.text),
+    answerLines: normalizeReviewTextLines(item.item.answer.plainText ?? item.item.answer.text),
+    promptLanguage: item.item.prompt.language,
+    answerLanguage: item.item.answer.language
+  });
+  if (!isStructuredChineseReviewView(view)) {
+    return true;
+  }
+  return view.promptSide !== "pronunciation" || isCompoundChinesePronunciation(view.fields);
+}
+
+function isChineseMandarinPackage(packageId?: string): boolean {
+  return packageId?.startsWith("com.sleepymario.language.chinese.mandarin.") === true;
+}
+
+function formatChineseEmbeddedExerciseLines(exercise: RenderedExercise, side: "prompt" | "answer"): readonly string[] | undefined {
+  const view = chineseReviewViewFromRenderedExercise(exercise);
+  if (!hasAnyChineseReviewField(view.fields)) {
+    return undefined;
+  }
+  if (side === "prompt") {
+    return chinesePromptLinesForView(view);
+  }
+  return chineseAnswerLinesForView(view, exercise.answerLines);
+}
+
+function formatChineseEmbeddedRevealLines(exercise: RenderedExercise): { readonly promptLines: readonly string[]; readonly answerLines: readonly string[] } | undefined {
+  const view = chineseReviewViewFromRenderedExercise(exercise);
+  if (!hasAnyChineseReviewField(view.fields)) {
+    return undefined;
+  }
+  return {
+    promptLines: chinesePromptLinesForView(view),
+    answerLines: chineseAnswerLinesForView(view, exercise.answerLines)
+  };
+}
+
+function chineseReviewViewFromRenderedExercise(exercise: RenderedExercise): ChineseReviewView {
+  return chineseReviewViewFromBlocks({
+    promptLines: exercise.promptLines,
+    answerLines: exercise.answerLines,
+    promptLanguage: exercise.promptLanguage,
+    answerLanguage: exercise.answerLanguage
+  });
+}
+
+function chineseReviewViewFromBlocks(options: {
+  readonly promptLines: readonly string[];
+  readonly answerLines: readonly string[];
+  readonly promptLanguage?: string;
+  readonly answerLanguage?: string;
+}): ChineseReviewView {
+  const promptStructured = structuredChineseReviewFields(options.promptLines);
+  const answerStructured = structuredChineseReviewFields(options.answerLines);
+  const promptSide = chineseSideForLines(options.promptLines, options.promptLanguage, promptStructured);
+  const answerSide = chineseSideForLines(options.answerLines, options.answerLanguage, answerStructured);
+  const inferredPrompt = inferChineseFieldsForSide(options.promptLines, promptSide);
+  const inferredAnswer = inferChineseFieldsForSide(options.answerLines, answerSide);
+  return {
+    promptSide,
+    fields: mergeChineseReviewFields(promptStructured, answerStructured, inferredPrompt, inferredAnswer)
+  };
+}
+
+function structuredChineseReviewFields(lines: readonly string[]): ChineseReviewFields {
+  const fields: { meaning?: string; pinyin?: string; zhuyin?: string; characters?: string } = {};
+  for (const line of lines) {
+    const match = line.match(/^(Meaning|Pinyin|Zhuyin|Characters):\s*(.+)$/iu);
+    if (match === null) {
+      continue;
+    }
+    const key = match[1]?.toLowerCase();
+    const value = match[2]?.trim();
+    if (value === undefined || value.length === 0) {
+      continue;
+    }
+    if (key === "meaning") {
+      fields.meaning = value;
+    } else if (key === "pinyin") {
+      fields.pinyin = value;
+    } else if (key === "zhuyin") {
+      fields.zhuyin = value;
+    } else if (key === "characters") {
+      fields.characters = value;
+    }
+  }
+  return fields;
+}
+
+function chineseSideForLines(lines: readonly string[], language: string | undefined, structured: ChineseReviewFields): ChineseReviewSide {
+  if (structured.meaning !== undefined && structured.pinyin === undefined && structured.zhuyin === undefined && structured.characters === undefined) {
+    return "meaning";
+  }
+  if ((structured.pinyin !== undefined || structured.zhuyin !== undefined) && structured.meaning === undefined && structured.characters === undefined) {
+    return "pronunciation";
+  }
+  if (structured.characters !== undefined && structured.meaning === undefined && structured.pinyin === undefined && structured.zhuyin === undefined) {
+    return "characters";
+  }
+  if (language === "en") {
+    return "meaning";
+  }
+  if (language === "zh-Latn-pinyin" || language === "zh-Bopo") {
+    return "pronunciation";
+  }
+  if (language?.startsWith("zh-") === true || lines.some(containsHanCharacter)) {
+    return "characters";
+  }
+  return "unknown";
+}
+
+function inferChineseFieldsForSide(lines: readonly string[], side: ChineseReviewSide): ChineseReviewFields {
+  const text = lines.join("\n").trim();
+  if (text.length === 0) {
+    return {};
+  }
+  if (side === "meaning") {
+    return { meaning: text };
+  }
+  if (side === "characters") {
+    return { characters: text };
+  }
+  if (side === "pronunciation") {
+    const structured = structuredChineseReviewFields(lines);
+    if (structured.pinyin !== undefined || structured.zhuyin !== undefined) {
+      return structured;
+    }
+    return containsZhuyinCharacter(text) ? { zhuyin: text } : { pinyin: text };
+  }
+  return {};
+}
+
+function mergeChineseReviewFields(...fields: readonly ChineseReviewFields[]): ChineseReviewFields {
+  const merged: { meaning?: string; pinyin?: string; zhuyin?: string; characters?: string } = {};
+  for (const field of fields) {
+    merged.meaning ??= field.meaning;
+    merged.pinyin ??= field.pinyin;
+    merged.zhuyin ??= field.zhuyin;
+    merged.characters ??= field.characters;
+  }
+  return merged;
+}
+
+function chinesePromptLinesForView(view: ChineseReviewView): readonly string[] {
+  if (view.promptSide === "meaning" && view.fields.meaning !== undefined) {
+    return [view.fields.meaning];
+  }
+  if (view.promptSide === "characters" && view.fields.characters !== undefined) {
+    return [view.fields.characters];
+  }
+  if (view.promptSide === "pronunciation") {
+    return [view.fields.pinyin, view.fields.zhuyin].filter((line): line is string => line !== undefined);
+  }
+  return [];
+}
+
+function chineseAnswerLinesForView(view: ChineseReviewView, fallbackAnswerLines: readonly string[]): readonly string[] {
+  const lines: string[] = [];
+  if (view.promptSide === "meaning") {
+    pushChineseReviewLine(lines, "Pinyin", view.fields.pinyin);
+    pushChineseReviewLine(lines, "Zhuyin", view.fields.zhuyin);
+    pushChineseReviewLine(lines, "Characters", view.fields.characters);
+  } else if (view.promptSide === "characters") {
+    pushChineseReviewLine(lines, "Meaning", view.fields.meaning);
+    pushChineseReviewLine(lines, "Pinyin", view.fields.pinyin);
+    pushChineseReviewLine(lines, "Zhuyin", view.fields.zhuyin);
+  } else if (view.promptSide === "pronunciation" && view.fields.meaning !== undefined && view.fields.characters !== undefined) {
+    pushChineseReviewLine(lines, "Meaning", view.fields.meaning);
+    pushChineseReviewLine(lines, "Characters", view.fields.characters);
+  } else if (view.promptSide === "pronunciation") {
+    pushChineseReviewLine(lines, "Pinyin", view.fields.pinyin);
+    pushChineseReviewLine(lines, "Zhuyin", view.fields.zhuyin);
+  }
+  const prompt = chinesePromptLinesForView(view);
+  const promptValues = new Set(prompt);
+  const visibleLines = lines.filter((line) => !promptValues.has(line.replace(/^[^:]+:\s*/u, "")));
+  return visibleLines.length === 0 ? fallbackAnswerLines : visibleLines;
+}
+
+function pushChineseReviewLine(lines: string[], label: string, value: string | undefined): void {
+  if (value !== undefined && value.length > 0) {
+    lines.push(`${label}: ${value}`);
+  }
+}
+
+function isStructuredChineseReviewView(view: ChineseReviewView): boolean {
+  return view.fields.meaning !== undefined && view.fields.characters !== undefined && (view.fields.pinyin !== undefined || view.fields.zhuyin !== undefined);
+}
+
+function hasAnyChineseReviewField(fields: ChineseReviewFields): boolean {
+  return fields.meaning !== undefined || fields.pinyin !== undefined || fields.zhuyin !== undefined || fields.characters !== undefined;
+}
+
+function isCompoundChinesePronunciation(fields: ChineseReviewFields): boolean {
+  const pinyinSyllables = fields.pinyin === undefined ? 0 : countPinyinSyllableTokens(fields.pinyin);
+  const zhuyinSyllables = fields.zhuyin === undefined ? 0 : countZhuyinSyllableTokens(fields.zhuyin);
+  const hanCharacters = fields.characters === undefined ? 0 : countHanCharacters(fields.characters);
+  return pinyinSyllables >= 2 || zhuyinSyllables >= 2 || (hanCharacters >= 2 && pinyinSyllables >= 2);
+}
+
+function countPinyinSyllableTokens(value: string): number {
+  return value
+    .split(/[\s·・-]+/u)
+    .map((token) => token.trim())
+    .filter((token) => /[A-Za-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüÜ]/u.test(token)).length;
+}
+
+function countZhuyinSyllableTokens(value: string): number {
+  return value
+    .split(/\s+/u)
+    .map((token) => token.trim())
+    .filter((token) => /[\u3100-\u312f\u31a0-\u31bf]/u.test(token)).length;
+}
+
+function countHanCharacters(value: string): number {
+  return [...value].filter(containsHanCharacter).length;
+}
+
+function containsHanCharacter(value: string): boolean {
+  return /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/u.test(value);
+}
+
+function containsZhuyinCharacter(value: string): boolean {
+  return /[\u3100-\u312f\u31a0-\u31bf]/u.test(value);
+}
+
+function normalizeReviewTextLines(text: string): readonly string[] {
+  const lines = text
+    .replace(/\r\n?/gu, "\n")
+    .split("\n")
+    .map((line) => line.replace(/[ \t\f\v]+/gu, " ").trim())
+    .filter((line) => line.length > 0);
+  return lines.length === 0 ? [""] : lines;
 }
 
 function formatPromptControls(colorsEnabled: boolean): string {

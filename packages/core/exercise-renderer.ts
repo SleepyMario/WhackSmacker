@@ -18,6 +18,8 @@ export interface RenderedExercise {
   readonly itemIdentity: ExerciseItemIdentity;
   readonly kind: MemorizationItem["kind"];
   readonly title: string;
+  readonly promptLanguage?: string;
+  readonly answerLanguage?: string;
   readonly promptLines: readonly string[];
   readonly answerLines: readonly string[];
   readonly hintLines: readonly string[];
@@ -43,6 +45,8 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
     itemIdentity: identity,
     kind: item.kind,
     title: titleFor(item),
+    ...(item.prompt.language === undefined ? {} : { promptLanguage: item.prompt.language }),
+    ...(item.answer.language === undefined ? {} : { answerLanguage: item.answer.language }),
     promptLines: promptLinesFor(item),
     answerLines: answerLinesFor(item),
     hintLines: (item.hints ?? []).flatMap((hint) => normalizeLines(hint)),
