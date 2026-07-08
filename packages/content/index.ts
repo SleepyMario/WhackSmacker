@@ -31,6 +31,7 @@ import {
   type DomainModule,
   type FirstClassModuleDescriptor,
   type InstalledPackageRecord,
+  type RenderedExercise,
   type ReviewRating
 } from "../core";
 
@@ -591,7 +592,7 @@ async function runSingleReviewSource(
       ...(dueItem.sourcePath === undefined ? {} : { sourcePath: dueItem.sourcePath }),
       itemId: dueItem.itemId
     });
-    console.log(prompt.text.trimEnd());
+    console.log(formatStudyReviewExercise(prompt.rendered, "prompt").trimEnd());
 
     const reveal = ((await reader.promptLine("Press Enter to show answer, or q to stop: ")) ?? "q").trim().toLowerCase();
     if (reveal === "q" || reveal === "quit") {
@@ -607,7 +608,7 @@ async function runSingleReviewSource(
       itemId: dueItem.itemId,
       answer: true
     });
-    console.log(answer.text.trimEnd());
+    console.log(formatStudyReviewExercise(answer.rendered, "answer").trimEnd());
 
     const rating = await promptForRating(reader);
     if (rating === null) {
@@ -627,6 +628,26 @@ async function runSingleReviewSource(
 
   console.log(`Completed review deck: ${label}`);
   return true;
+}
+
+function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer"): string {
+  const sections: string[] = [exercise.title];
+  if (side === "prompt") {
+    sections.push("", "Prompt", ...prefixStudyLines(exercise.promptLines));
+    if (exercise.hintLines.length > 0) {
+      sections.push("", "Hints", ...prefixStudyLines(exercise.hintLines));
+    }
+  } else {
+    sections.push("", "Answer", ...prefixStudyLines(exercise.answerLines));
+    if (exercise.noteLines.length > 0) {
+      sections.push("", "Notes", ...prefixStudyLines(exercise.noteLines));
+    }
+  }
+  return `${sections.join("\n").trimEnd()}\n`;
+}
+
+function prefixStudyLines(lines: readonly string[]): readonly string[] {
+  return lines.map((line) => `  ${line}`);
 }
 
 async function promptForRating(reader: LineReader): Promise<ReviewRating | null> {

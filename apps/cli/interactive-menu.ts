@@ -137,8 +137,14 @@ export interface VisibleLanguageTreeNode {
 const ansi = {
   reset: "\x1b[0m",
   bold: "\x1b[1m",
+  dim: "\x1b[2m",
+  inverse: "\x1b[7m",
   cyan: "\x1b[36m",
-  green: "\x1b[32m"
+  blue: "\x1b[34m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  red: "\x1b[31m",
+  gray: "\x1b[90m"
 };
 
 export const whackSmackerBanner = `██╗    ██╗███████╗███╗   ███╗
@@ -666,11 +672,12 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let selectedReviewStartId: string | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
+  let rightPaneOffset = 0;
 
   while (true) {
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
     selection = Math.min(selection, visible.length - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -683,6 +690,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       if (selected?.expandable === true && selected.expanded) {
         expandedIds = withoutExpandedId(expandedIds, selected.node.id);
         rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+        rightPaneOffset = 0;
         continue;
       }
       const parent = selected === undefined ? null : findParentLanguageTreeNode(tree, selected.node.id);
@@ -691,6 +699,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         const nextVisible = flattenVisibleLanguageTree(tree, expandedIds);
         selection = Math.max(0, nextVisible.findIndex((entry) => entry.node.id === parent.id));
         rightPaneText = await renderLanguageTreeRightPane(parent, options);
+        rightPaneOffset = 0;
         continue;
       }
       return false;
@@ -704,6 +713,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       selection = wrapSelection(selection - 1, visible.length);
       selectedReviewStartId = null;
       rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
+      rightPaneOffset = 0;
       continue;
     }
 
@@ -711,6 +721,27 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       selection = wrapSelection(selection + 1, visible.length);
       selectedReviewStartId = null;
       rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (isPageUp(key)) {
+      rightPaneOffset = Math.max(0, rightPaneOffset - rightPanePageSize);
+      continue;
+    }
+
+    if (isPageDown(key)) {
+      rightPaneOffset = rightPaneOffset + rightPanePageSize;
+      continue;
+    }
+
+    if (isHome(key)) {
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (isEnd(key)) {
+      rightPaneOffset = Number.MAX_SAFE_INTEGER;
       continue;
     }
 
@@ -728,6 +759,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         selection = Math.min(1, nextVisible.length - 1);
       }
       rightPaneText = result;
+      rightPaneOffset = 0;
       selectedReviewStartId = null;
       continue;
     }
@@ -747,12 +779,14 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         tree = await buildModuleTree(options);
         expandedIds = keepExistingExpandedIds(tree, expandedIds);
         rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+        rightPaneOffset = 0;
         if (quit) {
           return true;
         }
       } else {
         selectedReviewStartId = selected.node.id;
         rightPaneText = renderReviewDeckPreview(selected.node, true);
+        rightPaneOffset = 0;
       }
       continue;
     }
@@ -760,6 +794,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     if (selected.node.kind === "command") {
       const quit = await runModuleTreeCommandAction(registry, terminal, selected.node);
       rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+      rightPaneOffset = 0;
       if (quit) {
         return true;
       }
@@ -768,9 +803,11 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     if (selected.expandable) {
       expandedIds = selected.expanded ? withoutExpandedId(expandedIds, selected.node.id) : withExpandedId(expandedIds, selected.node.id);
       rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+      rightPaneOffset = 0;
       continue;
     }
     rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+    rightPaneOffset = 0;
   }
 }
 
@@ -1287,7 +1324,7 @@ async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: Inte
     return renderReviewDeckPreview(node, false);
   }
   if (node.kind === "read-section") {
-    return `Read content\n\nSelect a content item to preview it here. Markdown is shown as plain text for now.`;
+    return `Read content\n\nSelect a content item to preview it here. Markdown-like source is styled for terminal reading.`;
   }
   if (node.kind === "review-section") {
     return `Review decks\n\nSelect a review deck to see details, then press Enter again to start review.`;
@@ -1914,64 +1951,164 @@ function renderLanguageTreeMenu(
   root: LanguageTreeNode,
   expandedIds: ReadonlySet<string>,
   selection: number,
-  rightPaneText: string
+  rightPaneText: string,
+  rightPaneOffset: number
 ): void {
-  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled)}`);
+  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset)}`);
 }
+
+const rightPanePageSize = 24;
 
 export function renderTwoPaneLanguageTree(
   root: LanguageTreeNode,
   expandedIds: ReadonlySet<string>,
   selection: number,
   rightPaneText: string,
-  colorsEnabled: boolean
+  colorsEnabled: boolean,
+  rightPaneOffset = 0
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
   const leftWidth = 34;
   const rightWidth = 76;
   const bodyHeight = 28;
-  const leftLines = visible.map((entry, index) => renderTreeLine(entry, index === selection, leftWidth));
-  const rightLines = wrapPaneText(rightPaneText, rightWidth);
+  const leftLines = visible.map((entry, index) => renderTreeLine(entry, index === selection, leftWidth, colorsEnabled));
+  const rightLines = formatPaneText(rightPaneText, rightWidth, colorsEnabled);
+  const maxOffset = Math.max(0, rightLines.length - bodyHeight);
+  const offset = Math.min(Math.max(0, rightPaneOffset), maxOffset);
+  const visibleRightLines = rightLines.slice(offset, offset + bodyHeight);
   const lines: string[] = [];
-  lines.push(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}+`);
-  lines.push(`| ${padRight("WhackSmacker", leftWidth)} | ${padRight("Output", rightWidth)} |`);
-  lines.push(`| ${" ".repeat(leftWidth)} | ${" ".repeat(rightWidth)} |`);
+  const horizontal = colorizeUi(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}+`, colorsEnabled);
+  const separator = colorizeUi("|", colorsEnabled);
+  lines.push(horizontal);
+  lines.push(`${separator} ${padRight(stylePaneTitle("WhackSmacker", colorsEnabled), leftWidth)} ${separator} ${padRight(stylePaneTitle("Output", colorsEnabled), rightWidth)} ${separator}`);
+  lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}`);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
-    const right = rightLines[index] ?? "";
-    lines.push(`| ${padRight(left, leftWidth)} | ${padRight(right, rightWidth)} |`);
+    const right = visibleRightLines[index] ?? "";
+    lines.push(`${separator} ${padRight(left, leftWidth)} ${separator} ${padRight(right, rightWidth)} ${separator}`);
   }
 
-  const footer = "Up/Down move  Enter open/start  Space install available  Escape collapse/back  q quit";
-  lines.push(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}+`);
+  const scroll = rightLines.length > bodyHeight ? `  Output ${offset + 1}-${Math.min(offset + bodyHeight, rightLines.length)}/${rightLines.length}` : "";
+  const footer = `Up/Down move  Enter open/start  Space install available  PgUp/PgDn scroll  Home/End jump  Escape collapse/back  q quit${scroll}`;
+  lines.push(horizontal);
   lines.push(colorsEnabled ? `${ansi.green}${footer}${ansi.reset}` : footer);
   return lines.join("\n");
 }
 
-function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width: number): string {
+function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width: number, colorsEnabled: boolean): string {
   const marker = selected ? "> " : "  ";
   const expansion = entry.expandable ? (entry.expanded ? "v " : "> ") : "  ";
   const indent = "  ".repeat(entry.depth);
-  return truncateText(`${marker}${indent}${expansion}${entry.node.label}`, width);
+  const plain = truncateText(`${marker}${indent}${expansion}${entry.node.label}`, width);
+  if (!colorsEnabled) {
+    return plain;
+  }
+  if (selected) {
+    return `${ansi.inverse}${ansi.bold}${plain}${ansi.reset}`;
+  }
+  if (entry.node.kind === "available-module") {
+    if (entry.node.availableStatus === "installed") {
+      return `${ansi.green}${plain}${ansi.reset}`;
+    }
+    if (entry.node.availableStatus === "update-available") {
+      return `${ansi.yellow}${plain}${ansi.reset}`;
+    }
+    return `${ansi.gray}${plain}${ansi.reset}`;
+  }
+  if (entry.node.kind === "package" || entry.node.kind === "module") {
+    return `${ansi.green}${plain}${ansi.reset}`;
+  }
+  if (entry.node.kind === "category" || entry.node.kind === "installed-root" || entry.node.kind === "available-root" || entry.node.kind === "root") {
+    return `${ansi.bold}${ansi.cyan}${plain}${ansi.reset}`;
+  }
+  if (entry.node.kind === "message") {
+    return `${ansi.dim}${plain}${ansi.reset}`;
+  }
+  if (entry.node.kind === "review-source") {
+    return `${ansi.yellow}${plain}${ansi.reset}`;
+  }
+  return plain;
 }
 
-function wrapPaneText(text: string, width: number): readonly string[] {
+function formatPaneText(text: string, width: number, colorsEnabled: boolean): readonly string[] {
   const lines: string[] = [];
+  let inCodeBlock = false;
   for (const rawLine of text.replace(/\t/gu, "  ").split("\n")) {
+    if (/^\s*```/u.test(rawLine)) {
+      inCodeBlock = !inCodeBlock;
+      lines.push(stylePaneLine("code", width, colorsEnabled));
+      continue;
+    }
     if (rawLine.length === 0) {
       lines.push("");
       continue;
     }
-    let remaining = rawLine;
+    const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled);
+    let remaining = prepared.text;
+    const wrapped: string[] = [];
     while (remaining.length > width) {
       const breakAt = Math.max(1, remaining.lastIndexOf(" ", width));
-      lines.push(remaining.slice(0, breakAt));
+      wrapped.push(remaining.slice(0, breakAt));
       remaining = remaining.slice(breakAt).trimStart();
     }
-    lines.push(remaining);
+    wrapped.push(remaining);
+    lines.push(...wrapped.map((line) => prepared.style(line)));
   }
   return lines;
+}
+
+function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean): { text: string; style(line: string): string } {
+  if (inCodeBlock) {
+    return {
+      text: `  ${rawLine.trimEnd()}`,
+      style: (line) => colorsEnabled ? `${ansi.dim}${line}${ansi.reset}` : line
+    };
+  }
+  const heading = rawLine.match(/^(#{1,6})\s+(.+)$/u);
+  if (heading !== null) {
+    return {
+      text: heading[2]?.trim() ?? rawLine,
+      style: (line) => colorsEnabled ? `${ansi.bold}${ansi.cyan}${line}${ansi.reset}` : line
+    };
+  }
+  if (/^\s*(-{3,}|\*{3,})\s*$/u.test(rawLine)) {
+    return {
+      text: "-".repeat(width),
+      style: (line) => colorsEnabled ? `${ansi.gray}${line}${ansi.reset}` : line
+    };
+  }
+  const bullet = rawLine.match(/^(\s*)[-*]\s+(.+)$/u);
+  if (bullet !== null) {
+    return {
+      text: `${bullet[1] ?? ""}• ${stripInlineMarkdown(bullet[2] ?? "", colorsEnabled)}`,
+      style: (line) => colorsEnabled ? `${ansi.yellow}${line}${ansi.reset}` : line
+    };
+  }
+  return {
+    text: stripInlineMarkdown(rawLine, colorsEnabled),
+    style: (line) => line
+  };
+}
+
+function stripInlineMarkdown(text: string, colorsEnabled: boolean): string {
+  let result = text.replace(/\*\*([^*]+)\*\*/gu, colorsEnabled ? `${ansi.bold}$1${ansi.reset}` : "$1");
+  result = result.replace(/`([^`]+)`/gu, colorsEnabled ? `${ansi.blue}$1${ansi.reset}` : "$1");
+  result = result.replace(/\*([^*]+)\*/gu, "$1");
+  return result;
+}
+
+function stylePaneLine(text: string, width: number, colorsEnabled: boolean): string {
+  const line = truncateText(text, width);
+  return colorsEnabled ? `${ansi.dim}${line}${ansi.reset}` : line;
+}
+
+function stylePaneTitle(text: string, colorsEnabled: boolean): string {
+  return colorsEnabled ? `${ansi.bold}${ansi.cyan}${text}${ansi.reset}` : text;
+}
+
+function colorizeUi(text: string, colorsEnabled: boolean): string {
+  return colorsEnabled ? `${ansi.dim}${ansi.cyan}${text}${ansi.reset}` : text;
 }
 
 function padRight(text: string, width: number): string {
@@ -2047,6 +2184,22 @@ function isUp(key: KeyPress): boolean {
 
 function isDown(key: KeyPress): boolean {
   return key.name === "down";
+}
+
+function isPageUp(key: KeyPress): boolean {
+  return key.name === "pageup";
+}
+
+function isPageDown(key: KeyPress): boolean {
+  return key.name === "pagedown";
+}
+
+function isHome(key: KeyPress): boolean {
+  return key.name === "home";
+}
+
+function isEnd(key: KeyPress): boolean {
+  return key.name === "end";
 }
 
 function isEnter(key: KeyPress): boolean {

@@ -593,6 +593,60 @@ test("language tree flattening and renderer use deterministic keyboard state", a
   }
 });
 
+test("two-pane renderer styles tree state and markdown-like right pane content", () => {
+  const tree = {
+    id: "whacksmacker",
+    label: "WhackSmacker",
+    kind: "root",
+    children: [{
+      id: "available-modules",
+      label: "Modules available",
+      kind: "available-root",
+      children: [{
+        id: "available:example",
+        label: "Example Language [available]",
+        kind: "available-module",
+        availableStatus: "available"
+      }]
+    }]
+  };
+  const expanded = new Set(["whacksmacker", "available-modules"]);
+  const output = renderTwoPaneLanguageTree(tree, expanded, 2, [
+    "# Heading",
+    "",
+    "- one item",
+    "",
+    "```",
+    "raw code",
+    "```",
+    "",
+    "---"
+  ].join("\n"), true);
+
+  assert.match(output, /\x1b\[[0-9;]*m/);
+  assert.match(output, /Heading/);
+  assert.match(output, /• one item/);
+  assert.match(output, /raw code/);
+  assert.doesNotMatch(output, /# Heading/);
+  assert.doesNotMatch(output, /```/);
+  assert.match(output, /Example Language/);
+});
+
+test("two-pane renderer supports right pane scroll offsets", () => {
+  const tree = {
+    id: "whacksmacker",
+    label: "WhackSmacker",
+    kind: "root"
+  };
+  const longText = Array.from({ length: 40 }, (_, index) => `Line ${index + 1}`).join("\n");
+  const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, longText, false, 10);
+
+  assert.match(output, /Line 11/);
+  assert.doesNotMatch(output, /Line 1\s/);
+  assert.match(output, /Output 11-38\/40/);
+  assert.match(output, /PgUp\/PgDn scroll/);
+});
+
 test("Dutch review sources submenu uses clean selectable deck labels", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
@@ -832,7 +886,8 @@ test("installed language package read content menu uses selectable content label
     await runInteractiveMenu(createCommandRegistry(), terminal, { dataDir: fixture.dataDir });
 
     assert.match(terminal.output, /Read content/);
-    assert.match(terminal.output, /# Chapter 1 -- Basic Sentences I: Greeting and Identity/);
+    assert.match(terminal.output, /Chapter 1 -- Basic Sentences I: Greeting and Identity/);
+    assert.doesNotMatch(terminal.output, /# Chapter 1 -- Basic Sentences I: Greeting and Identity/);
     assert.doesNotMatch(terminal.output, /> units\/dutch-core\/chapter-005-basic-sentences-5\/chapter\.md/);
   } finally {
     await fixture.cleanup();

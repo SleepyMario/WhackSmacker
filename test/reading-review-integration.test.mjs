@@ -346,6 +346,9 @@ test("review run shows the front side before reveal prompt and q stops there", a
     assert.match(result.stdout, /Prompt\n\s+one/);
     assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
     assert.match(result.stdout, /Review stopped\./);
+    assert.doesNotMatch(result.stdout, /com\.sleepymario\.language\.sequence/);
+    assert.doesNotMatch(result.stdout, /review-decks\/chapter-001-005\/cards\.tsv/);
+    assert.doesNotMatch(result.stdout, /Item:/);
     assert.doesNotMatch(result.stdout, /Answer\n\s+1/);
     assert.doesNotMatch(result.stdout, /Choose a rating/);
     assert.doesNotMatch(result.stdout, /q\.Press Enter/);
@@ -381,6 +384,10 @@ test("review run shows answer before rating prompt and q stops at rating", async
     assert.notEqual(ratingIndex, -1);
     assert.equal(answerIndex < ratingIndex, true);
     assert.match(result.stdout, /Review stopped\./);
+    assert.doesNotMatch(result.stdout, /com\.sleepymario\.language\.sequence/);
+    assert.doesNotMatch(result.stdout, /review-decks\/chapter-001-005\/cards\.tsv/);
+    assert.doesNotMatch(result.stdout, /Item:/);
+    assert.doesNotMatch(result.stdout, /Metadata/);
     assert.doesNotMatch(result.stdout, /Completed review deck: Chapter 1-5/);
     assert.doesNotMatch(result.stdout, /q\.Press Enter/);
   } finally {
