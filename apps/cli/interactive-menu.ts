@@ -1899,7 +1899,7 @@ function formatRatingControls(colorsEnabled: boolean): string {
 }
 
 function formatLeaveReviewControl(colorsEnabled: boolean): string {
-  return colorsEnabled ? `${ansi.dim}${ansi.gray}Esc Leave Review${ansi.reset}` : "Esc Leave Review";
+  return colorsEnabled ? `${ansi.cyan}Esc Leave Review${ansi.reset}` : "Esc Leave Review";
 }
 
 function prefixReviewCardLines(lines: readonly string[]): readonly string[] {
@@ -2584,7 +2584,7 @@ function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width
     if (entry.node.availableStatus === "update-available") {
       return `${ansi.yellow}${plain}${ansi.reset}`;
     }
-    return `${ansi.gray}${plain}${ansi.reset}`;
+    return `${ansi.cyan}${plain}${ansi.reset}`;
   }
   if (entry.node.kind === "package" || entry.node.kind === "module") {
     return `${ansi.green}${plain}${ansi.reset}`;
