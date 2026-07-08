@@ -849,8 +849,67 @@ test("Chinese non-compound structured B prompt is not used in embedded review se
   assert.equal(isEmbeddedReviewItemUsable(item), false);
 });
 
+test("Japanese A prompt reveals reading and mixed written form", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "en",
+    answerLanguage: "ja",
+    promptLines: ["together"],
+    answerLines: ["Reading: いっしょに", "Japanese: 一緒に"]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.japanese");
+
+  assert.match(output, /Review Prompt[\s\S]+together/);
+  assert.match(output, /Review Answer[\s\S]+Reading: いっしょに/);
+  assert.match(output, /Japanese: 一緒に/);
+  assert.doesNotMatch(output, /com\.sleepymario/);
+  assert.doesNotMatch(output, /review-decks\//);
+  assert.doesNotMatch(output, /^Prompt$/m);
+  assert.doesNotMatch(output, /^Answer$/m);
+});
+
+test("Japanese C prompt reveals meaning and kana-only reading", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "ja",
+    answerLanguage: "en",
+    promptLines: ["一緒に"],
+    answerLines: ["Meaning: together", "Reading: いっしょに"]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.japanese");
+
+  assert.match(output, /Review Prompt[\s\S]+一緒に/);
+  assert.match(output, /Review Answer[\s\S]+Meaning: together/);
+  assert.match(output, /Reading: いっしょに/);
+  assert.doesNotMatch(output, /Japanese: 一緒に/);
+});
+
+test("Japanese two-plus mora B prompt reveals meaning and written form", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "ja-Kana",
+    answerLanguage: "ja",
+    promptLines: ["Reading: いっしょに"],
+    answerLines: ["Meaning: together", "Japanese: 一緒に"]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.japanese");
+
+  assert.match(output, /Review Prompt[\s\S]+いっしょに/);
+  assert.match(output, /Review Answer[\s\S]+Meaning: together/);
+  assert.match(output, /Japanese: 一緒に/);
+});
+
+test("Japanese short one-mora structured B prompt is not used in embedded review sessions", () => {
+  const item = reviewItem({
+    packageId: "com.sleepymario.language.japanese",
+    promptLanguage: "ja-Kana",
+    answerLanguage: "ja",
+    prompt: "Reading: き",
+    answer: "Meaning: tree\nJapanese: 木"
+  });
+
+  assert.equal(isEmbeddedReviewItemUsable(item), false);
+});
+
 test("non-Chinese embedded review rendering remains unchanged", () => {
-  const exercise = chineseExercise({
+  const exercise = reviewExercise({
     promptLanguage: "nl",
     answerLanguage: "en",
     promptLines: ["hallo"],
@@ -1266,6 +1325,20 @@ function chineseExercise({
   promptLines,
   answerLines
 }) {
+  return reviewExercise({
+    promptLanguage,
+    answerLanguage,
+    promptLines,
+    answerLines
+  });
+}
+
+function reviewExercise({
+  promptLanguage,
+  answerLanguage,
+  promptLines,
+  answerLines
+}) {
   return {
     itemIdentity: {
       packageId: "com.sleepymario.language.chinese.mandarin.traditional",
@@ -1291,8 +1364,24 @@ function chineseReviewItem({
   prompt,
   answer
 }) {
-  return {
+  return reviewItem({
     packageId: "com.sleepymario.language.chinese.mandarin.traditional",
+    promptLanguage,
+    answerLanguage,
+    prompt,
+    answer
+  });
+}
+
+function reviewItem({
+  packageId,
+  promptLanguage,
+  answerLanguage,
+  prompt,
+  answer
+}) {
+  return {
+    packageId,
     packageVersion: "0.1.0",
     sourcePath: "review-decks/test/cards.tsv",
     sourceExists: true,

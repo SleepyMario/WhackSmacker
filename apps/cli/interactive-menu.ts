@@ -1830,8 +1830,44 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
   ].filter((line) => line.length > 0).join("\n");
 }
 
+export function isEmbeddedReviewItemUsable(item: ReadingReviewItem): boolean {
+  if (isChineseMandarinPackage(item.packageId)) {
+    const view = chineseReviewViewFromBlocks({
+      promptLines: normalizeReviewTextLines(item.item.prompt.plainText ?? item.item.prompt.text),
+      answerLines: normalizeReviewTextLines(item.item.answer.plainText ?? item.item.answer.text),
+      promptLanguage: item.item.prompt.language,
+      answerLanguage: item.item.answer.language
+    });
+    if (!isStructuredChineseReviewView(view)) {
+      return true;
+    }
+    return view.promptSide !== "pronunciation" || isCompoundChinesePronunciation(view.fields);
+  }
+  if (isJapanesePackage(item.packageId)) {
+    const view = japaneseReviewViewFromBlocks({
+      promptLines: normalizeReviewTextLines(item.item.prompt.plainText ?? item.item.prompt.text),
+      answerLines: normalizeReviewTextLines(item.item.answer.plainText ?? item.item.answer.text),
+      promptLanguage: item.item.prompt.language,
+      answerLanguage: item.item.answer.language
+    });
+    if (!isStructuredJapaneseReviewView(view)) {
+      return true;
+    }
+    return view.promptSide !== "reading" || isMultiMoraJapaneseReading(view.fields.reading);
+  }
+  return true;
+}
+
+function isChineseMandarinPackage(packageId?: string): boolean {
+  return packageId?.startsWith("com.sleepymario.language.chinese.mandarin.") === true;
+}
+
+function isJapanesePackage(packageId?: string): boolean {
+  return packageId === "com.sleepymario.language.japanese";
+}
+
 export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean, packageId?: string): string {
-  const chineseLines = isChineseMandarinPackage(packageId) ? formatChineseEmbeddedExerciseLines(exercise, side) : undefined;
+  const languageLines = formatLanguageSpecificEmbeddedExerciseLines(exercise, side, packageId);
   const title = side === "prompt" ? "Review Prompt" : "Review Answer";
   const width = 64;
   const border = "-".repeat(width);
@@ -1839,7 +1875,7 @@ export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "
     reviewCardColor(border, side, colorsEnabled),
     reviewCardColor(centerText(title, width), side, colorsEnabled),
     reviewCardColor(border, side, colorsEnabled),
-    ...prefixReviewCardLines(chineseLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines))
+    ...prefixReviewCardLines(languageLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines))
   ];
   if (side === "prompt" && exercise.hintLines.length > 0) {
     lines.push("", "Hints", ...prefixReviewCardLines(exercise.hintLines));
@@ -1854,16 +1890,16 @@ export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "
 export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string): string {
   const width = 64;
   const border = "-".repeat(width);
-  const chineseReveal = isChineseMandarinPackage(packageId) ? formatChineseEmbeddedRevealLines(prompt) : undefined;
+  const languageReveal = formatLanguageSpecificEmbeddedRevealLines(prompt, packageId);
   const noteLines = cleanEmbeddedReviewNoteLines(answer.noteLines);
   const lines = [
     reviewCardColor(border, "answer", colorsEnabled),
     reviewCardColor(centerText("Review Prompt", width), "prompt", colorsEnabled),
     reviewCardColor(border, "prompt", colorsEnabled),
-    ...prefixReviewCardLines(chineseReveal?.promptLines ?? prompt.promptLines),
+    ...prefixReviewCardLines(languageReveal?.promptLines ?? prompt.promptLines),
     reviewCardColor(border, "answer", colorsEnabled),
     reviewCardColor(centerText("Review Answer", width), "answer", colorsEnabled),
-    ...prefixReviewCardLines(chineseReveal?.answerLines ?? answer.answerLines)
+    ...prefixReviewCardLines(languageReveal?.answerLines ?? answer.answerLines)
   ];
   if (noteLines.length > 0) {
     lines.push("Notes", ...prefixReviewCardLines(noteLines));
@@ -1878,6 +1914,237 @@ function cleanEmbeddedReviewNoteLines(lines: readonly string[]): readonly string
     .filter((line) => line.length > 0);
 }
 
+function formatLanguageSpecificEmbeddedExerciseLines(exercise: RenderedExercise, side: "prompt" | "answer", packageId?: string): readonly string[] | undefined {
+  if (isChineseMandarinPackage(packageId)) {
+    return formatChineseEmbeddedExerciseLines(exercise, side);
+  }
+  if (isJapanesePackage(packageId)) {
+    return formatJapaneseEmbeddedExerciseLines(exercise, side);
+  }
+  return undefined;
+}
+
+function formatLanguageSpecificEmbeddedRevealLines(exercise: RenderedExercise, packageId?: string): { readonly promptLines: readonly string[]; readonly answerLines: readonly string[] } | undefined {
+  if (isChineseMandarinPackage(packageId)) {
+    return formatChineseEmbeddedRevealLines(exercise);
+  }
+  if (isJapanesePackage(packageId)) {
+    return formatJapaneseEmbeddedRevealLines(exercise);
+  }
+  return undefined;
+}
+
+type JapaneseReviewSide = "meaning" | "reading" | "japanese" | "unknown";
+
+interface JapaneseReviewFields {
+  readonly meaning?: string;
+  readonly reading?: string;
+  readonly japanese?: string;
+}
+
+interface JapaneseReviewView {
+  readonly promptSide: JapaneseReviewSide;
+  readonly fields: JapaneseReviewFields;
+}
+
+function formatJapaneseEmbeddedExerciseLines(exercise: RenderedExercise, side: "prompt" | "answer"): readonly string[] | undefined {
+  const view = japaneseReviewViewFromRenderedExercise(exercise);
+  if (!hasAnyJapaneseReviewField(view.fields)) {
+    return undefined;
+  }
+  if (side === "prompt") {
+    return japanesePromptLinesForView(view);
+  }
+  return japaneseAnswerLinesForView(view, exercise.answerLines);
+}
+
+function formatJapaneseEmbeddedRevealLines(exercise: RenderedExercise): { readonly promptLines: readonly string[]; readonly answerLines: readonly string[] } | undefined {
+  const view = japaneseReviewViewFromRenderedExercise(exercise);
+  if (!hasAnyJapaneseReviewField(view.fields)) {
+    return undefined;
+  }
+  return {
+    promptLines: japanesePromptLinesForView(view),
+    answerLines: japaneseAnswerLinesForView(view, exercise.answerLines)
+  };
+}
+
+function japaneseReviewViewFromRenderedExercise(exercise: RenderedExercise): JapaneseReviewView {
+  return japaneseReviewViewFromBlocks({
+    promptLines: exercise.promptLines,
+    answerLines: exercise.answerLines,
+    promptLanguage: exercise.promptLanguage,
+    answerLanguage: exercise.answerLanguage
+  });
+}
+
+function japaneseReviewViewFromBlocks(options: {
+  readonly promptLines: readonly string[];
+  readonly answerLines: readonly string[];
+  readonly promptLanguage?: string;
+  readonly answerLanguage?: string;
+}): JapaneseReviewView {
+  const promptStructured = structuredJapaneseReviewFields(options.promptLines);
+  const answerStructured = structuredJapaneseReviewFields(options.answerLines);
+  const promptSide = japaneseSideForLines(options.promptLines, options.promptLanguage, promptStructured);
+  const answerSide = japaneseSideForLines(options.answerLines, options.answerLanguage, answerStructured);
+  const inferredPrompt = inferJapaneseFieldsForSide(options.promptLines, promptSide);
+  const inferredAnswer = inferJapaneseFieldsForSide(options.answerLines, answerSide);
+  return {
+    promptSide,
+    fields: mergeJapaneseReviewFields(promptStructured, answerStructured, inferredPrompt, inferredAnswer)
+  };
+}
+
+function structuredJapaneseReviewFields(lines: readonly string[]): JapaneseReviewFields {
+  const fields: { meaning?: string; reading?: string; japanese?: string } = {};
+  for (const line of lines) {
+    const match = line.match(/^(Meaning|Reading|Japanese):\s*(.+)$/iu);
+    if (match === null) {
+      continue;
+    }
+    const key = match[1]?.toLowerCase();
+    const value = match[2]?.trim();
+    if (value === undefined || value.length === 0) {
+      continue;
+    }
+    if (key === "meaning") {
+      fields.meaning = value;
+    } else if (key === "reading") {
+      fields.reading = value;
+    } else if (key === "japanese") {
+      fields.japanese = value;
+    }
+  }
+  return fields;
+}
+
+function japaneseSideForLines(lines: readonly string[], language: string | undefined, structured: JapaneseReviewFields): JapaneseReviewSide {
+  if (structured.meaning !== undefined && structured.reading === undefined && structured.japanese === undefined) {
+    return "meaning";
+  }
+  if (structured.reading !== undefined && structured.meaning === undefined && structured.japanese === undefined) {
+    return "reading";
+  }
+  if (structured.japanese !== undefined && structured.meaning === undefined && structured.reading === undefined) {
+    return "japanese";
+  }
+  if (language === "en") {
+    return "meaning";
+  }
+  const text = lines.join("");
+  if (language === "ja-Kana" || (containsKanaCharacter(text) && !containsHanCharacter(text))) {
+    return "reading";
+  }
+  if (language === "ja" || containsJapaneseCharacter(text)) {
+    return "japanese";
+  }
+  return "unknown";
+}
+
+function inferJapaneseFieldsForSide(lines: readonly string[], side: JapaneseReviewSide): JapaneseReviewFields {
+  const text = lines.join("\n").trim();
+  if (text.length === 0) {
+    return {};
+  }
+  if (side === "meaning") {
+    return { meaning: text };
+  }
+  if (side === "reading") {
+    return { reading: text };
+  }
+  if (side === "japanese") {
+    return { japanese: text };
+  }
+  return {};
+}
+
+function mergeJapaneseReviewFields(...fields: readonly JapaneseReviewFields[]): JapaneseReviewFields {
+  const merged: { meaning?: string; reading?: string; japanese?: string } = {};
+  for (const field of fields) {
+    merged.meaning ??= field.meaning;
+    merged.reading ??= field.reading;
+    merged.japanese ??= field.japanese;
+  }
+  return merged;
+}
+
+function japanesePromptLinesForView(view: JapaneseReviewView): readonly string[] {
+  if (view.promptSide === "meaning" && view.fields.meaning !== undefined) {
+    return [view.fields.meaning];
+  }
+  if (view.promptSide === "reading" && view.fields.reading !== undefined) {
+    return [view.fields.reading];
+  }
+  if (view.promptSide === "japanese" && view.fields.japanese !== undefined) {
+    return [view.fields.japanese];
+  }
+  return [];
+}
+
+function japaneseAnswerLinesForView(view: JapaneseReviewView, fallbackAnswerLines: readonly string[]): readonly string[] {
+  const lines: string[] = [];
+  if (view.promptSide === "meaning") {
+    pushJapaneseReviewLine(lines, "Reading", view.fields.reading);
+    pushJapaneseReviewLine(lines, "Japanese", view.fields.japanese);
+  } else if (view.promptSide === "japanese") {
+    pushJapaneseReviewLine(lines, "Meaning", view.fields.meaning);
+    pushJapaneseReviewLine(lines, "Reading", view.fields.reading);
+  } else if (view.promptSide === "reading") {
+    pushJapaneseReviewLine(lines, "Meaning", view.fields.meaning);
+    pushJapaneseReviewLine(lines, "Japanese", view.fields.japanese);
+  }
+  const prompt = japanesePromptLinesForView(view);
+  const promptValues = new Set(prompt);
+  const visibleLines = lines.filter((line) => !promptValues.has(line.replace(/^[^:]+:\s*/u, "")));
+  return visibleLines.length === 0 ? fallbackAnswerLines : visibleLines;
+}
+
+function pushJapaneseReviewLine(lines: string[], label: string, value: string | undefined): void {
+  if (value !== undefined && value.length > 0) {
+    lines.push(`${label}: ${value}`);
+  }
+}
+
+function isStructuredJapaneseReviewView(view: JapaneseReviewView): boolean {
+  return view.fields.meaning !== undefined && view.fields.reading !== undefined && view.fields.japanese !== undefined;
+}
+
+function hasAnyJapaneseReviewField(fields: JapaneseReviewFields): boolean {
+  return fields.meaning !== undefined || fields.reading !== undefined || fields.japanese !== undefined;
+}
+
+function isMultiMoraJapaneseReading(reading: string | undefined): boolean {
+  return reading !== undefined && countJapaneseMoraLikeUnits(reading) >= 2;
+}
+
+function countJapaneseMoraLikeUnits(value: string): number {
+  const normalized = value.replace(/[\s、。・･\-.!?！？ー]/gu, "");
+  let count = 0;
+  for (const character of normalized) {
+    if (!containsKanaCharacter(character)) {
+      continue;
+    }
+    if (/^[ゃゅょャュョぁぃぅぇぉァィゥェォゎヮ]$/u.test(character)) {
+      continue;
+    }
+    count += 1;
+  }
+  return count;
+}
+
+function containsJapaneseCharacter(value: string): boolean {
+  return containsHanCharacter(value) || containsKanaCharacter(value);
+}
+
+function containsKanaCharacter(value: string): boolean {
+  return /[\u3040-\u309f\u30a0-\u30ff]/u.test(value);
+}
+
+/*
+ * Chinese embedded review model.
+ */
+
 type ChineseReviewSide = "meaning" | "pronunciation" | "characters" | "unknown";
 
 interface ChineseReviewFields {
@@ -1890,26 +2157,6 @@ interface ChineseReviewFields {
 interface ChineseReviewView {
   readonly promptSide: ChineseReviewSide;
   readonly fields: ChineseReviewFields;
-}
-
-export function isEmbeddedReviewItemUsable(item: ReadingReviewItem): boolean {
-  if (!isChineseMandarinPackage(item.packageId)) {
-    return true;
-  }
-  const view = chineseReviewViewFromBlocks({
-    promptLines: normalizeReviewTextLines(item.item.prompt.plainText ?? item.item.prompt.text),
-    answerLines: normalizeReviewTextLines(item.item.answer.plainText ?? item.item.answer.text),
-    promptLanguage: item.item.prompt.language,
-    answerLanguage: item.item.answer.language
-  });
-  if (!isStructuredChineseReviewView(view)) {
-    return true;
-  }
-  return view.promptSide !== "pronunciation" || isCompoundChinesePronunciation(view.fields);
-}
-
-function isChineseMandarinPackage(packageId?: string): boolean {
-  return packageId?.startsWith("com.sleepymario.language.chinese.mandarin.") === true;
 }
 
 function formatChineseEmbeddedExerciseLines(exercise: RenderedExercise, side: "prompt" | "answer"): readonly string[] | undefined {
