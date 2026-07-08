@@ -616,6 +616,12 @@ function reviewDeckRowToItem(
     front,
     back
   });
+  if (isCoreReviewDeckRow(sourceChapter) && examples.length === 0) {
+    throw new Error(
+      `Review deck row ${rowNumber + 1} in ${sourcePath} has no learner-facing source example for ${front} -> ${back}. ` +
+      "Core vocabulary review cards must have at least one literal source example."
+    );
+  }
 
   return {
     schemaVersion: 1,
@@ -706,6 +712,10 @@ function examplesForReviewRow(index: ReviewExampleIndex, row: ReviewExampleRow):
   return examples;
 }
 
+function isCoreReviewDeckRow(sourceChapter: string): boolean {
+  return /^\d+$/u.test(sourceChapter.trim());
+}
+
 function reviewExampleSearchTerms(row: ReviewExampleRow): readonly string[] {
   const terms = row.promptLabel === "English"
     ? [row.back]
@@ -716,10 +726,30 @@ function reviewExampleSearchTerms(row: ReviewExampleRow): readonly string[] {
 }
 
 function splitReviewSearchTerm(value: string): readonly string[] {
-  return value
+  const baseTerms = value
     .split(/\s*;\s*/u)
     .map((term) => term.trim())
     .filter((term) => term.length > 0 && !/^N$/u.test(term));
+  return baseTerms
+    .flatMap((term) => [term, ...splitSlashAlternatives(term), ...koreanPredicateStemAlternatives(term)])
+    .filter((term, index, all) => all.indexOf(term) === index);
+}
+
+function splitSlashAlternatives(term: string): readonly string[] {
+  if (!term.includes("/")) {
+    return [];
+  }
+  return term.split(/\s*\/\s*/u).map((part) => part.trim()).filter((part) => part.length > 0);
+}
+
+function koreanPredicateStemAlternatives(term: string): readonly string[] {
+  if (term === "있다" || term === "없다") {
+    return [term.slice(0, -1)];
+  }
+  if (!/^[가-힣]+다$/u.test(term) || term.length < 3) {
+    return [];
+  }
+  return [term.slice(0, -1)];
 }
 
 function lineMatchesReviewTerm(line: string, term: string): boolean {
@@ -727,10 +757,17 @@ function lineMatchesReviewTerm(line: string, term: string): boolean {
     return false;
   }
   const escaped = escapeRegExp(term);
+  if (containsNonLatinScript(term)) {
+    return line.includes(term);
+  }
   if (containsWordLikeCharacters(term)) {
     return new RegExp(`(^|[^\\p{L}\\p{N}_])${escaped}([^\\p{L}\\p{N}_]|$)`, "iu").test(line);
   }
   return line.includes(term);
+}
+
+function containsNonLatinScript(value: string): boolean {
+  return /[\u1100-\u11ff\u3040-\u30ff\u3100-\u312f\u31a0-\u31bf\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]/u.test(value);
 }
 
 function containsWordLikeCharacters(value: string): boolean {
@@ -755,6 +792,7 @@ function extractLearnerFacingExampleLines(markdown: string): readonly string[] {
   let inFrontMatter = false;
   let inExampleSection = false;
   let inCodeFence = false;
+  let inLearnerTextFence = false;
   for (const [index, rawLine] of markdown.replace(/\r\n?/gu, "\n").split("\n").entries()) {
     const trimmed = rawLine.trim();
     if (index === 0 && trimmed === "---") {
@@ -768,18 +806,28 @@ function extractLearnerFacingExampleLines(markdown: string): readonly string[] {
       continue;
     }
     if (trimmed.startsWith("```")) {
-      inCodeFence = !inCodeFence;
+      if (inCodeFence) {
+        inCodeFence = false;
+        inLearnerTextFence = false;
+      } else {
+        inCodeFence = true;
+        inLearnerTextFence = inExampleSection && /^```(?:text)?\s*$/iu.test(trimmed);
+      }
       continue;
     }
-    if (inCodeFence) {
+    if (inCodeFence && !inLearnerTextFence) {
       continue;
     }
-    if (/^#{2,3}\s+(?:Learner-facing Dialogue|Controlled Reading|Simple Exercises)\b/iu.test(trimmed)) {
+    if (/^##\s+(?:Brief Introduction|Content|Simple Exercises|Model Mini Dialogue|Model Mini Text)\b/iu.test(trimmed)
+      || /^###\s+(?:Learner-facing Dialogue|Controlled Reading|New Vocabulary|New Grammar|New Grammar \/ Pattern|Hanja|Usage Notes|.* Usage Notes|Register|Register \/ Regional Notes|Register and Context Notes|Model Mini Dialogue|Model Mini Text)\b/iu.test(trimmed)) {
       inExampleSection = true;
       continue;
     }
-    if (/^#{2,3}\s+/u.test(trimmed)) {
+    if (/^##\s+(?:Cumulative Ledger|Ledger|Legality Audit|Mastery Criteria)\b/iu.test(trimmed)) {
       inExampleSection = false;
+      continue;
+    }
+    if (/^#{2,4}\s+/u.test(trimmed)) {
       continue;
     }
     if (!inExampleSection && !/^\s*(?:[-*]|\d+\.)\s+/u.test(rawLine)) {
@@ -798,8 +846,8 @@ function normalizeExampleSourceLine(line: string): string | undefined {
   const trimmed = line.trim();
   if (trimmed.length === 0
     || trimmed.startsWith("#")
-    || trimmed.startsWith("|")
     || /^---+$/u.test(trimmed)
+    || /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/u.test(trimmed)
     || /^Names from\b/u.test(trimmed)
     || /^Meaning:/iu.test(trimmed)
     || /^(?:Pinyin|Zhuyin):/iu.test(trimmed)
@@ -809,7 +857,6 @@ function normalizeExampleSourceLine(line: string): string | undefined {
   }
   const withoutListMarker = trimmed.replace(/^\s*(?:[-*]|\d+\.)\s+/u, "").trim();
   if (withoutListMarker.length === 0
-    || withoutListMarker.startsWith("|")
     || /^```/u.test(withoutListMarker)
     || /^`[^`]+`\s*--\s*/u.test(withoutListMarker)
     || /^`?[A-Z]{2,3}-GRAMMAR-\d+/u.test(withoutListMarker)) {

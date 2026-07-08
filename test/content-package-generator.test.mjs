@@ -125,6 +125,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     }
 
     const allReviewItems = reviewCollections.flatMap(({ collection }) => collection.items);
+    assertCoreReviewItemsHaveExamples(allReviewItems, "Korean");
     assert.ok(allReviewItems.some((item) => item.prompt.text === "안녕하세요" && item.answer.text === "hello"));
     assert.ok(allReviewItems.some((item) => item.prompt.text === "hello" && item.answer.text === "안녕하세요"));
     assert.ok(allReviewItems.some((item) => item.prompt.text === "topic particle" && item.answer.text === "은/는"));
@@ -190,6 +191,7 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
     }
 
     const allItems = expectedReviewDecks.flatMap((deck) => JSON.parse(archive.get(deck.itemPath).toString("utf8")).items);
+    assert.equal(allItems.some((item) => item.examples !== undefined), false);
     assert.ok(allItems.some((item) => item.prompt.text === "b" && item.answer.text === "ㄅ"));
     assert.ok(allItems.some((item) => item.prompt.text === "ㄅ" && item.answer.text === "b"));
     assert.ok(allItems.some((item) => item.prompt.text === "mā" && item.answer.text === "ㄇㄚ"));
@@ -318,6 +320,7 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.equal(archive.has(itemPath), true);
     assert.equal(archive.has("content/memorization/review-decks/lessons-001-005.json"), false);
     assert.equal(reviewItems.items.length, 80);
+    assertCoreReviewItemsHaveExamples(reviewItems.items, "Vietnamese");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "xin chào" && item.answer.text === "hello"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "xin chào"));
@@ -355,13 +358,14 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(content.files.some((file) => file.path === "units/dutch-core/chapter-006-basic-sentences-6/chapter.md"), false);
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 80);
+    assertCoreReviewItemsHaveExamples(reviewItems.items, "Dutch");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hallo" && item.answer.text === "hello"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "hallo"));
     const halloItem = reviewItems.items.find((item) => item.prompt.text === "hallo" && item.answer.text === "hello");
-    assert.deepEqual(halloItem.examples, ["A: Hallo.", "B: Hallo."]);
+    assert.deepEqual(halloItem.examples, ["A: Hallo.", "B: Hallo.", "| hallo | hello | Common safe greeting. |"]);
     const studentItem = reviewItems.items.find((item) => item.prompt.text === "student" && item.answer.text === "student");
-    assert.deepEqual(studentItem.examples, ["A: Ik ben student.", "B: Ik ben student.", "Match `Ik ben student.` with its meaning."]);
+    assert.deepEqual(studentItem.examples, ["A: Ik ben student.", "B: Ik ben student.", "| student | student | Learner/student role. |"]);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "${FOREIGN-NAME-1}" || item.answer.text === "${FOREIGN-NAME-1}"), false);
   } finally {
@@ -397,6 +401,7 @@ test("content package generator creates a valid German package", async () => {
     assert.equal(content.files.some((file) => file.path === "units/german-core/chapter-006-basic-sentences-6/chapter.md"), false);
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 80);
+    assertCoreReviewItemsHaveExamples(reviewItems.items, "German");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hallo" && item.answer.text === "hello"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "hallo"));
@@ -436,11 +441,12 @@ test("content package generator creates a valid French package", async () => {
     assert.equal(content.files.some((file) => file.path === "units/french-core/chapter-006-basic-sentences-6/chapter.md"), false);
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 80);
+    assertCoreReviewItemsHaveExamples(reviewItems.items, "French");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello; good day" && item.answer.text === "bonjour"));
     const bonjourItem = reviewItems.items.find((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day");
-    assert.deepEqual(bonjourItem.examples, ["A: Bonjour.", "B: Bonjour."]);
+    assert.deepEqual(bonjourItem.examples, ["A: Bonjour.", "B: Bonjour.", "| bonjour | hello; good day | Common safe greeting. |"]);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Je suis N" || item.answer.text === "Je suis N"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Ça va ?" || item.answer.text === "Ça va ?"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Alex Chen" || item.answer.text === "Alex Chen"), false);
@@ -477,6 +483,7 @@ test("content package generator creates a valid Spanish package", async () => {
     assert.equal(content.files.some((file) => file.path === "units/spanish-core/chapter-006-basic-sentences-6/chapter.md"), false);
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 80);
+    assertCoreReviewItemsHaveExamples(reviewItems.items, "Spanish");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hola" && item.answer.text === "hello; hi"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello; hi" && item.answer.text === "hola"));
@@ -580,6 +587,22 @@ async function readZip(filePath) {
   }
 
   return entries;
+}
+
+function assertCoreReviewItemsHaveExamples(items, label) {
+  const missing = items.filter((item) => (item.examples?.length ?? 0) === 0);
+  const tooMany = items.filter((item) => (item.examples?.length ?? 0) > 3);
+
+  assert.deepEqual(
+    missing.map((item) => `${item.prompt.text} -> ${item.answer.text}`),
+    [],
+    `${label} core review items must have source examples`
+  );
+  assert.deepEqual(
+    tooMany.map((item) => `${item.prompt.text} -> ${item.answer.text}`),
+    [],
+    `${label} core review items must have at most 3 source examples`
+  );
 }
 
 async function fileSha256(path) {
