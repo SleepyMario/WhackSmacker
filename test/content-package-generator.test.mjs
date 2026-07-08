@@ -358,6 +358,10 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hallo" && item.answer.text === "hello"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "hallo"));
+    const halloItem = reviewItems.items.find((item) => item.prompt.text === "hallo" && item.answer.text === "hello");
+    assert.deepEqual(halloItem.examples, ["A: Hallo.", "B: Hallo."]);
+    const studentItem = reviewItems.items.find((item) => item.prompt.text === "student" && item.answer.text === "student");
+    assert.deepEqual(studentItem.examples, ["A: Ik ben student.", "B: Ik ben student.", "Match `Ik ben student.` with its meaning."]);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "${FOREIGN-NAME-1}" || item.answer.text === "${FOREIGN-NAME-1}"), false);
   } finally {
@@ -435,6 +439,8 @@ test("content package generator creates a valid French package", async () => {
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello; good day" && item.answer.text === "bonjour"));
+    const bonjourItem = reviewItems.items.find((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day");
+    assert.deepEqual(bonjourItem.examples, ["A: Bonjour.", "B: Bonjour."]);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Je suis N" || item.answer.text === "Je suis N"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Ça va ?" || item.answer.text === "Ça va ?"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Alex Chen" || item.answer.text === "Alex Chen"), false);

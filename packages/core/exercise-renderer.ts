@@ -24,6 +24,7 @@ export interface RenderedExercise {
   readonly answerLines: readonly string[];
   readonly hintLines: readonly string[];
   readonly noteLines: readonly string[];
+  readonly exampleLines: readonly string[];
   readonly metadataLines: readonly string[];
   readonly warnings: readonly string[];
 }
@@ -51,6 +52,7 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
     answerLines: answerLinesFor(item),
     hintLines: (item.hints ?? []).flatMap((hint) => normalizeLines(hint)),
     noteLines: item.notes === undefined ? [] : normalizeLines(item.notes),
+    exampleLines: (item.examples ?? []).flatMap((example) => normalizeLines(example)).slice(0, 3),
     metadataLines: metadataLinesFor(item, identity),
     warnings: warningsFor(item)
   };
@@ -68,6 +70,9 @@ export function formatRenderedExercise(exercise: RenderedExercise, side: "prompt
     sections.push("", "Answer", ...prefixLines(exercise.answerLines));
     if (exercise.noteLines.length > 0) {
       sections.push("", "Notes", ...prefixLines(exercise.noteLines));
+    }
+    if (exercise.exampleLines.length > 0) {
+      sections.push("", "Example", ...prefixLines(exercise.exampleLines));
     }
   }
   if (side === "full" && exercise.metadataLines.length > 0) {

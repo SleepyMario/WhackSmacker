@@ -653,6 +653,32 @@ test("two-pane renderer supports right pane scroll offsets", () => {
   assert.match(output, /PgUp\/PgDn scroll/);
 });
 
+test("two-pane renderer pins embedded review controls to the bottom bar", () => {
+  const tree = {
+    id: "whacksmacker",
+    label: "WhackSmacker",
+    kind: "root"
+  };
+  const longReview = [
+    "Review Prompt",
+    "",
+    "question",
+    "",
+    "Review Answer",
+    "",
+    ...Array.from({ length: 35 }, (_, index) => `answer detail ${index + 1}`),
+    "[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]",
+    "1 Again   2 Hard   3 Good   4 Easy"
+  ].join("\n");
+  const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, longReview, false);
+  const paneRows = output.split("\n").filter((line) => /^\|/u.test(line));
+  const lastBodyRow = paneRows.at(-1) ?? "";
+
+  assert.match(output, /1 Again\s+2 Hard\s+3 Good\s+4 Easy/);
+  assert.match(lastBodyRow, /1 Again\s+2 Hard\s+3 Good\s+4 Easy/);
+  assert.doesNotMatch(output, /\[\[WHACKSMACKER_REVIEW_BOTTOM_BAR\]\]/);
+});
+
 test("Dutch review sources submenu uses clean selectable deck labels", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
@@ -729,10 +755,7 @@ test("selecting an installed review source runs review inside the right pane", a
     assert.doesNotMatch(stripAnsi(terminal.output), /^Answer$/m);
     assert.doesNotMatch(stripAnsi(terminal.output), /^Deck: Chapter 1-5$/m);
     assert.doesNotMatch(stripAnsi(terminal.output), /Notes\n\s+Deck:/);
-    assert.match(stripAnsi(terminal.output), /1 Again/);
-    assert.match(stripAnsi(terminal.output), /2 Hard/);
-    assert.match(stripAnsi(terminal.output), /3 Good/);
-    assert.match(stripAnsi(terminal.output), /4 Easy/);
+    assert.match(stripAnsi(terminal.output), /1 Again\s+2 Hard\s+3 Good\s+4 Easy/);
     assert.match(stripAnsi(terminal.output), /Esc Leave Review/);
     assert.match(terminal.output, /\x1b\[31m1 Again\x1b\[0m/);
     assert.match(terminal.output, /\x1b\[33m2 Hard\x1b\[0m/);
@@ -799,6 +822,10 @@ test("embedded review hides internal notes and renders compact learner notes and
       "Example: Ik ben student.",
       "Example Sentence: De student is hier.",
       "This long internal prose explains how the template generated this review entry and should not be shown to learners because it is not useful during study."
+    ],
+    exampleLines: [
+      "Sophie is student.",
+      "Extra example should be capped."
     ]
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.dutch");
@@ -806,8 +833,8 @@ test("embedded review hides internal notes and renders compact learner notes and
   assert.doesNotMatch(output, /Simple review entry/);
   assert.doesNotMatch(output, /not a grammar-pattern card/);
   assert.doesNotMatch(output, /template generated/);
-  assert.match(output, /Notes\n  - noun\n  - kinship noun/);
-  assert.match(output, /Example Sentence\n  Ik ben student\.\n  De student is hier\./);
+  assert.match(output, /Notes\n  - noun\n  - kinship noun\n\nExample\n  Ik ben student\.\n  De student is hier\.\n  Sophie is student\./);
+  assert.doesNotMatch(output, /Extra example should be capped/);
   assert.doesNotMatch(output, /\x1b\[[0-9;]*m/);
 });
 
@@ -1363,7 +1390,8 @@ function reviewExercise({
   answerLanguage,
   promptLines,
   answerLines,
-  noteLines = []
+  noteLines = [],
+  exampleLines = []
 }) {
   return {
     itemIdentity: {
@@ -1379,6 +1407,7 @@ function reviewExercise({
     answerLines,
     hintLines: [],
     noteLines,
+    exampleLines,
     metadataLines: [],
     warnings: []
   };

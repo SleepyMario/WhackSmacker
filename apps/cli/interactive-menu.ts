@@ -1826,9 +1826,9 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
   return [
     ...header,
     cards.join("\n\n"),
-    "",
-    controls,
-    session.message === undefined ? "" : `\n${session.message}`
+    session.message === undefined ? "" : `\n${session.message}`,
+    reviewBottomBarMarker,
+    controls
   ].filter((line) => line.length > 0).join("\n");
 }
 
@@ -1880,7 +1880,7 @@ export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "
     lines.push("", "Hints", ...prefixReviewCardLines(exercise.hintLines));
   }
   if (side === "answer") {
-    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromNotes(exercise.noteLines));
+    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(exercise));
   }
   return lines.join("\n");
 }
@@ -1892,7 +1892,7 @@ export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: Ren
     answerLines: languageReveal?.answerLines ?? answer.answerLines,
     colorsEnabled
   });
-  appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromNotes(answer.noteLines));
+  appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(answer));
   return lines.join("\n");
 }
 
@@ -1919,6 +1919,14 @@ interface EmbeddedReviewSupplement {
   readonly examples: readonly string[];
 }
 
+function embeddedReviewSupplementFromExercise(exercise: RenderedExercise): EmbeddedReviewSupplement {
+  const fromNotes = embeddedReviewSupplementFromNotes(exercise.noteLines);
+  return {
+    notes: fromNotes.notes,
+    examples: [...fromNotes.examples, ...exercise.exampleLines].filter((example, index, all) => all.indexOf(example) === index).slice(0, 3)
+  };
+}
+
 function embeddedReviewSupplementFromNotes(lines: readonly string[]): EmbeddedReviewSupplement {
   const notes: string[] = [];
   const examples: string[] = [];
@@ -1942,7 +1950,6 @@ function embeddedReviewSupplementFromNotes(lines: readonly string[]): EmbeddedRe
     }
   }
 
-  // TODO: Pull literal example sentences from source readings once review items expose source spans/examples.
   return { notes, examples };
 }
 
@@ -1951,7 +1958,7 @@ function appendEmbeddedReviewSupplement(lines: string[], supplement: EmbeddedRev
     lines.push("", "Notes", ...prefixReviewCardLines(supplement.notes.map((note) => `- ${note}`)));
   }
   if (supplement.examples.length > 0) {
-    lines.push("", "Example Sentence", ...prefixReviewCardLines(supplement.examples));
+    lines.push("", "Example", ...prefixReviewCardLines(supplement.examples.slice(0, 3)));
   }
 }
 
@@ -2482,14 +2489,14 @@ function formatRatingControls(colorsEnabled: boolean): string {
       "2 Hard",
       "3 Good",
       "4 Easy"
-    ].join("\n");
+    ].join("   ");
   }
   return [
     `${ansi.red}1 Again${ansi.reset}`,
     `${ansi.yellow}2 Hard${ansi.reset}`,
     `${ansi.green}3 Good${ansi.reset}`,
     `${ansi.cyan}4 Easy${ansi.reset}`
-  ].join("\n");
+  ].join("   ");
 }
 
 function formatLeaveReviewControl(colorsEnabled: boolean): string {
@@ -3122,6 +3129,7 @@ function renderLanguageTreeMenu(
 }
 
 const rightPanePageSize = 24;
+const reviewBottomBarMarker = "[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]";
 
 export function renderTwoPaneLanguageTree(
   root: LanguageTreeNode,
@@ -3136,10 +3144,17 @@ export function renderTwoPaneLanguageTree(
   const rightWidth = 76;
   const bodyHeight = 28;
   const leftLines = visible.map((entry, index) => renderTreeLine(entry, index === selection, leftWidth, colorsEnabled));
-  const rightLines = formatPaneText(rightPaneText, rightWidth, colorsEnabled);
-  const maxOffset = Math.max(0, rightLines.length - bodyHeight);
+  const rightPane = splitFixedBottomBar(rightPaneText);
+  const bottomBarLines = rightPane.bottomBar === undefined ? [] : formatPaneText(rightPane.bottomBar, rightWidth, colorsEnabled);
+  const scrollableHeight = Math.max(1, bodyHeight - bottomBarLines.length);
+  const rightLines = formatPaneText(rightPane.body, rightWidth, colorsEnabled);
+  const maxOffset = Math.max(0, rightLines.length - scrollableHeight);
   const offset = Math.min(Math.max(0, rightPaneOffset), maxOffset);
-  const visibleRightLines = rightLines.slice(offset, offset + bodyHeight);
+  const visibleRightLines = [
+    ...rightLines.slice(offset, offset + scrollableHeight),
+    ...Array.from({ length: Math.max(0, scrollableHeight - rightLines.slice(offset, offset + scrollableHeight).length) }, () => ""),
+    ...bottomBarLines
+  ];
   const lines: string[] = [];
   const horizontal = colorizeUi(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}+`, colorsEnabled);
   const separator = colorizeUi("|", colorsEnabled);
@@ -3153,11 +3168,22 @@ export function renderTwoPaneLanguageTree(
     lines.push(`${separator} ${padRight(left, leftWidth)} ${separator} ${padRight(right, rightWidth)} ${separator}`);
   }
 
-  const scroll = rightLines.length > bodyHeight ? `  Output ${offset + 1}-${Math.min(offset + bodyHeight, rightLines.length)}/${rightLines.length}` : "";
+  const scroll = rightLines.length > scrollableHeight ? `  Output ${offset + 1}-${Math.min(offset + scrollableHeight, rightLines.length)}/${rightLines.length}` : "";
   const footer = `Up/Down move  Enter open/start  Space install available  U uninstall  PgUp/PgDn scroll  Home/End jump  Escape collapse/back  q quit${scroll}`;
   lines.push(horizontal);
   lines.push(colorsEnabled ? `${ansi.green}${footer}${ansi.reset}` : footer);
   return lines.join("\n");
+}
+
+function splitFixedBottomBar(text: string): { readonly body: string; readonly bottomBar?: string } {
+  const markerIndex = text.lastIndexOf(`\n${reviewBottomBarMarker}\n`);
+  if (markerIndex < 0) {
+    return { body: text };
+  }
+  return {
+    body: text.slice(0, markerIndex),
+    bottomBar: text.slice(markerIndex + reviewBottomBarMarker.length + 2)
+  };
 }
 
 function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width: number, colorsEnabled: boolean): string {

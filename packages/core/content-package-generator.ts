@@ -546,10 +546,11 @@ function buildMemorizationFiles(
   sourceFiles: readonly SourceFile[],
   generatedAt: string
 ): readonly GeneratedMemorizationFile[] {
+  const reviewExampleIndex = buildReviewExampleIndex(sourceFiles);
   return sourceFiles
     .filter((file) => isReviewDeckCardsPath(file.path))
     .map((file) => {
-      const collection = parseReviewDeckCards(target, file, generatedAt);
+      const collection = parseReviewDeckCards(target, file, generatedAt, reviewExampleIndex);
       assertValidMemorizationItemCollection(collection);
       const buffer = Buffer.from(`${JSON.stringify(collection, null, 2)}\n`, "utf8");
       const outputPath = `content/memorization/${file.path.replace(/\/cards\.tsv$/u, ".json")}`;
@@ -560,7 +561,12 @@ function buildMemorizationFiles(
     });
 }
 
-function parseReviewDeckCards(target: ContentPackageGeneratorTarget, file: SourceFile, generatedAt: string): MemorizationItemCollection {
+function parseReviewDeckCards(
+  target: ContentPackageGeneratorTarget,
+  file: SourceFile,
+  generatedAt: string,
+  reviewExampleIndex: ReviewExampleIndex
+): MemorizationItemCollection {
   const rows = parseTabSeparatedRows(file.text);
   if (rows.length === 0) {
     throw new Error(`Review deck cards file is empty: ${file.path}`);
@@ -571,7 +577,7 @@ function parseReviewDeckCards(target: ContentPackageGeneratorTarget, file: Sourc
     throw new Error(`Review deck cards file has unsupported header: ${file.path}`);
   }
 
-  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt));
+  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex));
   return { schemaVersion: 1, items };
 }
 
@@ -580,7 +586,8 @@ function reviewDeckRowToItem(
   sourcePath: string,
   row: readonly string[],
   rowNumber: number,
-  generatedAt: string
+  generatedAt: string,
+  reviewExampleIndex: ReviewExampleIndex
 ): MemorizationItem {
   if (row.length !== 7) {
     throw new Error(`Review deck row ${rowNumber + 1} must have 7 tab-separated fields in ${sourcePath}`);
@@ -602,6 +609,13 @@ function reviewDeckRowToItem(
   const entrySlug = slugForPath(entryType);
   const directionSlug = slugForPath(direction);
   const itemId = `review-decks/${deckSlug}/${String(rowNumber).padStart(4, "0")}-${directionSlug}-${entrySlug}`;
+  const examples = examplesForReviewRow(reviewExampleIndex, {
+    sourceChapter,
+    promptLabel,
+    answerLabel,
+    front,
+    back
+  });
 
   return {
     schemaVersion: 1,
@@ -620,6 +634,7 @@ function reviewDeckRowToItem(
       mediaType: "text/plain"
     },
     notes: `Deck: ${deck}. ${notes}`,
+    ...(examples.length === 0 ? {} : { examples }),
     tags: [slugForPath(target.id), "review-deck", deckSlug, entrySlug],
     source: {
       path: sourcePath,
@@ -633,6 +648,174 @@ function reviewDeckRowToItem(
     createdAt: generatedAt,
     updatedAt: generatedAt
   };
+}
+
+interface ReviewExampleIndex {
+  readonly byChapter: ReadonlyMap<string, readonly string[]>;
+}
+
+interface ReviewExampleRow {
+  readonly sourceChapter: string;
+  readonly promptLabel: string;
+  readonly answerLabel: string;
+  readonly front: string;
+  readonly back: string;
+}
+
+function buildReviewExampleIndex(sourceFiles: readonly SourceFile[]): ReviewExampleIndex {
+  const byChapter = new Map<string, string[]>();
+  for (const file of sourceFiles) {
+    if (!isReadableChapterMarkdownPath(file.path)) {
+      continue;
+    }
+    const chapter = chapterNumberForPath(file.path);
+    if (chapter === undefined) {
+      continue;
+    }
+    const lines = extractLearnerFacingExampleLines(file.text);
+    if (lines.length === 0) {
+      continue;
+    }
+    byChapter.set(chapter, [...(byChapter.get(chapter) ?? []), ...lines]);
+  }
+  return { byChapter };
+}
+
+function examplesForReviewRow(index: ReviewExampleIndex, row: ReviewExampleRow): readonly string[] {
+  const sourceChapter = row.sourceChapter.trim();
+  if (!/^\d+$/u.test(sourceChapter)) {
+    return [];
+  }
+  const chapterKey = String(Number.parseInt(sourceChapter, 10));
+  const sourceLines = index.byChapter.get(chapterKey) ?? [];
+  if (sourceLines.length === 0) {
+    return [];
+  }
+  const terms = reviewExampleSearchTerms(row);
+  const examples: string[] = [];
+  for (const term of terms) {
+    for (const line of sourceLines) {
+      if (lineMatchesReviewTerm(line, term) && !examples.includes(line)) {
+        examples.push(line);
+        if (examples.length >= 3) {
+          return examples;
+        }
+      }
+    }
+  }
+  return examples;
+}
+
+function reviewExampleSearchTerms(row: ReviewExampleRow): readonly string[] {
+  const terms = row.promptLabel === "English"
+    ? [row.back]
+    : row.answerLabel === "English"
+      ? [row.front]
+      : [row.front, row.back];
+  return terms.flatMap(splitReviewSearchTerm).filter((term, index, all) => all.indexOf(term) === index);
+}
+
+function splitReviewSearchTerm(value: string): readonly string[] {
+  return value
+    .split(/\s*;\s*/u)
+    .map((term) => term.trim())
+    .filter((term) => term.length > 0 && !/^N$/u.test(term));
+}
+
+function lineMatchesReviewTerm(line: string, term: string): boolean {
+  if (term.length === 0) {
+    return false;
+  }
+  const escaped = escapeRegExp(term);
+  if (containsWordLikeCharacters(term)) {
+    return new RegExp(`(^|[^\\p{L}\\p{N}_])${escaped}([^\\p{L}\\p{N}_]|$)`, "iu").test(line);
+  }
+  return line.includes(term);
+}
+
+function containsWordLikeCharacters(value: string): boolean {
+  return /[\p{L}\p{N}_]/u.test(value);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[\\^$.*+?()[\]{}|]/gu, "\\$&");
+}
+
+function isReadableChapterMarkdownPath(path: string): boolean {
+  return /^units\/.+\/chapter-\d+[^/]*\/chapter\.md$/u.test(path);
+}
+
+function chapterNumberForPath(path: string): string | undefined {
+  const match = path.match(/\/chapter-0*(\d+)[^/]*\/chapter\.md$/u);
+  return match?.[1];
+}
+
+function extractLearnerFacingExampleLines(markdown: string): readonly string[] {
+  const examples: string[] = [];
+  let inFrontMatter = false;
+  let inExampleSection = false;
+  let inCodeFence = false;
+  for (const [index, rawLine] of markdown.replace(/\r\n?/gu, "\n").split("\n").entries()) {
+    const trimmed = rawLine.trim();
+    if (index === 0 && trimmed === "---") {
+      inFrontMatter = true;
+      continue;
+    }
+    if (inFrontMatter) {
+      if (trimmed === "---") {
+        inFrontMatter = false;
+      }
+      continue;
+    }
+    if (trimmed.startsWith("```")) {
+      inCodeFence = !inCodeFence;
+      continue;
+    }
+    if (inCodeFence) {
+      continue;
+    }
+    if (/^#{2,3}\s+(?:Learner-facing Dialogue|Controlled Reading|Simple Exercises)\b/iu.test(trimmed)) {
+      inExampleSection = true;
+      continue;
+    }
+    if (/^#{2,3}\s+/u.test(trimmed)) {
+      inExampleSection = false;
+      continue;
+    }
+    if (!inExampleSection && !/^\s*(?:[-*]|\d+\.)\s+/u.test(rawLine)) {
+      continue;
+    }
+    const line = normalizeExampleSourceLine(rawLine);
+    if (line === undefined || examples.includes(line)) {
+      continue;
+    }
+    examples.push(line);
+  }
+  return examples;
+}
+
+function normalizeExampleSourceLine(line: string): string | undefined {
+  const trimmed = line.trim();
+  if (trimmed.length === 0
+    || trimmed.startsWith("#")
+    || trimmed.startsWith("|")
+    || /^---+$/u.test(trimmed)
+    || /^Names from\b/u.test(trimmed)
+    || /^Meaning:/iu.test(trimmed)
+    || /^(?:Pinyin|Zhuyin):/iu.test(trimmed)
+    || /^See `?ledger\.md`?\./iu.test(trimmed)
+    || /^Choices:$/iu.test(trimmed)) {
+    return undefined;
+  }
+  const withoutListMarker = trimmed.replace(/^\s*(?:[-*]|\d+\.)\s+/u, "").trim();
+  if (withoutListMarker.length === 0
+    || withoutListMarker.startsWith("|")
+    || /^```/u.test(withoutListMarker)
+    || /^`[^`]+`\s*--\s*/u.test(withoutListMarker)
+    || /^`?[A-Z]{2,3}-GRAMMAR-\d+/u.test(withoutListMarker)) {
+    return undefined;
+  }
+  return withoutListMarker;
 }
 
 function languageCodeForReviewLabel(label: string): string | undefined {

@@ -32,6 +32,7 @@ test("vocabulary renders hints notes tags source language and difficulty", () =>
       ...item("vocabulary"),
       hints: ["Look at the vowel."],
       notes: "This is package-authored explanation.",
+      examples: ["아 is a vowel.", "아 is a syllable block."],
       tags: ["hangul", "vowel"],
       source: {
         path: "units/introduction-to-hangul/chapter-01-vowels/unit-01-simple-vowels.md",
@@ -52,6 +53,7 @@ test("vocabulary renders hints notes tags source language and difficulty", () =>
   assert.equal(rendered.title, "Simple vowels");
   assert.deepEqual(rendered.hintLines, ["Look at the vowel."]);
   assert.deepEqual(rendered.noteLines, ["This is package-authored explanation."]);
+  assert.deepEqual(rendered.exampleLines, ["아 is a vowel.", "아 is a syllable block."]);
   assert.match(rendered.metadataLines.join("\n"), /Tags: hangul, vowel/);
   assert.match(rendered.metadataLines.join("\n"), /Source: units\/introduction-to-hangul/);
   assert.match(rendered.metadataLines.join("\n"), /Language: target=ko, base=en, script=Hangul/);
@@ -83,6 +85,7 @@ test("concept renders without optional fields", () => {
 
   assert.deepEqual(rendered.hintLines, []);
   assert.deepEqual(rendered.noteLines, []);
+  assert.deepEqual(rendered.exampleLines, []);
   assert.deepEqual(rendered.promptLines, ["What is a syllable block?"]);
 });
 

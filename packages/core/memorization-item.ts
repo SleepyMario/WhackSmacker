@@ -36,6 +36,7 @@ export interface MemorizationItem {
   readonly answer: MemorizationContentBlock;
   readonly hints?: readonly string[];
   readonly notes?: string;
+  readonly examples?: readonly string[];
   readonly tags?: readonly string[];
   readonly source?: MemorizationItemSource;
   readonly language?: MemorizationLanguageMetadata;
@@ -205,6 +206,7 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     "answer",
     "hints",
     "notes",
+    "examples",
     "tags",
     "source",
     "language",
@@ -233,6 +235,7 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
   if (value.notes !== undefined && typeof value.notes !== "string") {
     errors.push(`${field}.notes must be a string when present.`);
   }
+  validateStringArray(value.examples, `${field}.examples`, errors, false);
   validateSource(value.source, `${field}.source`, errors);
   validateLanguage(value.language, `${field}.language`, errors);
   validateDifficulty(value.difficulty, `${field}.difficulty`, errors);
