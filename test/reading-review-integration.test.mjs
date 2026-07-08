@@ -344,6 +344,7 @@ test("review run shows the front side before reveal prompt and q stops there", a
     );
 
     assert.match(result.stdout, /Prompt\n\s+one/);
+    assert.match(result.stdout, /Review Prompt/);
     assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
     assert.match(result.stdout, /Review stopped\./);
     assert.doesNotMatch(result.stdout, /com\.sleepymario\.language\.sequence/);
@@ -379,6 +380,8 @@ test("review run shows answer before rating prompt and q stops at rating", async
     const answerIndex = result.stdout.indexOf("Answer\n  1");
     const ratingIndex = result.stdout.indexOf("Choose a rating");
     assert.match(result.stdout, /Prompt\n\s+one/);
+    assert.match(result.stdout, /Review Prompt/);
+    assert.match(result.stdout, /Review Answer/);
     assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
     assert.notEqual(answerIndex, -1);
     assert.notEqual(ratingIndex, -1);

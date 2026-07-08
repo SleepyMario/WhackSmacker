@@ -38,6 +38,7 @@ import {
 declare const process: {
   stdin: NodeInput;
   stdout: NodeOutput;
+  env: Record<string, string | undefined>;
 };
 
 interface NodeInput {
@@ -51,6 +52,7 @@ interface NodeInput {
 }
 
 interface NodeOutput {
+  isTTY?: boolean;
   write(text: string): void;
 }
 
@@ -631,7 +633,18 @@ async function runSingleReviewSource(
 }
 
 function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer"): string {
-  const sections: string[] = [exercise.title];
+  const colorsEnabled = shouldUseReviewColors();
+  const title = side === "prompt" ? "Review Prompt" : "Review Answer";
+  const width = 64;
+  const border = "-".repeat(width);
+  const sections: string[] = [
+    "",
+    reviewColor(border, side, colorsEnabled),
+    reviewColor(centerText(title, width), side, colorsEnabled),
+    reviewColor(centerText(exercise.title, width), side, colorsEnabled),
+    reviewColor(border, side, colorsEnabled),
+    ""
+  ];
   if (side === "prompt") {
     sections.push("", "Prompt", ...prefixStudyLines(exercise.promptLines));
     if (exercise.hintLines.length > 0) {
@@ -643,11 +656,32 @@ function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | 
       sections.push("", "Notes", ...prefixStudyLines(exercise.noteLines));
     }
   }
+  sections.push("", reviewColor(border, side, colorsEnabled));
   return `${sections.join("\n").trimEnd()}\n`;
 }
 
 function prefixStudyLines(lines: readonly string[]): readonly string[] {
   return lines.map((line) => `  ${line}`);
+}
+
+function shouldUseReviewColors(): boolean {
+  return process.stdout.isTTY === true && process.env.NO_COLOR === undefined;
+}
+
+function reviewColor(text: string, side: "prompt" | "answer", colorsEnabled: boolean): string {
+  if (!colorsEnabled) {
+    return text;
+  }
+  const color = side === "prompt" ? "\x1b[1m\x1b[36m" : "\x1b[1m\x1b[32m";
+  return `${color}${text}\x1b[0m`;
+}
+
+function centerText(text: string, width: number): string {
+  const normalized = text.length > width ? `${text.slice(0, Math.max(0, width - 3))}...` : text;
+  const padding = Math.max(0, width - normalized.length);
+  const left = Math.floor(padding / 2);
+  const right = padding - left;
+  return `${" ".repeat(left)}${normalized}${" ".repeat(right)}`;
 }
 
 async function promptForRating(reader: LineReader): Promise<ReviewRating | null> {
