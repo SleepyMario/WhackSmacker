@@ -723,6 +723,10 @@ test("selecting an installed review source runs review inside the right pane", a
     assert.match(terminal.output, /Review Prompt/);
     assert.match(terminal.output, /Review Answer/);
     assert.match(terminal.output, /Review Prompt[\s\S]+Review Answer/);
+    assert.doesNotMatch(stripAnsi(terminal.output), /^Prompt$/m);
+    assert.doesNotMatch(stripAnsi(terminal.output), /^Answer$/m);
+    assert.doesNotMatch(stripAnsi(terminal.output), /^Deck: Chapter 1-5$/m);
+    assert.doesNotMatch(stripAnsi(terminal.output), /Notes\n\s+Deck:/);
     assert.match(stripAnsi(terminal.output), /1 Again/);
     assert.match(stripAnsi(terminal.output), /2 Hard/);
     assert.match(stripAnsi(terminal.output), /3 Good/);
@@ -766,6 +770,10 @@ test("embedded review controls render plainly when terminal colors are disabled"
 
     assert.doesNotMatch(terminal.output, /\x1b\[[0-9;]*m/);
     assert.match(terminal.output, /Review Prompt[\s\S]+Review Answer/);
+    assert.doesNotMatch(terminal.output, /^Prompt$/m);
+    assert.doesNotMatch(terminal.output, /^Answer$/m);
+    assert.doesNotMatch(terminal.output, /^Deck: Chapter 1-5$/m);
+    assert.doesNotMatch(terminal.output, /Notes\n\s+Deck:/);
     assert.match(terminal.output, /1 Again/);
     assert.match(terminal.output, /2 Hard/);
     assert.match(terminal.output, /3 Good/);

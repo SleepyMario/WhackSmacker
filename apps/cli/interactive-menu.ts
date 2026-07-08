@@ -1802,7 +1802,6 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
 function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean): string {
   const header = [
     `Review: ${session.node.packageLabel ?? session.node.packageId ?? "Installed package"}`,
-    `Deck: ${session.node.label}`,
     `Card: ${Math.min(session.index + 1, Math.max(session.items.length, 1))}/${session.items.length}`,
     ""
   ];
@@ -1839,7 +1838,6 @@ function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt"
     reviewCardColor(centerText(title, width), side, colorsEnabled),
     reviewCardColor(centerText(exercise.title, width), side, colorsEnabled),
     reviewCardColor(border, side, colorsEnabled),
-    side === "prompt" ? "Prompt" : "Answer",
     ...prefixReviewCardLines(side === "prompt" ? exercise.promptLines : exercise.answerLines)
   ];
   if (side === "prompt" && exercise.hintLines.length > 0) {
@@ -1855,23 +1853,28 @@ function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt"
 function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean): string {
   const width = 64;
   const border = "-".repeat(width);
+  const noteLines = cleanEmbeddedReviewNoteLines(answer.noteLines);
   const lines = [
     reviewCardColor(border, "answer", colorsEnabled),
     reviewCardColor(centerText("Review Prompt", width), "prompt", colorsEnabled),
     reviewCardColor(centerText(prompt.title, width), "prompt", colorsEnabled),
     reviewCardColor(border, "prompt", colorsEnabled),
-    "Prompt",
     ...prefixReviewCardLines(prompt.promptLines),
     reviewCardColor(border, "answer", colorsEnabled),
     reviewCardColor(centerText("Review Answer", width), "answer", colorsEnabled),
-    "Answer",
     ...prefixReviewCardLines(answer.answerLines)
   ];
-  if (answer.noteLines.length > 0) {
-    lines.push("Notes", ...prefixReviewCardLines(answer.noteLines));
+  if (noteLines.length > 0) {
+    lines.push("Notes", ...prefixReviewCardLines(noteLines));
   }
   lines.push(reviewCardColor(border, "answer", colorsEnabled));
   return lines.join("\n");
+}
+
+function cleanEmbeddedReviewNoteLines(lines: readonly string[]): readonly string[] {
+  return lines
+    .map((line) => line.replace(/^Deck:\s*[^.]+\.?\s*/u, "").trimEnd())
+    .filter((line) => line.length > 0);
 }
 
 function formatPromptControls(colorsEnabled: boolean): string {
