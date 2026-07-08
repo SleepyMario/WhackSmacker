@@ -1801,9 +1801,11 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
 }
 
 function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean): string {
+  const packageLabel = session.node.packageLabel ?? session.node.packageId ?? "Installed package";
   const header = [
-    `Review: ${session.node.packageLabel ?? session.node.packageId ?? "Installed package"}`,
+    `Review: ${packageLabel} / ${session.node.label}`,
     `Card: ${Math.min(session.index + 1, Math.max(session.items.length, 1))}/${session.items.length}`,
+    formatLeaveReviewControl(colorsEnabled),
     ""
   ];
   if (session.side === "complete") {
@@ -1823,9 +1825,9 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
   const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled);
   return [
     ...header,
-    controls,
-    "",
     cards.join("\n\n"),
+    "",
+    controls,
     session.message === undefined ? "" : `\n${session.message}`
   ].filter((line) => line.length > 0).join("\n");
 }
@@ -1868,50 +1870,139 @@ function isJapanesePackage(packageId?: string): boolean {
 
 export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean, packageId?: string): string {
   const languageLines = formatLanguageSpecificEmbeddedExerciseLines(exercise, side, packageId);
-  const title = side === "prompt" ? "Review Prompt" : "Review Answer";
-  const width = 64;
-  const border = "-".repeat(width);
-  const lines = [
-    reviewCardColor(border, side, colorsEnabled),
-    reviewCardColor(centerText(title, width), side, colorsEnabled),
-    reviewCardColor(border, side, colorsEnabled),
-    ...prefixReviewCardLines(languageLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines))
-  ];
+  const lines = formatEmbeddedReviewBody({
+    promptLines: languageLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines),
+    answerLines: [],
+    colorsEnabled,
+    placeholder: "Answer hidden until reveal."
+  });
   if (side === "prompt" && exercise.hintLines.length > 0) {
     lines.push("", "Hints", ...prefixReviewCardLines(exercise.hintLines));
   }
-  if (side === "answer" && exercise.noteLines.length > 0) {
-    lines.push("", "Notes", ...prefixReviewCardLines(exercise.noteLines));
+  if (side === "answer") {
+    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromNotes(exercise.noteLines));
   }
-  lines.push(reviewCardColor(border, side, colorsEnabled));
   return lines.join("\n");
 }
 
 export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string): string {
-  const width = 64;
-  const border = "-".repeat(width);
   const languageReveal = formatLanguageSpecificEmbeddedRevealLines(prompt, packageId);
-  const noteLines = cleanEmbeddedReviewNoteLines(answer.noteLines);
-  const lines = [
-    reviewCardColor(border, "answer", colorsEnabled),
-    reviewCardColor(centerText("Review Prompt", width), "prompt", colorsEnabled),
-    reviewCardColor(border, "prompt", colorsEnabled),
-    ...prefixReviewCardLines(languageReveal?.promptLines ?? prompt.promptLines),
-    reviewCardColor(border, "answer", colorsEnabled),
-    reviewCardColor(centerText("Review Answer", width), "answer", colorsEnabled),
-    ...prefixReviewCardLines(languageReveal?.answerLines ?? answer.answerLines)
-  ];
-  if (noteLines.length > 0) {
-    lines.push("Notes", ...prefixReviewCardLines(noteLines));
-  }
-  lines.push(reviewCardColor(border, "answer", colorsEnabled));
+  const lines = formatEmbeddedReviewBody({
+    promptLines: languageReveal?.promptLines ?? prompt.promptLines,
+    answerLines: languageReveal?.answerLines ?? answer.answerLines,
+    colorsEnabled
+  });
+  appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromNotes(answer.noteLines));
   return lines.join("\n");
 }
 
-function cleanEmbeddedReviewNoteLines(lines: readonly string[]): readonly string[] {
-  return lines
-    .map((line) => line.replace(/^Deck:\s*[^.]+\.?\s*/u, "").trimEnd())
-    .filter((line) => line.length > 0);
+function formatEmbeddedReviewBody(options: {
+  readonly promptLines: readonly string[];
+  readonly answerLines: readonly string[];
+  readonly colorsEnabled: boolean;
+  readonly placeholder?: string;
+}): string[] {
+  const width = 64;
+  const border = "-".repeat(width);
+  return [
+    reviewCardColor(border, "prompt", options.colorsEnabled),
+    reviewCardColor(centerText("Review Prompt", width), "prompt", options.colorsEnabled),
+    ...prefixReviewCardLines(options.promptLines),
+    "",
+    reviewCardColor(centerText("Review Answer", width), "answer", options.colorsEnabled),
+    ...prefixReviewCardLines(options.answerLines.length > 0 ? options.answerLines : [options.placeholder ?? ""])
+  ];
+}
+
+interface EmbeddedReviewSupplement {
+  readonly notes: readonly string[];
+  readonly examples: readonly string[];
+}
+
+function embeddedReviewSupplementFromNotes(lines: readonly string[]): EmbeddedReviewSupplement {
+  const notes: string[] = [];
+  const examples: string[] = [];
+
+  for (const rawLine of lines) {
+    for (const candidate of splitEmbeddedReviewNoteLine(rawLine)) {
+      const line = stripDeckPrefix(candidate).trim();
+      if (line.length === 0 || isInternalEmbeddedReviewNote(line)) {
+        continue;
+      }
+      const example = embeddedReviewExampleSentence(line);
+      if (example !== undefined) {
+        if (examples.length < 3) {
+          examples.push(example);
+        }
+        continue;
+      }
+      if (isLearnerFacingEmbeddedReviewNote(line) && notes.length < 3) {
+        notes.push(normalizeEmbeddedReviewNote(line));
+      }
+    }
+  }
+
+  // TODO: Pull literal example sentences from source readings once review items expose source spans/examples.
+  return { notes, examples };
+}
+
+function appendEmbeddedReviewSupplement(lines: string[], supplement: EmbeddedReviewSupplement): void {
+  if (supplement.notes.length > 0) {
+    lines.push("", "Notes", ...prefixReviewCardLines(supplement.notes.map((note) => `- ${note}`)));
+  }
+  if (supplement.examples.length > 0) {
+    lines.push("", "Example Sentence", ...prefixReviewCardLines(supplement.examples));
+  }
+}
+
+function splitEmbeddedReviewNoteLine(line: string): readonly string[] {
+  return line
+    .replace(/\r\n?/gu, "\n")
+    .split(/\n|;/u)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+}
+
+function stripDeckPrefix(line: string): string {
+  return line.replace(/^Deck:\s*[^.]+\.?\s*/u, "");
+}
+
+function embeddedReviewExampleSentence(line: string): string | undefined {
+  const match = line.match(/^(?:Example(?: Sentence)?|Source Sentence):\s*(.+)$/iu);
+  const value = match?.[1]?.trim();
+  return value === undefined || value.length === 0 ? undefined : value;
+}
+
+function isInternalEmbeddedReviewNote(line: string): boolean {
+  const lower = line.toLowerCase();
+  return lower.includes("not a grammar-pattern card")
+    || lower.includes("not a grammar pattern card")
+    || lower.includes("simple review entry")
+    || lower.includes("simple predicate entry")
+    || lower.includes("template entry")
+    || lower.includes("implementation note")
+    || lower.includes("authoring note")
+    || lower.startsWith("source:")
+    || lower.startsWith("item id:")
+    || lower.startsWith("raw item id:")
+    || lower.startsWith("package id:")
+    || lower.startsWith("review-decks/");
+}
+
+function isLearnerFacingEmbeddedReviewNote(line: string): boolean {
+  const normalized = normalizeEmbeddedReviewNote(line);
+  if (normalized.length === 0 || normalized.length > 80) {
+    return false;
+  }
+  if ((normalized.match(/[.!?]/gu) ?? []).length > 1) {
+    return false;
+  }
+  const lower = normalized.toLowerCase();
+  return lower.length > 0;
+}
+
+function normalizeEmbeddedReviewNote(line: string): string {
+  return line.replace(/^[*-]\s*/u, "").replace(/\s+/gu, " ").trim();
 }
 
 function formatLanguageSpecificEmbeddedExerciseLines(exercise: RenderedExercise, side: "prompt" | "answer", packageId?: string): readonly string[] | undefined {
@@ -2381,7 +2472,7 @@ function normalizeReviewTextLines(text: string): readonly string[] {
 
 function formatPromptControls(colorsEnabled: boolean): string {
   const reveal = colorsEnabled ? `${ansi.bold}${ansi.cyan}Enter/Space Reveal Answer${ansi.reset}` : "Enter/Space Reveal Answer";
-  return `${reveal}   ${formatLeaveReviewControl(colorsEnabled)}`;
+  return reveal;
 }
 
 function formatRatingControls(colorsEnabled: boolean): string {
@@ -2390,16 +2481,14 @@ function formatRatingControls(colorsEnabled: boolean): string {
       "1 Again",
       "2 Hard",
       "3 Good",
-      "4 Easy",
-      "Esc Leave Review"
+      "4 Easy"
     ].join("\n");
   }
   return [
     `${ansi.red}1 Again${ansi.reset}`,
     `${ansi.yellow}2 Hard${ansi.reset}`,
     `${ansi.green}3 Good${ansi.reset}`,
-    `${ansi.cyan}4 Easy${ansi.reset}`,
-    formatLeaveReviewControl(colorsEnabled)
+    `${ansi.cyan}4 Easy${ansi.reset}`
   ].join("\n");
 }
 

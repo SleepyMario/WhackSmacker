@@ -786,6 +786,31 @@ test("embedded review controls render plainly when terminal colors are disabled"
   }
 });
 
+test("embedded review hides internal notes and renders compact learner notes and examples", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "nl",
+    answerLanguage: "en",
+    promptLines: ["student"],
+    answerLines: ["student"],
+    noteLines: [
+      "Deck: Chapter 1-5. Simple review entry, not a grammar-pattern card",
+      "noun",
+      "kinship noun",
+      "Example: Ik ben student.",
+      "Example Sentence: De student is hier.",
+      "This long internal prose explains how the template generated this review entry and should not be shown to learners because it is not useful during study."
+    ]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.dutch");
+
+  assert.doesNotMatch(output, /Simple review entry/);
+  assert.doesNotMatch(output, /not a grammar-pattern card/);
+  assert.doesNotMatch(output, /template generated/);
+  assert.match(output, /Notes\n  - noun\n  - kinship noun/);
+  assert.match(output, /Example Sentence\n  Ik ben student\.\n  De student is hier\./);
+  assert.doesNotMatch(output, /\x1b\[[0-9;]*m/);
+});
+
 test("Chinese A prompt reveals pronunciation and characters", () => {
   const output = formatEmbeddedReviewReveal(chineseExercise({
     promptLanguage: "en",
@@ -1337,7 +1362,8 @@ function reviewExercise({
   promptLanguage,
   answerLanguage,
   promptLines,
-  answerLines
+  answerLines,
+  noteLines = []
 }) {
   return {
     itemIdentity: {
@@ -1352,7 +1378,7 @@ function reviewExercise({
     promptLines,
     answerLines,
     hintLines: [],
-    noteLines: [],
+    noteLines,
     metadataLines: [],
     warnings: []
   };
