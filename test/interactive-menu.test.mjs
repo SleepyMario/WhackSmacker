@@ -722,7 +722,16 @@ test("selecting an installed review source runs review inside the right pane", a
     assert.match(terminal.output, /Press Enter or Space to start review in this pane\./);
     assert.match(terminal.output, /Review Prompt/);
     assert.match(terminal.output, /Review Answer/);
-    assert.match(terminal.output, /1 again\s+2 hard\s+3 good\s+4 easy/);
+    assert.match(terminal.output, /Review Prompt[\s\S]+Review Answer/);
+    assert.match(stripAnsi(terminal.output), /1 Again/);
+    assert.match(stripAnsi(terminal.output), /2 Hard/);
+    assert.match(stripAnsi(terminal.output), /3 Good/);
+    assert.match(stripAnsi(terminal.output), /4 Easy/);
+    assert.match(stripAnsi(terminal.output), /Esc Leave Review/);
+    assert.match(terminal.output, /\x1b\[31m1 Again\x1b\[0m/);
+    assert.match(terminal.output, /\x1b\[33m2 Hard\x1b\[0m/);
+    assert.match(terminal.output, /\x1b\[32m3 Good\x1b\[0m/);
+    assert.match(terminal.output, /\x1b\[36m4 Easy\x1b\[0m/);
     assert.match(terminal.output, /Review stopped: Chapter 1-5/);
     assert.doesNotMatch(terminal.output, /Review: Dutch -- Chapter 1-5/);
     assert.doesNotMatch(terminal.output, /Press Enter to show answer, or q to stop:/);

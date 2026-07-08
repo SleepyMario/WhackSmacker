@@ -152,7 +152,8 @@ interface EmbeddedReviewSession {
   readonly items: readonly ReviewItemState[];
   readonly index: number;
   readonly side: "prompt" | "answer" | "complete";
-  readonly rendered?: RenderedExercise;
+  readonly promptRendered?: RenderedExercise;
+  readonly answerRendered?: RenderedExercise;
   readonly message?: string;
 }
 
@@ -1740,12 +1741,20 @@ async function advanceEmbeddedReviewSession(
       ...session,
       index: nextIndex,
       side: "complete",
-      rendered: undefined,
+      promptRendered: undefined,
+      answerRendered: undefined,
       message: `Completed review deck: ${session.node.label}`
     };
   }
 
-  return renderEmbeddedReviewPrompt({ ...session, index: nextIndex, side: "prompt", rendered: undefined, message: undefined }, options);
+  return renderEmbeddedReviewPrompt({
+    ...session,
+    index: nextIndex,
+    side: "prompt",
+    promptRendered: undefined,
+    answerRendered: undefined,
+    message: undefined
+  }, options);
 }
 
 async function renderEmbeddedReviewPrompt(session: EmbeddedReviewSession, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
@@ -1760,7 +1769,7 @@ async function renderEmbeddedReviewPrompt(session: EmbeddedReviewSession, option
     ...(current.sourcePath === undefined ? {} : { sourcePath: current.sourcePath }),
     itemId: current.itemId
   });
-  return { ...session, side: "prompt", rendered: prompt.rendered, message: undefined };
+  return { ...session, side: "prompt", promptRendered: prompt.rendered, answerRendered: undefined, message: undefined };
 }
 
 async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
@@ -1776,7 +1785,7 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
     itemId: current.itemId,
     answer: true
   });
-  return { ...session, side: "answer", rendered: answer.rendered, message: undefined };
+  return { ...session, side: "answer", answerRendered: answer.rendered, message: undefined };
 }
 
 function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean): string {
@@ -1794,18 +1803,18 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
       "Press Escape to return to the deck preview."
     ].join("\n");
   }
-  if (session.rendered === undefined) {
+  if (session.promptRendered === undefined) {
     return [...header, "Loading review card..."].join("\n");
   }
-  const card = formatEmbeddedReviewExercise(session.rendered, session.side, colorsEnabled);
-  const controls = session.side === "prompt"
-    ? "Enter/Space reveal answer   Esc leave review"
-    : "1 again   2 hard   3 good   4 easy   Esc leave review";
+  const cards = session.side === "prompt"
+    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled)]
+    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled)];
+  const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled);
   return [
     ...header,
-    card,
-    "",
     controls,
+    "",
+    cards.join("\n\n"),
     session.message === undefined ? "" : `\n${session.message}`
   ].filter((line) => line.length > 0).join("\n");
 }
@@ -1819,7 +1828,6 @@ function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt"
     reviewCardColor(centerText(title, width), side, colorsEnabled),
     reviewCardColor(centerText(exercise.title, width), side, colorsEnabled),
     reviewCardColor(border, side, colorsEnabled),
-    "",
     side === "prompt" ? "Prompt" : "Answer",
     ...prefixReviewCardLines(side === "prompt" ? exercise.promptLines : exercise.answerLines)
   ];
@@ -1829,8 +1837,58 @@ function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt"
   if (side === "answer" && exercise.noteLines.length > 0) {
     lines.push("", "Notes", ...prefixReviewCardLines(exercise.noteLines));
   }
-  lines.push("", reviewCardColor(border, side, colorsEnabled));
+  lines.push(reviewCardColor(border, side, colorsEnabled));
   return lines.join("\n");
+}
+
+function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean): string {
+  const width = 64;
+  const border = "-".repeat(width);
+  const lines = [
+    reviewCardColor(border, "answer", colorsEnabled),
+    reviewCardColor(centerText("Review Prompt", width), "prompt", colorsEnabled),
+    reviewCardColor(centerText(prompt.title, width), "prompt", colorsEnabled),
+    reviewCardColor(border, "prompt", colorsEnabled),
+    "Prompt",
+    ...prefixReviewCardLines(prompt.promptLines),
+    reviewCardColor(border, "answer", colorsEnabled),
+    reviewCardColor(centerText("Review Answer", width), "answer", colorsEnabled),
+    "Answer",
+    ...prefixReviewCardLines(answer.answerLines)
+  ];
+  if (answer.noteLines.length > 0) {
+    lines.push("Notes", ...prefixReviewCardLines(answer.noteLines));
+  }
+  lines.push(reviewCardColor(border, "answer", colorsEnabled));
+  return lines.join("\n");
+}
+
+function formatPromptControls(colorsEnabled: boolean): string {
+  const reveal = colorsEnabled ? `${ansi.bold}${ansi.cyan}Enter/Space Reveal Answer${ansi.reset}` : "Enter/Space Reveal Answer";
+  return `${reveal}   ${formatLeaveReviewControl(colorsEnabled)}`;
+}
+
+function formatRatingControls(colorsEnabled: boolean): string {
+  if (!colorsEnabled) {
+    return [
+      "1 Again",
+      "2 Hard",
+      "3 Good",
+      "4 Easy",
+      "Esc Leave Review"
+    ].join("\n");
+  }
+  return [
+    `${ansi.red}1 Again${ansi.reset}`,
+    `${ansi.yellow}2 Hard${ansi.reset}`,
+    `${ansi.green}3 Good${ansi.reset}`,
+    `${ansi.cyan}4 Easy${ansi.reset}`,
+    formatLeaveReviewControl(colorsEnabled)
+  ].join("\n");
+}
+
+function formatLeaveReviewControl(colorsEnabled: boolean): string {
+  return colorsEnabled ? `${ansi.dim}${ansi.gray}Esc Leave Review${ansi.reset}` : "Esc Leave Review";
 }
 
 function prefixReviewCardLines(lines: readonly string[]): readonly string[] {
