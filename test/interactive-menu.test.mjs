@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { test } from "node:test";
 
 import { createCommandRegistry, resolveCliCommand } from "../dist/apps/cli/main.js";
@@ -37,7 +37,11 @@ import {
   installContentPackage,
   InMemoryCliCommandRegistry,
   installedPackageToFirstClassModuleDescriptor,
-  listReadingReviewSources
+  listInstalledContentPackages,
+  listReadingReviewItems,
+  listReadingReviewSources,
+  loadReviewProgressStore,
+  recordReadingReviewAnswer
 } from "../dist/packages/core/index.js";
 
 class FakeTerminal {
@@ -402,7 +406,7 @@ test("language tree lists installed packages and package sections", async () => 
     assert.equal(tree.label, "Languages");
     assert.deepEqual(tree.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
     for (const languagePackage of tree.children) {
-      assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Review decks", "Package info"]);
+      assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Review decks", "Package info", "Uninstall"]);
     }
   } finally {
     await fixture.cleanup();
@@ -820,6 +824,84 @@ test("Enter on an available module does not install but Space installs and refre
   }
 });
 
+test("installed modules expose uninstall and cancel leaves package and progress untouched", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    await createDutchReviewProgress(fixture.dataDir);
+    const terminal = new FakeTerminal([
+      key("down"),
+      key("return"),
+      key("down"),
+      key("u", { sequence: "u" }),
+      key("escape"),
+      key("q", { sequence: "q" })
+    ]);
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+
+    assert.match(terminal.output, /Uninstall Dutch/);
+    assert.match(terminal.output, /Esc: cancel/);
+    assert.match(terminal.output, /Uninstall cancelled: Dutch/);
+    assert.equal((await listInstalledContentPackages(fixture.dataDir)).length, 1);
+    assert.equal((await loadDutchReviewProgress(fixture.dataDir)).items.some((item) => item.packageId === "com.sleepymario.language.dutch"), true);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("package-only uninstall removes installed module but keeps saved review progress", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    await createDutchReviewProgress(fixture.dataDir);
+    const terminal = new FakeTerminal([
+      key("down"),
+      key("return"),
+      key("down"),
+      key("u", { sequence: "u" }),
+      key("k", { sequence: "k" }),
+      key("q", { sequence: "q" })
+    ]);
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+
+    assert.match(terminal.output, /Module uninstalled\./);
+    assert.match(terminal.output, /Saved user data was kept/);
+    assert.deepEqual(await listInstalledContentPackages(fixture.dataDir), []);
+    assert.equal((await loadDutchReviewProgress(fixture.dataDir)).items.some((item) => item.packageId === "com.sleepymario.language.dutch"), true);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("destructive uninstall removes only selected package review progress", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    await createDutchReviewProgress(fixture.dataDir);
+    const progressDir = join(dirname(fixture.dataDir), "progress");
+    const before = await loadReviewProgressStore(progressDir);
+    assert.equal(before.items.some((item) => item.packageId === "com.sleepymario.language.dutch"), true);
+    const terminal = new FakeTerminal([
+      key("down"),
+      key("return"),
+      key("down"),
+      key("u", { sequence: "u" }),
+      key("d", { sequence: "d" }),
+      key("q", { sequence: "q" })
+    ]);
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+    const after = await loadReviewProgressStore(progressDir);
+
+    assert.match(terminal.output, /Saved review progress deleted for this package only/);
+    assert.match(terminal.output, /Removed review states: 1/);
+    assert.deepEqual(await listInstalledContentPackages(fixture.dataDir), []);
+    assert.equal(after.items.some((item) => item.packageId === "com.sleepymario.language.dutch"), false);
+    assert.equal(after.events.some((event) => event.packageId === "com.sleepymario.language.dutch"), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("package without review sources can show a helpful message node", () => {
   const tree = {
     id: "languages",
@@ -1030,6 +1112,29 @@ function packageRecord(packageId, displayName) {
 
 async function createInstalledDutchFixture() {
   return createInstalledLanguageFixture(["dutch-curriculum"], ["com.sleepymario.language.dutch"]);
+}
+
+async function createDutchReviewProgress(dataDir) {
+  const items = await listReadingReviewItems({
+    dataDir,
+    packageId: "com.sleepymario.language.dutch",
+    packageVersion: "0.1.0"
+  });
+  const item = items[0];
+  assert.ok(item, "Dutch fixture has at least one review item");
+  await recordReadingReviewAnswer({
+    dataDir,
+    packageId: item.packageId,
+    packageVersion: item.packageVersion,
+    sourcePath: item.sourcePath,
+    itemId: item.item.id,
+    rating: "good",
+    reviewedAt: "2026-07-06T00:00:00Z"
+  });
+}
+
+async function loadDutchReviewProgress(dataDir) {
+  return loadReviewProgressStore(join(dirname(dataDir), "progress"));
 }
 
 async function createInstalledLanguageFixture(targetIds, packageIds) {

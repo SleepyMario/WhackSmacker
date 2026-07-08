@@ -12,6 +12,7 @@ import {
   loadReviewProgressStore,
   recordReviewOutcome,
   recordStoredReviewOutcome,
+  removeReviewProgressForPackage,
   resolveReviewProgressDirectory,
   reviewProgressFormatVersion,
   reviewProgressStorePath,
@@ -117,6 +118,43 @@ test("stored review outcome preserves package id version and item id", async () 
     assert.equal(result.state.itemId, "hangul/vowels/a");
     assert.equal(result.event.rating, "good");
     assert.equal(result.progressPath, join(progressDir, "review-progress.json"));
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("package review progress removal deletes only matching package state and events", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-review-remove-package-"));
+  const progressDir = join(root, "progress");
+  const kept = createInitialReviewState({
+    packageId: "com.sleepymario.language.kept",
+    packageVersion: "0.1.0",
+    itemId: "deck/card"
+  }, now);
+  const removed = createInitialReviewState(identity(), now);
+  const removedEvent = recordReviewOutcome(removed, "good", now).event;
+  const keptEvent = recordReviewOutcome(kept, "good", now).event;
+  try {
+    await saveReviewProgressStore({
+      reviewProgressFormatVersion: 1,
+      updatedAt: now,
+      items: [removed, kept],
+      events: [removedEvent, keptEvent]
+    }, progressDir);
+
+    const result = await removeReviewProgressForPackage({
+      progressDir,
+      packageId: "com.sleepymario.language.memory",
+      packageVersion: "0.1.0",
+      removedAt: "2026-07-07T00:00:00Z"
+    });
+    const store = await loadReviewProgressStore(progressDir);
+
+    assert.equal(result.removedItemCount, 1);
+    assert.equal(result.removedEventCount, 1);
+    assert.deepEqual(store.items.map((item) => item.packageId), ["com.sleepymario.language.kept"]);
+    assert.deepEqual(store.events.map((event) => event.packageId), ["com.sleepymario.language.kept"]);
+    assert.equal(store.updatedAt, "2026-07-07T00:00:00Z");
   } finally {
     await rm(root, { recursive: true, force: true });
   }

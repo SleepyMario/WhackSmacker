@@ -15,6 +15,8 @@ import {
   orderReviewItemsForSession,
   readInstalledContentEntry,
   recordReadingReviewAnswer,
+  removeContentPackage,
+  removeReadingReviewProgressForPackage,
   renderReadingReviewItem,
   renderReadingContent,
   sortFirstClassModules,
@@ -110,6 +112,7 @@ export type LanguageTreeNodeKind =
   | "read-section"
   | "review-section"
   | "package-info"
+  | "uninstall"
   | "content"
   | "review-source"
   | "message";
@@ -151,6 +154,11 @@ interface EmbeddedReviewSession {
   readonly side: "prompt" | "answer" | "complete";
   readonly rendered?: RenderedExercise;
   readonly message?: string;
+}
+
+interface PendingUninstallSession {
+  readonly nodeId: string;
+  readonly node: LanguageTreeNode;
 }
 
 const ansi = {
@@ -691,6 +699,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let selectedReviewStartId: string | null = null;
   let embeddedReview: EmbeddedReviewSession | null = null;
+  let pendingUninstall: PendingUninstallSession | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
   let rightPaneOffset = 0;
 
@@ -706,6 +715,12 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     }
 
     if (isEscape(key)) {
+      if (pendingUninstall !== null) {
+        rightPaneText = renderUninstallCancelled(pendingUninstall.node);
+        pendingUninstall = null;
+        rightPaneOffset = 0;
+        continue;
+      }
       if (embeddedReview !== null) {
         const selected = visible[selection];
         embeddedReview = null;
@@ -736,6 +751,12 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     }
 
     if (isQuit(key)) {
+      if (pendingUninstall !== null) {
+        rightPaneText = renderUninstallCancelled(pendingUninstall.node);
+        pendingUninstall = null;
+        rightPaneOffset = 0;
+        continue;
+      }
       if (embeddedReview !== null) {
         rightPaneText = renderEmbeddedReviewStopped(embeddedReview.node);
         embeddedReview = null;
@@ -748,6 +769,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 
     if (isUp(key)) {
       embeddedReview = null;
+      pendingUninstall = null;
       selection = wrapSelection(selection - 1, visible.length);
       selectedReviewStartId = null;
       rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
@@ -757,6 +779,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 
     if (isDown(key)) {
       embeddedReview = null;
+      pendingUninstall = null;
       selection = wrapSelection(selection + 1, visible.length);
       selectedReviewStartId = null;
       rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
@@ -781,6 +804,52 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 
     if (isEnd(key)) {
       rightPaneOffset = Number.MAX_SAFE_INTEGER;
+      continue;
+    }
+
+    if (pendingUninstall !== null) {
+      if (isDeleteSavedData(key)) {
+        const result = await uninstallInstalledModuleFromTreeNode(pendingUninstall.node, options, { deleteSavedData: true });
+        tree = await buildModuleTree(options);
+        expandedIds = keepExistingExpandedIds(tree, expandedIds);
+        selection = selectionAfterRemovedNode(tree, expandedIds, pendingUninstall.node.id);
+        rightPaneText = result;
+        rightPaneOffset = 0;
+        pendingUninstall = null;
+        selectedReviewStartId = null;
+        embeddedReview = null;
+        continue;
+      }
+      if (isKeepSavedData(key) || isEnter(key)) {
+        const result = await uninstallInstalledModuleFromTreeNode(pendingUninstall.node, options, { deleteSavedData: false });
+        tree = await buildModuleTree(options);
+        expandedIds = keepExistingExpandedIds(tree, expandedIds);
+        selection = selectionAfterRemovedNode(tree, expandedIds, pendingUninstall.node.id);
+        rightPaneText = result;
+        rightPaneOffset = 0;
+        pendingUninstall = null;
+        selectedReviewStartId = null;
+        embeddedReview = null;
+        continue;
+      }
+      rightPaneText = renderUninstallConfirmation(pendingUninstall.node, terminal.colorsEnabled, "Choose K to keep saved data, D to delete saved data too, Enter for the safe default, or Esc to cancel.");
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (isUninstall(key)) {
+      const selected = visible[selection];
+      const uninstallNode = selected === undefined ? null : uninstallTargetNode(selected.node);
+      if (uninstallNode === null) {
+        rightPaneText = "Uninstall is available only for installed content-package modules.";
+        rightPaneOffset = 0;
+        continue;
+      }
+      pendingUninstall = { nodeId: uninstallNode.id, node: uninstallNode };
+      embeddedReview = null;
+      selectedReviewStartId = null;
+      rightPaneText = renderUninstallConfirmation(uninstallNode, terminal.colorsEnabled);
+      rightPaneOffset = 0;
       continue;
     }
 
@@ -812,6 +881,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       rightPaneOffset = 0;
       selectedReviewStartId = null;
       embeddedReview = null;
+      pendingUninstall = null;
       continue;
     }
 
@@ -841,6 +911,13 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     }
     selectedReviewStartId = null;
     embeddedReview = null;
+    pendingUninstall = null;
+    if (selected.node.kind === "uninstall") {
+      pendingUninstall = { nodeId: selected.node.id, node: selected.node };
+      rightPaneText = renderUninstallConfirmation(selected.node, terminal.colorsEnabled);
+      rightPaneOffset = 0;
+      continue;
+    }
     if (selected.node.kind === "command") {
       const quit = await runModuleTreeCommandAction(registry, terminal, selected.node);
       rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
@@ -925,6 +1002,121 @@ async function installAvailableModuleFromTreeNode(node: LanguageTreeNode, option
   } catch (error) {
     return `Install failed.\n\n${error instanceof Error ? error.message : String(error)}`;
   }
+}
+
+async function uninstallInstalledModuleFromTreeNode(
+  node: LanguageTreeNode,
+  options: InteractiveMenuOptions,
+  behavior: { readonly deleteSavedData: boolean }
+): Promise<string> {
+  if (!isInstalledContentPackageNode(node)) {
+    return "Uninstall is available only for installed content-package modules.";
+  }
+  try {
+    const removedAt = currentReviewTimestamp();
+    const result = await removeContentPackage({
+      dataDir: options.dataDir,
+      packageId: node.packageId,
+      ...(node.packageVersion === undefined ? {} : { packageVersion: node.packageVersion })
+    });
+    let savedDataResult = "";
+    if (behavior.deleteSavedData) {
+      const progress = await removeReadingReviewProgressForPackage({
+        dataDir: options.dataDir,
+        packageId: node.packageId,
+        ...(node.packageVersion === undefined ? {} : { packageVersion: node.packageVersion }),
+        removedAt
+      });
+      savedDataResult = [
+        "",
+        "Saved review progress deleted for this package only.",
+        `Removed review states: ${progress.removedItemCount}`,
+        `Removed review events: ${progress.removedEventCount}`,
+        `Progress store: ${progress.progressPath}`
+      ].join("\n");
+    } else {
+      savedDataResult = [
+        "",
+        "Saved user data was kept.",
+        "Review progress remains outside installed package content and can be reused if this package is installed again."
+      ].join("\n");
+    }
+    return [
+      "Module uninstalled.",
+      "",
+      `Package: ${node.packageId}`,
+      `Version: ${node.packageVersion ?? "all installed versions"}`,
+      `Removed package records: ${result.removed.length}`,
+      "",
+      "Installed package content and registry entries were removed.",
+      "Package feeds and catalogues were not changed.",
+      savedDataResult
+    ].join("\n");
+  } catch (error) {
+    return `Uninstall failed.\n\n${error instanceof Error ? error.message : String(error)}`;
+  }
+}
+
+function isInstalledContentPackageNode(node: LanguageTreeNode): node is LanguageTreeNode & { readonly packageId: string } {
+  return (node.kind === "package" || node.kind === "package-info" || node.kind === "uninstall") &&
+    node.sourceKind === "content-package" &&
+    node.packageId !== undefined;
+}
+
+function uninstallTargetNode(node: LanguageTreeNode): LanguageTreeNode | null {
+  return isInstalledContentPackageNode(node) ? node : null;
+}
+
+function selectionAfterRemovedNode(root: LanguageTreeNode, expandedIds: ReadonlySet<string>, removedNodeId: string): number {
+  const visible = flattenVisibleLanguageTree(root, expandedIds);
+  const exact = visible.findIndex((entry) => entry.node.id === removedNodeId);
+  if (exact >= 0) {
+    return exact;
+  }
+  const installedRoot = visible.findIndex((entry) => entry.node.id === "installed-modules");
+  return Math.max(0, installedRoot);
+}
+
+function renderUninstallPreview(label: string): string {
+  return [
+    `Uninstall ${label}`,
+    "",
+    "Uninstall removes the installed read-only package content and package registry entry.",
+    "Saved user data and review progress are kept by default.",
+    "",
+    "Press Enter or U to choose uninstall behavior."
+  ].join("\n");
+}
+
+function renderUninstallConfirmation(node: LanguageTreeNode, colorsEnabled: boolean, message?: string): string {
+  const title = `Uninstall ${node.packageLabel ?? node.label}`;
+  const destructive = colorsEnabled ? `${ansi.bold}${ansi.red}D${ansi.reset}` : "D";
+  const keep = colorsEnabled ? `${ansi.bold}${ansi.green}K${ansi.reset}` : "K";
+  const safeDefault = colorsEnabled ? `${ansi.bold}${ansi.green}Enter${ansi.reset}` : "Enter";
+  const warning = colorsEnabled ? `${ansi.bold}${ansi.yellow}This cannot be undone from inside WhackSmacker.${ansi.reset}` : "This cannot be undone from inside WhackSmacker.";
+  return [
+    title,
+    "",
+    `Package: ${node.packageId ?? "unknown"}`,
+    `Version: ${node.packageVersion ?? "latest installed"}`,
+    "",
+    "Choose uninstall behavior:",
+    "",
+    `${safeDefault} or ${keep}: uninstall package only, keep saved data/progress. (safe default)`,
+    `${destructive}: uninstall package and delete saved review progress for this package only.`,
+    "Esc: cancel.",
+    "",
+    warning,
+    message === undefined ? "" : `\n${message}`
+  ].filter((line) => line.length > 0).join("\n");
+}
+
+function renderUninstallCancelled(node: LanguageTreeNode): string {
+  return [
+    `Uninstall cancelled: ${node.packageLabel ?? node.label}`,
+    "",
+    "Installed package content and saved user data were not changed."
+  ].join("\n");
 }
 
 export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeNode> {
@@ -1242,6 +1434,18 @@ async function buildLanguageTreeFromDescriptors(
           packageVersion: descriptor.packageVersion,
           packageLabel: descriptor.displayName,
           previewText: formatFirstClassModuleInfo(descriptor)
+        },
+        {
+          id: `${packageBase}:uninstall`,
+          label: "Uninstall",
+          kind: "uninstall",
+          moduleId: descriptor.moduleId,
+          moduleVersion: descriptor.version,
+          sourceKind: descriptor.sourceKind,
+          packageId: descriptor.packageId,
+          packageVersion: descriptor.packageVersion,
+          packageLabel: descriptor.displayName,
+          previewText: renderUninstallPreview(descriptor.displayName)
         }
       ]
     });
@@ -1359,6 +1563,9 @@ async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: Inte
       "User progress and settings stay outside package directories."
     ].join("\n");
   }
+  if (node.kind === "uninstall") {
+    return node.previewText ?? renderUninstallPreview(node.packageLabel ?? node.label);
+  }
   if (node.kind === "package") {
     return [
       node.packageLabel ?? node.label,
@@ -1367,7 +1574,9 @@ async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: Inte
       `Version: ${node.packageVersion ?? "latest installed"}`,
       "",
       "Installed package content is read-only.",
-      "User progress and settings stay outside package directories."
+      "User progress and settings stay outside package directories.",
+      "",
+      "Press U to uninstall this package."
     ].join("\n");
   }
   if (node.kind === "review-source") {
@@ -2282,7 +2491,7 @@ export function renderTwoPaneLanguageTree(
   }
 
   const scroll = rightLines.length > bodyHeight ? `  Output ${offset + 1}-${Math.min(offset + bodyHeight, rightLines.length)}/${rightLines.length}` : "";
-  const footer = `Up/Down move  Enter open/start  Space install available  PgUp/PgDn scroll  Home/End jump  Escape collapse/back  q quit${scroll}`;
+  const footer = `Up/Down move  Enter open/start  Space install available  U uninstall  PgUp/PgDn scroll  Home/End jump  Escape collapse/back  q quit${scroll}`;
   lines.push(horizontal);
   lines.push(colorsEnabled ? `${ansi.green}${footer}${ansi.reset}` : footer);
   return lines.join("\n");
@@ -2319,6 +2528,9 @@ function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width
   }
   if (entry.node.kind === "review-source") {
     return `${ansi.yellow}${plain}${ansi.reset}`;
+  }
+  if (entry.node.kind === "uninstall") {
+    return `${ansi.red}${plain}${ansi.reset}`;
   }
   return plain;
 }
@@ -2500,6 +2712,18 @@ function isEnter(key: KeyPress): boolean {
 
 function isSpace(key: KeyPress): boolean {
   return key.name === "space" || key.sequence === " ";
+}
+
+function isUninstall(key: KeyPress): boolean {
+  return key.name === "u" || key.sequence === "u" || key.sequence === "U";
+}
+
+function isKeepSavedData(key: KeyPress): boolean {
+  return key.name === "k" || key.sequence === "k" || key.sequence === "K";
+}
+
+function isDeleteSavedData(key: KeyPress): boolean {
+  return key.name === "d" || key.sequence === "d" || key.sequence === "D";
 }
 
 function isEscape(key: KeyPress): boolean {

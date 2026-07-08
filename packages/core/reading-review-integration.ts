@@ -10,6 +10,7 @@ import {
   reviewProgressStorePath,
   saveReviewProgressStore,
   loadReviewProgressStore,
+  removeReviewProgressForPackage,
   type RecordStoredReviewOutcomeResult
 } from "./review-progress-store";
 import {
@@ -58,6 +59,17 @@ export interface RecordReadingReviewAnswerOptions extends ReadingReviewOptions {
   readonly itemId: string;
   readonly rating: ReviewRating;
   readonly reviewedAt: string;
+}
+
+export interface RemoveReadingReviewProgressOptions extends ReadingReviewOptions {
+  readonly packageId: string;
+  readonly removedAt: string;
+}
+
+export interface RemoveReadingReviewProgressResult {
+  readonly removedItemCount: number;
+  readonly removedEventCount: number;
+  readonly progressPath: string;
 }
 
 export interface OrderReviewItemsForSessionOptions {
@@ -213,6 +225,18 @@ export async function recordReadingReviewAnswer(options: RecordReadingReviewAnsw
     itemId: reviewItem.item.id,
     rating: options.rating,
     reviewedAt: options.reviewedAt
+  });
+}
+
+export async function removeReadingReviewProgressForPackage(
+  options: RemoveReadingReviewProgressOptions
+): Promise<RemoveReadingReviewProgressResult> {
+  const progressDir = resolveIntegrationProgressDir(options.dataDir, options.progressDir);
+  return removeReviewProgressForPackage({
+    progressDir,
+    packageId: options.packageId,
+    packageVersion: options.packageVersion,
+    removedAt: options.removedAt
   });
 }
 
