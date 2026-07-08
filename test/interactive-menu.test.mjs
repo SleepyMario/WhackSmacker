@@ -45,10 +45,10 @@ import {
 } from "../dist/packages/core/index.js";
 
 class FakeTerminal {
-  constructor(keys, { interactive = true } = {}) {
+  constructor(keys, { interactive = true, colorsEnabled = interactive } = {}) {
     this.keys = [...keys];
     this.isInteractive = interactive;
-    this.colorsEnabled = interactive;
+    this.colorsEnabled = colorsEnabled;
     this.output = "";
     this.enterCount = 0;
     this.restoreCount = 0;
@@ -742,6 +742,40 @@ test("selecting an installed review source runs review inside the right pane", a
   }
 });
 
+for (const [ratingKey, expectedRating] of [["1", "again"], ["2", "hard"], ["3", "good"], ["4", "easy"]]) {
+  test(`embedded review accepts numeric rating ${ratingKey} as ${expectedRating}`, async () => {
+    const fixture = await createInstalledDutchFixture();
+    const terminal = new FakeTerminal(embeddedDutchReviewKeys(ratingKey));
+    try {
+      await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+      const progress = await loadDutchReviewProgress(fixture.dataDir);
+
+      assert.equal(progress.events.some((event) => event.packageId === "com.sleepymario.language.dutch" && event.rating === expectedRating), true);
+      assert.equal(progress.items.some((item) => item.packageId === "com.sleepymario.language.dutch" && item.reviewCount === 1), true);
+    } finally {
+      await fixture.cleanup();
+    }
+  });
+}
+
+test("embedded review controls render plainly when terminal colors are disabled", async () => {
+  const fixture = await createInstalledDutchFixture();
+  const terminal = new FakeTerminal(embeddedDutchReviewKeys("3"), { colorsEnabled: false });
+  try {
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+
+    assert.doesNotMatch(terminal.output, /\x1b\[[0-9;]*m/);
+    assert.match(terminal.output, /Review Prompt[\s\S]+Review Answer/);
+    assert.match(terminal.output, /1 Again/);
+    assert.match(terminal.output, /2 Hard/);
+    assert.match(terminal.output, /3 Good/);
+    assert.match(terminal.output, /4 Easy/);
+    assert.match(terminal.output, /Esc Leave Review/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("review section can be expanded without starting review", async () => {
   const fixture = await createInstalledDutchFixture();
   const calls = [];
@@ -1117,6 +1151,25 @@ function packageRecord(packageId, displayName) {
     displayName,
     contentType: "language-curriculum"
   };
+}
+
+function embeddedDutchReviewKeys(ratingKey) {
+  return [
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("return"),
+    key("return"),
+    key(ratingKey, { sequence: ratingKey }),
+    key("q", { sequence: "q" }),
+    key("q", { sequence: "q" })
+  ];
 }
 
 async function createInstalledDutchFixture() {

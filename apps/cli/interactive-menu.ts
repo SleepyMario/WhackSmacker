@@ -838,6 +838,17 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       continue;
     }
 
+    if (embeddedReview !== null) {
+      const selected = visible[selection];
+      if (selected?.node.kind === "review-source" && embeddedReview.nodeId === selected.node.id) {
+        embeddedReview = await advanceEmbeddedReviewSession(embeddedReview, key, options);
+        rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+        rightPaneOffset = 0;
+        selectedReviewStartId = selected.node.id;
+        continue;
+      }
+    }
+
     if (isUninstall(key)) {
       const selected = visible[selection];
       const uninstallNode = selected === undefined ? null : uninstallTargetNode(selected.node);
