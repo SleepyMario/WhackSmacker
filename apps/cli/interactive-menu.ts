@@ -7,15 +7,24 @@ import {
   installContentPackage,
   isLanguageLikeModulePackage,
   listAvailableContentPackages,
+  listIntegratedDueReviewItems,
   listReadableContentEntries,
   listInstalledReadablePackages,
+  listReadingReviewItems,
   listReadingReviewSources,
+  orderReviewItemsForSession,
   readInstalledContentEntry,
+  recordReadingReviewAnswer,
+  renderReadingReviewItem,
   renderReadingContent,
   sortFirstClassModules,
+  syncReadingReviewItems,
   type ContentPackageCatalogueEntry,
   type FirstClassModuleDescriptor,
   type ReadableContentEntry,
+  type RenderedExercise,
+  type ReviewItemState,
+  type ReviewRating,
   type ReadingReviewSource,
   type InstalledReadablePackage
 } from "../../packages/core";
@@ -132,6 +141,16 @@ export interface VisibleLanguageTreeNode {
   readonly depth: number;
   readonly expandable: boolean;
   readonly expanded: boolean;
+}
+
+interface EmbeddedReviewSession {
+  readonly nodeId: string;
+  readonly node: LanguageTreeNode;
+  readonly items: readonly ReviewItemState[];
+  readonly index: number;
+  readonly side: "prompt" | "answer" | "complete";
+  readonly rendered?: RenderedExercise;
+  readonly message?: string;
 }
 
 const ansi = {
@@ -671,6 +690,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let selectedReviewStartId: string | null = null;
+  let embeddedReview: EmbeddedReviewSession | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
   let rightPaneOffset = 0;
 
@@ -686,6 +706,16 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     }
 
     if (isEscape(key)) {
+      if (embeddedReview !== null) {
+        const selected = visible[selection];
+        embeddedReview = null;
+        selectedReviewStartId = selected?.node.kind === "review-source" ? selected.node.id : null;
+        rightPaneText = selected?.node.kind === "review-source"
+          ? renderReviewDeckPreview(selected.node, true)
+          : await renderLanguageTreeRightPane(selected?.node ?? tree, options);
+        rightPaneOffset = 0;
+        continue;
+      }
       const selected = visible[selection];
       if (selected?.expandable === true && selected.expanded) {
         expandedIds = withoutExpandedId(expandedIds, selected.node.id);
@@ -706,10 +736,18 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     }
 
     if (isQuit(key)) {
+      if (embeddedReview !== null) {
+        rightPaneText = renderEmbeddedReviewStopped(embeddedReview.node);
+        embeddedReview = null;
+        selectedReviewStartId = null;
+        rightPaneOffset = 0;
+        continue;
+      }
       return true;
     }
 
     if (isUp(key)) {
+      embeddedReview = null;
       selection = wrapSelection(selection - 1, visible.length);
       selectedReviewStartId = null;
       rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
@@ -718,6 +756,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     }
 
     if (isDown(key)) {
+      embeddedReview = null;
       selection = wrapSelection(selection + 1, visible.length);
       selectedReviewStartId = null;
       rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
@@ -750,6 +789,17 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       if (selected === undefined) {
         continue;
       }
+      if (selected.node.kind === "review-source") {
+        if (embeddedReview === null || embeddedReview.nodeId !== selected.node.id || embeddedReview.side === "complete") {
+          embeddedReview = await startEmbeddedReviewSession(selected.node, options);
+        } else {
+          embeddedReview = await advanceEmbeddedReviewSession(embeddedReview, key, options);
+        }
+        selectedReviewStartId = selected.node.id;
+        rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+        rightPaneOffset = 0;
+        continue;
+      }
       const result = await installAvailableModuleFromTreeNode(selected.node, options);
       tree = await buildModuleTree(options);
       expandedIds = keepExistingExpandedIds(tree, expandedIds);
@@ -761,6 +811,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       rightPaneText = result;
       rightPaneOffset = 0;
       selectedReviewStartId = null;
+      embeddedReview = null;
       continue;
     }
 
@@ -773,16 +824,14 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       continue;
     }
     if (selected.node.kind === "review-source") {
-      if (selectedReviewStartId === selected.node.id) {
-        const quit = await runLanguageTreeReviewSourceAction(registry, terminal, selected.node, options);
-        selectedReviewStartId = null;
-        tree = await buildModuleTree(options);
-        expandedIds = keepExistingExpandedIds(tree, expandedIds);
-        rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+      if (embeddedReview !== null && embeddedReview.nodeId === selected.node.id) {
+        embeddedReview = await advanceEmbeddedReviewSession(embeddedReview, key, options);
+        rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
         rightPaneOffset = 0;
-        if (quit) {
-          return true;
-        }
+      } else if (selectedReviewStartId === selected.node.id) {
+        embeddedReview = await startEmbeddedReviewSession(selected.node, options);
+        rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+        rightPaneOffset = 0;
       } else {
         selectedReviewStartId = selected.node.id;
         rightPaneText = renderReviewDeckPreview(selected.node, true);
@@ -791,6 +840,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       continue;
     }
     selectedReviewStartId = null;
+    embeddedReview = null;
     if (selected.node.kind === "command") {
       const quit = await runModuleTreeCommandAction(registry, terminal, selected.node);
       rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
@@ -1378,8 +1428,250 @@ function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean): string
     `Package: ${node.packageLabel ?? node.packageId ?? "unknown"}`,
     node.itemCount === undefined ? "" : `Items: ${node.itemCount}`,
     "",
-    armed ? "Press Enter to start review." : "Press Enter once to select this deck, then press Enter again to start review."
+    armed ? "Press Enter or Space to start review in this pane." : "Press Enter once to select this deck, then press Enter or Space to start review here."
   ].filter((line) => line.length > 0).join("\n");
+}
+
+async function startEmbeddedReviewSession(node: LanguageTreeNode, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
+  if (node.packageId === undefined || node.sourcePath === undefined) {
+    return {
+      nodeId: node.id,
+      node,
+      items: [],
+      index: 0,
+      side: "complete",
+      message: "Review source is missing package metadata."
+    };
+  }
+
+  const now = currentReviewTimestamp();
+  await syncReadingReviewItems({
+    dataDir: options.dataDir,
+    packageId: node.packageId,
+    packageVersion: node.packageVersion,
+    now
+  });
+
+  const sourceItems = await listReadingReviewItems({
+    dataDir: options.dataDir,
+    packageId: node.packageId,
+    packageVersion: node.packageVersion,
+    sourcePath: node.sourcePath
+  });
+  const sourceItemIds = new Set(sourceItems.map((item) => item.item.id));
+  const due = (await listIntegratedDueReviewItems({
+    dataDir: options.dataDir,
+    packageId: node.packageId,
+    packageVersion: node.packageVersion,
+    now
+  })).filter((item) => sourceItemIds.has(item.itemId) && (item.sourcePath === undefined || item.sourcePath === node.sourcePath));
+  const items = orderReviewItemsForSession(due) as readonly ReviewItemState[];
+
+  if (items.length === 0) {
+    return {
+      nodeId: node.id,
+      node,
+      items,
+      index: 0,
+      side: "complete",
+      message: `No due review items found for deck: ${node.label}`
+    };
+  }
+
+  return renderEmbeddedReviewPrompt({
+    nodeId: node.id,
+    node,
+    items,
+    index: 0,
+    side: "prompt"
+  }, options);
+}
+
+async function advanceEmbeddedReviewSession(
+  session: EmbeddedReviewSession,
+  key: KeyPress,
+  options: InteractiveMenuOptions
+): Promise<EmbeddedReviewSession> {
+  if (session.side === "complete") {
+    return session;
+  }
+  if (session.side === "prompt") {
+    if (isEnter(key) || isSpace(key)) {
+      return renderEmbeddedReviewAnswer(session, options);
+    }
+    return { ...session, message: "Press Enter or Space to reveal the answer. Press Esc to leave review." };
+  }
+
+  const rating = reviewRatingForKey(key);
+  if (rating === null) {
+    return {
+      ...session,
+      message: "Choose 1 again, 2 hard, 3 good, or 4 easy. Esc leaves review."
+    };
+  }
+
+  const current = session.items[session.index];
+  if (current === undefined) {
+    return { ...session, side: "complete", message: `Completed review deck: ${session.node.label}` };
+  }
+
+  await recordReadingReviewAnswer({
+    dataDir: options.dataDir,
+    packageId: current.packageId,
+    packageVersion: current.packageVersion,
+    ...(current.sourcePath === undefined ? {} : { sourcePath: current.sourcePath }),
+    itemId: current.itemId,
+    rating,
+    reviewedAt: currentReviewTimestamp()
+  });
+
+  const nextIndex = session.index + 1;
+  if (nextIndex >= session.items.length) {
+    return {
+      ...session,
+      index: nextIndex,
+      side: "complete",
+      rendered: undefined,
+      message: `Completed review deck: ${session.node.label}`
+    };
+  }
+
+  return renderEmbeddedReviewPrompt({ ...session, index: nextIndex, side: "prompt", rendered: undefined, message: undefined }, options);
+}
+
+async function renderEmbeddedReviewPrompt(session: EmbeddedReviewSession, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
+  const current = session.items[session.index];
+  if (current === undefined) {
+    return { ...session, side: "complete", message: `Completed review deck: ${session.node.label}` };
+  }
+  const prompt = await renderReadingReviewItem({
+    dataDir: options.dataDir,
+    packageId: current.packageId,
+    packageVersion: current.packageVersion,
+    ...(current.sourcePath === undefined ? {} : { sourcePath: current.sourcePath }),
+    itemId: current.itemId
+  });
+  return { ...session, side: "prompt", rendered: prompt.rendered, message: undefined };
+}
+
+async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
+  const current = session.items[session.index];
+  if (current === undefined) {
+    return { ...session, side: "complete", message: `Completed review deck: ${session.node.label}` };
+  }
+  const answer = await renderReadingReviewItem({
+    dataDir: options.dataDir,
+    packageId: current.packageId,
+    packageVersion: current.packageVersion,
+    ...(current.sourcePath === undefined ? {} : { sourcePath: current.sourcePath }),
+    itemId: current.itemId,
+    answer: true
+  });
+  return { ...session, side: "answer", rendered: answer.rendered, message: undefined };
+}
+
+function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean): string {
+  const header = [
+    `Review: ${session.node.packageLabel ?? session.node.packageId ?? "Installed package"}`,
+    `Deck: ${session.node.label}`,
+    `Card: ${Math.min(session.index + 1, Math.max(session.items.length, 1))}/${session.items.length}`,
+    ""
+  ];
+  if (session.side === "complete") {
+    return [
+      ...header,
+      session.message ?? `Completed review deck: ${session.node.label}`,
+      "",
+      "Press Escape to return to the deck preview."
+    ].join("\n");
+  }
+  if (session.rendered === undefined) {
+    return [...header, "Loading review card..."].join("\n");
+  }
+  const card = formatEmbeddedReviewExercise(session.rendered, session.side, colorsEnabled);
+  const controls = session.side === "prompt"
+    ? "Enter/Space reveal answer   Esc leave review"
+    : "1 again   2 hard   3 good   4 easy   Esc leave review";
+  return [
+    ...header,
+    card,
+    "",
+    controls,
+    session.message === undefined ? "" : `\n${session.message}`
+  ].filter((line) => line.length > 0).join("\n");
+}
+
+function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean): string {
+  const title = side === "prompt" ? "Review Prompt" : "Review Answer";
+  const width = 64;
+  const border = "-".repeat(width);
+  const lines = [
+    reviewCardColor(border, side, colorsEnabled),
+    reviewCardColor(centerText(title, width), side, colorsEnabled),
+    reviewCardColor(centerText(exercise.title, width), side, colorsEnabled),
+    reviewCardColor(border, side, colorsEnabled),
+    "",
+    side === "prompt" ? "Prompt" : "Answer",
+    ...prefixReviewCardLines(side === "prompt" ? exercise.promptLines : exercise.answerLines)
+  ];
+  if (side === "prompt" && exercise.hintLines.length > 0) {
+    lines.push("", "Hints", ...prefixReviewCardLines(exercise.hintLines));
+  }
+  if (side === "answer" && exercise.noteLines.length > 0) {
+    lines.push("", "Notes", ...prefixReviewCardLines(exercise.noteLines));
+  }
+  lines.push("", reviewCardColor(border, side, colorsEnabled));
+  return lines.join("\n");
+}
+
+function prefixReviewCardLines(lines: readonly string[]): readonly string[] {
+  return lines.map((line) => `  ${line}`);
+}
+
+function reviewCardColor(text: string, side: "prompt" | "answer", colorsEnabled: boolean): string {
+  if (!colorsEnabled) {
+    return text;
+  }
+  const color = side === "prompt" ? `${ansi.bold}${ansi.cyan}` : `${ansi.bold}${ansi.green}`;
+  return `${color}${text}${ansi.reset}`;
+}
+
+function centerText(text: string, width: number): string {
+  const normalized = text.length > width ? `${text.slice(0, Math.max(0, width - 3))}...` : text;
+  const padding = Math.max(0, width - normalized.length);
+  const left = Math.floor(padding / 2);
+  const right = padding - left;
+  return `${" ".repeat(left)}${normalized}${" ".repeat(right)}`;
+}
+
+function reviewRatingForKey(key: KeyPress): ReviewRating | null {
+  const value = key.sequence ?? key.name ?? "";
+  if (value === "1" || value === "a") {
+    return "again";
+  }
+  if (value === "2" || value === "h") {
+    return "hard";
+  }
+  if (value === "3" || value === "g") {
+    return "good";
+  }
+  if (value === "4" || value === "e") {
+    return "easy";
+  }
+  return null;
+}
+
+function currentReviewTimestamp(): string {
+  return new Date().toISOString().replace(/\.\d{3}Z$/u, "Z");
+}
+
+function renderEmbeddedReviewStopped(node: LanguageTreeNode): string {
+  return [
+    `Review stopped: ${node.label}`,
+    "",
+    "Progress for cards already rated has been saved.",
+    "Select the deck and press Enter or Space to continue later."
+  ].join("\n");
 }
 
 async function runLanguageTreeReviewSourceAction(

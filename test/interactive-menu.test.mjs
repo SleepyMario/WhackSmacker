@@ -686,7 +686,7 @@ test("Korean and Chinese review source menus use clean deck names", async () => 
   }
 });
 
-test("selecting an installed review source runs the existing review flow live with package and source", async () => {
+test("selecting an installed review source runs review inside the right pane", async () => {
   const fixture = await createInstalledDutchFixture();
   const calls = [];
   const terminal = new FakeTerminal([
@@ -700,47 +700,28 @@ test("selecting an installed review source runs the existing review flow live wi
     key("down"),
     key("return"),
     key("return"),
-    key("escape"),
+    key("return"),
+    key("3", { sequence: "3" }),
+    key("q", { sequence: "q" }),
     key("q", { sequence: "q" })
   ]);
 
   try {
-    const registry = createStubRegistry(calls, {
-      reviewRun: async (args) => {
-        calls.push({ path: "review run", args: [...args] });
-        terminal.write("Prompt\nfront side\n");
-        terminal.write("Press Enter to show answer, or q to stop: ");
-        terminal.write("Answer\nback side\n");
-        terminal.write("Choose a rating (1 again / 2 hard / 3 good / 4 easy, or q to stop): ");
-        terminal.write("Review stopped.\n");
-      }
-    });
+    const registry = createStubRegistry(calls);
     await runInteractiveMenu(registry, terminal, { dataDir: fixture.dataDir });
 
-    assert.deepEqual(calls, [{
-      path: "review run",
-      args: [
-        "--package",
-        "com.sleepymario.language.dutch",
-        "--source",
-        "review-decks/chapter-001-005/cards.tsv",
-        "--version",
-        "0.1.0",
-        "--data-dir",
-        fixture.dataDir
-      ]
-    }]);
-    assert.equal(terminal.restoreCount >= 1, true);
-    assert.equal(terminal.enterCount >= 2, true);
+    assert.deepEqual(calls, []);
+    assert.equal(terminal.restoreCount, 1);
+    assert.equal(terminal.enterCount, 1);
     assert.match(terminal.output, /Review decks/);
     assert.match(terminal.output, /Chapter 1-5/);
-    assert.match(terminal.output, /Press Enter to start review\./);
-    assert.match(terminal.output, /Review: Dutch -- Chapter 1-5/);
-    assert.match(terminal.output, /Prompt\nfront side/);
-    assert.match(terminal.output, /Press Enter to show answer, or q to stop:/);
-    assert.match(terminal.output, /Answer\nback side/);
-    assert.match(terminal.output, /Choose a rating/);
-    assert.equal(terminal.output.indexOf("Answer\nback side") < terminal.output.indexOf("Choose a rating"), true);
+    assert.match(terminal.output, /Press Enter or Space to start review in this pane\./);
+    assert.match(terminal.output, /Review Prompt/);
+    assert.match(terminal.output, /Review Answer/);
+    assert.match(terminal.output, /1 again\s+2 hard\s+3 good\s+4 easy/);
+    assert.match(terminal.output, /Review stopped: Chapter 1-5/);
+    assert.doesNotMatch(terminal.output, /Review: Dutch -- Chapter 1-5/);
+    assert.doesNotMatch(terminal.output, /Press Enter to show answer, or q to stop:/);
     assert.doesNotMatch(terminal.output, /> com\.sleepymario\.language\.dutch 0\.1\.0 review-decks\/chapter-001-005\/cards\.tsv Chapter 1-5 \(80 items\)/);
     assert.doesNotMatch(terminal.output, /q\.Press Enter/);
   } finally {
