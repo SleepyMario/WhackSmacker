@@ -546,7 +546,7 @@ function buildMemorizationFiles(
   sourceFiles: readonly SourceFile[],
   generatedAt: string
 ): readonly GeneratedMemorizationFile[] {
-  const reviewExampleIndex = buildReviewExampleIndex(sourceFiles);
+  const reviewExampleIndex = buildReviewExampleIndex(target, sourceFiles);
   return sourceFiles
     .filter((file) => isReviewDeckCardsPath(file.path))
     .map((file) => {
@@ -616,7 +616,8 @@ function reviewDeckRowToItem(
     front,
     back
   });
-  if (isCoreReviewDeckRow(sourceChapter) && examples.length === 0) {
+  const missingSourceExample = isCoreReviewDeckRow(sourceChapter) && examples.length === 0;
+  if (missingSourceExample) {
     throw new Error(
       `Review deck row ${rowNumber + 1} in ${sourcePath} has no learner-facing source example for ${front} -> ${back}. ` +
       "Core vocabulary review cards must have at least one literal source example."
@@ -641,7 +642,7 @@ function reviewDeckRowToItem(
     },
     notes: `Deck: ${deck}. ${notes}`,
     ...(examples.length === 0 ? {} : { examples }),
-    tags: [slugForPath(target.id), "review-deck", deckSlug, entrySlug],
+    tags: [slugForPath(target.id), "review-deck", deckSlug, entrySlug, ...(missingSourceExample ? ["missing-source-example"] : [])],
     source: {
       path: sourcePath,
       title: deck
@@ -658,6 +659,8 @@ function reviewDeckRowToItem(
 
 interface ReviewExampleIndex {
   readonly byChapter: ReadonlyMap<string, readonly string[]>;
+  readonly allLines: readonly string[];
+  readonly strictReadContentOnly: boolean;
 }
 
 interface ReviewExampleRow {
@@ -668,8 +671,10 @@ interface ReviewExampleRow {
   readonly back: string;
 }
 
-function buildReviewExampleIndex(sourceFiles: readonly SourceFile[]): ReviewExampleIndex {
+function buildReviewExampleIndex(target: ContentPackageGeneratorTarget, sourceFiles: readonly SourceFile[]): ReviewExampleIndex {
   const byChapter = new Map<string, string[]>();
+  const allLines: string[] = [];
+  const strictReadContentOnly = isLanguageCurriculumTarget(target);
   for (const file of sourceFiles) {
     if (!isReadableChapterMarkdownPath(file.path)) {
       continue;
@@ -678,13 +683,20 @@ function buildReviewExampleIndex(sourceFiles: readonly SourceFile[]): ReviewExam
     if (chapter === undefined) {
       continue;
     }
-    const lines = extractLearnerFacingExampleLines(file.text);
+    const lines = strictReadContentOnly
+      ? extractStrictReadContentExampleLines(file.text)
+      : extractLearnerFacingExampleLines(file.text);
     if (lines.length === 0) {
       continue;
     }
     byChapter.set(chapter, [...(byChapter.get(chapter) ?? []), ...lines]);
+    for (const line of lines) {
+      if (!allLines.includes(line)) {
+        allLines.push(line);
+      }
+    }
   }
-  return { byChapter };
+  return { byChapter, allLines, strictReadContentOnly };
 }
 
 function examplesForReviewRow(index: ReviewExampleIndex, row: ReviewExampleRow): readonly string[] {
@@ -693,7 +705,10 @@ function examplesForReviewRow(index: ReviewExampleIndex, row: ReviewExampleRow):
     return [];
   }
   const chapterKey = String(Number.parseInt(sourceChapter, 10));
-  const sourceLines = index.byChapter.get(chapterKey) ?? [];
+  const chapterLines = index.byChapter.get(chapterKey) ?? [];
+  const sourceLines = index.strictReadContentOnly
+    ? [...chapterLines, ...index.allLines.filter((line) => !chapterLines.includes(line))]
+    : chapterLines;
   if (sourceLines.length === 0) {
     return [];
   }
@@ -746,10 +761,14 @@ function koreanPredicateStemAlternatives(term: string): readonly string[] {
   if (term === "있다" || term === "없다") {
     return [term.slice(0, -1)];
   }
+  if (term === "이다") {
+    return ["이에요", "예요", "입니다"];
+  }
   if (!/^[가-힣]+다$/u.test(term) || term.length < 3) {
     return [];
   }
-  return [term.slice(0, -1)];
+  const stem = term.slice(0, -1);
+  return stem.length < 2 ? [] : [stem];
 }
 
 function lineMatchesReviewTerm(line: string, term: string): boolean {
@@ -757,6 +776,9 @@ function lineMatchesReviewTerm(line: string, term: string): boolean {
     return false;
   }
   const escaped = escapeRegExp(term);
+  if (containsHangul(term)) {
+    return line.includes(term) || compactKoreanText(line).includes(compactKoreanText(term));
+  }
   if (containsNonLatinScript(term)) {
     return line.includes(term);
   }
@@ -766,8 +788,16 @@ function lineMatchesReviewTerm(line: string, term: string): boolean {
   return line.includes(term);
 }
 
+function containsHangul(value: string): boolean {
+  return /[\u1100-\u11ff\uac00-\ud7af]/u.test(value);
+}
+
 function containsNonLatinScript(value: string): boolean {
   return /[\u1100-\u11ff\u3040-\u30ff\u3100-\u312f\u31a0-\u31bf\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]/u.test(value);
+}
+
+function compactKoreanText(value: string): string {
+  return value.replace(/[\s\u200b-\u200d\ufeff]+/gu, "");
 }
 
 function containsWordLikeCharacters(value: string): boolean {
@@ -842,6 +872,54 @@ function extractLearnerFacingExampleLines(markdown: string): readonly string[] {
   return examples;
 }
 
+function extractStrictReadContentExampleLines(markdown: string): readonly string[] {
+  const examples: string[] = [];
+  let inFrontMatter = false;
+  let inReadContentSection = false;
+  let inCodeFence = false;
+  let inReadContentTextFence = false;
+  for (const [index, rawLine] of markdown.replace(/\r\n?/gu, "\n").split("\n").entries()) {
+    const trimmed = rawLine.trim();
+    if (index === 0 && trimmed === "---") {
+      inFrontMatter = true;
+      continue;
+    }
+    if (inFrontMatter) {
+      if (trimmed === "---") {
+        inFrontMatter = false;
+      }
+      continue;
+    }
+    if (/^#{2,4}\s+(?:Model Dialogue|Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Controlled Reading)\b/iu.test(trimmed)) {
+      inReadContentSection = true;
+      continue;
+    }
+    if (/^#{2,4}\s+/u.test(trimmed)) {
+      inReadContentSection = false;
+      continue;
+    }
+    if (trimmed.startsWith("```")) {
+      if (inCodeFence) {
+        inCodeFence = false;
+        inReadContentTextFence = false;
+      } else {
+        inCodeFence = true;
+        inReadContentTextFence = inReadContentSection && /^```(?:text)?\s*$/iu.test(trimmed);
+      }
+      continue;
+    }
+    if (!inReadContentSection || (inCodeFence && !inReadContentTextFence)) {
+      continue;
+    }
+    const line = normalizeExampleSourceLine(rawLine);
+    if (line === undefined || examples.includes(line)) {
+      continue;
+    }
+    examples.push(line);
+  }
+  return examples;
+}
+
 function normalizeExampleSourceLine(line: string): string | undefined {
   const trimmed = line.trim();
   if (trimmed.length === 0
@@ -851,6 +929,7 @@ function normalizeExampleSourceLine(line: string): string | undefined {
     || /^Names from\b/u.test(trimmed)
     || /^Meaning:/iu.test(trimmed)
     || /^(?:Pinyin|Zhuyin):/iu.test(trimmed)
+    || /^Context:/iu.test(trimmed)
     || /^See `?ledger\.md`?\./iu.test(trimmed)
     || /^Choices:$/iu.test(trimmed)) {
     return undefined;
@@ -863,6 +942,10 @@ function normalizeExampleSourceLine(line: string): string | undefined {
     return undefined;
   }
   return withoutListMarker;
+}
+
+function isLanguageCurriculumTarget(target: ContentPackageGeneratorTarget): boolean {
+  return target.contentType === "language-curriculum";
 }
 
 function languageCodeForReviewLabel(label: string): string | undefined {

@@ -12,6 +12,8 @@ import {
   listInstalledReadablePackages,
   listReadingReviewItems,
   listReadingReviewSources,
+  grammarEasyMenuLabel,
+  grammarHardMenuLabel,
   orderReviewItemsForSession,
   readInstalledContentEntry,
   recordReadingReviewAnswer,
@@ -1958,7 +1960,7 @@ function appendEmbeddedReviewSupplement(lines: string[], supplement: EmbeddedRev
     lines.push("", "Notes", ...prefixReviewCardLines(supplement.notes.map((note) => `- ${note}`)));
   }
   if (supplement.examples.length > 0) {
-    lines.push("", "Example", ...prefixReviewCardLines(supplement.examples.slice(0, 3)));
+    lines.push("", "Example", ...prefixReviewCardLines(supplement.examples.slice(0, 3).map((example) => `- ${example}`)));
   }
 }
 
@@ -2987,7 +2989,16 @@ function compareMenuLabels(left: string, right: string): number {
 }
 
 function compareReadableContentLabels(leftPath: string, rightPath: string): number {
-  return readableContentRank(leftPath) - readableContentRank(rightPath) || compareMenuLabels(leftPath, rightPath);
+  const rankDifference = readableContentRank(leftPath) - readableContentRank(rightPath);
+  if (rankDifference !== 0) {
+    return rankDifference;
+  }
+  const leftChapterOrder = readableContentChapterOrder(leftPath);
+  const rightChapterOrder = readableContentChapterOrder(rightPath);
+  if (leftChapterOrder !== undefined && rightChapterOrder !== undefined && leftChapterOrder !== rightChapterOrder) {
+    return leftChapterOrder - rightChapterOrder;
+  }
+  return compareMenuLabels(leftPath, rightPath);
 }
 
 function readableContentRank(path: string): number {
@@ -2998,6 +3009,20 @@ function readableContentRank(path: string): number {
     return 1;
   }
   return 2;
+}
+
+function readableContentChapterOrder(path: string): number | undefined {
+  const grammarSummaryMatch = path.match(/\/chapter-0*(\d+)-0*(\d+)-grammar-(easy|hard)\/chapter\.md$/u);
+  if (grammarSummaryMatch !== null) {
+    const blockEnd = Number.parseInt(grammarSummaryMatch[2], 10);
+    const summaryOffset = grammarSummaryMatch[3] === "easy" ? 0.45 : 0.46;
+    return blockEnd + summaryOffset;
+  }
+  const match = path.match(/\/chapter-0*(\d+)[^/]*\/chapter\.md$/u);
+  if (match === null) {
+    return undefined;
+  }
+  return Number.parseInt(match[1], 10);
 }
 
 function isUserFacingReadableContentPath(path: string): boolean {
@@ -3019,6 +3044,12 @@ function cleanContentPathLabel(path: string): string {
 }
 
 function markdownContentLabel(text: string, fallbackPath: string): string {
+  if (/\/chapter-0*\d+-0*\d+-grammar-easy\/chapter\.md$/u.test(fallbackPath)) {
+    return grammarEasyMenuLabel;
+  }
+  if (/\/chapter-0*\d+-0*\d+-grammar-hard\/chapter\.md$/u.test(fallbackPath)) {
+    return grammarHardMenuLabel;
+  }
   const heading = text.match(/^#\s+(.+)$/mu)?.[1]?.trim();
   return heading === undefined || heading.length === 0 ? cleanContentPathLabel(fallbackPath) : heading;
 }
@@ -3227,10 +3258,21 @@ function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width
 function formatPaneText(text: string, width: number, colorsEnabled: boolean): readonly string[] {
   const lines: string[] = [];
   let inCodeBlock = false;
-  for (const rawLine of text.replace(/\t/gu, "  ").split("\n")) {
+  const rawLines = text.replace(/\t/gu, "  ").split("\n");
+  for (let index = 0; index < rawLines.length; index += 1) {
+    const rawLine = rawLines[index] ?? "";
     if (/^\s*```/u.test(rawLine)) {
       inCodeBlock = !inCodeBlock;
       lines.push(stylePaneLine("code", width, colorsEnabled));
+      continue;
+    }
+    if (!inCodeBlock && isMarkdownTableLine(rawLine)) {
+      const tableLines = [rawLine];
+      while (index + 1 < rawLines.length && isMarkdownTableLine(rawLines[index + 1] ?? "")) {
+        index += 1;
+        tableLines.push(rawLines[index] ?? "");
+      }
+      lines.push(...formatMarkdownTable(tableLines, width, colorsEnabled));
       continue;
     }
     if (rawLine.length === 0) {
@@ -3249,6 +3291,33 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
     lines.push(...wrapped.map((line) => prepared.style(line)));
   }
   return lines;
+}
+
+function isMarkdownTableLine(line: string): boolean {
+  const trimmed = line.trim();
+  return trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.slice(1, -1).includes("|");
+}
+
+function formatMarkdownTable(rawLines: readonly string[], width: number, colorsEnabled: boolean): readonly string[] {
+  const rows = rawLines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => stripInlineMarkdown(cell.trim(), colorsEnabled)));
+  const columnCount = Math.max(...rows.map((row) => row.length));
+  const widths = Array.from({ length: columnCount }, (_, column) => Math.max(
+    3,
+    ...rows
+      .filter((row) => !isMarkdownTableSeparatorRow(row))
+      .map((row) => strippedLength(row[column] ?? ""))
+  ));
+  return rows.map((row) => {
+    if (isMarkdownTableSeparatorRow(row)) {
+      return truncateText(`| ${widths.map((cellWidth) => "-".repeat(cellWidth)).join(" | ")} |`, width);
+    }
+    const line = `| ${widths.map((cellWidth, column) => padRightDisplay(row[column] ?? "", cellWidth)).join(" | ")} |`;
+    return truncateText(line, width);
+  });
+}
+
+function isMarkdownTableSeparatorRow(row: readonly string[]): boolean {
+  return row.every((cell) => /^:?-{3,}:?$/u.test(cell.trim()));
 }
 
 function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean): { text: string; style(line: string): string } {
@@ -3306,7 +3375,7 @@ function colorizeUi(text: string, colorsEnabled: boolean): string {
 
 function padRight(text: string, width: number): string {
   const truncated = truncateText(text, width);
-  return `${truncated}${" ".repeat(Math.max(0, width - strippedLength(truncated)))}`;
+  return padRightDisplay(truncated, width);
 }
 
 function truncateText(text: string, width: number): string {
@@ -3320,7 +3389,31 @@ function truncateText(text: string, width: number): string {
 }
 
 function strippedLength(text: string): number {
-  return text.replace(/\x1b\[[0-9;]*m/gu, "").length;
+  return displayWidth(text.replace(/\x1b\[[0-9;]*m/gu, ""));
+}
+
+function padRightDisplay(text: string, width: number): string {
+  return `${text}${" ".repeat(Math.max(0, width - strippedLength(text)))}`;
+}
+
+function displayWidth(text: string): number {
+  let width = 0;
+  for (const character of [...text]) {
+    width += isWideCharacter(character) ? 2 : 1;
+  }
+  return width;
+}
+
+function isWideCharacter(character: string): boolean {
+  const codePoint = character.codePointAt(0) ?? 0;
+  return (codePoint >= 0x1100 && codePoint <= 0x11ff)
+    || (codePoint >= 0x2e80 && codePoint <= 0xa4cf)
+    || (codePoint >= 0xac00 && codePoint <= 0xd7a3)
+    || (codePoint >= 0xf900 && codePoint <= 0xfaff)
+    || (codePoint >= 0xfe10 && codePoint <= 0xfe19)
+    || (codePoint >= 0xfe30 && codePoint <= 0xfe6f)
+    || (codePoint >= 0xff00 && codePoint <= 0xff60)
+    || (codePoint >= 0xffe0 && codePoint <= 0xffe6);
 }
 
 function withExpandedId(expandedIds: ReadonlySet<string>, id: string): Set<string> {

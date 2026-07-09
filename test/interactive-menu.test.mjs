@@ -43,6 +43,7 @@ import {
   listReadingReviewItems,
   listReadingReviewSources,
   loadReviewProgressStore,
+  readInstalledContentEntry,
   recordReadingReviewAnswer
 } from "../dist/packages/core/index.js";
 
@@ -512,6 +513,66 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
   }
 });
 
+test("language tree exposes Korean Grammar Easy and Hard summaries after each completed five-chapter block", async () => {
+  const fixture = await createInstalledLanguageFixture(["korean-curriculum"], ["com.sleepymario.language.korean"]);
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const korean = tree.children.find((node) => node.label === "Korean");
+    const readContent = korean.children.find((node) => node.label === "Read content");
+    const labels = readContent.children.map((node) => node.label);
+    const expanded = new Set(["languages", "com.sleepymario.language.korean", "com.sleepymario.language.korean:read"]);
+    const visible = flattenVisibleLanguageTree(tree, expanded);
+
+    for (const blockEnd of [5, 10, 15]) {
+      const chapterIndex = labels.findIndex((label) => label.startsWith(`Chapter ${blockEnd} -- `));
+      const easyIndex = labels.findIndex((label, index) => index > chapterIndex && label === "Grammar - Easy");
+      const hardIndex = labels.findIndex((label, index) => index > easyIndex && label === "Grammar - Hard");
+      const paddedStart = String(blockEnd - 4).padStart(3, "0");
+      const paddedEnd = String(blockEnd).padStart(3, "0");
+      const easyNode = readContent.children[easyIndex];
+      const hardNode = readContent.children[hardIndex];
+
+      assert.notEqual(chapterIndex, -1);
+      assert.equal(easyIndex, chapterIndex + 1);
+      assert.equal(hardIndex, easyIndex + 1);
+      assert.equal(easyNode.kind, "content");
+      assert.equal(hardNode.kind, "content");
+      assert.equal(easyNode.filePath, `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-easy/chapter.md`);
+      assert.equal(hardNode.filePath, `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-hard/chapter.md`);
+
+      const easyContent = await readInstalledContentEntry({
+        dataDir: fixture.dataDir,
+        packageId: "com.sleepymario.language.korean",
+        path: easyNode.filePath
+      });
+      const hardContent = await readInstalledContentEntry({
+        dataDir: fixture.dataDir,
+        packageId: "com.sleepymario.language.korean",
+        path: hardNode.filePath
+      });
+      const easyOutput = renderTwoPaneLanguageTree(
+        tree,
+        expanded,
+        visible.findIndex((entry) => entry.node.id === easyNode.id),
+        easyContent.text,
+        false
+      );
+      const hardOutput = renderTwoPaneLanguageTree(tree, expanded, visible.findIndex((entry) => entry.node.id === hardNode.id), hardContent.text, false);
+
+      assert.match(easyOutput, /Grammar - Easy/);
+      assert.match(hardOutput, /Grammar - Hard/);
+      assert.match(easyContent.text, /Plain Summary/);
+      assert.match(hardContent.text, /Technical Summary/);
+    }
+
+    assert.equal(labels.includes("Grammar Summary"), false);
+    assert.equal(labels.includes("Grammar Summarize"), false);
+    assert.equal(labels.includes("Chapter: 1-5 grammar"), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("language tree exposes Mandarin variant readable content without Core review decks", async () => {
   const fixture = await createInstalledLanguageFixture(
     ["chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum"],
@@ -833,9 +894,45 @@ test("embedded review hides internal notes and renders compact learner notes and
   assert.doesNotMatch(output, /Simple review entry/);
   assert.doesNotMatch(output, /not a grammar-pattern card/);
   assert.doesNotMatch(output, /template generated/);
-  assert.match(output, /Notes\n  - noun\n  - kinship noun\n\nExample\n  Ik ben student\.\n  De student is hier\.\n  Sophie is student\./);
+  assert.match(output, /Notes\n  - noun\n  - kinship noun\n\nExample\n  - Ik ben student\.\n  - De student is hier\.\n  - Sophie is student\./);
   assert.doesNotMatch(output, /Extra example should be capped/);
   assert.doesNotMatch(output, /\x1b\[[0-9;]*m/);
+});
+
+test("Korean embedded review reveal shows strict read-content examples", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "ko",
+    answerLanguage: "en",
+    promptLines: ["학생"],
+    answerLines: ["student"],
+    noteLines: ["Deck: Chapter 1-5. Noun."],
+    exampleLines: ["저는 학생입니다.", "A: 학생입니까?", "B: 네, 학생입니다."]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.korean");
+
+  assert.match(output, /Example\n  - 저는 학생입니다\.\n  - A: 학생입니까\?\n  - B: 네, 학생입니다\./);
+  assert.doesNotMatch(output, /missing-source-example/);
+});
+
+test("two-pane renderer aligns Korean markdown table columns by display width", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
+    "| Korean | Meaning | Notes |",
+    "|---|---|---|",
+    "| 안녕하세요 | hello | Fixed greeting expression. |",
+    "| 저 | I, me | Used inside `저는`. |",
+    "| 외국 | foreign country, abroad | New noun; not self-ID here. |"
+  ].join("\n"), false);
+  const tableLines = output
+    .split("\n")
+    .map(rightPaneCell)
+    .filter((line) => line.startsWith("| "));
+  const pipeColumns = tableLines.map(displayPipeColumns);
+
+  assert.equal(tableLines.length, 5);
+  assert.deepEqual(new Set(pipeColumns.map((columns) => JSON.stringify(columns))).size, 1);
+  assert.match(tableLines[0], /^\| Korean\s+\| Meaning\s+\| Notes\s+\|$/u);
+  assert.match(tableLines[2], /^\| 안녕하세요\s+\| hello\s+\| Fixed greeting expression\.\s+\|$/u);
 });
 
 test("Chinese A prompt reveals pronunciation and characters", () => {
@@ -1489,6 +1586,35 @@ async function createDutchReviewProgress(dataDir) {
 
 async function loadDutchReviewProgress(dataDir) {
   return loadReviewProgressStore(join(dirname(dataDir), "progress"));
+}
+
+function rightPaneCell(line) {
+  const match = line.match(/^\| .{34} \| (.*) \|$/u);
+  return (match?.[1] ?? "").trimEnd();
+}
+
+function displayPipeColumns(line) {
+  const columns = [];
+  let column = 0;
+  for (const character of [...line]) {
+    if (character === "|") {
+      columns.push(column);
+    }
+    column += isWideCharacterForTest(character) ? 2 : 1;
+  }
+  return columns;
+}
+
+function isWideCharacterForTest(character) {
+  const codePoint = character.codePointAt(0) ?? 0;
+  return (codePoint >= 0x1100 && codePoint <= 0x11ff)
+    || (codePoint >= 0x2e80 && codePoint <= 0xa4cf)
+    || (codePoint >= 0xac00 && codePoint <= 0xd7a3)
+    || (codePoint >= 0xf900 && codePoint <= 0xfaff)
+    || (codePoint >= 0xfe10 && codePoint <= 0xfe19)
+    || (codePoint >= 0xfe30 && codePoint <= 0xfe6f)
+    || (codePoint >= 0xff00 && codePoint <= 0xff60)
+    || (codePoint >= 0xffe0 && codePoint <= 0xffe6);
 }
 
 async function createInstalledLanguageFixture(targetIds, packageIds) {

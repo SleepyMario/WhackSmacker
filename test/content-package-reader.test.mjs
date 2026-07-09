@@ -127,19 +127,19 @@ test("installed Korean package exposes Chapter 15 and split vocabulary review de
         title: "Chapter 1-5",
         sourcePath: "review-decks/chapter-001-005/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-001-005.json",
-        itemCount: 78
+        itemCount: 46
       },
       {
         title: "Chapter 6-10",
         sourcePath: "review-decks/chapter-006-010/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-006-010.json",
-        itemCount: 84
+        itemCount: 52
       },
       {
         title: "Chapter 11-15",
         sourcePath: "review-decks/chapter-011-015/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-011-015.json",
-        itemCount: 84
+        itemCount: 28
       }
     ];
     const installed = await listInstalledContentPackages(fixture.dataDir);
@@ -197,6 +197,10 @@ test("installed Korean package exposes Chapter 15 and split vocabulary review de
     assert.ok(allItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "안녕하세요"));
     assert.ok(allItems.some((item) => item.item.prompt.text === "은/는" && item.item.answer.text === "topic particle"));
     assert.ok(allItems.some((item) => item.item.prompt.text === "subject/existence marker" && item.item.answer.text === "이/가"));
+    assert.equal(
+      allItems.some((item) => ["사람", "언니", "연필", "소파", "시간"].includes(item.item.prompt.text) || ["사람", "언니", "연필", "소파", "시간"].includes(item.item.answer.text)),
+      false
+    );
 
     const forbiddenPatterns = [
       "저는 N입니다",
@@ -375,7 +379,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.vietnamese",
       sourcePath: "review-decks/chapter-001-005/cards.tsv"
     });
-    assert.equal(vietnameseItems.length, 80);
+    assert.equal(vietnameseItems.length, 46);
     assert.ok(vietnameseItems.some((item) => item.item.prompt.text === "xin chào" && item.item.answer.text === "hello"));
     assert.ok(vietnameseItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "xin chào"));
 
@@ -386,7 +390,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.dutch",
       sourcePath: "review-decks/chapter-001-005/cards.tsv"
     });
-    assert.equal(dutchItems.length, 80);
+    assert.equal(dutchItems.length, 38);
     assert.ok(dutchItems.some((item) => item.item.prompt.text === "hallo" && item.item.answer.text === "hello"));
     assert.ok(dutchItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "hallo"));
 
@@ -397,7 +401,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.german",
       sourcePath: "review-decks/chapter-001-005/cards.tsv"
     });
-    assert.equal(germanItems.length, 80);
+    assert.equal(germanItems.length, 54);
     assert.ok(germanItems.some((item) => item.item.prompt.text === "hallo" && item.item.answer.text === "hello"));
     assert.ok(germanItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "hallo"));
 
@@ -408,7 +412,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.french",
       sourcePath: "review-decks/chapter-001-005/cards.tsv"
     });
-    assert.equal(frenchItems.length, 80);
+    assert.equal(frenchItems.length, 32);
     assert.ok(frenchItems.some((item) => item.item.prompt.text === "bonjour" && item.item.answer.text === "hello; good day"));
     assert.ok(frenchItems.some((item) => item.item.prompt.text === "hello; good day" && item.item.answer.text === "bonjour"));
 
@@ -419,7 +423,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.spanish",
       sourcePath: "review-decks/chapter-001-005/cards.tsv"
     });
-    assert.equal(spanishItems.length, 80);
+    assert.equal(spanishItems.length, 30);
     assert.ok(spanishItems.some((item) => item.item.prompt.text === "hola" && item.item.answer.text === "hello; hi"));
     assert.ok(spanishItems.some((item) => item.item.prompt.text === "hello; hi" && item.item.answer.text === "hola"));
 

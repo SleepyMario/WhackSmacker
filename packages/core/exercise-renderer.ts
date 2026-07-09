@@ -72,7 +72,7 @@ export function formatRenderedExercise(exercise: RenderedExercise, side: "prompt
       sections.push("", "Notes", ...prefixLines(exercise.noteLines));
     }
     if (exercise.exampleLines.length > 0) {
-      sections.push("", "Example", ...prefixLines(exercise.exampleLines));
+      sections.push("", "Example", ...prefixLines(exercise.exampleLines.map((example) => `- ${example}`)));
     }
   }
   if (side === "full" && exercise.metadataLines.length > 0) {

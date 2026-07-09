@@ -156,6 +156,12 @@ export interface ResolvedCliCommand {
   readonly path: readonly string[];
 }
 
+interface GlobalCliOptions {
+  readonly args: readonly string[];
+  readonly dataDir?: string;
+  readonly cataloguePath?: string;
+}
+
 export function createCommandRegistry(): InMemoryCliCommandRegistry {
   const cli = new InMemoryCliCommandRegistry();
   const context = {
@@ -196,22 +202,89 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   }
 
   const registry = createCommandRegistry();
+  const globalOptions = parseLeadingGlobalOptions(argv);
 
-  const interactiveOptions = parseInteractiveOptions(argv);
-  if (interactiveOptions !== null) {
-    await runInteractiveMenu(registry, undefined, interactiveOptions);
+  if (globalOptions.args.length === 0) {
+    await runInteractiveMenu(registry, undefined, {
+      dataDir: globalOptions.dataDir,
+      cataloguePath: globalOptions.cataloguePath
+    });
     return;
   }
 
-  const resolved = resolveCliCommand(registry, argv);
+  const interactiveOptions = parseInteractiveOptions(globalOptions.args);
+  if (interactiveOptions !== null) {
+    await runInteractiveMenu(registry, undefined, {
+      dataDir: interactiveOptions.dataDir ?? globalOptions.dataDir,
+      cataloguePath: interactiveOptions.cataloguePath ?? globalOptions.cataloguePath
+    });
+    return;
+  }
+
+  const resolved = resolveCliCommand(registry, globalOptions.args);
 
   if (resolved === null) {
-    console.error(`Unknown command: ${argv.join(" ")}\nRun 'whacksmacker --help' or 'wsm --help' for usage.`);
+    console.error(`Unknown command: ${globalOptions.args.join(" ")}\nRun 'whacksmacker --help' or 'wsm --help' for usage.`);
     process.exitCode = 1;
     return;
   }
 
-  await dispatch(resolved.command, resolved.args);
+  await dispatch(resolved.command, appendGlobalOptions(resolved, globalOptions));
+}
+
+function parseLeadingGlobalOptions(argv: readonly string[]): GlobalCliOptions {
+  let dataDir: string | undefined;
+  let cataloguePath: string | undefined;
+  let index = 0;
+
+  while (index < argv.length) {
+    const arg = argv[index];
+    if (arg === "--data-dir") {
+      dataDir = readGlobalOptionValue(argv, index, arg);
+      index += 2;
+      continue;
+    }
+    if (arg === "--catalogue") {
+      cataloguePath = readGlobalOptionValue(argv, index, arg);
+      index += 2;
+      continue;
+    }
+    break;
+  }
+
+  return { args: argv.slice(index), dataDir, cataloguePath };
+}
+
+function readGlobalOptionValue(argv: readonly string[], index: number, option: string): string {
+  const value = argv[index + 1];
+  if (value === undefined || value.trim().length === 0 || value.startsWith("--")) {
+    throw new Error(`${option} requires a value.`);
+  }
+  return value;
+}
+
+function appendGlobalOptions(resolved: ResolvedCliCommand, globalOptions: GlobalCliOptions): readonly string[] {
+  const args = [...resolved.args];
+  if (globalOptions.dataDir !== undefined && commandAcceptsDataDir(resolved.path) && !args.includes("--data-dir")) {
+    args.push("--data-dir", globalOptions.dataDir);
+  }
+  if (globalOptions.cataloguePath !== undefined && commandAcceptsCatalogue(resolved.path) && !args.includes("--catalogue")) {
+    args.push("--catalogue", globalOptions.cataloguePath);
+  }
+  return args;
+}
+
+function commandAcceptsDataDir(path: readonly string[]): boolean {
+  return path[0] === "content"
+    || path[0] === "review"
+    || path[0] === "module"
+    || path[0] === "backup"
+    || sameCliPath(path, ["language", "korean"])
+    || sameCliPath(path, ["language", "terms"]);
+}
+
+function commandAcceptsCatalogue(path: readonly string[]): boolean {
+  return path[0] === "content" || path[0] === "review" || path[0] === "module";
 }
 
 function parseInteractiveOptions(argv: readonly string[]): { readonly dataDir?: string; readonly cataloguePath?: string } | null {
@@ -268,4 +341,8 @@ export function resolveCliCommand(registry: InMemoryCliCommandRegistry, argv: re
 
 function argvStartsWith(argv: readonly string[], path: readonly string[]): boolean {
   return argv.length >= path.length && path.every((segment, index) => argv[index] === segment);
+}
+
+function sameCliPath(left: readonly string[], right: readonly string[]): boolean {
+  return left.length === right.length && left.every((segment, index) => segment === right[index]);
 }

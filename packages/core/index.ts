@@ -6,6 +6,7 @@ export * from "./content-package-reader";
 export * from "./content-package-spec";
 export * from "./exercise-renderer";
 export * from "./features";
+export * from "./language-curriculum-policy";
 export * from "./logging";
 export * from "./memorization-item";
 export * from "./modules";

@@ -60,6 +60,19 @@ test("vocabulary renders hints notes tags source language and difficulty", () =>
   assert.match(rendered.metadataLines.join("\n"), /Difficulty: level=1, label=foundation/);
 });
 
+test("formatted vocabulary examples render as bullets", () => {
+  const rendered = renderMemorizationExercise({
+    ...identity,
+    item: {
+      ...item("vocabulary"),
+      examples: ["아 is a vowel.", "아 is a syllable block."]
+    }
+  });
+  const output = formatRenderedExercise(rendered, "answer");
+
+  assert.match(output, /Example\n  - 아 is a vowel\.\n  - 아 is a syllable block\./);
+});
+
 test("sentence renders deterministically", () => {
   const rendered = renderMemorizationExercise({
     ...identity,
