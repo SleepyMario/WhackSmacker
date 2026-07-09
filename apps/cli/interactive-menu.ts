@@ -174,6 +174,7 @@ const ansi = {
   blue: "\x1b[34m",
   green: "\x1b[32m",
   yellow: "\x1b[33m",
+  pink: "\x1b[38;5;213m",
   red: "\x1b[31m",
   gray: "\x1b[90m"
 };
@@ -3002,6 +3003,9 @@ function compareReadableContentLabels(leftPath: string, rightPath: string): numb
 }
 
 function readableContentRank(path: string): number {
+  if (isHangulChapterOverviewPath(path)) {
+    return -1;
+  }
   if (/\/chapter\.md$/u.test(path)) {
     return 0;
   }
@@ -3009,6 +3013,10 @@ function readableContentRank(path: string): number {
     return 1;
   }
   return 2;
+}
+
+function isHangulChapterOverviewPath(path: string): boolean {
+  return /^units\/introduction-to-hangul\/chapter-\d+[^/]*\/README\.md$/u.test(path);
 }
 
 function readableContentChapterOrder(path: string): number | undefined {
@@ -3168,13 +3176,17 @@ export function renderTwoPaneLanguageTree(
   selection: number,
   rightPaneText: string,
   colorsEnabled: boolean,
-  rightPaneOffset = 0
+  rightPaneOffset = 0,
+  bodyHeight = 28
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
-  const leftWidth = 34;
-  const rightWidth = 76;
-  const bodyHeight = 28;
-  const leftLines = visible.map((entry, index) => renderTreeLine(entry, index === selection, leftWidth, colorsEnabled));
+  const leftWidth = 30;
+  const rightWidth = 80;
+  const renderedLeftEntries = visible.map((entry, index) => renderTreeLines(entry, index === selection, leftWidth, colorsEnabled));
+  const selectedLineIndex = renderedLeftEntries.slice(0, selection).reduce((count, entryLines) => count + entryLines.length, 0);
+  const allLeftLines = renderedLeftEntries.flat();
+  const leftOffset = leftPaneOffsetForSelection(selectedLineIndex, allLeftLines.length, bodyHeight);
+  const leftLines = allLeftLines.slice(leftOffset, leftOffset + bodyHeight);
   const rightPane = splitFixedBottomBar(rightPaneText);
   const bottomBarLines = rightPane.bottomBar === undefined ? [] : formatPaneText(rightPane.bottomBar, rightWidth, colorsEnabled);
   const scrollableHeight = Math.max(1, bodyHeight - bottomBarLines.length);
@@ -3206,6 +3218,14 @@ export function renderTwoPaneLanguageTree(
   return lines.join("\n");
 }
 
+function leftPaneOffsetForSelection(selection: number, itemCount: number, paneHeight: number): number {
+  if (itemCount <= paneHeight) {
+    return 0;
+  }
+  const clampedSelection = Math.min(Math.max(0, selection), itemCount - 1);
+  return Math.min(Math.max(0, clampedSelection - paneHeight + 1), itemCount - paneHeight);
+}
+
 function splitFixedBottomBar(text: string): { readonly body: string; readonly bottomBar?: string } {
   const markerIndex = text.lastIndexOf(`\n${reviewBottomBarMarker}\n`);
   if (markerIndex < 0) {
@@ -3217,13 +3237,24 @@ function splitFixedBottomBar(text: string): { readonly body: string; readonly bo
   };
 }
 
-function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width: number, colorsEnabled: boolean): string {
+function renderTreeLines(entry: VisibleLanguageTreeNode, selected: boolean, width: number, colorsEnabled: boolean): readonly string[] {
   const marker = selected ? "> " : "  ";
   const expansion = entry.expandable ? (entry.expanded ? "v " : "> ") : "  ";
-  const indent = "  ".repeat(entry.depth);
-  const plain = truncateText(`${marker}${indent}${expansion}${entry.node.label}`, width);
+  const indent = " ".repeat(entry.depth);
+  const prefix = `${marker}${indent}${expansion}`;
+  const continuationPrefix = " ".repeat(strippedLength(prefix));
+  const labelWidth = Math.max(1, width - strippedLength(prefix));
+  const labelLines = wrapDisplayText(displayTreeLabel(entry.node), labelWidth);
+  const plainLines = labelLines.map((line, index) => truncateTextDisplay(`${index === 0 ? prefix : continuationPrefix}${line}`, width));
+  return plainLines.map((plain) => styleTreeLine(plain, entry, selected, colorsEnabled));
+}
+
+function styleTreeLine(plain: string, entry: VisibleLanguageTreeNode, selected: boolean, colorsEnabled: boolean): string {
   if (!colorsEnabled) {
     return plain;
+  }
+  if (entry.node.kind === "content" && hasReviewDeckColoredMenuToken(plain)) {
+    return styleReviewDeckColoredMenuToken(plain, selected);
   }
   if (selected) {
     return `${ansi.inverse}${ansi.bold}${plain}${ansi.reset}`;
@@ -3255,6 +3286,47 @@ function renderTreeLine(entry: VisibleLanguageTreeNode, selected: boolean, width
   return plain;
 }
 
+function hasReviewDeckColoredMenuToken(line: string): boolean {
+  return reviewDeckColoredMenuTokenPattern().test(line);
+}
+
+function styleReviewDeckColoredMenuToken(line: string, selected: boolean): string {
+  const match = reviewDeckColoredMenuTokenPattern().exec(line);
+  if (match === null) {
+    return selected ? `${ansi.inverse}${ansi.bold}${line}${ansi.reset}` : line;
+  }
+  const before = line.slice(0, match.index);
+  const token = match[0];
+  const after = line.slice(match.index + token.length);
+  if (!selected) {
+    return `${before}${reviewDeckContentStyle()}${token}${ansi.reset}${after}`;
+  }
+  const selectedStyle = `${ansi.inverse}${ansi.bold}`;
+  return `${selectedStyle}${before}${reviewDeckContentStyle()}${token}${ansi.reset}${selectedStyle}${after}${ansi.reset}`;
+}
+
+function reviewDeckContentStyle(): string {
+  return ansi.yellow;
+}
+
+function reviewDeckColoredMenuTokenPattern(): RegExp {
+  return /\b(?:Han Gul\s+\d+(?=\s+--)|Ch\s+\d+(?=\s+--)|Grammar(?=\s+--))/u;
+}
+
+function displayTreeLabel(node: LanguageTreeNode): string {
+  const label = node.label;
+  if (label === grammarEasyMenuLabel) {
+    return "Grammar -- Easy";
+  }
+  if (label === grammarHardMenuLabel) {
+    return "Grammar -- Hard";
+  }
+  if (node.kind === "content" && node.filePath !== undefined && isHangulChapterOverviewPath(node.filePath)) {
+    return label.replace(/^Chapter\s+(\d+)\b/u, "Han Gul $1");
+  }
+  return label.replace(/^Chapter\s+(\d+)\b/u, "Ch $1");
+}
+
 function formatPaneText(text: string, width: number, colorsEnabled: boolean): readonly string[] {
   const lines: string[] = [];
   let inCodeBlock = false;
@@ -3263,7 +3335,6 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
     const rawLine = rawLines[index] ?? "";
     if (/^\s*```/u.test(rawLine)) {
       inCodeBlock = !inCodeBlock;
-      lines.push(stylePaneLine("code", width, colorsEnabled));
       continue;
     }
     if (!inCodeBlock && isMarkdownTableLine(rawLine)) {
@@ -3280,15 +3351,7 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
       continue;
     }
     const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled);
-    let remaining = prepared.text;
-    const wrapped: string[] = [];
-    while (remaining.length > width) {
-      const breakAt = Math.max(1, remaining.lastIndexOf(" ", width));
-      wrapped.push(remaining.slice(0, breakAt));
-      remaining = remaining.slice(breakAt).trimStart();
-    }
-    wrapped.push(remaining);
-    lines.push(...wrapped.map((line) => prepared.style(line)));
+    lines.push(...wrapDisplayText(prepared.text, width).map((line) => prepared.style(line)));
   }
   return lines;
 }
@@ -3299,21 +3362,71 @@ function isMarkdownTableLine(line: string): boolean {
 }
 
 function formatMarkdownTable(rawLines: readonly string[], width: number, colorsEnabled: boolean): readonly string[] {
-  const rows = rawLines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => stripInlineMarkdown(cell.trim(), colorsEnabled)));
+  const parsedRows = rawLines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => stripInlineMarkdown(cell.trim(), colorsEnabled)));
+  const originalColumnCount = Math.max(...parsedRows.map((row) => row.length));
+  const headerRow = parsedRows.find((row) => !isMarkdownTableSeparatorRow(row)) ?? [];
+  const visibleColumns = Array.from({ length: originalColumnCount }, (_, column) => column)
+    .filter((column) => (headerRow[column] ?? "").trim().toLowerCase() !== "status");
+  const noteColumn = visibleColumns.findIndex((column) => (headerRow[column] ?? "").trim().toLowerCase() === "notes");
+  const rows = parsedRows.map((row) => visibleColumns.map((column, visibleColumn) => {
+    const cell = row[column] ?? "";
+    return visibleColumn === noteColumn && !isMarkdownTableSeparatorRow(row) ? normalizeVocabularyNote(cell) : cell;
+  }));
   const columnCount = Math.max(...rows.map((row) => row.length));
-  const widths = Array.from({ length: columnCount }, (_, column) => Math.max(
+  const idealWidths = Array.from({ length: columnCount }, (_, column) => Math.max(
     3,
     ...rows
       .filter((row) => !isMarkdownTableSeparatorRow(row))
       .map((row) => strippedLength(row[column] ?? ""))
   ));
-  return rows.map((row) => {
+  const widths = constrainTableWidths(idealWidths, width);
+  const formattedRows: string[] = [];
+  for (const row of rows) {
     if (isMarkdownTableSeparatorRow(row)) {
-      return truncateText(`| ${widths.map((cellWidth) => "-".repeat(cellWidth)).join(" | ")} |`, width);
+      formattedRows.push(`| ${widths.map((cellWidth) => "-".repeat(cellWidth)).join(" | ")} |`);
+      continue;
     }
-    const line = `| ${widths.map((cellWidth, column) => padRightDisplay(row[column] ?? "", cellWidth)).join(" | ")} |`;
-    return truncateText(line, width);
-  });
+    const wrappedCells = widths.map((cellWidth, column) => wrapDisplayText(row[column] ?? "", cellWidth));
+    const rowHeight = Math.max(...wrappedCells.map((cell) => cell.length));
+    for (let lineIndex = 0; lineIndex < rowHeight; lineIndex += 1) {
+      formattedRows.push(`| ${widths.map((cellWidth, column) => padRightDisplay(wrappedCells[column]?.[lineIndex] ?? "", cellWidth)).join(" | ")} |`);
+    }
+  }
+  return formattedRows;
+}
+
+function normalizeVocabularyNote(note: string): string {
+  const normalized = note.trim();
+  if (/^(?:Can fill the N slot\.|New noun; not self-ID here\.)$/iu.test(normalized)) {
+    return "Noun";
+  }
+  return note;
+}
+
+function constrainTableWidths(idealWidths: readonly number[], paneWidth: number): readonly number[] {
+  if (idealWidths.length === 0) {
+    return [];
+  }
+  const separatorWidth = (3 * idealWidths.length) + 1;
+  const availableCellWidth = Math.max(idealWidths.length * 3, paneWidth - separatorWidth);
+  const widths = idealWidths.map((cellWidth) => Math.max(3, cellWidth));
+  while (sum(widths) > availableCellWidth) {
+    let widestIndex = 0;
+    for (let index = 1; index < widths.length; index += 1) {
+      if ((widths[index] ?? 0) > (widths[widestIndex] ?? 0)) {
+        widestIndex = index;
+      }
+    }
+    if ((widths[widestIndex] ?? 0) <= 3) {
+      break;
+    }
+    widths[widestIndex] = (widths[widestIndex] ?? 3) - 1;
+  }
+  return widths;
+}
+
+function sum(values: readonly number[]): number {
+  return values.reduce((total, value) => total + value, 0);
 }
 
 function isMarkdownTableSeparatorRow(row: readonly string[]): boolean {
@@ -3323,14 +3436,14 @@ function isMarkdownTableSeparatorRow(row: readonly string[]): boolean {
 function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean): { text: string; style(line: string): string } {
   if (inCodeBlock) {
     return {
-      text: `  ${rawLine.trimEnd()}`,
-      style: (line) => colorsEnabled ? `${ansi.dim}${line}${ansi.reset}` : line
+      text: rawLine.trimEnd(),
+      style: (line) => colorsEnabled ? `${ansi.pink}${line}${ansi.reset}` : line
     };
   }
   const heading = rawLine.match(/^(#{1,6})\s+(.+)$/u);
   if (heading !== null) {
     return {
-      text: heading[2]?.trim() ?? rawLine,
+      text: displayChapterHeading(heading[2]?.trim() ?? rawLine),
       style: (line) => colorsEnabled ? `${ansi.bold}${ansi.cyan}${line}${ansi.reset}` : line
     };
   }
@@ -3360,8 +3473,12 @@ function stripInlineMarkdown(text: string, colorsEnabled: boolean): string {
   return result;
 }
 
+function displayChapterHeading(text: string): string {
+  return text.replace(/^Chapter\s+(\d+)\b/u, "Ch $1");
+}
+
 function stylePaneLine(text: string, width: number, colorsEnabled: boolean): string {
-  const line = truncateText(text, width);
+  const line = truncateTextDisplay(text, width);
   return colorsEnabled ? `${ansi.dim}${line}${ansi.reset}` : line;
 }
 
@@ -3374,18 +3491,68 @@ function colorizeUi(text: string, colorsEnabled: boolean): string {
 }
 
 function padRight(text: string, width: number): string {
-  const truncated = truncateText(text, width);
+  const truncated = truncateTextDisplay(text, width);
   return padRightDisplay(truncated, width);
 }
 
-function truncateText(text: string, width: number): string {
+function truncateTextDisplay(text: string, width: number): string {
   if (strippedLength(text) <= width) {
     return text;
   }
   if (width <= 3) {
-    return text.slice(0, width);
+    return takeDisplayWidth(text, width);
   }
-  return `${text.slice(0, width - 3)}...`;
+  return `${takeDisplayWidth(text, width - 3)}...`;
+}
+
+function wrapDisplayText(text: string, width: number): readonly string[] {
+  if (width <= 0) {
+    return [""];
+  }
+  const lines: string[] = [];
+  let remaining = text;
+  while (strippedLength(remaining) > width) {
+    const breakIndex = findDisplayBreakIndex(remaining, width);
+    lines.push(remaining.slice(0, breakIndex).trimEnd());
+    remaining = remaining.slice(breakIndex).trimStart();
+    if (remaining.length === 0) {
+      break;
+    }
+  }
+  lines.push(remaining);
+  return lines;
+}
+
+function findDisplayBreakIndex(text: string, width: number): number {
+  let displayColumn = 0;
+  let lastSpaceIndex = -1;
+  let index = 0;
+  for (const character of [...text]) {
+    const nextWidth = displayColumn + (isWideCharacter(character) ? 2 : 1);
+    if (nextWidth > width) {
+      return lastSpaceIndex > 0 ? lastSpaceIndex : Math.max(index, character.length);
+    }
+    if (/\s/u.test(character)) {
+      lastSpaceIndex = index;
+    }
+    displayColumn = nextWidth;
+    index += character.length;
+  }
+  return text.length;
+}
+
+function takeDisplayWidth(text: string, width: number): string {
+  let displayColumn = 0;
+  let result = "";
+  for (const character of [...text]) {
+    const nextWidth = displayColumn + (isWideCharacter(character) ? 2 : 1);
+    if (nextWidth > width) {
+      break;
+    }
+    result += character;
+    displayColumn = nextWidth;
+  }
+  return result;
 }
 
 function strippedLength(text: string): number {

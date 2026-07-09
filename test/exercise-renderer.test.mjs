@@ -73,6 +73,20 @@ test("formatted vocabulary examples render as bullets", () => {
   assert.match(output, /Example\n  - 아 is a vowel\.\n  - 아 is a syllable block\./);
 });
 
+test("formatted examples preserve internal source spacing", () => {
+  const rendered = renderMemorizationExercise({
+    ...identity,
+    item: {
+      ...item("vocabulary"),
+      examples: ["김민준         : 안녕하세요. 저는 김민준입니다."]
+    }
+  });
+  const output = formatRenderedExercise(rendered, "answer");
+
+  assert.deepEqual(rendered.exampleLines, ["김민준         : 안녕하세요. 저는 김민준입니다."]);
+  assert.match(output, /Example\n  - 김민준 {9}: 안녕하세요\. 저는 김민준입니다\./);
+});
+
 test("sentence renders deterministically", () => {
   const rendered = renderMemorizationExercise({
     ...identity,

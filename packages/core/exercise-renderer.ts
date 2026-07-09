@@ -52,7 +52,7 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
     answerLines: answerLinesFor(item),
     hintLines: (item.hints ?? []).flatMap((hint) => normalizeLines(hint)),
     noteLines: item.notes === undefined ? [] : normalizeLines(item.notes),
-    exampleLines: (item.examples ?? []).flatMap((example) => normalizeLines(example)).slice(0, 3),
+    exampleLines: (item.examples ?? []).flatMap((example) => normalizeExampleLines(example)).slice(0, 3),
     metadataLines: metadataLinesFor(item, identity),
     warnings: warningsFor(item)
   };
@@ -155,6 +155,14 @@ function normalizeLines(text: string): readonly string[] {
     .map((line) => line.replace(/[ \t\f\v]+/gu, " ").trim())
     .filter((line) => line.length > 0);
   return lines.length === 0 ? [""] : lines;
+}
+
+function normalizeExampleLines(text: string): readonly string[] {
+  return text
+    .replace(/\r\n?/gu, "\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 }
 
 function firstLine(block: MemorizationContentBlock): string {

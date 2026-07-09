@@ -119,6 +119,69 @@ test("content read CLI lists packages files and renders selected content", async
   }
 });
 
+test("rendered reading content hides useless Status table columns", () => {
+  const rendered = renderReadingContent({
+    package: {
+      packageId: "com.sleepymario.language.korean",
+      packageVersion: "0.1.0",
+      displayName: "Korean Curriculum",
+      installPath: "packages/com.sleepymario.language.korean/0.1.0",
+      installedAt: "2026-07-09T00:00:00Z",
+      source: { type: "file", path: "/tmp/korean.wspkg" }
+    },
+    entry: {
+      path: "units/korean-core/chapter-001-basic-life-sentences-1/chapter.md",
+      mediaType: "text/markdown",
+      title: "Chapter 1",
+      source: "snapshot"
+    },
+    text: [
+      "# Chapter 1",
+      "",
+      "| Korean Word | Hanja Form | Status | Note |",
+      "|---|---|---|---|",
+      "| 학생 | 學生 | reference-only | Useful common word. |"
+    ].join("\n")
+  });
+
+  assert.match(rendered, /\| Korean Word \| Hanja Form \| Note \|/u);
+  assert.match(rendered, /\| 학생 \| 學生 \| Useful common word\. \|/u);
+  assert.doesNotMatch(rendered, /Status|reference-only/u);
+});
+
+test("rendered reading content normalizes noun-only vocabulary notes", () => {
+  const rendered = renderReadingContent({
+    package: {
+      packageId: "com.sleepymario.language.korean",
+      packageVersion: "0.1.0",
+      displayName: "Korean Curriculum",
+      installPath: "packages/com.sleepymario.language.korean/0.1.0",
+      installedAt: "2026-07-09T00:00:00Z",
+      source: { type: "file", path: "/tmp/korean.wspkg" }
+    },
+    entry: {
+      path: "units/korean-core/chapter-001-basic-life-sentences-1/chapter.md",
+      mediaType: "text/markdown",
+      title: "Chapter 1",
+      source: "snapshot"
+    },
+    text: [
+      "# Chapter 1",
+      "",
+      "| Korean | Meaning | Notes |",
+      "|---|---|---|",
+      "| 학생 | student | Can fill the N slot. |",
+      "| 저 | I, me | Used inside `저는`. |",
+      "| 한국 | Korea | New noun; not self-ID here. |"
+    ].join("\n")
+  });
+
+  assert.match(rendered, /\| 학생 \| student \| Noun \|/u);
+  assert.match(rendered, /\| 한국 \| Korea \| Noun \|/u);
+  assert.match(rendered, /\| 저 \| I, me \| Used inside `저는`\. \|/u);
+  assert.doesNotMatch(rendered, /Can fill the N slot|New noun; not self-ID here/u);
+});
+
 test("installed Korean package exposes Chapter 15 and split vocabulary review decks", async () => {
   const fixture = await createInstalledReadingFixture();
   try {
@@ -163,7 +226,7 @@ test("installed Korean package exposes Chapter 15 and split vocabulary review de
     assert.equal(entries.some((entry) => entry.path === "review-decks/chapter-001-020/cards.tsv"), false);
     assert.equal(entries.some((entry) => entry.path === "review-decks/chapter-008-010/cards.tsv"), false);
     assert.equal(entries.some((entry) => entry.path === "review-decks/chapter-016-020/cards.tsv"), false);
-    assert.match(chapter20.text, /Chapter 15 -- Basic Life Sentences XV/);
+    assert.match(chapter20.text, /Chapter 15 -- Casual Absence I/);
     assert.deepEqual(
       itemFiles.map((file) => file.path),
       expectedReviewDecks.map((deck) => deck.itemPath)
@@ -318,8 +381,8 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
         ["com.sleepymario.language.vietnamese", "Vietnamese Curriculum"]
       ]
     );
-    assert.match(koreanChapter20.text, /Chapter 15 -- Basic Life Sentences XV/);
-    assert.match(vietnameseChapter5.text, /Chapter 5 -- Basic Sentences V/);
+    assert.match(koreanChapter20.text, /Chapter 15 -- Casual Absence I/);
+    assert.match(vietnameseChapter5.text, /Chapter 5 -- There Is \/ There Are I/);
     assert.match(chineseDeck.text, /^Pinyin-Zhuyin\tPinyin -> Zhuyin\tb\tㄅ/m);
     assert.match(chineseTraditionalPinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
     assert.match(chineseTraditionalChapter1.text, /我是Alex Chen/);
@@ -341,11 +404,11 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.match(japaneseChapter1.text, /学生（がくせい）/);
     assert.match(japaneseChapter1.text, /Meaning: I am a student\./);
     assert.doesNotMatch(japaneseChapter1.text, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
-    assert.match(dutchChapter5.text, /Chapter 5 -- Basic Sentences V/);
-    assert.match(germanChapter1.text, /Chapter 1 -- Basic Sentences I/);
+    assert.match(dutchChapter5.text, /Chapter 5 -- There Is \/ There Are I/);
+    assert.match(germanChapter1.text, /Chapter 1 -- Greetings and Identity/);
     assert.match(germanChapter1.text, /Ich bin Alex Chen/);
     assert.match(germanChapter1.text, /Ich bin Lena Müller/);
-    assert.match(germanChapter5.text, /Chapter 5 -- Basic Sentences V/);
+    assert.match(germanChapter5.text, /Chapter 5 -- First Wellbeing Questions/);
     assert.match(frenchChapter1.text, /Je suis Alex Chen/);
     assert.match(frenchChapter1.text, /Je suis Camille Martin/);
     assert.match(spanishChapter1.text, /Soy Alex Chen/);

@@ -129,9 +129,58 @@ export function renderReadingContent(result: ReadInstalledContentEntryResult): s
     `${result.package.packageId} ${result.package.packageVersion}`,
     result.entry.path,
     "",
-    result.text.trimEnd(),
+    renderLearnerReadingText(result.text).trimEnd(),
     ""
   ].join("\n");
+}
+
+function renderLearnerReadingText(text: string): string {
+  const output: string[] = [];
+  const lines = text.replace(/\r\n?/gu, "\n").split("\n");
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index] ?? "";
+    if (isMarkdownTableLine(line)) {
+      const tableLines = [line];
+      while (index + 1 < lines.length && isMarkdownTableLine(lines[index + 1] ?? "")) {
+        index += 1;
+        tableLines.push(lines[index] ?? "");
+      }
+      output.push(...removeStatusTableColumn(tableLines));
+      continue;
+    }
+    output.push(line);
+  }
+  return output.join("\n");
+}
+
+function isMarkdownTableLine(line: string): boolean {
+  const trimmed = line.trim();
+  return trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.slice(1, -1).includes("|");
+}
+
+function removeStatusTableColumn(lines: readonly string[]): readonly string[] {
+  const rows = lines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => cell.trim()));
+  const header = rows.find((row) => !row.every((cell) => /^:?-{3,}:?$/u.test(cell))) ?? [];
+  const visibleColumns = Array.from({ length: Math.max(...rows.map((row) => row.length)) }, (_, column) => column)
+    .filter((column) => (header[column] ?? "").trim().toLowerCase() !== "status");
+  const noteColumn = visibleColumns.findIndex((column) => (header[column] ?? "").trim().toLowerCase() === "notes");
+  if (visibleColumns.length === 0) {
+    return lines;
+  }
+  return rows.map((row) => `| ${visibleColumns.map((column, visibleColumn) => {
+    const cell = row[column] ?? "";
+    return visibleColumn === noteColumn && !row.every((value) => /^:?-{3,}:?$/u.test(value))
+      ? normalizeVocabularyNote(cell)
+      : cell;
+  }).join(" | ")} |`);
+}
+
+function normalizeVocabularyNote(note: string): string {
+  const normalized = note.trim();
+  if (/^(?:Can fill the N slot\.|New noun; not self-ID here\.)$/iu.test(normalized)) {
+    return "Noun";
+  }
+  return note;
 }
 
 async function selectInstalledPackage(packageId: string, dataDir?: string, packageVersion?: string): Promise<InstalledPackageRecord> {
