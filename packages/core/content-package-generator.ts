@@ -161,7 +161,10 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "backlog.md",
       "decisions.md",
       "name-pools",
-      "review-decks",
+      "review-decks/README.md",
+      "review-decks/pinyin-zhuyin",
+      "review-decks/pinyin-zhuyin-with-tones",
+      "review-decks/mandarin-traditional-chapter-001-005",
       "research",
       "units/README.md",
       "units/mandarin-traditional"
@@ -189,6 +192,8 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "backlog.md",
       "decisions.md",
       "name-pools",
+      "review-decks/README.md",
+      "review-decks/mandarin-simplified-chapter-001-005",
       "research",
       "units/README.md",
       "units/mandarin-simplified"
@@ -592,7 +597,9 @@ function reviewDeckRowToItem(
   if (row.length !== 7) {
     throw new Error(`Review deck row ${rowNumber + 1} must have 7 tab-separated fields in ${sourcePath}`);
   }
-  const [deck, direction, front, back, sourceChapter, entryType, notes] = row;
+  const [deck, direction, rawFront, rawBack, sourceChapter, entryType, notes] = row;
+  const front = decodeReviewDeckField(rawFront);
+  const back = decodeReviewDeckField(rawBack);
   if (deck.trim().length === 0 || direction.trim().length === 0 || front.trim().length === 0 || back.trim().length === 0) {
     throw new Error(`Review deck row ${rowNumber + 1} has an empty required field in ${sourcePath}`);
   }
@@ -732,12 +739,45 @@ function isCoreReviewDeckRow(sourceChapter: string): boolean {
 }
 
 function reviewExampleSearchTerms(row: ReviewExampleRow): readonly string[] {
+  const frontFields = structuredReviewSearchFields(row.front);
+  const backFields = structuredReviewSearchFields(row.back);
+  const targetTermKeys = ["characters", "japanese"];
   const terms = row.promptLabel === "English"
-    ? [row.back]
+    ? reviewSearchTermValues(backFields, row.back, targetTermKeys)
     : row.answerLabel === "English"
-      ? [row.front]
-      : [row.front, row.back];
+      ? reviewSearchTermValues(frontFields, row.front, targetTermKeys)
+      : [
+        ...reviewSearchTermValues(frontFields, row.front, targetTermKeys),
+        ...reviewSearchTermValues(backFields, row.back, targetTermKeys)
+      ];
   return terms.flatMap(splitReviewSearchTerm).filter((term, index, all) => all.indexOf(term) === index);
+}
+
+function decodeReviewDeckField(value: string): string {
+  return value.replace(/\\n/gu, "\n").replace(/\\t/gu, "\t").replace(/\\\\/gu, "\\");
+}
+
+function structuredReviewSearchFields(value: string): ReadonlyMap<string, string> {
+  const fields = new Map<string, string>();
+  for (const line of value.replace(/\r\n?/gu, "\n").split("\n")) {
+    const match = line.match(/^(Meaning|Pinyin|Zhuyin|Characters|Reading|Japanese):\s*(.+)$/iu);
+    if (match === null) {
+      continue;
+    }
+    const key = match[1]?.toLowerCase();
+    const fieldValue = match[2]?.trim();
+    if (key !== undefined && fieldValue !== undefined && fieldValue.length > 0) {
+      fields.set(key, fieldValue);
+    }
+  }
+  return fields;
+}
+
+function reviewSearchTermValues(fields: ReadonlyMap<string, string>, fallback: string, preferredKeys: readonly string[]): readonly string[] {
+  const terms = preferredKeys
+    .map((key) => fields.get(key))
+    .filter((value): value is string => value !== undefined && value.trim().length > 0);
+  return terms.length > 0 ? terms : [fallback];
 }
 
 function splitReviewSearchTerm(value: string): readonly string[] {
@@ -956,6 +996,8 @@ function languageCodeForReviewLabel(label: string): string | undefined {
       return "ko";
     case "Japanese":
       return "ja";
+    case "Reading":
+      return "ja-Kana";
     case "Vietnamese":
       return "vi";
     case "Dutch":

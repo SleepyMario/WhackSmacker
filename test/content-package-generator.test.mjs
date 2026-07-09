@@ -189,7 +189,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
   }
 });
 
-test("content package generator creates a valid Chinese - Mandarin Traditional package with conversion decks", async () => {
+test("content package generator creates a valid Chinese - Mandarin Traditional package with conversion and core decks", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-chinese-traditional-package-"));
 
   try {
@@ -213,6 +213,12 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
         sourcePath: "review-decks/pinyin-zhuyin-with-tones/cards.tsv",
         itemPath: "content/memorization/review-decks/pinyin-zhuyin-with-tones.json",
         itemCount: 206
+      },
+      {
+        title: "Chapter 1-5",
+        sourcePath: "review-decks/mandarin-traditional-chapter-001-005/cards.tsv",
+        itemPath: "content/memorization/review-decks/mandarin-traditional-chapter-001-005.json",
+        itemCount: 120
       }
     ];
 
@@ -227,10 +233,12 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
     assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-005-basic-sentences-5/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-001-005-grammar-easy/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-001-005-grammar-hard/chapter.md"));
     assert.equal(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-006-basic-sentences-6/chapter.md"), false);
     assert.equal(content.files.some((file) => file.path.startsWith("units/mandarin-simplified/")), false);
-    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"), false);
-    assert.equal(archive.has("content/memorization/review-decks/chapter-001-005.json"), false);
+    assert.equal(content.files.some((file) => file.path === "review-decks/mandarin-simplified-chapter-001-005/cards.tsv"), false);
+    assert.equal(archive.has("content/memorization/review-decks/mandarin-simplified-chapter-001-005.json"), false);
 
     for (const deck of expectedReviewDecks) {
       assert.ok(content.files.some((file) => file.path === deck.sourcePath));
@@ -241,29 +249,37 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
       assert.equal(collection.items[0].source.path, deck.sourcePath);
     }
 
-    const allItems = expectedReviewDecks.flatMap((deck) => JSON.parse(archive.get(deck.itemPath).toString("utf8")).items);
-    assert.equal(allItems.some((item) => item.examples !== undefined), false);
-    assert.ok(allItems.some((item) => item.prompt.text === "b" && item.answer.text === "ㄅ"));
-    assert.ok(allItems.some((item) => item.prompt.text === "ㄅ" && item.answer.text === "b"));
-    assert.ok(allItems.some((item) => item.prompt.text === "mā" && item.answer.text === "ㄇㄚ"));
-    assert.ok(allItems.some((item) => item.prompt.text === "ㄇㄚˊ" && item.answer.text === "má"));
-    assert.equal(allItems.some((item) => item.kind === "sentence" || item.kind === "concept"), false);
-    assert.equal(allItems.some((item) => item.source.title === "Chapter 1-5"), false);
+    const conversionItems = expectedReviewDecks
+      .filter((deck) => deck.sourcePath.startsWith("review-decks/pinyin-"))
+      .flatMap((deck) => JSON.parse(archive.get(deck.itemPath).toString("utf8")).items);
+    const coreItems = JSON.parse(archive.get("content/memorization/review-decks/mandarin-traditional-chapter-001-005.json").toString("utf8")).items;
+    assert.equal(conversionItems.some((item) => item.examples !== undefined), false);
+    assert.ok(conversionItems.some((item) => item.prompt.text === "b" && item.answer.text === "ㄅ"));
+    assert.ok(conversionItems.some((item) => item.prompt.text === "ㄅ" && item.answer.text === "b"));
+    assert.ok(conversionItems.some((item) => item.prompt.text === "mā" && item.answer.text === "ㄇㄚ"));
+    assert.ok(conversionItems.some((item) => item.prompt.text === "ㄇㄚˊ" && item.answer.text === "má"));
+    assert.equal(conversionItems.some((item) => item.kind === "sentence" || item.kind === "concept"), false);
+    assertCoreReviewItemsHaveExamples(coreItems, "Traditional Mandarin");
+    assert.equal(coreItems.length, 120);
+    assert.ok(coreItems.some((item) => item.prompt.text === "Meaning: hello" && item.answer.text.includes("Characters: 你好")));
+    assert.ok(coreItems.some((item) => item.prompt.text === "Characters: 學生" && item.answer.text.includes("Pinyin: xuéshēng")));
+    assert.ok(coreItems.some((item) => item.prompt.text.includes("Pinyin: nǐ hǎo") && item.prompt.text.includes("Zhuyin: ㄋㄧˇ ㄏㄠˇ")));
+    assert.ok(coreItems.every((item) => item.examples.every((example) => !/^Pinyin:|^Meaning:|^\|/u.test(example))));
     const pinyinIntro = content.files.find((file) => file.path === "units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md").text;
     const chapter1 = content.files.find((file) => file.path === "units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md").text;
     assert.match(pinyinIntro, /Hanyu Pinyin is the standard romanization system/);
-    assert.match(chapter1, /我是Alex Chen/);
+    assert.match(chapter1, /我是馬莉亞/);
     assert.match(chapter1, /我是林雅婷/);
-    assert.match(chapter1, /\| 學生 \| xuéshēng \| ㄒㄩㄝˊ ㄕㄥ \| student \|/);
-    assert.match(chapter1, /Pinyin: Wǒ shì Lín Yǎtíng\./);
-    assert.match(chapter1, /Meaning: I am Lin Yating\./);
+    assert.match(chapter1, /\|\s*學生\s*\|\s*xuéshēng\s*\|\s*ㄒㄩㄝˊ ㄕㄥ\s*\|\s*student\s*\|/);
+    assert.match(chapter1, /Lín Yǎtíng: Wǒ shì Lín Yǎtíng\./);
+    assert.match(chapter1, /Lin Yating: I am Lin Yating\./);
     assert.doesNotMatch(chapter1, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
 });
 
-test("content package generator creates a valid Chinese - Mandarin Simplified package without Core review deck", async () => {
+test("content package generator creates a valid Chinese - Mandarin Simplified package with core review deck", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-chinese-simplified-package-"));
 
   try {
@@ -287,24 +303,34 @@ test("content package generator creates a valid Chinese - Mandarin Simplified pa
     assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/introduction-to-hanyu-pinyin/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-001-basic-sentences-1/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-005-basic-sentences-5/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-001-005-grammar-easy/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-001-005-grammar-hard/chapter.md"));
     assert.equal(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-006-basic-sentences-6/chapter.md"), false);
     assert.equal(content.files.some((file) => file.path.startsWith("units/mandarin-traditional/")), false);
-    assert.equal(content.files.some((file) => file.path.startsWith("review-decks/")), false);
-    assert.equal([...archive.keys()].some((path) => path.startsWith("content/memorization/")), false);
+    assert.ok(content.files.some((file) => file.path === "review-decks/mandarin-simplified-chapter-001-005/cards.tsv"));
+    assert.equal(content.files.some((file) => file.path === "review-decks/mandarin-traditional-chapter-001-005/cards.tsv"), false);
+    assert.equal(content.files.some((file) => file.path.startsWith("review-decks/pinyin-zhuyin")), false);
+    assert.equal(archive.has("content/memorization/review-decks/mandarin-simplified-chapter-001-005.json"), true);
+    const coreItems = JSON.parse(archive.get("content/memorization/review-decks/mandarin-simplified-chapter-001-005.json").toString("utf8")).items;
+    assert.equal(coreItems.length, 120);
+    assertCoreReviewItemsHaveExamples(coreItems, "Simplified Mandarin");
+    assert.ok(coreItems.some((item) => item.prompt.text === "Meaning: hello" && item.answer.text.includes("Characters: 你好")));
+    assert.ok(coreItems.some((item) => item.prompt.text === "Characters: 学生" && item.answer.text.includes("Pinyin: xuéshēng")));
+    assert.equal(coreItems.some((item) => item.prompt.text.includes("Zhuyin:") || item.answer.text.includes("Zhuyin:")), false);
     const chapter1 = content.files.find((file) => file.path === "units/mandarin-simplified/chapter-001-basic-sentences-1/chapter.md").text;
-    assert.match(chapter1, /我是Alex Chen/);
+    assert.match(chapter1, /我是玛莉亚/);
     assert.match(chapter1, /我是林雅婷/);
     assert.match(chapter1, /我是学生/);
-    assert.match(chapter1, /\| 学生 \| xuéshēng \| student \|/);
-    assert.match(chapter1, /Pinyin: Wǒ shì Lín Yǎtíng\./);
-    assert.match(chapter1, /Meaning: I am Lin Yating\./);
+    assert.match(chapter1, /\|\s*学生\s*\|\s*xuéshēng\s*\|\s*student\s*\|/);
+    assert.match(chapter1, /Lín Yǎtíng: Wǒ shì Lín Yǎtíng\./);
+    assert.match(chapter1, /Lin Yating: I am Lin Yating\./);
     assert.doesNotMatch(chapter1, /\$\{|FOREIGN-NAME|LOCAL-NAME|ㄒㄩㄝˊ/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
 });
 
-test("content package generator creates a valid Japanese package without Core review deck", async () => {
+test("content package generator creates a valid Japanese package with Core review deck", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-japanese-package-"));
 
   try {
@@ -329,17 +355,27 @@ test("content package generator creates a valid Japanese package without Core re
     assert.ok(content.files.some((file) => file.path === "units/introduction-to-japanese-writing/introduction-to-kanji/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-001-basic-sentences-1/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-005-basic-sentences-5/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-001-005-grammar-easy/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-001-005-grammar-hard/chapter.md"));
     assert.equal(content.files.some((file) => file.path === "units/japanese-core/chapter-006-basic-sentences-6/chapter.md"), false);
-    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"), false);
-    assert.equal([...archive.keys()].some((path) => path.startsWith("content/memorization/")), false);
+    assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
+    assert.equal(archive.has("content/memorization/review-decks/chapter-001-005.json"), true);
+    const reviewItems = JSON.parse(archive.get("content/memorization/review-decks/chapter-001-005.json").toString("utf8")).items;
+    assert.equal(reviewItems.length, 120);
+    assertCoreReviewItemsHaveExamples(reviewItems, "Japanese");
+    assert.equal(reviewItems[0].source.title, "Chapter 1-5");
+    assert.ok(reviewItems.some((item) => item.prompt.text === "Meaning: hello" && item.answer.text.includes("Japanese: こんにちは")));
+    assert.ok(reviewItems.some((item) => item.prompt.text === "Japanese: 学生" && item.answer.text.includes("Reading: がくせい")));
+    assert.ok(reviewItems.some((item) => item.prompt.text === "Reading: がくせい" && item.answer.text.includes("Japanese: 学生")));
+    assert.ok(reviewItems.every((item) => item.examples.every((example) => !/^Reading:|^Meaning:|^\|/u.test(example))));
     assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/hiragana/chapter.md").text, /future work/);
     assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/katakana/chapter.md").text, /future work/);
     assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/introduction-to-kanji/chapter.md").text, /future work/);
     const chapter1 = content.files.find((file) => file.path === "units/japanese-core/chapter-001-basic-sentences-1/chapter.md").text;
-    assert.match(chapter1, /アレックスです/);
-    assert.match(chapter1, /さくらです/);
-    assert.match(chapter1, /学生（がくせい）/);
-    assert.match(chapter1, /Meaning: I am a student\./);
+    assert.match(chapter1, /マリア: 私はマリアです。/);
+    assert.match(chapter1, /佐藤さくら: 私は佐藤さくらです。/);
+    assert.match(chapter1, /マリア: 私は学生です。/);
+    assert.match(chapter1, /\|\s*学生\s*\|\s*がくせい\s*\|\s*student\s*\|/);
     assert.doesNotMatch(chapter1, /\$\{|FOREIGN-NAME|LOCAL-NAME/);
   } finally {
     await rm(directory, { recursive: true, force: true });

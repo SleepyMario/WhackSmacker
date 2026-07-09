@@ -474,7 +474,7 @@ test("language tree exposes French and Spanish content and review deck labels", 
   }
 });
 
-test("language tree exposes Japanese writing placeholders and no review deck", async () => {
+test("language tree exposes Japanese writing placeholders and core review deck", async () => {
   const fixture = await createInstalledLanguageFixture(["japanese-curriculum"], ["com.sleepymario.language.japanese"]);
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
@@ -487,7 +487,7 @@ test("language tree exposes Japanese writing placeholders and no review deck", a
     assert.ok(readContent.children.some((node) => node.label === "An Introduction to Kanji"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["No review decks"]);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
   } finally {
     await fixture.cleanup();
   }
@@ -506,7 +506,7 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
     const chineseReview = chinese.children.find((node) => node.label === "Review decks");
 
     assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
-    assert.deepEqual(chineseReview.children.map((node) => node.label), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.deepEqual(chineseReview.children.map((node) => node.label), ["Chapter 1-5", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
     assert.equal(koreanReview.children.some((node) => node.label.includes("com.sleepymario")), false);
     assert.equal(chineseReview.children.some((node) => node.label.includes("cards.tsv")), false);
   } finally {
@@ -614,7 +614,7 @@ test("language tree exposes Korean Grammar Easy and Hard summaries after each co
   }
 });
 
-test("language tree exposes Mandarin variant readable content without Core review decks", async () => {
+test("language tree exposes Mandarin variant readable content with script-specific Core review decks", async () => {
   const fixture = await createInstalledLanguageFixture(
     ["chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum"],
     [
@@ -634,12 +634,15 @@ test("language tree exposes Mandarin variant readable content without Core revie
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Introduction to Hanyu Pinyin"));
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(traditionalReviewDecks.children.map((node) => node.label), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
-    assert.equal(traditionalReviewDecks.children.some((node) => node.label === "Chapter 1-5"), false);
+    assert.ok(traditionalReadContent.children.some((node) => node.label === "Grammar - Easy"));
+    assert.ok(traditionalReadContent.children.some((node) => node.label === "Grammar - Hard"));
+    assert.deepEqual(traditionalReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Introduction to Hanyu Pinyin"));
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(simplifiedReviewDecks.children.map((node) => node.label), ["No review decks"]);
+    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Grammar - Easy"));
+    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Grammar - Hard"));
+    assert.deepEqual(simplifiedReviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
   } finally {
     await fixture.cleanup();
   }
@@ -1072,7 +1075,7 @@ test("Korean and Chinese review source menus use clean deck names", async () => 
     }));
 
     assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
-    assert.deepEqual(chinese.map((item) => item.label), ["Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.deepEqual(chinese.map((item) => item.label), ["Chapter 1-5", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
   } finally {
     await fixture.cleanup();
   }
