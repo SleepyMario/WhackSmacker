@@ -20,6 +20,7 @@ test("content package generator exposes the supported local package targets", ()
       ["korean-curriculum", "com.sleepymario.language.korean"],
       ["chinese-mandarin-traditional-curriculum", "com.sleepymario.language.chinese.mandarin.traditional"],
       ["chinese-mandarin-simplified-curriculum", "com.sleepymario.language.chinese.mandarin.simplified"],
+      ["english-curriculum", "com.sleepymario.language.english"],
       ["japanese-curriculum", "com.sleepymario.language.japanese"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
@@ -116,6 +117,18 @@ test("content package generator creates a valid Korean Curriculum package", asyn
         sourcePath: "review-decks/chapter-011-015/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-011-015.json",
         itemCount: 28
+      },
+      {
+        title: "Chapter 16-20",
+        sourcePath: "review-decks/chapter-016-020/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-016-020.json",
+        itemCount: 40
+      },
+      {
+        title: "Chapter 21-25",
+        sourcePath: "review-decks/chapter-021-025/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-021-025.json",
+        itemCount: 40
       }
     ];
 
@@ -125,10 +138,8 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     }
     assert.equal(content.files.some((file) => file.path === "review-decks/chapter-001-020/cards.tsv"), false);
     assert.equal(content.files.some((file) => file.path === "review-decks/chapter-008-010/cards.tsv"), false);
-    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-016-020/cards.tsv"), false);
     assert.equal(archive.has("content/memorization/review-decks/chapter-001-020.json"), false);
     assert.equal(archive.has("content/memorization/review-decks/chapter-008-010.json"), false);
-    assert.equal(archive.has("content/memorization/review-decks/chapter-016-020.json"), false);
 
     const reviewCollections = expectedReviewDecks.map((deck) => ({
       deck,
@@ -150,7 +161,8 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     assert.ok(allReviewItems.some((item) => item.prompt.text === "이/가" && item.answer.text === "subject/existence marker"));
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 1-20"), false);
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 8-10"), false);
-    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 16-20"), false);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 16-20"), true);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 21-25"), true);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "저는 N입니다" || item.answer.text === "저는 N입니다"), false);
 
     const studentItem = allReviewItems.find((item) => item.prompt.text === "학생" && item.answer.text === "student");
@@ -238,7 +250,7 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
     assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-001-005-grammar-easy/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-001-005-grammar-hard/chapter.md"));
-    assert.equal(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "units/mandarin-traditional/chapter-006-basic-sentences-6/chapter.md"), true);
     assert.equal(content.files.some((file) => file.path.startsWith("units/mandarin-simplified/")), false);
     assert.equal(content.files.some((file) => file.path === "review-decks/mandarin-simplified-chapter-001-005/cards.tsv"), false);
     assert.equal(archive.has("content/memorization/review-decks/mandarin-simplified-chapter-001-005.json"), false);
@@ -309,7 +321,7 @@ test("content package generator creates a valid Chinese - Mandarin Simplified pa
     assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-001-005-grammar-easy/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-001-005-grammar-hard/chapter.md"));
-    assert.equal(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "units/mandarin-simplified/chapter-006-basic-sentences-6/chapter.md"), true);
     assert.equal(content.files.some((file) => file.path.startsWith("units/mandarin-traditional/")), false);
     assert.ok(content.files.some((file) => file.path === "review-decks/mandarin-simplified-chapter-001-005/cards.tsv"));
     assert.equal(content.files.some((file) => file.path === "review-decks/mandarin-traditional-chapter-001-005/cards.tsv"), false);
@@ -362,7 +374,7 @@ test("content package generator creates a valid Japanese package with Core revie
     assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-001-005-grammar-easy/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-001-005-grammar-hard/chapter.md"));
-    assert.equal(content.files.some((file) => file.path === "units/japanese-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "units/japanese-core/chapter-006-basic-sentences-6/chapter.md"), true);
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
     assert.equal(archive.has("content/memorization/review-decks/chapter-001-005.json"), true);
     const reviewItems = JSON.parse(archive.get("content/memorization/review-decks/chapter-001-005.json").toString("utf8")).items;
@@ -413,7 +425,7 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.ok(content.files.some((file) => file.path === "name-pools/initial-name-pools.md"));
     assert.ok(content.files.some((file) => file.path === "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
-    assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-006-basic-sentences-6/chapter.md"), true);
     assert.equal(content.files.some((file) => file.path.includes("lessons-001-005") || file.path.includes("lesson-001")), false);
     assert.equal(archive.has(itemPath), true);
     assert.equal(archive.has("content/memorization/review-decks/lessons-001-005.json"), false);
@@ -494,6 +506,53 @@ test("content package generator creates a valid Dutch package", async () => {
   }
 });
 
+test("content package generator creates a valid English package", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-english-package-"));
+
+  try {
+    const result = await generateContentPackage({
+      targetId: "english-curriculum",
+      outputDirectory: directory,
+      generatedAt: "2026-07-06T00:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
+    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const itemPath = "content/memorization/review-decks/chapter-001-005.json";
+    const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
+
+    assert.equal(result.packageId, "com.sleepymario.language.english");
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.english-0.1.0.wspkg"), true);
+    assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+    assert.equal(manifest.displayName, "English");
+    assert.equal(manifest.contentType, "language-curriculum");
+    assert.equal(content.packageId, "com.sleepymario.language.english");
+    assertUsefulChapterTitles(content.files);
+    assertNoGenericDialogueSpeakerLabels(content.files, "English", reviewItems.items);
+    assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "English");
+    assert.ok(content.files.some((file) => file.path === "name-pools/initial-name-pools.md"));
+    assert.ok(content.files.some((file) => file.path === "units/english-core/chapter-001-basic-sentences-1/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/english-core/chapter-005-basic-sentences-5/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/english-core/chapter-001-005-grammar-easy/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "units/english-core/chapter-001-005-grammar-hard/chapter.md"));
+    assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
+    assert.equal(archive.has(itemPath), true);
+    assert.equal(reviewItems.items.length, 40);
+    assertCoreReviewItemsHaveExamples(reviewItems.items, "English");
+    assertEnglishReviewExamplesComeFromReadContent(reviewItems.items, content.files);
+    assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "greeting"));
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "greeting" && item.answer.text === "hello"));
+    const helloItem = reviewItems.items.find((item) => item.prompt.text === "hello" && item.answer.text === "greeting");
+    assert.deepEqual(helloItem.examples, ["Maria  : Hello.", "John   : Hello.", "Hello."]);
+    const questionItem = reviewItems.items.find((item) => item.prompt.text === "question" && item.answer.text === "something asked");
+    assert.deepEqual(questionItem.examples, ["Anna   : This is a question."]);
+    assert.equal(reviewItems.items.some((item) => item.prompt.text === "I am N" || item.answer.text === "I am N"), false);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("content package generator creates a valid German package", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-german-package-"));
 
@@ -522,7 +581,7 @@ test("content package generator creates a valid German package", async () => {
     assert.ok(content.files.some((file) => file.path === "units/german-core/chapter-001-basic-sentences-1/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/german-core/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
-    assert.equal(content.files.some((file) => file.path === "units/german-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "units/german-core/chapter-006-basic-sentences-6/chapter.md"), true);
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 54);
     assertCoreReviewItemsHaveExamples(reviewItems.items, "German");
@@ -565,7 +624,7 @@ test("content package generator creates a valid French package", async () => {
     assert.ok(content.files.some((file) => file.path === "units/french-core/chapter-001-basic-sentences-1/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/french-core/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
-    assert.equal(content.files.some((file) => file.path === "units/french-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "units/french-core/chapter-006-basic-sentences-6/chapter.md"), true);
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 32);
     assertCoreReviewItemsHaveExamples(reviewItems.items, "French");
@@ -610,7 +669,7 @@ test("content package generator creates a valid Spanish package", async () => {
     assert.ok(content.files.some((file) => file.path === "units/spanish-core/chapter-001-basic-sentences-1/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/spanish-core/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
-    assert.equal(content.files.some((file) => file.path === "units/spanish-core/chapter-006-basic-sentences-6/chapter.md"), false);
+    assert.equal(content.files.some((file) => file.path === "units/spanish-core/chapter-006-basic-sentences-6/chapter.md"), true);
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 30);
     assertCoreReviewItemsHaveExamples(reviewItems.items, "Spanish");
@@ -666,6 +725,8 @@ test("content package generator CLI can build all local test targets", async () 
       "--target",
       "chinese-mandarin-simplified-curriculum",
       "--target",
+      "english-curriculum",
+      "--target",
       "japanese-curriculum",
       "--target",
       "vietnamese-curriculum",
@@ -684,6 +745,7 @@ test("content package generator CLI can build all local test targets", async () 
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.korean/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.chinese\.mandarin\.traditional/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.chinese\.mandarin\.simplified/);
+    assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.english/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.japanese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.vietnamese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.dutch/);
@@ -748,6 +810,17 @@ function assertDutchReviewExamplesComeFromReadContent(items, contentFiles) {
     .map((example) => `${item.prompt.text} -> ${item.answer.text}: ${example}`));
 
   assert.deepEqual(invalidExamples, [], "Dutch examples must be literal lines from learner-facing read content only");
+}
+
+function assertEnglishReviewExamplesComeFromReadContent(items, contentFiles) {
+  const readContentLines = new Set(contentFiles
+    .filter((file) => /^units\/english-core\/chapter-\d{3}-basic-sentences-\d+\/chapter\.md$/u.test(file.path))
+    .flatMap((file) => extractLearnerFacingReadContentLinesForTest(file.text)));
+  const invalidExamples = items.flatMap((item) => (item.examples ?? [])
+    .filter((example) => !readContentLines.has(example))
+    .map((example) => `${item.prompt.text} -> ${item.answer.text}: ${example}`));
+
+  assert.deepEqual(invalidExamples, [], "English examples must be literal lines from learner-facing read content only");
 }
 
 function extractLearnerFacingReadContentLinesForTest(markdown) {

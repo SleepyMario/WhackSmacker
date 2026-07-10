@@ -25,8 +25,10 @@ import {
   languageMenuHeading,
   listAvailableModuleDescriptors,
   renderTwoPaneLanguageTree,
+  renderLanguageTreeRightPane,
   renderWhackSmackerHeader,
   readableContentEntriesToMenuItems,
+  reviewDeckMenuStatusFromStates,
   reviewSourcesToMenuItems,
   runInteractiveMenu,
   shouldUseTerminalColors,
@@ -36,6 +38,7 @@ import {
 import {
   generateContentPackage,
   generateLocalContentPackageCatalogue,
+  createInitialReviewState,
   getBuiltInFirstClassModules,
   installContentPackage,
   InMemoryCliCommandRegistry,
@@ -45,7 +48,8 @@ import {
   listReadingReviewSources,
   loadReviewProgressStore,
   readInstalledContentEntry,
-  recordReadingReviewAnswer
+  recordReadingReviewAnswer,
+  syncReadingReviewItems
 } from "../dist/packages/core/index.js";
 
 class FakeTerminal {
@@ -283,7 +287,7 @@ test("interactive menu opens the module two-pane tree", async () => {
 
 test("module tree lists top-level categories and installed language packages", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
     [
       "com.sleepymario.language.korean",
       "com.sleepymario.language.chinese.mandarin.simplified",
@@ -291,6 +295,7 @@ test("module tree lists top-level categories and installed language packages", a
       "com.sleepymario.language.japanese",
       "com.sleepymario.language.vietnamese",
       "com.sleepymario.language.dutch",
+      "com.sleepymario.language.english",
       "com.sleepymario.language.german",
       "com.sleepymario.language.french",
       "com.sleepymario.language.spanish"
@@ -304,11 +309,12 @@ test("module tree lists top-level categories and installed language packages", a
     assert.equal(tree.label, "WhackSmacker");
     assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
     assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
-    assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
+    assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "English", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
       "com.sleepymario.language.chinese.mandarin.simplified",
       "com.sleepymario.language.chinese.mandarin.traditional",
       "com.sleepymario.language.dutch",
+      "com.sleepymario.language.english",
       "com.sleepymario.language.french",
       "com.sleepymario.language.german",
       "com.sleepymario.language.japanese",
@@ -391,7 +397,7 @@ test("language menu discovers installed packages from the selected data dir", as
 
 test("language tree lists installed packages and package sections", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
     [
       "com.sleepymario.language.korean",
       "com.sleepymario.language.chinese.mandarin.simplified",
@@ -399,6 +405,7 @@ test("language tree lists installed packages and package sections", async () => 
       "com.sleepymario.language.japanese",
       "com.sleepymario.language.vietnamese",
       "com.sleepymario.language.dutch",
+      "com.sleepymario.language.english",
       "com.sleepymario.language.german",
       "com.sleepymario.language.french",
       "com.sleepymario.language.spanish"
@@ -408,7 +415,7 @@ test("language tree lists installed packages and package sections", async () => 
     const tree = await buildLanguageTree(fixture.dataDir);
 
     assert.equal(tree.label, "Languages");
-    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
+    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "English", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
     for (const languagePackage of tree.children) {
       assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Review decks", "Package info", "Uninstall"]);
     }
@@ -446,7 +453,7 @@ test("language tree exposes German content and review deck labels", async () => 
 
     assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
   } finally {
     await fixture.cleanup();
   }
@@ -468,10 +475,10 @@ test("language tree exposes French and Spanish content and review deck labels", 
 
     assert.ok(frenchReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(frenchReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(frenchReviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
+    assert.deepEqual(frenchReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
     assert.ok(spanishReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(spanishReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(spanishReviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
+    assert.deepEqual(spanishReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
   } finally {
     await fixture.cleanup();
   }
@@ -490,7 +497,7 @@ test("language tree exposes Japanese writing placeholders and core review deck",
     assert.ok(readContent.children.some((node) => node.label === "An Introduction to Kanji"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
   } finally {
     await fixture.cleanup();
   }
@@ -508,8 +515,8 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
     const koreanReview = korean.children.find((node) => node.label === "Review decks");
     const chineseReview = chinese.children.find((node) => node.label === "Review decks");
 
-    assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
-    assert.deepEqual(chineseReview.children.map((node) => node.label), ["Chapter 1-5", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
+    assert.deepEqual(chineseReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
     assert.equal(koreanReview.children.some((node) => node.label.includes("com.sleepymario")), false);
     assert.equal(chineseReview.children.some((node) => node.label.includes("cards.tsv")), false);
   } finally {
@@ -639,13 +646,13 @@ test("language tree exposes Mandarin variant readable content with script-specif
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Grammar - Easy"));
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Grammar - Hard"));
-    assert.deepEqual(traditionalReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.deepEqual(traditionalReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Introduction to Hanyu Pinyin"));
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Grammar - Easy"));
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Grammar - Hard"));
-    assert.deepEqual(simplifiedReviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
+    assert.deepEqual(simplifiedReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
   } finally {
     await fixture.cleanup();
   }
@@ -653,7 +660,7 @@ test("language tree exposes Mandarin variant readable content with script-specif
 
 test("module tree includes available modules from a catalogue with install status", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
     ["com.sleepymario.language.korean"]
   );
   try {
@@ -666,6 +673,7 @@ test("module tree includes available modules from a catalogue with install statu
       "Chinese - Mandarin (Simplified):available",
       "Chinese - Mandarin (Traditional):available",
       "Dutch:available",
+      "English:available",
       "French:available",
       "German:available",
       "Japanese:available",
@@ -677,6 +685,7 @@ test("module tree includes available modules from a catalogue with install statu
       "Chinese - Mandarin (Simplified) [available]",
       "Chinese - Mandarin (Traditional) [available]",
       "Dutch [available]",
+      "English [available]",
       "French [available]",
       "German [available]",
       "Japanese [available]",
@@ -884,7 +893,8 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
       children: [{
         id: "review-source",
         label: "Chapter 1-5",
-        kind: "review-source"
+        kind: "review-source",
+        reviewStatus: "has_cards_to_review"
       }]
     }]
   }, new Set(["whacksmacker", "review-decks"]), 0, "Preview", true);
@@ -908,6 +918,231 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
   assert.match(stripped, /Grammar -- Easy/u);
   assert.doesNotMatch(stripped, /Ch 1\s*--\s*\.\.\./u);
   assert.doesNotMatch(stripped, /\|\s*(?:\.\.\.|…)\s+\|/u);
+});
+
+test("review deck menu status distinguishes not started finished waiting and due decks", () => {
+  const now = "2026-07-10T00:00:00Z";
+  const identity = (itemId) => ({
+    packageId: "com.sleepymario.language.test",
+    packageVersion: "0.1.0",
+    sourcePath: "review-decks/test/cards.tsv",
+    itemId
+  });
+  const sourceIds = new Set(["card-1", "card-2"]);
+  const initial1 = createInitialReviewState(identity("card-1"), now);
+  const initial2 = createInitialReviewState(identity("card-2"), now);
+  const due = {
+    ...initial1,
+    lastReviewedAt: "2026-07-09T00:00:00Z",
+    reviewCount: 1,
+    intervalDays: 1,
+    status: "review"
+  };
+  const waiting = {
+    ...createInitialReviewState(identity("card-1"), now),
+    nextReviewAt: "2999-01-01T00:00:00Z",
+    reviewCount: 1,
+    intervalDays: 2,
+    status: "review"
+  };
+  const suspended1 = {
+    ...waiting,
+    status: "suspended"
+  };
+  const suspended2 = {
+    ...createInitialReviewState(identity("card-2"), now),
+    nextReviewAt: "2999-01-01T00:00:00Z",
+    reviewCount: 1,
+    intervalDays: 2,
+    status: "suspended"
+  };
+
+  assert.deepEqual(reviewDeckMenuStatusFromStates(sourceIds, [], now), {
+    kind: "not_started",
+    dueCardCount: 0,
+    text: "Not started yet."
+  });
+  assert.deepEqual(reviewDeckMenuStatusFromStates(sourceIds, [initial1, initial2], now), {
+    kind: "not_started",
+    dueCardCount: 0,
+    text: "Not started yet."
+  });
+  assert.deepEqual(reviewDeckMenuStatusFromStates(sourceIds, [suspended1, suspended2], now), {
+    kind: "finished",
+    dueCardCount: 0,
+    text: "Finished."
+  });
+  assert.deepEqual(reviewDeckMenuStatusFromStates(new Set(["card-1"]), [waiting], now), {
+    kind: "no_cards_to_review",
+    dueCardCount: 0,
+    text: "No new cards to review right now."
+  });
+  assert.deepEqual(reviewDeckMenuStatusFromStates(sourceIds, [due], now), {
+    kind: "has_cards_to_review",
+    dueCardCount: 2,
+    text: "There are 2 cards to review."
+  });
+  assert.deepEqual(reviewDeckMenuStatusFromStates(new Set(), [], now), {
+    kind: "not_started",
+    dueCardCount: 0,
+    text: "Not started yet."
+  });
+});
+
+test("two-pane renderer colors review deck rows by review status", () => {
+  const tree = {
+    id: "whacksmacker",
+    label: "WhackSmacker",
+    kind: "root",
+    children: [{
+      id: "review-decks",
+      label: "Review decks",
+      kind: "review-section",
+      children: [{
+        id: "not-started",
+        label: "Not Started",
+        kind: "review-source",
+        reviewStatus: "not_started"
+      }, {
+        id: "finished",
+        label: "Finished",
+        kind: "review-source",
+        reviewStatus: "finished"
+      }, {
+        id: "waiting",
+        label: "Waiting",
+        kind: "review-source",
+        reviewStatus: "no_cards_to_review"
+      }, {
+        id: "due",
+        label: "Due Now",
+        kind: "review-source",
+        reviewStatus: "has_cards_to_review"
+      }]
+    }]
+  };
+  const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker", "review-decks"]), 5, "There are 17 cards to review.", true);
+  const selectedStyle = "\x1b[7m\x1b[1m";
+
+  assert.match(output, /\x1b\[35m[^\x1b\n]*Not Started/u);
+  assert.doesNotMatch(output, /\x1b\[36m[^\x1b\n]*Not Started/u);
+  assert.match(output, /\x1b\[32m[^\x1b\n]*Finished/u);
+  assert.match(output, /\x1b\[34m[^\x1b\n]*Waiting/u);
+  assert.match(output, /\x1b\[33m[^\x1b\n]*Due Now/u);
+  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}${escapeRegExp("\x1b[33m")}[^\\x1b]*Due Now`, "u"));
+  assert.match(stripAnsi(output), /There are 17 cards to review\./u);
+});
+
+test("review deck tree status repaints after review progress changes", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const now = "2026-07-10T00:00:00Z";
+    await syncReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.dutch",
+      packageVersion: "0.1.0",
+      now
+    });
+    const notStartedTree = await buildLanguageTree(fixture.dataDir);
+    const notStartedDeck = dutchReviewDeckNode(notStartedTree, "Chapter 1-5");
+
+    assert.equal(notStartedDeck.reviewStatus, "not_started");
+    assert.equal(notStartedDeck.reviewStatusText, "Not started yet.");
+
+    const sourceItems = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.dutch",
+      packageVersion: "0.1.0",
+      sourcePath: "review-decks/chapter-001-005/cards.tsv"
+    });
+    const [firstItem] = sourceItems;
+    assert.ok(firstItem, "Dutch fixture has review items");
+    await recordReadingReviewAnswer({
+      dataDir: fixture.dataDir,
+      packageId: firstItem.packageId,
+      packageVersion: firstItem.packageVersion,
+      sourcePath: firstItem.sourcePath,
+      itemId: firstItem.item.id,
+      rating: "good",
+      reviewedAt: now
+    });
+
+    const partiallyReviewedTree = await buildLanguageTree(fixture.dataDir);
+    const partiallyReviewedDeck = dutchReviewDeckNode(partiallyReviewedTree, "Chapter 1-5");
+
+    assert.equal(partiallyReviewedDeck.reviewStatus, "has_cards_to_review");
+    assert.equal(partiallyReviewedDeck.reviewStatusText, `There are ${partiallyReviewedDeck.dueCardCount} cards to review.`);
+    assert.ok((partiallyReviewedDeck.dueCardCount ?? 0) > 0);
+
+    for (const item of sourceItems) {
+      await recordReadingReviewAnswer({
+        dataDir: fixture.dataDir,
+        packageId: item.packageId,
+        packageVersion: item.packageVersion,
+        sourcePath: item.sourcePath,
+        itemId: item.item.id,
+        rating: "good",
+        reviewedAt: now
+      });
+    }
+
+    const refreshedTree = await buildLanguageTree(fixture.dataDir);
+    const refreshedDeck = dutchReviewDeckNode(refreshedTree, "Chapter 1-5");
+    const output = renderTwoPaneLanguageTree({
+      id: "whacksmacker",
+      label: "WhackSmacker",
+      kind: "root",
+      children: [{
+        id: "review-decks",
+        label: "Review decks",
+        kind: "review-section",
+        children: [refreshedDeck]
+      }]
+    }, new Set(["whacksmacker", "review-decks"]), 2, refreshedDeck.reviewStatusText, true);
+
+    assert.equal(refreshedDeck.reviewStatus, "no_cards_to_review");
+    assert.equal(refreshedDeck.reviewStatusText, "No new cards to review right now.");
+    assert.match(output, /\x1b\[34m[^\x1b\n]*Ch 1-5/u);
+    assert.doesNotMatch(output, /\x1b\[33m[^\x1b\n]*Ch 1-5/u);
+    assert.match(stripAnsi(output), /No new cards to review right now\./u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("review deck right pane reports available card count", async () => {
+  const text = await renderLanguageTreeRightPane({
+    id: "review-source",
+    label: "Chapter 6-10",
+    kind: "review-source",
+    packageLabel: "Dutch",
+    packageId: "com.sleepymario.language.dutch",
+    sourcePath: "review-decks/chapter-006-010/cards.tsv",
+    itemCount: 40,
+    reviewStatus: "has_cards_to_review",
+    dueCardCount: 17,
+    reviewStatusText: "There are 17 cards to review."
+  }, {});
+
+  assert.match(text, /Review deck: Chapter 6-10/u);
+  assert.match(text, /Items: 40/u);
+  assert.match(text, /There are 17 cards to review\./u);
+});
+
+test("review deck tree status handles missing progress files and exposes output-pane text", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
+    const chapterDeck = reviewDecks.children.find((node) => node.label === "Chapter 1-5");
+
+    assert.equal(chapterDeck.reviewStatus, "not_started");
+    assert.equal(chapterDeck.dueCardCount, 0);
+    assert.equal(chapterDeck.reviewStatusText, "Not started yet.");
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("Korean read content menu pins seven Hangul chapter entries before numbered core chapters", () => {
@@ -1077,8 +1312,8 @@ test("Korean and Chinese review source menus use clean deck names", async () => 
       packageId: "com.sleepymario.language.chinese.mandarin.traditional"
     }));
 
-    assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
-    assert.deepEqual(chinese.map((item) => item.label), ["Chapter 1-5", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
+    assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
+    assert.deepEqual(chinese.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
   } finally {
     await fixture.cleanup();
   }
@@ -1456,7 +1691,7 @@ test("review section can be expanded without starting review", async () => {
 });
 
 test("Enter on an available module does not install but Space installs and refreshes installed modules", async () => {
-  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"], []);
+  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"], []);
   try {
     const enterOnly = new FakeTerminal([
       key("down"),
@@ -1930,6 +2165,16 @@ function reviewItem({
 
 async function createInstalledDutchFixture() {
   return createInstalledLanguageFixture(["dutch-curriculum"], ["com.sleepymario.language.dutch"]);
+}
+
+function dutchReviewDeckNode(tree, label) {
+  const dutch = tree.children.find((node) => node.label === "Dutch");
+  assert.ok(dutch, "Dutch package appears in the language tree");
+  const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
+  assert.ok(reviewDecks, "Dutch package has a review deck section");
+  const deck = reviewDecks.children.find((node) => node.label === label);
+  assert.ok(deck, `Dutch review deck exists: ${label}`);
+  return deck;
 }
 
 async function createDutchReviewProgress(dataDir) {

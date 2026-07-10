@@ -34,7 +34,7 @@ declare function require(name: "node:crypto"): {
   };
 };
 declare function require(name: "node:child_process"): {
-  execFileSync(command: string, args: readonly string[], options: { cwd: string; encoding: "utf8" }): string;
+  execFileSync(command: string, args: readonly string[], options: { cwd: string; encoding: "utf8"; stdio?: readonly ["ignore", "pipe", "pipe"] }): string;
 };
 declare function require(name: "node:fs/promises"): {
   mkdir(path: string, options: { recursive: boolean }): Promise<void>;
@@ -165,6 +165,7 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "review-decks/pinyin-zhuyin",
       "review-decks/pinyin-zhuyin-with-tones",
       "review-decks/mandarin-traditional-chapter-001-005",
+      "review-decks/mandarin-traditional-chapter-006-010",
       "research",
       "units/README.md",
       "units/mandarin-traditional"
@@ -194,9 +195,37 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "name-pools",
       "review-decks/README.md",
       "review-decks/mandarin-simplified-chapter-001-005",
+      "review-decks/mandarin-simplified-chapter-006-010",
       "research",
       "units/README.md",
       "units/mandarin-simplified"
+    ]
+  },
+  {
+    id: "english-curriculum",
+    packageId: "com.sleepymario.language.english",
+    displayName: "English",
+    description: "English language curriculum content generated from the canonical English curriculum repository.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../english-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/english-curriculum",
+    languages: ["en"],
+    subjects: ["language", "english"],
+    license: { spdx: null, name: null, path: null },
+    include: [
+      "README.md",
+      "philosophy.md",
+      "scope.md",
+      "curriculum-map.md",
+      "progress.md",
+      "backlog.md",
+      "decisions.md",
+      "name-pools",
+      "review-decks",
+      "research",
+      "units"
     ]
   },
   {
@@ -367,7 +396,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const target = getContentPackageGeneratorTarget(options.targetId);
   const sourceRoot = resolveSourcePath(target.sourcePath);
   const sourceFiles = await collectSourceFiles(sourceRoot, target.include);
-  const sourceCommit = readGitValue(sourceRoot, ["rev-parse", "HEAD"]);
+  const sourceCommit = normalizeGitCommit(readGitValue(sourceRoot, ["rev-parse", "HEAD"]));
   const sourceDirty = readGitValue(sourceRoot, ["status", "--short"]).trim().length > 0;
   const generatorCommit = readGitValue(repositoryRoot, ["rev-parse", "HEAD"]);
 
@@ -991,6 +1020,7 @@ function isLanguageCurriculumTarget(target: ContentPackageGeneratorTarget): bool
 function languageCodeForReviewLabel(label: string): string | undefined {
   switch (label) {
     case "English":
+    case "English Target":
       return "en";
     case "Korean":
       return "ko";
@@ -1025,6 +1055,8 @@ function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
       return "Pinyin/Zhuyin";
     case "chinese-mandarin-simplified-curriculum":
       return "Pinyin";
+    case "english-curriculum":
+      return "English";
     case "japanese-curriculum":
       return "Japanese";
     case "vietnamese-curriculum":
@@ -1149,13 +1181,17 @@ function resolveSourcePath(sourcePath: string): string {
 
 function readGitValue(cwd: string, args: readonly string[]): string {
   try {
-    return execFileSync("git", [...args], { cwd, encoding: "utf8" }).trim();
+    return execFileSync("git", [...args], { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
   } catch (error) {
     if (typeof error === "object" && error !== null && "stdout" in error && typeof error.stdout === "string") {
       return error.stdout.trim();
     }
     throw error;
   }
+}
+
+function normalizeGitCommit(value: string): string {
+  return /^[0-9a-f]{40}$/u.test(value) ? value : "0".repeat(40);
 }
 
 function mediaTypeForPath(path: string): string {
