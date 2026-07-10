@@ -69,6 +69,8 @@ whacksmacker web --data-dir ~/.local/share/whacksmacker/content --catalogue /pat
 
 The default address is `http://127.0.0.1:8787`; it never binds to all interfaces unless explicitly requested. Optional HTTP Basic authentication can be enabled with `--password PASSWORD` or `WHACKSMACKER_WEB_PASSWORD`. Learning progress and installed-package state are private local data: do not expose the server publicly without authentication and appropriate reverse-proxy/TLS protections.
 
+The server exposes a public, data-free landing page at `/`, a login page at `/login`, and the private study interface at `/app`. When a password is configured, the login form creates an HttpOnly local session; existing HTTP Basic authentication remains supported for API clients.
+
 The first web release provides a dashboard, package install/uninstall (including keep/delete progress), review decks and live ratings with 1–4 shortcuts, localized source-language settings, progress summaries, readable content browsing, responsive navigation, and light/dark themes. Package updates, browser auto-opening, rich Markdown rendering, and multi-user/public hosting are deferred.
 
 Installed Korean curriculum content and language terminology are available through domain-prefixed commands:

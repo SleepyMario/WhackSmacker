@@ -13,15 +13,25 @@ test("web options use localhost-safe defaults and validate ports", () => {
   assert.throws(() => parseWebOptions(["--port", "0"], {}), /1 to 65535/);
 });
 
-test("web server serves local assets, health, state, and persists locale", async () => {
+test("web server serves a data-free public landing page, logo, health, and private app", async () => {
   const root = await mkdtemp(join(tmpdir(), "wsm-web-"));
   const server = await startWebServer({ host: "127.0.0.1", port: 0, dataDir: join(root, "content") });
   try {
     const address = server.address();
     assert.ok(address && typeof address === "object");
     const base = `http://127.0.0.1:${address.port}`;
-    assert.match(await (await fetch(base)).text(), /WhackSmacker/);
+    const landing = await (await fetch(base)).text();
+    assert.match(landing, /Build knowledge that sticks/);
+    assert.match(landing, />Log in</);
+    assert.match(landing, />GitHub</);
+    assert.match(landing, />Developer notes</);
+    assert.doesNotMatch(landing, /\/api\/state|Installed packages|Cards due/);
+    const logo = await fetch(`${base}/assets/whacksmacker-logo.png`);
+    assert.equal(logo.status, 200);
+    assert.equal(logo.headers.get("content-type"), "image/png");
+    assert.ok((await logo.arrayBuffer()).byteLength > 100_000);
     assert.deepEqual(await (await fetch(`${base}/api/health`)).json(), { ok: true, service: "whacksmacker-web" });
+    assert.match(await (await fetch(`${base}/app`)).text(), /Dashboard/);
     const initial = await (await fetch(`${base}/api/state`)).json();
     assert.equal(initial.locale, "en-US");
     assert.deepEqual(initial.installed, []);
@@ -34,12 +44,32 @@ test("web server serves local assets, health, state, and persists locale", async
   }
 });
 
-test("web password requires HTTP Basic authentication", async () => {
+test("password mode keeps landing and health public while protecting app state", async () => {
   const server = await startWebServer({ host: "127.0.0.1", port: 0, password: "secret" });
   try {
     const address = server.address(); assert.ok(address && typeof address === "object");
-    const url = `http://127.0.0.1:${address.port}/api/health`;
-    assert.equal((await fetch(url)).status, 401);
-    assert.equal((await fetch(url, { headers: { authorization: `Basic ${Buffer.from("user:secret").toString("base64")}` } })).status, 200);
+    const base = `http://127.0.0.1:${address.port}`;
+    assert.equal((await fetch(base)).status, 200);
+    assert.equal((await fetch(`${base}/api/health`)).status, 200);
+    assert.equal((await fetch(`${base}/app`)).status, 401);
+    assert.equal((await fetch(`${base}/api/state`)).status, 401);
+    assert.equal((await fetch(`${base}/api/state`, { headers: { authorization: `Basic ${Buffer.from("user:secret").toString("base64")}` } })).status, 200);
+  } finally { await new Promise(resolve => server.close(resolve)); }
+});
+
+test("styled login creates a session without signup or default credentials", async () => {
+  const server = await startWebServer({ host: "127.0.0.1", port: 0, password: "secret" });
+  try {
+    const address = server.address(); assert.ok(address && typeof address === "object");
+    const base = `http://127.0.0.1:${address.port}`;
+    const page = await (await fetch(`${base}/login`)).text();
+    assert.match(page, /There is no public registration or default account/);
+    assert.doesNotMatch(page, /Sign up|Register/);
+    assert.equal((await fetch(`${base}/api/login`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password: "wrong" }) })).status, 401);
+    const login = await fetch(`${base}/api/login`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password: "secret" }) });
+    assert.equal(login.status, 200);
+    const cookie = login.headers.get("set-cookie");
+    assert.match(cookie ?? "", /wsm_session=.*HttpOnly.*SameSite=Strict/);
+    assert.equal((await fetch(`${base}/app`, { headers: { cookie: cookie?.split(";")[0] ?? "" } })).status, 200);
   } finally { await new Promise(resolve => server.close(resolve)); }
 });
