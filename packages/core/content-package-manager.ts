@@ -11,6 +11,7 @@ import {
   type ContentPackageManifest,
   type ContentPackageSourceProvenance
 } from "./content-package-spec";
+import { localized } from "./localized-content";
 
 type BufferValue = {
   readonly length: number;
@@ -256,7 +257,7 @@ export async function installContentPackage(options: InstallContentPackageOption
   const record: InstalledPackageRecord = {
     packageId: manifest.packageId,
     packageVersion: manifest.packageVersion,
-    displayName: manifest.displayName,
+    displayName: localized(manifest.displayName, "en-US"),
     contentType: manifest.contentType,
     contentSchemaVersion: manifest.contentSchemaVersion,
     minimumWhackSmackerVersion: manifest.minimumWhackSmackerVersion,

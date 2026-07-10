@@ -1,6 +1,7 @@
 import { listInstalledContentPackages, type InstalledPackageRecord } from "./content-package-manager";
 import { listReadableContentEntries } from "./content-package-reader";
 import { isSafeContentPackagePath } from "./content-package-spec";
+import { localized } from "./localized-content";
 import { formatRenderedExercise, renderMemorizationExercise, type RenderedExercise } from "./exercise-renderer";
 import { listInstalledMemorizationItemFiles, readInstalledMemorizationItems, type MemorizationItem } from "./memorization-item";
 import {
@@ -26,6 +27,7 @@ export interface ReadingReviewOptions {
   readonly progressDir?: string;
   readonly packageId?: string;
   readonly packageVersion?: string;
+  readonly sourceLocale?: string;
 }
 
 export interface ListReadingReviewItemsOptions extends ReadingReviewOptions {
@@ -117,7 +119,7 @@ export async function listReadingReviewSources(options: ReadingReviewOptions = {
       packageId: item.packageId,
       packageVersion: item.packageVersion,
       sourcePath: item.sourcePath,
-      ...(item.item.source?.title === undefined ? {} : { title: item.item.source.title }),
+      ...(item.item.source?.title === undefined ? {} : { title: localized(item.item.source.title, options.sourceLocale ?? "en-US") }),
       sourceExists: item.sourceExists === true,
       itemCount: (existing?.itemCount ?? 0) + 1
     });
@@ -129,7 +131,8 @@ export async function findNextReadingReviewSource(options: NextReadingReviewSour
   const sources = (await listReadingReviewSources({
     dataDir: options.dataDir,
     packageId: options.packageId,
-    packageVersion: options.packageVersion
+    packageVersion: options.packageVersion,
+    sourceLocale: options.sourceLocale
   })).filter((source) => source.packageId === options.packageId);
   const currentIndex = sources.findIndex(
     (source) =>
@@ -206,7 +209,8 @@ export async function renderReadingReviewItem(options: RenderReadingReviewItemOp
     packageId: reviewItem.packageId,
     packageVersion: reviewItem.packageVersion,
     itemId: reviewItem.item.id,
-    item: reviewItem.item
+    item: reviewItem.item,
+    sourceLocale: options.sourceLocale
   });
   return {
     rendered,

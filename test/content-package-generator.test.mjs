@@ -78,6 +78,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(manifest.dependencies[0].packageId, "com.sleepymario.language.linguistic-terminology");
     assert.equal(content.packageId, "com.sleepymario.language.korean");
+    assertOddEvenChapterFormats(content.files, "Korean", content.packageId);
     assertUsefulChapterTitles(content.files);
     assert.ok(content.files.some((file) => file.path === "units/introduction-to-hangul/README.md"));
     assert.ok(content.files.some((file) => file.path === "units/introduction-to-hangul/chapter-01-vowels/unit-01-simple-vowels.md"));
@@ -129,6 +130,12 @@ test("content package generator creates a valid Korean Curriculum package", asyn
         sourcePath: "review-decks/chapter-021-025/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-021-025.json",
         itemCount: 40
+      },
+      {
+        title: "Chapter 26-30",
+        sourcePath: "review-decks/chapter-026-030/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-026-030.json",
+        itemCount: 40
       }
     ];
 
@@ -163,6 +170,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 8-10"), false);
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 16-20"), true);
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 21-25"), true);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 26-30"), true);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "저는 N입니다" || item.answer.text === "저는 N입니다"), false);
 
     const studentItem = allReviewItems.find((item) => item.prompt.text === "학생" && item.answer.text === "student");
@@ -171,8 +179,8 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     const markerItem = allReviewItems.find((item) => item.prompt.text === "이/가" && item.answer.text === "subject/existence marker");
     assert.deepEqual(helloItem.examples, ["마리아: 안녕하세요. 저는 마리아 가르시아입니다.", "김민준: 안녕하세요. 저는 김민준입니다.", "안녕하세요."]);
     assert.deepEqual(studentItem.examples, ["저는 학생입니다.", "마리아: 학생입니까?", "김민준: 네, 학생입니다."]);
-    assert.deepEqual(existsItem.examples, ["교실  : 학생이 있습니다.", "학교  : 선생님이 있습니다.", "집    : 가족이 있습니다."]);
-    assert.deepEqual(markerItem.examples, ["교실  : 학생이 있습니다.", "학교  : 선생님이 있습니다.", "집    : 가족이 있습니다."]);
+    assert.deepEqual(existsItem.examples, ["방이 있습니다.", "책이 있습니다.", "가방이 있습니다."]);
+    assert.deepEqual(markerItem.examples, ["방이 있습니다.", "책이 있습니다.", "가방이 있습니다."]);
     assert.deepEqual(findReviewTerms(allReviewItems, ["사람", "언니", "연필", "소파", "시간"]), []);
     assert.ok(findReviewTerms(allReviewItems, ["학생", "나", "문", "지도", "식탁"]).length >= 5);
 
@@ -243,6 +251,7 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
     assert.equal(manifest.description, "Chinese - Mandarin Traditional language curriculum content generated from the canonical Chinese curriculum repository.");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.chinese.mandarin.traditional");
+    assertOddEvenChapterFormats(content.files, "Chinese Traditional", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "Chinese Traditional");
     assert.ok(content.files.some((file) => file.path === "units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md"));
@@ -314,6 +323,7 @@ test("content package generator creates a valid Chinese - Mandarin Simplified pa
     assert.equal(manifest.description, "Chinese - Mandarin Simplified language curriculum content generated from the canonical Chinese curriculum repository.");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.chinese.mandarin.simplified");
+    assertOddEvenChapterFormats(content.files, "Chinese Simplified", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "Chinese Simplified");
     assert.ok(content.files.some((file) => file.path === "units/mandarin-simplified/introduction-to-hanyu-pinyin/chapter.md"));
@@ -365,6 +375,7 @@ test("content package generator creates a valid Japanese package with Core revie
     assert.equal(manifest.displayName, "Japanese");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.japanese");
+    assertOddEvenChapterFormats(content.files, "Japanese", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "Japanese");
     assert.ok(content.files.some((file) => file.path === "units/introduction-to-japanese-writing/hiragana/chapter.md"));
@@ -419,6 +430,7 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.vietnamese");
+    assertOddEvenChapterFormats(content.files, "Vietnamese", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertNoGenericDialogueSpeakerLabels(content.files, "Vietnamese", reviewItems.items);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "Vietnamese");
@@ -426,6 +438,12 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.ok(content.files.some((file) => file.path === "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
     assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-006-basic-sentences-6/chapter.md"), true);
+    assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-026-basic-sentences-26/chapter.md"), true);
+    assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-030-basic-sentences-30/chapter.md"), true);
+    assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-026-030-grammar-easy/chapter.md"), true);
+    assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-026-030-grammar-hard/chapter.md"), true);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-026-030/cards.tsv"), true);
+    assert.equal(archive.has("content/memorization/review-decks/chapter-026-030.json"), true);
     assert.equal(content.files.some((file) => file.path.includes("lessons-001-005") || file.path.includes("lesson-001")), false);
     assert.equal(archive.has(itemPath), true);
     assert.equal(archive.has("content/memorization/review-decks/lessons-001-005.json"), false);
@@ -465,6 +483,7 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(manifest.displayName, "Dutch");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.dutch");
+    assertOddEvenChapterFormats(content.files, "Dutch", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertNoGenericDialogueSpeakerLabels(content.files, "Dutch", allReviewItems);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "Dutch");
@@ -495,7 +514,7 @@ test("content package generator creates a valid Dutch package", async () => {
     const studentItem = reviewItems0105.items.find((item) => item.prompt.text === "student" && item.answer.text === "student");
     assert.deepEqual(studentItem.examples, ["Alex   : Ik ben student.", "Sophie : Ik ben student.", "Ik ben student."]);
     const hebItem = reviewItems0610.items.find((item) => item.prompt.text === "heb" && item.answer.text === "have");
-    assert.deepEqual(hebItem.examples, ["Alex   : Ik heb een tas.", "Sophie : Ik heb een telefoon.", "Alex   : Ik heb een sleutel."]);
+    assert.deepEqual(hebItem.examples, ["Ik heb een tas.", "Ik heb een telefoon.", "Ik heb een sleutel."]);
     const woonItem = reviewItems0610.items.find((item) => item.prompt.text === "woon" && item.answer.text === "live");
     assert.deepEqual(woonItem.examples, ["Ik woon in Amsterdam.", "Ik woon in Rotterdam.", "Ik woon in Nederland."]);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);
@@ -527,6 +546,7 @@ test("content package generator creates a valid English package", async () => {
     assert.equal(manifest.displayName, "English");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.english");
+    assertOddEvenChapterFormats(content.files, "English", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertNoGenericDialogueSpeakerLabels(content.files, "English", reviewItems.items);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "English");
@@ -574,6 +594,7 @@ test("content package generator creates a valid German package", async () => {
     assert.equal(manifest.displayName, "German");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.german");
+    assertOddEvenChapterFormats(content.files, "German", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertNoGenericDialogueSpeakerLabels(content.files, "German", reviewItems.items);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "German");
@@ -617,6 +638,7 @@ test("content package generator creates a valid French package", async () => {
     assert.equal(manifest.displayName, "French");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.french");
+    assertOddEvenChapterFormats(content.files, "French", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertNoGenericDialogueSpeakerLabels(content.files, "French", reviewItems.items);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "French");
@@ -662,6 +684,7 @@ test("content package generator creates a valid Spanish package", async () => {
     assert.equal(manifest.displayName, "Spanish");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.spanish");
+    assertOddEvenChapterFormats(content.files, "Spanish", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertNoGenericDialogueSpeakerLabels(content.files, "Spanish", reviewItems.items);
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "Spanish");
@@ -779,6 +802,125 @@ async function readZip(filePath) {
   }
 
   return entries;
+}
+
+function assertOddEvenChapterFormats(files, label, packageId) {
+  const failures = [];
+
+  for (const file of files.filter((candidate) => candidate.path.startsWith("units/") && candidate.path.endsWith("/chapter.md"))) {
+    if (/grammar-(?:easy|hard)\/chapter\.md$/u.test(file.path)) {
+      continue;
+    }
+    const chapterMatch = file.text.match(/^chapter:\s*(\d+)$/mu);
+    if (chapterMatch === null) {
+      continue;
+    }
+
+    const chapter = Number.parseInt(chapterMatch[1], 10);
+    const expected = chapter % 2 === 1 ? "dialogue" : "narrative";
+    const analysis = analyzeChapterReadFormatForTest(file.text);
+
+    if (analysis.genericSpeakerLabels.length > 0) {
+      failures.push(`${label} (${packageId}) chapter ${chapter}: placeholder speaker labels ${analysis.genericSpeakerLabels.join(", ")} in ${file.path}`);
+    }
+    if (analysis.dialogueBlockWithoutIntro) {
+      failures.push(`${label} (${packageId}) chapter ${chapter}: dialogue block lacks participant/relationship intro in ${file.path}`);
+    }
+    if (analysis.misalignedDialogueColons) {
+      failures.push(`${label} (${packageId}) chapter ${chapter}: dialogue speaker-label colons are not display-width aligned in ${file.path}`);
+    }
+    if (analysis.detected !== expected) {
+      failures.push(`${label} (${packageId}) chapter ${chapter}: expected ${expected}, detected ${analysis.detected} in ${file.path}`);
+    }
+  }
+
+  assert.deepEqual(failures, [], `${label} generated package chapters must follow odd dialogue / even narrative format`);
+}
+
+function analyzeChapterReadFormatForTest(markdown) {
+  const sections = extractReadSectionsForFormatTest(markdown);
+  const speakerLines = sections.flatMap((section) => section.lines.filter(isDialogueSpeakerLineForTest));
+  const headingSuggestsDialogue = sections.some((section) => /dialogue/iu.test(section.heading));
+  const genericSpeakerLabels = speakerLines
+    .filter((line) => /^\s*[A-Z]\s*:\s/u.test(line))
+    .map((line) => line.trim());
+  const detected = headingSuggestsDialogue || speakerLines.length >= 2 ? "dialogue" : "narrative";
+  let dialogueBlockWithoutIntro = false;
+  let misalignedDialogueColons = false;
+
+  for (const section of sections) {
+    for (const block of contiguousSpeakerBlocksForTest(section.lines)) {
+      if (block.lines.length < 2) {
+        continue;
+      }
+      const previous = previousNonBlankLineForTest(section.lines, block.start - 1);
+      if (previous === undefined || /^#{1,6}\s/u.test(previous) || /^(?:Pinyin|Meaning):$/u.test(previous)) {
+        dialogueBlockWithoutIntro = true;
+      }
+      const colonColumns = block.lines.map((line) => displayWidthForTest(line.slice(0, line.indexOf(":"))));
+      if (new Set(colonColumns).size !== 1) {
+        misalignedDialogueColons = true;
+      }
+    }
+  }
+
+  return { detected, genericSpeakerLabels, dialogueBlockWithoutIntro, misalignedDialogueColons };
+}
+
+function extractReadSectionsForFormatTest(markdown) {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const sections = [];
+
+  for (let index = 0; index < lines.length; index++) {
+    if (!/^#{2,4}\s+(?:Learner-facing |Model Mini Dialogue|Model Dialogue|Model Mini Scene|Model Mini Text|Controlled Reading)/iu.test(lines[index])) {
+      continue;
+    }
+    let end = lines.length;
+    for (let next = index + 1; next < lines.length; next++) {
+      if (/^#{2,4}\s+/u.test(lines[next])) {
+        end = next;
+        break;
+      }
+    }
+    sections.push({ heading: lines[index], lines: lines.slice(index, end) });
+  }
+
+  return sections;
+}
+
+function isDialogueSpeakerLineForTest(line) {
+  return /^(?!\s*[-*])\s*([^:]{1,24}?)\s*:\s+\S/u.test(line)
+    && !/^\s*(?:Pinyin|Meaning|Reading|Characters|Notes?|Context)\s*:/iu.test(line);
+}
+
+function contiguousSpeakerBlocksForTest(lines) {
+  const blocks = [];
+  for (let index = 0; index < lines.length; index++) {
+    if (!isDialogueSpeakerLineForTest(lines[index])) {
+      continue;
+    }
+    const start = index;
+    const blockLines = [];
+    for (; index < lines.length; index++) {
+      if (lines[index].trim() === "" || /^#{1,6}\s/u.test(lines[index])) {
+        break;
+      }
+      if (isDialogueSpeakerLineForTest(lines[index])) {
+        blockLines.push(lines[index]);
+      }
+    }
+    blocks.push({ start, lines: blockLines });
+  }
+  return blocks;
+}
+
+function previousNonBlankLineForTest(lines, start) {
+  for (let index = start; index >= 0; index--) {
+    if (lines[index].trim() !== "" && !lines[index].startsWith("```")) {
+      return lines[index];
+    }
+  }
+  return undefined;
 }
 
 function assertCoreReviewItemsHaveExamples(items, label) {
@@ -977,7 +1119,7 @@ function isWideCodePointForTest(codePoint) {
 function assertKoreanStrictReadContentExamples(items, contentFiles) {
   const readContentLines = new Set(
     contentFiles
-      .filter((file) => /^units\/korean-core\/chapter-\d+[^/]*\/chapter\.md$/u.test(file.path))
+      .filter((file) => /^units\/korean-core\/chapter-\d{3}-(?:basic-life-sentences|basic-sentences)-\d+\/chapter\.md$/u.test(file.path))
       .flatMap((file) => extractKoreanReadContentLinesForTest(file.text))
   );
   const invalidExamples = [];
@@ -1179,7 +1321,7 @@ function extractKoreanReadContentLinesForTest(markdown) {
       }
       continue;
     }
-    if (/^#{2,4}\s+(?:Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Controlled Reading)\b/iu.test(trimmed)) {
+    if (/^#{2,4}\s+(?:Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Learner-facing Controlled Reading|Controlled Reading)\b/iu.test(trimmed)) {
       inReadSection = true;
       continue;
     }
@@ -1195,6 +1337,10 @@ function extractKoreanReadContentLinesForTest(markdown) {
         inFence = true;
         inTextFence = inReadSection && /^```(?:text)?\s*$/iu.test(trimmed);
       }
+      continue;
+    }
+    if (inReadSection && !inFence && trimmed.length > 0) {
+      lines.push(trimmed);
       continue;
     }
     if (inTextFence && trimmed.length > 0) {

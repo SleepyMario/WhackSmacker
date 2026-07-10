@@ -75,6 +75,7 @@ export interface InstalledPackageModuleInput {
   readonly packageId: string;
   readonly packageVersion: string;
   readonly displayName: string;
+  readonly description?: string;
 }
 
 export const firstClassModuleCategoryOrder: readonly FirstClassModuleCategory[] = [
@@ -203,7 +204,7 @@ export function installedPackageToFirstClassModuleDescriptor(
     sourceKind: "content-package",
     packageId: contentPackage.packageId,
     packageVersion: contentPackage.packageVersion,
-    description: "Installed read-only language content package.",
+    description: contentPackage.description ?? "Installed read-only language content package.",
     readableContentCount: counts.readableContentCount,
     reviewSourceCount: counts.reviewSourceCount
   };

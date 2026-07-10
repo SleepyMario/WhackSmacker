@@ -11,6 +11,7 @@ import {
   type MemorizationItem,
   type MemorizationItemCollection
 } from "./memorization-item";
+import type { LocalizedContentValue } from "./localized-content";
 
 type BufferValue = {
   readonly length: number;
@@ -65,8 +66,8 @@ const { dirname, join, relative, resolve, sep } = require("node:path");
 export interface ContentPackageGeneratorTarget {
   readonly id: string;
   readonly packageId: string;
-  readonly displayName: string;
-  readonly description: string;
+  readonly displayName: LocalizedContentValue;
+  readonly description: LocalizedContentValue;
   readonly contentType: ContentPackageManifest["contentType"];
   readonly contentSchemaVersion: string;
   readonly packageVersion: string;

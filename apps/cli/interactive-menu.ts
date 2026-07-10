@@ -12,6 +12,7 @@ import {
   listInstalledReadablePackages,
   listReadingReviewItems,
   listReadingReviewSources,
+  localized,
   loadReviewProgressStore,
   defaultReviewProgressDirectoryForContentDataDirectory,
   grammarEasyMenuLabel,
@@ -44,6 +45,8 @@ import {
   defaultOneTwoThreeOutputPath,
   defaultSixToNineOutputPath
 } from "../../packages/mathematics";
+import { sourceLocales, sourceLocaleLabel, translate, type SourceLocale } from "../../src/i18n";
+import { defaultSettingsDirectoryForContentDataDirectory, loadSourceLanguageSettings, saveSourceLanguage } from "../../src/settings/source-language";
 
 declare function require(name: "node:fs/promises"): {
   stat(path: string): Promise<unknown>;
@@ -125,6 +128,9 @@ export type LanguageTreeNodeKind =
   | "uninstall"
   | "content"
   | "review-source"
+  | "settings"
+  | "source-language"
+  | "source-locale"
   | "message";
 
 export interface LanguageTreeNode {
@@ -150,6 +156,7 @@ export interface LanguageTreeNode {
   readonly commandPath?: readonly string[];
   readonly commandArgs?: readonly string[];
   readonly launchTitle?: string;
+  readonly sourceLocale?: SourceLocale;
 }
 
 export type ReviewDeckMenuStatusKind = "not_started" | "finished" | "no_cards_to_review" | "has_cards_to_review";
@@ -333,22 +340,23 @@ export function reviewSourcesToMenuItems(sources: readonly ReadingReviewSource[]
 export function reviewDeckMenuStatusFromStates(
   sourceItemIds: ReadonlySet<string>,
   states: readonly ReviewItemState[],
-  now: string
+  now: string,
+  locale: SourceLocale = "en-US"
 ): ReviewDeckMenuStatus {
   const sourceStates = states.filter((state) => sourceItemIds.has(state.itemId));
   const hasReviewProgress = sourceStates.some((state) => state.reviewCount > 0 || state.lastReviewedAt !== undefined || state.status !== "new");
   if (!hasReviewProgress) {
-    return { kind: "not_started", dueCardCount: 0, text: "Not started yet." };
+    return { kind: "not_started", dueCardCount: 0, text: translate(locale, "review.notStarted") };
   }
   const missingNewCount = Math.max(0, sourceItemIds.size - sourceStates.length);
   const dueCount = sourceStates.filter((state) => isReviewDue(state, now)).length + missingNewCount;
   if (dueCount > 0) {
-    return { kind: "has_cards_to_review", dueCardCount: dueCount, text: `There are ${dueCount} cards to review.` };
+    return { kind: "has_cards_to_review", dueCardCount: dueCount, text: translate(locale, "review.cardsDue", { count: dueCount }) };
   }
   if (sourceStates.length > 0 && sourceStates.every((state) => state.status === "suspended")) {
-    return { kind: "finished", dueCardCount: 0, text: "Finished." };
+    return { kind: "finished", dueCardCount: 0, text: translate(locale, "review.finished") };
   }
-  return { kind: "no_cards_to_review", dueCardCount: 0, text: "No new cards to review right now." };
+  return { kind: "no_cards_to_review", dueCardCount: 0, text: translate(locale, "review.noneDue") };
 }
 
 async function describeReviewSourceMenuStatus(source: ReadingReviewSource, options: InteractiveMenuOptions): Promise<ReviewDeckMenuStatus> {
@@ -362,7 +370,7 @@ async function describeReviewSourceMenuStatus(source: ReadingReviewSource, optio
     }),
     loadReviewProgressStore(progressDir)
   ]);
-  const usableIds = new Set(sourceItems.filter(isEmbeddedReviewItemUsable).map((item) => item.item.id));
+  const usableIds = new Set(sourceItems.filter((item) => isEmbeddedReviewItemUsable(item, options.locale)).map((item) => item.item.id));
   const sourceStateKeys = new Set(
     [...usableIds].map((itemId) =>
       reviewIdentityKey({
@@ -374,7 +382,7 @@ async function describeReviewSourceMenuStatus(source: ReadingReviewSource, optio
     )
   );
   const sourceStates = progress.items.filter((state) => sourceStateKeys.has(reviewIdentityKey(state)));
-  return reviewDeckMenuStatusFromStates(usableIds, sourceStates, currentReviewTimestamp());
+  return reviewDeckMenuStatusFromStates(usableIds, sourceStates, currentReviewTimestamp(), options.locale ?? "en-US");
 }
 
 export function readableContentEntriesToMenuItems(entries: readonly ReadableContentEntry[]): readonly MenuItem[] {
@@ -460,6 +468,8 @@ export function createNodeTerminal(): Terminal {
 export interface InteractiveMenuOptions {
   readonly dataDir?: string;
   readonly cataloguePath?: string;
+  readonly settingsDir?: string;
+  readonly locale?: SourceLocale;
 }
 
 export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal(), options: InteractiveMenuOptions = {}): Promise<void> {
@@ -765,8 +775,13 @@ async function runGeographyAction(registry: InMemoryCliCommandRegistry, terminal
 }
 
 async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
+  if (options.settingsDir === undefined && options.dataDir !== undefined) {
+    options = { ...options, settingsDir: defaultSettingsDirectoryForContentDataDirectory(options.dataDir) };
+  }
+  const savedSettings = await loadSourceLanguageSettings(options.settingsDir);
+  options = { ...options, locale: options.locale ?? savedSettings.sourceLanguage };
   let tree = await buildModuleTree(options);
-  let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
+  let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules", "settings"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let selectedReviewStartId: string | null = null;
   let embeddedReview: EmbeddedReviewSession | null = null;
@@ -787,7 +802,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 
     if (isEscape(key)) {
       if (pendingUninstall !== null) {
-        rightPaneText = renderUninstallCancelled(pendingUninstall.node);
+        rightPaneText = renderUninstallCancelled(pendingUninstall.node, options.locale);
         pendingUninstall = null;
         rightPaneOffset = 0;
         continue;
@@ -803,7 +818,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           selectedReviewStartId = refreshedNode?.kind === "review-source" ? refreshedNode.id : null;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, true)
+            ? renderReviewDeckPreview(refreshedNode, true, options.locale)
             : await renderLanguageTreeRightPane(refreshedNode ?? tree, options);
         } else {
           selectedReviewStartId = null;
@@ -833,7 +848,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 
     if (isQuit(key)) {
       if (pendingUninstall !== null) {
-        rightPaneText = renderUninstallCancelled(pendingUninstall.node);
+        rightPaneText = renderUninstallCancelled(pendingUninstall.node, options.locale);
         pendingUninstall = null;
         rightPaneOffset = 0;
         continue;
@@ -921,7 +936,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         embeddedReview = null;
         continue;
       }
-      rightPaneText = renderUninstallConfirmation(pendingUninstall.node, terminal.colorsEnabled, "Choose K to keep saved data, D to delete saved data too, Enter for the safe default, or Esc to cancel.");
+      rightPaneText = renderUninstallConfirmation(pendingUninstall.node, terminal.colorsEnabled, options.locale, "Choose K to keep saved data, D to delete saved data too, Enter for the safe default, or Esc to cancel.");
       rightPaneOffset = 0;
       continue;
     }
@@ -937,11 +952,11 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+            ? renderReviewDeckPreview(refreshedNode, false, options.locale)
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
           selectedReviewStartId = null;
         } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
           selectedReviewStartId = selected.node.id;
         }
         rightPaneOffset = 0;
@@ -960,7 +975,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       pendingUninstall = { nodeId: uninstallNode.id, node: uninstallNode };
       embeddedReview = null;
       selectedReviewStartId = null;
-      rightPaneText = renderUninstallConfirmation(uninstallNode, terminal.colorsEnabled);
+      rightPaneText = renderUninstallConfirmation(uninstallNode, terminal.colorsEnabled, options.locale);
       rightPaneOffset = 0;
       continue;
     }
@@ -983,12 +998,12 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+            ? renderReviewDeckPreview(refreshedNode, false, options.locale)
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
           selectedReviewStartId = null;
         } else {
           selectedReviewStartId = selected.node.id;
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
         }
         rightPaneOffset = 0;
         continue;
@@ -1027,11 +1042,11 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+            ? renderReviewDeckPreview(refreshedNode, false, options.locale)
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
           selectedReviewStartId = null;
         } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
           selectedReviewStartId = selected.node.id;
         }
         rightPaneOffset = 0;
@@ -1044,19 +1059,32 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+            ? renderReviewDeckPreview(refreshedNode, false, options.locale)
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
           selectedReviewStartId = null;
         } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
           selectedReviewStartId = selected.node.id;
         }
         rightPaneOffset = 0;
       } else {
         selectedReviewStartId = selected.node.id;
-        rightPaneText = renderReviewDeckPreview(selected.node, true);
+        rightPaneText = renderReviewDeckPreview(selected.node, true, options.locale);
         rightPaneOffset = 0;
       }
+      continue;
+    }
+    if (selected.node.kind === "source-locale" && selected.node.sourceLocale !== undefined) {
+      await saveSourceLanguage(selected.node.sourceLocale, options.settingsDir);
+      options = { ...options, locale: selected.node.sourceLocale };
+      tree = await buildModuleTree(options);
+      expandedIds = keepExistingExpandedIds(tree, expandedIds);
+      const localeNodeId = `settings:source-language:${selected.node.sourceLocale}`;
+      selection = Math.max(0, flattenVisibleLanguageTree(tree, expandedIds).findIndex((entry) => entry.node.id === localeNodeId));
+      rightPaneText = translate(selected.node.sourceLocale, "settings.sourceLanguageChanged", {
+        language: sourceLocaleLabel(selected.node.sourceLocale)
+      });
+      rightPaneOffset = 0;
       continue;
     }
     selectedReviewStartId = null;
@@ -1064,7 +1092,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     pendingUninstall = null;
     if (selected.node.kind === "uninstall") {
       pendingUninstall = { nodeId: selected.node.id, node: selected.node };
-      rightPaneText = renderUninstallConfirmation(selected.node, terminal.colorsEnabled);
+      rightPaneText = renderUninstallConfirmation(selected.node, terminal.colorsEnabled, options.locale);
       rightPaneOffset = 0;
       continue;
     }
@@ -1097,15 +1125,17 @@ function normalizeTreeOptions(options: InteractiveMenuOptions | string | undefin
 
 export async function buildModuleTree(options: InteractiveMenuOptions | string | undefined = {}): Promise<LanguageTreeNode> {
   const resolvedOptions = normalizeTreeOptions(options);
-  const descriptors = await listFirstClassModuleDescriptors(resolvedOptions.dataDir);
-  const availableDescriptors = await listAvailableModuleDescriptors(resolvedOptions.cataloguePath, resolvedOptions.dataDir);
+  const locale = resolvedOptions.locale ?? "en-US";
+  const descriptors = await listFirstClassModuleDescriptors(resolvedOptions.dataDir, locale);
+  const availableDescriptors = await listAvailableModuleDescriptors(resolvedOptions.cataloguePath, resolvedOptions.dataDir, locale);
   return {
     id: "whacksmacker",
     label: "WhackSmacker",
     kind: "root",
     children: [
-      await buildInstalledModulesTree(descriptors, resolvedOptions.dataDir),
-      buildAvailableModulesTree(availableDescriptors, resolvedOptions.cataloguePath)
+      await buildInstalledModulesTree(descriptors, resolvedOptions.dataDir, locale),
+      buildAvailableModulesTree(availableDescriptors, resolvedOptions.cataloguePath, locale),
+      buildSettingsTree(locale)
     ]
   };
 }
@@ -1245,19 +1275,19 @@ async function refreshTreeSelection(
   };
 }
 
-function renderUninstallPreview(label: string): string {
+function renderUninstallPreview(label: string, locale: SourceLocale = "en-US"): string {
   return [
-    `Uninstall ${label}`,
+    `${translate(locale, "menu.uninstall")} ${label}`,
     "",
-    "Uninstall removes the installed read-only package content and package registry entry.",
-    "Saved user data and review progress are kept by default.",
+    translate(locale, "uninstall.removesPackage"),
+    translate(locale, "uninstall.keepsProgress"),
     "",
-    "Press Enter or U to choose uninstall behavior."
+    translate(locale, "uninstall.choose")
   ].join("\n");
 }
 
-function renderUninstallConfirmation(node: LanguageTreeNode, colorsEnabled: boolean, message?: string): string {
-  const title = `Uninstall ${node.packageLabel ?? node.label}`;
+function renderUninstallConfirmation(node: LanguageTreeNode, colorsEnabled: boolean, locale: SourceLocale = "en-US", message?: string): string {
+  const title = `${translate(locale, "menu.uninstall")} ${node.packageLabel ?? node.label}`;
   const destructive = colorsEnabled ? `${ansi.bold}${ansi.red}D${ansi.reset}` : "D";
   const keep = colorsEnabled ? `${ansi.bold}${ansi.green}K${ansi.reset}` : "K";
   const safeDefault = colorsEnabled ? `${ansi.bold}${ansi.green}Enter${ansi.reset}` : "Enter";
@@ -1270,8 +1300,8 @@ function renderUninstallConfirmation(node: LanguageTreeNode, colorsEnabled: bool
     "",
     "Choose uninstall behavior:",
     "",
-    `${safeDefault} or ${keep}: uninstall package only, keep saved data/progress. (safe default)`,
-    `${destructive}: uninstall package and delete saved review progress for this package only.`,
+    `${safeDefault} or ${keep}: ${translate(locale, "menu.keepProgress")}. (safe default)`,
+    `${destructive}: ${translate(locale, "menu.deleteProgress")}.`,
     "Esc: cancel.",
     "",
     warning,
@@ -1279,9 +1309,9 @@ function renderUninstallConfirmation(node: LanguageTreeNode, colorsEnabled: bool
   ].filter((line) => line.length > 0).join("\n");
 }
 
-function renderUninstallCancelled(node: LanguageTreeNode): string {
+function renderUninstallCancelled(node: LanguageTreeNode, locale: SourceLocale = "en-US"): string {
   return [
-    `Uninstall cancelled: ${node.packageLabel ?? node.label}`,
+    `${translate(locale, "menu.uninstall")} cancelled: ${node.packageLabel ?? node.label}`,
     "",
     "Installed package content and saved user data were not changed."
   ].join("\n");
@@ -1289,11 +1319,11 @@ function renderUninstallCancelled(node: LanguageTreeNode): string {
 
 export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeNode> {
   const descriptors = (await listFirstClassModuleDescriptors(dataDir)).filter((descriptor) => descriptor.category === "Languages");
-  return buildLanguageTreeFromDescriptors(descriptors, dataDir);
+  return buildLanguageTreeFromDescriptors(descriptors, dataDir, "en-US");
 }
 
-export async function listFirstClassModuleDescriptors(dataDir?: string): Promise<readonly FirstClassModuleDescriptor[]> {
-  const installedPackages = await listInstalledReadablePackages(dataDir);
+export async function listFirstClassModuleDescriptors(dataDir?: string, locale: SourceLocale = "en-US"): Promise<readonly FirstClassModuleDescriptor[]> {
+  const installedPackages = await listInstalledReadablePackages(dataDir, locale);
   const installedDescriptors: FirstClassModuleDescriptor[] = [];
 
   for (const contentPackage of installedPackages) {
@@ -1304,6 +1334,7 @@ export async function listFirstClassModuleDescriptors(dataDir?: string): Promise
       listReadableContentEntries(contentPackage.packageId, dataDir, contentPackage.packageVersion),
       listReadingReviewSources({
         dataDir,
+        sourceLocale: locale,
         packageId: contentPackage.packageId,
         packageVersion: contentPackage.packageVersion
       })
@@ -1322,9 +1353,10 @@ export async function listFirstClassModuleDescriptors(dataDir?: string): Promise
 
 export async function listAvailableModuleDescriptors(
   cataloguePath?: string,
-  dataDir?: string
+  dataDir?: string,
+  locale: SourceLocale = "en-US"
 ): Promise<readonly FirstClassModuleDescriptor[]> {
-  const installedRecords = await listInstalledReadablePackages(dataDir);
+  const installedRecords = await listInstalledReadablePackages(dataDir, locale);
   const installedByPackageId = new Map(installedRecords.map((record) => [record.packageId, record]));
   const descriptors: FirstClassModuleDescriptor[] = [];
 
@@ -1333,7 +1365,7 @@ export async function listAvailableModuleDescriptors(
       if (!entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
         continue;
       }
-      descriptors.push(catalogueEntryToModuleDescriptor(entry, installedByPackageId.get(entry.packageId)));
+      descriptors.push(catalogueEntryToModuleDescriptor(entry, installedByPackageId.get(entry.packageId), locale));
     }
   }
 
@@ -1346,7 +1378,8 @@ export async function listAvailableModuleDescriptors(
 
 function catalogueEntryToModuleDescriptor(
   entry: ContentPackageCatalogueEntry,
-  installed: InstalledReadablePackage | undefined
+  installed: InstalledReadablePackage | undefined,
+  locale: SourceLocale
 ): FirstClassModuleDescriptor {
   const status = installed === undefined
     ? "available"
@@ -1355,19 +1388,23 @@ function catalogueEntryToModuleDescriptor(
       : "update-available";
   return {
     moduleId: entry.packageId,
-    displayName: displayLabelForModulePackage(entry.displayName),
+    displayName: displayLabelForModulePackage(localized(entry.displayName, locale)),
     category: "Languages",
     version: entry.packageVersion,
     sourceKind: "content-package",
     packageId: entry.packageId,
     packageVersion: entry.packageVersion,
-    description: entry.description,
+    description: localized(entry.description, locale),
     availableStatus: status
   };
 }
 
 function availableStatusForDescriptor(descriptor: FirstClassModuleDescriptor): "installed" | "available" | "update-available" {
   return descriptor.availableStatus ?? (descriptor.sourceKind === "content-package" ? "available" : "installed");
+}
+
+function availableStatusLabel(status: "installed" | "available" | "update-available", locale: SourceLocale): string {
+  return translate(locale, status === "installed" ? "menu.installed" : status === "available" ? "menu.available" : "menu.updateAvailable");
 }
 
 function renderAvailableModuleInfo(
@@ -1400,35 +1437,37 @@ function renderAvailableModuleInfo(
 
 async function buildInstalledModulesTree(
   descriptors: readonly FirstClassModuleDescriptor[],
-  dataDir?: string
+  dataDir: string | undefined,
+  locale: SourceLocale
 ): Promise<LanguageTreeNode> {
   return {
     id: "installed-modules",
-    label: "Installed modules",
+    label: translate(locale, "menu.installedModules"),
     kind: "installed-root",
-    previewText: "Installed modules\n\nInstalled modules are usable/openable. Content packages are read-only; user progress stays outside package directories.",
+    previewText: `${translate(locale, "menu.installedModules")}\n\n${translate(locale, "pane.installedModulesHelp")}`,
     children: [
-      await buildLanguageTreeFromDescriptors(descriptors.filter((descriptor) => descriptor.category === "Languages"), dataDir),
-      buildModuleCategoryTree("Games", descriptors),
-      buildModuleCategoryTree("Geography", descriptors),
-      buildModuleCategoryTree("Mathematics", descriptors)
+      await buildLanguageTreeFromDescriptors(descriptors.filter((descriptor) => descriptor.category === "Languages"), dataDir, locale),
+      buildModuleCategoryTree("Games", descriptors, locale),
+      buildModuleCategoryTree("Geography", descriptors, locale),
+      buildModuleCategoryTree("Mathematics", descriptors, locale)
     ]
   };
 }
 
 function buildAvailableModulesTree(
   descriptors: readonly FirstClassModuleDescriptor[],
-  cataloguePath?: string
+  cataloguePath: string | undefined,
+  locale: SourceLocale
 ): LanguageTreeNode {
   return {
     id: "available-modules",
-    label: "Modules available",
+    label: translate(locale, "menu.availableModules"),
     kind: "available-root",
     previewText: cataloguePath === undefined
       ? [
         "Modules available",
         "",
-        "No catalogue path was supplied.",
+        translate(locale, "pane.noCatalogue"),
         "",
         "Launch with:",
         "whacksmacker --data-dir <dir> --catalogue <catalogue.json>",
@@ -1440,19 +1479,18 @@ function buildAvailableModulesTree(
         "",
         `Catalogue: ${cataloguePath}`,
         "",
-        "Enter opens module information. Space installs selected available content packages.",
-        "Selecting a module does not auto-install it."
+        translate(locale, "pane.availableHelp")
       ].join("\n"),
     children: cataloguePath === undefined ? [{
       id: "available-modules:none",
       label: "No catalogue selected",
       kind: "message",
-      previewText: "No catalogue path was supplied.\n\nLaunch with --catalogue <catalogue.json> to list installable modules."
+      previewText: translate(locale, "pane.noCatalogue")
     }] : [
-      buildAvailableCategoryTree("Languages", descriptors, cataloguePath),
-      buildAvailableCategoryTree("Games", descriptors, cataloguePath),
-      buildAvailableCategoryTree("Geography", descriptors, cataloguePath),
-      buildAvailableCategoryTree("Mathematics", descriptors, cataloguePath)
+      buildAvailableCategoryTree("Languages", descriptors, cataloguePath, locale),
+      buildAvailableCategoryTree("Games", descriptors, cataloguePath, locale),
+      buildAvailableCategoryTree("Geography", descriptors, cataloguePath, locale),
+      buildAvailableCategoryTree("Mathematics", descriptors, cataloguePath, locale)
     ]
   };
 }
@@ -1460,15 +1498,16 @@ function buildAvailableModulesTree(
 function buildAvailableCategoryTree(
   category: FirstClassModuleDescriptor["category"],
   descriptors: readonly FirstClassModuleDescriptor[],
-  cataloguePath: string
+  cataloguePath: string,
+  locale: SourceLocale
 ): LanguageTreeNode {
   const children = descriptors
     .filter((descriptor) => descriptor.category === category)
-    .map((descriptor) => buildAvailableModuleTreeNode(descriptor, cataloguePath));
+    .map((descriptor) => buildAvailableModuleTreeNode(descriptor, cataloguePath, locale));
 
   return {
     id: `available:${category.toLowerCase()}`,
-    label: category,
+    label: categoryLabel(category, locale),
     kind: "category",
     previewText: `${category}\n\nAvailable first-party modules from the selected catalogue or built-in registry.`,
     children: children.length > 0 ? children : [{
@@ -1480,9 +1519,9 @@ function buildAvailableCategoryTree(
   };
 }
 
-function buildAvailableModuleTreeNode(descriptor: FirstClassModuleDescriptor, cataloguePath: string): LanguageTreeNode {
+function buildAvailableModuleTreeNode(descriptor: FirstClassModuleDescriptor, cataloguePath: string, locale: SourceLocale): LanguageTreeNode {
   const status = availableStatusForDescriptor(descriptor);
-  const label = `${descriptor.displayName} [${status}]`;
+  const label = `${descriptor.displayName} [${availableStatusLabel(status, locale)}]`;
   return {
     id: `available:${descriptor.moduleId}`,
     label,
@@ -1501,7 +1540,8 @@ function buildAvailableModuleTreeNode(descriptor: FirstClassModuleDescriptor, ca
 
 async function buildLanguageTreeFromDescriptors(
   descriptors: readonly FirstClassModuleDescriptor[],
-  dataDir?: string
+  dataDir: string | undefined,
+  locale: SourceLocale
 ): Promise<LanguageTreeNode> {
   const packageNodes: LanguageTreeNode[] = [];
 
@@ -1511,13 +1551,14 @@ async function buildLanguageTreeFromDescriptors(
     }
     const languagePackage = moduleDescriptorToMenuItem(descriptor);
     const entries = await listReadableContentEntries(descriptor.packageId, dataDir, descriptor.packageVersion);
-    const labeledEntries = await labelReadableContentEntries(languagePackage, entries, { dataDir });
+    const labeledEntries = await labelReadableContentEntries(languagePackage, entries, { dataDir, locale });
     const rawReviewSources = await listReadingReviewSources({
       dataDir,
+      sourceLocale: locale,
       packageId: descriptor.packageId,
       packageVersion: descriptor.packageVersion
     });
-    const reviewStatuses = await Promise.all(rawReviewSources.map((source) => describeReviewSourceMenuStatus(source, { dataDir })));
+    const reviewStatuses = await Promise.all(rawReviewSources.map((source) => describeReviewSourceMenuStatus(source, { dataDir, locale })));
     const reviewSources = reviewSourcesToMenuItems(rawReviewSources).map((item) => {
       const sourceIndex = rawReviewSources.findIndex(
         (source) =>
@@ -1578,7 +1619,7 @@ async function buildLanguageTreeFromDescriptors(
       children: [
         {
           id: `${packageBase}:read`,
-          label: "Read content",
+          label: translate(locale, "menu.readContent"),
           kind: "read-section",
           moduleId: descriptor.moduleId,
           moduleVersion: descriptor.version,
@@ -1595,7 +1636,7 @@ async function buildLanguageTreeFromDescriptors(
         },
         {
           id: `${packageBase}:review`,
-          label: "Review decks",
+          label: translate(locale, "menu.reviewDecks"),
           kind: "review-section",
           moduleId: descriptor.moduleId,
           moduleVersion: descriptor.version,
@@ -1612,7 +1653,7 @@ async function buildLanguageTreeFromDescriptors(
         },
         {
           id: `${packageBase}:info`,
-          label: "Package info",
+          label: translate(locale, "menu.packageInfo"),
           kind: "package-info",
           moduleId: descriptor.moduleId,
           moduleVersion: descriptor.version,
@@ -1624,7 +1665,7 @@ async function buildLanguageTreeFromDescriptors(
         },
         {
           id: `${packageBase}:uninstall`,
-          label: "Uninstall",
+          label: translate(locale, "menu.uninstall"),
           kind: "uninstall",
           moduleId: descriptor.moduleId,
           moduleVersion: descriptor.version,
@@ -1632,7 +1673,7 @@ async function buildLanguageTreeFromDescriptors(
           packageId: descriptor.packageId,
           packageVersion: descriptor.packageVersion,
           packageLabel: descriptor.displayName,
-          previewText: renderUninstallPreview(descriptor.displayName)
+          previewText: renderUninstallPreview(descriptor.displayName, locale)
         }
       ]
     });
@@ -1640,7 +1681,7 @@ async function buildLanguageTreeFromDescriptors(
 
   return {
     id: "languages",
-    label: "Languages",
+    label: translate(locale, "menu.languages"),
     kind: "category",
     children: packageNodes.length > 0 ? packageNodes : [{
       id: "languages:none",
@@ -1666,14 +1707,14 @@ function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): Men
   };
 }
 
-function buildModuleCategoryTree(category: FirstClassModuleDescriptor["category"], descriptors: readonly FirstClassModuleDescriptor[]): LanguageTreeNode {
+function buildModuleCategoryTree(category: FirstClassModuleDescriptor["category"], descriptors: readonly FirstClassModuleDescriptor[], locale: SourceLocale): LanguageTreeNode {
   const children = descriptors
     .filter((descriptor) => descriptor.category === category)
     .map((descriptor) => buildBuiltInModuleTreeNode(descriptor));
 
   return {
     id: category.toLowerCase(),
-    label: category,
+    label: categoryLabel(category, locale),
     kind: "category",
     previewText: `${category}\n\nFirst-class WhackSmacker modules in this category.`,
     children: children.length > 0 ? children : [{
@@ -1709,6 +1750,50 @@ function buildBuiltInModuleTreeNode(descriptor: FirstClassModuleDescriptor): Lan
   };
 }
 
+function categoryLabel(category: FirstClassModuleDescriptor["category"], locale: SourceLocale): string {
+  const keys: Record<FirstClassModuleDescriptor["category"], string> = {
+    Languages: "menu.languages",
+    Games: "menu.games",
+    Geography: "menu.geography",
+    Mathematics: "menu.mathematics"
+  };
+  return translate(locale, keys[category]);
+}
+
+function buildSettingsTree(locale: SourceLocale): LanguageTreeNode {
+  const currentLanguage = sourceLocaleLabel(locale, locale);
+  return {
+    id: "settings",
+    label: translate(locale, "menu.settings"),
+    kind: "settings",
+    previewText: [
+      translate(locale, "menu.settings"),
+      "",
+      translate(locale, "settings.currentSourceLanguage", { language: currentLanguage })
+    ].join("\n"),
+    children: [{
+      id: "settings:source-language",
+      label: translate(locale, "menu.sourceLanguage"),
+      kind: "source-language",
+      previewText: [
+        translate(locale, "menu.sourceLanguage"),
+        "",
+        translate(locale, "settings.currentSourceLanguage", { language: currentLanguage }),
+        translate(locale, "settings.chooseSourceLanguage")
+      ].join("\n"),
+      children: sourceLocales.map((sourceLocale) => ({
+        id: `settings:source-language:${sourceLocale}`,
+        label: `${sourceLocale === locale ? "* " : "  "}${sourceLocaleLabel(sourceLocale, locale)}`,
+        kind: "source-locale" as const,
+        sourceLocale,
+        previewText: translate(locale, "settings.currentSourceLanguage", {
+          language: sourceLocaleLabel(sourceLocale, locale)
+        })
+      }))
+    }]
+  };
+}
+
 export function flattenVisibleLanguageTree(root: LanguageTreeNode, expandedIds: ReadonlySet<string>): readonly VisibleLanguageTreeNode[] {
   const visible: VisibleLanguageTreeNode[] = [];
   const walk = (node: LanguageTreeNode, depth: number): void => {
@@ -1727,6 +1812,7 @@ export function flattenVisibleLanguageTree(root: LanguageTreeNode, expandedIds: 
 }
 
 export async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: InteractiveMenuOptions): Promise<string> {
+  const locale = options.locale ?? "en-US";
   if (node.kind === "content") {
     if (node.packageId === undefined || node.filePath === undefined) {
       return "Readable content item is missing package metadata.";
@@ -1735,7 +1821,8 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
       dataDir: options.dataDir,
       packageId: node.packageId,
       packageVersion: node.packageVersion,
-      path: node.filePath
+      path: node.filePath,
+      locale
     });
     return result.text;
   }
@@ -1751,7 +1838,7 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     ].join("\n");
   }
   if (node.kind === "uninstall") {
-    return node.previewText ?? renderUninstallPreview(node.packageLabel ?? node.label);
+    return node.previewText ?? renderUninstallPreview(node.packageLabel ?? node.label, locale);
   }
   if (node.kind === "package") {
     return [
@@ -1767,13 +1854,13 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     ].join("\n");
   }
   if (node.kind === "review-source") {
-    return renderReviewDeckPreview(node, false);
+    return renderReviewDeckPreview(node, false, locale);
   }
   if (node.kind === "read-section") {
-    return `Read content\n\nSelect a content item to preview it here. Markdown-like source is styled for terminal reading.`;
+    return `${translate(locale, "menu.readContent")}\n\n${translate(locale, "pane.readContentHelp")}`;
   }
   if (node.kind === "review-section") {
-    return `Review decks\n\nSelect a review deck to see details, then press Enter again to start review.`;
+    return `${translate(locale, "menu.reviewDecks")}\n\n${translate(locale, "pane.reviewDecksHelp")}`;
   }
   if (node.kind === "message") {
     return node.previewText ?? node.label;
@@ -1781,7 +1868,7 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
   if (node.kind === "available-module") {
     return node.previewText ?? `${node.label}\n\nPress Space to install if this module is available. Enter does not install.`;
   }
-  if (node.kind === "installed-root" || node.kind === "available-root" || node.kind === "category" || node.kind === "module" || node.kind === "command") {
+  if (node.kind === "installed-root" || node.kind === "available-root" || node.kind === "category" || node.kind === "module" || node.kind === "command" || node.kind === "settings" || node.kind === "source-language" || node.kind === "source-locale") {
     return node.previewText ?? `${node.label}\n\nSelect or expand items in the tree.`;
   }
   return [
@@ -1818,14 +1905,14 @@ async function runModuleTreeCommandAction(
   return showPagedMessage(terminal, renderLanguageActionResult(node.launchTitle ?? node.label, output));
 }
 
-function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean): string {
+function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean, locale: SourceLocale = "en-US"): string {
   return [
-    `Review deck: ${node.label}`,
-    `Package: ${node.packageLabel ?? node.packageId ?? "unknown"}`,
-    node.itemCount === undefined ? "" : `Items: ${node.itemCount}`,
+    `${translate(locale, "menu.reviewDeck")}: ${node.label}`,
+    translate(locale, "review.package", { name: node.packageLabel ?? node.packageId ?? "unknown" }),
+    node.itemCount === undefined ? "" : translate(locale, "review.items", { count: node.itemCount }),
     node.reviewStatusText ?? "",
     "",
-    armed ? "Press Enter or Space to start review in this pane." : "Press Enter once to select this deck, then press Enter or Space to start review here."
+    translate(locale, armed ? "review.previewArmed" : "review.previewSelect")
   ].filter((line) => line.length > 0).join("\n");
 }
 
@@ -1855,7 +1942,7 @@ async function startEmbeddedReviewSession(node: LanguageTreeNode, options: Inter
     packageVersion: node.packageVersion,
     sourcePath: node.sourcePath
   });
-  const sourceItemIds = new Set(sourceItems.filter(isEmbeddedReviewItemUsable).map((item) => item.item.id));
+  const sourceItemIds = new Set(sourceItems.filter((item) => isEmbeddedReviewItemUsable(item, options.locale)).map((item) => item.item.id));
   const due = (await listIntegratedDueReviewItems({
     dataDir: options.dataDir,
     packageId: node.packageId,
@@ -1954,7 +2041,8 @@ async function renderEmbeddedReviewPrompt(session: EmbeddedReviewSession, option
     packageId: current.packageId,
     packageVersion: current.packageVersion,
     ...(current.sourcePath === undefined ? {} : { sourcePath: current.sourcePath }),
-    itemId: current.itemId
+    itemId: current.itemId,
+    sourceLocale: options.locale
   });
   return { ...session, side: "prompt", promptRendered: prompt.rendered, answerRendered: undefined, message: undefined };
 }
@@ -1970,12 +2058,13 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
     packageVersion: current.packageVersion,
     ...(current.sourcePath === undefined ? {} : { sourcePath: current.sourcePath }),
     itemId: current.itemId,
-    answer: true
+    answer: true,
+    sourceLocale: options.locale
   });
   return { ...session, side: "answer", answerRendered: answer.rendered, message: undefined };
 }
 
-function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean): string {
+function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean, locale: SourceLocale = "en-US"): string {
   const packageLabel = session.node.packageLabel ?? session.node.packageId ?? "Installed package";
   const header = [
     `Review: ${packageLabel} / ${session.node.label}`,
@@ -1997,7 +2086,7 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
   const cards = session.side === "prompt"
     ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled, session.node.packageId)]
     : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled, session.node.packageId)];
-  const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled);
+  const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled, locale);
   return [
     ...header,
     cards.join("\n\n"),
@@ -2007,11 +2096,11 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
   ].filter((line) => line.length > 0).join("\n");
 }
 
-export function isEmbeddedReviewItemUsable(item: ReadingReviewItem): boolean {
+export function isEmbeddedReviewItemUsable(item: ReadingReviewItem, locale: SourceLocale = "en-US"): boolean {
   if (isChineseMandarinPackage(item.packageId)) {
     const view = chineseReviewViewFromBlocks({
-      promptLines: normalizeReviewTextLines(item.item.prompt.plainText ?? item.item.prompt.text),
-      answerLines: normalizeReviewTextLines(item.item.answer.plainText ?? item.item.answer.text),
+      promptLines: normalizeReviewTextLines(localized(item.item.prompt.plainText ?? item.item.prompt.text, locale)),
+      answerLines: normalizeReviewTextLines(localized(item.item.answer.plainText ?? item.item.answer.text, locale)),
       promptLanguage: item.item.prompt.language,
       answerLanguage: item.item.answer.language
     });
@@ -2022,8 +2111,8 @@ export function isEmbeddedReviewItemUsable(item: ReadingReviewItem): boolean {
   }
   if (isJapanesePackage(item.packageId)) {
     const view = japaneseReviewViewFromBlocks({
-      promptLines: normalizeReviewTextLines(item.item.prompt.plainText ?? item.item.prompt.text),
-      answerLines: normalizeReviewTextLines(item.item.answer.plainText ?? item.item.answer.text),
+      promptLines: normalizeReviewTextLines(localized(item.item.prompt.plainText ?? item.item.prompt.text, locale)),
+      answerLines: normalizeReviewTextLines(localized(item.item.answer.plainText ?? item.item.answer.text, locale)),
       promptLanguage: item.item.prompt.language,
       answerLanguage: item.item.answer.language
     });
@@ -2657,20 +2746,21 @@ function formatPromptControls(colorsEnabled: boolean): string {
   return reveal;
 }
 
-function formatRatingControls(colorsEnabled: boolean): string {
+function formatRatingControls(colorsEnabled: boolean, locale: SourceLocale = "en-US"): string {
+  const labels = ["review.again", "review.hard", "review.good", "review.easy"].map((key) => translate(locale, key));
   if (!colorsEnabled) {
     return [
-      "1 Again",
-      "2 Hard",
-      "3 Good",
-      "4 Easy"
+      `1 ${labels[0]}`,
+      `2 ${labels[1]}`,
+      `3 ${labels[2]}`,
+      `4 ${labels[3]}`
     ].join("   ");
   }
   return [
-    `${ansi.red}1 Again${ansi.reset}`,
-    `${ansi.yellow}2 Hard${ansi.reset}`,
-    `${ansi.green}3 Good${ansi.reset}`,
-    `${ansi.cyan}4 Easy${ansi.reset}`
+    `${ansi.red}1 ${labels[0]}${ansi.reset}`,
+    `${ansi.yellow}2 ${labels[1]}${ansi.reset}`,
+    `${ansi.green}3 ${labels[2]}${ansi.reset}`,
+    `${ansi.cyan}4 ${labels[3]}${ansi.reset}`
   ].join("   ");
 }
 
@@ -2839,7 +2929,8 @@ async function runReviewSourcesMenu(
   const sources = await listReadingReviewSources({
     dataDir: options.dataDir,
     packageId: languagePackage.packageId,
-    packageVersion: languagePackage.packageVersion
+    packageVersion: languagePackage.packageVersion,
+    sourceLocale: options.locale
   });
   const items = [...reviewSourcesToMenuItems(sources), { label: "Back", kind: "back" as const }];
   if (sources.length === 0) {
@@ -2987,7 +3078,8 @@ async function runReadableContentAction(
     dataDir: options.dataDir,
     packageId: languagePackage.packageId,
     packageVersion: languagePackage.packageVersion,
-    path: item.filePath
+    path: item.filePath,
+    locale: options.locale
   });
   return showPagedMessage(terminal, renderReadingContent(result));
 }
@@ -3139,9 +3231,10 @@ async function labelReadableContentEntries(
         dataDir: options.dataDir,
         packageId: languagePackage.packageId,
         packageVersion: languagePackage.packageVersion,
-        path: item.filePath
+        path: item.filePath,
+        locale: options.locale
       });
-      labeled.push({ ...item, label: markdownContentLabel(content.text, item.filePath) });
+      labeled.push({ ...item, label: markdownContentLabel(content.text, item.filePath, options.locale) });
     } catch {
       labeled.push(item);
     }
@@ -3223,12 +3316,12 @@ function cleanContentPathLabel(path: string): string {
     .replace(/\b\w/gu, (letter) => letter.toUpperCase());
 }
 
-function markdownContentLabel(text: string, fallbackPath: string): string {
+function markdownContentLabel(text: string, fallbackPath: string, locale: SourceLocale = "en-US"): string {
   if (/\/chapter-0*\d+-0*\d+-grammar-easy\/chapter\.md$/u.test(fallbackPath)) {
-    return grammarEasyMenuLabel;
+    return translate(locale, "review.grammarEasy");
   }
   if (/\/chapter-0*\d+-0*\d+-grammar-hard\/chapter\.md$/u.test(fallbackPath)) {
-    return grammarHardMenuLabel;
+    return translate(locale, "review.grammarHard");
   }
   const heading = text.match(/^#\s+(.+)$/mu)?.[1]?.trim();
   return heading === undefined || heading.length === 0 ? cleanContentPathLabel(fallbackPath) : heading;

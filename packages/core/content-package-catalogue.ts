@@ -8,6 +8,7 @@ import {
   type ContentPackageManifest,
   type ContentPackageSourceProvenance
 } from "./content-package-spec";
+import { isLocalizedContentValue, type LocalizedContentValue } from "./localized-content";
 
 type BufferValue = {
   readonly length: number;
@@ -53,8 +54,8 @@ export const whackSmackerPackageMediaType = "application/vnd.whacksmacker.packag
 export interface ContentPackageCatalogue {
   readonly catalogueFormatVersion: 1;
   readonly catalogueId: string;
-  readonly displayName: string;
-  readonly description: string;
+  readonly displayName: LocalizedContentValue;
+  readonly description: LocalizedContentValue;
   readonly generatedAt: string;
   readonly packages: readonly ContentPackageCatalogueEntry[];
 }
@@ -62,8 +63,8 @@ export interface ContentPackageCatalogue {
 export interface ContentPackageCatalogueEntry {
   readonly packageId: string;
   readonly packageVersion: string;
-  readonly displayName: string;
-  readonly description: string;
+  readonly displayName: LocalizedContentValue;
+  readonly description: LocalizedContentValue;
   readonly contentType: string;
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
@@ -124,8 +125,8 @@ export function validateContentPackageCatalogue(catalogue: unknown): ContentPack
   }
 
   validateCatalogueId(readString(catalogue.catalogueId), "catalogueId", errors);
-  validateNonEmptyString(catalogue.displayName, "displayName", errors);
-  validateNonEmptyString(catalogue.description, "description", errors);
+  validateLocalizedContentValue(catalogue.displayName, "displayName", errors);
+  validateLocalizedContentValue(catalogue.description, "description", errors);
   validateGeneratedAt(catalogue.generatedAt, errors);
   validateCataloguePackages(catalogue.packages, errors);
 
@@ -279,8 +280,8 @@ function validateCataloguePackages(value: unknown, errors: string[]): void {
     const packageId = readString(entry.packageId);
     validateCatalogueId(packageId, `packages[${index}].packageId`, errors);
     validateSemver(readString(entry.packageVersion), `packages[${index}].packageVersion`, errors);
-    validateNonEmptyString(entry.displayName, `packages[${index}].displayName`, errors);
-    validateNonEmptyString(entry.description, `packages[${index}].description`, errors);
+    validateLocalizedContentValue(entry.displayName, `packages[${index}].displayName`, errors);
+    validateLocalizedContentValue(entry.description, `packages[${index}].description`, errors);
     validateNonEmptyString(entry.contentType, `packages[${index}].contentType`, errors);
     validateSemver(readString(entry.contentSchemaVersion), `packages[${index}].contentSchemaVersion`, errors);
     validateSemver(readString(entry.minimumWhackSmackerVersion), `packages[${index}].minimumWhackSmackerVersion`, errors);
@@ -400,6 +401,12 @@ function validateGeneratedAt(value: unknown, errors: string[]): void {
 function validateNonEmptyString(value: unknown, field: string, errors: string[]): void {
   if (typeof value !== "string" || value.trim().length === 0) {
     errors.push(`${field} must be a non-empty string.`);
+  }
+}
+
+function validateLocalizedContentValue(value: unknown, field: string, errors: string[]): void {
+  if (!isLocalizedContentValue(value)) {
+    errors.push(`${field} must be a non-empty string or a non-empty locale-to-string object.`);
   }
 }
 

@@ -15,6 +15,7 @@ export interface LanguageCurriculumPacingRule {
 export interface LanguageCurriculumPolicy {
   readonly pacingRules: readonly LanguageCurriculumPacingRule[];
   readonly decisionBoundaryChapter: number;
+  readonly chapterFormatRules: readonly string[];
   readonly vocabularyContinuityRules: readonly string[];
   readonly strictExampleRules: readonly string[];
   readonly surfaceFormRules: readonly string[];
@@ -26,23 +27,30 @@ export const grammarHardMenuLabel = "Grammar - Hard";
 export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
   pacingRules: [
     {
-      label: "Chapters 1-100",
+      label: "Chapters 1-25",
       chapterStart: 1,
-      chapterEnd: 100,
+      chapterEnd: 25,
       grammarPoints: { min: 1, max: 1 },
       readContentLines: { min: 6, max: 20 },
       newVocabularyItems: { min: 6, max: 10 }
     },
     {
-      label: "Chapters 100-200",
-      chapterStart: 100,
-      chapterEnd: 199,
-      grammarPoints: { min: 2, max: 2 },
+      label: "Chapters 26-50",
+      chapterStart: 26,
+      chapterEnd: 50,
+      grammarPoints: { min: 1, max: 2 },
       readContentLines: { min: 10, max: 30 },
-      newVocabularyItems: { min: 10, max: 15 }
+      newVocabularyItems: { min: 6, max: 20 }
     }
   ],
-  decisionBoundaryChapter: 200,
+  decisionBoundaryChapter: 51,
+  chapterFormatRules: [
+    "Odd-numbered chapters are dialogues.",
+    "Even-numbered chapters are narratives.",
+    "The odd/even dialogue/narrative rule applies across all languages and all chapter ranges.",
+    "Chapter 26 onward remains topic-centered: odd chapters are topic-centered dialogues; even chapters are topic-centered narratives.",
+    "Generation, package tests, and audits must check the chapter format rule before accepting chapters."
+  ],
   vocabularyContinuityRules: [
     "Only Chapter 1 may establish the initial base vocabulary.",
     "Later chapters must build cumulatively on previous chapters.",
@@ -85,7 +93,7 @@ export function assertLanguageCurriculumPacing(values: {
 }): void {
   const rule = pacingRuleForChapter(values.chapter);
   if (rule === "decision-boundary") {
-    throw new Error("Chapter 200 is a language curriculum pacing decision boundary; do not generate a new pacing band automatically.");
+    throw new Error("Chapter 51 is a language curriculum pacing decision boundary; do not generate a new pacing band automatically.");
   }
   assertInRange(values.grammarPointCount, rule.grammarPoints, `Chapter ${values.chapter} grammar point count`);
   assertInRange(values.readContentLineCount, rule.readContentLines, `Chapter ${values.chapter} read-content line count`);

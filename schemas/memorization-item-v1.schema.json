@@ -50,12 +50,11 @@
         "hints": {
           "type": "array",
           "items": {
-            "type": "string",
-            "minLength": 1
+            "$ref": "#/$defs/localizedContent"
           }
         },
         "notes": {
-          "type": "string"
+          "$ref": "#/$defs/localizedContent"
         },
         "examples": {
           "type": "array",
@@ -86,8 +85,7 @@
               "minLength": 1
             },
             "title": {
-              "type": "string",
-              "minLength": 1
+              "$ref": "#/$defs/localizedContent"
             }
           }
         },
@@ -119,8 +117,7 @@
               "maximum": 10
             },
             "label": {
-              "type": "string",
-              "minLength": 1
+              "$ref": "#/$defs/localizedContent"
             }
           }
         },
@@ -138,11 +135,10 @@
       "required": ["text"],
       "properties": {
         "text": {
-          "type": "string",
-          "minLength": 1
+          "$ref": "#/$defs/localizedContent"
         },
         "plainText": {
-          "type": "string"
+          "$ref": "#/$defs/localizedContentAllowEmpty"
         },
         "language": {
           "type": "string",
@@ -152,6 +148,28 @@
           "enum": ["text/plain", "text/markdown"]
         }
       }
+    },
+    "localizedContent": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "minLength": 1 },
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        }
+      ]
+    },
+    "localizedContentAllowEmpty": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "minLength": 1 },
+          "additionalProperties": { "type": "string" }
+        }
+      ]
     },
     "safeId": {
       "type": "string",

@@ -16,8 +16,8 @@ export interface ContentPackageManifest {
   readonly packageFormatVersion: 1;
   readonly packageId: string;
   readonly packageVersion: string;
-  readonly displayName: string;
-  readonly description: string;
+  readonly displayName: LocalizedContentValue;
+  readonly description: LocalizedContentValue;
   readonly contentType: string;
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
@@ -98,8 +98,8 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
 
   validatePackageId(readString(manifest.packageId), "packageId", errors);
   validateSemver(readString(manifest.packageVersion), "packageVersion", errors);
-  validateNonEmptyString(manifest.displayName, "displayName", errors);
-  validateNonEmptyString(manifest.description, "description", errors);
+  validateLocalizedContentValue(manifest.displayName, "displayName", errors);
+  validateLocalizedContentValue(manifest.description, "description", errors);
   validateContentType(readString(manifest.contentType), errors);
   validateSemver(readString(manifest.contentSchemaVersion), "contentSchemaVersion", errors);
   validateSemver(readString(manifest.minimumWhackSmackerVersion), "minimumWhackSmackerVersion", errors);
@@ -367,6 +367,12 @@ function validateNonEmptyString(value: unknown, field: string, errors: string[])
   }
 }
 
+function validateLocalizedContentValue(value: unknown, field: string, errors: string[]): void {
+  if (!isLocalizedContentValue(value)) {
+    errors.push(`${field} must be a non-empty string or a non-empty locale-to-string object.`);
+  }
+}
+
 function isSemverRange(value: string): boolean {
   return /^(?:[<>=~^]*\d+\.\d+\.\d+)(?:\s+[<>=~^]*\d+\.\d+\.\d+)*$/u.test(value);
 }
@@ -382,3 +388,4 @@ function readString(value: unknown): string {
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
+import { isLocalizedContentValue, type LocalizedContentValue } from "./localized-content";

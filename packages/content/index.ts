@@ -15,6 +15,7 @@ import {
   isLanguageLikeModulePackage,
   listReadingReviewItems,
   listReadingReviewSources,
+  localized,
   migrateUserDataBackupFile,
   orderReviewItemsForSession,
   readInstalledContentEntry,
@@ -78,7 +79,7 @@ export const contentModule: DomainModule = {
         const packages = await listAvailableContentPackages(options.catalogue);
         console.log("Available packages:");
         for (const entry of packages) {
-          console.log(`- ${entry.packageId} ${entry.packageVersion} ${entry.displayName}`);
+          console.log(`- ${entry.packageId} ${entry.packageVersion} ${localized(entry.displayName, "en-US")}`);
         }
       }
     });

@@ -8,6 +8,7 @@ export * from "./exercise-renderer";
 export * from "./features";
 export * from "./language-curriculum-policy";
 export * from "./logging";
+export * from "./localized-content";
 export * from "./memorization-item";
 export * from "./modules";
 export * from "./paths";

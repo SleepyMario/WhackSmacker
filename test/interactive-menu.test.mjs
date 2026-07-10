@@ -51,6 +51,7 @@ import {
   recordReadingReviewAnswer,
   syncReadingReviewItems
 } from "../dist/packages/core/index.js";
+import { loadSourceLanguageSettings } from "../dist/src/settings/source-language.js";
 
 class FakeTerminal {
   constructor(keys, { interactive = true, colorsEnabled = interactive } = {}) {
@@ -307,7 +308,7 @@ test("module tree lists top-level categories and installed language packages", a
     const languages = installed.children.find((node) => node.label === "Languages");
 
     assert.equal(tree.label, "WhackSmacker");
-    assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
+    assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available", "Settings"]);
     assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
     assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "English", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
@@ -515,7 +516,7 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
     const koreanReview = korean.children.find((node) => node.label === "Review decks");
     const chineseReview = chinese.children.find((node) => node.label === "Review decks");
 
-    assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
+    assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30"]);
     assert.deepEqual(chineseReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
     assert.equal(koreanReview.children.some((node) => node.label.includes("com.sleepymario")), false);
     assert.equal(chineseReview.children.some((node) => node.label.includes("cards.tsv")), false);
@@ -682,16 +683,16 @@ test("module tree includes available modules from a catalogue with install statu
       "Vietnamese:available"
     ]);
     assert.deepEqual(availableLanguages.children.map((node) => node.label), [
-      "Chinese - Mandarin (Simplified) [available]",
-      "Chinese - Mandarin (Traditional) [available]",
-      "Dutch [available]",
-      "English [available]",
-      "French [available]",
-      "German [available]",
-      "Japanese [available]",
-      "Korean [installed]",
-      "Spanish [available]",
-      "Vietnamese [available]"
+      "Chinese - Mandarin (Simplified) [Available]",
+      "Chinese - Mandarin (Traditional) [Available]",
+      "Dutch [Available]",
+      "English [Available]",
+      "French [Available]",
+      "German [Available]",
+      "Japanese [Available]",
+      "Korean [Installed]",
+      "Spanish [Available]",
+      "Vietnamese [Available]"
     ]);
   } finally {
     await fixture.cleanup();
@@ -1312,7 +1313,7 @@ test("Korean and Chinese review source menus use clean deck names", async () => 
       packageId: "com.sleepymario.language.chinese.mandarin.traditional"
     }));
 
-    assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
+    assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30"]);
     assert.deepEqual(chinese.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
   } finally {
     await fixture.cleanup();
@@ -1732,7 +1733,7 @@ test("Enter on an available module does not install but Space installs and refre
     const availableLanguages = tree.children.find((node) => node.label === "Modules available").children.find((node) => node.label === "Languages");
 
     assert.ok(installedLanguages.children.some((node) => node.label === "Chinese - Mandarin (Traditional)"));
-    assert.ok(availableLanguages.children.some((node) => node.label === "Chinese - Mandarin (Traditional) [installed]"));
+    assert.ok(availableLanguages.children.some((node) => node.label === "Chinese - Mandarin (Traditional) [Installed]"));
     assert.match(install.output, /Module installed\./);
 
     const alreadyInstalled = new FakeTerminal([
@@ -2023,6 +2024,37 @@ test("interactive menu starts with the module tree", async () => {
   assert.match(stripAnsi(terminal.output), /Games/);
   assert.match(stripAnsi(terminal.output), /Geography/);
   assert.match(stripAnsi(terminal.output), /Mathematics/);
+});
+
+test("interactive source-language selector persists and repaints Traditional Chinese UI", async () => {
+  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-menu-settings-"));
+  try {
+    const tree = await buildModuleTree({ locale: "en-US" });
+    const expanded = new Set(["whacksmacker", "installed-modules", "available-modules", "settings"]);
+    const visible = flattenVisibleLanguageTree(tree, expanded);
+    const settingsIndex = visible.findIndex((entry) => entry.node.id === "settings");
+    assert.ok(settingsIndex > 1);
+    const keys = [
+      ...Array.from({ length: settingsIndex - 1 }, () => key("down")),
+      key("down"),
+      key("return"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("q", { sequence: "q" })
+    ];
+    const terminal = new FakeTerminal(keys, { colorsEnabled: false });
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { settingsDir });
+
+    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "zh-Hant-TW");
+    assert.match(terminal.output, /已安裝模組/u);
+    assert.match(terminal.output, /可安裝模組/u);
+    assert.match(terminal.output, /來源語言/u);
+    assert.match(terminal.output, /來源語言已變更為中文（臺灣）。/u);
+  } finally {
+    await rm(settingsDir, { recursive: true, force: true });
+  }
 });
 
 function stripAnsi(text) {

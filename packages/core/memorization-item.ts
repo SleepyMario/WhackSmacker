@@ -8,6 +8,7 @@ import {
   isSafeContentPackagePath,
   type ContentPackageManifest
 } from "./content-package-spec";
+import { isLocalizedContentValue, type LocalizedContentValue } from "./localized-content";
 
 type BufferValue = {
   toString(encoding: "utf8"): string;
@@ -34,8 +35,8 @@ export interface MemorizationItem {
   readonly kind: (typeof memorizationItemKinds)[number];
   readonly prompt: MemorizationContentBlock;
   readonly answer: MemorizationContentBlock;
-  readonly hints?: readonly string[];
-  readonly notes?: string;
+  readonly hints?: readonly LocalizedContentValue[];
+  readonly notes?: LocalizedContentValue;
   readonly examples?: readonly string[];
   readonly tags?: readonly string[];
   readonly source?: MemorizationItemSource;
@@ -46,8 +47,8 @@ export interface MemorizationItem {
 }
 
 export interface MemorizationContentBlock {
-  readonly text: string;
-  readonly plainText?: string;
+  readonly text: LocalizedContentValue;
+  readonly plainText?: LocalizedContentValue;
   readonly language?: string;
   readonly mediaType?: "text/plain" | "text/markdown";
 }
@@ -55,7 +56,7 @@ export interface MemorizationContentBlock {
 export interface MemorizationItemSource {
   readonly path: string;
   readonly anchor?: string;
-  readonly title?: string;
+  readonly title?: LocalizedContentValue;
 }
 
 export interface MemorizationLanguageMetadata {
@@ -66,7 +67,7 @@ export interface MemorizationLanguageMetadata {
 
 export interface MemorizationDifficultyMetadata {
   readonly level?: number;
-  readonly label?: string;
+  readonly label?: LocalizedContentValue;
 }
 
 export interface MemorizationItemCollection {
@@ -230,10 +231,10 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
   }
   validateContentBlock(value.prompt, `${field}.prompt`, errors);
   validateContentBlock(value.answer, `${field}.answer`, errors);
-  validateStringArray(value.hints, `${field}.hints`, errors, false);
+  validateLocalizedContentArray(value.hints, `${field}.hints`, errors);
   validateStringArray(value.tags, `${field}.tags`, errors, true);
-  if (value.notes !== undefined && typeof value.notes !== "string") {
-    errors.push(`${field}.notes must be a string when present.`);
+  if (value.notes !== undefined && !isLocalizedContentValue(value.notes)) {
+    errors.push(`${field}.notes must be a string or locale-to-string object when present.`);
   }
   validateStringArray(value.examples, `${field}.examples`, errors, false);
   validateSource(value.source, `${field}.source`, errors);
@@ -259,9 +260,9 @@ function validateContentBlock(value: unknown, field: string, errors: string[]): 
       errors.push(`${field}.${key} is not allowed.`);
     }
   }
-  validateNonEmptyString(value.text, `${field}.text`, errors);
-  if (value.plainText !== undefined && typeof value.plainText !== "string") {
-    errors.push(`${field}.plainText must be a string when present.`);
+  validateLocalizedContent(value.text, `${field}.text`, errors);
+  if (value.plainText !== undefined && !isLocalizedContentValue(value.plainText, true)) {
+    errors.push(`${field}.plainText must be a string or locale-to-string object when present.`);
   }
   if (value.language !== undefined) {
     validateNonEmptyString(value.language, `${field}.language`, errors);
@@ -286,7 +287,7 @@ function validateSource(value: unknown, field: string, errors: string[]): void {
     validateNonEmptyString(value.anchor, `${field}.anchor`, errors);
   }
   if (value.title !== undefined) {
-    validateNonEmptyString(value.title, `${field}.title`, errors);
+    validateLocalizedContent(value.title, `${field}.title`, errors);
   }
 }
 
@@ -320,7 +321,7 @@ function validateDifficulty(value: unknown, field: string, errors: string[]): vo
     }
   }
   if (value.label !== undefined) {
-    validateNonEmptyString(value.label, `${field}.label`, errors);
+    validateLocalizedContent(value.label, `${field}.label`, errors);
   }
 }
 
@@ -345,6 +346,25 @@ function validateStringArray(value: unknown, field: string, errors: string[], ta
       errors.push(`${field} contains duplicate value: ${item}`);
     }
     seen.add(item);
+  }
+}
+
+function validateLocalizedContent(value: unknown, field: string, errors: string[]): void {
+  if (!isLocalizedContentValue(value)) {
+    errors.push(`${field} must be a non-empty string or a non-empty locale-to-string object.`);
+  }
+}
+
+function validateLocalizedContentArray(value: unknown, field: string, errors: string[]): void {
+  if (value === undefined) {
+    return;
+  }
+  if (!Array.isArray(value)) {
+    errors.push(`${field} must be an array when present.`);
+    return;
+  }
+  for (const [index, item] of value.entries()) {
+    validateLocalizedContent(item, `${field}[${index}]`, errors);
   }
 }
 

@@ -4,19 +4,31 @@ These rules are hard WhackSmacker language-curriculum constraints. They apply to
 
 ## Pacing
 
-Chapters 1-100:
+Chapters 1-25:
 
 - 1 main grammar point per chapter.
 - 6-20 lines of read content per chapter.
 - 6-10 new vocabulary items per chapter.
 
-Chapters 100-200:
+Chapters 26-50:
 
-- 2 main grammar points per chapter.
+- 1-2 main grammar patterns per chapter.
 - 10-30 lines of read content per chapter.
-- 10-15 new vocabulary items per chapter.
+- 6-20 new vocabulary items per chapter.
 
-Chapter 200 is a decision boundary. Do not invent a new pacing band automatically after Chapter 200.
+Chapter 51 is a decision boundary. Do not invent a new pacing band automatically after Chapter 50.
+
+## Odd/Even Format
+
+All normal language core chapters follow this hard format rule:
+
+- odd-numbered chapters are dialogues;
+- even-numbered chapters are narratives.
+
+The rule applies across all languages and all chapter ranges. Chapter 26 onward
+remains topic-centered: odd chapters are topic-centered dialogues, and even
+chapters are topic-centered narratives. Grammar progression must fit the
+required format.
 
 ## Vocabulary Continuity
 

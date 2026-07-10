@@ -8,6 +8,7 @@ import {
   isSafeContentPackagePath,
   type ContentPackageManifest
 } from "./content-package-spec";
+import { isLocalizedContentValue, localized, type LocalizedContentValue } from "./localized-content";
 
 type BufferValue = {
   toString(encoding: "utf8"): string;
@@ -28,6 +29,7 @@ export interface InstalledReadablePackage {
   readonly packageId: string;
   readonly packageVersion: string;
   readonly displayName: string;
+  readonly description?: string;
   readonly contentType: string;
 }
 
@@ -43,6 +45,7 @@ export interface ReadInstalledContentEntryOptions {
   readonly packageId: string;
   readonly packageVersion?: string;
   readonly path: string;
+  readonly locale?: string;
 }
 
 export interface ReadInstalledContentEntryResult {
@@ -51,8 +54,11 @@ export interface ReadInstalledContentEntryResult {
   readonly text: string;
 }
 
-export async function listInstalledReadablePackages(dataDir?: string): Promise<readonly InstalledReadablePackage[]> {
-  return (await listInstalledContentPackages(dataDir)).map(toReadablePackage);
+export async function listInstalledReadablePackages(dataDir?: string, locale = "en-US"): Promise<readonly InstalledReadablePackage[]> {
+  return Promise.all((await listInstalledContentPackages(dataDir)).map(async (record) => {
+    const manifest = await readInstalledManifest(installedPackageRoot(record, dataDir));
+    return toReadablePackage(record, manifest, locale);
+  }));
 }
 
 export async function listReadableContentEntries(
@@ -94,7 +100,8 @@ export async function readInstalledContentEntry(options: ReadInstalledContentEnt
 
   const selected = await selectInstalledPackage(options.packageId, options.dataDir, options.packageVersion);
   const root = installedPackageRoot(selected, options.dataDir);
-  const readablePackage = toReadablePackage(selected);
+  const manifest = await readInstalledManifest(root);
+  const readablePackage = toReadablePackage(selected, manifest, options.locale ?? "en-US");
   const snapshot = await readSnapshot(root);
 
   if (snapshot !== null) {
@@ -105,7 +112,7 @@ export async function readInstalledContentEntry(options: ReadInstalledContentEnt
     return {
       package: readablePackage,
       entry: { path: file.path, mediaType: file.mediaType, title: file.path, source: "snapshot" },
-      text: file.text
+      text: localized(file.text, options.locale ?? "en-US")
     };
   }
 
@@ -223,7 +230,7 @@ interface SourceMarkdownSnapshot {
 interface SourceMarkdownFile {
   readonly path: string;
   readonly mediaType: string;
-  readonly text: string;
+  readonly text: LocalizedContentValue;
 }
 
 function isSnapshot(value: unknown): value is SourceMarkdownSnapshot {
@@ -231,7 +238,8 @@ function isSnapshot(value: unknown): value is SourceMarkdownSnapshot {
     return false;
   }
   return value.files.every(
-    (file) => isRecord(file) && typeof file.path === "string" && typeof file.mediaType === "string" && typeof file.text === "string"
+    (file) => isRecord(file) && typeof file.path === "string" && typeof file.mediaType === "string" &&
+      isLocalizedContentValue(file.text)
   );
 }
 
@@ -239,11 +247,12 @@ function isReadableMediaType(mediaType: string): boolean {
   return mediaType === "text/markdown" || mediaType === "text/plain" || mediaType === "application/json" || mediaType === "text/tab-separated-values";
 }
 
-function toReadablePackage(record: InstalledPackageRecord): InstalledReadablePackage {
+function toReadablePackage(record: InstalledPackageRecord, manifest: ContentPackageManifest, locale: string): InstalledReadablePackage {
   return {
     packageId: record.packageId,
     packageVersion: record.packageVersion,
-    displayName: record.displayName,
+    displayName: localized(manifest.displayName, locale),
+    description: localized(manifest.description, locale),
     contentType: record.contentType
   };
 }
