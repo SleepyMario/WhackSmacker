@@ -427,7 +427,10 @@ test("language tree exposes Dutch content and review deck labels", async () => {
 
     assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- There Is / There Are I"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5"]);
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 10 -- Living Here"));
+    assert.ok(readContent.children.some((node) => node.label === "Grammar - Easy"));
+    assert.ok(readContent.children.some((node) => node.label === "Grammar - Hard"));
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
   } finally {
     await fixture.cleanup();
   }
@@ -940,7 +943,7 @@ test("two-pane renderer styles Korean read-content blocks pink without affecting
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
     "```text",
-    "마리아: 안녕하세요. 저는 마리아입니다.",
+    "마리아: 안녕하세요. 저는 마리아 가르시아입니다.",
     "김민준: 안녕하세요. 저는 김민준입니다.",
     "```",
     "",
@@ -979,7 +982,7 @@ test("two-pane renderer starts chapter content near the content pane border", ()
     "This chapter teaches a first formal Korean self-introduction.",
     "",
     "```text",
-    "마리아: 안녕하세요. 저는 마리아입니다.",
+    "마리아: 안녕하세요. 저는 마리아 가르시아입니다.",
     "김민준: 안녕하세요. 저는 김민준입니다.",
     "```"
   ].join("\n"), false);
@@ -1051,7 +1054,7 @@ test("Dutch review sources submenu uses clean selectable deck labels", async () 
     });
     const items = reviewSourcesToMenuItems(sources);
 
-    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5"]);
+    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10"]);
     assert.equal(items.some((item) => item.label.includes("com.sleepymario.language.dutch")), false);
     assert.equal(items.some((item) => item.label.includes("cards.tsv")), false);
   } finally {
@@ -1208,11 +1211,11 @@ test("Korean embedded review reveal shows strict read-content examples", () => {
     promptLines: ["학생"],
     answerLines: ["student"],
     noteLines: ["Deck: Chapter 1-5. Noun."],
-    exampleLines: ["저는 학생입니다.", "A: 학생입니까?", "B: 네, 학생입니다."]
+    exampleLines: ["저는 학생입니다.", "마리아: 학생입니까?", "김민준: 네, 학생입니다."]
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.korean");
 
-  assert.match(output, /Example\n  - 저는 학생입니다\.\n  - A: 학생입니까\?\n  - B: 네, 학생입니다\./);
+  assert.match(output, /Example\n  - 저는 학생입니다\.\n  - 마리아: 학생입니까\?\n  - 김민준: 네, 학생입니다\./u);
   assert.doesNotMatch(output, /missing-source-example/);
 });
 
@@ -1265,7 +1268,7 @@ test("two-pane renderer preserves origin-based Korean dialogue name alignment by
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
     "```text",
-    "마리아: 안녕하세요. 저는 마리아입니다.",
+    "마리아: 안녕하세요. 저는 마리아 가르시아입니다.",
     "김민준: 안녕하세요. 저는 김민준입니다.",
     "```"
   ].join("\n"), false);

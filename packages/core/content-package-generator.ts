@@ -930,7 +930,7 @@ function extractStrictReadContentExampleLines(markdown: string): readonly string
       }
       continue;
     }
-    if (/^#{2,4}\s+(?:Model Dialogue|Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Controlled Reading)\b/iu.test(trimmed)) {
+    if (/^#{2,4}\s+(?:Model Dialogue|Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Learner-facing Controlled Reading|Controlled Reading)\b/iu.test(trimmed)) {
       inReadContentSection = true;
       continue;
     }

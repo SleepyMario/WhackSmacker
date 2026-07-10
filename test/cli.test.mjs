@@ -237,7 +237,7 @@ test("leading wrapper globals are forwarded to command mode", async () => {
     assert.match(grammarReads[5].stdout, /existential and negative-existential/u);
     assert.equal(reviewShow.exitCode, 0);
     assert.match(reviewShow.stdout, /저는 학생입니다/);
-    assert.match(reviewShow.stdout, /Example\n  - 저는 학생입니다\.\n  - A: 학생입니까\?/);
+    assert.match(reviewShow.stdout, /Example\n  - 저는 학생입니다\.\n  - 마리아: 학생입니까\?/u);
     assert.equal(reviewShow.stderr, "");
   } finally {
     await fixture.cleanup();
