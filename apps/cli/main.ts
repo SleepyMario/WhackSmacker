@@ -13,6 +13,7 @@ import { geographyModule } from "../../packages/geography";
 import { languageModule } from "../../packages/language";
 import { mathematicsModule } from "../../packages/mathematics";
 import { runInteractiveMenu } from "./interactive-menu";
+import { parseWebOptions, startWebServer, webUsage } from "../web/server";
 
 declare function require(name: string): { version: string };
 
@@ -34,6 +35,11 @@ Usage:
   whacksmacker
   wsm <command>
   whacksmacker <command>
+
+Web GUI:
+  whacksmacker web [--host 127.0.0.1] [--port 8787] [--data-dir <dir>] [--catalogue <catalogue.json>] [--password <password>]
+  wsm web [options]
+      Start the local web frontend. Defaults to http://127.0.0.1:8787.
 
 Interactive mode:
   wsm
@@ -191,6 +197,15 @@ async function dispatch(command: CliCommand, args: readonly string[]): Promise<v
 }
 
 export async function main(argv = process.argv.slice(2)): Promise<void> {
+  if (argv[0] === "web") {
+    const options = parseWebOptions(argv.slice(1));
+    if (options === "help") { console.log(webUsage); return; }
+    const server = await startWebServer(options);
+    const address = server.address();
+    const port = typeof address === "object" && address !== null ? address.port : options.port ?? 8787;
+    console.log(`WhackSmacker Web GUI listening on http://${options.host ?? "127.0.0.1"}:${port}`);
+    return;
+  }
   if (isHelpRequest(argv)) {
     console.log(usage);
     return;

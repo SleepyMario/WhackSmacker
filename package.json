@@ -13,6 +13,7 @@
   },
   "files": [
     "dist/apps/cli",
+    "dist/apps/web",
     "dist/packages",
     "dist/src",
     "dist/main.js",

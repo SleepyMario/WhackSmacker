@@ -12,8 +12,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "types": ["node"],
     "ignoreDeprecations": "6.0"
   },
-  "include": ["apps/cli/**/*.ts", "apps/chess-desktop/src/ChessApp.tsx", "packages/**/*.ts", "src/**/*.ts"],
+  "include": ["apps/cli/**/*.ts", "apps/web/**/*.ts", "apps/chess-desktop/src/ChessApp.tsx", "packages/**/*.ts", "src/**/*.ts"],
   "exclude": ["apps/chess-desktop/dist-electron"]
 }
