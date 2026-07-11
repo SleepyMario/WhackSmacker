@@ -23,7 +23,7 @@ This audit is narrower: it maps the remaining bundled, static, compatibility, an
 | Native Linguistic Terms missing-package fallback | `packages/language/linguistic-terminology.ts` | Missing-package message | Reports that `com.sleepymario.language.linguistic-terminology` is not installed and prints install guidance for `language terms`. | Runtime behavior, fallback UX | Yes | No | Keep. Make catalogue/install guidance clearer before removing bundled terminology search. |
 | Source snapshot package format | `packages/core/content-package-generator.ts` | Generated content schema | Builds current Korean and Linguistic Terminology packages as `whacksmacker-source-markdown-snapshot-v1` in `content/content.json` | Package generation, generated snapshot format | Yes | No | Keep until subject-specific schemas and review-item generation are designed. |
 | Source snapshot reader | `packages/core/content-package-reader.ts` | Installed package reader | Detects `content/content.json` source snapshots and exposes Markdown/plain text/JSON entries as readable installed content | Runtime behavior for installed packages | Yes | No | Keep. Later retain as a compatibility reader or migrate packages to richer content schemas. |
-| Linguistic terminology sync script | `scripts/sync-linguistic-terminology.mjs` | Snapshot generation script | Regenerates `packages/language/linguistic-terminology-snapshot.ts` from a local terminology repo | Development compatibility tool | Yes, while the bundled snapshot remains | No for installed package runtime | Update the default source path later. It still defaults to `../languages/linguistic-terminology`, which is stale under the current module layout; use `--source` or `LINGUISTIC_TERMINOLOGY_SOURCE` until fixed. |
+| Linguistic terminology sync script | `scripts/sync-linguistic-terminology.mjs` | Snapshot generation script | Regenerates `packages/language/linguistic-terminology-snapshot.ts` from the pinned local terminology repo at the sibling default `../linguistic-terminology` | Development compatibility tool | Yes, while the bundled snapshot remains | No for installed package runtime | Keep the sibling default, `--source`, and `LINGUISTIC_TERMINOLOGY_SOURCE` aligned with release documentation. |
 | Terminology snapshot documentation | `docs/linguistic-terminology.md` | Documentation | Describes the standalone terminology repo and checked-in bundled snapshot workflow | Documentation | Yes, as historical/current fallback docs | No | Later rewrite to make installed package terminology primary and bundled snapshot explicitly fallback/deprecated. |
 | README bundled terminology references | `README.md` | Documentation | Documents both `language terms` for installed package content and `language terminology` for bundled searchable snapshot | Documentation | Yes, because both commands exist | No | Later make installed packages the primary path and move bundled snapshot to a fallback/deprecation section. |
 | Anki parity documentation | `docs/anki-parity.md` | Historical documentation | Records native parity coverage and explicitly states the old Anki-backed command was removed | Documentation | Yes, for roadmap history | No | Keep until native review docs fully replace historical migration context. Then archive or shorten. |
@@ -43,10 +43,10 @@ This audit is narrower: it maps the remaining bundled, static, compatibility, an
 
 No active runtime code was found that reads from `/home/ashwin/Projects/languages`.
 
-One development script still contains a stale relative default:
+The terminology synchronization script now uses the current sibling-repository default:
 
 ```text
-scripts/sync-linguistic-terminology.mjs -> ../languages/linguistic-terminology
+scripts/sync-linguistic-terminology.mjs -> ../linguistic-terminology
 ```
 
 Under the current module layout, the intended source repository is:
@@ -95,7 +95,7 @@ Only remove these after an explicit cleanup task:
 
 1. Keep bundled terminology only as an explicit fallback while installed package search/navigation improves.
 2. Add clearer CLI messages for missing packages, including catalogue location guidance.
-3. Fix the stale `scripts/sync-linguistic-terminology.mjs` default source path.
+3. Keep the pinned terminology commit and sibling source-path validation in the release checklist.
 4. Deprecate stale bundled snapshot paths after installed package UX covers search, IDs, categories, and related links.
 5. Remove the bundled terminology snapshot only after package install UX is good and a release checklist verifies installed terminology.
 6. Shorten or archive remaining Anki docs/references only after native review is fully documented.

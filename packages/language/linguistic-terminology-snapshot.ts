@@ -4,7 +4,7 @@ import type { LinguisticTerminologySnapshot } from "./linguistic-terminology";
 
 export const linguisticTerminologySnapshot: LinguisticTerminologySnapshot = {
   "sourceRepository": "linguistic-terminology",
-  "sourceCommit": "ebec8c56282167c9d6d025279bae4ad296e9f73b",
+  "sourceCommit": "d2612e2dcef8204b43d1927a7cb6e3911cb8cc6e",
   "terms": [
     {
       "id": "learning.active-production",

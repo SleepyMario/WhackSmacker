@@ -16,7 +16,7 @@ test("synchronized linguistic terminology data loads with unique stable IDs", ()
   const ids = snapshot.terms.map((term) => term.id);
 
   assert.equal(snapshot.sourceRepository, "linguistic-terminology");
-  assert.match(snapshot.sourceCommit, /^[0-9a-f]{40}$/u);
+  assert.equal(snapshot.sourceCommit, "d2612e2dcef8204b43d1927a7cb6e3911cb8cc6e");
   assert.equal(snapshot.terms.length, 89);
   assert.equal(new Set(ids).size, ids.length);
 });

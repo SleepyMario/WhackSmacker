@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtemp, readFile, readdir, rm, symlink } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, stat, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
@@ -131,6 +131,11 @@ test("help prints native WhackSmacker usage", async () => {
 });
 
 test("help aliases and executable aliases produce equivalent substantive help", async () => {
+  const entrypoint = await stat("dist/main.js");
+  const source = await readFile("dist/main.js", "utf8");
+  assert.notEqual(entrypoint.mode & 0o111, 0, "dist/main.js must be executable");
+  assert.equal(source.startsWith("#!/usr/bin/env node\n"), true, "dist/main.js must retain its Node shebang");
+
   const results = [
     await runInstalledName("whacksmacker", ["--help"]),
     await runInstalledName("whacksmacker", ["-h"]),

@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const repositoryRoot = resolve(new URL("..", import.meta.url).pathname);
-const defaultSourcePath = resolve(repositoryRoot, "../languages/linguistic-terminology");
+const defaultSourcePath = resolve(repositoryRoot, "../linguistic-terminology");
 const outputPath = resolve(repositoryRoot, "packages/language/linguistic-terminology-snapshot.ts");
 
 const sourcePath = resolve(readSourcePath(process.argv.slice(2)));
