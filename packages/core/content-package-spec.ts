@@ -3,6 +3,7 @@ export const whackSmackerPackageExtension = ".wspkg";
 
 export const knownContentPackageTypes = [
   "language-curriculum",
+  "curriculum-source-language-pack",
   "linguistic-terminology",
   "mathematics-curriculum",
   "geography-dataset",
@@ -33,7 +34,12 @@ export interface ContentPackageManifest {
   readonly homepage?: string;
   readonly authors?: readonly string[];
   readonly keywords?: readonly string[];
+  readonly localization?: ContentPackageLocalizationMetadata;
 }
+
+export type ContentPackageLocalizationMetadata =
+  | { readonly role: "base-curriculum"; readonly schemaVersion: string; readonly targetLanguage: string; readonly defaultSourceLocale: string; readonly defaultSourcePackageId: string }
+  | { readonly role: "source-language-pack"; readonly schemaVersion: string; readonly basePackageId: string; readonly sourceLocale: string; readonly targetLanguage: string; readonly compatibleBaseVersion: string; readonly isDefault?: boolean };
 
 export interface ContentPackageSourceProvenance {
   readonly repository: string;
@@ -111,8 +117,27 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   validateEntryPoints(manifest.entryPoints, files, errors);
   validateDependencies(manifest.dependencies, readString(manifest.packageId), errors);
   validateLicense(manifest.license, files, errors);
+  validateLocalization(manifest.localization, errors);
 
   return { valid: errors.length === 0, errors };
+}
+
+function validateLocalization(value: unknown, errors: string[]): void {
+  if (value === undefined) return;
+  if (!isRecord(value) || (value.role !== "base-curriculum" && value.role !== "source-language-pack")) {
+    errors.push("localization must declare a supported role."); return;
+  }
+  validateSemver(readString(value.schemaVersion), "localization.schemaVersion", errors);
+  validateNonEmptyString(value.targetLanguage, "localization.targetLanguage", errors);
+  if (value.role === "base-curriculum") {
+    validateNonEmptyString(value.defaultSourceLocale, "localization.defaultSourceLocale", errors);
+    validatePackageId(readString(value.defaultSourcePackageId), "localization.defaultSourcePackageId", errors);
+  } else {
+    validatePackageId(readString(value.basePackageId), "localization.basePackageId", errors);
+    validateNonEmptyString(value.sourceLocale, "localization.sourceLocale", errors);
+    validateNonEmptyString(value.compatibleBaseVersion, "localization.compatibleBaseVersion", errors);
+    if (value.isDefault !== undefined && typeof value.isDefault !== "boolean") errors.push("localization.isDefault must be boolean.");
+  }
 }
 
 export function assertValidContentPackageManifest(manifest: unknown): asserts manifest is ContentPackageManifest {

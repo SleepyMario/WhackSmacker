@@ -55,7 +55,7 @@ export interface ReadInstalledContentEntryResult {
 }
 
 export async function listInstalledReadablePackages(dataDir?: string, locale = "en-US"): Promise<readonly InstalledReadablePackage[]> {
-  return Promise.all((await listInstalledContentPackages(dataDir)).map(async (record) => {
+  return Promise.all((await listInstalledContentPackages(dataDir)).filter(record => record.contentType !== "curriculum-source-language-pack").map(async (record) => {
     const manifest = await readInstalledManifest(installedPackageRoot(record, dataDir));
     return toReadablePackage(record, manifest, locale);
   }));
@@ -72,6 +72,7 @@ export async function listReadableContentEntries(
   if (snapshot !== null) {
     return snapshot.files
       .filter((file) => isReadableMediaType(file.mediaType))
+      .filter((file) => snapshot.localizedPaths === undefined || snapshot.localizedPaths.includes(file.path))
       .map((file) => ({
         path: file.path,
         mediaType: file.mediaType,
@@ -109,10 +110,11 @@ export async function readInstalledContentEntry(options: ReadInstalledContentEnt
     if (file === undefined || !isReadableMediaType(file.mediaType)) {
       throw new Error(`Readable content entry not found: ${options.path}`);
     }
+    const overlayText = await readSelectedSourceOverlayText(manifest, selected, file.path, options.locale, options.dataDir);
     return {
       package: readablePackage,
       entry: { path: file.path, mediaType: file.mediaType, title: file.path, source: "snapshot" },
-      text: localized(file.text, options.locale ?? "en-US")
+      text: overlayText ?? localized(file.text, options.locale ?? "en-US")
     };
   }
 
@@ -128,6 +130,33 @@ export async function readInstalledContentEntry(options: ReadInstalledContentEnt
     entry,
     text: (await readFile(destination)).toString("utf8")
   };
+}
+
+async function readSelectedSourceOverlayText(manifest: ContentPackageManifest, base: InstalledPackageRecord, path: string, locale: string | undefined, dataDir?: string): Promise<string | undefined> {
+  const metadata = manifest.localization;
+  if (metadata?.role !== "base-curriculum") return undefined;
+  const selectedLocale = canonicalSourceLocale(locale ?? metadata.defaultSourceLocale);
+  const candidates = [selectedLocale, metadata.defaultSourceLocale].filter((value, index, all) => all.indexOf(value) === index);
+  const installed = await listInstalledContentPackages(dataDir);
+  for (const candidateLocale of candidates) {
+    for (const record of installed.filter(item => item.contentType === "curriculum-source-language-pack")) {
+      const root = installedPackageRoot(record, dataDir);
+      const sourceManifest = await readInstalledManifest(root);
+      if (sourceManifest.localization?.role !== "source-language-pack" || sourceManifest.localization.basePackageId !== base.packageId || sourceManifest.localization.sourceLocale !== candidateLocale) continue;
+      try {
+        const overlay = JSON.parse((await readFile(join(root, "content", "content.json"))).toString("utf8")) as { files?: readonly { path: string; text: string }[] };
+        const match = overlay.files?.find(file => file.path === path);
+        if (match !== undefined) return match.text;
+      } catch { continue; }
+    }
+  }
+  return undefined;
+}
+
+function canonicalSourceLocale(locale: string): string {
+  if (locale === "zh-Hant-TW" || locale === "zh-TW") return "zh-TW";
+  if (locale === "en-US" || locale === "en") return "en";
+  return locale;
 }
 
 export function renderReadingContent(result: ReadInstalledContentEntryResult): string {
@@ -224,6 +253,8 @@ async function readSnapshot(root: string): Promise<SourceMarkdownSnapshot | null
 
 interface SourceMarkdownSnapshot {
   readonly contentSchema: "whacksmacker-source-markdown-snapshot-v1";
+  readonly defaultContentLocale?: string;
+  readonly localizedPaths?: readonly string[];
   readonly files: readonly SourceMarkdownFile[];
 }
 

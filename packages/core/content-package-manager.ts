@@ -208,10 +208,17 @@ export async function installContentPackage(options: InstallContentPackageOption
   const contentDir = resolveContentDataDirectory(options.dataDir);
   const catalogue = await loadContentPackageCatalogue(options.cataloguePath);
   const entry = selectCatalogueEntry(catalogue, options.packageId, options.packageVersion);
-  const registry = await loadInstalledPackageRegistry(contentDir);
+  let registry = await loadInstalledPackageRegistry(contentDir);
   const relativeInstallPath = packageInstallPath(entry.packageId, entry.packageVersion);
   const finalInstallPath = join(contentDir, relativeInstallPath);
   const existing = registry.packages.find((record) => record.packageId === entry.packageId && record.packageVersion === entry.packageVersion);
+
+  for (const dependency of entry.dependencies ?? []) {
+    if (dependency.optional === true || registry.packages.some(record => record.packageId === dependency.packageId)) continue;
+    if (!catalogue.packages.some(candidate => candidate.packageId === dependency.packageId)) continue;
+    await installContentPackage({ ...options, packageId: dependency.packageId, packageVersion: undefined, force: false });
+    registry = await loadInstalledPackageRegistry(contentDir);
+  }
 
   if (existing !== undefined && options.force !== true) {
     return { installed: false, record: existing, installPath: finalInstallPath };

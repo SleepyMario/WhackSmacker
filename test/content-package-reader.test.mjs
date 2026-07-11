@@ -221,6 +221,30 @@ test("installed Korean package exposes Chapter 15 and split vocabulary review de
         sourcePath: "review-decks/chapter-026-030/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-026-030.json",
         itemCount: 40
+      },
+      {
+        title: "Chapter 31-35",
+        sourcePath: "review-decks/chapter-031-035/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-031-035.json",
+        itemCount: 60
+      },
+      {
+        title: "Chapter 36-40",
+        sourcePath: "review-decks/chapter-036-040/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-036-040.json",
+        itemCount: 60
+      },
+      {
+        title: "Chapter 41-45",
+        sourcePath: "review-decks/chapter-041-045/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-041-045.json",
+        itemCount: 60
+      },
+      {
+        title: "Chapter 46-50",
+        sourcePath: "review-decks/chapter-046-050/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-046-050.json",
+        itemCount: 60
       }
     ];
     const installed = await listInstalledContentPackages(fixture.dataDir);
@@ -238,6 +262,10 @@ test("installed Korean package exposes Chapter 15 and split vocabulary review de
 
     assert.deepEqual(installed.map((record) => record.packageId), ["com.sleepymario.language.korean"]);
     assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-015-basic-life-sentences-15/chapter.md"));
+    assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-031-basic-sentences-31/chapter.md"));
+    assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-040-basic-sentences-40/chapter.md"));
+    assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-041-basic-sentences-41/chapter.md"));
+    assert.ok(entries.some((entry) => entry.path === "units/korean-core/chapter-050-basic-sentences-50/chapter.md"));
     for (const deck of expectedReviewDecks) {
       assert.ok(entries.some((entry) => entry.path === deck.sourcePath));
     }
@@ -367,6 +395,12 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.english",
       path: "units/english-core/chapter-001-basic-sentences-1/chapter.md"
     });
+    const englishChapter1EnglishLocale = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.english",
+      path: "units/english-core/chapter-001-basic-sentences-1/chapter.md",
+      locale: "en-US"
+    });
     const germanChapter1 = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.german",
@@ -411,6 +445,12 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.match(chineseTraditionalChapter1.text, /我是林雅婷/);
     assert.match(chineseTraditionalChapter1.text, /我是學生/);
     assert.match(englishChapter1.text, /Chapter 1 -- First Introductions/);
+    assert.match(englishChapter1.text, /This chapter introduces simple English identity sentences with `I am`/);
+    assert.doesNotMatch(englishChapter1.text, /[\u3400-\u9fff]/u);
+    assert.match(englishChapter1.text, /Maria  : Hello\./);
+    assert.match(englishChapter1EnglishLocale.text, /Chapter 1 -- First Introductions/);
+    assert.match(englishChapter1EnglishLocale.text, /This chapter introduces simple English identity sentences with `I am`/);
+    assert.doesNotMatch(englishChapter1EnglishLocale.text, /[\u3400-\u9fff]/u);
     assert.match(chineseTraditionalChapter1.text, /\|\s*學生\s*\|\s*xuéshēng\s*\|\s*ㄒㄩㄝˊ ㄕㄥ\s*\|\s*student\s*\|/);
     assert.match(chineseTraditionalChapter1.text, /Lín Yǎtíng: Wǒ shì Lín Yǎtíng\./);
     assert.match(chineseTraditionalChapter1.text, /Lin Yating: I am Lin Yating\./);
@@ -446,6 +486,10 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
         ["Chapter 16-20", "review-decks/chapter-016-020/cards.tsv"],
         ["Chapter 21-25", "review-decks/chapter-021-025/cards.tsv"],
         ["Chapter 26-30", "review-decks/chapter-026-030/cards.tsv"],
+        ["Chapter 31-35", "review-decks/chapter-031-035/cards.tsv"],
+        ["Chapter 36-40", "review-decks/chapter-036-040/cards.tsv"],
+        ["Chapter 41-45", "review-decks/chapter-041-045/cards.tsv"],
+        ["Chapter 46-50", "review-decks/chapter-046-050/cards.tsv"],
         ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"]
       ]
     );
@@ -464,7 +508,9 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     const japaneseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.japanese");
     assert.deepEqual(japaneseSources.map((source) => [source.title, source.sourcePath]), [
       ["Chapter 1-5", "review-decks/chapter-001-005/cards.tsv"],
-      ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"]
+      ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"],
+      ["Chapter 11-15", "review-decks/chapter-011-015/cards.tsv"],
+      ["Chapter 16-20", "review-decks/chapter-016-020/cards.tsv"]
     ]);
 
     const vietnameseItems = await listReadingReviewItems({

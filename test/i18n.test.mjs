@@ -46,22 +46,16 @@ test("source-language setting defaults to English and persists changes", async (
   }
 });
 
-test("module tree displays English source-language settings", async () => {
+test("module tree displays English roots without the former settings path", async () => {
   const tree = await buildModuleTree({ locale: "en-US" });
-  assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available", "Settings"]);
-  const settings = tree.children.find((node) => node.id === "settings");
-  const selector = settings.children.find((node) => node.id === "settings:source-language");
-  assert.equal(selector.label, "Source language");
-  assert.deepEqual(selector.children.map((node) => node.label), ["* English", "  中文（臺灣）"]);
+  assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
+  assert.equal(tree.children.some((node) => node.id === "settings"), false);
 });
 
-test("module tree displays Traditional Chinese Taiwan source-language settings", async () => {
+test("module tree displays Traditional Chinese Taiwan roots without the former settings path", async () => {
   const tree = await buildModuleTree({ locale: "zh-Hant-TW" });
-  assert.deepEqual(tree.children.map((node) => node.label), ["已安裝模組", "可安裝模組", "設定"]);
-  const settings = tree.children.find((node) => node.id === "settings");
-  const selector = settings.children.find((node) => node.id === "settings:source-language");
-  assert.equal(selector.label, "來源語言");
-  assert.deepEqual(selector.children.map((node) => node.label), ["  英文", "* 中文（臺灣）"]);
+  assert.deepEqual(tree.children.map((node) => node.label), ["已安裝模組", "可安裝模組"]);
+  assert.equal(tree.children.some((node) => node.id === "settings"), false);
 });
 
 test("review deck status text localizes without changing status kinds", () => {

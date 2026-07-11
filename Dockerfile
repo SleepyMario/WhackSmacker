@@ -18,11 +18,15 @@ WORKDIR /app
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/migrations ./migrations
 
 # Bundle the current local package feed for the first Docker image.
 # The catalogue currently contains absolute file:// paths, so keep that path
 # available inside the container and expose /feed as a stable shortcut.
-COPY whacksmacker-packages /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages
+RUN mkdir -p /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages
+COPY whacksmacker-packages/catalogue.json /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages/catalogue.json
+COPY whacksmacker-packages/manifests /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages/manifests
+COPY whacksmacker-packages/packages /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages/packages
 RUN ln -s /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages /feed
 
 VOLUME ["/data"]

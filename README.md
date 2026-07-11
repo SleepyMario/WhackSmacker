@@ -71,7 +71,11 @@ The default address is `http://127.0.0.1:8787`; it never binds to all interfaces
 
 The server exposes a public, data-free landing page at `/`, a login page at `/login`, and the private study interface at `/app`. When a password is configured, the login form creates an HttpOnly local session; existing HTTP Basic authentication remains supported for API clients.
 
-The first web release provides a dashboard, package install/uninstall (including keep/delete progress), review decks and live ratings with 1–4 shortcuts, localized source-language settings, progress summaries, readable content browsing, responsive navigation, and light/dark themes. Package updates, browser auto-opening, rich Markdown rendering, and multi-user/public hosting are deferred.
+The public pages include a working browser UI-language selector for English and 中文（臺灣）. Its `whacksmacker.ui-locale` browser-local-storage value is used first; otherwise the public pages select 中文（臺灣） for Traditional Chinese/Taiwan browser preferences and English by default. The selector changes public-page copy immediately. The UI preference contains no authentication or private application data.
+
+The public alpha provides a dashboard, PostgreSQL-backed user accounts and isolated learning state, package install/uninstall (including keep/delete progress), review decks and live ratings with 1–4 shortcuts, persisted per-user source-language settings and source-package isolation through the API, progress summaries, readable content browsing, responsive navigation, and light/dark themes. Package updates, browser auto-opening, and rich Markdown rendering are deferred.
+
+Known alpha limitation: the source-language selector works on the public/unauthenticated pages, but the logged-in private-app toggle still requires follow-up. Until it is repaired, users may need to refresh the private app or use the currently supported Settings path after changing the source language. The persisted per-user locale and source-package isolation remain enforced through the API.
 
 Installed Korean curriculum content and language terminology are available through domain-prefixed commands:
 
@@ -284,3 +288,5 @@ whacksmacker backup restore whacksmacker-backup.json --data-dir ~/.local/share/w
 ```
 
 Roadmap Point 12 removed the old Anki-backed review path. Native review is the only active review workflow.
+
+PostgreSQL-backed multi-user web deployment, account administration, Compose, and portable backup procedures are documented in [docs/postgresql-public-alpha.md](docs/postgresql-public-alpha.md). Filesystem-backed local CLI and legacy single-user web behavior remain available when `DATABASE_URL` is absent.

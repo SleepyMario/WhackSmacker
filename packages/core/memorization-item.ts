@@ -171,7 +171,8 @@ export async function readInstalledMemorizationItems(
   packageId: string,
   path: string,
   dataDir?: string,
-  packageVersion?: string
+  packageVersion?: string,
+  sourceLocale?: string
 ): Promise<InstalledMemorizationItems> {
   if (!isMemorizationItemPath(path)) {
     throw new Error(`Memorization item path must be under content/memorization and safe: ${path}`);
@@ -186,12 +187,44 @@ export async function readInstalledMemorizationItems(
   const destination = join(root, path);
   ensureInside(root, destination);
   const collection = normalizeMemorizationItemCollection(JSON.parse((await readFile(destination)).toString("utf8")) as unknown);
+  const items = await applySourceReviewOverlay(collection.items, selected, sourceLocale, dataDir);
   return {
     packageId: selected.packageId,
     packageVersion: selected.packageVersion,
     path,
-    items: collection.items
+    items
   };
+}
+
+async function applySourceReviewOverlay(items: readonly MemorizationItem[], base: InstalledPackageRecord, locale: string | undefined, dataDir?: string): Promise<readonly MemorizationItem[]> {
+  const baseRoot = installedPackageRoot(base, dataDir);
+  const baseManifest = await readInstalledManifest(baseRoot);
+  if (baseManifest.localization?.role !== "base-curriculum") return items;
+  const selected = locale === "zh-Hant-TW" || locale === "zh-TW" ? "zh-TW" : locale === "en-US" || locale === "en" ? "en" : baseManifest.localization.defaultSourceLocale;
+  const locales = [selected, baseManifest.localization.defaultSourceLocale].filter((value, index, all) => all.indexOf(value) === index);
+  for (const candidate of locales) {
+    for (const record of await listInstalledContentPackages(dataDir)) {
+      if (record.contentType !== "curriculum-source-language-pack") continue;
+      const root = installedPackageRoot(record, dataDir);
+      const manifest = await readInstalledManifest(root);
+      if (manifest.localization?.role !== "source-language-pack" || manifest.localization.basePackageId !== base.packageId || manifest.localization.sourceLocale !== candidate) continue;
+      try {
+        const overlay = JSON.parse((await readFile(join(root, "content", "content.json"))).toString("utf8")) as { review?: readonly { sourcePath: string; rowNumber: number; prompt: string; answer: string; notes: string; title: string }[] };
+        return items.flatMap(item => {
+          const rowNumber = Number.parseInt(item.id.match(/\/(\d{4})-/u)?.[1] ?? "0", 10);
+          const value = overlay.review?.find(entry => entry.sourcePath === item.source?.path && entry.rowNumber === rowNumber);
+          if (value === undefined) return [];
+          return [{ ...item,
+            prompt: value.prompt.length === 0 ? item.prompt : { ...item.prompt, text: value.prompt, plainText: value.prompt },
+            answer: value.answer.length === 0 ? item.answer : { ...item.answer, text: value.answer, plainText: value.answer },
+            notes: value.notes,
+            source: item.source === undefined ? undefined : { ...item.source, title: value.title }
+          }];
+        });
+      } catch { continue; }
+    }
+  }
+  return items;
 }
 
 function validateItem(value: unknown, field: string, errors: string[]): void {

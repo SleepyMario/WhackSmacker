@@ -153,7 +153,7 @@ export async function listReadingReviewItems(options: ListReadingReviewItemsOpti
   for (const contentPackage of packages) {
     const readablePaths = await safeReadablePathSet(contentPackage, options.dataDir);
     for (const file of await listInstalledMemorizationItemFiles(contentPackage.packageId, options.dataDir, contentPackage.packageVersion)) {
-      const collection = await readInstalledMemorizationItems(contentPackage.packageId, file.path, options.dataDir, contentPackage.packageVersion);
+      const collection = await readInstalledMemorizationItems(contentPackage.packageId, file.path, options.dataDir, contentPackage.packageVersion, options.sourceLocale);
       for (const item of collection.items) {
         const sourcePath = item.source?.path;
         if (options.sourcePath !== undefined && sourcePath !== options.sourcePath) {

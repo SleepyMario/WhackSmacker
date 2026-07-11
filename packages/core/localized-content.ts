@@ -12,11 +12,11 @@ export function localized(
   if (value === null || value === undefined || typeof value !== "object" || Array.isArray(value)) {
     return "";
   }
-  const selected = usableString(value[locale]);
+  const selected = localeCandidates(locale).map((candidate) => usableString(value[candidate])).find((candidate) => candidate !== undefined);
   if (selected !== undefined) {
     return selected;
   }
-  const fallback = usableString(value[fallbackLocale]);
+  const fallback = localeCandidates(fallbackLocale).map((candidate) => usableString(value[candidate])).find((candidate) => candidate !== undefined);
   if (fallback !== undefined) {
     return fallback;
   }
@@ -27,6 +27,17 @@ export function localized(
     }
   }
   return "";
+}
+
+function localeCandidates(locale: string): readonly string[] {
+  const normalized = locale.trim();
+  if (normalized === "zh-Hant-TW" || normalized === "zh-TW") {
+    return [normalized, "zh-TW", "zh-Hant-TW"];
+  }
+  if (normalized === "en-US" || normalized === "en") {
+    return [normalized, "en", "en-US"];
+  }
+  return [normalized];
 }
 
 export function isLocalizedContentValue(value: unknown, allowEmptyString = false): value is LocalizedContentValue {

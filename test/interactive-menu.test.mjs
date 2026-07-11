@@ -26,11 +26,13 @@ import {
   listAvailableModuleDescriptors,
   renderTwoPaneLanguageTree,
   renderLanguageTreeRightPane,
+  renderSourceLanguageToggle,
   renderWhackSmackerHeader,
   readableContentEntriesToMenuItems,
   reviewDeckMenuStatusFromStates,
   reviewSourcesToMenuItems,
   runInteractiveMenu,
+  shouldShowTogglesPane,
   shouldUseTerminalColors,
   whackSmackerBanner,
   whackSmackerSubtitle
@@ -54,10 +56,11 @@ import {
 import { loadSourceLanguageSettings } from "../dist/src/settings/source-language.js";
 
 class FakeTerminal {
-  constructor(keys, { interactive = true, colorsEnabled = interactive } = {}) {
+  constructor(keys, { interactive = true, colorsEnabled = interactive, width } = {}) {
     this.keys = [...keys];
     this.isInteractive = interactive;
     this.colorsEnabled = colorsEnabled;
+    this.width = width;
     this.output = "";
     this.enterCount = 0;
     this.restoreCount = 0;
@@ -262,7 +265,7 @@ test("One, Two, Three submenu exposes workbook generation and back", () => {
   );
 });
 
-test("interactive menu opens the module two-pane tree", async () => {
+test("interactive menu opens the module three-pane tree", async () => {
   const fixture = await createInstalledDutchFixture();
   const terminal = new FakeTerminal([
     key("q", { sequence: "q" })
@@ -271,7 +274,7 @@ test("interactive menu opens the module two-pane tree", async () => {
   try {
     await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
 
-    assert.match(terminal.output, /\+-{32}\+-{82}\+/);
+    assert.match(stripAnsi(terminal.output), /\+-+\+-+\+-+\+/u);
     assert.match(terminal.output, /WhackSmacker/);
     assert.match(terminal.output, /Installed modules/);
     assert.match(terminal.output, /Modules available/);
@@ -280,7 +283,7 @@ test("interactive menu opens the module two-pane tree", async () => {
     assert.match(terminal.output, /Geography/);
     assert.match(terminal.output, /Mathematics/);
     assert.doesNotMatch(terminal.output, /mouse/i);
-    assert.match(terminal.output, /Space install available/);
+    assert.match(terminal.output, /Space activate\/install/);
   } finally {
     await fixture.cleanup();
   }
@@ -308,7 +311,7 @@ test("module tree lists top-level categories and installed language packages", a
     const languages = installed.children.find((node) => node.label === "Languages");
 
     assert.equal(tree.label, "WhackSmacker");
-    assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available", "Settings"]);
+    assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
     assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
     assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "English", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
@@ -379,7 +382,7 @@ test("language category can expand installed package nodes in the module tree", 
 
     assert.match(terminal.output, /Languages/);
     assert.match(terminal.output, /Dutch/);
-    assert.match(terminal.output, /Space install available/);
+    assert.match(terminal.output, /Space activate\/install/);
   } finally {
     await fixture.cleanup();
   }
@@ -420,6 +423,12 @@ test("language tree lists installed packages and package sections", async () => 
     for (const languagePackage of tree.children) {
       assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Review decks", "Package info", "Uninstall"]);
     }
+    const english = tree.children.find((node) => node.label === "English");
+    const englishReadContent = english.children.find((node) => node.label === "Read content");
+    const englishReviewDecks = english.children.find((node) => node.label === "Review decks");
+    assert.ok(englishReadContent.children.some((node) => node.label === "Chapter 1 -- First Introductions"));
+    assert.ok(englishReadContent.children.some((node) => node.label === "Grammar - Easy"));
+    assert.deepEqual(englishReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
   } finally {
     await fixture.cleanup();
   }
@@ -498,7 +507,10 @@ test("language tree exposes Japanese writing placeholders and core review deck",
     assert.ok(readContent.children.some((node) => node.label === "An Introduction to Kanji"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 20 -- A Day Trip to Kyoto"));
+    assert.ok(readContent.children.filter((node) => node.label === "Grammar - Easy").length >= 4);
+    assert.ok(readContent.children.filter((node) => node.label === "Grammar - Hard").length >= 4);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20"]);
   } finally {
     await fixture.cleanup();
   }
@@ -516,7 +528,7 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
     const koreanReview = korean.children.find((node) => node.label === "Review decks");
     const chineseReview = chinese.children.find((node) => node.label === "Review decks");
 
-    assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30"]);
+    assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50"]);
     assert.deepEqual(chineseReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
     assert.equal(koreanReview.children.some((node) => node.label.includes("com.sleepymario")), false);
     assert.equal(chineseReview.children.some((node) => node.label.includes("cards.tsv")), false);
@@ -569,11 +581,14 @@ test("language tree exposes Korean Grammar Easy and Hard summaries after each co
     const expanded = new Set(["languages", "com.sleepymario.language.korean", "com.sleepymario.language.korean:read"]);
     const visible = flattenVisibleLanguageTree(tree, expanded);
 
-    for (const blockEnd of [5, 10, 15]) {
+    for (const blockEnd of [5, 10, 15, 20, 25, 30, 35, 40]) {
       const chapterIndex = labels.findIndex((label) => label.startsWith(`Chapter ${blockEnd} -- `));
       const paddedStart = String(blockEnd - 4).padStart(3, "0");
       const paddedEnd = String(blockEnd).padStart(3, "0");
-      const coreChapterIndex = readContent.children.findIndex((node) => node.filePath === `units/korean-core/chapter-${paddedEnd}-basic-life-sentences-${blockEnd}/chapter.md`);
+      const coreChapterIndex = readContent.children.findIndex((node) =>
+        node.filePath === `units/korean-core/chapter-${paddedEnd}-basic-life-sentences-${blockEnd}/chapter.md` ||
+        node.filePath === `units/korean-core/chapter-${paddedEnd}-basic-sentences-${blockEnd}/chapter.md`
+      );
       const easyIndex = readContent.children.findIndex((node, index) => index > coreChapterIndex && node.label === "Grammar - Easy");
       const hardIndex = readContent.children.findIndex((node, index) => index > easyIndex && node.label === "Grammar - Hard");
       const easyNode = readContent.children[easyIndex];
@@ -711,7 +726,7 @@ test("language tree flattening and renderer use deterministic keyboard state", a
     assert.deepEqual(labels.slice(0, 5), ["Languages", "Dutch", "Read content", "Review decks", "Package info"]);
     assert.match(output, />\s+>\s+Read content/);
     assert.match(output, /Preview text/);
-    assert.match(output, /Space install available/);
+    assert.match(output, /Space activate\/install/);
   } finally {
     await fixture.cleanup();
   }
@@ -758,6 +773,63 @@ test("two-pane renderer styles tree state and markdown-like right pane content",
   assert.match(output, /Example/u);
   assert.match(output, /Language/u);
   assert.doesNotMatch(output, /^\s*\.\.\.\s*$/mu);
+});
+
+test("right-pane source-language toggle shows only the current language in orange", () => {
+  const english = renderSourceLanguageToggle("en-US", true);
+  const chinese = renderSourceLanguageToggle("zh-Hant-TW", true);
+
+  assert.equal(english, "\x1b[1m\x1b[38;5;208mEnglish\x1b[0m");
+  assert.equal(chinese, "\x1b[1m\x1b[38;5;208m中文（臺灣）\x1b[0m");
+  assert.equal(stripAnsi(english), "English");
+  assert.equal(stripAnsi(chinese), "中文（臺灣）");
+  assert.doesNotMatch(stripAnsi(`${english}${chinese}`), /Source language:|來源語言：/u);
+});
+
+test("three-pane renderer separates navigation output and toggles", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const english = renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "navigation", 150);
+  const chinese = renderTwoPaneLanguageTree(tree, new Set(), 0, "預覽", true, 0, 28, "zh-Hant-TW", "toggles", 150);
+  const englishPlain = stripAnsi(english);
+  const toggleRow = englishPlain.split("\n").find((line) => line.includes("English"));
+  const cells = toggleRow.split("|");
+
+  assert.match(englishPlain, /WhackSmacker/u);
+  assert.match(englishPlain, /Output/u);
+  assert.match(englishPlain, /Toggles/u);
+  assert.equal(cells[2].includes("English"), false);
+  assert.equal(cells[3].trim(), "English");
+  assert.match(english, /\x1b\[1m\x1b\[38;5;208mEnglish\x1b\[0m/u);
+  assert.match(chinese, /\x1b\[7m\x1b\[1m> 中文（臺灣）\x1b\[0m/u);
+  assert.match(englishPlain, /Left\/Right focus/u);
+});
+
+test("focus selector jumps between navigation and the toggle row while skipping titles and Output", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const navigation = renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "navigation", 150);
+  const toggles = renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "toggles", 150);
+  const selectedToggleRow = stripAnsi(toggles).split("\n").find((line) => line.includes("> English"));
+
+  assert.match(navigation, /\x1b\[7m\x1b\[1m>\s+WhackSmacker\x1b\[0m/u);
+  assert.match(toggles, /\x1b\[7m\x1b\[1m> English\x1b\[0m/u);
+  assert.equal((toggles.match(/\x1b\[7m/gu) ?? []).length, 1);
+  assert.equal(selectedToggleRow?.split("|")[3].trim(), "> English");
+  assert.doesNotMatch(toggles, /\x1b\[7m[^\n]*Toggles/u);
+  assert.doesNotMatch(toggles, /\x1b\[7m[^\n]*Output/u);
+});
+
+test("narrow terminals collapse the Toggles pane without corrupting borders", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const output = renderTwoPaneLanguageTree(tree, new Set(), 0, "Narrow output", false, 0, 10, "en-US", "navigation", 90);
+  const lines = output.split("\n");
+
+  assert.equal(shouldShowTogglesPane(90), false);
+  assert.doesNotMatch(output, /Toggles/u);
+  assert.match(output, /WhackSmacker/u);
+  assert.match(output, /Output/u);
+  assert.equal(lines[0].length, 90);
+  assert.equal(lines.slice(0, 13).filter((line) => line.startsWith("|")).every((line) => line.length === 90), true);
+  assert.ok(lines.at(-1).length <= 90);
 });
 
 test("two-pane renderer keeps the right border fixed while wrapping long wide content", () => {
@@ -847,7 +919,7 @@ test("two-pane renderer preserves read content chapter titles without ellipsis-o
   assert.match(output, /and First/u);
   assert.match(output, /Greetings/u);
   assert.match(output, /Ch 15 -- Casual Absence/u);
-  assert.match(output, /\|\s+I\s+\|/u);
+  assert.match(output, /Ch 15 -- Casual Absence I/u);
   assert.match(output, /Grammar -- Easy/u);
   assert.match(output, /Grammar -- Hard/u);
   assert.doesNotMatch(output, /Ch 1\s*--\s*\.\.\./u);
@@ -1235,7 +1307,8 @@ test("two-pane renderer starts chapter content near the content pane border", ()
   assert.equal(headingStart, (contentBorderColumns[0] ?? 0) + 2);
   assert.equal(bodyStart, (contentBorderColumns[0] ?? 0) + 2);
   assert.equal(dialogueStart, (contentBorderColumns[0] ?? 0) + 2);
-  assert.equal(contentBorderColumns[0], 33);
+  assert.ok((contentBorderColumns[0] ?? 0) >= 33);
+  assert.ok((contentBorderColumns[0] ?? 0) <= 75);
   assert.doesNotMatch(output, /Chapter 1 -- Names and First Greetings/u);
   assert.doesNotMatch(output, /^.*\|\s+code\s+\|.*$/mu);
 });
@@ -1313,7 +1386,7 @@ test("Korean and Chinese review source menus use clean deck names", async () => 
       packageId: "com.sleepymario.language.chinese.mandarin.traditional"
     }));
 
-    assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30"]);
+    assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50"]);
     assert.deepEqual(chinese.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
   } finally {
     await fixture.cleanup();
@@ -2024,34 +2097,79 @@ test("interactive menu starts with the module tree", async () => {
   assert.match(stripAnsi(terminal.output), /Games/);
   assert.match(stripAnsi(terminal.output), /Geography/);
   assert.match(stripAnsi(terminal.output), /Mathematics/);
+  assert.doesNotMatch(stripAnsi(terminal.output), /^\|[^\n]*\bSettings\b/mu);
+  assert.doesNotMatch(stripAnsi(terminal.output), /^\|[^\n]*\bSource language\b/mu);
 });
 
-test("interactive source-language selector persists and repaints Traditional Chinese UI", async () => {
-  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-menu-settings-"));
+test("module tree omits the former Settings source-language path in every locale", async () => {
+  for (const locale of ["en-US", "zh-Hant-TW"]) {
+    const tree = await buildModuleTree({ locale });
+    const nodes = [];
+    const visit = (node) => {
+      nodes.push(node);
+      for (const child of node.children ?? []) {
+        visit(child);
+      }
+    };
+    visit(tree);
+
+    assert.deepEqual(tree.children.map((node) => node.id), ["installed-modules", "available-modules"]);
+    assert.equal(nodes.some((node) => node.id === "settings" || node.id.startsWith("settings:")), false);
+    assert.equal(nodes.some((node) => ["settings", "source-language", "source-locale"].includes(node.kind)), false);
+    assert.equal(nodes.some((node) => node.label === "Settings" || node.label === "Source language" || node.label === "設定" || node.label === "來源語言"), false);
+  }
+});
+
+test("former language shortcut no longer changes the persisted source language", async () => {
+  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-pane-language-"));
   try {
-    const tree = await buildModuleTree({ locale: "en-US" });
-    const expanded = new Set(["whacksmacker", "installed-modules", "available-modules", "settings"]);
-    const visible = flattenVisibleLanguageTree(tree, expanded);
-    const settingsIndex = visible.findIndex((entry) => entry.node.id === "settings");
-    assert.ok(settingsIndex > 1);
-    const keys = [
-      ...Array.from({ length: settingsIndex - 1 }, () => key("down")),
-      key("down"),
-      key("return"),
-      key("down"),
-      key("down"),
-      key("return"),
+    const terminal = new FakeTerminal([
+      key("l", { sequence: "l" }),
       key("q", { sequence: "q" })
-    ];
-    const terminal = new FakeTerminal(keys, { colorsEnabled: false });
+    ], { colorsEnabled: true });
 
     await runInteractiveMenu(createStubRegistry([]), terminal, { settingsDir });
 
-    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "zh-Hant-TW");
-    assert.match(terminal.output, /已安裝模組/u);
-    assert.match(terminal.output, /可安裝模組/u);
-    assert.match(terminal.output, /來源語言/u);
-    assert.match(terminal.output, /來源語言已變更為中文（臺灣）。/u);
+    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "en-US");
+    assert.match(terminal.output, /\x1b\[1m\x1b\[38;5;208mEnglish\x1b\[0m/u);
+    assert.doesNotMatch(stripAnsi(terminal.output), /中文（臺灣）|已安裝模組/u);
+    assert.match(stripAnsi(terminal.output), /Installed modules/u);
+  } finally {
+    await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
+test("left and right arrows focus Toggles while Enter and Space cycle its language", async () => {
+  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-pane-focus-"));
+  try {
+    const terminal = new FakeTerminal([
+      key("right"),
+      key("return"),
+      key("left"),
+      key("right"),
+      key("space", { sequence: " " }),
+      key("left"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: true, width: 150 });
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { settingsDir });
+
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter((screen) => screen !== "");
+    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "en-US");
+    assert.ok(screens.length >= 7);
+    assert.match(screens[1], /\x1b\[7m\x1b\[1m> English\x1b\[0m/u);
+    assert.equal((screens[1].match(/\x1b\[7m/gu) ?? []).length, 1);
+    assert.match(screens[2], /\x1b\[7m\x1b\[1m> 中文（臺灣）\x1b\[0m/u);
+    assert.match(screens[3], /\x1b\[7m\x1b\[1m>[^\n]*已安裝模組/u);
+    assert.match(screens[3], /\x1b\[1m\x1b\[38;5;208m中文（臺灣）\x1b\[0m/u);
+    assert.match(screens[4], /\x1b\[7m\x1b\[1m> 中文（臺灣）\x1b\[0m/u);
+    assert.match(screens[5], /\x1b\[7m\x1b\[1m> English\x1b\[0m/u);
+    assert.match(screens[6], /\x1b\[7m\x1b\[1m>[^\n]*Installed modules/u);
+    assert.match(screens[6], /\x1b\[1m\x1b\[38;5;208mEnglish\x1b\[0m/u);
+    assert.doesNotMatch(terminal.output, /\x1b\[7m[^\n]*Toggles/u);
+    assert.doesNotMatch(terminal.output, /\x1b\[7m[^\n]*Output/u);
+    assert.match(stripAnsi(terminal.output), /已安裝模組/u);
+    assert.match(stripAnsi(terminal.output), /Installed modules/u);
   } finally {
     await rm(settingsDir, { recursive: true, force: true });
   }
@@ -2233,7 +2351,8 @@ async function loadDutchReviewProgress(dataDir) {
 }
 
 function rightPaneCell(line) {
-  const match = line.match(/^\| .+? \| (.*) \|$/u);
+  const withoutToggles = line.replace(/ \| {2,}(?:English|中文（臺灣）)?\s*\|$/u, " |");
+  const match = withoutToggles.match(/^\| .+? \| (.*) \|$/u);
   return (match?.[1] ?? "").trimEnd();
 }
 

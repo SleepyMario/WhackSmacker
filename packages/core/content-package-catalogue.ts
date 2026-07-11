@@ -77,6 +77,7 @@ export interface ContentPackageCatalogueEntry {
   readonly homepage?: string;
   readonly authors?: readonly string[];
   readonly keywords?: readonly string[];
+  readonly localization?: ContentPackageManifest["localization"];
 }
 
 export interface ContentPackageCatalogueFile {
@@ -211,6 +212,7 @@ async function createCatalogueEntry(packagePath: string): Promise<ContentPackage
     ...(manifest.homepage === undefined ? {} : { homepage: manifest.homepage }),
     ...(manifest.authors === undefined ? {} : { authors: [...manifest.authors] }),
     ...(manifest.keywords === undefined ? {} : { keywords: [...manifest.keywords].sort() })
+    ,...(manifest.localization === undefined ? {} : { localization: manifest.localization })
   };
 }
 

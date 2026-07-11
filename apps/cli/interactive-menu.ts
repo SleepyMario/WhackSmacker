@@ -45,7 +45,7 @@ import {
   defaultOneTwoThreeOutputPath,
   defaultSixToNineOutputPath
 } from "../../packages/mathematics";
-import { sourceLocales, sourceLocaleLabel, translate, type SourceLocale } from "../../src/i18n";
+import { sourceLocaleLabel, translate, type SourceLocale } from "../../src/i18n";
 import { defaultSettingsDirectoryForContentDataDirectory, loadSourceLanguageSettings, saveSourceLanguage } from "../../src/settings/source-language";
 
 declare function require(name: "node:fs/promises"): {
@@ -80,6 +80,7 @@ interface NodeInput {
 
 interface NodeOutput {
   isTTY?: boolean;
+  columns?: number;
   write(text: string): void;
 }
 
@@ -92,6 +93,7 @@ export interface KeyPress {
 export interface Terminal {
   readonly isInteractive: boolean;
   readonly colorsEnabled: boolean;
+  readonly width?: number;
   write(text: string): void;
   readKey(): Promise<KeyPress>;
   enter(): void;
@@ -128,9 +130,6 @@ export type LanguageTreeNodeKind =
   | "uninstall"
   | "content"
   | "review-source"
-  | "settings"
-  | "source-language"
-  | "source-locale"
   | "message";
 
 export interface LanguageTreeNode {
@@ -156,7 +155,6 @@ export interface LanguageTreeNode {
   readonly commandPath?: readonly string[];
   readonly commandArgs?: readonly string[];
   readonly launchTitle?: string;
-  readonly sourceLocale?: SourceLocale;
 }
 
 export type ReviewDeckMenuStatusKind = "not_started" | "finished" | "no_cards_to_review" | "has_cards_to_review";
@@ -200,6 +198,7 @@ const ansi = {
   blue: "\x1b[34m",
   green: "\x1b[32m",
   yellow: "\x1b[33m",
+  orange: "\x1b[38;5;208m",
   pink: "\x1b[38;5;213m",
   red: "\x1b[31m",
   gray: "\x1b[90m"
@@ -334,7 +333,25 @@ export function reviewSourcesToMenuItems(sources: readonly ReadingReviewSource[]
     packageVersion: source.packageVersion,
     sourcePath: source.sourcePath,
     itemCount: source.itemCount
-  })).sort((left, right) => compareMenuLabels(left.label, right.label));
+  })).sort((left, right) => {
+    const leftChapter = reviewSourceChapterStart(left.sourcePath);
+    const rightChapter = reviewSourceChapterStart(right.sourcePath);
+    if (leftChapter !== undefined && rightChapter !== undefined && leftChapter !== rightChapter) {
+      return leftChapter - rightChapter;
+    }
+    if (leftChapter !== undefined && rightChapter === undefined) {
+      return -1;
+    }
+    if (leftChapter === undefined && rightChapter !== undefined) {
+      return 1;
+    }
+    return compareMenuLabels(left.label, right.label);
+  });
+}
+
+function reviewSourceChapterStart(sourcePath: string | undefined): number | undefined {
+  const match = sourcePath?.match(/chapter-0*(\d+)-0*\d+/u);
+  return match === null || match === undefined ? undefined : Number.parseInt(match[1], 10);
 }
 
 export function reviewDeckMenuStatusFromStates(
@@ -428,6 +445,9 @@ export function createNodeTerminal(): Terminal {
     },
     get colorsEnabled() {
       return shouldUseTerminalColors(process.stdout.isTTY === true, process.env);
+    },
+    get width() {
+      return process.stdout.columns;
     },
     write(text) {
       process.stdout.write(text);
@@ -781,18 +801,20 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   const savedSettings = await loadSourceLanguageSettings(options.settingsDir);
   options = { ...options, locale: options.locale ?? savedSettings.sourceLanguage };
   let tree = await buildModuleTree(options);
-  let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules", "settings"]);
+  let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let selectedReviewStartId: string | null = null;
   let embeddedReview: EmbeddedReviewSession | null = null;
   let pendingUninstall: PendingUninstallSession | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
   let rightPaneOffset = 0;
+  let focusedPane: FocusablePane = "navigation";
+  let toggleSelection = 0;
 
   while (true) {
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
     selection = Math.min(selection, visible.length - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -869,6 +891,52 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         continue;
       }
       return true;
+    }
+
+    if (focusedPane === "navigation" && isRight(key) && shouldShowTogglesPane(terminal.width)) {
+      focusedPane = "toggles";
+      toggleSelection = 0;
+      continue;
+    }
+
+    if (focusedPane === "toggles") {
+      if (isLeft(key) || isEscape(key)) {
+        focusedPane = "navigation";
+        continue;
+      }
+      if (isPageUp(key)) {
+        rightPaneOffset = Math.max(0, rightPaneOffset - rightPanePageSize);
+        continue;
+      }
+      if (isPageDown(key)) {
+        rightPaneOffset += rightPanePageSize;
+        continue;
+      }
+      if (isHome(key)) {
+        rightPaneOffset = 0;
+        continue;
+      }
+      if (isEnd(key)) {
+        rightPaneOffset = Number.MAX_SAFE_INTEGER;
+        continue;
+      }
+      if (isUp(key) || isDown(key)) {
+        toggleSelection = wrapSelection(toggleSelection + (isUp(key) ? -1 : 1), sourceLanguageToggleCount);
+        continue;
+      }
+      if (isEnter(key) || isSpace(key)) {
+        options = await persistInteractiveSourceLocale(options, nextSourceLocale(options.locale));
+        embeddedReview = null;
+        pendingUninstall = null;
+        selectedReviewStartId = null;
+        const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
+        tree = refreshed.tree;
+        expandedIds = refreshed.expandedIds;
+        selection = refreshed.selection;
+        rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
+        rightPaneOffset = 0;
+      }
+      continue;
     }
 
     if (isUp(key)) {
@@ -1074,19 +1142,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       }
       continue;
     }
-    if (selected.node.kind === "source-locale" && selected.node.sourceLocale !== undefined) {
-      await saveSourceLanguage(selected.node.sourceLocale, options.settingsDir);
-      options = { ...options, locale: selected.node.sourceLocale };
-      tree = await buildModuleTree(options);
-      expandedIds = keepExistingExpandedIds(tree, expandedIds);
-      const localeNodeId = `settings:source-language:${selected.node.sourceLocale}`;
-      selection = Math.max(0, flattenVisibleLanguageTree(tree, expandedIds).findIndex((entry) => entry.node.id === localeNodeId));
-      rightPaneText = translate(selected.node.sourceLocale, "settings.sourceLanguageChanged", {
-        language: sourceLocaleLabel(selected.node.sourceLocale)
-      });
-      rightPaneOffset = 0;
-      continue;
-    }
     selectedReviewStartId = null;
     embeddedReview = null;
     pendingUninstall = null;
@@ -1116,6 +1171,15 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   }
 }
 
+function nextSourceLocale(locale: SourceLocale | undefined): SourceLocale {
+  return locale === "zh-Hant-TW" ? "en-US" : "zh-Hant-TW";
+}
+
+async function persistInteractiveSourceLocale(options: InteractiveMenuOptions, locale: SourceLocale): Promise<InteractiveMenuOptions> {
+  await saveSourceLanguage(locale, options.settingsDir);
+  return { ...options, locale };
+}
+
 function normalizeTreeOptions(options: InteractiveMenuOptions | string | undefined): InteractiveMenuOptions {
   if (typeof options === "string") {
     return { dataDir: options };
@@ -1134,8 +1198,7 @@ export async function buildModuleTree(options: InteractiveMenuOptions | string |
     kind: "root",
     children: [
       await buildInstalledModulesTree(descriptors, resolvedOptions.dataDir, locale),
-      buildAvailableModulesTree(availableDescriptors, resolvedOptions.cataloguePath, locale),
-      buildSettingsTree(locale)
+      buildAvailableModulesTree(availableDescriptors, resolvedOptions.cataloguePath, locale)
     ]
   };
 }
@@ -1362,7 +1425,7 @@ export async function listAvailableModuleDescriptors(
 
   if (cataloguePath !== undefined) {
     for (const entry of await listAvailableContentPackages(cataloguePath)) {
-      if (!entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
+      if (entry.contentType === "curriculum-source-language-pack" || !entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
         continue;
       }
       descriptors.push(catalogueEntryToModuleDescriptor(entry, installedByPackageId.get(entry.packageId), locale));
@@ -1760,40 +1823,6 @@ function categoryLabel(category: FirstClassModuleDescriptor["category"], locale:
   return translate(locale, keys[category]);
 }
 
-function buildSettingsTree(locale: SourceLocale): LanguageTreeNode {
-  const currentLanguage = sourceLocaleLabel(locale, locale);
-  return {
-    id: "settings",
-    label: translate(locale, "menu.settings"),
-    kind: "settings",
-    previewText: [
-      translate(locale, "menu.settings"),
-      "",
-      translate(locale, "settings.currentSourceLanguage", { language: currentLanguage })
-    ].join("\n"),
-    children: [{
-      id: "settings:source-language",
-      label: translate(locale, "menu.sourceLanguage"),
-      kind: "source-language",
-      previewText: [
-        translate(locale, "menu.sourceLanguage"),
-        "",
-        translate(locale, "settings.currentSourceLanguage", { language: currentLanguage }),
-        translate(locale, "settings.chooseSourceLanguage")
-      ].join("\n"),
-      children: sourceLocales.map((sourceLocale) => ({
-        id: `settings:source-language:${sourceLocale}`,
-        label: `${sourceLocale === locale ? "* " : "  "}${sourceLocaleLabel(sourceLocale, locale)}`,
-        kind: "source-locale" as const,
-        sourceLocale,
-        previewText: translate(locale, "settings.currentSourceLanguage", {
-          language: sourceLocaleLabel(sourceLocale, locale)
-        })
-      }))
-    }]
-  };
-}
-
 export function flattenVisibleLanguageTree(root: LanguageTreeNode, expandedIds: ReadonlySet<string>): readonly VisibleLanguageTreeNode[] {
   const visible: VisibleLanguageTreeNode[] = [];
   const walk = (node: LanguageTreeNode, depth: number): void => {
@@ -1868,7 +1897,7 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
   if (node.kind === "available-module") {
     return node.previewText ?? `${node.label}\n\nPress Space to install if this module is available. Enter does not install.`;
   }
-  if (node.kind === "installed-root" || node.kind === "available-root" || node.kind === "category" || node.kind === "module" || node.kind === "command" || node.kind === "settings" || node.kind === "source-language" || node.kind === "source-locale") {
+  if (node.kind === "installed-root" || node.kind === "available-root" || node.kind === "category" || node.kind === "module" || node.kind === "command") {
     return node.previewText ?? `${node.label}\n\nSelect or expand items in the tree.`;
   }
   return [
@@ -3317,13 +3346,19 @@ function cleanContentPathLabel(path: string): string {
 }
 
 function markdownContentLabel(text: string, fallbackPath: string, locale: SourceLocale = "en-US"): string {
+  const heading = text.match(/^#\s+(.+)$/mu)?.[1]?.trim();
   if (/\/chapter-0*\d+-0*\d+-grammar-easy\/chapter\.md$/u.test(fallbackPath)) {
+    if (heading?.includes(" / ") === true) {
+      return heading;
+    }
     return translate(locale, "review.grammarEasy");
   }
   if (/\/chapter-0*\d+-0*\d+-grammar-hard\/chapter\.md$/u.test(fallbackPath)) {
+    if (heading?.includes(" / ") === true) {
+      return heading;
+    }
     return translate(locale, "review.grammarHard");
   }
-  const heading = text.match(/^#\s+(.+)$/mu)?.[1]?.trim();
   return heading === undefined || heading.length === 0 ? cleanContentPathLabel(fallbackPath) : heading;
 }
 
@@ -3427,13 +3462,19 @@ function renderLanguageTreeMenu(
   expandedIds: ReadonlySet<string>,
   selection: number,
   rightPaneText: string,
-  rightPaneOffset: number
+  rightPaneOffset: number,
+  sourceLocale: SourceLocale = "en-US",
+  focusedPane: FocusablePane = "navigation",
+  toggleSelection = 0
 ): void {
-  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset)}`);
+  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection)}`);
 }
 
 const rightPanePageSize = 24;
 const reviewBottomBarMarker = "[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]";
+const sourceLanguageToggleCount = 1;
+const minimumThreePaneWidth = 100;
+type FocusablePane = "navigation" | "toggles";
 
 export function renderTwoPaneLanguageTree(
   root: LanguageTreeNode,
@@ -3442,12 +3483,17 @@ export function renderTwoPaneLanguageTree(
   rightPaneText: string,
   colorsEnabled: boolean,
   rightPaneOffset = 0,
-  bodyHeight = 28
+  bodyHeight = 28,
+  sourceLocale: SourceLocale = "en-US",
+  focusedPane: FocusablePane = "navigation",
+  terminalWidth?: number,
+  toggleSelection = 0
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
-  const leftWidth = 30;
-  const rightWidth = 80;
-  const renderedLeftEntries = visible.map((entry, index) => renderTreeLines(entry, index === selection, leftWidth, colorsEnabled));
+  const layout = threePaneLayout(terminalWidth);
+  const leftWidth = layout.leftWidth;
+  const rightWidth = layout.outputWidth;
+  const renderedLeftEntries = visible.map((entry, index) => renderTreeLines(entry, index === selection && focusedPane === "navigation", leftWidth, colorsEnabled));
   const selectedLineIndex = renderedLeftEntries.slice(0, selection).reduce((count, entryLines) => count + entryLines.length, 0);
   const allLeftLines = renderedLeftEntries.flat();
   const leftOffset = leftPaneOffsetForSelection(selectedLineIndex, allLeftLines.length, bodyHeight);
@@ -3464,23 +3510,66 @@ export function renderTwoPaneLanguageTree(
     ...bottomBarLines
   ];
   const lines: string[] = [];
-  const horizontal = colorizeUi(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}+`, colorsEnabled);
+  const toggleHorizontal = layout.showToggles ? `+${"-".repeat(layout.toggleWidth + 2)}` : "";
+  const horizontal = colorizeUi(`+${"-".repeat(leftWidth + 2)}+${"-".repeat(rightWidth + 2)}${toggleHorizontal}+`, colorsEnabled);
   const separator = colorizeUi("|", colorsEnabled);
   lines.push(horizontal);
-  lines.push(`${separator} ${padRight(stylePaneTitle("WhackSmacker", colorsEnabled), leftWidth)} ${separator} ${padRight(stylePaneTitle("Output", colorsEnabled), rightWidth)} ${separator}`);
-  lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}`);
+  const navigationTitle = stylePaneTitle("WhackSmacker", colorsEnabled);
+  const outputTitle = stylePaneTitle("Output", colorsEnabled);
+  const togglesTitle = stylePaneTitle("Toggles", colorsEnabled);
+  lines.push(`${separator} ${padRight(navigationTitle, leftWidth)} ${separator} ${padRight(outputTitle, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(togglesTitle, layout.toggleWidth)} ${separator}` : ""}`);
+  lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}${layout.showToggles ? ` ${" ".repeat(layout.toggleWidth)} ${separator}` : ""}`);
+
+  const toggleLines = renderTogglesPane(sourceLocale, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
     const right = visibleRightLines[index] ?? "";
-    lines.push(`${separator} ${padRight(left, leftWidth)} ${separator} ${padRight(right, rightWidth)} ${separator}`);
+    const toggle = toggleLines[index] ?? "";
+    lines.push(`${separator} ${padRight(left, leftWidth)} ${separator} ${padRight(right, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(toggle, layout.toggleWidth)} ${separator}` : ""}`);
   }
 
-  const scroll = rightLines.length > scrollableHeight ? `  Output ${offset + 1}-${Math.min(offset + scrollableHeight, rightLines.length)}/${rightLines.length}` : "";
-  const footer = `Up/Down move  Enter open/start  Space install available  U uninstall  PgUp/PgDn scroll  Home/End jump  Escape collapse/back  q quit${scroll}`;
+  const scroll = rightLines.length > scrollableHeight ? `Output ${offset + 1}-${Math.min(offset + scrollableHeight, rightLines.length)}/${rightLines.length}` : "";
+  const controls = layout.showToggles
+    ? "Left/Right focus  Up/Down move  Enter open/start  Space activate/install  U uninstall  PgUp/PgDn scroll  Home/End jump  Esc back  q quit"
+    : "Up/Down move  Enter open  Space install  PgUp/PgDn scroll  Esc back  q quit";
+  const frameWidth = leftWidth + rightWidth + (layout.showToggles ? layout.toggleWidth + 10 : 7);
+  const footer = truncateTextDisplay(scroll === "" ? controls : `${scroll}  ${controls}`, frameWidth);
   lines.push(horizontal);
   lines.push(colorsEnabled ? `${ansi.green}${footer}${ansi.reset}` : footer);
   return lines.join("\n");
+}
+
+export function renderSourceLanguageToggle(sourceLocale: SourceLocale, colorsEnabled: boolean): string {
+  const label = sourceLocaleLabel(sourceLocale, sourceLocale);
+  return colorsEnabled ? `${ansi.bold}${ansi.orange}${label}${ansi.reset}` : label;
+}
+
+function renderTogglesPane(sourceLocale: SourceLocale, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
+  const selected = focused && selection === 0;
+  if (selected) {
+    const line = truncateTextDisplay(`> ${sourceLocaleLabel(sourceLocale, sourceLocale)}`, width);
+    return [colorsEnabled ? `${ansi.inverse}${ansi.bold}${line}${ansi.reset}` : line];
+  }
+  return [truncateTextDisplay(`  ${renderSourceLanguageToggle(sourceLocale, colorsEnabled)}`, width)];
+}
+
+export function shouldShowTogglesPane(terminalWidth?: number): boolean {
+  return terminalWidth === undefined || terminalWidth >= minimumThreePaneWidth;
+}
+
+function threePaneLayout(terminalWidth?: number): { readonly showToggles: boolean; readonly leftWidth: number; readonly outputWidth: number; readonly toggleWidth: number } {
+  if (!shouldShowTogglesPane(terminalWidth)) {
+    const width = Math.max(40, terminalWidth ?? 117);
+    const available = width - 7;
+    const leftWidth = Math.min(30, Math.max(14, Math.floor(available * 0.32)));
+    return { showToggles: false, leftWidth, outputWidth: Math.max(19, available - leftWidth), toggleWidth: 0 };
+  }
+  const width = Math.max(minimumThreePaneWidth, terminalWidth ?? 160);
+  const available = width - 10;
+  const toggleWidth = 22;
+  const leftWidth = Math.min(72, Math.max(30, Math.floor(width * 0.3)));
+  return { showToggles: true, leftWidth, outputWidth: Math.max(36, available - leftWidth - toggleWidth), toggleWidth };
 }
 
 function leftPaneOffsetForSelection(selection: number, itemCount: number, paneHeight: number): number {
@@ -3923,6 +4012,14 @@ function isUp(key: KeyPress): boolean {
 
 function isDown(key: KeyPress): boolean {
   return key.name === "down";
+}
+
+function isLeft(key: KeyPress): boolean {
+  return key.name === "left";
+}
+
+function isRight(key: KeyPress): boolean {
+  return key.name === "right";
 }
 
 function isPageUp(key: KeyPress): boolean {

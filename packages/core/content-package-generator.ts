@@ -74,6 +74,9 @@ export interface ContentPackageGeneratorTarget {
   readonly sourcePath: string;
   readonly sourceRepository: string;
   readonly languages?: readonly string[];
+  readonly defaultContentLocale?: string;
+  readonly targetLanguage?: string;
+  readonly localization?: ContentPackageManifest["localization"];
   readonly subjects?: readonly string[];
   readonly dependencies?: ContentPackageManifest["dependencies"];
   readonly license?: ContentPackageManifest["license"];
@@ -205,14 +208,17 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
   {
     id: "english-curriculum",
     packageId: "com.sleepymario.language.english",
-    displayName: "English",
-    description: "English language curriculum content generated from the canonical English curriculum repository.",
+    displayName: { "zh-TW": "英文", en: "English" },
+    description: { "zh-TW": "以中文（臺灣）學習英文的在地化課程。", en: "A localized curriculum for learning English." },
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
     sourcePath: "../english-curriculum",
     sourceRepository: "https://github.com/SleepyMario/english-curriculum",
-    languages: ["en"],
+    languages: ["zh-TW", "en"],
+    targetLanguage: "en",
+    localization: { role: "base-curriculum", schemaVersion: "1.0.0", targetLanguage: "en", defaultSourceLocale: "zh-TW", defaultSourcePackageId: "com.sleepymario.language.english.source.zh-tw" },
+    dependencies: [{ packageId: "com.sleepymario.language.english.source.zh-tw", version: ">=0.1.0 <1.0.0" }],
     subjects: ["language", "english"],
     license: { spdx: null, name: null, path: null },
     include: [
@@ -228,6 +234,34 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "research",
       "units"
     ]
+  },
+  {
+    id: "english-curriculum-source-zh-tw",
+    packageId: "com.sleepymario.language.english.source.zh-tw",
+    displayName: "英文課程中文（臺灣）來源包",
+    description: "英文課程的中文（臺灣）教學在地化內容。",
+    contentType: "curriculum-source-language-pack",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../english-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/english-curriculum",
+    languages: ["zh-TW"], targetLanguage: "en",
+    localization: { role: "source-language-pack", schemaVersion: "1.0.0", basePackageId: "com.sleepymario.language.english", sourceLocale: "zh-TW", targetLanguage: "en", compatibleBaseVersion: ">=0.1.0 <1.0.0", isDefault: true },
+    subjects: ["language", "english", "localization"], license: { spdx: null, name: null, path: null }, include: ["review-decks/chapter-001-005/cards.tsv", "units/english-core"]
+  },
+  {
+    id: "english-curriculum-source-en",
+    packageId: "com.sleepymario.language.english.source.en",
+    displayName: "English Curriculum Source Pack",
+    description: "English instructional localization for the English curriculum.",
+    contentType: "curriculum-source-language-pack",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../english-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/english-curriculum",
+    languages: ["en"], targetLanguage: "en",
+    localization: { role: "source-language-pack", schemaVersion: "1.0.0", basePackageId: "com.sleepymario.language.english", sourceLocale: "en", targetLanguage: "en", compatibleBaseVersion: ">=0.1.0 <1.0.0" },
+    subjects: ["language", "english", "localization"], license: { spdx: null, name: null, path: null }, include: ["review-decks/chapter-001-005/cards.tsv", "units/english-core"]
   },
   {
     id: "japanese-curriculum",
@@ -404,7 +438,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const content = buildContentSnapshot(target, sourceRoot, sourceFiles, sourceCommit, sourceDirty);
   const contentBuffer = Buffer.from(`${JSON.stringify(content, null, 2)}\n`, "utf8");
   const contentFile = createFileRecord("content/content.json", "application/json", contentBuffer);
-  const memorizationFiles = buildMemorizationFiles(target, sourceFiles, options.generatedAt);
+  const memorizationFiles = target.localization?.role === "source-language-pack" ? [] : buildMemorizationFiles(target, sourceFiles, options.generatedAt);
 
   const manifest: ContentPackageManifest = {
     packageFormatVersion: whackSmackerPackageFormatVersion,
@@ -439,6 +473,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     ...(target.dependencies === undefined ? { dependencies: [] } : { dependencies: [...target.dependencies] }),
     files: [contentFile, ...memorizationFiles.map((file) => file.record)],
     ...(target.license === undefined ? {} : { license: target.license })
+    ,...(target.localization === undefined ? {} : { localization: target.localization })
   };
 
   assertValidContentPackageManifest(manifest);
@@ -548,6 +583,9 @@ function buildContentSnapshot(
   sourceCommit: string,
   sourceDirty: boolean
 ): unknown {
+  if (target.localization?.role === "source-language-pack") {
+    return buildSourceLanguageOverlay(target, sourceFiles, sourceCommit, sourceDirty);
+  }
   return {
     contentSchema: "whacksmacker-source-markdown-snapshot-v1",
     packageId: target.packageId,
@@ -557,14 +595,43 @@ function buildContentSnapshot(
       dirty: sourceDirty
     },
     sourceRootName: sourceRoot.split(sep).at(-1) ?? target.id,
-    files: sourceFiles.map((file) => ({
-      path: file.path,
-      mediaType: file.mediaType,
-      size: file.size,
-      sha256: file.sha256,
-      text: file.text
-    }))
+    ...(target.targetLanguage === undefined ? {} : { targetLanguage: target.targetLanguage }),
+    ...(target.localization?.role !== "base-curriculum" ? {} : { defaultSourceLocale: target.localization.defaultSourceLocale, defaultSourcePackageId: target.localization.defaultSourcePackageId }),
+    ...(target.localization?.role !== "base-curriculum" ? {} : { localizedPaths: sourceFiles.filter(file => file.path.endsWith(".en.md")).map(file => file.path.replace(/\.en\.md$/u, ".md")) }),
+    files: target.localization?.role === "base-curriculum" ? baseCurriculumSnapshotFiles(sourceFiles) : localizedSnapshotFiles(sourceFiles)
   };
+}
+
+function baseCurriculumSnapshotFiles(sourceFiles: readonly SourceFile[]): readonly unknown[] {
+  const english = new Map(sourceFiles.filter(file => file.path.endsWith(".en.md")).map(file => [file.path.replace(/\.en\.md$/u, ".md"), file]));
+  return sourceFiles.flatMap(file => {
+    if (/\.(?:en|zh-TW)\.md$/u.test(file.path)) return [];
+    const canonical = english.get(file.path) ?? file;
+    return [{ path: file.path, mediaType: file.mediaType, size: canonical.size, sha256: canonical.sha256, text: canonical.text }];
+  });
+}
+
+function buildSourceLanguageOverlay(target: ContentPackageGeneratorTarget, sourceFiles: readonly SourceFile[], sourceCommit: string, sourceDirty: boolean): unknown {
+  const metadata = target.localization;
+  if (metadata?.role !== "source-language-pack") throw new Error("Source overlay target requires source-language-pack metadata.");
+  const locale = metadata.sourceLocale;
+  const localizedPaths = new Set(sourceFiles.filter(file => file.path.endsWith(".en.md")).map(file => file.path.replace(/\.en\.md$/u, ".md")));
+  const variants = sourceFiles.flatMap(file => {
+    if (locale === "en") {
+      if (!file.path.endsWith(".en.md")) return [];
+      return [{ path: file.path.replace(/\.en\.md$/u, ".md"), text: file.text }];
+    }
+    if (file.path.endsWith(".en.md") || !localizedPaths.has(file.path)) return [];
+    return [{ path: file.path, text: file.text }];
+  });
+  const review = sourceFiles.filter(file => isReviewDeckCardsPath(file.path)).flatMap(file => parseTabSeparatedRows(file.text).slice(1).map((row, index) => ({
+    sourcePath: file.path, rowNumber: index + 1,
+    prompt: decodeReviewDeckField(row[locale === "en" ? 6 : 4] || row[2]),
+    answer: decodeReviewDeckField(row[locale === "en" ? 7 : 5] || row[3]),
+    notes: row[locale === "en" ? 11 : 10],
+    title: row[0].split(/\s+\/\s+/u)[locale === "en" ? 1 : 0] ?? row[0]
+  })));
+  return { contentSchema: "whacksmacker-curriculum-source-overlay-v1", packageId: target.packageId, basePackageId: metadata.basePackageId, sourceLocale: locale, targetLanguage: metadata.targetLanguage, source: { repository: target.sourceRepository, commit: sourceCommit, dirty: sourceDirty }, files: variants, review };
 }
 
 function createFileRecord(path: string, mediaType: string, data: BufferValue): ContentPackageFileRecord {
@@ -607,12 +674,14 @@ function parseReviewDeckCards(
     throw new Error(`Review deck cards file is empty: ${file.path}`);
   }
   const [header, ...body] = rows;
-  const expectedHeader = ["deck", "direction", "front", "back", "source_chapter", "entry_type", "notes"];
-  if (header.length !== expectedHeader.length || header.some((field, index) => field !== expectedHeader[index])) {
+  const legacyHeader = ["deck", "direction", "front", "back", "source_chapter", "entry_type", "notes"];
+  const localizedHeader = ["deck", "direction", "front", "back", "front_zh_tw", "back_zh_tw", "front_en", "back_en", "source_chapter", "entry_type", "notes_zh_tw", "notes_en"];
+  const usesLocalizedRows = header.length === localizedHeader.length && header.every((field, index) => field === localizedHeader[index]);
+  if (!usesLocalizedRows && (header.length !== legacyHeader.length || header.some((field, index) => field !== legacyHeader[index]))) {
     throw new Error(`Review deck cards file has unsupported header: ${file.path}`);
   }
 
-  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex));
+  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex, usesLocalizedRows));
   return { schemaVersion: 1, items };
 }
 
@@ -622,15 +691,23 @@ function reviewDeckRowToItem(
   row: readonly string[],
   rowNumber: number,
   generatedAt: string,
-  reviewExampleIndex: ReviewExampleIndex
+  reviewExampleIndex: ReviewExampleIndex,
+  localizedRow = false
 ): MemorizationItem {
-  if (row.length !== 7) {
-    throw new Error(`Review deck row ${rowNumber + 1} must have 7 tab-separated fields in ${sourcePath}`);
+  if (row.length !== (localizedRow ? 12 : 7)) {
+    throw new Error(`Review deck row ${rowNumber + 1} has the wrong number of tab-separated fields in ${sourcePath}`);
   }
-  const [deck, direction, rawFront, rawBack, sourceChapter, entryType, notes] = row;
+  const [deck, direction, rawFront, rawBack] = row;
+  const sourceChapter = row[localizedRow ? 8 : 4];
+  const entryType = row[localizedRow ? 9 : 5];
+  const notes = row[localizedRow ? 10 : 6];
   const front = decodeReviewDeckField(rawFront);
   const back = decodeReviewDeckField(rawBack);
-  if (deck.trim().length === 0 || direction.trim().length === 0 || front.trim().length === 0 || back.trim().length === 0) {
+  const frontLocalized: LocalizedContentValue = localizedRow && row[4].length + row[6].length > 0 ? { "zh-TW": decodeReviewDeckField(row[4]), en: decodeReviewDeckField(row[6]) } : localizedReviewField(front);
+  const backLocalized: LocalizedContentValue = localizedRow && row[5].length + row[7].length > 0 ? { "zh-TW": decodeReviewDeckField(row[5]), en: decodeReviewDeckField(row[7]) } : localizedReviewField(back);
+  const frontValue = target.localization?.role === "base-curriculum" && typeof frontLocalized !== "string" ? frontLocalized.en : frontLocalized;
+  const backValue = target.localization?.role === "base-curriculum" && typeof backLocalized !== "string" ? backLocalized.en : backLocalized;
+  if (deck.trim().length === 0 || direction.trim().length === 0 || (!localizedRow && (front.trim().length === 0 || back.trim().length === 0))) {
     throw new Error(`Review deck row ${rowNumber + 1} has an empty required field in ${sourcePath}`);
   }
   const directionMatch = direction.match(/^(.+?) -> (.+?)$/u);
@@ -640,11 +717,11 @@ function reviewDeckRowToItem(
   const [, promptLabel, answerLabel] = directionMatch;
   const promptLanguage = languageCodeForReviewLabel(promptLabel);
   const answerLanguage = languageCodeForReviewLabel(answerLabel);
-  const targetLanguage = target.languages?.find((language) => language !== "en") ?? promptLanguage ?? answerLanguage;
+  const targetLanguage = target.targetLanguage ?? target.languages?.find((language) => language !== "en") ?? promptLanguage ?? answerLanguage;
 
   const deckSlug = slugForPath(sourcePath.replace(/^review-decks\//u, "").replace(/\/cards\.tsv$/u, ""));
   const entrySlug = slugForPath(entryType);
-  const directionSlug = slugForPath(direction);
+  const directionSlug = stableDirectionSlug(target, direction, promptLabel, answerLabel);
   const itemId = `review-decks/${deckSlug}/${String(rowNumber).padStart(4, "0")}-${directionSlug}-${entrySlug}`;
   const examples = examplesForReviewRow(reviewExampleIndex, {
     sourceChapter,
@@ -666,32 +743,77 @@ function reviewDeckRowToItem(
     id: itemId,
     kind: "vocabulary",
     prompt: {
-      text: front,
-      plainText: front,
+      text: frontValue,
+      plainText: frontValue,
       ...(promptLanguage === undefined ? {} : { language: promptLanguage }),
       mediaType: "text/plain"
     },
     answer: {
-      text: back,
-      plainText: back,
+      text: backValue,
+      plainText: backValue,
       ...(answerLanguage === undefined ? {} : { language: answerLanguage }),
       mediaType: "text/plain"
     },
-    notes: `Deck: ${deck}. ${notes}`,
+    notes: localizedRow ? `Deck: ${deck.split(/\s+\/\s+/u)[1] ?? deck}. ${row[11]}` : localizedReviewNotes(deck, notes),
     ...(examples.length === 0 ? {} : { examples }),
     tags: [slugForPath(target.id), "review-deck", deckSlug, entrySlug, ...(missingSourceExample ? ["missing-source-example"] : [])],
     source: {
       path: sourcePath,
-      title: deck
+      title: target.localization?.role === "base-curriculum" ? (deck.split(/\s+\/\s+/u)[1] ?? deck) : localizedReviewTitle(deck)
     },
     language: {
       ...(targetLanguage === undefined ? {} : { target: targetLanguage }),
-      base: "en",
+      base: target.defaultContentLocale ?? "en",
       script: scriptLabelForTarget(target)
     },
     createdAt: generatedAt,
     updatedAt: generatedAt
   };
+}
+
+function localizedReviewField(value: string): LocalizedContentValue {
+  const match = value.match(/^中文（臺灣）:\s*(.*?)\nEnglish support:\s*(.+)$/su);
+  return match === null ? value : { "zh-TW": match[1].trim(), en: match[2].trim() };
+}
+
+function localizedReviewTitle(value: string): LocalizedContentValue {
+  const parts = value.split(/\s+\/\s+/u);
+  return parts.length === 2 ? { "zh-TW": parts[0], en: parts[1] } : value;
+}
+
+function localizedReviewNotes(deck: string, notes: string): LocalizedContentValue {
+  const title = localizedReviewTitle(deck);
+  const parts = notes.split(/\s+\/\s+/u);
+  if (typeof title === "string" && parts.length !== 2) return `Deck: ${deck}. ${notes}`;
+  return {
+    "zh-TW": `牌組：${typeof title === "string" ? title : title["zh-TW"]}。${parts[0] ?? notes}`,
+    en: `Deck: ${typeof title === "string" ? title : title.en}. ${parts[1] ?? notes}`
+  };
+}
+
+function localizedSnapshotFiles(sourceFiles: readonly SourceFile[]): readonly { readonly path: string; readonly mediaType: string; readonly size: number; readonly sha256: string; readonly text: LocalizedContentValue }[] {
+  const localizedVariants = new Map<string, Map<string, SourceFile>>();
+  for (const file of sourceFiles) {
+    const match = file.path.match(/^(.*)\.(en|zh-TW)(\.md)$/u);
+    if (match === null) continue;
+    const logicalPath = `${match[1]}${match[3]}`;
+    const variants = localizedVariants.get(logicalPath) ?? new Map<string, SourceFile>();
+    variants.set(match[2], file);
+    localizedVariants.set(logicalPath, variants);
+  }
+  const output: { path: string; mediaType: string; size: number; sha256: string; text: LocalizedContentValue }[] = [];
+  for (const file of sourceFiles) {
+    if (/\.(?:en|zh-TW)\.md$/u.test(file.path)) continue;
+    const variants = localizedVariants.get(file.path);
+    if (variants === undefined) {
+      output.push({ path: file.path, mediaType: file.mediaType, size: file.size, sha256: file.sha256, text: file.text });
+      continue;
+    }
+    const text: Record<string, string> = { "zh-TW": file.text };
+    for (const [locale, variant] of variants) text[locale] = variant.text;
+    output.push({ path: file.path, mediaType: file.mediaType, size: file.size, sha256: file.sha256, text });
+  }
+  return output;
 }
 
 interface ReviewExampleIndex {
@@ -834,11 +956,15 @@ function koreanPredicateStemAlternatives(term: string): readonly string[] {
   if (term === "이다") {
     return ["이에요", "예요", "입니다"];
   }
-  if (!/^[가-힣]+다$/u.test(term) || term.length < 3) {
+  if (!/^[가-힣]+다$/u.test(term) || term.length < 2) {
     return [];
   }
   const stem = term.slice(0, -1);
-  return stem.length < 2 ? [] : [stem];
+  const alternatives = stem.length === 0 ? [] : [stem];
+  if (term.endsWith("하다") && term.length > 2) {
+    alternatives.push(term.slice(0, -2));
+  }
+  return alternatives;
 }
 
 function lineMatchesReviewTerm(line: string, term: string): boolean {
@@ -960,7 +1086,7 @@ function extractStrictReadContentExampleLines(markdown: string): readonly string
       }
       continue;
     }
-    if (/^#{2,4}\s+(?:Model Dialogue|Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Learner-facing Controlled Reading|Controlled Reading)\b/iu.test(trimmed)) {
+    if (/^#{2,4}\s+(?:對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Model Dialogue|Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Learner-facing Controlled Reading|Controlled Reading)(?:\b|$)/iu.test(trimmed)) {
       inReadContentSection = true;
       continue;
     }
@@ -1023,6 +1149,8 @@ function languageCodeForReviewLabel(label: string): string | undefined {
     case "English":
     case "English Target":
       return "en";
+    case "Chinese (Taiwan)":
+      return "zh-TW";
     case "Korean":
       return "ko";
     case "Japanese":
@@ -1046,6 +1174,23 @@ function languageCodeForReviewLabel(label: string): string | undefined {
     default:
       return undefined;
   }
+}
+
+function stableDirectionSlug(
+  target: ContentPackageGeneratorTarget,
+  direction: string,
+  promptLabel: string,
+  answerLabel: string
+): string {
+  if (target.id === "english-curriculum") {
+    if (promptLabel === "English Target" && answerLabel === "Chinese (Taiwan)") {
+      return slugForPath("English Target -> English");
+    }
+    if (promptLabel === "Chinese (Taiwan)" && answerLabel === "English Target") {
+      return slugForPath("English -> English Target");
+    }
+  }
+  return slugForPath(direction);
 }
 
 function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {

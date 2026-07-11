@@ -14,6 +14,7 @@ import { languageModule } from "../../packages/language";
 import { mathematicsModule } from "../../packages/mathematics";
 import { runInteractiveMenu } from "./interactive-menu";
 import { parseWebOptions, startWebServer, webUsage } from "../web/server";
+import { runAdmin, adminUsage } from "./admin";
 
 declare function require(name: string): { version: string };
 
@@ -40,6 +41,11 @@ Web GUI:
   whacksmacker web [--host 127.0.0.1] [--port 8787] [--data-dir <dir>] [--catalogue <catalogue.json>] [--password <password>]
   wsm web [options]
       Start the local web frontend. Defaults to http://127.0.0.1:8787.
+
+PostgreSQL administration:
+  whacksmacker admin db migrate|status
+  whacksmacker admin user create|list|disable|enable|reset-password|revoke-sessions USERNAME
+      Requires DATABASE_URL. Password entry is hidden; automation may use --password-stdin.
 
 Interactive mode:
   wsm
@@ -197,6 +203,7 @@ async function dispatch(command: CliCommand, args: readonly string[]): Promise<v
 }
 
 export async function main(argv = process.argv.slice(2)): Promise<void> {
+  if (argv[0] === "admin") { if (argv[1] === "--help" || argv[1] === "help") { console.log(adminUsage); return; } await runAdmin(argv.slice(1)); return; }
   if (argv[0] === "web") {
     const options = parseWebOptions(argv.slice(1));
     if (options === "help") { console.log(webUsage); return; }

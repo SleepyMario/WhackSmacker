@@ -21,6 +21,8 @@ test("content package generator exposes the supported local package targets", ()
       ["chinese-mandarin-traditional-curriculum", "com.sleepymario.language.chinese.mandarin.traditional"],
       ["chinese-mandarin-simplified-curriculum", "com.sleepymario.language.chinese.mandarin.simplified"],
       ["english-curriculum", "com.sleepymario.language.english"],
+      ["english-curriculum-source-zh-tw", "com.sleepymario.language.english.source.zh-tw"],
+      ["english-curriculum-source-en", "com.sleepymario.language.english.source.en"],
       ["japanese-curriculum", "com.sleepymario.language.japanese"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
@@ -136,6 +138,30 @@ test("content package generator creates a valid Korean Curriculum package", asyn
         sourcePath: "review-decks/chapter-026-030/cards.tsv",
         itemPath: "content/memorization/review-decks/chapter-026-030.json",
         itemCount: 40
+      },
+      {
+        title: "Chapter 31-35",
+        sourcePath: "review-decks/chapter-031-035/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-031-035.json",
+        itemCount: 60
+      },
+      {
+        title: "Chapter 36-40",
+        sourcePath: "review-decks/chapter-036-040/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-036-040.json",
+        itemCount: 60
+      },
+      {
+        title: "Chapter 41-45",
+        sourcePath: "review-decks/chapter-041-045/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-041-045.json",
+        itemCount: 60
+      },
+      {
+        title: "Chapter 46-50",
+        sourcePath: "review-decks/chapter-046-050/cards.tsv",
+        itemPath: "content/memorization/review-decks/chapter-046-050.json",
+        itemCount: 60
       }
     ];
 
@@ -171,6 +197,10 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 16-20"), true);
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 21-25"), true);
     assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 26-30"), true);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 31-35"), true);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 36-40"), true);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 41-45"), true);
+    assert.equal(allReviewItems.some((item) => item.source.title === "Chapter 46-50"), true);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "저는 N입니다" || item.answer.text === "저는 N입니다"), false);
 
     const studentItem = allReviewItems.find((item) => item.prompt.text === "학생" && item.answer.text === "student");
@@ -179,7 +209,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     const markerItem = allReviewItems.find((item) => item.prompt.text === "이/가" && item.answer.text === "subject/existence marker");
     assert.deepEqual(helloItem.examples, ["마리아: 안녕하세요. 저는 마리아 가르시아입니다.", "김민준: 안녕하세요. 저는 김민준입니다.", "안녕하세요."]);
     assert.deepEqual(studentItem.examples, ["저는 학생입니다.", "마리아: 학생입니까?", "김민준: 네, 학생입니다."]);
-    assert.deepEqual(existsItem.examples, ["방이 있습니다.", "책이 있습니다.", "가방이 있습니다."]);
+    assert.deepEqual(existsItem.examples, ["예약한 방은 삼 층 삼백이 호에 있다.", "삼 층 발표실에는 의자 마흔 개와 노트북 여섯 대가 있다.", "일 층 식당에는 물 칠십이 병과 컵 백 개가 준비되어 있다."]);
     assert.deepEqual(markerItem.examples, ["방이 있습니다.", "책이 있습니다.", "가방이 있습니다."]);
     assert.deepEqual(findReviewTerms(allReviewItems, ["사람", "언니", "연필", "소파", "시간"]), []);
     assert.ok(findReviewTerms(allReviewItems, ["학생", "나", "문", "지도", "식탁"]).length >= 5);
@@ -205,7 +235,37 @@ test("content package generator creates a valid Korean Curriculum package", asyn
       "- KOR-GRAMMAR-014 -- N이/가 있어",
       "- KOR-GRAMMAR-015 -- N이/가 없어"
     ]);
-    assertKoreanGrammarSummariesAreBlockSpecific([grammarSummary0105, grammarSummary0610, grammarSummary1115]);
+    const grammarSummary3135 = assertKoreanGrammarSummaryPair(content.files, "031", "035", [
+      "- KOR-GRAMMAR-031A -- V-아서/어서", "- KOR-GRAMMAR-031B -- N 전에",
+      "- KOR-GRAMMAR-032A -- 그런데", "- KOR-GRAMMAR-032B -- N까지",
+      "- KOR-GRAMMAR-033A -- 그래서", "- KOR-GRAMMAR-033B -- V-아/어 보다",
+      "- KOR-GRAMMAR-034A -- 그리고", "- KOR-GRAMMAR-034B -- N마다",
+      "- KOR-GRAMMAR-035A -- V-지만", "- KOR-GRAMMAR-035B -- N보다"
+    ]);
+    const grammarSummary3640 = assertKoreanGrammarSummaryPair(content.files, "036", "040", [
+      "- KOR-GRAMMAR-036A -- 그러나", "- KOR-GRAMMAR-036B -- V-(으)려고 하다",
+      "- KOR-GRAMMAR-037A -- V-고 나서", "- KOR-GRAMMAR-037B -- N에서 N까지",
+      "- KOR-GRAMMAR-038A -- V-기 때문에", "- KOR-GRAMMAR-038B -- V-(으)ㄹ 수 있다",
+      "- KOR-GRAMMAR-039A -- 그래서", "- KOR-GRAMMAR-039B -- N도 N도",
+      "- KOR-GRAMMAR-040A -- V-는데", "- KOR-GRAMMAR-040B -- V-(으)ㄴ 적이 있다"
+    ]);
+    const grammarSummary4145 = assertKoreanGrammarSummaryPair(content.files, "041", "045", [
+      "- KOR-GRAMMAR-041 -- Native Korean number + counter",
+      "- KOR-GRAMMAR-042 -- Native Korean 11-20 and 스무 before counters",
+      "- KOR-GRAMMAR-043 -- 몇 + counter",
+      "- KOR-GRAMMAR-044 -- Native hours and ages with Sino-Korean minutes",
+      "- KOR-GRAMMAR-045 -- Sino-Korean number formation and counters"
+    ]);
+    const grammarSummary4650 = assertKoreanGrammarSummaryPair(content.files, "046", "050", [
+      "- KOR-GRAMMAR-046 -- Sino-Korean calendar dates and numbered locations",
+      "- KOR-GRAMMAR-047 -- Neutral 명 and honorific 분",
+      "- KOR-GRAMMAR-048 -- N씩 distribution",
+      "- KOR-GRAMMAR-049 -- Quantity + 정도 for approximation",
+      "- KOR-GRAMMAR-050 -- Selecting native and Sino-Korean numbers by context"
+    ]);
+    assertKoreanChapters3135And3640(content.files);
+    assertKoreanChapters4150(content.files);
+    assertKoreanGrammarSummariesAreBlockSpecific([grammarSummary0105, grammarSummary0610, grammarSummary1115, grammarSummary3135, grammarSummary3640, grammarSummary4145, grammarSummary4650]);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -386,6 +446,30 @@ test("content package generator creates a valid Japanese package with Core revie
     assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-001-005-grammar-easy/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/japanese-core/chapter-001-005-grammar-hard/chapter.md"));
     assert.equal(content.files.some((file) => file.path === "units/japanese-core/chapter-006-basic-sentences-6/chapter.md"), true);
+    for (const chapter of [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]) {
+      const chapterFile = content.files.find((file) => !file.path.includes("-grammar-") && new RegExp(`units/japanese-core/chapter-${String(chapter).padStart(3, "0")}-[^/]+/chapter\\.md$`).test(file.path));
+      assert.ok(chapterFile);
+      const sourceText = await readFile(join("..", "japanese-curriculum", chapterFile.path), "utf8");
+      assert.match(sourceText, new RegExp(`JPN-GRAMMAR-${String(chapter).padStart(3, "0")}`));
+      const readBlock = sourceText.split("```text")[1]?.split("```")[0] ?? "";
+      const readLines = readBlock.trim().split(/\r?\n/u).filter((line) => line.trim());
+      assert.ok(readLines.length >= 6 && readLines.length <= 20, `Japanese Chapter ${chapter} must have 6-20 learner-facing lines`);
+      const vocabularySection = sourceText.match(/### New Vocabulary\s+\n([\s\S]*?)\n### New Grammar/u)?.[1] ?? "";
+      const vocabularyRows = vocabularySection.split("\n").filter((line) => /^\|[^-].*\|$/u.test(line.trim())).slice(1);
+      assert.equal(vocabularyRows.length, 8, `Japanese Chapter ${chapter} must have 8 new vocabulary items`);
+    }
+    const newGrammarIds = content.files
+      .filter((file) => /^units\/japanese-core\/chapter-0(?:1[1-9]|20)-[^/]+\/chapter\.md$/u.test(file.path))
+      .filter((file) => !file.path.includes("-grammar-"))
+      .flatMap((file) => file.text.match(/JPN-GRAMMAR-\d{3}/gu) ?? []);
+    assert.deepEqual([...new Set(newGrammarIds)], Array.from({ length: 10 }, (_, index) => `JPN-GRAMMAR-${String(index + 11).padStart(3, "0")}`));
+    for (const block of ["011-015", "016-020"]) {
+      const easy = content.files.find((file) => file.path === `units/japanese-core/chapter-${block}-grammar-easy/chapter.md`);
+      const hard = content.files.find((file) => file.path === `units/japanese-core/chapter-${block}-grammar-hard/chapter.md`);
+      assert.ok(easy);
+      assert.ok(hard);
+      assert.deepEqual(easy.text.match(/JPN-GRAMMAR-\d{3}/gu), hard.text.match(/JPN-GRAMMAR-\d{3}/gu));
+    }
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
     assert.equal(archive.has("content/memorization/review-decks/chapter-001-005.json"), true);
     const reviewItems = JSON.parse(archive.get("content/memorization/review-decks/chapter-001-005.json").toString("utf8")).items;
@@ -396,6 +480,18 @@ test("content package generator creates a valid Japanese package with Core revie
     assert.ok(reviewItems.some((item) => item.prompt.text === "Japanese: 学生" && item.answer.text.includes("Reading: がくせい")));
     assert.ok(reviewItems.some((item) => item.prompt.text === "Reading: がくせい" && item.answer.text.includes("Japanese: 学生")));
     assert.ok(reviewItems.every((item) => item.examples.every((example) => !/^Reading:|^Meaning:|^\|/u.test(example))));
+    for (const [block, title] of [["011-015", "Chapter 11-15"], ["016-020", "Chapter 16-20"]]) {
+      const sourcePath = `review-decks/chapter-${block}/cards.tsv`;
+      const itemPath = `content/memorization/review-decks/chapter-${block}.json`;
+      assert.ok(content.files.some((file) => file.path === sourcePath));
+      assert.equal(archive.has(itemPath), true);
+      const items = JSON.parse(archive.get(itemPath).toString("utf8")).items;
+      assert.equal(items.length, 120);
+      assertCoreReviewItemsHaveExamples(items, `Japanese ${title}`);
+      assert.ok(items.some((item) => item.prompt.text.startsWith("Meaning:") && item.answer.text.includes("Japanese:") && item.answer.text.includes("Reading:")));
+      assert.ok(items.some((item) => item.prompt.text.startsWith("Japanese:") && item.answer.text.includes("Meaning:") && item.answer.text.includes("Reading:")));
+      assert.ok(items.some((item) => item.prompt.text.startsWith("Reading:") && item.answer.text.includes("Meaning:") && item.answer.text.includes("Japanese:")));
+    }
     assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/hiragana/chapter.md").text, /future work/);
     assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/katakana/chapter.md").text, /future work/);
     assert.match(content.files.find((file) => file.path === "units/introduction-to-japanese-writing/introduction-to-kanji/chapter.md").text, /future work/);
@@ -424,6 +520,8 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
     const itemPath = "content/memorization/review-decks/chapter-001-005.json";
     const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
+    const chapter3640ItemPath = "content/memorization/review-decks/chapter-036-040.json";
+    const chapter3640Items = JSON.parse(archive.get(chapter3640ItemPath).toString("utf8"));
 
     assert.equal(result.packageId, "com.sleepymario.language.vietnamese");
     assert.equal(result.filePath.endsWith("com.sleepymario.language.vietnamese-0.1.0.wspkg"), true);
@@ -444,6 +542,16 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-026-030-grammar-hard/chapter.md"), true);
     assert.equal(content.files.some((file) => file.path === "review-decks/chapter-026-030/cards.tsv"), true);
     assert.equal(archive.has("content/memorization/review-decks/chapter-026-030.json"), true);
+    for (const chapter of [36, 37, 38, 39, 40]) {
+      assert.equal(content.files.some((file) => file.path === `units/vietnamese-core/chapter-0${chapter}-basic-sentences-${chapter}/chapter.md`), true);
+    }
+    assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-036-040-grammar-easy/chapter.md"), true);
+    assert.equal(content.files.some((file) => file.path === "units/vietnamese-core/chapter-036-040-grammar-hard/chapter.md"), true);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-036-040/cards.tsv"), true);
+    assert.equal(archive.has(chapter3640ItemPath), true);
+    assert.equal(chapter3640Items.items.length, 50);
+    assertCoreReviewItemsHaveExamples(chapter3640Items.items, "Vietnamese Chapters 36-40");
+    assertVietnameseChapters3640(content.files);
     assert.equal(content.files.some((file) => file.path.includes("lessons-001-005") || file.path.includes("lesson-001")), false);
     assert.equal(archive.has(itemPath), true);
     assert.equal(archive.has("content/memorization/review-decks/lessons-001-005.json"), false);
@@ -458,6 +566,56 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+function assertVietnameseChapters3640(files) {
+  const expectedTypes = new Map([[36, "narrative"], [37, "dialogue"], [38, "narrative"], [39, "dialogue"], [40, "narrative"]]);
+  const expectedCategories = new Map([
+    [36, ["connector: concessive contrast", "aspect: completive"]],
+    [37, ["connector: additive discourse linker", "speech act: polite request"]],
+    [38, ["connector: temporal subordination", "degree: gradual change"]],
+    [39, ["connector: spoken consequence", "modality: permission"]],
+    [40, ["connector: simultaneous coordination", "voice: passive-like affected construction"]]
+  ]);
+  const grammarIds = [];
+
+  for (const [chapter, expectedType] of expectedTypes) {
+    const path = `units/vietnamese-core/chapter-0${chapter}-basic-sentences-${chapter}/chapter.md`;
+    const markdown = files.find((file) => file.path === path)?.text;
+    assert.ok(markdown, `missing Vietnamese chapter ${chapter}`);
+    const analysis = analyzeChapterReadFormatForTest(markdown);
+    assert.equal(analysis.detected, expectedType, `Vietnamese chapter ${chapter} read format`);
+    assert.deepEqual(analysis.genericSpeakerLabels, []);
+    assert.equal(analysis.dialogueBlockWithoutIntro, false);
+    assert.equal(analysis.misalignedDialogueColons, false);
+
+    const grammarPoint = markdown.match(/^grammar_point:\s*"([^"]+)"$/mu)?.[1] ?? "";
+    const ids = [...grammarPoint.matchAll(/VIE-GRAMMAR-\d{3}[AB]/gu)].map((match) => match[0]);
+    assert.equal(ids.length, 2, `Vietnamese chapter ${chapter} must introduce two grammar IDs`);
+    grammarIds.push(...ids);
+
+    const categories = (markdown.match(/^grammar_categories:\s*"([^"]+)"$/mu)?.[1] ?? "").split("; ");
+    assert.deepEqual(categories, expectedCategories.get(chapter));
+    assert.equal(categories.filter((category) => category.startsWith("connector:")).length, 1);
+
+    const readSection = extractReadSectionsForFormatTest(markdown)[0];
+    const learnerLines = readSection.lines.filter((line) => line.trim().length > 0 && line !== "```text" && line !== "```");
+    assert.ok(learnerLines.length >= 10 && learnerLines.length <= 30, `Vietnamese chapter ${chapter} read-line count`);
+    const vocabularyRows = markdown.split("\n").filter((line) => /^\| [^|-].*\|$/u.test(line) && !/^\| Vietnamese /u.test(line));
+    assert.ok(vocabularyRows.length >= 6 && vocabularyRows.length <= 20, `Vietnamese chapter ${chapter} vocabulary count`);
+    assert.doesNotMatch(markdown, /placeholder|TODO|TBD|\b[ABC]\s*:/iu);
+  }
+
+  assert.equal(grammarIds.length, 10);
+  assert.equal(new Set(grammarIds).size, 10);
+
+  const easy = files.find((file) => file.path === "units/vietnamese-core/chapter-036-040-grammar-easy/chapter.md")?.text ?? "";
+  const hard = files.find((file) => file.path === "units/vietnamese-core/chapter-036-040-grammar-hard/chapter.md")?.text ?? "";
+  const inventory = (markdown) => [...markdown.matchAll(/^- (VIE-GRAMMAR-\d{3}[AB] -- .+)$/gmu)].map((match) => match[1]);
+  assert.equal(easy.includes("Chapters 36-40"), true);
+  assert.equal(hard.includes("Chapters 36-40"), true);
+  assert.deepEqual(inventory(easy), inventory(hard));
+  assert.equal(inventory(easy).length, 10);
+}
 
 test("content package generator creates a valid Dutch package", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-dutch-package-"));
@@ -543,13 +701,21 @@ test("content package generator creates a valid English package", async () => {
     assert.equal(result.packageId, "com.sleepymario.language.english");
     assert.equal(result.filePath.endsWith("com.sleepymario.language.english-0.1.0.wspkg"), true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
-    assert.equal(manifest.displayName, "English");
+    assert.deepEqual(manifest.displayName, { "zh-TW": "英文", en: "English" });
+    assert.deepEqual(manifest.languages, ["en", "zh-TW"]);
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.english");
-    assertOddEvenChapterFormats(content.files, "English", content.packageId);
-    assertUsefulChapterTitles(content.files);
-    assertNoGenericDialogueSpeakerLabels(content.files, "English", reviewItems.items);
-    assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "English");
+    assert.equal("instructionalLanguages" in content, false);
+    assert.equal(content.defaultSourceLocale, "zh-TW");
+    assert.equal(content.defaultSourcePackageId, "com.sleepymario.language.english.source.zh-tw");
+    assert.equal("contentLocales" in content, false);
+    assert.equal(manifest.localization.role, "base-curriculum");
+    assert.equal(content.targetLanguage, "en");
+    const englishZhFiles = content.files.map((file) => ({ ...file, text: typeof file.text === "string" ? file.text : file.text["zh-TW"] }));
+    assertOddEvenChapterFormats(englishZhFiles, "English", content.packageId);
+    assertUsefulChapterTitles(englishZhFiles);
+    assertNoGenericDialogueSpeakerLabels(englishZhFiles, "English", reviewItems.items);
+    assertDialogueBlocksHaveIntroductionsAndAlignedColons(englishZhFiles, "English");
     assert.ok(content.files.some((file) => file.path === "name-pools/initial-name-pools.md"));
     assert.ok(content.files.some((file) => file.path === "units/english-core/chapter-001-basic-sentences-1/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/english-core/chapter-005-basic-sentences-5/chapter.md"));
@@ -559,15 +725,34 @@ test("content package generator creates a valid English package", async () => {
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 40);
     assertCoreReviewItemsHaveExamples(reviewItems.items, "English");
-    assertEnglishReviewExamplesComeFromReadContent(reviewItems.items, content.files);
+    assertEnglishReviewExamplesComeFromReadContent(reviewItems.items, englishZhFiles);
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
+    assert.equal(reviewItems.items[0].id, "review-decks/chapter-001-005/0001-english-target---english-vocabulary");
+    assert.equal(reviewItems.items[1].id, "review-decks/chapter-001-005/0002-english---english-target-vocabulary");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "greeting"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "greeting" && item.answer.text === "hello"));
-    const helloItem = reviewItems.items.find((item) => item.prompt.text === "hello" && item.answer.text === "greeting");
+    const helloItem = reviewItems.items.find((item) => item.prompt.text === "hello");
     assert.deepEqual(helloItem.examples, ["Maria  : Hello.", "John   : Hello.", "Hello."]);
-    const questionItem = reviewItems.items.find((item) => item.prompt.text === "question" && item.answer.text === "something asked");
+    const questionItem = reviewItems.items.find((item) => item.prompt.text === "question");
     assert.deepEqual(questionItem.examples, ["Anna   : This is a question."]);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "I am N" || item.answer.text === "I am N"), false);
+    assert.ok(reviewItems.items.every((item) => item.language.target === "en" && item.language.base === "en"));
+    assert.ok(reviewItems.items.some((item) => item.prompt.language === "zh-TW" && item.answer.language === "en"));
+    assert.ok(reviewItems.items.some((item) => item.prompt.language === "en" && item.answer.language === "zh-TW"));
+    const sourceToTarget = reviewItems.items.filter((item) => item.prompt.language === "zh-TW");
+    assert.ok(sourceToTarget.every((item) => item.prompt.text.toLowerCase() !== item.answer.text.toLowerCase()));
+
+    const localizedChapters = content.files.filter((file) => /^units\/english-core\/chapter-00[1-5]-basic-sentences-[1-5]\/chapter\.md$/u.test(file.path));
+    assert.equal(localizedChapters.length, 5);
+    for (const file of localizedChapters) {
+      assert.equal(typeof file.text, "string");
+      assert.doesNotMatch(file.text, /[\u3400-\u9fff]/u);
+    }
+    const easy = content.files.find((file) => file.path === "units/english-core/chapter-001-005-grammar-easy/chapter.md").text;
+    const hard = content.files.find((file) => file.path === "units/english-core/chapter-001-005-grammar-hard/chapter.md").text;
+    assert.match(easy, /Grammar - Easy/u);
+    assert.match(hard, /Grammar - Hard/u);
+    assert.deepEqual(easy.match(/ENG-GRAMMAR-00[1-5]/gu), hard.match(/ENG-GRAMMAR-00[1-5]/gu));
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -872,7 +1057,7 @@ function extractReadSectionsForFormatTest(markdown) {
   const sections = [];
 
   for (let index = 0; index < lines.length; index++) {
-    if (!/^#{2,4}\s+(?:Learner-facing |Model Mini Dialogue|Model Dialogue|Model Mini Scene|Model Mini Text|Controlled Reading)/iu.test(lines[index])) {
+    if (!/^#{2,4}\s+(?:對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Learner-facing |Model Mini Dialogue|Model Dialogue|Model Mini Scene|Model Mini Text|Controlled Reading)/iu.test(lines[index])) {
       continue;
     }
     let end = lines.length;
@@ -970,10 +1155,10 @@ function extractLearnerFacingReadContentLinesForTest(markdown) {
   const readLines = [];
 
   for (let index = 0; index < lines.length; index++) {
-    if (!/^### Learner-facing (?:Dialogue|Controlled Reading)$/u.test(lines[index])) {
+    if (!/^### (?:對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Learner-facing (?:Dialogue|Controlled Reading))$/u.test(lines[index])) {
       continue;
     }
-    for (index += 1; index < lines.length && !/^### New Vocabulary$/u.test(lines[index]); index++) {
+    for (index += 1; index < lines.length && !/^### (?:新單字 \/ New Vocabulary|New Vocabulary)$/u.test(lines[index]); index++) {
       const line = lines[index].trimEnd();
       if (line.trim() === "" || line === "```text" || line === "```") {
         continue;
@@ -1119,7 +1304,7 @@ function isWideCodePointForTest(codePoint) {
 function assertKoreanStrictReadContentExamples(items, contentFiles) {
   const readContentLines = new Set(
     contentFiles
-      .filter((file) => /^units\/korean-core\/chapter-\d{3}-(?:basic-life-sentences|basic-sentences)-\d+\/chapter\.md$/u.test(file.path))
+      .filter((file) => /^units\/korean-core\/chapter-\d{3}-basic-(?:life-)?sentences-\d+\/chapter\.md$/u.test(file.path))
       .flatMap((file) => extractKoreanReadContentLinesForTest(file.text))
   );
   const invalidExamples = [];
@@ -1231,7 +1416,7 @@ function koreanGrammarInventoryFromChapterFiles(files, start, end) {
   const endNumber = Number.parseInt(end, 10);
   return files
     .filter((file) => {
-      const match = file.path.match(/^units\/korean-core\/chapter-0*(\d+)-basic-life-sentences-\d+\/chapter\.md$/u);
+      const match = file.path.match(/^units\/korean-core\/chapter-0*(\d+)-basic-(?:life-)?sentences-\d+\/chapter\.md$/u);
       if (match === null) {
         return false;
       }
@@ -1242,8 +1427,51 @@ function koreanGrammarInventoryFromChapterFiles(files, start, end) {
     .map((file) => {
       const match = file.text.match(/^grammar_point:\s*"([^"]+)"$/mu);
       assert.ok(match, `${file.path} must declare a grammar_point`);
-      return `- ${match[1]}`;
-    });
+      return match[1].split("; ").map((grammarPoint) => `- ${grammarPoint}`);
+    })
+    .flat();
+}
+
+function assertKoreanChapters3135And3640(files) {
+  const expected = new Map([
+    [31, { title: "Community Center Event", type: "dialogue", connector: "V-아서/어서", other: "N 전에" }],
+    [32, { title: "Rainy Morning Commute", type: "narrative", connector: "그런데", other: "N까지" }],
+    [33, { title: "The Lost Wallet Desk", type: "dialogue", connector: "그래서", other: "V-아/어 보다" }],
+    [34, { title: "Recycling Day", type: "narrative", connector: "그리고", other: "N마다" }],
+    [35, { title: "Cooking Class Choices", type: "dialogue", connector: "V-지만", other: "N보다" }],
+    [36, { title: "Neighborhood Repair Notice", type: "narrative", connector: "그러나", other: "V-(으)려고 하다" }],
+    [37, { title: "Bus Transfer Help", type: "dialogue", connector: "V-고 나서", other: "N에서 N까지" }],
+    [38, { title: "Weather Report and Plans", type: "narrative", connector: "V-기 때문에", other: "V-(으)ㄹ 수 있다" }],
+    [39, { title: "Study Group Presentation", type: "dialogue", connector: "그래서", other: "N도 N도" }],
+    [40, { title: "A Quiet Museum Visit", type: "narrative", connector: "V-는데", other: "V-(으)ㄴ 적이 있다" }]
+  ]);
+  const chapterFiles = files.filter((file) => /^units\/korean-core\/chapter-0*(?:3[1-9]|40)-basic-sentences-\d+\/chapter\.md$/u.test(file.path));
+  assert.equal(chapterFiles.length, 10);
+
+  for (const file of chapterFiles) {
+    const chapter = Number.parseInt(file.text.match(/^chapter:\s*(\d+)$/mu)?.[1] ?? "0", 10);
+    const specification = expected.get(chapter);
+    assert.ok(specification, `unexpected Korean chapter ${chapter}`);
+    assert.match(file.text, new RegExp(`^title: "${specification.title}"$`, "mu"));
+    assert.match(file.text, specification.type === "dialogue" ? /^### Learner-facing Dialogue$/mu : /^### Learner-facing Controlled Reading$/mu);
+    const grammarPoint = file.text.match(/^grammar_point:\s*"([^"]+)"$/mu)?.[1]?.split("; ") ?? [];
+    assert.deepEqual(grammarPoint, [
+      `KOR-GRAMMAR-${String(chapter).padStart(3, "0")}A -- ${specification.connector}`,
+      `KOR-GRAMMAR-${String(chapter).padStart(3, "0")}B -- ${specification.other}`
+    ]);
+    assert.equal(specification.connector !== specification.other, true);
+  }
+}
+
+function assertKoreanChapters4150(files) {
+  const chapterFiles = files.filter((file) => /^units\/korean-core\/chapter-0*(?:4[1-9]|50)-basic-sentences-\d+\/chapter\.md$/u.test(file.path));
+  assert.equal(chapterFiles.length, 10);
+  for (const file of chapterFiles) {
+    const chapter = Number.parseInt(file.text.match(/^chapter:\s*(\d+)$/mu)?.[1] ?? "0", 10);
+    assert.match(file.text, chapter % 2 === 1 ? /^### Learner-facing Dialogue$/mu : /^### Learner-facing Controlled Reading$/mu);
+    assert.match(file.text, new RegExp(`^grammar_id: "KOR-GRAMMAR-${String(chapter).padStart(3, "0")}"$`, "mu"));
+    assert.match(file.text, /(?:한 개|스무 개|몇 명|두 시|이십 쪽|칠월|서른두 분|한 장씩|마흔 명 정도|컵 백 개)/u);
+  }
 }
 
 function grammarSection(markdown, heading) {
@@ -1351,14 +1579,14 @@ function extractKoreanReadContentLinesForTest(markdown) {
 }
 
 function assertUsefulChapterTitles(files) {
-  const chapterFiles = files.filter((file) => file.path.endsWith("/chapter.md"));
+  const chapterFiles = files.filter((file) => file.path.endsWith("/chapter.md") && !/grammar-(?:easy|hard)\/chapter\.md$/u.test(file.path));
   assert.ok(chapterFiles.length > 0);
 
   for (const file of chapterFiles) {
     const title = file.text.match(/^title:\s*"([^"]+)"$/mu)?.[1]?.trim();
     const heading = file.text.match(/^#\s+(.+)$/mu)?.[1]?.trim();
     for (const value of [title, heading].filter((candidate) => candidate !== undefined)) {
-      assert.doesNotMatch(value, /^(?:\.{3}|…|\W*)$/u, `${file.path} has an invalid placeholder title`);
+      assert.doesNotMatch(value, /^(?:\.{3}|…|[\p{P}\p{S}\s]*)$/u, `${file.path} has an invalid placeholder title`);
       assert.doesNotMatch(value, /\bBasic (?:Life )?Sentences\b/u, `${file.path} still uses a basic-sentences placeholder title`);
     }
   }

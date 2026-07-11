@@ -17,8 +17,11 @@
     "dist/packages",
     "dist/src",
     "dist/main.js",
+    "migrations",
     "docs",
     "schemas",
+    "scripts/postgres-backup.sh",
+    "scripts/postgres-restore-test.sh",
     "packages/geography/data/continents.provenance.md",
     "COPYING",
     "README.md"
@@ -39,6 +42,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
@@ -49,6 +53,7 @@
   },
   "dependencies": {
     "chess.js": "^1.4.0",
+    "pg": "^8.22.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   }
