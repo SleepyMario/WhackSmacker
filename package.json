@@ -38,9 +38,12 @@
     "pretest": "npm run build",
     "start": "node dist/main.js",
     "sync-linguistic-terminology": "node scripts/sync-linguistic-terminology.mjs",
-    "test": "node --test --test-concurrency=1 test/*.test.mjs"
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "test:web:e2e": "npm run build && playwright test",
+    "test:web:e2e:headed": "npm run build && playwright test --headed --project=chromium-desktop"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.0",
     "@types/pg": "^8.20.0",
     "@types/react": "^19.2.17",
