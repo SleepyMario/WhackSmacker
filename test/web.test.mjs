@@ -40,7 +40,7 @@ test("web server serves a data-free public landing page, logo, health, and priva
     assert.equal(logo.headers.get("content-type"), "image/png");
     assert.ok((await logo.arrayBuffer()).byteLength > 100_000);
     assert.deepEqual(await (await fetch(`${base}/api/health`)).json(), { ok: true, service: "whacksmacker-web" });
-    assert.match(await (await fetch(`${base}/app`)).text(), /Dashboard/);
+    assert.match(await (await fetch(`${base}/app`)).text(), /Curriculum reader/);
     assert.match(await (await fetch(`${base}/login`)).text(), /id="ui-locale"/);
     assert.match(await (await fetch(`${base}/ui-locale.js`)).text(), /whacksmacker\.ui-locale/);
     assert.equal((await fetch(`${base}/landing.js`)).status, 200);
@@ -48,7 +48,7 @@ test("web server serves a data-free public landing page, logo, health, and priva
     assert.equal(initial.locale, "en-US");
     assert.deepEqual(initial.installed, []);
     const saved = await (await fetch(`${base}/api/settings`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ locale: "zh-Hant-TW" }) })).json();
-    assert.equal(saved.locale, "zh-Hant-TW");
+    assert.equal(saved.locale, "zh-TW");
     assert.equal((await (await fetch(`${base}/api/state`)).json()).locale, "zh-Hant-TW");
   } finally {
     await new Promise(resolve => server.close(resolve));
@@ -63,7 +63,9 @@ test("password mode keeps landing and health public while protecting app state",
     const base = `http://127.0.0.1:${address.port}`;
     assert.equal((await fetch(base)).status, 200);
     assert.equal((await fetch(`${base}/api/health`)).status, 200);
-    assert.equal((await fetch(`${base}/app`)).status, 401);
+    const appNavigation=await fetch(`${base}/app`,{redirect:"manual"});
+    assert.equal(appNavigation.status,302);
+    assert.match(appNavigation.headers.get("location")??"",/^\/login\?returnTo=/);
     assert.equal((await fetch(`${base}/api/state`)).status, 401);
     assert.equal((await fetch(`${base}/api/state`, { headers: { authorization: `Basic ${Buffer.from("user:secret").toString("base64")}` } })).status, 200);
   } finally { await new Promise(resolve => server.close(resolve)); }
@@ -93,15 +95,16 @@ test("package includes public UI locale assets", async () => {
   assert.match(await readFile("apps/web/public/landing.js", "utf8"), /installSelector/);
 });
 
-test("private source-language control mutates settings and rerenders the persisted locale", async () => {
+test("private reader restores URL state, persists locale, and renders unsafe Markdown as inert text", async () => {
   const html = await readFile("apps/web/public/index.html", "utf8");
-  const localeScript = await readFile("apps/web/public/ui-locale.js", "utf8");
   const appScript = await readFile("apps/web/public/app.js", "utf8");
   const dom = new JSDOM(html, { url: "http://127.0.0.1:8787/app", runScripts: "outside-only" });
   dom.window.document.cookie = "wsm_csrf=csrf-for-ui-test; Path=/";
-  let locale = "en-US";
+  let locale = "en";
   const requests = [];
-  const state = () => ({ locale, theme: "light", user: { username: "account-a", role: "user" }, installed: [], available: [], decks: [], review: { total: 0, due: 0, reviewed: 0 } });
+  const chapter={id:"units/core/chapter-010-ten/chapter.md",path:"units/core/chapter-010-ten/chapter.md",number:10,title:"Chapter Ten",packageVersion:"1.0.0"};
+  const curriculum=()=>({moduleType:"language",packageId:"com.example.language",packageVersion:"1.0.0",name:"Example",targetLanguage:"nl",requestedSourceLocale:locale,effectiveSourceLocale:locale,overlayStatus:"active",chapters:[chapter]});
+  dom.reconfigure({url:`http://127.0.0.1:8787/app?package=com.example.language&version=1.0.0&locale=en&chapter=${encodeURIComponent(chapter.id)}`});
   dom.window.fetch = async (path, options = {}) => {
     requests.push({ path, options });
     if (path === "/api/settings") {
@@ -110,21 +113,33 @@ test("private source-language control mutates settings and rerenders the persist
       locale = JSON.parse(options.body).locale;
       return new Response(JSON.stringify({ locale }), { status: 200, headers: { "content-type": "application/json" } });
     }
-    assert.equal(path, "/api/state");
-    return new Response(JSON.stringify(state()), { status: 200, headers: { "content-type": "application/json" } });
+    if(path==="/api/state")return new Response(JSON.stringify({locale,user:{username:"account-a"}}),{status:200,headers:{"content-type":"application/json"}});
+    if(path==="/api/curricula")return new Response(JSON.stringify({requestedSourceLocale:locale,curricula:[curriculum()]}),{status:200,headers:{"content-type":"application/json"}});
+    if(String(path).startsWith("/api/curriculum/chapter?"))return new Response(JSON.stringify({curriculum:{...curriculum(),effectiveSourceLocale:undefined,overlayStatus:"missing"},chapter,text:"# Safe heading\n\n<script>bad()</script> [bad](javascript:alert(1)) [mixed](JaVaScRiPt:alert(1)) [encoded](java%73cript:alert(1)) [protocol](//evil.example)\n\n| A | B |\n|---|---|\n| 很長 | value |"}),{status:200,headers:{"content-type":"application/json"}});
+    throw new Error(`Unexpected request ${path}`);
   };
-  dom.window.eval(localeScript);
   dom.window.eval(appScript);
-  await waitFor(() => [...dom.window.document.querySelectorAll(".metric")].some(node => node.textContent === "EN"), () => dom.window.document.querySelector("#app")?.textContent);
-  const selector = dom.window.document.querySelector("#locale");
-  selector.value = "zh-Hant-TW";
-  selector.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
-  await waitFor(() => [...dom.window.document.querySelectorAll(".metric")].some(node => node.textContent === "中文"), () => dom.window.document.querySelector("#app")?.textContent);
-  assert.equal(selector.value, "zh-Hant-TW");
-  assert.equal(dom.window.document.documentElement.lang, "zh-Hant-TW");
-  assert.equal(dom.window.document.querySelector('[data-page="dashboard"] span').textContent, "儀表板");
-  assert.deepEqual(JSON.parse(requests.find(request => request.path === "/api/settings").options.body), { locale: "zh-Hant-TW" });
-  assert.equal(requests.filter(request => request.path === "/api/state").length, 2);
+  await waitFor(()=>dom.window.document.querySelector("#chapter-title")?.textContent==="Chapter Ten",()=>dom.window.document.body.textContent);
+  assert.equal(dom.window.document.querySelector("#chapter-content script"),null);
+  assert.equal(dom.window.document.querySelector("#chapter-content a"),null);
+  assert.match(dom.window.document.querySelector("#chapter-content").textContent,/<script>bad\(\)<\/script> bad/);
+  assert.ok(dom.window.document.querySelector("#chapter-content table"));
+  assert.equal(dom.window.document.activeElement.id,"reader");
+  assert.match(dom.window.document.querySelector("#overlay").textContent,/No compatible English overlay/);
+  const selector=dom.window.document.querySelector('input[name="source-locale"][value="zh-TW"]');selector.checked=true;selector.dispatchEvent(new dom.window.Event("change",{bubbles:true}));
+  await waitFor(()=>requests.some(request=>request.path==="/api/settings"));
+  assert.deepEqual(JSON.parse(requests.find(request=>request.path==="/api/settings").options.body),{locale:"zh-TW"});
+});
+
+test("private reader refuses an unavailable exact-version deep link instead of substituting another version",async()=>{
+  const html=await readFile("apps/web/public/index.html","utf8"),appScript=await readFile("apps/web/public/app.js","utf8");
+  const dom=new JSDOM(html,{url:"http://127.0.0.1:8787/app?package=com.example.language&version=forged&locale=en",runScripts:"outside-only"});
+  const curriculum={moduleType:"language",packageId:"com.example.language",packageVersion:"1.0.0",name:"Example",targetLanguage:"nl",requestedSourceLocale:"en",effectiveSourceLocale:"en",overlayStatus:"active",chapters:[]};
+  const requests=[];dom.window.fetch=async path=>{requests.push(path);if(path==="/api/state")return new Response(JSON.stringify({locale:"en",user:{username:"account-a"}}),{status:200,headers:{"content-type":"application/json"}});if(path==="/api/curricula")return new Response(JSON.stringify({requestedSourceLocale:"en",curricula:[curriculum],unavailable:[]}),{status:200,headers:{"content-type":"application/json"}});throw new Error(`Unexpected request ${path}`)};
+  dom.window.eval(appScript);
+  await waitFor(()=>/not authorized/.test(dom.window.document.querySelector("#status")?.textContent??""),()=>dom.window.document.body.textContent);
+  assert.equal(requests.some(path=>String(path).startsWith("/api/curriculum/chapter")),false);
+  assert.equal(dom.window.location.search.includes("version=forged"),true);
 });
 
 async function waitFor(predicate, detail = () => "") {
