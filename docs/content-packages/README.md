@@ -49,18 +49,24 @@ Roadmap Point 2 supports these deterministic generator targets:
 
 | Target | Package ID | Source repository |
 |---|---|---|
-| `linguistic-terminology` | `com.sleepymario.language.linguistic-terminology` | `/home/ashwin/Projects/whacksmacker-modules/linguistic-terminology` |
-| `korean-curriculum` | `com.sleepymario.language.korean` | `/home/ashwin/Projects/whacksmacker-modules/korean-curriculum` |
-| `chinese-mandarin-traditional-curriculum` | `com.sleepymario.language.chinese.mandarin.traditional` | `/home/ashwin/Projects/whacksmacker-modules/chinese-curriculum` |
-| `chinese-mandarin-simplified-curriculum` | `com.sleepymario.language.chinese.mandarin.simplified` | `/home/ashwin/Projects/whacksmacker-modules/chinese-curriculum` |
-| `japanese-curriculum` | `com.sleepymario.language.japanese` | `/home/ashwin/Projects/whacksmacker-modules/japanese-curriculum` |
-| `vietnamese-curriculum` | `com.sleepymario.language.vietnamese` | `/home/ashwin/Projects/whacksmacker-modules/vietnamese-curriculum` |
-| `dutch-curriculum` | `com.sleepymario.language.dutch` | `/home/ashwin/Projects/whacksmacker-modules/dutch-curriculum` |
-| `german-curriculum` | `com.sleepymario.language.german` | `/home/ashwin/Projects/whacksmacker-modules/german-curriculum` |
-| `french-curriculum` | `com.sleepymario.language.french` | `/home/ashwin/Projects/whacksmacker-modules/french-curriculum` |
-| `spanish-curriculum` | `com.sleepymario.language.spanish` | `/home/ashwin/Projects/whacksmacker-modules/spanish-curriculum` |
+| `linguistic-terminology` | `com.sleepymario.language.linguistic-terminology` | `linguistic-terminology/` |
+| `korean-curriculum` | `com.sleepymario.language.korean` | `korean-curriculum/` |
+| `chinese-mandarin-traditional-curriculum` | `com.sleepymario.language.chinese.mandarin.traditional` | `chinese-curriculum/` |
+| `chinese-mandarin-simplified-curriculum` | `com.sleepymario.language.chinese.mandarin.simplified` | `chinese-curriculum/` |
+| `japanese-curriculum` | `com.sleepymario.language.japanese` | `japanese-curriculum/` |
+| `vietnamese-curriculum` | `com.sleepymario.language.vietnamese` | `vietnamese-curriculum/` |
+| `dutch-curriculum` | `com.sleepymario.language.dutch` | `dutch-curriculum/` |
+| `german-curriculum` | `com.sleepymario.language.german` | `german-curriculum/` |
+| `french-curriculum` | `com.sleepymario.language.french` | `french-curriculum/` |
+| `spanish-curriculum` | `com.sleepymario.language.spanish` | `spanish-curriculum/` |
 
-Do not assume the old source paths under `/home/ashwin/Projects/languages`.
+Configured absolute source paths are used unchanged. Relative source paths resolve beneath an explicit generator `sourceRoot` option when used programmatically, then beneath `WHACKSMACKER_PACKAGE_SOURCE_ROOT` when set. Without either override, the generator preserves its legacy behavior and resolves paths relative to the process working directory captured at startup.
+
+For a Git worktree or a grouped source-repository layout, set the common parent explicitly:
+
+```sh
+WHACKSMACKER_PACKAGE_SOURCE_ROOT="$HOME/Projects/whacksmacker-modules" npm test
+```
 
 For local development, generate packages into a temporary output directory:
 

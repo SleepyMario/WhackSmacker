@@ -53,6 +53,7 @@ declare function require(name: "node:fs/promises"): {
 };
 declare function require(name: "node:path"): {
   dirname(path: string): string;
+  isAbsolute(path: string): boolean;
   join(...paths: string[]): string;
   relative(from: string, to: string): string;
   resolve(...paths: string[]): string;
@@ -60,6 +61,7 @@ declare function require(name: "node:path"): {
 };
 declare const process: {
   cwd(): string;
+  env: Record<string, string | undefined>;
 };
 
 const packageMetadata = require("../../../package.json");
@@ -68,7 +70,7 @@ const { Buffer } = require("node:buffer");
 const { createHash } = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { access, mkdir, readdir, readFile, stat, writeFile } = require("node:fs/promises");
-const { dirname, join, relative, resolve, sep } = require("node:path");
+const { dirname, isAbsolute, join, relative, resolve, sep } = require("node:path");
 
 export interface ContentPackageGeneratorTarget {
   readonly id: string;
@@ -94,7 +96,17 @@ export interface GenerateContentPackageOptions {
   readonly targetId: string;
   readonly outputDirectory: string;
   readonly generatedAt: string;
+  readonly sourceRoot?: string;
+  readonly env?: Readonly<Record<string, string | undefined>>;
 }
+
+export interface ContentPackageSourceResolution {
+  readonly configuredPath: string;
+  readonly resolvedPath: string;
+  readonly sourceRootSelection: string;
+}
+
+export const contentPackageSourceRootEnvironmentVariable = "WHACKSMACKER_PACKAGE_SOURCE_ROOT";
 
 export interface GeneratedContentPackageResult {
   readonly targetId: string;
@@ -436,8 +448,18 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
 
 export async function generateContentPackage(options: GenerateContentPackageOptions): Promise<GeneratedContentPackageResult> {
   const target = getContentPackageGeneratorTarget(options.targetId);
-  const sourceRoot = resolveSourcePath(target.sourcePath);
-  const sourceFiles = await collectSourceFiles(sourceRoot, await sourceIncludesForTarget(target, sourceRoot));
+  const sourceResolution = resolveContentPackageSourcePath(target.sourcePath, {
+    sourceRoot: options.sourceRoot,
+    env: options.env
+  });
+  const sourceRoot = sourceResolution.resolvedPath;
+  let sourceFiles: readonly SourceFile[];
+  try {
+    await access(sourceRoot);
+    sourceFiles = await collectSourceFiles(sourceRoot, await sourceIncludesForTarget(target, sourceRoot));
+  } catch (error) {
+    throw contentPackageSourceError(sourceResolution, error);
+  }
   if (target.contentType === "language-curriculum") {
     const chapters = sourceFiles
       .filter((file) => isReadableChapterMarkdownPath(file.path))
@@ -1358,8 +1380,47 @@ function sha256Hex(data: BufferValue): string {
   return createHash("sha256").update(data).digest("hex");
 }
 
-function resolveSourcePath(sourcePath: string): string {
-  return resolve(repositoryRoot, sourcePath);
+export function resolveContentPackageSourcePath(sourcePath: string, options: {
+  readonly sourceRoot?: string;
+  readonly repositoryRoot?: string;
+  readonly env?: Readonly<Record<string, string | undefined>>;
+} = {}): ContentPackageSourceResolution {
+  const baseRepositoryRoot = resolve(options.repositoryRoot ?? repositoryRoot);
+  if (isAbsolute(sourcePath)) {
+    return { configuredPath: sourcePath, resolvedPath: resolve(sourcePath), sourceRootSelection: "absolute sourcePath" };
+  }
+  const env = options.env ?? process.env;
+  const optionProvided = options.sourceRoot !== undefined;
+  const environmentProvided = Object.prototype.hasOwnProperty.call(env, contentPackageSourceRootEnvironmentVariable);
+  const configuredRoot = optionProvided ? options.sourceRoot : environmentProvided ? env[contentPackageSourceRootEnvironmentVariable] : undefined;
+  if (configuredRoot !== undefined) {
+    if (configuredRoot.trim().length === 0) {
+      const selection = optionProvided ? "explicit sourceRoot option" : `${contentPackageSourceRootEnvironmentVariable} environment variable`;
+      throw new Error(`Content package source root selected by ${selection} must not be empty. Configured source path: "${sourcePath}".`);
+    }
+    const resolvedRoot = resolve(baseRepositoryRoot, configuredRoot);
+    const pathBelowRoot = sourcePath.replace(/^(?:\.\.\/)+/u, "").replace(/^\.\//u, "");
+    return {
+      configuredPath: sourcePath,
+      resolvedPath: resolve(resolvedRoot, pathBelowRoot),
+      sourceRootSelection: optionProvided
+        ? `explicit sourceRoot option "${configuredRoot}"`
+        : `${contentPackageSourceRootEnvironmentVariable} environment variable "${configuredRoot}"`
+    };
+  }
+  return {
+    configuredPath: sourcePath,
+    resolvedPath: resolve(baseRepositoryRoot, sourcePath),
+    sourceRootSelection: `legacy process working directory "${baseRepositoryRoot}"`
+  };
+}
+
+function contentPackageSourceError(resolution: ContentPackageSourceResolution, cause: unknown): Error {
+  const detail = cause instanceof Error ? cause.message : String(cause);
+  return new Error(
+    `Content package source could not be read. Configured source path: "${resolution.configuredPath}". ` +
+    `Resolved source path: "${resolution.resolvedPath}". Source root selection: ${resolution.sourceRootSelection}. Cause: ${detail}`
+  );
 }
 
 function readGitValue(cwd: string, args: readonly string[]): string {

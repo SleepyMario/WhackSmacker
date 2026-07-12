@@ -2,13 +2,14 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { spawn } from "node:child_process";
 import { test } from "node:test";
 
 import {
   contentPackageGeneratorTargets,
   generateContentPackage,
+  resolveContentPackageSourcePath,
   validateContentPackageManifest
 } from "../dist/packages/core/index.js";
 
@@ -449,7 +450,7 @@ test("content package generator creates a valid Japanese package with Core revie
     for (const chapter of [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]) {
       const chapterFile = content.files.find((file) => !file.path.includes("-grammar-") && new RegExp(`units/japanese-core/chapter-${String(chapter).padStart(3, "0")}-[^/]+/chapter\\.md$`).test(file.path));
       assert.ok(chapterFile);
-      const sourceText = await readFile(join("..", "japanese-curriculum", chapterFile.path), "utf8");
+      const sourceText = await readFile(join(sourceRepositoryPath("japanese-curriculum"), chapterFile.path), "utf8");
       assert.match(sourceText, new RegExp(`JPN-GRAMMAR-${String(chapter).padStart(3, "0")}`));
       const readBlock = sourceText.split("```text")[1]?.split("```")[0] ?? "";
       const readLines = readBlock.trim().split(/\r?\n/u).filter((line) => line.trim());
@@ -644,7 +645,7 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.dutch");
     const castPath = "name-pools/canonical-cast.json";
-    const castSource = await readFile(join("..", "dutch-curriculum", castPath));
+    const castSource = await readFile(join(sourceRepositoryPath("dutch-curriculum"), castPath));
     const castEntry = content.files.find((file) => file.path === castPath);
     const castRecord = manifest.files.find((file) => file.path === castPath);
     assert.ok(castEntry);
@@ -662,7 +663,7 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.deepEqual(new Set(cast.activeCast.progression), new Set(cast.cast.map((person) => person.id)));
     assert.equal(new Set(cast.cast.map((person) => person.id)).size, 30);
     const packagedCastValidation = await runNode(
-      ["../language-learning-curriculum-builder/scripts/validate-packaged-cast.mjs"],
+      [join(dirname(sourceRepositoryPath("dutch-curriculum")),"language-learning-curriculum-builder","scripts","validate-packaged-cast.mjs")],
       archive.get("content/content.json")
     );
     assert.equal(packagedCastValidation.exitCode, 0, packagedCastValidation.stderr);
@@ -1660,6 +1661,10 @@ function assertUsefulChapterTitles(files) {
 
 async function fileSha256(path) {
   return createHash("sha256").update(await readFile(path)).digest("hex");
+}
+
+function sourceRepositoryPath(repositoryName) {
+  return resolveContentPackageSourcePath(`../${repositoryName}`).resolvedPath;
 }
 
 async function runNode(args, input) {
