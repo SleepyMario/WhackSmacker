@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whacksmacker.com/schemas/broader-topic-inventory-v1.schema.json",
+  "title": "WhackSmacker broader-topic inventory",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "canonicalName", "primaryDomain", "firstIntroductionChapter", "firstContentType", "description", "laterUses", "meaningfulNarrativeReuseOccurred", "meaningfulDialogueReuseOccurred"],
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "canonicalName": { "type": "string", "minLength": 1 },
+      "primaryDomain": { "$ref": "#/$defs/domain" },
+      "additionalDomains": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/domain" } },
+      "firstIntroductionChapter": { "type": "integer", "minimum": 71, "maximum": 140 },
+      "firstContentType": { "const": "narrative" },
+      "description": { "type": "string", "minLength": 1 },
+      "laterUses": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["chapter", "contentType", "kind", "description"],
+          "properties": {
+            "chapter": { "type": "integer", "minimum": 1 },
+            "contentType": { "enum": ["narrative", "dialogue"] },
+            "kind": { "enum": ["meaningful-reuse", "incidental-mention"] },
+            "description": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "meaningfulNarrativeReuseOccurred": { "type": "boolean" },
+      "meaningfulDialogueReuseOccurred": { "type": "boolean" }
+    }
+  },
+  "$defs": {
+    "domain": { "enum": ["social", "cultural", "ethical", "institutional", "environmental", "conceptual"] }
+  }
+}

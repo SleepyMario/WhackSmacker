@@ -12,6 +12,12 @@ import {
   type MemorizationItemCollection
 } from "./memorization-item";
 import type { LocalizedContentValue } from "./localized-content";
+import {
+  assertLanguageCurriculumChapter5170Requirements,
+  assertLanguageCurriculumChapter71140Requirements,
+  assertLanguageCurriculumStage71140Coverage,
+  type BroaderTopicRecord
+} from "./language-curriculum-policy";
 
 type BufferValue = {
   readonly length: number;
@@ -431,6 +437,16 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const target = getContentPackageGeneratorTarget(options.targetId);
   const sourceRoot = resolveSourcePath(target.sourcePath);
   const sourceFiles = await collectSourceFiles(sourceRoot, target.include);
+  if (target.contentType === "language-curriculum") {
+    const chapters = sourceFiles
+      .filter((file) => isReadableChapterMarkdownPath(file.path))
+      .map((file) => ({ chapter: Number.parseInt(chapterNumberForPath(file.path) ?? "0", 10), markdown: file.text }));
+    assertLanguageCurriculumChapter5170Requirements(chapters);
+    const topicInventoryFile = sourceFiles.find((file) => file.path === "units/broader-topic-inventory.json");
+    const broaderTopics = topicInventoryFile === undefined ? [] : JSON.parse(topicInventoryFile.text) as BroaderTopicRecord[];
+    assertLanguageCurriculumChapter71140Requirements(chapters, broaderTopics);
+    if (chapters.some((chapter) => chapter.chapter === 140)) assertLanguageCurriculumStage71140Coverage(chapters, { requireCompleteStage: true });
+  }
   const sourceCommit = normalizeGitCommit(readGitValue(sourceRoot, ["rev-parse", "HEAD"]));
   const sourceDirty = readGitValue(sourceRoot, ["status", "--short"]).trim().length > 0;
   const generatorCommit = readGitValue(repositoryRoot, ["rev-parse", "HEAD"]);
@@ -1005,7 +1021,7 @@ function escapeRegExp(value: string): string {
 }
 
 function isReadableChapterMarkdownPath(path: string): boolean {
-  return /^units\/.+\/chapter-\d+[^/]*\/chapter\.md$/u.test(path);
+  return /^units\/.+\/chapter-\d+[^/]*\/chapter\.md$/u.test(path) && !/-grammar-(?:easy|hard)\/chapter\.md$/u.test(path);
 }
 
 function chapterNumberForPath(path: string): string | undefined {
