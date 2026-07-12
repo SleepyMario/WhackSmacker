@@ -445,9 +445,10 @@ test("language tree exposes Dutch content and review deck labels", async () => {
     assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- There Is / There Are I"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 10 -- Living Here"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 15 -- Asking Where Someone Lives"));
     assert.ok(readContent.children.some((node) => node.label === "Grammar - Easy"));
     assert.ok(readContent.children.some((node) => node.label === "Grammar - Hard"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
   } finally {
     await fixture.cleanup();
   }
@@ -635,6 +636,26 @@ test("language tree exposes Korean Grammar Easy and Hard summaries after each co
     assert.equal(labels.includes("Grammar Summary"), false);
     assert.equal(labels.includes("Grammar Summarize"), false);
     assert.equal(labels.includes("Chapter: 1-5 grammar"), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch read tree includes the complete zero-padded Chapters 11-15 block", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const chapter11 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md");
+    const chapter15 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-015-asking-where-someone-lives/chapter.md");
+
+    assert.equal(chapter11?.label, "Chapter 11 -- Asking How Someone Is");
+    assert.equal(chapter15?.label, "Chapter 15 -- Asking Where Someone Lives");
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-016-/u.test(node.filePath ?? "")), false);
+    assert.equal(readContent.children.some((node) => /chapter-011-015-grammar-(?:easy|hard)/u.test(node.filePath ?? "")), true);
+    const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 11-15"), true);
   } finally {
     await fixture.cleanup();
   }
@@ -1363,7 +1384,7 @@ test("Dutch review sources submenu uses clean selectable deck labels", async () 
     });
     const items = reviewSourcesToMenuItems(sources);
 
-    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10"]);
+    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
     assert.equal(items.some((item) => item.label.includes("com.sleepymario.language.dutch")), false);
     assert.equal(items.some((item) => item.label.includes("cards.tsv")), false);
   } finally {

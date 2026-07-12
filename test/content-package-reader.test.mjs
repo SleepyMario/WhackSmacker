@@ -390,6 +390,17 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.dutch",
       path: "units/dutch-core/chapter-005-basic-sentences-5/chapter.md"
     });
+    const dutchEntries = await listReadableContentEntries("com.sleepymario.language.dutch", fixture.dataDir);
+    const dutchChapter11 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.dutch",
+      path: "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md"
+    });
+    const dutchChapter15 = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.dutch",
+      path: "units/dutch-core/chapter-015-asking-where-someone-lives/chapter.md"
+    });
     const englishChapter1 = await readInstalledContentEntry({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.english",
@@ -439,6 +450,11 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     );
     assert.match(koreanChapter20.text, /Chapter 15 -- Casual Absence I/);
     assert.match(vietnameseChapter5.text, /Chapter 5 -- There Is \/ There Are I/);
+    assert.match(dutchChapter11.text, /Chapter 11 -- Asking How Someone Is/);
+    assert.match(dutchChapter15.text, /Chapter 15 -- Asking Where Someone Lives/);
+    assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md"), true);
+    assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-015-asking-where-someone-lives/chapter.md"), true);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-016-/u.test(entry.path)), false);
     assert.match(chineseDeck.text, /^Pinyin-Zhuyin\tPinyin -> Zhuyin\tb\tㄅ/m);
     assert.match(chineseTraditionalPinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
     assert.match(chineseTraditionalChapter1.text, /我是馬莉亞/);
@@ -535,7 +551,8 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     const dutchSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.dutch");
     assert.deepEqual(dutchSources.map((source) => [source.title, source.sourcePath]), [
       ["Chapter 1-5", "review-decks/chapter-001-005/cards.tsv"],
-      ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"]
+      ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"],
+      ["Chapter 11-15", "review-decks/chapter-011-015/cards.tsv"]
     ]);
     const dutchItems = await listReadingReviewItems({
       dataDir: fixture.dataDir,
@@ -553,6 +570,15 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.equal(dutchItems0610.length, 40);
     assert.ok(dutchItems0610.some((item) => item.item.prompt.text === "heb" && item.item.answer.text === "have"));
     assert.ok(dutchItems0610.some((item) => item.item.prompt.text === "live" && item.item.answer.text === "woon"));
+    const dutchItems1115 = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.dutch",
+      sourcePath: "review-decks/chapter-011-015/cards.tsv"
+    });
+    assert.equal(dutchItems1115.length, 30);
+    assert.ok(dutchItems1115.some((item) => item.item.prompt.text === "Waar woon je?" && item.item.answer.text === "Where do you live?"));
+    assert.ok(dutchItems1115.some((item) => item.item.prompt.text === "Het gaat goed, dank je." && item.item.answer.text === "It is going well, thank you."));
+    assert.equal(dutchItems1115.some((item) => (item.item.examples ?? []).some((example) => example.includes("Alex"))), false);
 
     const germanSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.german");
     assert.deepEqual(germanSources.map((source) => [source.title, source.sourcePath]), [

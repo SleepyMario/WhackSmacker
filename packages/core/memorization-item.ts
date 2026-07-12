@@ -9,6 +9,7 @@ import {
   type ContentPackageManifest
 } from "./content-package-spec";
 import { isLocalizedContentValue, type LocalizedContentValue } from "./localized-content";
+import { assertCanonicalLexicalRecord, type CanonicalLexicalRecord, type LearnerFacingVocabularyRecord } from "./language-curriculum-policy";
 
 type BufferValue = {
   toString(encoding: "utf8"): string;
@@ -42,6 +43,8 @@ export interface MemorizationItem {
   readonly source?: MemorizationItemSource;
   readonly language?: MemorizationLanguageMetadata;
   readonly difficulty?: MemorizationDifficultyMetadata;
+  /** Package-preserved language-adaptive lexical data for isolated vocabulary. */
+  readonly lexicalMetadata?: LearnerFacingVocabularyRecord;
   readonly createdAt?: string;
   readonly updatedAt?: string;
 }
@@ -245,6 +248,7 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     "source",
     "language",
     "difficulty",
+    "lexicalMetadata",
     "createdAt",
     "updatedAt"
   ]);
@@ -273,12 +277,30 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
   validateSource(value.source, `${field}.source`, errors);
   validateLanguage(value.language, `${field}.language`, errors);
   validateDifficulty(value.difficulty, `${field}.difficulty`, errors);
+  validateLexicalMetadata(value.lexicalMetadata, `${field}.lexicalMetadata`, errors);
   validateTimestamp(value.createdAt, `${field}.createdAt`, errors);
   validateTimestamp(value.updatedAt, `${field}.updatedAt`, errors);
   for (const forbidden of ["dueAt", "interval", "easeFactor", "reviewHistory", "progress", "settings", "providerDeck", "providerNoteId"]) {
     if (forbidden in value) {
       errors.push(`${field}.${forbidden} is user progress, scheduler state, settings, or provider-specific data and is not allowed.`);
     }
+  }
+}
+
+function validateLexicalMetadata(value: unknown, field: string, errors: string[]): void {
+  if (value === undefined) return;
+  if (!isRecord(value) || typeof value.learnerFacingForm !== "string" || value.learnerFacingForm.trim() === "") {
+    errors.push(`${field} must be a language-adaptive vocabulary record with learnerFacingForm.`);
+    return;
+  }
+  if (value.lexicalType === "noun" && (typeof value.lemma !== "string" || value.lemma.trim() === "")) errors.push(`${field}.lemma is required for noun records.`);
+  if (value.lexicalType === "measure-expression") {
+    if (!['MW', 'classifier', 'counter'].includes(readString(value.grammaticalType))) errors.push(`${field}.grammaticalType must be MW, classifier, or counter.`);
+    if (typeof value.semanticScope !== "string" || value.semanticScope.trim() === "") errors.push(`${field}.semanticScope is required for grammatical measure expressions.`);
+  }
+  if ("lexicalEntryId" in value || "senseId" in value) {
+    try { assertCanonicalLexicalRecord(value as unknown as CanonicalLexicalRecord); }
+    catch (error) { errors.push(`${field}: ${error instanceof Error ? error.message : String(error)}`); }
   }
 }
 

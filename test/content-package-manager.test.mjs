@@ -414,6 +414,37 @@ test("reinstalling the same package does not delete review progress", async () =
   }
 });
 
+test("force reinstall replaces an older snapshot of the same package version", async () => {
+  const fixture = await createPackageFixture();
+  try {
+    const packageId = "com.sleepymario.language.same-version-refresh";
+    const archivePath = await createCustomPackage(fixture, {
+      packageId,
+      packageVersion: "0.1.0",
+      entryPointPath: "content/content.json",
+      filePath: "content/content.json",
+      contentValue: "old snapshot"
+    });
+    let cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId);
+    await installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId });
+
+    await createCustomPackage(fixture, {
+      packageId,
+      packageVersion: "0.1.0",
+      entryPointPath: "content/content.json",
+      filePath: "content/content.json",
+      contentValue: "new snapshot with chapter 11"
+    });
+    cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId);
+    const result = await installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId, force: true });
+
+    assert.equal(result.installed, true);
+    assert.match(await readFile(join(result.installPath, "content", "content.json"), "utf8"), /new snapshot with chapter 11/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("installed packages can be listed", async () => {
   const fixture = await createPackageFixture();
   try {
@@ -598,7 +629,7 @@ async function createPackageFixture() {
 }
 
 async function createCustomPackage(fixture, options) {
-  const content = Buffer.from(JSON.stringify({ packageId: options.packageId, packageVersion: options.packageVersion }), "utf8");
+  const content = Buffer.from(JSON.stringify({ packageId: options.packageId, packageVersion: options.packageVersion, value: options.contentValue }), "utf8");
   const manifest = {
     packageFormatVersion: 1,
     packageId: options.packageId,

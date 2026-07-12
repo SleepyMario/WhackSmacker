@@ -93,6 +93,8 @@ test("language curriculum pacing validates early and advanced chapters", () => {
 });
 
 test("language curriculum policy records continuity and strict example rules", () => {
+  assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /min\(30, 5 \+ 3 \* floor\(\(chapter - 1\) \/ 20\)\)/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /newly authored violations are blocking/u.test(rule)));
   assert.ok(languageCurriculumPolicy.chapterFormatRules.some((rule) => /Odd-numbered chapters are dialogues/u.test(rule)));
   assert.ok(languageCurriculumPolicy.chapterFormatRules.some((rule) => /Even-numbered chapters are narratives/u.test(rule)));
   assert.ok(languageCurriculumPolicy.numberContinuationRules.some((rule) => /51-55.*56-60.*100 through 999/u.test(rule)));

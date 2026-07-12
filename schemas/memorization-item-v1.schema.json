@@ -121,6 +121,9 @@
             }
           }
         },
+        "lexicalMetadata": {
+          "$ref": "language-vocabulary-v1.schema.json"
+        },
         "createdAt": {
           "$ref": "#/$defs/timestamp"
         },

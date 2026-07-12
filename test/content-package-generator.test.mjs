@@ -631,9 +631,11 @@ test("content package generator creates a valid Dutch package", async () => {
     const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
     const itemPath0105 = "content/memorization/review-decks/chapter-001-005.json";
     const itemPath0610 = "content/memorization/review-decks/chapter-006-010.json";
+    const itemPath1115 = "content/memorization/review-decks/chapter-011-015.json";
     const reviewItems0105 = JSON.parse(archive.get(itemPath0105).toString("utf8"));
     const reviewItems0610 = JSON.parse(archive.get(itemPath0610).toString("utf8"));
-    const allReviewItems = [...reviewItems0105.items, ...reviewItems0610.items];
+    const reviewItems1115 = JSON.parse(archive.get(itemPath1115).toString("utf8"));
+    const allReviewItems = [...reviewItems0105.items, ...reviewItems0610.items, ...reviewItems1115.items];
 
     assert.equal(result.packageId, "com.sleepymario.language.dutch");
     assert.equal(result.filePath.endsWith("com.sleepymario.language.dutch-0.1.0.wspkg"), true);
@@ -655,6 +657,9 @@ test("content package generator creates a valid Dutch package", async () => {
     const cast = JSON.parse(castEntry.text);
     assert.equal(cast.cast.length, 30);
     assert.equal(cast.deckPersonPool.length, 30);
+    assert.equal(cast.activeCast.schemaVersion, 1);
+    assert.equal(cast.activeCast.progression.length, 30);
+    assert.deepEqual(new Set(cast.activeCast.progression), new Set(cast.cast.map((person) => person.id)));
     assert.equal(new Set(cast.cast.map((person) => person.id)).size, 30);
     const packagedCastValidation = await runNode(
       ["../language-learning-curriculum-builder/scripts/validate-packaged-cast.mjs"],
@@ -670,18 +675,31 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-005-basic-sentences-5/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-006-basic-sentences-6/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-010-basic-sentences-10/chapter.md"));
+    const chapter11Path = "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md";
+    assert.ok(content.files.some((file) => file.path === chapter11Path));
+    assert.match(content.files.find((file) => file.path === chapter11Path).text, /^chapter:\s*11$/mu);
+    for (const chapter of [12, 13, 14, 15]) {
+      assert.ok(content.files.some((file) => file.path.startsWith(`units/dutch-core/chapter-${String(chapter).padStart(3, "0")}-`) && file.path.endsWith("/chapter.md")));
+    }
+    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-016-/u.test(file.path)), false);
+    assert.equal(content.files.some((file) => /chapter-011-015-grammar-(?:easy|hard)/u.test(file.path)), true);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-011-015/cards.tsv"), true);
+    assert.equal(archive.get("content/content.json").includes(Buffer.from(chapter11Path)), true);
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-006-010-grammar-easy/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-006-010-grammar-hard/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-001-005/cards.tsv"));
     assert.ok(content.files.some((file) => file.path === "review-decks/chapter-006-010/cards.tsv"));
     assert.equal(archive.has(itemPath0105), true);
     assert.equal(archive.has(itemPath0610), true);
+    assert.equal(archive.has(itemPath1115), true);
     assert.equal(reviewItems0105.items.length, 38);
     assert.equal(reviewItems0610.items.length, 40);
+    assert.equal(reviewItems1115.items.length, 30);
     assertCoreReviewItemsHaveExamples(allReviewItems, "Dutch");
     assertDutchReviewExamplesComeFromReadContent(allReviewItems, content.files);
     assert.equal(reviewItems0105.items[0].source.title, "Chapter 1-5");
     assert.equal(reviewItems0610.items[0].source.title, "Chapter 6-10");
+    assert.equal(reviewItems1115.items[0].source.title, "Chapter 11-15");
     assert.ok(reviewItems0105.items.some((item) => item.prompt.text === "hallo" && item.answer.text === "hello"));
     assert.ok(reviewItems0105.items.some((item) => item.prompt.text === "hello" && item.answer.text === "hallo"));
     assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "heb" && item.answer.text === "have"));
@@ -1172,7 +1190,7 @@ function assertCoreReviewItemsHaveExamples(items, label) {
 
 function assertDutchReviewExamplesComeFromReadContent(items, contentFiles) {
   const readContentLines = new Set(contentFiles
-    .filter((file) => /^units\/dutch-core\/chapter-\d{3}-basic-sentences-\d+\/chapter\.md$/u.test(file.path))
+    .filter((file) => /^units\/dutch-core\/chapter-\d{3}-[^/]+\/chapter\.md$/u.test(file.path) && !/grammar-(?:easy|hard)/u.test(file.path))
     .flatMap((file) => extractLearnerFacingReadContentLinesForTest(file.text)));
   const invalidExamples = items.flatMap((item) => (item.examples ?? [])
     .filter((example) => !readContentLines.has(example))

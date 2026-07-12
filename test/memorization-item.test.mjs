@@ -34,6 +34,37 @@ test("valid memorization item collection passes", () => {
   assertValidCollection(collection);
 });
 
+test("language-adaptive lexical metadata survives packaged memorization collections", () => {
+  const item = validItem();
+  item.lexicalMetadata = {
+    lexicalType: "measure-expression",
+    lexicalForm: "本",
+    learnerFacingForm: "本 — MW: bound books and volumes",
+    grammaticalType: "MW",
+    semanticScope: "bound books and volumes",
+    representativeNounClasses: ["books", "volumes"],
+    usageStatus: "restricted"
+  };
+  const collection = normalizeMemorizationItemCollection(JSON.parse(JSON.stringify({ schemaVersion: 1, items: [item] })));
+  assert.equal(collection.items[0].lexicalMetadata.semanticScope, "bound books and volumes");
+  assert.deepEqual(collection.items[0].lexicalMetadata.representativeNounClasses, ["books", "volumes"]);
+});
+
+test("memorization items preserve encountered form citation form and lexical sense identity", () => {
+  const item = validItem();
+  item.lexicalMetadata = {
+    lexicalType: "verb", learnerFacingForm: "klopt — dictionary form: kloppen",
+    lexicalEntryId: "nl.verb.kloppen", senseId: "nl.verb.kloppen.be-correct",
+    surfaceForm: "klopt", lemma: "kloppen", citationForm: "kloppen",
+    partOfSpeech: "verb", meaning: "to be correct", introductionStatus: "new-entry",
+    firstIntroductionChapter: 2, encounteredForms: ["klopt"], morphologyStatus: "supporting-form"
+  };
+  const collection = normalizeMemorizationItemCollection(JSON.parse(JSON.stringify({ schemaVersion: 1, items: [item] })));
+  assert.equal(collection.items[0].lexicalMetadata.surfaceForm, "klopt");
+  assert.equal(collection.items[0].lexicalMetadata.citationForm, "kloppen");
+  assert.equal(collection.items[0].lexicalMetadata.senseId, "nl.verb.kloppen.be-correct");
+});
+
 test("single item normalizes to a collection", () => {
   const collection = normalizeMemorizationItemCollection(validItem("hangul/vowels/a"));
 

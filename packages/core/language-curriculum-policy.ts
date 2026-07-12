@@ -47,6 +47,157 @@ export interface LanguageCurriculumChapter71140ValidationResult {
 export type BroaderTopicContentType = "narrative" | "dialogue";
 export type BroaderTopicUseKind = "meaningful-reuse" | "incidental-mention";
 
+export const canonicalCastSize = 30;
+export const activeCastBlockSize = 20;
+export const activeCastExpansionSize = 3;
+
+export type ActiveCastMigrationStatus = "compliant" | "pending-legacy-migration";
+
+export interface ActiveCastMetadata {
+  readonly schemaVersion: 1;
+  readonly progression: readonly string[];
+}
+
+export interface ActiveCastChapterRecord {
+  readonly chapter: number;
+  readonly migrationStatus: ActiveCastMigrationStatus;
+  readonly authorship: "legacy" | "new";
+  readonly participatingPersonIds?: readonly string[];
+  readonly dialogueSpeakerIds?: readonly string[];
+  readonly narrativePersonIds?: readonly string[];
+  /** Canonical IDs with a substantive learner-facing dialogue or narrative appearance. */
+  readonly meaningfulPersonIds?: readonly string[];
+  readonly reviewPersonIds?: readonly string[];
+  readonly reviewSourceChapters?: readonly number[];
+  readonly recurringRelationship?: string;
+  readonly incidentalPeople?: readonly IncidentalRoleCharacter[];
+}
+
+export interface IncidentalRoleCharacter {
+  readonly nameOrRole: string;
+  readonly function: string;
+  readonly canonicalPersonId?: never;
+  readonly lightlyDescribed: true;
+  readonly biography?: never;
+  readonly relationshipPersonIds?: never;
+  readonly recurringStoryline?: never;
+  readonly detailedPersonalityTraits?: never;
+}
+
+export interface ActiveCastAppearanceBlock {
+  readonly chapterStart: number;
+  readonly chapterEnd: number;
+  readonly appearancesByPersonId: Readonly<Record<string, number>>;
+  readonly coverageStatus: "complete" | "pending";
+  readonly requiredNewPersonIds: readonly string[];
+  readonly missingNewPersonIds: readonly string[];
+  readonly activationPeople: readonly ActivationPersonAppearanceReport[];
+  readonly oldCastAppearanceCount: number;
+  readonly newCastAppearanceCount: number;
+  readonly totalCanonicalAppearanceCount: number;
+  readonly requiredMinimumOldCastCount: number;
+  readonly oldCastPercentage: number | null;
+  readonly distributionOnTrack: boolean | "not-applicable";
+  readonly distributionStatus: "pending" | "passed" | "failed" | "not-applicable";
+}
+
+export interface ActivationPersonAppearanceReport {
+  readonly canonicalId: string;
+  readonly activationChapter: number;
+  readonly activationBlock: string;
+  readonly qualifyingChapterNumbers: readonly number[];
+  readonly distinctQualifyingChapterCount: number;
+  readonly requiredCount: 5;
+  readonly remainingCount: number;
+  readonly status: "pending" | "passed" | "failed";
+}
+
+export interface ActiveCastAuditResult {
+  readonly status: "compliant" | "pending-legacy-migration";
+  readonly appearancesByChapter: Readonly<Record<number, Readonly<Record<string, number>>>>;
+  readonly blocks: readonly ActiveCastAppearanceBlock[];
+  readonly cumulativeAppearances: Readonly<Record<string, number>>;
+  readonly warnings: readonly string[];
+  readonly pendingChapters: readonly number[];
+  readonly pendingCoverageBlocks: readonly string[];
+}
+
+export type GrammaticalGender = "M" | "F" | "N" | string;
+export type LexicalIntroductionStatus = "new-entry" | "new-sense" | "new-part-of-speech" | "new-multiword-expression" | "review" | "reintroduced" | "previously-introduced" | "reuse";
+export type LexicalMorphologyStatus = "productive-and-known" | "supporting-form" | "fixed-or-unanalyzed" | "not-yet-taught";
+export interface LexicalIdentityMetadata {
+  readonly lexicalEntryId: string;
+  readonly senseId: string;
+  readonly surfaceForm: string;
+  readonly lemma: string;
+  readonly citationForm: string;
+  readonly partOfSpeech: string;
+  readonly meaning: string;
+  readonly introductionStatus: LexicalIntroductionStatus;
+  readonly firstIntroductionChapter: number;
+  readonly encounteredForms?: readonly string[];
+  readonly relatedSenseIds?: readonly string[];
+  readonly morphologyStatus?: LexicalMorphologyStatus;
+  readonly attestationChapters?: readonly number[];
+}
+export interface NounVocabularyRecord extends Partial<LexicalIdentityMetadata> {
+  readonly lexicalType: "noun";
+  readonly lemma: string;
+  readonly learnerFacingForm: string;
+  readonly definiteArticle?: string;
+  readonly grammaticalCategory?: GrammaticalGender;
+  readonly explicitCategoryMarkerRequired?: boolean;
+  readonly exceptionalStatus?: string;
+  readonly pluralOnly?: boolean;
+}
+export type MeasureExpressionType = "MW" | "classifier" | "counter";
+export type MeasureUsageStatus = "general" | "productive" | "restricted" | "formal" | "colloquial" | "context-dependent";
+export interface MeasureExpressionVocabularyRecord extends Partial<LexicalIdentityMetadata> {
+  readonly lexicalType: "measure-expression";
+  readonly lexicalForm: string;
+  readonly learnerFacingForm: string;
+  readonly pronunciation?: string;
+  readonly grammaticalType: MeasureExpressionType;
+  readonly semanticScope: string;
+  readonly representativeNounClasses?: readonly string[];
+  readonly restrictions?: string;
+  readonly usageStatus?: MeasureUsageStatus;
+}
+export interface SimpleVocabularyRecord {
+  readonly lexicalType?: "simple" | "proper-name" | "verb" | "adjective" | "phrase" | "transparent-measure-noun";
+  readonly learnerFacingForm: string;
+}
+export interface VerbVocabularyRecord extends LexicalIdentityMetadata {
+  readonly lexicalType: "verb";
+  readonly learnerFacingForm: string;
+  readonly encounteredForms: readonly string[];
+}
+export interface MultiwordExpressionVocabularyRecord extends LexicalIdentityMetadata {
+  readonly lexicalType: "multiword-expression";
+  readonly learnerFacingForm: string;
+  readonly multiwordExpression: true;
+  readonly componentLexicalEntryIds?: readonly string[];
+  readonly morphologyStatus: LexicalMorphologyStatus;
+  readonly introducesProductiveMorphology?: boolean;
+}
+export type CanonicalLexicalRecord = (NounVocabularyRecord | MeasureExpressionVocabularyRecord) & LexicalIdentityMetadata | VerbVocabularyRecord | MultiwordExpressionVocabularyRecord;
+export type LearnerFacingVocabularyRecord = NounVocabularyRecord | MeasureExpressionVocabularyRecord | VerbVocabularyRecord | MultiwordExpressionVocabularyRecord | SimpleVocabularyRecord;
+export interface LexicalInventoryAuditResult {
+  readonly newVocabularyCount: number;
+  readonly newSenseIds: readonly string[];
+  readonly reviewSenseIds: readonly string[];
+  readonly warnings: readonly string[];
+}
+export interface LanguageLexicalPolicy {
+  readonly language: string;
+  readonly nounCategorySystem?: {
+    readonly citationFormDefiniteArticles: readonly string[];
+    readonly ambiguityForms?: readonly string[];
+    readonly categoryMarkerLabels?: readonly string[];
+  };
+  readonly grammaticalMeasureExpressions?: boolean;
+}
+
 export interface BroaderTopicLaterUse {
   readonly chapter: number;
   readonly contentType: BroaderTopicContentType;
@@ -75,6 +226,8 @@ export interface LargeNumberCoverageRule {
 }
 
 export interface LanguageCurriculumPolicy {
+  readonly activeCastRules: readonly string[];
+  readonly lexicalFoundationRules: readonly string[];
   readonly pacingRules: readonly LanguageCurriculumPacingRule[];
   readonly decisionBoundaryChapter: number;
   readonly chapterFormatRules: readonly string[];
@@ -93,6 +246,27 @@ export const grammarEasyMenuLabel = "Grammar - Easy";
 export const grammarHardMenuLabel = "Grammar - Hard";
 
 export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
+  activeCastRules: [
+    "Canonical-cast metadata declares one explicit versioned progression containing exactly thirty unique canonical person IDs.",
+    "The active pool is the first min(30, 5 + 3 * floor((chapter - 1) / 20)) progression IDs.",
+    "Previously active people remain active; Chapter 201 onward retains the same thirty people.",
+    "Dialogue, narrative, metadata, and review cast IDs must be active; only meaningful learner-facing dialogue or narrative appearances satisfy block coverage.",
+    "In each person's first activation block, that person appears meaningfully in at least five distinct ordinary chapters; duplicate lines in one chapter count once.",
+    "In every completed activation block after Chapters 1-20, old cast supplies at least ceil(total meaningful canonical person-chapter appearances / 3).",
+    "Chapter 201 onward permits lightly described functional incidental people without canonical IDs, but never a hidden second detailed cast.",
+    "Builders prefer least-used suitable active people and audit severe imbalance without requiring exact equality.",
+    "Only legacy-authorship records may remain pending legacy migration; newly authored violations are blocking."
+  ],
+  lexicalFoundationRules: [
+    "Chapter 1 introduces citation-form definite articles and noun categories where the language has them, without inventing gender for languages that do not.",
+    "This mandatory lexical-system guidance may coexist with the principal grammar point and does not automatically add a principal grammar ID.",
+    "Applicable isolated learner-facing nouns use article-bearing citation forms and explicit category markers where elision or syncretism hides the category.",
+    "Grammatical measure words, classifiers, and counters state concise semantic scope; transparent ordinary measure nouns remain simple vocabulary.",
+    "Lexical identity uses stable entry and sense IDs, so identical surface forms may carry genuinely distinct senses or parts of speech without being merged.",
+    "An encountered inflected verb form and its language-appropriate citation form are one lexical introduction; ordinary later inflections are reuse.",
+    "Lexicalized multiword expressions have their own complete entry and sense; internal untaught morphology remains fixed or unanalyzed rather than implicitly productive.",
+    "Review and reintroduction retain the original first-introduction chapter and do not count toward new-vocabulary quotas."
+  ],
   pacingRules: [
     {
       label: "Chapters 1-25",
@@ -567,6 +741,302 @@ function learnerFacingReadContent(markdown: string): { readonly format: "dialogu
     lines.push(line);
   }
   return { format, lines };
+}
+
+export function activeCastSizeForChapter(chapter: number): number {
+  assertPositiveIntegerChapter(chapter);
+  return Math.min(canonicalCastSize, 5 + activeCastExpansionSize * Math.floor((chapter - 1) / activeCastBlockSize));
+}
+
+export function assertActiveCastProgression(canonicalPersonIds: readonly string[], progression: readonly string[]): void {
+  if (canonicalPersonIds.length !== canonicalCastSize || new Set(canonicalPersonIds).size !== canonicalCastSize) {
+    throw new Error(`Canonical cast must contain exactly ${canonicalCastSize} unique person IDs.`);
+  }
+  if (progression.length !== canonicalCastSize) {
+    throw new Error(`Active-cast progression must contain exactly ${canonicalCastSize} IDs; got ${progression.length}.`);
+  }
+  const canonical = new Set(canonicalPersonIds);
+  const seen = new Set<string>();
+  const unknown: string[] = [];
+  for (const id of progression) {
+    if (seen.has(id)) throw new Error(`Active-cast progression contains duplicate person ID ${id}.`);
+    seen.add(id);
+    if (!canonical.has(id)) unknown.push(id);
+  }
+  const omitted = canonicalPersonIds.filter((id) => !seen.has(id));
+  if (unknown.length > 0 || omitted.length > 0) {
+    throw new Error(`Active-cast progression${unknown.length > 0 ? ` references unknown canonical person ID ${unknown[0]}` : ""}${unknown.length > 0 && omitted.length > 0 ? " and" : ""}${omitted.length > 0 ? ` omits canonical person ID ${omitted[0]}` : ""}.`);
+  }
+}
+
+export function activePersonIdsForChapter(chapter: number, progression: readonly string[]): readonly string[] {
+  if (progression.length !== canonicalCastSize || new Set(progression).size !== canonicalCastSize) {
+    throw new Error(`Active-cast progression must contain exactly ${canonicalCastSize} unique IDs before calculating an active pool.`);
+  }
+  return progression.slice(0, activeCastSizeForChapter(chapter));
+}
+
+export function leastUsedSuitableActivePersonIds(values: {
+  readonly chapter: number;
+  readonly progression: readonly string[];
+  readonly cumulativeAppearances: Readonly<Record<string, number>>;
+  readonly suitablePersonIds?: readonly string[];
+  readonly count: number;
+}): readonly string[] {
+  if (!Number.isInteger(values.count) || values.count < 1) throw new Error("Active-cast selection count must be a positive integer.");
+  const active = activePersonIdsForChapter(values.chapter, values.progression);
+  const suitable = new Set(values.suitablePersonIds ?? active);
+  const candidates = active.filter((id) => suitable.has(id));
+  if (candidates.length < values.count) throw new Error(`Only ${candidates.length} suitable active people are available; ${values.count} requested.`);
+  const order = new Map(values.progression.map((id, index) => [id, index]));
+  return candidates.sort((left, right) =>
+    (values.cumulativeAppearances[left] ?? 0) - (values.cumulativeAppearances[right] ?? 0)
+      || (order.get(left) ?? 0) - (order.get(right) ?? 0)
+  ).slice(0, values.count);
+}
+
+export function auditActiveCast(values: {
+  readonly canonicalPersonIds: readonly string[];
+  readonly progression: readonly string[];
+  readonly chapters: readonly ActiveCastChapterRecord[];
+}): ActiveCastAuditResult {
+  assertActiveCastProgression(values.canonicalPersonIds, values.progression);
+  const canonical = new Set(values.canonicalPersonIds);
+  const appearancesByChapter: Record<number, Record<string, number>> = {};
+  const cumulativeAppearances: Record<string, number> = Object.fromEntries(values.canonicalPersonIds.map((id) => [id, 0]));
+  const pendingChapters: number[] = [];
+  const pendingCoverageBlocks: string[] = [];
+  const chapterIds = new Map<number, Set<string>>();
+  const suppliedChapters = new Set(values.chapters.map((record) => record.chapter));
+
+  for (const record of [...values.chapters].sort((left, right) => left.chapter - right.chapter)) {
+    assertPositiveIntegerChapter(record.chapter);
+    if (record.migrationStatus === "pending-legacy-migration" && record.authorship !== "legacy") {
+      throw new Error(`Chapter ${record.chapter}: newly authored content cannot be marked pending legacy migration.`);
+    }
+    const active = new Set(activePersonIdsForChapter(record.chapter, values.progression));
+    const declared = [
+      ...(record.participatingPersonIds ?? []),
+      ...(record.dialogueSpeakerIds ?? []),
+      ...(record.narrativePersonIds ?? []),
+      ...(record.meaningfulPersonIds ?? []),
+      ...(record.reviewPersonIds ?? [])
+    ];
+    for (const id of declared) if (!canonical.has(id)) throw new Error(`Chapter ${record.chapter}: unknown canonical person ID ${id}.`);
+    const used = new Set(declared);
+    const inactive = [...used].filter((id) => !active.has(id));
+    if (inactive.length > 0) {
+      if (record.migrationStatus === "pending-legacy-migration" && record.authorship === "legacy") pendingChapters.push(record.chapter);
+      else throw new Error(`Chapter ${record.chapter}: inactive canonical person ${inactive[0]} appears before activation.`);
+    }
+    if (record.reviewPersonIds?.length) {
+      const sources = record.reviewSourceChapters ?? [];
+      if (sources.length === 0) throw new Error(`Chapter ${record.chapter}: review cast requires reviewSourceChapters.`);
+      const sourcePeople = new Set(sources.flatMap((chapter) => [...(chapterIds.get(chapter) ?? [])]));
+      for (const id of record.reviewPersonIds) {
+        if (!sourcePeople.has(id)) throw new Error(`Chapter ${record.chapter}: review person ${id} was not active in a declared source chapter.`);
+      }
+    }
+    for (const person of record.incidentalPeople ?? []) assertIncidentalRoleCharacter(record.chapter, person);
+    const counts: Record<string, number> = {};
+    for (const id of new Set(record.meaningfulPersonIds ?? [])) {
+      counts[id] = 1;
+      cumulativeAppearances[id] += 1;
+    }
+    appearancesByChapter[record.chapter] = counts;
+    chapterIds.set(record.chapter, used);
+  }
+
+  const blocks: ActiveCastAppearanceBlock[] = [];
+  const warnings: string[] = [];
+  const lastChapter = Math.max(0, ...values.chapters.map((chapter) => chapter.chapter));
+  for (let chapterStart = 1; chapterStart <= lastChapter; chapterStart += activeCastBlockSize) {
+    const chapterEnd = chapterStart + activeCastBlockSize - 1;
+    const coverageStatus = Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index)
+      .every((chapter) => suppliedChapters.has(chapter)) ? "complete" : "pending";
+    const appearancesByPersonId: Record<string, number> = {};
+    for (let chapter = chapterStart; chapter <= chapterEnd; chapter += 1) {
+      for (const [id, count] of Object.entries(appearancesByChapter[chapter] ?? {})) appearancesByPersonId[id] = (appearancesByPersonId[id] ?? 0) + count;
+    }
+    const report = activeCastBlockReport({ chapterStart, progression: values.progression, appearancesByChapter, suppliedChapters });
+    const requiredNewPersonIds = report.activationPeople.map((person) => person.canonicalId);
+    const missingNewPersonIds = report.activationPeople.filter((person) => person.remainingCount > 0).map((person) => person.canonicalId);
+    if (coverageStatus === "pending") pendingCoverageBlocks.push(`${chapterStart}-${chapterEnd}`);
+    else {
+      const failedPerson = report.activationPeople.find((person) => person.status === "failed");
+      if (failedPerson !== undefined) throw new Error(`Chapters ${chapterStart}-${chapterEnd}: newly activated person ${failedPerson.canonicalId} has ${failedPerson.distinctQualifyingChapterCount} distinct meaningful chapter appearances; 5 required.`);
+      if (report.distributionStatus === "failed") throw new Error(`Chapters ${chapterStart}-${chapterEnd}: old cast has ${report.oldCastAppearanceCount} of ${report.totalCanonicalAppearanceCount} distinct person-chapter appearances; at least ${report.requiredMinimumOldCastCount} required.`);
+    }
+    if (coverageStatus === "pending" && report.distributionOnTrack === false) warnings.push(`Chapters ${chapterStart}-${chapterEnd}: pending old-cast distribution is below one third and may be difficult to recover without prompt older-cast use.`);
+    blocks.push({ chapterStart, chapterEnd, appearancesByPersonId, coverageStatus, requiredNewPersonIds, missingNewPersonIds, ...report });
+    const counts = activePersonIdsForChapter(chapterStart, values.progression).map((id) => appearancesByPersonId[id] ?? 0);
+    const total = counts.reduce((sum, count) => sum + count, 0);
+    const min = Math.min(...counts);
+    const max = Math.max(...counts);
+    if (total >= counts.length * 2 && max >= Math.max(6, min * 3)) {
+      warnings.push(`Chapters ${chapterStart}-${chapterEnd}: severe active-cast appearance imbalance (minimum ${min}, maximum ${max}).`);
+    }
+  }
+  const appearedCounts = Object.values(cumulativeAppearances).filter((count) => count > 0);
+  if (lastChapter >= 100 && appearedCounts.length > 1 && Math.max(...appearedCounts) >= Math.max(20, Math.min(...appearedCounts) * 8)) {
+    warnings.push(`Chapters 1-${lastChapter}: strong long-term canonical-cast appearance imbalance.`);
+  }
+  return {
+    status: pendingChapters.length > 0 ? "pending-legacy-migration" : "compliant",
+    appearancesByChapter,
+    blocks,
+    cumulativeAppearances,
+    warnings,
+    pendingChapters,
+    pendingCoverageBlocks
+  };
+}
+
+export function activeCastBlockReport(values: {
+  readonly chapterStart: number;
+  readonly progression: readonly string[];
+  readonly appearancesByChapter: Readonly<Record<number, Readonly<Record<string, number>>>>;
+  readonly suppliedChapters: ReadonlySet<number>;
+}): Omit<ActiveCastAppearanceBlock, "chapterStart" | "chapterEnd" | "appearancesByPersonId" | "coverageStatus" | "requiredNewPersonIds" | "missingNewPersonIds"> {
+  const chapterStart = values.chapterStart;
+  if (chapterStart < 1 || (chapterStart - 1) % activeCastBlockSize !== 0) throw new Error(`Activation block must start at Chapter 1 or a later twenty-chapter boundary: ${chapterStart}.`);
+  const chapterEnd = chapterStart + activeCastBlockSize - 1;
+  const complete = Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index).every((chapter) => values.suppliedChapters.has(chapter));
+  if (chapterStart > 200) return { activationPeople: [], oldCastAppearanceCount: 0, newCastAppearanceCount: 0, totalCanonicalAppearanceCount: 0, requiredMinimumOldCastCount: 0, oldCastPercentage: null, distributionOnTrack: "not-applicable", distributionStatus: "not-applicable" };
+  const current = activePersonIdsForChapter(chapterStart, values.progression);
+  const previousCount = chapterStart === 1 ? 0 : activeCastSizeForChapter(chapterStart - 1);
+  const oldIds = new Set(current.slice(0, previousCount));
+  const newIds = new Set(current.slice(previousCount));
+  const qualifyingChapters = (id: string) => Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index)
+    .filter((chapter) => (values.appearancesByChapter[chapter]?.[id] ?? 0) > 0);
+  const activationPeople: ActivationPersonAppearanceReport[] = [...newIds].map((canonicalId) => {
+    const chapters = qualifyingChapters(canonicalId);
+    const remainingCount = Math.max(0, 5 - chapters.length);
+    return { canonicalId, activationChapter: chapterStart, activationBlock: `${chapterStart}-${chapterEnd}`, qualifyingChapterNumbers: chapters, distinctQualifyingChapterCount: chapters.length, requiredCount: 5, remainingCount, status: complete ? (remainingCount === 0 ? "passed" : "failed") : "pending" };
+  });
+  let oldCastAppearanceCount = 0;
+  let newCastAppearanceCount = 0;
+  for (let chapter = chapterStart; chapter <= chapterEnd; chapter += 1) {
+    for (const id of Object.keys(values.appearancesByChapter[chapter] ?? {})) {
+      if (oldIds.has(id)) oldCastAppearanceCount += 1;
+      else if (newIds.has(id)) newCastAppearanceCount += 1;
+    }
+  }
+  const totalCanonicalAppearanceCount = oldCastAppearanceCount + newCastAppearanceCount;
+  const requiredMinimumOldCastCount = chapterStart === 1 ? 0 : Math.ceil(totalCanonicalAppearanceCount / 3);
+  const oldCastPercentage = totalCanonicalAppearanceCount === 0 ? 0 : oldCastAppearanceCount / totalCanonicalAppearanceCount;
+  if (chapterStart === 1) return { activationPeople, oldCastAppearanceCount, newCastAppearanceCount, totalCanonicalAppearanceCount, requiredMinimumOldCastCount, oldCastPercentage: null, distributionOnTrack: "not-applicable", distributionStatus: "not-applicable" };
+  const ratioPasses = oldCastAppearanceCount >= requiredMinimumOldCastCount;
+  return { activationPeople, oldCastAppearanceCount, newCastAppearanceCount, totalCanonicalAppearanceCount, requiredMinimumOldCastCount, oldCastPercentage, distributionOnTrack: ratioPasses, distributionStatus: complete ? (ratioPasses ? "passed" : "failed") : "pending" };
+}
+
+export function assertIncidentalRoleCharacter(chapter: number, person: IncidentalRoleCharacter): void {
+  assertPositiveIntegerChapter(chapter);
+  if (chapter < 201) throw new Error(`Chapter ${chapter}: unrestricted incidental fictional people are permitted only from Chapter 201 onward.`);
+  const unsafe = person as unknown as Record<string, unknown>;
+  if (typeof unsafe.canonicalPersonId === "string") throw new Error(`Chapter ${chapter}: incidental person ${person.nameOrRole} must not receive a canonical ID.`);
+  for (const field of ["biography", "relationshipPersonIds", "recurringStoryline", "detailedPersonalityTraits"] as const) {
+    const value = unsafe[field];
+    if (value !== undefined && value !== "" && (!Array.isArray(value) || value.length > 0)) {
+      throw new Error(`Chapter ${chapter}: incidental person ${person.nameOrRole} has canonical-style ${field} metadata.`);
+    }
+  }
+  if (person.lightlyDescribed !== true || person.nameOrRole.trim() === "" || person.function.trim() === "") {
+    throw new Error(`Chapter ${chapter}: incidental people must remain lightly described and functional.`);
+  }
+}
+
+export function assertChapterOneLexicalFoundation(values: {
+  readonly policy: LanguageLexicalPolicy;
+  readonly chapter: number;
+  readonly introducedDefiniteArticles?: readonly string[];
+  readonly explainsNounCategories?: boolean;
+  readonly explainsLearningNounsWithArticle?: boolean;
+  readonly explainsAmbiguityMarkers?: boolean;
+  readonly principalGrammarPointIds: readonly string[];
+}): void {
+  if (values.chapter !== 1 || values.policy.nounCategorySystem === undefined) return;
+  const system = values.policy.nounCategorySystem;
+  const introduced = new Set(values.introducedDefiniteArticles ?? []);
+  for (const article of system.citationFormDefiniteArticles) if (!introduced.has(article)) throw new Error(`Chapter 1 ${values.policy.language}: missing required definite article ${article}.`);
+  if (!values.explainsNounCategories || !values.explainsLearningNounsWithArticle) throw new Error(`Chapter 1 ${values.policy.language}: noun categories and learning nouns with their article must be explained.`);
+  if ((system.ambiguityForms?.length ?? 0) > 0 && !values.explainsAmbiguityMarkers) throw new Error(`Chapter 1 ${values.policy.language}: ambiguity-marker guidance is required.`);
+  if (values.principalGrammarPointIds.length !== 1) throw new Error(`Chapter 1 ${values.policy.language}: lexical foundation must not change the principal grammar point count.`);
+}
+
+export function assertLearnerFacingVocabularyRecord(record: LearnerFacingVocabularyRecord, policy: LanguageLexicalPolicy): void {
+  if (record.lexicalType === "noun" && policy.nounCategorySystem !== undefined) {
+    if (!record.definiteArticle || !policy.nounCategorySystem.citationFormDefiniteArticles.includes(record.definiteArticle)) throw new Error(`${policy.language} noun ${record.lemma}: missing required citation-form definite article.`);
+    if (!record.learnerFacingForm.startsWith(`${record.definiteArticle} `) && !record.learnerFacingForm.startsWith(record.definiteArticle)) throw new Error(`${policy.language} noun ${record.lemma}: learner-facing form must include its definite article.`);
+    if (record.explicitCategoryMarkerRequired && (!record.grammaticalCategory || !record.learnerFacingForm.endsWith(`(${record.grammaticalCategory})`))) throw new Error(`${policy.language} noun ${record.lemma}: missing required ambiguity marker.`);
+  }
+  if (record.lexicalType === "measure-expression") {
+    if (!policy.grammaticalMeasureExpressions) throw new Error(`${record.lexicalForm}: transparent or non-grammatical measure expressions must remain simple vocabulary.`);
+    if (record.semanticScope.trim() === "") throw new Error(`${record.lexicalForm}: grammatical ${record.grammaticalType} requires semantic scope.`);
+    if (record.grammaticalType === "MW" && /(?:^|\s)M(?:\s|:|$)/u.test(record.learnerFacingForm)) throw new Error(`${record.lexicalForm}: use MW for measure word; M is reserved for masculine gender.`);
+  }
+  if (hasCanonicalLexicalIdentity(record)) assertCanonicalLexicalRecord(record);
+}
+
+export function assertCanonicalLexicalRecord(record: CanonicalLexicalRecord): void {
+  for (const [field, value] of Object.entries({ lexicalEntryId: record.lexicalEntryId, senseId: record.senseId, surfaceForm: record.surfaceForm, lemma: record.lemma, citationForm: record.citationForm, partOfSpeech: record.partOfSpeech, meaning: record.meaning })) {
+    if (typeof value !== "string" || value.trim() === "") throw new Error(`Canonical lexical record requires non-empty ${field}.`);
+  }
+  assertPositiveIntegerChapter(record.firstIntroductionChapter);
+  if (record.lexicalType === "verb") {
+    if (record.encounteredForms.length === 0 || !record.encounteredForms.includes(record.surfaceForm)) throw new Error(`${record.lexicalEntryId}: verb encounteredForms must include the introduced surface form.`);
+    if (record.surfaceForm !== record.citationForm && record.citationForm.trim() === "") throw new Error(`${record.lexicalEntryId}: inflected verb requires a dictionary or citation form.`);
+  }
+  if (record.lexicalType === "multiword-expression") {
+    if (!record.multiwordExpression || !/\s/u.test(record.citationForm)) throw new Error(`${record.lexicalEntryId}: idiom or fixed expression must be stored under its complete multiword citation form.`);
+    if (record.componentLexicalEntryIds?.includes(record.lexicalEntryId)) throw new Error(`${record.lexicalEntryId}: a multiword expression cannot be represented only as one of its component entries.`);
+    if (record.introducesProductiveMorphology === true && (record.morphologyStatus === "fixed-or-unanalyzed" || record.morphologyStatus === "not-yet-taught")) throw new Error(`${record.lexicalEntryId}: fixed expression internal morphology cannot introduce an untaught productive grammar rule.`);
+  }
+  if (["review", "reintroduced", "previously-introduced", "reuse"].includes(record.introductionStatus) && record.attestationChapters?.includes(record.firstIntroductionChapter) === false && (record.attestationChapters?.length ?? 0) > 0) {
+    // The original chapter remains authoritative even when later attestations omit it.
+  }
+}
+
+export function auditLexicalInventory(records: readonly CanonicalLexicalRecord[]): LexicalInventoryAuditResult {
+  const senseDefinitions = new Map<string, { entryId: string; meaning: string; firstChapter: number }>();
+  const identityByEntryAndMeaning = new Map<string, string>();
+  const newlyCounted = new Set<string>();
+  const newSenseIds: string[] = [];
+  const reviewSenseIds: string[] = [];
+  const warnings: string[] = [];
+  for (const record of records) {
+    assertCanonicalLexicalRecord(record);
+    const existing = senseDefinitions.get(record.senseId);
+    if (existing !== undefined && (existing.entryId !== record.lexicalEntryId || normalizeLexicalMeaning(existing.meaning) !== normalizeLexicalMeaning(record.meaning))) throw new Error(`Sense ID ${record.senseId} is shared by unrelated lexical senses.`);
+    if (existing !== undefined && existing.firstChapter !== record.firstIntroductionChapter) throw new Error(`Sense ${record.senseId} must retain first-introduction Chapter ${existing.firstChapter}.`);
+    senseDefinitions.set(record.senseId, { entryId: record.lexicalEntryId, meaning: record.meaning, firstChapter: record.firstIntroductionChapter });
+    const entryMeaningKey = `${record.lexicalEntryId}\u0000${record.partOfSpeech}\u0000${normalizeLexicalMeaning(record.meaning)}`;
+    const existingSenseForEntryMeaning = identityByEntryAndMeaning.get(entryMeaningKey);
+    if (existingSenseForEntryMeaning !== undefined && existingSenseForEntryMeaning !== record.senseId) throw new Error(`${record.lexicalEntryId}: ordinary forms of one lexical meaning cannot be counted under separate sense IDs ${existingSenseForEntryMeaning} and ${record.senseId}.`);
+    identityByEntryAndMeaning.set(entryMeaningKey, record.senseId);
+    const isNew = ["new-entry", "new-sense", "new-part-of-speech", "new-multiword-expression"].includes(record.introductionStatus);
+    if (isNew) {
+      if (newlyCounted.has(record.senseId)) throw new Error(`Sense ${record.senseId} is counted as newly introduced more than once.`);
+      newlyCounted.add(record.senseId);
+      newSenseIds.push(record.senseId);
+    } else reviewSenseIds.push(record.senseId);
+    if (record.introductionStatus === "new-sense" && record.relatedSenseIds?.length === 0) warnings.push(`${record.senseId}: new sense has no relationship recorded to the existing same-form sense.`);
+    if (record.lexicalType === "multiword-expression" && (record.componentLexicalEntryIds?.length ?? 0) === 0) warnings.push(`${record.senseId}: multiword expression has no component links; human review should confirm lexicalization.`);
+  }
+  return { newVocabularyCount: newSenseIds.length, newSenseIds, reviewSenseIds, warnings };
+}
+
+function hasCanonicalLexicalIdentity(record: LearnerFacingVocabularyRecord): record is CanonicalLexicalRecord {
+  return "lexicalEntryId" in record || "senseId" in record;
+}
+
+function normalizeLexicalMeaning(value: string): string {
+  return value.normalize("NFKC").replace(/\s+/gu, " ").trim().toLocaleLowerCase();
+}
+
+export function buildLearnerFacingVocabularyIndex(records: readonly LearnerFacingVocabularyRecord[], policy: LanguageLexicalPolicy): readonly LearnerFacingVocabularyRecord[] {
+  for (const record of records) assertLearnerFacingVocabularyRecord(record, policy);
+  return records.map((record) => ({ ...record, ...(record.lexicalType === "measure-expression" && record.representativeNounClasses ? { representativeNounClasses: [...record.representativeNounClasses] } : {}) }));
 }
 
 function assertPositiveIntegerChapter(chapter: number): void {

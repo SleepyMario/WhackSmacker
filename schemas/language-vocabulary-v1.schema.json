@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whacksmacker.com/schemas/language-vocabulary-v1.schema.json",
+  "title": "WhackSmacker language-adaptive learner-facing vocabulary",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["lexicalType", "lemma", "learnerFacingForm"],
+      "properties": {
+        "lexicalType": { "const": "noun" },
+        "lemma": { "type": "string", "minLength": 1 },
+        "learnerFacingForm": { "type": "string", "minLength": 1 },
+        "definiteArticle": { "type": "string", "minLength": 1 },
+        "grammaticalCategory": { "type": "string", "minLength": 1 },
+        "explicitCategoryMarkerRequired": { "type": "boolean" },
+        "exceptionalStatus": { "type": "string", "minLength": 1 },
+        "pluralOnly": { "type": "boolean" }
+        ,"lexicalEntryId": { "type": "string", "minLength": 1 }
+        ,"senseId": { "type": "string", "minLength": 1 }
+        ,"surfaceForm": { "type": "string", "minLength": 1 }
+        ,"citationForm": { "type": "string", "minLength": 1 }
+        ,"partOfSpeech": { "type": "string", "minLength": 1 }
+        ,"meaning": { "type": "string", "minLength": 1 }
+        ,"introductionStatus": { "$ref": "#/$defs/introductionStatus" }
+        ,"firstIntroductionChapter": { "type": "integer", "minimum": 1 }
+        ,"encounteredForms": { "$ref": "#/$defs/stringList" }
+        ,"relatedSenseIds": { "$ref": "#/$defs/stringList" }
+        ,"morphologyStatus": { "$ref": "#/$defs/morphologyStatus" }
+        ,"attestationChapters": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["lexicalType", "lexicalForm", "learnerFacingForm", "grammaticalType", "semanticScope"],
+      "properties": {
+        "lexicalType": { "const": "measure-expression" },
+        "lexicalForm": { "type": "string", "minLength": 1 },
+        "learnerFacingForm": { "type": "string", "minLength": 1 },
+        "pronunciation": { "type": "string", "minLength": 1 },
+        "grammaticalType": { "enum": ["MW", "classifier", "counter"] },
+        "semanticScope": { "type": "string", "minLength": 1 },
+        "representativeNounClasses": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "restrictions": { "type": "string", "minLength": 1 },
+        "usageStatus": { "enum": ["general", "productive", "restricted", "formal", "colloquial", "context-dependent"] }
+        ,"lexicalEntryId": { "type": "string", "minLength": 1 }
+        ,"senseId": { "type": "string", "minLength": 1 }
+        ,"surfaceForm": { "type": "string", "minLength": 1 }
+        ,"lemma": { "type": "string", "minLength": 1 }
+        ,"citationForm": { "type": "string", "minLength": 1 }
+        ,"partOfSpeech": { "type": "string", "minLength": 1 }
+        ,"meaning": { "type": "string", "minLength": 1 }
+        ,"introductionStatus": { "$ref": "#/$defs/introductionStatus" }
+        ,"firstIntroductionChapter": { "type": "integer", "minimum": 1 }
+        ,"encounteredForms": { "$ref": "#/$defs/stringList" }
+        ,"relatedSenseIds": { "$ref": "#/$defs/stringList" }
+        ,"morphologyStatus": { "$ref": "#/$defs/morphologyStatus" }
+        ,"attestationChapters": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["lexicalType", "learnerFacingForm", "lexicalEntryId", "senseId", "surfaceForm", "lemma", "citationForm", "partOfSpeech", "meaning", "introductionStatus", "firstIntroductionChapter", "encounteredForms"],
+      "properties": {
+        "lexicalType": { "const": "verb" },
+        "learnerFacingForm": { "type": "string", "minLength": 1 },
+        "lexicalEntryId": { "type": "string", "minLength": 1 }, "senseId": { "type": "string", "minLength": 1 },
+        "surfaceForm": { "type": "string", "minLength": 1 }, "lemma": { "type": "string", "minLength": 1 }, "citationForm": { "type": "string", "minLength": 1 },
+        "partOfSpeech": { "type": "string", "minLength": 1 }, "meaning": { "type": "string", "minLength": 1 },
+        "introductionStatus": { "$ref": "#/$defs/introductionStatus" }, "firstIntroductionChapter": { "type": "integer", "minimum": 1 },
+        "encounteredForms": { "$ref": "#/$defs/stringList" }, "relatedSenseIds": { "$ref": "#/$defs/stringList" },
+        "morphologyStatus": { "$ref": "#/$defs/morphologyStatus" }, "attestationChapters": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["lexicalType", "learnerFacingForm", "lexicalEntryId", "senseId", "surfaceForm", "lemma", "citationForm", "partOfSpeech", "meaning", "introductionStatus", "firstIntroductionChapter", "multiwordExpression", "morphologyStatus"],
+      "properties": {
+        "lexicalType": { "const": "multiword-expression" }, "learnerFacingForm": { "type": "string", "minLength": 1 },
+        "lexicalEntryId": { "type": "string", "minLength": 1 }, "senseId": { "type": "string", "minLength": 1 },
+        "surfaceForm": { "type": "string", "minLength": 1 }, "lemma": { "type": "string", "minLength": 1 }, "citationForm": { "type": "string", "minLength": 1 },
+        "partOfSpeech": { "type": "string", "minLength": 1 }, "meaning": { "type": "string", "minLength": 1 },
+        "introductionStatus": { "$ref": "#/$defs/introductionStatus" }, "firstIntroductionChapter": { "type": "integer", "minimum": 1 },
+        "encounteredForms": { "$ref": "#/$defs/stringList" }, "relatedSenseIds": { "$ref": "#/$defs/stringList" },
+        "multiwordExpression": { "const": true }, "componentLexicalEntryIds": { "$ref": "#/$defs/stringList" },
+        "morphologyStatus": { "$ref": "#/$defs/morphologyStatus" }, "introducesProductiveMorphology": { "type": "boolean" },
+        "attestationChapters": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": ["learnerFacingForm"],
+      "properties": {
+        "lexicalType": { "enum": ["simple", "proper-name", "verb", "adjective", "phrase", "transparent-measure-noun"] },
+        "learnerFacingForm": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "stringList": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "introductionStatus": { "enum": ["new-entry", "new-sense", "new-part-of-speech", "new-multiword-expression", "review", "reintroduced", "previously-introduced", "reuse"] },
+    "morphologyStatus": { "enum": ["productive-and-known", "supporting-form", "fixed-or-unanalyzed", "not-yet-taught"] }
+  }
+}

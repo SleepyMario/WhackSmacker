@@ -2,6 +2,110 @@
 
 These rules are hard WhackSmacker language-curriculum constraints. They apply to normal language core chapters and normal core review decks.
 
+## Canonical cast and active cast
+
+Language packages preserve the complete thirty-person `canonical-cast.json`,
+including its versioned `activeCast.progression`. That explicit list is a
+permutation of all thirty canonical IDs; cast-array, object, and filesystem
+order are never activation order.
+
+For chapter `c`, the active prefix length is
+`min(30, 5 + 3 × floor((c - 1) / 20))`. Chapters 1-20 therefore permit 5
+people, Chapters 21-40 permit 8, and every twenty-chapter boundary adds exactly
+3 through 29 in Chapters 161-180. Chapter 181 adds only the remaining thirtieth
+person. Chapter 201 onward stays at those same 30. Earlier
+people remain active permanently and no thirty-first identity is allowed.
+
+Participant declarations, speaker IDs, narrative subject/narrator IDs,
+learner-facing content, cast-assignment metadata, and reviews are checked.
+Reviews can only reuse IDs present in declared source chapters. Ordinary proper
+nouns are not cast identities unless explicitly assigned a canonical ID.
+
+Appearance auditing reports counts by chapter, twenty-chapter block, and
+cumulatively. Generation prefers least-used suitable active people; recurring
+relationships remain valid, and only severe imbalance warns. Unknown and early
+inactive IDs hard-fail. Legacy records may explicitly remain
+`pending-legacy-migration`; new records cannot claim that status.
+
+Completed activation blocks have two independent meaningful-use requirements.
+Every newly activated person, including each initial person, participates in at
+least five distinct ordinary chapters during their first activation block. Each
+person counts once per chapter regardless of line count. Every completed
+post-initial block also requires old-cast appearances to be at least
+`ceil(total meaningful canonical person-chapter appearances / 3)`. This
+supersedes the former one-older-person minimum. Metadata,
+ledgers, titles, grammar notes, cast files, bare speaker labels, and review-only
+references do not satisfy coverage. Incomplete blocks report new-person chapter
+lists/counts/remaining-to-five and old/new/total ratio data with `pending`
+status; they do not fail merely because future chapters are absent. Completed
+shortfalls hard-fail. After Chapter 200, activation and old/new accounting cease
+entirely. Severe concentration and long-term imbalance auditing may continue.
+
+From Chapter 201, chapters may use ID-less, lightly described functional role
+characters when a setting requires them. They do not enter the progression,
+active totals, relationship graphs, or balancing. Adding a canonical ID or
+substantial biography, relationships, personality, recurring personal plot, or
+long-term continuity is a blocking hidden-cast violation. Before Chapter 201,
+fictional incidental people remain prohibited except where another policy
+already permits a non-cast real, historical, literary, or public figure.
+
+## Chapter 1 lexical systems and learner-facing vocabulary
+
+Languages with multiple definite articles, grammatical gender, noun classes,
+or a comparable category system establish that foundation in Chapter 1. The
+chapter teaches the citation-form definite articles, learning nouns with their
+article, and any elision or syncretism that hides category information. Dutch
+requires `de`/`het`, German `der`/`die`/`das`, French `le`/`la`/`l’` plus marker
+guidance, and Spanish its definite-article/gender system. Do not invent gender
+for English, Chinese, Japanese, Korean, Vietnamese, or another language without
+it. This mandatory lexical guidance may be the principal grammar point or may
+coexist with it; it does not automatically count as a second principal point.
+
+Applicable isolated noun vocabulary uses the article-bearing citation form in
+chapter vocabulary, chapter/cumulative ledgers, isolated reviews, grammar
+summary vocabulary lists, and generated indexes. Internal data may retain a
+bare lemma and records the definite article, grammatical category, marker
+requirement, and exceptional/plural-only status. Use dictionary case, do not
+prepend articles to non-nouns or running text, and add `M`, `F`, or `N` when an
+elided/syncretic display hides the category (`l’eau (F)`). Other noun-class
+systems use stable language-specific labels.
+
+Grammatical measure-word/classifier/counter records preserve lexical form,
+learner-facing form, optional pronunciation, grammatical type (`MW`,
+`classifier`, or `counter`), concise semantic scope, representative noun
+classes, restrictions, and usage status. Scope appears in every isolated
+learner-facing listing and survives package/index generation. `M` is reserved
+for masculine. Transparent ordinary measures such as spoonful, glass, kilo, or
+box remain simple vocabulary unless their selection is grammaticalized and
+must be memorized.
+
+## Lexical identity, verb forms, and expressions
+
+Canonical vocabulary distinguishes surface form, lemma/citation form, part of
+speech, stable lexical-entry ID, stable sense ID, meaning, introduction status,
+first-introduction chapter, encountered forms, related senses, and later
+attestations. Identical spelling does not merge unrelated senses. Predictable
+inflection, agreement, article display, diminutive formation, spelling or
+pronunciation variation, and contextual reuse do not create new senses.
+
+An inflected, contracted, polite, or otherwise non-citation verb encounter links
+to the language's normal dictionary/citation form. The encounter and lemma are
+one introduction: Dutch `klopt` → `kloppen`, English `does` → `do`, Korean `해`
+→ `하다`, and Japanese `します` → `する`. Do not impose “infinitive” terminology
+where another citation convention is appropriate.
+
+Lexicalized multiword expressions receive independent entry and sense IDs under
+their complete citation form. Reviews test the whole expression rather than a
+component falsely assigned the idiomatic meaning. Internal morphology is
+productive-and-known, supporting, fixed-or-unanalyzed, or not-yet-taught; a
+fixed expression cannot silently introduce an undeclared productive rule.
+
+Review, reintroduced, previously introduced, and reuse records retain the
+original first-introduction chapter and do not count as new vocabulary. New
+entries, genuinely distinct senses, new parts of speech, and complete new
+multiword expressions count once. Semantic boundaries and lexicalization remain
+subject to human linguistic review, never automatic inference from prose.
+
 ## Pacing
 
 Chapters 1-25:
