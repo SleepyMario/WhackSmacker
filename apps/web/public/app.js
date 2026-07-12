@@ -16,7 +16,7 @@
   }
   function messageFor(status,message){return status===400?`The request was invalid. ${message||""}`:status===403?"You are not authorized to use that curriculum version.":status===404?"That curriculum or chapter is no longer available.":status===429?"Too many requests. Wait a moment and try again.":status>=500?"The server could not read the curriculum. Try again later.":message||"The request failed."}
   function setStatus(kind,message){elements.status.hidden=false;elements.status.className=`status ${kind}`;elements.status.textContent=message}
-  function busy(value){state.busy=value;document.querySelectorAll("button,select,input").forEach(control=>control.disabled=value)}
+  function busy(value){state.busy=value;document.querySelectorAll("button,select,input").forEach(control=>control.disabled=value);if(!value&&state.chapter&&state.curriculum){const index=state.curriculum.chapters.findIndex(chapter=>chapter.id===state.chapter.id);elements.previous.disabled=index<=0;elements.next.disabled=index<0||index===state.curriculum.chapters.length-1}}
   function urlState(){const p=new URLSearchParams(location.search);return {packageId:p.get("package"),version:p.get("version"),locale:canonicalLocale(p.get("locale")),chapter:p.get("chapter")}}
   function canonicalLocale(value){return value==="zh-Hant-TW"||value==="zh-TW"?"zh-TW":value==="en-US"||value==="en"?"en":null}
   function writeUrl(next,replace=false){const p=new URLSearchParams();if(next.packageId)p.set("package",next.packageId);if(next.version)p.set("version",next.version);if(next.locale)p.set("locale",next.locale);if(next.chapter)p.set("chapter",next.chapter);history[replace?"replaceState":"pushState"](null,"",`/app${p.size?`?${p}`:""}`)}
