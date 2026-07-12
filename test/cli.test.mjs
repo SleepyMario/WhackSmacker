@@ -180,6 +180,60 @@ test("version aliases print package version", async () => {
   }
 });
 
+test("help and version work after leading global options without accessing their paths", async () => {
+  const root = await mkdtemp(join(tmpdir(), "whacksmacker-global-help-test-"));
+  const dataDir = join(root, "missing", "data");
+  const cataloguePath = join(root, "missing", "catalogue.json");
+  try {
+    const helpResults = await Promise.all([
+      runCli(["--data-dir", dataDir, "--help"]),
+      runCli(["--catalogue", cataloguePath, "--help"]),
+      runCli(["--data-dir", dataDir, "--catalogue", cataloguePath, "--help"]),
+      runCli(["--data-dir", dataDir, "-h"]),
+      runCli(["--catalogue", cataloguePath, "help"])
+    ]);
+
+    for (const result of helpResults) {
+      assert.equal(result.exitCode, 0);
+      assert.match(result.stdout, /^WhackSmacker/);
+      assert.match(result.stdout, /A modular terminal application/);
+      assert.equal(result.stderr, "");
+    }
+    await assert.rejects(() => stat(dataDir), { code: "ENOENT" });
+    await assert.rejects(() => stat(cataloguePath), { code: "ENOENT" });
+
+    const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+    const versionResults = await Promise.all([
+      runCli(["--data-dir", dataDir, "--version"]),
+      runCli(["--catalogue", cataloguePath, "-v"]),
+      runCli(["--data-dir", dataDir, "--catalogue", cataloguePath, "--version"])
+    ]);
+
+    for (const result of versionResults) {
+      assert.equal(result.exitCode, 0);
+      assert.equal(result.stdout, `${packageJson.version}\n`);
+      assert.equal(result.stderr, "");
+    }
+    await assert.rejects(() => stat(dataDir), { code: "ENOENT" });
+    await assert.rejects(() => stat(cataloguePath), { code: "ENOENT" });
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("admin and web keep their command-specific help", async () => {
+  const admin = await runCli(["admin", "--help"]);
+  const web = await runCli(["web", "--help"]);
+
+  assert.equal(admin.exitCode, 0);
+  assert.match(admin.stdout, /^Usage:/);
+  assert.match(admin.stdout, /whacksmacker admin db migrate\|status/);
+  assert.equal(admin.stderr, "");
+  assert.equal(web.exitCode, 0);
+  assert.match(web.stdout, /WhackSmacker Web GUI/);
+  assert.equal(web.stderr, "");
+});
+
 test("unknown commands and removed Anki review shape fail clearly", async () => {
   const unknown = await runCli(["unknown"]);
   const legacyReview = await runCli(["review", "Default"]);

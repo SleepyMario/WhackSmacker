@@ -223,8 +223,17 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
     return;
   }
 
-  const registry = createCommandRegistry();
   const globalOptions = parseLeadingGlobalOptions(argv);
+  if (isHelpRequest(globalOptions.args)) {
+    console.log(usage);
+    return;
+  }
+  if (isVersionRequest(globalOptions.args)) {
+    console.log(appVersion);
+    return;
+  }
+
+  const registry = createCommandRegistry();
 
   if (globalOptions.args.length === 0) {
     await runInteractiveMenu(registry, undefined, {

@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { spawn } from "node:child_process";
 import { test } from "node:test";
+import { deflateRawSync } from "node:zlib";
 
 import {
   detectContentPackageUpdates,
@@ -14,6 +15,7 @@ import {
   listAvailableContentPackages,
   listInstalledContentPackages,
   loadInstalledPackageRegistry,
+  maxPackageUncompressedSizeBytes,
   removeContentPackage,
   updateContentPackage,
   validateContentPackageManifest,
@@ -164,6 +166,166 @@ test("install rejects unsafe archive paths", async () => {
     await fixture.cleanup();
   }
 });
+
+test("install accepts an explicit content directory entry", async () => {
+  const fixture = await createPackageFixture();
+  try {
+    const archivePath = await createCustomPackage(fixture, {
+      packageId: "com.sleepymario.language.explicit-directory",
+      packageVersion: "0.1.0",
+      entryPointPath: "content/content.json",
+      filePath: "content/content.json",
+      directoryEntries: ["content/"]
+    });
+    const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, "com.sleepymario.language.explicit-directory");
+
+    const result = await installContentPackage({
+      cataloguePath,
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.explicit-directory"
+    });
+
+    assert.equal((await stat(join(result.installPath, "content", "content.json"))).size > 0, true);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("install accepts nested explicit directory entries", async () => {
+  const fixture = await createPackageFixture();
+  try {
+    const archivePath = await createCustomPackage(fixture, {
+      packageId: "com.sleepymario.language.nested-directories",
+      packageVersion: "0.1.0",
+      entryPointPath: "review-decks/chapter-001-005/content.json",
+      filePath: "review-decks/chapter-001-005/content.json",
+      directoryEntries: ["review-decks/", "review-decks/chapter-001-005/"]
+    });
+    const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, "com.sleepymario.language.nested-directories");
+
+    const result = await installContentPackage({
+      cataloguePath,
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.nested-directories"
+    });
+
+    assert.equal((await stat(join(result.installPath, "review-decks", "chapter-001-005", "content.json"))).size > 0, true);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+for (const unsafeDirectoryPath of ["../evil/", "/absolute/"]) {
+  test(`install rejects unsafe explicit directory path ${unsafeDirectoryPath}`, async () => {
+    const fixture = await createPackageFixture();
+    try {
+      const archive = createStoreZip([{ path: unsafeDirectoryPath, data: Buffer.alloc(0) }]);
+      const archivePath = join(fixture.root, "unsafe-directory.wspkg");
+      await writeFile(archivePath, archive);
+      const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, "com.sleepymario.language.unsafe-directory");
+
+      await assert.rejects(
+        () => installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.unsafe-directory" }),
+        /Unsafe package archive path/
+      );
+    } finally {
+      await fixture.cleanup();
+    }
+  });
+}
+
+test("install rejects an explicit directory entry with data", async () => {
+  const fixture = await createPackageFixture();
+  try {
+    const archive = createStoreZip([{ path: "content/", data: Buffer.from("not empty", "utf8") }]);
+    const archivePath = join(fixture.root, "directory-with-data.wspkg");
+    await writeFile(archivePath, archive);
+    const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, "com.sleepymario.language.directory-with-data");
+
+    await assert.rejects(
+      () => installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.directory-with-data" }),
+      /directory entry contains data/
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+for (const [description, manifestCompressionMethod, contentCompressionMethod] of [
+  ["a deflated manifest", 8, 0],
+  ["deflated content", 0, 8],
+  ["mixed stored and deflated files", 8, 0],
+  ["explicit directories with deflated files", 8, 8]
+]) {
+  test(`install accepts ${description}`, async () => {
+    const fixture = await createPackageFixture();
+    try {
+      const packageId = `com.sleepymario.language.deflate-${manifestCompressionMethod}-${contentCompressionMethod}-${description.length}`;
+      const archivePath = await createCustomPackage(fixture, {
+        packageId,
+        packageVersion: "0.1.0",
+        entryPointPath: "content/content.json",
+        filePath: "content/content.json",
+        manifestCompressionMethod,
+        contentCompressionMethod,
+        directoryEntries: description.startsWith("explicit") ? ["content/"] : []
+      });
+      const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId);
+
+      const result = await installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId });
+
+      assert.equal((await stat(join(result.installPath, "manifest.json"))).size > 0, true);
+      assert.equal((await stat(join(result.installPath, "content", "content.json"))).size > 0, true);
+    } finally {
+      await fixture.cleanup();
+    }
+  });
+}
+
+test("deflated content is validated using its inflated size and SHA-256", async () => {
+  const fixture = await createPackageFixture();
+  try {
+    const packageId = "com.sleepymario.language.deflate-integrity";
+    const archivePath = await createCustomPackage(fixture, {
+      packageId,
+      packageVersion: "0.1.0",
+      entryPointPath: "content/content.json",
+      filePath: "content/content.json",
+      contentCompressionMethod: 8,
+      fileSha256: "0".repeat(64)
+    });
+    const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId);
+
+    await assert.rejects(
+      () => installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId }),
+      /Declared file SHA-256 mismatch/
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+for (const [description, entry, expectedError] of [
+  ["malformed deflate data", { path: "manifest.json", data: Buffer.alloc(0), compressionMethod: 8, compressedData: Buffer.from([0xff]) }, /Invalid deflate data/],
+  ["a declared inflated-size mismatch", { path: "manifest.json", data: Buffer.from("{}"), compressionMethod: 8, declaredUncompressedSize: 3 }, /Inflated package archive entry size mismatch/],
+  ["an unsupported compression method", { path: "manifest.json", data: Buffer.from("{}"), compressionMethod: 12 }, /Unsupported package archive compression method/],
+  ["an excessive cumulative uncompressed size", { path: "manifest.json", data: Buffer.alloc(0), compressionMethod: 8, declaredUncompressedSize: maxPackageUncompressedSizeBytes + 1 }, /exceeds uncompressed size limit/]
+]) {
+  test(`install rejects ${description}`, async () => {
+    const fixture = await createPackageFixture();
+    try {
+      const archive = createStoreZip([entry]);
+      const archivePath = join(fixture.root, "invalid-compression.wspkg");
+      await writeFile(archivePath, archive);
+      const packageId = "com.sleepymario.language.invalid-compression";
+      const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId);
+
+      await assert.rejects(() => installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId }), expectedError);
+    } finally {
+      await fixture.cleanup();
+    }
+  });
+}
 
 test("install rejects manifest with unsafe entry-point paths", async () => {
   const fixture = await createPackageFixture();
@@ -454,11 +616,12 @@ async function createCustomPackage(fixture, options) {
     generator: { name: "test", version: "0.1.0" },
     entryPoints: [{ id: "primary", mediaType: "application/json", path: options.entryPointPath, role: "primary" }],
     dependencies: [],
-    files: [{ path: options.filePath, mediaType: "application/json", size: content.length, sha256: sha256(content) }]
+    files: [{ path: options.filePath, mediaType: "application/json", size: content.length, sha256: options.fileSha256 ?? sha256(content) }]
   };
   const archive = createStoreZip([
-    { path: "manifest.json", data: Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`, "utf8") },
-    { path: options.filePath, data: content }
+    ...(options.directoryEntries ?? []).map((path) => ({ path, data: Buffer.alloc(0) })),
+    { path: "manifest.json", data: Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`, "utf8"), compressionMethod: options.manifestCompressionMethod },
+    { path: options.filePath, data: content, compressionMethod: options.contentCompressionMethod }
   ]);
   const archivePath = join(fixture.root, `${options.packageId}-${options.packageVersion}.wspkg`);
   await writeFile(archivePath, archive);
@@ -514,31 +677,35 @@ function createStoreZip(entries) {
   let offset = 0;
   for (const entry of [...entries].sort((left, right) => left.path.localeCompare(right.path))) {
     const name = Buffer.from(entry.path, "utf8");
+    const compressionMethod = entry.compressionMethod ?? 0;
+    const compressedData = entry.compressedData ?? (compressionMethod === 8 ? deflateRawSync(entry.data) : entry.data);
+    const declaredUncompressedSize = entry.declaredUncompressedSize ?? entry.data.length;
+    const entryCrc32 = entry.crc32 ?? crc32(entry.data);
     const localHeader = Buffer.alloc(30);
     localHeader.writeUInt32LE(0x04034b50, 0);
     localHeader.writeUInt16LE(20, 4);
     localHeader.writeUInt16LE(0x0800, 6);
-    localHeader.writeUInt16LE(0, 8);
+    localHeader.writeUInt16LE(compressionMethod, 8);
     localHeader.writeUInt16LE(0, 10);
     localHeader.writeUInt16LE(33, 12);
-    localHeader.writeUInt32LE(0, 14);
-    localHeader.writeUInt32LE(entry.data.length, 18);
-    localHeader.writeUInt32LE(entry.data.length, 22);
+    localHeader.writeUInt32LE(entryCrc32, 14);
+    localHeader.writeUInt32LE(compressedData.length, 18);
+    localHeader.writeUInt32LE(declaredUncompressedSize, 22);
     localHeader.writeUInt16LE(name.length, 26);
     localHeader.writeUInt16LE(0, 28);
-    localParts.push(localHeader, name, entry.data);
+    localParts.push(localHeader, name, compressedData);
 
     const centralHeader = Buffer.alloc(46);
     centralHeader.writeUInt32LE(0x02014b50, 0);
     centralHeader.writeUInt16LE(20, 4);
     centralHeader.writeUInt16LE(20, 6);
     centralHeader.writeUInt16LE(0x0800, 8);
-    centralHeader.writeUInt16LE(0, 10);
+    centralHeader.writeUInt16LE(compressionMethod, 10);
     centralHeader.writeUInt16LE(0, 12);
     centralHeader.writeUInt16LE(33, 14);
-    centralHeader.writeUInt32LE(0, 16);
-    centralHeader.writeUInt32LE(entry.data.length, 20);
-    centralHeader.writeUInt32LE(entry.data.length, 24);
+    centralHeader.writeUInt32LE(entryCrc32, 16);
+    centralHeader.writeUInt32LE(compressedData.length, 20);
+    centralHeader.writeUInt32LE(declaredUncompressedSize, 24);
     centralHeader.writeUInt16LE(name.length, 28);
     centralHeader.writeUInt16LE(0, 30);
     centralHeader.writeUInt16LE(0, 32);
@@ -547,7 +714,7 @@ function createStoreZip(entries) {
     centralHeader.writeUInt32LE(0, 38);
     centralHeader.writeUInt32LE(offset, 42);
     centralParts.push(centralHeader, name);
-    offset += localHeader.length + name.length + entry.data.length;
+    offset += localHeader.length + name.length + compressedData.length;
   }
   const centralDirectory = Buffer.concat(centralParts);
   const end = Buffer.alloc(22);
@@ -560,6 +727,17 @@ function createStoreZip(entries) {
   end.writeUInt32LE(offset, 16);
   end.writeUInt16LE(0, 20);
   return Buffer.concat([...localParts, centralDirectory, end]);
+}
+
+function crc32(data) {
+  let crc = 0xffffffff;
+  for (const byte of data) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit += 1) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0);
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
 }
 
 async function runCli(args) {

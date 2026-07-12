@@ -33,6 +33,9 @@ declare function require(name: "node:crypto"): {
     update(data: BufferValue): { digest(encoding: "hex"): string };
   };
 };
+declare function require(name: "node:zlib"): {
+  inflateRawSync(data: BufferValue, options: { maxOutputLength: number }): BufferValue;
+};
 declare function require(name: "node:fs/promises"): {
   access(path: string): Promise<void>;
   chmod(path: string, mode: number): Promise<void>;
@@ -65,11 +68,13 @@ declare const AbortSignal: {
 
 const { Buffer } = require("node:buffer");
 const { createHash } = require("node:crypto");
+const { inflateRawSync } = require("node:zlib");
 const { access, chmod, mkdir, readFile, rename, rm, stat, writeFile } = require("node:fs/promises");
 const { dirname, join, relative, resolve } = require("node:path");
 
 export const installedPackageRegistryFormatVersion = 1;
 export const maxPackageArchiveSizeBytes = 100 * 1024 * 1024;
+export const maxPackageUncompressedSizeBytes = 100 * 1024 * 1024;
 export const maxPackageArchiveFileCount = 10000;
 
 export interface InstalledPackageRegistry {
@@ -377,33 +382,80 @@ function verifyPackageArchive(entry: ContentPackageCatalogueEntry, archive: Buff
 
 function readPackageZip(archive: BufferValue): { readonly entries: readonly ZipEntry[] } {
   const entries: ZipEntry[] = [];
-  const paths = new Set<string>();
+  const archivePaths = new Set<string>();
+  let totalUncompressedSize = 0;
   let offset = 0;
 
   while (offset + 30 <= archive.length && archive.readUInt32LE(offset) === 0x04034b50) {
+    const generalPurposeFlags = archive.readUInt16LE(offset + 6);
     const compressionMethod = archive.readUInt16LE(offset + 8);
+    const expectedCrc32 = archive.readUInt32LE(offset + 14);
     const compressedSize = archive.readUInt32LE(offset + 18);
     const uncompressedSize = archive.readUInt32LE(offset + 22);
     const fileNameLength = archive.readUInt16LE(offset + 26);
     const extraLength = archive.readUInt16LE(offset + 28);
     const nameStart = offset + 30;
     const dataStart = nameStart + fileNameLength + extraLength;
+    if ((generalPurposeFlags & 0x0041) !== 0) {
+      throw new Error("Package archive contains an encrypted entry.");
+    }
+    if ((generalPurposeFlags & 0x0008) !== 0) {
+      throw new Error("Package archive data descriptors are not supported.");
+    }
+    if (compressedSize === 0xffffffff || uncompressedSize === 0xffffffff) {
+      throw new Error("Package archive ZIP64 entries are not supported.");
+    }
     const dataEnd = dataStart + compressedSize;
-    if (dataEnd > archive.length) {
+    if (dataStart > archive.length || dataEnd > archive.length) {
       throw new Error("Package archive has a truncated local file entry.");
     }
-    if (compressionMethod !== 0 || compressedSize !== uncompressedSize) {
-      throw new Error("Unsupported package archive compression method.");
-    }
     const path = archive.subarray(nameStart, nameStart + fileNameLength).toString("utf8");
-    if (!isSafeContentPackagePath(path)) {
+    const isDirectory = path.endsWith("/");
+    const pathForValidation = isDirectory ? path.slice(0, -1) : path;
+    if (!isSafeContentPackagePath(pathForValidation)) {
       throw new Error(`Unsafe package archive path: ${path}`);
     }
-    if (paths.has(path)) {
+    if (archivePaths.has(path)) {
       throw new Error(`Duplicate package archive path: ${path}`);
     }
-    paths.add(path);
-    entries.push({ path, data: archive.subarray(dataStart, dataEnd) });
+    archivePaths.add(path);
+    if (isDirectory) {
+      if (compressedSize !== 0 || uncompressedSize !== 0 || dataEnd !== dataStart) {
+        throw new Error(`Package archive directory entry contains data: ${path}`);
+      }
+      offset = dataEnd;
+      continue;
+    }
+    if (compressionMethod !== 0 && compressionMethod !== 8) {
+      throw new Error("Unsupported package archive compression method.");
+    }
+    if (totalUncompressedSize + uncompressedSize > maxPackageUncompressedSizeBytes) {
+      throw new Error(`Package archive exceeds uncompressed size limit: ${maxPackageUncompressedSizeBytes}`);
+    }
+    const compressedData = archive.subarray(dataStart, dataEnd);
+    let data: BufferValue;
+    if (compressionMethod === 0) {
+      if (compressedSize !== uncompressedSize) {
+        throw new Error(`Stored package archive entry size mismatch: ${path}`);
+      }
+      data = compressedData;
+    } else {
+      try {
+        data = inflateRawSync(compressedData, {
+          maxOutputLength: Math.max(1, maxPackageUncompressedSizeBytes - totalUncompressedSize)
+        });
+      } catch {
+        throw new Error(`Invalid deflate data in package archive entry: ${path}`);
+      }
+      if (data.length !== uncompressedSize) {
+        throw new Error(`Inflated package archive entry size mismatch: ${path}`);
+      }
+    }
+    if (crc32(data) !== expectedCrc32) {
+      throw new Error(`Package archive entry CRC-32 mismatch: ${path}`);
+    }
+    totalUncompressedSize += data.length;
+    entries.push({ path, data });
     if (entries.length > maxPackageArchiveFileCount) {
       throw new Error(`Package archive exceeds file count limit: ${maxPackageArchiveFileCount}`);
     }
@@ -413,8 +465,19 @@ function readPackageZip(archive: BufferValue): { readonly entries: readonly ZipE
   if (entries.length === 0) {
     throw new Error("Package archive has no readable file entries.");
   }
-  validateCentralDirectory(archive, paths);
+  validateCentralDirectory(archive, archivePaths);
   return { entries };
+}
+
+function crc32(data: BufferValue): number {
+  let crc = 0xffffffff;
+  for (const byte of data) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit += 1) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0);
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
 }
 
 interface ZipEntry {
