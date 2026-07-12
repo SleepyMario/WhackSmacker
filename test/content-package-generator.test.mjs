@@ -641,6 +641,27 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(manifest.displayName, "Dutch");
     assert.equal(manifest.contentType, "language-curriculum");
     assert.equal(content.packageId, "com.sleepymario.language.dutch");
+    const castPath = "name-pools/canonical-cast.json";
+    const castSource = await readFile(join("..", "dutch-curriculum", castPath));
+    const castEntry = content.files.find((file) => file.path === castPath);
+    const castRecord = manifest.files.find((file) => file.path === castPath);
+    assert.ok(castEntry);
+    assert.ok(castRecord);
+    assert.equal(castEntry.mediaType, "application/json");
+    assert.equal(castRecord.mediaType, "application/json");
+    assert.equal(castRecord.size, castSource.length);
+    assert.equal(castRecord.sha256, createHash("sha256").update(castSource).digest("hex"));
+    assert.deepEqual(archive.get(castPath), castSource);
+    const cast = JSON.parse(castEntry.text);
+    assert.equal(cast.cast.length, 30);
+    assert.equal(cast.deckPersonPool.length, 30);
+    assert.equal(new Set(cast.cast.map((person) => person.id)).size, 30);
+    const packagedCastValidation = await runNode(
+      ["../language-learning-curriculum-builder/scripts/validate-packaged-cast.mjs"],
+      archive.get("content/content.json")
+    );
+    assert.equal(packagedCastValidation.exitCode, 0, packagedCastValidation.stderr);
+    assert.match(packagedCastValidation.stdout, /packaged canonical cast passed/u);
     assertOddEvenChapterFormats(content.files, "Dutch", content.packageId);
     assertUsefulChapterTitles(content.files);
     assertNoGenericDialogueSpeakerLabels(content.files, "Dutch", allReviewItems);
@@ -753,6 +774,27 @@ test("content package generator creates a valid English package", async () => {
     assert.match(easy, /Grammar - Easy/u);
     assert.match(hard, /Grammar - Hard/u);
     assert.deepEqual(easy.match(/ENG-GRAMMAR-00[1-5]/gu), hard.match(/ENG-GRAMMAR-00[1-5]/gu));
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("source-language package variants reference the base cast without inventing a package-local cast", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-english-source-packages-"));
+
+  try {
+    for (const targetId of ["english-curriculum-source-zh-tw", "english-curriculum-source-en"]) {
+      const result = await generateContentPackage({ targetId, outputDirectory: directory, generatedAt: "2026-07-06T00:00:00Z" });
+      const archive = await readZip(result.filePath);
+      const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
+      const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+      assert.equal(manifest.localization.role, "source-language-pack");
+      assert.equal(manifest.localization.basePackageId, "com.sleepymario.language.english");
+      assert.equal(content.basePackageId, "com.sleepymario.language.english");
+      assert.equal(content.files.some((file) => file.path === "name-pools/canonical-cast.json"), false);
+      assert.equal(manifest.files.some((file) => file.path === "name-pools/canonical-cast.json"), false);
+      assert.equal(archive.has("name-pools/canonical-cast.json"), false);
+    }
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
@@ -1602,11 +1644,15 @@ async function fileSha256(path) {
   return createHash("sha256").update(await readFile(path)).digest("hex");
 }
 
-async function runNode(args) {
+async function runNode(args, input) {
   const child = spawn(process.execPath, args, {
     cwd: process.cwd(),
-    stdio: ["ignore", "pipe", "pipe"]
+    stdio: [input === undefined ? "ignore" : "pipe", "pipe", "pipe"]
   });
+
+  if (input !== undefined) {
+    child.stdin.end(input);
+  }
 
   let stdout = "";
   let stderr = "";

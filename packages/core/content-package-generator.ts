@@ -44,6 +44,7 @@ declare function require(name: "node:child_process"): {
   execFileSync(command: string, args: readonly string[], options: { cwd: string; encoding: "utf8"; stdio?: readonly ["ignore", "pipe", "pipe"] }): string;
 };
 declare function require(name: "node:fs/promises"): {
+  access(path: string): Promise<void>;
   mkdir(path: string, options: { recursive: boolean }): Promise<void>;
   readdir(path: string): Promise<string[]>;
   readFile(path: string): Promise<BufferValue>;
@@ -66,7 +67,7 @@ const whackSmackerApplicationVersion = packageMetadata.version;
 const { Buffer } = require("node:buffer");
 const { createHash } = require("node:crypto");
 const { execFileSync } = require("node:child_process");
-const { mkdir, readdir, readFile, stat, writeFile } = require("node:fs/promises");
+const { access, mkdir, readdir, readFile, stat, writeFile } = require("node:fs/promises");
 const { dirname, join, relative, resolve, sep } = require("node:path");
 
 export interface ContentPackageGeneratorTarget {
@@ -436,7 +437,7 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
 export async function generateContentPackage(options: GenerateContentPackageOptions): Promise<GeneratedContentPackageResult> {
   const target = getContentPackageGeneratorTarget(options.targetId);
   const sourceRoot = resolveSourcePath(target.sourcePath);
-  const sourceFiles = await collectSourceFiles(sourceRoot, target.include);
+  const sourceFiles = await collectSourceFiles(sourceRoot, await sourceIncludesForTarget(target, sourceRoot));
   if (target.contentType === "language-curriculum") {
     const chapters = sourceFiles
       .filter((file) => isReadableChapterMarkdownPath(file.path))
@@ -455,6 +456,9 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const contentBuffer = Buffer.from(`${JSON.stringify(content, null, 2)}\n`, "utf8");
   const contentFile = createFileRecord("content/content.json", "application/json", contentBuffer);
   const memorizationFiles = target.localization?.role === "source-language-pack" ? [] : buildMemorizationFiles(target, sourceFiles, options.generatedAt);
+  const packagedSourceFiles = sourceFiles
+    .filter((file) => target.contentType === "language-curriculum" && file.path === canonicalCastPath)
+    .map((file) => ({ record: createFileRecord(file.path, file.mediaType, file.buffer), buffer: file.buffer }));
 
   const manifest: ContentPackageManifest = {
     packageFormatVersion: whackSmackerPackageFormatVersion,
@@ -487,7 +491,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
       }
     ],
     ...(target.dependencies === undefined ? { dependencies: [] } : { dependencies: [...target.dependencies] }),
-    files: [contentFile, ...memorizationFiles.map((file) => file.record)],
+    files: [contentFile, ...packagedSourceFiles.map((file) => file.record), ...memorizationFiles.map((file) => file.record)],
     ...(target.license === undefined ? {} : { license: target.license })
     ,...(target.localization === undefined ? {} : { localization: target.localization })
   };
@@ -498,6 +502,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const archiveBuffer = createDeterministicZip([
     { path: "manifest.json", data: manifestBuffer },
     { path: contentFile.path, data: contentBuffer },
+    ...packagedSourceFiles.map((file) => ({ path: file.record.path, data: file.buffer })),
     ...memorizationFiles.map((file) => ({ path: file.record.path, data: file.buffer }))
   ]);
   const filePath = join(options.outputDirectory, `${target.packageId}-${target.packageVersion}${whackSmackerPackageExtension}`);
@@ -530,6 +535,7 @@ interface SourceFile {
   readonly size: number;
   readonly sha256: string;
   readonly text: string;
+  readonly buffer: BufferValue;
 }
 
 interface ArchiveEntry {
@@ -543,6 +549,20 @@ interface GeneratedMemorizationFile {
 }
 
 const repositoryRoot = process.cwd();
+const canonicalCastPath = "name-pools/canonical-cast.json";
+
+async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
+  const castAlreadyIncluded = target.include.some((include) => canonicalCastPath === include || canonicalCastPath.startsWith(`${include}/`));
+  if (target.contentType !== "language-curriculum" || castAlreadyIncluded) {
+    return target.include;
+  }
+  try {
+    await access(resolve(sourceRoot, canonicalCastPath));
+    return [...target.include, canonicalCastPath];
+  } catch {
+    return target.include;
+  }
+}
 
 async function collectSourceFiles(sourceRoot: string, includes: readonly string[]): Promise<readonly SourceFile[]> {
   const files: SourceFile[] = [];
@@ -578,7 +598,7 @@ async function collectPath(sourceRoot: string, absolutePath: string, files: Sour
   }
 
   const relativePath = normalizeArchivePath(relative(sourceRoot, absolutePath));
-  if (!relativePath.endsWith(".md") && !relativePath.endsWith(".tsv") && relativePath !== ".gitignore") {
+  if (!relativePath.endsWith(".md") && !relativePath.endsWith(".tsv") && relativePath !== canonicalCastPath && relativePath !== ".gitignore") {
     return;
   }
 
@@ -588,7 +608,8 @@ async function collectPath(sourceRoot: string, absolutePath: string, files: Sour
     mediaType: mediaTypeForPath(relativePath),
     size: buffer.length,
     sha256: sha256Hex(buffer),
-    text: buffer.toString("utf8")
+    text: buffer.toString("utf8"),
+    buffer
   });
 }
 
