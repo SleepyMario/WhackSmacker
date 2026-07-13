@@ -53,16 +53,21 @@ test("language-adaptive lexical metadata survives packaged memorization collecti
 test("memorization items preserve encountered form citation form and lexical sense identity", () => {
   const item = validItem();
   item.lexicalMetadata = {
-    lexicalType: "verb", learnerFacingForm: "klopt — dictionary form: kloppen",
+    lexicalType: "verb", learnerFacingForm: "klopt — kloppen",
     lexicalEntryId: "nl.verb.kloppen", senseId: "nl.verb.kloppen.be-correct",
     surfaceForm: "klopt", lemma: "kloppen", citationForm: "kloppen",
     partOfSpeech: "verb", meaning: "to be correct", introductionStatus: "new-entry",
-    firstIntroductionChapter: 2, encounteredForms: ["klopt"], morphologyStatus: "supporting-form"
+    firstIntroductionChapter: 2, encounteredForms: ["klopt"], morphologyStatus: "supporting-form",
+    regularityStatus: "regular", verbClass: "weak verb"
   };
   const collection = normalizeMemorizationItemCollection(JSON.parse(JSON.stringify({ schemaVersion: 1, items: [item] })));
   assert.equal(collection.items[0].lexicalMetadata.surfaceForm, "klopt");
   assert.equal(collection.items[0].lexicalMetadata.citationForm, "kloppen");
   assert.equal(collection.items[0].lexicalMetadata.senseId, "nl.verb.kloppen.be-correct");
+  assert.equal(collection.items[0].lexicalMetadata.regularityStatus, "regular");
+  assert.equal(collection.items[0].lexicalMetadata.verbClass, "weak verb");
+  assert.doesNotMatch(collection.items[0].prompt.text, /regular|weak verb/u);
+  assert.doesNotMatch(collection.items[0].answer.text, /regular|weak verb/u);
 });
 
 test("single item normalizes to a collection", () => {
@@ -126,6 +131,8 @@ test("installed memorization item files can be discovered and read", async () =>
     assert.equal(files[0].mediaType, memorizationItemFileMediaType);
     assert.equal(result.items.length, 2);
     assert.equal(result.items[0].id, "hangul/vowels/a");
+    assert.equal(result.items[1].lexicalMetadata.regularityStatus, "irregular");
+    assert.equal(result.items[1].lexicalMetadata.verbClass, "Korean ㅂ-irregular conjugation");
   } finally {
     await fixture.cleanup();
   }
@@ -184,9 +191,18 @@ async function createInstalledMemoryFixture() {
   const dataDir = join(root, "data");
   const installPath = "packages/com.sleepymario.language.memory/0.1.0";
   const packageRoot = join(dataDir, installPath);
+  const installedVerb = validItem("hangul/vowels/eo");
+  installedVerb.lexicalMetadata = {
+    lexicalType: "verb", learnerFacingForm: "도와요\n돕다\nVerb",
+    lexicalEntryId: "ko.verb.dopda", senseId: "ko.verb.dopda.help",
+    surfaceForm: "도와요", lemma: "돕다", citationForm: "돕다",
+    partOfSpeech: "verb", meaning: "to help", introductionStatus: "new-entry",
+    firstIntroductionChapter: 12, encounteredForms: ["도와요"], morphologyStatus: "supporting-form",
+    regularityStatus: "irregular", verbClass: "Korean ㅂ-irregular conjugation"
+  };
   const items = {
     schemaVersion: 1,
-    items: [validItem("hangul/vowels/a"), validItem("hangul/vowels/eo")]
+    items: [validItem("hangul/vowels/a"), installedVerb]
   };
   const itemBuffer = Buffer.from(`${JSON.stringify(items, null, 2)}\n`, "utf8");
   const itemPath = "content/memorization/hangul/items.json";

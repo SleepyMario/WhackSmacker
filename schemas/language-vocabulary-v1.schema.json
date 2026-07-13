@@ -61,7 +61,7 @@
     },
     {
       "type": "object",
-      "required": ["lexicalType", "learnerFacingForm", "lexicalEntryId", "senseId", "surfaceForm", "lemma", "citationForm", "partOfSpeech", "meaning", "introductionStatus", "firstIntroductionChapter", "encounteredForms"],
+      "required": ["lexicalType", "learnerFacingForm", "lexicalEntryId", "senseId", "surfaceForm", "lemma", "citationForm", "partOfSpeech", "meaning", "introductionStatus", "firstIntroductionChapter", "encounteredForms", "regularityStatus"],
       "properties": {
         "lexicalType": { "const": "verb" },
         "learnerFacingForm": { "type": "string", "minLength": 1 },
@@ -70,7 +70,11 @@
         "partOfSpeech": { "type": "string", "minLength": 1 }, "meaning": { "type": "string", "minLength": 1 },
         "introductionStatus": { "$ref": "#/$defs/introductionStatus" }, "firstIntroductionChapter": { "type": "integer", "minimum": 1 },
         "encounteredForms": { "$ref": "#/$defs/stringList" }, "relatedSenseIds": { "$ref": "#/$defs/stringList" },
-        "morphologyStatus": { "$ref": "#/$defs/morphologyStatus" }, "attestationChapters": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true }
+        "morphologyStatus": { "$ref": "#/$defs/morphologyStatus" }, "attestationChapters": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true },
+        "regularityStatus": { "enum": ["regular", "irregular", "not-applicable", "undetermined"] },
+        "verbClass": { "type": "string", "minLength": 1 },
+        "regularityMigrationStatus": { "const": "pending-legacy-migration" },
+        "regularityCorrectionAudit": { "type": "string", "minLength": 1 }
       },
       "additionalProperties": false
     },

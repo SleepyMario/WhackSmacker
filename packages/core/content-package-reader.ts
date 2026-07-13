@@ -9,6 +9,7 @@ import {
   type ContentPackageManifest
 } from "./content-package-spec";
 import { isLocalizedContentValue, localized, type LocalizedContentValue } from "./localized-content";
+import { defaultCurriculumDisplayMode, projectCurriculumMarkdown, type CurriculumDisplayMode } from "./curriculum-display";
 
 type BufferValue = {
   toString(encoding: "utf8"): string;
@@ -327,13 +328,13 @@ function canonicalSourceLocale(locale: string): string {
   return locale;
 }
 
-export function renderReadingContent(result: ReadInstalledContentEntryResult): string {
+export function renderReadingContent(result: ReadInstalledContentEntryResult, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
   return [
     result.package.displayName,
     `${result.package.packageId} ${result.package.packageVersion}`,
     result.entry.path,
     "",
-    renderLearnerReadingText(result.text).trimEnd(),
+    renderLearnerReadingText(projectCurriculumMarkdown(result.text, displayMode)).trimEnd(),
     ""
   ].join("\n");
 }
@@ -371,12 +372,38 @@ function removeStatusTableColumn(lines: readonly string[]): readonly string[] {
   if (visibleColumns.length === 0) {
     return lines;
   }
-  return rows.map((row) => `| ${visibleColumns.map((column, visibleColumn) => {
+  const vocabularyTable = isVocabularyTableHeader(header);
+  let renderedVocabularyEntries = 0;
+  return rows.flatMap((row, rowIndex) => {
+    const cells = visibleColumns.map((column, visibleColumn) => {
     const cell = row[column] ?? "";
     return visibleColumn === noteColumn && !row.every((value) => /^:?-{3,}:?$/u.test(value))
       ? normalizeVocabularyNote(cell)
       : cell;
-  }).join(" | ")} |`);
+    }).map(splitMarkdownCellLines);
+    const lineCount = Math.max(...cells.map((cell) => cell.length));
+    const rendered = Array.from({ length: lineCount }, (_, line) =>
+      `| ${cells.map((cell) => cell[line] ?? "").join(" | ")} |`
+    );
+    const separator = row.every((value) => /^:?-{3,}:?$/u.test(value));
+    const isVocabularyRow = vocabularyTable && rowIndex > 0 && !separator;
+    const isContinuation = isVocabularyRow && (row[noteColumn] ?? "").trim() === "Infinitive";
+    const isIndependentEntry = isVocabularyRow && !isContinuation;
+    const output = isIndependentEntry && renderedVocabularyEntries > 0
+      ? [`| ${visibleColumns.map(() => "").join(" | ")} |`, ...rendered]
+      : rendered;
+    if (isIndependentEntry) renderedVocabularyEntries += 1;
+    return output;
+  });
+}
+
+function isVocabularyTableHeader(header: readonly string[]): boolean {
+  const labels = header.map((cell) => cell.trim().toLowerCase());
+  return labels.includes("notes") && labels.some((label) => label === "meaning" || label === "english");
+}
+
+function splitMarkdownCellLines(cell: string): readonly string[] {
+  return cell.split(/(?:<br\s*\/?>|&#10;)/giu).map((line) => line.trim());
 }
 
 function normalizeVocabularyNote(note: string): string {

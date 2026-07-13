@@ -15,10 +15,12 @@ import {
   localized,
   loadReviewProgressStore,
   defaultReviewProgressDirectoryForContentDataDirectory,
+  defaultCurriculumDisplayMode,
   grammarEasyMenuLabel,
   grammarHardMenuLabel,
   isReviewDue,
   orderReviewItemsForSession,
+  projectCurriculumMarkdown,
   readInstalledContentEntry,
   recordReadingReviewAnswer,
   removeContentPackage,
@@ -29,6 +31,7 @@ import {
   sortFirstClassModules,
   syncReadingReviewItems,
   type ContentPackageCatalogueEntry,
+  type CurriculumDisplayMode,
   type FirstClassModuleDescriptor,
   type ReadableContentEntry,
   type RenderedExercise,
@@ -178,6 +181,7 @@ interface EmbeddedReviewSession {
   readonly items: readonly ReviewItemState[];
   readonly index: number;
   readonly side: "prompt" | "answer" | "complete";
+  readonly developerItems?: readonly ReadingReviewItem[];
   readonly promptRendered?: RenderedExercise;
   readonly answerRendered?: RenderedExercise;
   readonly message?: string;
@@ -490,6 +494,7 @@ export interface InteractiveMenuOptions {
   readonly cataloguePath?: string;
   readonly settingsDir?: string;
   readonly locale?: SourceLocale;
+  readonly displayMode?: CurriculumDisplayMode;
 }
 
 export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal(), options: InteractiveMenuOptions = {}): Promise<void> {
@@ -799,7 +804,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     options = { ...options, settingsDir: defaultSettingsDirectoryForContentDataDirectory(options.dataDir) };
   }
   const savedSettings = await loadSourceLanguageSettings(options.settingsDir);
-  options = { ...options, locale: options.locale ?? savedSettings.sourceLanguage };
+  options = { ...options, locale: options.locale ?? savedSettings.sourceLanguage, displayMode: options.displayMode ?? defaultCurriculumDisplayMode };
   let tree = await buildModuleTree(options);
   let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
@@ -814,7 +819,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   while (true) {
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
     selection = Math.min(selection, visible.length - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -840,7 +845,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           selectedReviewStartId = refreshedNode?.kind === "review-source" ? refreshedNode.id : null;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, true, options.locale)
+            ? renderReviewDeckPreview(refreshedNode, true, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
             : await renderLanguageTreeRightPane(refreshedNode ?? tree, options);
         } else {
           selectedReviewStartId = null;
@@ -925,7 +930,8 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         continue;
       }
       if (isEnter(key) || isSpace(key)) {
-        options = await persistInteractiveSourceLocale(options, nextSourceLocale(options.locale));
+        if (toggleSelection === 0) options = await persistInteractiveSourceLocale(options, nextSourceLocale(options.locale));
+        else options = { ...options, displayMode: options.displayMode === "developer" ? "normal" : "developer" };
         embeddedReview = null;
         pendingUninstall = null;
         selectedReviewStartId = null;
@@ -1020,11 +1026,11 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false, options.locale)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
+            ? renderReviewDeckPreview(refreshedNode, false, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
           selectedReviewStartId = null;
         } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
           selectedReviewStartId = selected.node.id;
         }
         rightPaneOffset = 0;
@@ -1066,12 +1072,12 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false, options.locale)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
+            ? renderReviewDeckPreview(refreshedNode, false, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
           selectedReviewStartId = null;
         } else {
           selectedReviewStartId = selected.node.id;
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
         }
         rightPaneOffset = 0;
         continue;
@@ -1110,11 +1116,11 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false, options.locale)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
+            ? renderReviewDeckPreview(refreshedNode, false, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
           selectedReviewStartId = null;
         } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
           selectedReviewStartId = selected.node.id;
         }
         rightPaneOffset = 0;
@@ -1127,17 +1133,17 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false, options.locale)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
+            ? renderReviewDeckPreview(refreshedNode, false, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
           selectedReviewStartId = null;
         } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
           selectedReviewStartId = selected.node.id;
         }
         rightPaneOffset = 0;
       } else {
         selectedReviewStartId = selected.node.id;
-        rightPaneText = renderReviewDeckPreview(selected.node, true, options.locale);
+        rightPaneText = renderReviewDeckPreview(selected.node, true, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
         rightPaneOffset = 0;
       }
       continue;
@@ -1853,7 +1859,7 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
       path: node.filePath,
       locale
     });
-    return result.text;
+    return projectCurriculumMarkdown(result.text, options.displayMode ?? defaultCurriculumDisplayMode);
   }
   if (node.kind === "package-info") {
     return node.previewText ?? [
@@ -1883,7 +1889,7 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     ].join("\n");
   }
   if (node.kind === "review-source") {
-    return renderReviewDeckPreview(node, false, locale);
+    return renderReviewDeckPreview(node, false, locale, options.displayMode ?? defaultCurriculumDisplayMode);
   }
   if (node.kind === "read-section") {
     return `${translate(locale, "menu.readContent")}\n\n${translate(locale, "pane.readContentHelp")}`;
@@ -1934,8 +1940,8 @@ async function runModuleTreeCommandAction(
   return showPagedMessage(terminal, renderLanguageActionResult(node.launchTitle ?? node.label, output));
 }
 
-function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean, locale: SourceLocale = "en-US"): string {
-  return [
+function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean, locale: SourceLocale = "en-US", displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
+  const normal = [
     `${translate(locale, "menu.reviewDeck")}: ${node.label}`,
     translate(locale, "review.package", { name: node.packageLabel ?? node.packageId ?? "unknown" }),
     node.itemCount === undefined ? "" : translate(locale, "review.items", { count: node.itemCount }),
@@ -1943,6 +1949,8 @@ function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean, locale:
     "",
     translate(locale, armed ? "review.previewArmed" : "review.previewSelect")
   ].filter((line) => line.length > 0).join("\n");
+  if (displayMode === "normal") return normal;
+  return [normal, "", "Developer metadata", `Package ID: ${node.packageId ?? "unknown"}`, `Package version: ${node.packageVersion ?? "latest installed"}`, `Source path: ${node.sourcePath ?? "unknown"}`, `Internal item count: ${node.itemCount ?? "unknown"}`].join("\n");
 }
 
 async function startEmbeddedReviewSession(node: LanguageTreeNode, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
@@ -1985,6 +1993,7 @@ async function startEmbeddedReviewSession(node: LanguageTreeNode, options: Inter
       nodeId: node.id,
       node,
       items,
+      developerItems: sourceItems,
       index: 0,
       side: "complete",
       message: `No due review items found for deck: ${node.label}`
@@ -1995,6 +2004,7 @@ async function startEmbeddedReviewSession(node: LanguageTreeNode, options: Inter
     nodeId: node.id,
     node,
     items,
+    developerItems: sourceItems,
     index: 0,
     side: "prompt"
   }, options);
@@ -2093,7 +2103,7 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
   return { ...session, side: "answer", answerRendered: answer.rendered, message: undefined };
 }
 
-function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean, locale: SourceLocale = "en-US"): string {
+function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean, locale: SourceLocale = "en-US", displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
   const packageLabel = session.node.packageLabel ?? session.node.packageId ?? "Installed package";
   const header = [
     `Review: ${packageLabel} / ${session.node.label}`,
@@ -2119,10 +2129,34 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
   return [
     ...header,
     cards.join("\n\n"),
+    ...(displayMode === "developer" ? developerReviewMetadataLines(session) : []),
     session.message === undefined ? "" : `\n${session.message}`,
     reviewBottomBarMarker,
     controls
   ].filter((line) => line.length > 0).join("\n");
+}
+
+function developerReviewMetadataLines(session: EmbeddedReviewSession): readonly string[] {
+  const state = session.items[session.index];
+  const source = state === undefined ? undefined : session.developerItems?.find((item) => item.item.id === state.itemId);
+  if (source === undefined) return ["", "Developer metadata", "No structured item metadata is available for this card."];
+  const item = source.item;
+  const lexical = item.lexicalMetadata as unknown as Record<string, unknown> | undefined;
+  const lines = ["", "Developer metadata", `Item ID: ${item.id}`, `Package ID: ${source.packageId}`, `Package version: ${source.packageVersion}`, `Source path: ${source.sourcePath ?? item.source?.path ?? "unknown"}`];
+  if (item.source?.title !== undefined) lines.push(`Source title: ${typeof item.source.title === "string" ? item.source.title : JSON.stringify(item.source.title)}`);
+  if (item.examples?.length) lines.push("Source examples:", ...item.examples.map((example) => `- ${example}`));
+  if (lexical !== undefined) {
+    const ordered = ["lexicalEntryId", "senseId", "surfaceForm", "lemma", "citationForm", "partOfSpeech", "firstIntroductionChapter", "introductionStatus", "attestationChapters", "morphologyStatus", "regularityStatus", "verbClass"];
+    for (const key of ordered) {
+      const value = lexical[key];
+      if (value !== undefined) lines.push(`${developerMetadataLabel(key)}: ${Array.isArray(value) ? value.join(", ") : String(value)}`);
+    }
+  }
+  return lines;
+}
+
+function developerMetadataLabel(key: string): string {
+  return key.replace(/([a-z])([A-Z])/gu, "$1 $2").replace(/^./u, (character) => character.toUpperCase());
 }
 
 export function isEmbeddedReviewItemUsable(item: ReadingReviewItem, locale: SourceLocale = "en-US"): boolean {
@@ -3465,14 +3499,15 @@ function renderLanguageTreeMenu(
   rightPaneOffset: number,
   sourceLocale: SourceLocale = "en-US",
   focusedPane: FocusablePane = "navigation",
-  toggleSelection = 0
+  toggleSelection = 0,
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode
 ): void {
-  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection)}`);
+  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode)}`);
 }
 
 const rightPanePageSize = 24;
 const reviewBottomBarMarker = "[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]";
-const sourceLanguageToggleCount = 1;
+const sourceLanguageToggleCount = 2;
 const minimumThreePaneWidth = 100;
 type FocusablePane = "navigation" | "toggles";
 
@@ -3487,7 +3522,8 @@ export function renderTwoPaneLanguageTree(
   sourceLocale: SourceLocale = "en-US",
   focusedPane: FocusablePane = "navigation",
   terminalWidth?: number,
-  toggleSelection = 0
+  toggleSelection = 0,
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
   const layout = threePaneLayout(terminalWidth);
@@ -3520,7 +3556,7 @@ export function renderTwoPaneLanguageTree(
   lines.push(`${separator} ${padRight(navigationTitle, leftWidth)} ${separator} ${padRight(outputTitle, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(togglesTitle, layout.toggleWidth)} ${separator}` : ""}`);
   lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}${layout.showToggles ? ` ${" ".repeat(layout.toggleWidth)} ${separator}` : ""}`);
 
-  const toggleLines = renderTogglesPane(sourceLocale, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
+  const toggleLines = renderTogglesPane(sourceLocale, displayMode, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
@@ -3545,13 +3581,15 @@ export function renderSourceLanguageToggle(sourceLocale: SourceLocale, colorsEna
   return colorsEnabled ? `${ansi.bold}${ansi.orange}${label}${ansi.reset}` : label;
 }
 
-function renderTogglesPane(sourceLocale: SourceLocale, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
-  const selected = focused && selection === 0;
-  if (selected) {
-    const line = truncateTextDisplay(`> ${sourceLocaleLabel(sourceLocale, sourceLocale)}`, width);
-    return [colorsEnabled ? `${ansi.inverse}${ansi.bold}${line}${ansi.reset}` : line];
-  }
-  return [truncateTextDisplay(`  ${renderSourceLanguageToggle(sourceLocale, colorsEnabled)}`, width)];
+function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
+  const raw = [sourceLocaleLabel(sourceLocale, sourceLocale), `View mode: ${displayMode === "normal" ? "Normal" : "Developer"}`];
+  return raw.map((value, index) => {
+    const selected = focused && selection === index;
+    const line = truncateTextDisplay(`${selected ? ">" : " "} ${value}`, width);
+    if (selected) return colorsEnabled ? `${ansi.inverse}${ansi.bold}${line}${ansi.reset}` : line;
+    if (colorsEnabled) return `  ${ansi.bold}${ansi.orange}${value}${ansi.reset}`;
+    return line;
+  });
 }
 
 export function shouldShowTogglesPane(terminalWidth?: number): boolean {
@@ -3737,7 +3775,7 @@ function isMarkdownTableLine(line: string): boolean {
 }
 
 function formatMarkdownTable(rawLines: readonly string[], width: number, colorsEnabled: boolean): readonly string[] {
-  const parsedRows = rawLines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => stripInlineMarkdown(cell.trim(), colorsEnabled)));
+  const parsedRows = rawLines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => stripInlineMarkdown(cell.trim(), colorsEnabled).replace(/<br\s*\/?\s*>/giu, "\n")));
   const originalColumnCount = Math.max(...parsedRows.map((row) => row.length));
   const headerRow = parsedRows.find((row) => !isMarkdownTableSeparatorRow(row)) ?? [];
   const visibleColumns = Array.from({ length: originalColumnCount }, (_, column) => column)
@@ -3752,22 +3790,39 @@ function formatMarkdownTable(rawLines: readonly string[], width: number, colorsE
     3,
     ...rows
       .filter((row) => !isMarkdownTableSeparatorRow(row))
-      .map((row) => strippedLength(row[column] ?? ""))
+      .flatMap((row) => (row[column] ?? "").split("\n").map(strippedLength))
   ));
   const widths = constrainTableWidths(idealWidths, width);
   const formattedRows: string[] = [];
+  const vocabularyTable = isVocabularyTableHeader(headerRow);
+  let renderedVocabularyEntries = 0;
   for (const row of rows) {
     if (isMarkdownTableSeparatorRow(row)) {
       formattedRows.push(`| ${widths.map((cellWidth) => "-".repeat(cellWidth)).join(" | ")} |`);
       continue;
     }
-    const wrappedCells = widths.map((cellWidth, column) => wrapDisplayText(row[column] ?? "", cellWidth));
+    const isVocabularyRow = vocabularyTable && row !== rows[0];
+    const isContinuation = isVocabularyRow && (row[noteColumn] ?? "").trim() === "Infinitive";
+    if (isVocabularyRow && !isContinuation && renderedVocabularyEntries > 0) {
+      formattedRows.push(`| ${widths.map((cellWidth) => " ".repeat(cellWidth)).join(" | ")} |`);
+    }
+    const wrappedCells = widths.map((cellWidth, column) => wrapMultilineTableCell(row[column] ?? "", cellWidth));
     const rowHeight = Math.max(...wrappedCells.map((cell) => cell.length));
     for (let lineIndex = 0; lineIndex < rowHeight; lineIndex += 1) {
       formattedRows.push(`| ${widths.map((cellWidth, column) => padRightDisplay(wrappedCells[column]?.[lineIndex] ?? "", cellWidth)).join(" | ")} |`);
     }
+    if (isVocabularyRow && !isContinuation) renderedVocabularyEntries += 1;
   }
   return formattedRows;
+}
+
+function isVocabularyTableHeader(header: readonly string[]): boolean {
+  const labels = header.map((cell) => cell.trim().toLowerCase());
+  return labels.includes("notes") && labels.some((label) => label === "meaning" || label === "english");
+}
+
+function wrapMultilineTableCell(value: string, width: number): readonly string[] {
+  return value.split("\n").flatMap((line) => wrapDisplayText(line, width));
 }
 
 function normalizeVocabularyNote(note: string): string {

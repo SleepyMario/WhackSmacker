@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  assertCanonicalCumulativeContinuity,
+  assertCanonicalGrammarPatternRecord,
+  assertGrammarSummaryPatternAgreement,
+  assertLanguageCurriculumChapter3150Requirements,
   assertLanguageCurriculumChapter5170Requirements,
   assertLanguageCurriculumChapter71140Requirements,
   assertLanguageCurriculumStage71140Coverage,
@@ -9,8 +13,30 @@ import {
   grammarEasyMenuLabel,
   grammarHardMenuLabel,
   languageCurriculumPolicy,
+  formatGrammarPatternComponents,
   pacingRuleForChapter
 } from "../dist/packages/core/index.js";
+
+const dutch1115Patterns = [
+  { grammarId: "DUT-GRAMMAR-011", learnerFacingPattern: "Hoe gaat het met je? / Het gaat goed.", indivisibleExpression: true },
+  { grammarId: "DUT-GRAMMAR-012", learnerFacingPattern: "Sophie + V stem-t", components: ["Sophie", "V stem-t"], developerDescription: "controlled third-person present actions with a named subject" },
+  { grammarId: "DUT-GRAMMAR-013", learnerFacingPattern: "Ik + wil + graag + N", components: ["Ik", "wil", "graag", "N"] },
+  { grammarId: "DUT-GRAMMAR-014", learnerFacingPattern: "clause + en + clause", components: ["clause", "en", "clause"] },
+  { grammarId: "DUT-GRAMMAR-015", learnerFacingPattern: "Waar woon je?", indivisibleExpression: true }
+];
+
+test("canonical cumulative continuity begins at Chapter 1 and Chapter 16 inherits Chapters 1-15", () => {
+  const states = Array.from({ length: 16 }, (_, index) => ({
+    chapter: index + 1,
+    inheritedChapterNumbers: Array.from({ length: index }, (_, priorIndex) => priorIndex + 1)
+  }));
+  assert.doesNotThrow(() => assertCanonicalCumulativeContinuity(states));
+  assert.throws(() => assertCanonicalCumulativeContinuity([
+    ...states.slice(0, 15),
+    { chapter: 16, inheritedChapterNumbers: [15] }
+  ]), /complete curriculum state from Chapters 1-15/u);
+  assert.match(languageCurriculumPolicy.cumulativeContinuityRules.join("\n"), /Chapter 1 through the immediately preceding chapter/u);
+});
 
 test("language curriculum policy hardcodes chapter pacing bands", () => {
   assert.deepEqual(languageCurriculumPolicy.pacingRules.map((rule) => ({
@@ -30,12 +56,28 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       newVocabularyItems: { min: 6, max: 10 }
     },
     {
-      label: "Chapters 26-50",
+      label: "Chapters 26-30",
       chapterStart: 26,
-      chapterEnd: 50,
+      chapterEnd: 30,
       grammarPoints: { min: 1, max: 2 },
       readContentLines: { min: 10, max: 30 },
       newVocabularyItems: { min: 6, max: 20 }
+    },
+    {
+      label: "Chapters 31-50",
+      chapterStart: 31,
+      chapterEnd: 50,
+      grammarPoints: { min: 2, max: 2 },
+      readContentLines: { min: 10, max: 30 },
+      newVocabularyItems: { min: 6, max: 20 }
+    },
+    {
+      label: "Chapters 51-70",
+      chapterStart: 51,
+      chapterEnd: 70,
+      grammarPoints: { min: 2, max: 2 },
+      readContentLines: { min: 15, max: 30 },
+      newVocabularyItems: { min: 10, max: 30 }
     },
     {
       label: "Chapters 71-140",
@@ -46,15 +88,82 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       newVocabularyItems: { min: 10, max: 30 }
     }
   ]);
-  assert.equal(languageCurriculumPolicy.decisionBoundaryChapter, 51);
+});
+
+test("canonical policy requires direct or neutral Normal-view instructional voice", () => {
+  assert.equal(languageCurriculumPolicy.normalViewVoiceRules.length, 4);
+  const rules = languageCurriculumPolicy.normalViewVoiceRules.join("\n");
+  assert.match(rules, /direct address.*neutral reference.*ordinary imperative/u);
+  assert.match(rules, /the learner.*students.*the user/u);
+  assert.match(rules, /dialogue, narrative, and quoted examples/u);
+});
+
+test("canonical Grammar Easy policy preserves direct US grade 4-8 guidance and pattern identity", () => {
+  const rules = languageCurriculumPolicy.grammarEasyRules.join("\n");
+  assert.match(rules, /addresses the learner directly/u);
+  assert.match(rules, /US grade levels 4-8/u);
+  assert.match(rules, /short, concrete explanations and examples/u);
+  assert.match(rules, /the learner.*learners.*the student.*students.*the user/u);
+  assert.match(rules, /technically accurate/u);
+  assert.match(rules, /same canonical grammar ID.*exact learner-facing pattern/u);
+});
+
+test("canonical grammar records separate patterns from developer descriptions", () => {
+  for (const record of dutch1115Patterns) assert.doesNotThrow(() => assertCanonicalGrammarPatternRecord(record));
+  assert.throws(() => assertCanonicalGrammarPatternRecord({
+    grammarId: "DUT-GRAMMAR-012",
+    learnerFacingPattern: "controlled third-person present actions with a named subject",
+    developerDescription: "controlled third-person present actions with a named subject"
+  }), /must not be populated from the developer description/u);
+  assert.throws(() => assertCanonicalGrammarPatternRecord({
+    grammarId: "DUT-GRAMMAR-012",
+    developerDescription: "controlled third-person present actions with a named subject",
+    patternSource: "developer-description"
+  }), /learner-facing grammar pattern is required/u);
+});
+
+test("compositional grammar patterns require canonical spaced plus separators", () => {
+  assert.equal(formatGrammarPatternComponents(["clause", "en", "clause"]), "clause + en + clause");
+  assert.throws(() => assertCanonicalGrammarPatternRecord({
+    grammarId: "DUT-GRAMMAR-014",
+    learnerFacingPattern: "clause en clause",
+    components: ["clause", "en", "clause"]
+  }), /must be clause \+ en \+ clause/u);
+  assert.throws(() => assertCanonicalGrammarPatternRecord({
+    grammarId: "DUT-GRAMMAR-014",
+    learnerFacingPattern: "clause+en+clause",
+    components: ["clause", "en", "clause"]
+  }), /must be clause \+ en \+ clause/u);
+});
+
+test("the component separator rule is cross-language and preserves fixed expressions", () => {
+  assert.doesNotThrow(() => assertCanonicalGrammarPatternRecord({
+    grammarId: "JPN-GRAMMAR-001",
+    learnerFacingPattern: "topic + は + comment",
+    components: ["topic", "は", "comment"]
+  }));
+  assert.doesNotThrow(() => assertCanonicalGrammarPatternRecord({
+    grammarId: "FIXED-001",
+    learnerFacingPattern: "How are you?",
+    indivisibleExpression: true
+  }));
+});
+
+test("Grammar Easy and Hard must agree on canonical pattern identity", () => {
+  assert.doesNotThrow(() => assertGrammarSummaryPatternAgreement(dutch1115Patterns, dutch1115Patterns.map((record) => ({ ...record }))));
+  assert.throws(() => assertGrammarSummaryPatternAgreement(dutch1115Patterns, dutch1115Patterns.map((record) => record.grammarId === "DUT-GRAMMAR-012" ? { ...record, learnerFacingPattern: "subject + verb", components: ["subject", "verb"] } : record)), /patterns disagree/u);
 });
 
 test("language curriculum pacing validates early and advanced chapters", () => {
   assert.equal(pacingRuleForChapter(1).label, "Chapters 1-25");
   assert.equal(pacingRuleForChapter(25).label, "Chapters 1-25");
-  assert.equal(pacingRuleForChapter(26).label, "Chapters 26-50");
-  assert.equal(pacingRuleForChapter(50).label, "Chapters 26-50");
-  assert.equal(pacingRuleForChapter(51), "decision-boundary");
+  assert.equal(pacingRuleForChapter(26).label, "Chapters 26-30");
+  assert.equal(pacingRuleForChapter(30).label, "Chapters 26-30");
+  assert.equal(pacingRuleForChapter(31).label, "Chapters 31-50");
+  assert.equal(pacingRuleForChapter(50).label, "Chapters 31-50");
+  assert.equal(pacingRuleForChapter(51).label, "Chapters 51-70");
+  assert.equal(pacingRuleForChapter(60).label, "Chapters 51-70");
+  assert.equal(pacingRuleForChapter(70).label, "Chapters 51-70");
   assert.equal(pacingRuleForChapter(71).label, "Chapters 71-140");
   assert.equal(pacingRuleForChapter(130).label, "Chapters 71-140");
   assert.equal(pacingRuleForChapter(131).label, "Chapters 71-140");
@@ -84,12 +193,12 @@ test("language curriculum pacing validates early and advanced chapters", () => {
     readContentLineCount: 9,
     newVocabularyItemCount: 10
   }), /read-content line count must be 10-30/u);
-  assert.throws(() => assertLanguageCurriculumPacing({
+  assert.doesNotThrow(() => assertLanguageCurriculumPacing({
     chapter: 51,
     grammarPointCount: 2,
-    readContentLineCount: 10,
+    readContentLineCount: 15,
     newVocabularyItemCount: 10
-  }), /decision boundary/u);
+  }));
 });
 
 test("language curriculum policy records continuity and strict example rules", () => {
@@ -127,11 +236,92 @@ test("language curriculum policy records continuity and strict example rules", (
   assert.equal(grammarHardMenuLabel, "Grammar - Hard");
 });
 
+test("Chapters 31, 40, 41, and 50 require two new points with exactly one connector-domain point", () => {
+  for (const chapter of [31, 40, 41, 50]) {
+    const source = chapter3150Markdown({ chapter });
+    const [result] = assertLanguageCurriculumChapter3150Requirements([source]);
+    assert.equal(result.newPrincipalGrammarPointCount, 2);
+    assert.equal(result.connectorPrincipalGrammarPointCount, 1);
+  }
+});
+
+test("Chapters 31-50 reject wrong principal counts and wrong connector splits", () => {
+  for (const grammar of [
+    ["Principal: G-A | connector: contrast"],
+    ["Principal: G-A | connector: contrast", "Principal: G-B | aspect: completion", "Principal: G-C | modality: possibility"],
+    ["Principal: G-A | connector: contrast", "Principal: G-B | conjunction: addition"],
+    ["Principal: G-A | aspect: completion", "Principal: G-B | modality: possibility"]
+  ]) {
+    assert.throws(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 41, grammar })]), /principal grammar point count|connector-domain/u);
+  }
+});
+
+test("Chapters 31-50 supporting variants do not inflate the count and reused grammar fills no slot", () => {
+  assert.doesNotThrow(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 31, grammar: [
+    "Principal: G-31-A | sequencing construction: ordered events",
+    "Supporting: G-31-A-FORM | required agreement",
+    "Principal: G-31-B | aspect: completion",
+    "Reused: OLD | earlier grammar"
+  ] })]));
+  assert.throws(() => assertLanguageCurriculumChapter3150Requirements([
+    { chapter: 30, markdown: "### New Grammar\n- Principal: OLD-LINK | connector: earlier\n- Principal: OLD-ASPECT | aspect: earlier" },
+    chapter3150Markdown({ chapter: 31, grammar: [
+      "Principal: OLD-LINK | connector: relabelled",
+      "Principal: OLD-ASPECT | aspect: relabelled",
+      "Supporting: NEW-FORM | morphology"
+    ] })
+  ]), /new principal grammar point count must be 2-2; got 0/u);
+});
+
+test("Chapters 31-50 retain vocabulary, line, and odd-even limits", () => {
+  assert.throws(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 31, vocabulary: vocabularyItems(5) })]), /vocabulary item count must be 6-20/u);
+  assert.throws(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 40, lineCount: 9 })]), /line count must be 10-30/u);
+  assert.throws(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 41, format: "narrative" })]), /must use learner-facing dialogue/u);
+});
+
+function chapter3150Markdown({ chapter, grammar = [`Principal: G-${chapter}-A | connector: contrast`, `Principal: G-${chapter}-B | aspect: completion`], vocabulary = vocabularyItems(6), lineCount = 10, format = chapter % 2 === 1 ? "dialogue" : "narrative" }) {
+  const heading = format === "dialogue" ? "Learner-facing Dialogue" : "Learner-facing Controlled Reading";
+  const lines = Array.from({ length: lineCount }, (_, index) => format === "dialogue" ? `Marieke: topic line ${index + 1}.` : `Topic narrative line ${index + 1}.`);
+  return { chapter, markdown: `---\nchapter: ${chapter}\n---\n\n### ${heading}\n${lines.join("\n")}\n\n### New Vocabulary\n${vocabulary.map((item) => `- ${item}`).join("\n")}\n\n### New Grammar\n${grammar.map((item) => `- ${item}`).join("\n")}` };
+}
+
 test("Chapters 51-70 accept 10 and 30 new learner-facing vocabulary items", () => {
   assert.doesNotThrow(() => assertLanguageCurriculumChapter5170Requirements([
     chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 15 }),
     chapter5170Markdown({ chapter: 52, vocabulary: vocabularyItems(30, "second"), lineCount: 15 })
   ]));
+});
+
+test("Chapters 51, 60, and 70 require exactly two genuinely new principal grammar points", () => {
+  for (const chapter of [51, 60, 70]) {
+    assert.doesNotThrow(() => assertLanguageCurriculumChapter5170Requirements([
+      chapter5170Markdown({ chapter, vocabulary: vocabularyItems(10), lineCount: 15 })
+    ]));
+    for (const grammar of [[], ["Principal: G-A"], ["Principal: G-A", "Principal: G-B", "Principal: G-C"]]) {
+      assert.throws(() => assertLanguageCurriculumChapter5170Requirements([
+        chapter5170Markdown({ chapter, vocabulary: vocabularyItems(10), lineCount: 15, grammar })
+      ]), /new principal grammar point count must be 2-2/u);
+    }
+  }
+});
+
+test("supporting variants do not inflate Chapters 51-70 grammar and reused grammar satisfies neither point", () => {
+  assert.doesNotThrow(() => assertLanguageCurriculumChapter5170Requirements([
+    chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 15, grammar: [
+      "Principal: G-51-A | first new point",
+      "Supporting: G-51-A-FORM | required inflection",
+      "Principal: G-51-B | second new point",
+      "Reused: OLD | earlier grammar"
+    ] })
+  ]));
+  assert.throws(() => assertLanguageCurriculumChapter5170Requirements([
+    { chapter: 50, markdown: "### New Grammar\n- Principal: OLD-A | earlier\n- Principal: OLD-B | earlier" },
+    chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 15, grammar: [
+      "Principal: OLD-A | relabelled",
+      "Principal: OLD-B | relabelled",
+      "Supporting: NEW-FORM | does not count"
+    ] })
+  ]), /new principal grammar point count must be 2-2; got 0/u);
 });
 
 test("Chapters 51-70 reject fewer than 10 or more than 30 new vocabulary items", () => {
@@ -159,7 +349,7 @@ test("metadata grammar reviews and developer content do not count as Chapters 51
     ...source,
     markdown: source.markdown
       .replace("chapter: 51", "chapter: 51\nmetadata_vocabulary: term-10")
-      .replace("### New Grammar", "### New Grammar\n- term-10\n\n### Developer Notes\n- term-10\n\n### Review\n- term-10")
+      .replace("### New Grammar", "### Developer Notes\n- term-10\n\n### Review\n- term-10\n\n### New Grammar")
   };
   assert.throws(() => assertLanguageCurriculumChapter5170Requirements([chapter]), /got 9/u);
 });
@@ -186,7 +376,7 @@ test("non-read-content material does not inflate Chapters 51-70 line counts", ()
     ...source,
     markdown: source.markdown
       .replace("### New Vocabulary", "Speaker Only:\n\n---\n\n### New Vocabulary")
-      .replace("### New Grammar", "### New Grammar\nGrammar explanation.\n\n### Review\nReview exercise.\n\n### Developer Notes\nGenerated summary.")
+      .replace("### New Grammar", "### Review\nReview exercise.\n\n### Developer Notes\nGenerated summary.\n\n### New Grammar")
   };
   assert.throws(() => assertLanguageCurriculumChapter5170Requirements([chapter]), /line count must be 15-30; got 14/u);
 });
@@ -204,14 +394,14 @@ test("Chapters 51-70 retain odd dialogue and even narrative formats", () => {
   ]), /must use learner-facing narrative/u);
 });
 
-function chapter5170Markdown({ chapter, vocabulary, lineCount, format = chapter % 2 === 1 ? "dialogue" : "narrative" }) {
+function chapter5170Markdown({ chapter, vocabulary, lineCount, format = chapter % 2 === 1 ? "dialogue" : "narrative", grammar = [`Principal: G-${chapter}-A | first new point`, `Principal: G-${chapter}-B | second new point`] }) {
   const heading = format === "dialogue" ? "Learner-facing Dialogue" : "Learner-facing Controlled Reading";
   const lines = Array.from({ length: lineCount }, (_, index) => format === "dialogue"
     ? `Speaker: dialogue line ${index + 1}.`
     : `Narrative line ${index + 1}.`);
   return {
     chapter,
-    markdown: `---\nchapter: ${chapter}\n---\n\n### ${heading}\n${lines.join("\n")}\n\n### New Vocabulary\n${vocabulary.map((item) => `- ${item}`).join("\n")}\n\n### New Grammar\nGrammar explanation.`
+    markdown: `---\nchapter: ${chapter}\n---\n\n### ${heading}\n${lines.join("\n")}\n\n### New Vocabulary\n${vocabulary.map((item) => `- ${item}`).join("\n")}\n\n### New Grammar\n${grammar.map((item) => `- ${item}`).join("\n")}`
   };
 }
 

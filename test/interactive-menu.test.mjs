@@ -446,9 +446,165 @@ test("language tree exposes Dutch content and review deck labels", async () => {
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- There Is / There Are I"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 10 -- Living Here"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 15 -- Asking Where Someone Lives"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 20 -- An Appointment in Town"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 25 -- Going to the Museum"));
     assert.ok(readContent.children.some((node) => node.label === "Grammar - Easy"));
     assert.ok(readContent.children.some((node) => node.label === "Grammar - Hard"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapter 1 Normal and Developer projections preserve one complete source", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const chapter = readContent.children.find((node) => node.label === "Chapter 1 -- Greetings and Identity");
+    const normal = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const developer = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "developer" });
+
+    assert.doesNotMatch(normal, /It does not introduce `je`, `jij`, or `u` yet\./u);
+    assert.doesNotMatch(normal, /Do not turn this into a full verb-conjugation chapter yet\./u);
+    assert.doesNotMatch(normal, /grammar_id:|DUT-GRAMMAR-001|See `ledger\.md`/u);
+    assert.match(normal, /row marked `Infinitive` gives the base verb form\./u);
+    assert.match(developer, /It does not introduce `je`, `jij`, or `u` yet\./u);
+    assert.match(developer, /Do not turn this into a full verb-conjugation chapter yet\./u);
+    assert.match(developer, /grammar_id: "DUT-GRAMMAR-001"|DUT-GRAMMAR-001/u);
+    assert.match(developer, /See `ledger\.md`/u);
+
+    const renderedNormal = renderTwoPaneLanguageTree(tree, new Set(), 0, normal, false, 0, 80, "en-US", "navigation", 180);
+    const renderedDeveloper = renderTwoPaneLanguageTree(tree, new Set(), 0, developer, false, 0, 80, "en-US", "navigation", 180, 1, "developer");
+    const outputLines = renderedNormal.split("\n").map(rightPaneCell);
+    const entryIndexes = Object.fromEntries(["hallo", "dag", "ik", "ben", "zijn", "de student", "de docent", "de vriend"].map((entry) => [entry, outputLines.findIndex((line) => new RegExp(`^\\| ${escapeRegExp(entry)}\\s+\\|`, "u").test(line))]));
+    assert.equal(entryIndexes.dag - entryIndexes.hallo, 2);
+    assert.equal(entryIndexes.ik - entryIndexes.dag, 2);
+    assert.equal(entryIndexes.ben - entryIndexes.ik, 2);
+    assert.equal(entryIndexes.zijn - entryIndexes.ben, 1);
+    assert.equal(entryIndexes["de student"] - entryIndexes.zijn, 2);
+    assert.equal(entryIndexes["de docent"] - entryIndexes["de student"], 2);
+    assert.equal(entryIndexes["de vriend"] - entryIndexes["de docent"], 2);
+    assert.match(outputLines[entryIndexes.ben], /ben\s+\| am\s+\| Verb\s+\|$/u);
+    assert.match(outputLines[entryIndexes.zijn], /zijn\s+\| to be\s+\| Infinitive\s+\|$/u);
+    for (const index of [entryIndexes.hallo + 1, entryIndexes.dag + 1, entryIndexes.ik + 1, entryIndexes.zijn + 1, entryIndexes["de student"] + 1, entryIndexes["de docent"] + 1]) {
+      assert.match(outputLines[index], /^\|\s+\|\s+\|\s+\|$/u);
+    }
+    const vocabularyRows = (rendered) => {
+      const lines = rendered.split("\n").map(rightPaneCell);
+      const start = lines.findIndex((line) => /^\| Dutch\s+\| English\s+\| Notes\s+\|$/u.test(line));
+      const end = lines.findIndex((line) => /^\| de vriend\s+\|/u.test(line));
+      return lines.slice(start, end + 1);
+    };
+    assert.deepEqual(vocabularyRows(renderedDeveloper), vocabularyRows(renderedNormal));
+    assert.doesNotMatch(renderedNormal, /<br\s*\/?\s*>/iu);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapter 12 uses neutral Normal-view voice and preserves original Developer wording", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const chapter = readContent.children.find((node) => node.label === "Chapter 12 -- A Simple Daily Routine");
+    const normal = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const developer = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "developer" });
+
+    assert.doesNotMatch(normal, /the learner/iu);
+    assert.match(normal, /In this pattern, a named third-person subject is followed by a controlled present-action form:/u);
+    assert.match(developer, /The learner sees a named third-person subject followed by a controlled present-action form:/u);
+    assert.match(developer, /In this pattern, a named third-person subject is followed by a controlled present-action form:/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapters 11-15 summaries render canonical patterns instead of developer descriptions", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const easyNode = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-011-015-grammar-easy/chapter.md");
+    const hardNode = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-011-015-grammar-hard/chapter.md");
+    const chapter14Node = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-014-two-places-in-a-day/chapter.md");
+    const easyNormal = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const hardNormal = await renderLanguageTreeRightPane(hardNode, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const easyDeveloper = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const hardDeveloper = await renderLanguageTreeRightPane(hardNode, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const chapter14Normal = await renderLanguageTreeRightPane(chapter14Node, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const chapter14Developer = await renderLanguageTreeRightPane(chapter14Node, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const patterns = ["Hoe gaat het met je? / Het gaat goed.", "Sophie + V stem-t", "Ik + wil + graag + N", "clause + en + clause", "Waar woon je?"];
+
+    for (const pattern of patterns) {
+      assert.match(easyNormal, new RegExp(escapeRegExp(pattern), "u"));
+      assert.match(hardNormal, new RegExp(escapeRegExp(pattern), "u"));
+    }
+    assert.doesNotMatch(easyNormal, /controlled third-person present actions with a named subject|DUT-GRAMMAR-/u);
+    assert.doesNotMatch(hardNormal, /controlled third-person present actions with a named subject|DUT-GRAMMAR-/u);
+    assert.match(easyDeveloper, /DUT-GRAMMAR-012[\s\S]*Sophie \+ V stem-t/u);
+    assert.match(hardDeveloper, /DUT-GRAMMAR-012[\s\S]*controlled third-person present actions with a named subject/u);
+    assert.match(chapter14Normal, /Pattern: `clause \+ en \+ clause`[\s\S]*Meaning: clause \+ en \+ clause\./u);
+    assert.doesNotMatch(chapter14Normal, /DUT-GRAMMAR-014/u);
+    assert.match(chapter14Developer, /DUT-GRAMMAR-014 -- clause \+ en \+ clause/u);
+
+    const renderedEasy = renderTwoPaneLanguageTree(tree, new Set(), 0, easyNormal, false, 0, 100, "en-US", "navigation", 180);
+    const renderedHard = renderTwoPaneLanguageTree(tree, new Set(), 0, hardNormal, false, 0, 100, "en-US", "navigation", 180);
+    assert.match(renderedEasy, /Sophie \+ V stem-t/u);
+    assert.match(renderedHard, /clause \+ en \+ clause/u);
+    assert.doesNotMatch(`${renderedEasy}\n${renderedHard}`, /controlled third-person present actions with a named subject/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapters 16-20 summaries share canonical patterns and hide IDs in Normal", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const easyNode = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-016-020-grammar-easy/chapter.md");
+    const hardNode = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-016-020-grammar-hard/chapter.md");
+    const chapter19Node = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-019-asking-for-help/chapter.md");
+    const easyNormal = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const hardNormal = await renderLanguageTreeRightPane(hardNode, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const easyDeveloper = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const chapter19Normal = await renderLanguageTreeRightPane(chapter19Node, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const chapter19Developer = await renderLanguageTreeRightPane(chapter19Node, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const patterns = ["Ik + V stem", "Wat doe je?", "subject + verb + niet", "Kun je + infinitive?", "time + verb + subject + ..."];
+    for (const pattern of patterns) {
+      assert.match(easyNormal, new RegExp(escapeRegExp(pattern), "u"));
+      assert.match(hardNormal, new RegExp(escapeRegExp(pattern), "u"));
+    }
+    assert.doesNotMatch(`${easyNormal}\n${hardNormal}\n${chapter19Normal}`, /DUT-GRAMMAR-/u);
+    assert.match(easyDeveloper, /DUT-GRAMMAR-016[\s\S]*DUT-GRAMMAR-020/u);
+    assert.match(chapter19Developer, /DUT-GRAMMAR-019 -- Kun je \+ infinitive\?/u);
+    assert.match(chapter19Normal, /kun[\s\S]*kunnen[\s\S]*to be able to[\s\S]*Infinitive[\s\S]*natuurlijk/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Normal deck preview is unchanged while Developer adds package metadata", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const decks = dutch.children.find((node) => node.label === "Review decks");
+    const deck = decks.children[0];
+    const before = (await listReadingReviewItems({ dataDir: fixture.dataDir, packageId: deck.packageId, packageVersion: deck.packageVersion, sourcePath: deck.sourcePath })).map((item) => [item.item.id, item.item.prompt.text, item.item.answer.text]);
+    const normal = await renderLanguageTreeRightPane(deck, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const developer = await renderLanguageTreeRightPane(deck, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const after = (await listReadingReviewItems({ dataDir: fixture.dataDir, packageId: deck.packageId, packageVersion: deck.packageVersion, sourcePath: deck.sourcePath })).map((item) => [item.item.id, item.item.prompt.text, item.item.answer.text]);
+    assert.deepEqual(after, before);
+    assert.doesNotMatch(normal, /Developer metadata|Package ID:|Source path:/u);
+    assert.equal(developer.startsWith(normal), true);
+    assert.match(developer, /Developer metadata[\s\S]*Package ID:[\s\S]*Source path:/u);
   } finally {
     await fixture.cleanup();
   }
@@ -641,7 +797,7 @@ test("language tree exposes Korean Grammar Easy and Hard summaries after each co
   }
 });
 
-test("Dutch read tree includes the complete zero-padded Chapters 11-15 block", async () => {
+test("Dutch read tree includes the complete zero-padded Chapters 11-25 blocks", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
@@ -649,13 +805,21 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-15 block", a
     const readContent = dutch.children.find((node) => node.label === "Read content");
     const chapter11 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md");
     const chapter15 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-015-asking-where-someone-lives/chapter.md");
+    const chapter16 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-016-working-at-the-library/chapter.md");
+    const chapter20 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-020-an-appointment-in-town/chapter.md");
+    const chapter25 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-025-going-to-the-museum/chapter.md");
 
     assert.equal(chapter11?.label, "Chapter 11 -- Asking How Someone Is");
     assert.equal(chapter15?.label, "Chapter 15 -- Asking Where Someone Lives");
-    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-016-/u.test(node.filePath ?? "")), false);
+    assert.equal(chapter16?.label, "Chapter 16 -- Working at the Library");
+    assert.equal(chapter20?.label, "Chapter 20 -- An Appointment in Town");
+    assert.equal(chapter25?.label, "Chapter 25 -- Going to the Museum");
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-026-/u.test(node.filePath ?? "")), false);
     assert.equal(readContent.children.some((node) => /chapter-011-015-grammar-(?:easy|hard)/u.test(node.filePath ?? "")), true);
     const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 11-15"), true);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 16-20"), true);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 21-25"), true);
   } finally {
     await fixture.cleanup();
   }
@@ -823,6 +987,18 @@ test("three-pane renderer separates navigation output and toggles", () => {
   assert.match(english, /\x1b\[1m\x1b\[38;5;208mEnglish\x1b\[0m/u);
   assert.match(chinese, /\x1b\[7m\x1b\[1m> 中文（臺灣）\x1b\[0m/u);
   assert.match(englishPlain, /Left\/Right focus/u);
+  assert.match(englishPlain, /View mode: Normal/u);
+  assert.doesNotMatch(englishPlain, /● Normal|○ Developer/u);
+});
+
+test("Normal is the default and the view mode uses one toggle row", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const normal = stripAnsi(renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "navigation", 150));
+  const developer = stripAnsi(renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "toggles", 150, 1, "developer"));
+  assert.match(normal, /View mode: Normal/u);
+  assert.doesNotMatch(normal, /View mode: Developer/u);
+  assert.match(developer, /> View mode: Developer/u);
+  assert.equal((developer.match(/View mode:/gu) ?? []).length, 1);
 });
 
 test("focus selector jumps between navigation and the toggle row while skipping titles and Output", () => {
@@ -1384,7 +1560,7 @@ test("Dutch review sources submenu uses clean selectable deck labels", async () 
     });
     const items = reviewSourcesToMenuItems(sources);
 
-    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
+    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
     assert.equal(items.some((item) => item.label.includes("com.sleepymario.language.dutch")), false);
     assert.equal(items.some((item) => item.label.includes("cards.tsv")), false);
   } finally {
@@ -1564,11 +1740,13 @@ test("two-pane renderer aligns Korean markdown table columns by display width", 
     .filter((line) => line.startsWith("| "));
   const pipeColumns = tableLines.map(displayPipeColumns);
 
-  assert.equal(tableLines.length, 5);
+  assert.equal(tableLines.length, 7);
   assert.deepEqual(new Set(pipeColumns.map((columns) => JSON.stringify(columns))).size, 1);
   assert.match(tableLines[0], /^\| Korean\s+\| Meaning\s+\| Notes\s+\|$/u);
   assert.match(tableLines[2], /^\| 안녕하세요\s+\| hello\s+\| Fixed greeting expression\.\s+\|$/u);
-  assert.match(tableLines[4], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
+  assert.match(tableLines[3], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[5], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[6], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
   assert.doesNotMatch(tableLines.join("\n"), /New noun; not self-ID here|Can fill the N slot/u);
 });
 
@@ -2196,6 +2374,37 @@ test("left and right arrows focus Toggles while Enter and Space cycle its langua
   }
 });
 
+test("Enter toggles Normal to Developer and back while navigation preserves the selection", async () => {
+  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-display-mode-"));
+  try {
+    const terminal = new FakeTerminal([
+      key("right"),
+      key("down"),
+      key("return"),
+      key("left"),
+      key("down"),
+      key("right"),
+      key("down"),
+      key("return"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: true, width: 150 });
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { settingsDir });
+
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter((screen) => screen !== "").map(stripAnsi);
+    assert.match(screens[0], /View mode: Normal/u);
+    assert.match(screens[2], /> View mode: Normal/u);
+    assert.match(screens[3], /> View mode: Developer/u);
+    assert.match(screens[4], /View mode: Developer/u);
+    assert.match(screens[5], /View mode: Developer/u);
+    assert.match(screens[6], /View mode: Developer/u);
+    assert.match(screens[7], /> View mode: Developer/u);
+    assert.match(screens[8], /> View mode: Normal/u);
+  } finally {
+    await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
 function stripAnsi(text) {
   return text.replace(/\x1b\[[0-9;]*m/g, "");
 }
@@ -2372,7 +2581,7 @@ async function loadDutchReviewProgress(dataDir) {
 }
 
 function rightPaneCell(line) {
-  const withoutToggles = line.replace(/ \| {2,}(?:English|中文（臺灣）)?\s*\|$/u, " |");
+  const withoutToggles = line.replace(/ \| [^|]*\|$/u, " |");
   const match = withoutToggles.match(/^\| .+? \| (.*) \|$/u);
   return (match?.[1] ?? "").trimEnd();
 }

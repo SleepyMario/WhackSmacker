@@ -182,6 +182,59 @@ test("rendered reading content normalizes noun-only vocabulary notes", () => {
   assert.doesNotMatch(rendered, /Can fill the N slot|New noun; not self-ID here/u);
 });
 
+test("reading projections hide developer blocks by default and preserve uninterrupted infinitive rows", () => {
+  const result = {
+    package: {
+      packageId: "com.sleepymario.language.dutch",
+      packageVersion: "0.1.0",
+      displayName: "Dutch Curriculum"
+    },
+    entry: {
+      path: "units/dutch-core/chapter-001-basic-sentences-1/chapter.md",
+      mediaType: "text/markdown",
+      title: "Chapter 1",
+      source: "snapshot"
+    },
+    text: [
+      "# Chapter 1",
+      "",
+      "The infinitive row gives the base verb form.",
+      "",
+      "<!-- whacksmacker:developer-only:start -->",
+      "It does not introduce `je`, `jij`, or `u` yet.",
+      "<!-- whacksmacker:developer-only:end -->",
+      "",
+      "| Dutch | Meaning | Notes |",
+      "|---|---|---|",
+      "| ben | am | Verb |",
+      "| zijn | to be | Infinitive |",
+      "| de student | student | Noun |",
+      "| de docent | teacher | Noun |"
+    ].join("\n")
+  };
+
+  const normal = renderReadingContent(result);
+  const developer = renderReadingContent(result, "developer");
+
+  assert.doesNotMatch(normal, /does not introduce/u);
+  assert.match(normal, /infinitive row gives the base verb form/u);
+  const expectedVocabulary = [
+    "| Dutch | Meaning | Notes |",
+    "| --- | --- | --- |",
+    "| ben | am | Verb |",
+    "| zijn | to be | Infinitive |",
+    "|  |  |  |",
+    "| de student | student | Noun |",
+    "|  |  |  |",
+    "| de docent | teacher | Noun |"
+  ].join("\n");
+  assert.match(normal, new RegExp(expectedVocabulary.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
+  assert.doesNotMatch(normal, /<br\s*\/?/iu);
+  assert.match(developer, /It does not introduce `je`, `jij`, or `u` yet\./u);
+  assert.match(developer, new RegExp(expectedVocabulary.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
+  assert.equal(result.text.split("\n").filter((line) => line.startsWith("|") && !line.startsWith("|---")).length, 5);
+});
+
 test("installed Korean package exposes Chapter 15 and split vocabulary review decks", async () => {
   const fixture = await createInstalledReadingFixture();
   try {
@@ -454,7 +507,11 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.match(dutchChapter15.text, /Chapter 15 -- Asking Where Someone Lives/);
     assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md"), true);
     assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-015-asking-where-someone-lives/chapter.md"), true);
-    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-016-/u.test(entry.path)), false);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-016-/u.test(entry.path)), true);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-020-/u.test(entry.path)), true);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-021-/u.test(entry.path)), true);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-025-/u.test(entry.path)), true);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-026-/u.test(entry.path)), false);
     assert.match(chineseDeck.text, /^Pinyin-Zhuyin\tPinyin -> Zhuyin\tb\tㄅ/m);
     assert.match(chineseTraditionalPinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
     assert.match(chineseTraditionalChapter1.text, /我是馬莉亞/);
@@ -552,7 +609,9 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.deepEqual(dutchSources.map((source) => [source.title, source.sourcePath]), [
       ["Chapter 1-5", "review-decks/chapter-001-005/cards.tsv"],
       ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"],
-      ["Chapter 11-15", "review-decks/chapter-011-015/cards.tsv"]
+      ["Chapter 11-15", "review-decks/chapter-011-015/cards.tsv"],
+      ["Chapter 16-20", "review-decks/chapter-016-020/cards.tsv"],
+      ["Chapter 21-25", "review-decks/chapter-021-025/cards.tsv"]
     ]);
     const dutchItems = await listReadingReviewItems({
       dataDir: fixture.dataDir,

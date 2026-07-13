@@ -633,10 +633,14 @@ test("content package generator creates a valid Dutch package", async () => {
     const itemPath0105 = "content/memorization/review-decks/chapter-001-005.json";
     const itemPath0610 = "content/memorization/review-decks/chapter-006-010.json";
     const itemPath1115 = "content/memorization/review-decks/chapter-011-015.json";
+    const itemPath1620 = "content/memorization/review-decks/chapter-016-020.json";
+    const itemPath2125 = "content/memorization/review-decks/chapter-021-025.json";
     const reviewItems0105 = JSON.parse(archive.get(itemPath0105).toString("utf8"));
     const reviewItems0610 = JSON.parse(archive.get(itemPath0610).toString("utf8"));
     const reviewItems1115 = JSON.parse(archive.get(itemPath1115).toString("utf8"));
-    const allReviewItems = [...reviewItems0105.items, ...reviewItems0610.items, ...reviewItems1115.items];
+    const reviewItems1620 = JSON.parse(archive.get(itemPath1620).toString("utf8"));
+    const reviewItems2125 = JSON.parse(archive.get(itemPath2125).toString("utf8"));
+    const allReviewItems = [...reviewItems0105.items, ...reviewItems0610.items, ...reviewItems1115.items, ...reviewItems1620.items, ...reviewItems2125.items];
 
     assert.equal(result.packageId, "com.sleepymario.language.dutch");
     assert.equal(result.filePath.endsWith("com.sleepymario.language.dutch-0.1.0.wspkg"), true);
@@ -679,12 +683,16 @@ test("content package generator creates a valid Dutch package", async () => {
     const chapter11Path = "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md";
     assert.ok(content.files.some((file) => file.path === chapter11Path));
     assert.match(content.files.find((file) => file.path === chapter11Path).text, /^chapter:\s*11$/mu);
-    for (const chapter of [12, 13, 14, 15]) {
+    for (const chapter of [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]) {
       assert.ok(content.files.some((file) => file.path.startsWith(`units/dutch-core/chapter-${String(chapter).padStart(3, "0")}-`) && file.path.endsWith("/chapter.md")));
     }
-    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-016-/u.test(file.path)), false);
+    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-026-/u.test(file.path)), false);
     assert.equal(content.files.some((file) => /chapter-011-015-grammar-(?:easy|hard)/u.test(file.path)), true);
     assert.equal(content.files.some((file) => file.path === "review-decks/chapter-011-015/cards.tsv"), true);
+    assert.equal(content.files.some((file) => /chapter-016-020-grammar-(?:easy|hard)/u.test(file.path)), true);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-016-020/cards.tsv"), true);
+    assert.equal(content.files.some((file) => /chapter-021-025-grammar-(?:easy|hard)/u.test(file.path)), true);
+    assert.equal(content.files.some((file) => file.path === "review-decks/chapter-021-025/cards.tsv"), true);
     assert.equal(archive.get("content/content.json").includes(Buffer.from(chapter11Path)), true);
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-006-010-grammar-easy/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-006-010-grammar-hard/chapter.md"));
@@ -693,14 +701,20 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(archive.has(itemPath0105), true);
     assert.equal(archive.has(itemPath0610), true);
     assert.equal(archive.has(itemPath1115), true);
+    assert.equal(archive.has(itemPath1620), true);
+    assert.equal(archive.has(itemPath2125), true);
     assert.equal(reviewItems0105.items.length, 38);
     assert.equal(reviewItems0610.items.length, 40);
     assert.equal(reviewItems1115.items.length, 30);
+    assert.equal(reviewItems1620.items.length, 30);
+    assert.equal(reviewItems2125.items.length, 15);
     assertCoreReviewItemsHaveExamples(allReviewItems, "Dutch");
     assertDutchReviewExamplesComeFromReadContent(allReviewItems, content.files);
     assert.equal(reviewItems0105.items[0].source.title, "Chapter 1-5");
     assert.equal(reviewItems0610.items[0].source.title, "Chapter 6-10");
     assert.equal(reviewItems1115.items[0].source.title, "Chapter 11-15");
+    assert.equal(reviewItems1620.items[0].source.title, "Chapter 16-20");
+    assert.equal(reviewItems2125.items[0].source.title, "Chapter 21-25");
     assert.ok(reviewItems0105.items.some((item) => item.prompt.text === "hallo" && item.answer.text === "hello"));
     assert.ok(reviewItems0105.items.some((item) => item.prompt.text === "hello" && item.answer.text === "hallo"));
     assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "heb" && item.answer.text === "have"));
@@ -709,10 +723,10 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "live" && item.answer.text === "woon"));
     const halloItem = reviewItems0105.items.find((item) => item.prompt.text === "hallo" && item.answer.text === "hello");
     assert.deepEqual(halloItem.examples, ["Alex   : Hallo.", "Sophie : Hallo.", "Hallo."]);
-    const studentItem = reviewItems0105.items.find((item) => item.prompt.text === "student" && item.answer.text === "student");
-    assert.deepEqual(studentItem.examples, ["Alex   : Ik ben student.", "Sophie : Ik ben student.", "Ik ben student."]);
+    const bookItem = reviewItems0105.items.find((item) => item.prompt.text === "het boek" && item.answer.text === "book");
+    assert.deepEqual(bookItem.examples, ["Sophie: Dit is het boek."]);
     const hebItem = reviewItems0610.items.find((item) => item.prompt.text === "heb" && item.answer.text === "have");
-    assert.deepEqual(hebItem.examples, ["Ik heb een tas.", "Ik heb een telefoon.", "Ik heb een sleutel."]);
+    assert.deepEqual(hebItem.examples, ["Ik heb de tas.", "Ik heb de telefoon.", "Ik heb een sleutel."]);
     const woonItem = reviewItems0610.items.find((item) => item.prompt.text === "woon" && item.answer.text === "live");
     assert.deepEqual(woonItem.examples, ["Ik woon in Amsterdam.", "Ik woon in Rotterdam.", "Ik woon in Nederland."]);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);

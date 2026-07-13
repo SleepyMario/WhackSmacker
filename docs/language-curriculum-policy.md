@@ -2,6 +2,18 @@
 
 These rules are hard WhackSmacker language-curriculum constraints. They apply to normal language core chapters and normal core review decks.
 
+## Canonical cumulative continuity from Chapter 1
+
+For every chapter through Chapter 140, continuity begins at Chapter 1 and
+includes the complete state through the immediately preceding chapter. The
+immediate predecessor is the newest part of that state, not its sole source.
+Five-chapter blocks, review decks, grammar summaries, units, packages, and
+installation boundaries never reset grammar, vocabulary, lexical/sense
+identity, first-introduction chapters, verb metadata, encountered forms,
+noun/article state, cast and relationship history, topic history,
+broader-topic reuse, or cumulative difficulty. Validation processes chapters in
+one ordered Chapter-1-origin sequence and rejects missing earlier state.
+
 ## Canonical cast and active cast
 
 Language packages preserve the complete thirty-person `canonical-cast.json`,
@@ -89,10 +101,10 @@ inflection, agreement, article display, diminutive formation, spelling or
 pronunciation variation, and contextual reuse do not create new senses.
 
 An inflected, contracted, polite, or otherwise non-citation verb encounter links
-to the language's normal dictionary/citation form. The encounter and lemma are
+to the language's normal infinitive or other citation form. The encounter and lemma are
 one introduction: Dutch `klopt` → `kloppen`, English `does` → `do`, Korean `해`
-→ `하다`, and Japanese `します` → `する`. Do not impose “infinitive” terminology
-where another citation convention is appropriate.
+→ `하다`, and Japanese `します` → `する`. Use `infinitive` only where that concept
+applies; otherwise use the language's appropriate citation convention.
 
 Lexicalized multiword expressions receive independent entry and sense IDs under
 their complete citation form. Reviews test the whole expression rather than a
@@ -106,6 +118,67 @@ entries, genuinely distinct senses, new parts of speech, and complete new
 multiword expressions count once. Semantic boundaries and lexicalization remain
 subject to human linguistic review, never automatic inference from prose.
 
+## Learner-facing lexical display
+
+Learner-facing vocabulary Notes use concise pedagogical labels: `Noun`, `Verb`, `Infinitive`,
+`Adjective`, `Adverb`, `Preposition`, `Conjunction`, `Pronoun`, `Numeral`, `Phrase`, `Sequence word`, `Classifier`,
+`Counter`, or `Measure word`. They do not expose lemma, lexical-entry or sense
+IDs, surface/citation-form terminology, introduction status, first-introduction
+chapter, attestations, or morphology classifications. Internal structured
+metadata retains all of those fields.
+
+When an encountered verb differs meaningfully from its infinitive in a language
+where that concept applies, keep the encounter primary. Directly below it, put
+the bare infinitive in the lexical/form column, its natural English infinitive
+in the translation column, and exactly `Infinitive` in Notes. Do not insert a
+separator between these rows. They remain one lexical introduction and share
+lexical and sense identity.
+
+Never prefix this row with `INF:` or `DF:`, and never use learner-facing
+`dictionary form`. Omit the row when the display is already the infinitive, the
+mapping adds no learner value, or the language has no applicable infinitive.
+Such languages retain their own citation-form convention and must not receive
+an invented infinitive.
+
+## Normal-view instructional voice
+
+Normal-view instructional prose addresses the reader directly, normally with
+`you`; refers neutrally to the language, construction, sentence, form, example,
+or exercise; or uses an ordinary imperative such as `Use`, `Notice`, or
+`Compare`. It does not describe the reader with detached third-person labels
+such as `the learner`, `learners`, `the student`, `students`, or `the user`.
+
+This check applies to instructional prose, not genuine people in dialogue,
+narrative, or quoted examples. Developer view may retain complete original
+authoring, validator, and technical wording inside structurally classified
+developer-only blocks.
+
+## Canonical verb regularity
+
+At first introduction, every canonical verb sense stores `regularityStatus`:
+`regular`, `irregular`, `not-applicable`, or temporary migration
+`undetermined`. It may also store a language-specific `verbClass`. Applicable
+new or reviewed verbs resolve to regular/irregular; ordinary Chinese verbs and
+other systems without a meaningful distinction use not-applicable. Undetermined
+is reserved for pending legacy migration.
+
+The normalized field does not replace real language categories. `verbClass`
+may preserve strong/weak, conjugation, stem-changing, separable/inseparable,
+Japanese, Korean irregular, or another established class. Encounter/dictionary
+form differences, predictable phonology or spelling, politeness, agreement,
+regular inflection, and normal separability do not independently imply
+irregularity.
+
+Later inflected encounters, review, reuse, and reintroduction inherit the first
+record's status/class and remain one lexical entry. Incompatible changes fail
+validation unless explicitly audited as a correction. The fields survive
+ledgers, structured vocabulary, packages, installation, memorization items,
+reviews, reintroductions, and internal indexes. They do not appear in
+learner-facing Notes, which remain `Verb` plus the applicable DF line.
+
+Existing curricula are pending language-by-language migration; this policy does
+not mutate their repositories automatically.
+
 ## Pacing
 
 Chapters 1-25:
@@ -114,15 +187,42 @@ Chapters 1-25:
 - 6-20 lines of read content per chapter.
 - 6-10 new vocabulary items per chapter.
 
-Chapters 26-50:
+Chapters 26-30:
 
 - 1-2 main grammar patterns per chapter.
 - 10-30 lines of read content per chapter.
 - 6-20 new vocabulary items per chapter.
 
-Chapter 51 remains a pacing decision boundary. Do not invent a new pacing band
-automatically after Chapter 50. The number-continuation requirements below are
-an explicit, limited exception.
+Chapters 31-50:
+
+- exactly 2 genuinely new principal grammar points per chapter;
+- exactly 1 connector, conjunction, linking form, sequencing construction, or comparable discourse-linking point;
+- exactly 1 genuinely new point from a different broad grammatical domain;
+- 10-30 learner-facing read lines and 6-20 genuinely new vocabulary items;
+- topic-centred content and odd dialogue / even narrative.
+
+Two connector-domain points fail. Reused grammar satisfies neither slot, and
+supporting morphology, agreement, pronunciation, spelling, or required
+inflectional variants do not increase the count. The Chapters 41-50 numbers and
+quantity focus remains content inside this unified grammar stage, not a separate
+grammar band.
+
+Chapters 51-70:
+
+- exactly 2 genuinely new principal grammar points per chapter;
+- 15-30 learner-facing dialogue or narrative lines;
+- 10-30 genuinely new learner-facing vocabulary items;
+- odd dialogue / even narrative and topic-centred content.
+
+Chapters 31-70 are intentionally the steepest grammar-acquisition section.
+Chapters 51-70 concentrate on language-appropriate tense, time reference,
+aspect, event structure, mood, and modality. Both points must be new,
+compatible, and subordinate to a coherent chapter topic. Supporting
+morphology, agreement, pronunciation, spelling, and required inflectional
+variants do not count separately. Reused grammar satisfies neither point. Do
+not force English tense categories onto languages organized differently or
+combine two extremely difficult distinctions from one narrow subsystem unless
+the language requires them together.
 
 ## Number Continuation: Chapters 51-70
 
@@ -167,11 +267,23 @@ summaries, blank lines, and structural separators.
 Odd-numbered Chapters 51-70 remain dialogues; even-numbered Chapters 51-70
 remain narratives.
 
+In `New Grammar`, use `Principal: ID | description`, `Supporting: ID |
+description`, and `Reused: ID | description`. Each chapter must contain exactly
+two stable principal IDs not introduced earlier. Supporting and reused entries
+never inflate or satisfy the count.
+
 ## Expanded Grammar and Broader Discourse: Chapters 71-140
 
 Chapters 71-140 form one seventy-chapter stage. Each chapter introduces exactly
 one genuinely new principal grammar point, 10-30 genuinely new learner-facing
 vocabulary items, and 20-40 learner-facing dialogue or narrative lines.
+
+This is a transition to slower new-grammar intake, not easier content. Increase
+text length, discourse complexity, clause depth, topic breadth, cumulative
+reuse, negation and question complexity, integrated tense/time/aspect/mood/
+modality, and diminutive systems where applicable. The overall progression is
+Chapters 1-30 foundation and transition, Chapters 31-70 the steep grammar hill,
+and Chapters 71-140 deeper integration with more advanced reading.
 
 In `New Grammar`, declare each bullet as `Principal: ID | description`,
 `Supporting: ID | description`, or `Reused: ID | description`. The stable ID,
@@ -304,6 +416,27 @@ After each 5-chapter block, add two grammar summary readable-content entries:
 - `Grammar - Hard`
 
 Both entries cover the same grammar inventory and technical content. The Easy version explains the same points in simpler language; the Hard version stays compact and technical.
+
+Grammar Easy addresses the learner directly using language understandable to
+someone roughly at US grade levels 4-8. It uses short, concrete explanations
+and examples, avoids detached references such as `the learner`, `learners`,
+`the student`, `students`, or `the user`, and remains technically accurate.
+Grammar Easy and Grammar Hard retain the same canonical grammar ID and exact
+learner-facing pattern for every shared point.
+
+Every grammar record keeps `grammarId`, `learnerFacingPattern`,
+`learnerFacingExplanation`, and optional `developerDescription` separate.
+Chapter headings and Easy/Hard inventories render the learner-facing pattern;
+they never fall back to the developer description. Easy and Hard must use the
+same pattern identity for a shared grammar ID.
+
+When structured components form a compositional pattern, render them with
+exactly ` + ` between components, such as `clause + en + clause`,
+`subject + verb + object`, or `topic + は + comment`. Do not use unspaced plus
+signs, repeated spaces, arrows, or prose descriptions in the pattern position.
+Fixed indivisible expressions remain whole. Components are declared, not
+inferred from arbitrary prose, and their pedagogical form remains subject to
+human review.
 
 ## Strict Review Examples
 
