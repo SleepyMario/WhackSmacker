@@ -144,7 +144,7 @@ export async function readInstalledLanguageCurriculumChapter(options: {
 }
 
 export async function listInstalledReadablePackages(dataDir?: string, locale = "en-US"): Promise<readonly InstalledReadablePackage[]> {
-  return Promise.all((await listInstalledContentPackages(dataDir)).filter(record => record.contentType !== "curriculum-source-language-pack").map(async (record) => {
+  return Promise.all((await listInstalledContentPackages(dataDir)).filter(record => record.contentType !== "curriculum-source-language-pack" && record.contentType !== "core-review").map(async (record) => {
     const manifest = await readInstalledManifest(installedPackageRoot(record, dataDir));
     return toReadablePackage(record, manifest, locale);
   }));

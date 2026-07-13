@@ -1431,7 +1431,7 @@ export async function listAvailableModuleDescriptors(
 
   if (cataloguePath !== undefined) {
     for (const entry of await listAvailableContentPackages(cataloguePath)) {
-      if (entry.contentType === "curriculum-source-language-pack" || !entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
+      if (entry.contentType === "curriculum-source-language-pack" || entry.contentType === "core-review" || !entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
         continue;
       }
       descriptors.push(catalogueEntryToModuleDescriptor(entry, installedByPackageId.get(entry.packageId), locale));

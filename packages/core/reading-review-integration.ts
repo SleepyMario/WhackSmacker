@@ -151,6 +151,12 @@ export async function listReadingReviewItems(options: ListReadingReviewItemsOpti
   const packages = await selectInstalledPackages(options);
   const results: ReadingReviewItem[] = [];
   for (const contentPackage of packages) {
+    // Core review packages deliberately preserve the legacy reading-package
+    // identity namespace so existing scheduler state remains valid after the
+    // content is rehomed. relatedPackageIds is informational, not a dependency.
+    const identityPackageId = contentPackage.capabilities?.includes("core-review")
+      ? (contentPackage.relatedPackageIds?.[0] ?? contentPackage.packageId)
+      : contentPackage.packageId;
     const readablePaths = await safeReadablePathSet(contentPackage, options.dataDir);
     for (const file of await listInstalledMemorizationItemFiles(contentPackage.packageId, options.dataDir, contentPackage.packageVersion)) {
       const collection = await readInstalledMemorizationItems(contentPackage.packageId, file.path, options.dataDir, contentPackage.packageVersion, options.sourceLocale);
@@ -160,7 +166,7 @@ export async function listReadingReviewItems(options: ListReadingReviewItemsOpti
           continue;
         }
         results.push({
-          packageId: contentPackage.packageId,
+          packageId: identityPackageId,
           packageVersion: contentPackage.packageVersion,
           item,
           sourcePath,
@@ -279,7 +285,8 @@ async function findReadingReviewItem(options: RenderReadingReviewItemOptions | R
 
 async function selectInstalledPackages(options: ReadingReviewOptions): Promise<readonly InstalledPackageRecord[]> {
   return (await listInstalledContentPackages(options.dataDir))
-    .filter((record) => options.packageId === undefined || record.packageId === options.packageId)
+    .filter((record) => record.capabilities?.includes("core-review") || (record.capabilities === undefined && record.contentType === "language-curriculum"))
+    .filter((record) => options.packageId === undefined || record.packageId === options.packageId || record.relatedPackageIds?.includes(options.packageId))
     .filter((record) => options.packageVersion === undefined || record.packageVersion === options.packageVersion)
     .sort((left, right) => {
       const packageOrder = left.packageId.localeCompare(right.packageId);

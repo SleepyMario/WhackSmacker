@@ -1,5 +1,22 @@
 # WhackSmacker
 
+## Licensing and content images
+
+WhackSmacker application code, technical tooling, and core review decks are
+`GPL-3.0-or-later` (see `COPYING`). Authored reading curricula are separate
+`CC-BY-NC-4.0` packages and are not distributed in the public core image.
+Review packages declare `core-review`; reading packages declare
+`reading-curriculum`. Optional related package IDs connect them without making
+either a runtime dependency of the other. Legacy manifests without a
+capability retain explicit combined-package compatibility.
+
+The public `sleepiestmario/whacksmacker` image bundles only the runtime and
+core review feed. The private `sleepiestmario/whacksmacker-curricula` init image
+synchronizes reading packages into `/curricula/managed` on the dedicated
+`reading-curricula` volume. Mutable application state stays in `/data` on the
+separate `application-data` volume. The application mounts curricula read-only
+and starts after the init container completes. See `compose.split.local.yaml`.
+
 WhackSmacker is a modular learning and utility application. The current command-line application uses native downloadable content packages, native memorization items, native review progress, and terminal review commands.
 
 Milestone: `v0.001`

@@ -29,7 +29,17 @@ test("content package generator exposes the supported local package targets", ()
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
       ["german-curriculum", "com.sleepymario.language.german"],
       ["french-curriculum", "com.sleepymario.language.french"],
-      ["spanish-curriculum", "com.sleepymario.language.spanish"]
+      ["spanish-curriculum", "com.sleepymario.language.spanish"],
+      ["korean-core-reviews", "com.sleepymario.language.korean.reviews"],
+      ["chinese-traditional-core-reviews", "com.sleepymario.language.chinese.mandarin.traditional.reviews"],
+      ["chinese-simplified-core-reviews", "com.sleepymario.language.chinese.mandarin.simplified.reviews"],
+      ["english-core-reviews", "com.sleepymario.language.english.reviews"],
+      ["japanese-core-reviews", "com.sleepymario.language.japanese.reviews"],
+      ["vietnamese-core-reviews", "com.sleepymario.language.vietnamese.reviews"],
+      ["dutch-core-reviews", "com.sleepymario.language.dutch.reviews"],
+      ["german-core-reviews", "com.sleepymario.language.german.reviews"],
+      ["french-core-reviews", "com.sleepymario.language.french.reviews"],
+      ["spanish-core-reviews", "com.sleepymario.language.spanish.reviews"]
     ]
   );
 });
@@ -71,9 +81,9 @@ test("content package generator creates a valid Korean Curriculum package", asyn
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "korean-core-reviews");
 
     assert.equal(result.packageId, "com.sleepymario.language.korean");
     assert.equal(result.filePath.endsWith("com.sleepymario.language.korean-0.1.0.wspkg"), true);
@@ -208,10 +218,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     const helloItem = allReviewItems.find((item) => item.prompt.text === "안녕하세요" && item.answer.text === "hello");
     const existsItem = allReviewItems.find((item) => item.prompt.text === "있다" && item.answer.text === "to exist / to have");
     const markerItem = allReviewItems.find((item) => item.prompt.text === "이/가" && item.answer.text === "subject/existence marker");
-    assert.deepEqual(helloItem.examples, ["마리아: 안녕하세요. 저는 마리아 가르시아입니다.", "김민준: 안녕하세요. 저는 김민준입니다.", "안녕하세요."]);
-    assert.deepEqual(studentItem.examples, ["저는 학생입니다.", "마리아: 학생입니까?", "김민준: 네, 학생입니다."]);
-    assert.deepEqual(existsItem.examples, ["예약한 방은 삼 층 삼백이 호에 있다.", "삼 층 발표실에는 의자 마흔 개와 노트북 여섯 대가 있다.", "일 층 식당에는 물 칠십이 병과 컵 백 개가 준비되어 있다."]);
-    assert.deepEqual(markerItem.examples, ["방이 있습니다.", "책이 있습니다.", "가방이 있습니다."]);
+    assert.equal([helloItem, studentItem, existsItem, markerItem].every(item => item.examples === undefined), true);
     assert.deepEqual(findReviewTerms(allReviewItems, ["사람", "언니", "연필", "소파", "시간"]), []);
     assert.ok(findReviewTerms(allReviewItems, ["학생", "나", "문", "지도", "식탁"]).length >= 5);
 
@@ -281,9 +288,9 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "chinese-traditional-core-reviews");
     const expectedReviewDecks = [
       {
         title: "Pinyin-Zhuyin",
@@ -349,7 +356,7 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
     assert.ok(coreItems.some((item) => item.prompt.text === "Meaning: hello" && item.answer.text.includes("Characters: 你好")));
     assert.ok(coreItems.some((item) => item.prompt.text === "Characters: 學生" && item.answer.text.includes("Pinyin: xuéshēng")));
     assert.ok(coreItems.some((item) => item.prompt.text.includes("Pinyin: nǐ hǎo") && item.prompt.text.includes("Zhuyin: ㄋㄧˇ ㄏㄠˇ")));
-    assert.ok(coreItems.every((item) => item.examples.every((example) => !/^Pinyin:|^Meaning:|^\|/u.test(example))));
+    assert.ok(coreItems.every((item) => item.examples === undefined));
     const pinyinIntro = content.files.find((file) => file.path === "units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md").text;
     const chapter1 = content.files.find((file) => file.path === "units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md").text;
     assert.match(pinyinIntro, /Hanyu Pinyin is the standard romanization system/);
@@ -373,9 +380,9 @@ test("content package generator creates a valid Chinese - Mandarin Simplified pa
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "chinese-simplified-core-reviews");
 
     assert.equal(result.packageId, "com.sleepymario.language.chinese.mandarin.simplified");
     assert.equal(result.filePath.endsWith("com.sleepymario.language.chinese.mandarin.simplified-0.1.0.wspkg"), true);
@@ -426,9 +433,9 @@ test("content package generator creates a valid Japanese package with Core revie
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "japanese-core-reviews");
 
     assert.equal(result.packageId, "com.sleepymario.language.japanese");
     assert.equal(result.filePath.endsWith("com.sleepymario.language.japanese-0.1.0.wspkg"), true);
@@ -480,7 +487,7 @@ test("content package generator creates a valid Japanese package with Core revie
     assert.ok(reviewItems.some((item) => item.prompt.text === "Meaning: hello" && item.answer.text.includes("Japanese: こんにちは")));
     assert.ok(reviewItems.some((item) => item.prompt.text === "Japanese: 学生" && item.answer.text.includes("Reading: がくせい")));
     assert.ok(reviewItems.some((item) => item.prompt.text === "Reading: がくせい" && item.answer.text.includes("Japanese: 学生")));
-    assert.ok(reviewItems.every((item) => item.examples.every((example) => !/^Reading:|^Meaning:|^\|/u.test(example))));
+    assert.ok(reviewItems.every((item) => item.examples === undefined));
     for (const [block, title] of [["011-015", "Chapter 11-15"], ["016-020", "Chapter 16-20"]]) {
       const sourcePath = `review-decks/chapter-${block}/cards.tsv`;
       const itemPath = `content/memorization/review-decks/chapter-${block}.json`;
@@ -516,9 +523,9 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "vietnamese-core-reviews");
     const itemPath = "content/memorization/review-decks/chapter-001-005.json";
     const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
     const chapter3640ItemPath = "content/memorization/review-decks/chapter-036-040.json";
@@ -627,9 +634,9 @@ test("content package generator creates a valid Dutch package", async () => {
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "dutch-core-reviews");
     const itemPath0105 = "content/memorization/review-decks/chapter-001-005.json";
     const itemPath0610 = "content/memorization/review-decks/chapter-006-010.json";
     const itemPath1115 = "content/memorization/review-decks/chapter-011-015.json";
@@ -722,13 +729,13 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "woon" && item.answer.text === "live"));
     assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "live" && item.answer.text === "woon"));
     const halloItem = reviewItems0105.items.find((item) => item.prompt.text === "hallo" && item.answer.text === "hello");
-    assert.deepEqual(halloItem.examples, ["Alex   : Hallo.", "Sophie : Hallo.", "Hallo."]);
+    assert.equal(halloItem.examples, undefined);
     const bookItem = reviewItems0105.items.find((item) => item.prompt.text === "het boek" && item.answer.text === "book");
-    assert.deepEqual(bookItem.examples, ["Sophie: Dit is het boek."]);
+    assert.equal(bookItem.examples, undefined);
     const hebItem = reviewItems0610.items.find((item) => item.prompt.text === "heb" && item.answer.text === "have");
-    assert.deepEqual(hebItem.examples, ["Ik heb de tas.", "Ik heb de telefoon.", "Ik heb een sleutel."]);
+    assert.equal(hebItem.examples, undefined);
     const woonItem = reviewItems0610.items.find((item) => item.prompt.text === "woon" && item.answer.text === "live");
-    assert.deepEqual(woonItem.examples, ["Ik woon in Amsterdam.", "Ik woon in Rotterdam.", "Ik woon in Nederland."]);
+    assert.equal(woonItem.examples, undefined);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik heb N" || item.answer.text === "Ik heb N"), false);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "${FOREIGN-NAME-1}" || item.answer.text === "${FOREIGN-NAME-1}"), false);
@@ -746,9 +753,9 @@ test("content package generator creates a valid English package", async () => {
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "english-core-reviews");
     const itemPath = "content/memorization/review-decks/chapter-001-005.json";
     const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
 
@@ -786,9 +793,9 @@ test("content package generator creates a valid English package", async () => {
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "greeting"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "greeting" && item.answer.text === "hello"));
     const helloItem = reviewItems.items.find((item) => item.prompt.text === "hello");
-    assert.deepEqual(helloItem.examples, ["Maria  : Hello.", "John   : Hello.", "Hello."]);
+    assert.equal(helloItem.examples, undefined);
     const questionItem = reviewItems.items.find((item) => item.prompt.text === "question");
-    assert.deepEqual(questionItem.examples, ["Anna   : This is a question."]);
+    assert.equal(questionItem.examples, undefined);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "I am N" || item.answer.text === "I am N"), false);
     assert.ok(reviewItems.items.every((item) => item.language.target === "en" && item.language.base === "en"));
     assert.ok(reviewItems.items.some((item) => item.prompt.language === "zh-TW" && item.answer.language === "en"));
@@ -842,9 +849,9 @@ test("content package generator creates a valid German package", async () => {
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "german-core-reviews");
     const itemPath = "content/memorization/review-decks/chapter-001-005.json";
     const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
 
@@ -886,9 +893,9 @@ test("content package generator creates a valid French package", async () => {
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "french-core-reviews");
     const itemPath = "content/memorization/review-decks/chapter-001-005.json";
     const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
 
@@ -914,7 +921,7 @@ test("content package generator creates a valid French package", async () => {
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello; good day" && item.answer.text === "bonjour"));
     const bonjourItem = reviewItems.items.find((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day");
-    assert.deepEqual(bonjourItem.examples, ["Alex   : Bonjour.", "Camille: Bonjour.", "Bonjour."]);
+    assert.equal(bonjourItem.examples, undefined);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Je suis N" || item.answer.text === "Je suis N"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Ça va ?" || item.answer.text === "Ça va ?"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Alex Chen" || item.answer.text === "Alex Chen"), false);
@@ -932,9 +939,9 @@ test("content package generator creates a valid Spanish package", async () => {
       outputDirectory: directory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    const archive = await readZip(result.filePath);
-    const manifest = JSON.parse(archive.get("manifest.json").toString("utf8"));
-    const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const { archive, content } = await mergedSplitArchive(readingArchive, directory, "spanish-core-reviews");
     const itemPath = "content/memorization/review-decks/chapter-001-005.json";
     const reviewItems = JSON.parse(archive.get(itemPath).toString("utf8"));
 
@@ -1040,6 +1047,26 @@ test("content package generator CLI can build all local test targets", async () 
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+async function mergedSplitArchive(readingArchive, directory, reviewTargetId) {
+  const readingContent = JSON.parse(readingArchive.get("content/content.json").toString("utf8"));
+  assert.equal(readingContent.files.some(file => file.path.startsWith("review-decks/")), false);
+  assert.equal([...readingArchive.keys()].some(path => path.startsWith("content/memorization/")), false);
+  const reviewResult = await generateContentPackage({
+    targetId: reviewTargetId,
+    outputDirectory: directory,
+    generatedAt: "2026-07-06T00:00:00Z"
+  });
+  const reviewArchive = await readZip(reviewResult.filePath);
+  const reviewManifest = JSON.parse(reviewArchive.get("manifest.json").toString("utf8"));
+  const reviewContent = JSON.parse(reviewArchive.get("content/content.json").toString("utf8"));
+  assert.deepEqual(reviewManifest.capabilities, ["core-review"]);
+  assert.equal(reviewManifest.license.spdx, "GPL-3.0-or-later");
+  return {
+    archive: new Map([...readingArchive, ...[...reviewArchive].filter(([path]) => path !== "manifest.json" && path !== "content/content.json")]),
+    content: { ...readingContent, files: [...readingContent.files, ...reviewContent.files] }
+  };
+}
 
 async function readZip(filePath) {
   const buffer = await readFile(filePath);
@@ -1184,23 +1211,7 @@ function previousNonBlankLineForTest(lines, start) {
 }
 
 function assertCoreReviewItemsHaveExamples(items, label) {
-  const missing = items.filter((item) => (item.examples?.length ?? 0) === 0);
-  const tooMany = items.filter((item) => (item.examples?.length ?? 0) > 3);
-  const tableExamples = items.flatMap((item) => (item.examples ?? [])
-    .filter((example) => example.startsWith("|"))
-    .map((example) => `${item.prompt.text} -> ${item.answer.text}: ${example}`));
-
-  assert.deepEqual(
-    missing.map((item) => `${item.prompt.text} -> ${item.answer.text}`),
-    [],
-    `${label} core review items must have source examples`
-  );
-  assert.deepEqual(
-    tooMany.map((item) => `${item.prompt.text} -> ${item.answer.text}`),
-    [],
-    `${label} core review items must have at most 3 source examples`
-  );
-  assert.deepEqual(tableExamples, [], `${label} core review items must not use vocabulary table rows as examples`);
+  assert.equal(items.every(item => item.examples === undefined), true, `${label} independent core reviews must not embed CC reading examples`);
 }
 
 function assertDutchReviewExamplesComeFromReadContent(items, contentFiles) {

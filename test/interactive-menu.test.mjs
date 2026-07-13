@@ -46,6 +46,7 @@ import {
   InMemoryCliCommandRegistry,
   installedPackageToFirstClassModuleDescriptor,
   listInstalledContentPackages,
+  listAvailableContentPackages,
   listReadingReviewItems,
   listReadingReviewSources,
   loadReviewProgressStore,
@@ -720,9 +721,7 @@ test("Korean read content tree starts with fixed Hangul chapter entries and keep
     assert.match(output, /Han Gul 7 -- Compound[\s\S]+받침/u);
     assert.match(output, /Ch 1 -- Names and/u);
     assert.doesNotMatch(output, /Ch 1 -- Vowels/u);
-    assert.equal(readContent.children.some((node) => node.filePath === "review-decks/chapter-001-005/README.md"), true);
-    assert.equal(readContent.children.some((node) => node.filePath === "review-decks/chapter-006-010/README.md"), true);
-    assert.equal(readContent.children.some((node) => node.filePath === "review-decks/chapter-011-015/README.md"), true);
+    assert.equal(readContent.children.some((node) => node.filePath?.startsWith("review-decks/")), false);
   } finally {
     await fixture.cleanup();
   }
@@ -2046,7 +2045,7 @@ test("installed modules expose uninstall and cancel leaves package and progress 
     assert.match(terminal.output, /Uninstall Dutch/);
     assert.match(terminal.output, /Esc: cancel/);
     assert.match(terminal.output, /Uninstall cancelled: Dutch/);
-    assert.equal((await listInstalledContentPackages(fixture.dataDir)).length, 1);
+    assert.equal((await listInstalledContentPackages(fixture.dataDir)).length, 2);
     assert.equal((await loadDutchReviewProgress(fixture.dataDir)).items.some((item) => item.packageId === "com.sleepymario.language.dutch"), true);
   } finally {
     await fixture.cleanup();
@@ -2070,7 +2069,7 @@ test("package-only uninstall removes installed module but keeps saved review pro
 
     assert.match(terminal.output, /Module uninstalled\./);
     assert.match(terminal.output, /Saved user data was kept/);
-    assert.deepEqual(await listInstalledContentPackages(fixture.dataDir), []);
+    assert.deepEqual((await listInstalledContentPackages(fixture.dataDir)).map(item => item.packageId), ["com.sleepymario.language.dutch.reviews"]);
     assert.equal((await loadDutchReviewProgress(fixture.dataDir)).items.some((item) => item.packageId === "com.sleepymario.language.dutch"), true);
   } finally {
     await fixture.cleanup();
@@ -2098,7 +2097,7 @@ test("destructive uninstall removes only selected package review progress", asyn
 
     assert.match(terminal.output, /Saved review progress deleted for this package only/);
     assert.match(terminal.output, /Removed review states: 1/);
-    assert.deepEqual(await listInstalledContentPackages(fixture.dataDir), []);
+    assert.deepEqual((await listInstalledContentPackages(fixture.dataDir)).map(item => item.packageId), ["com.sleepymario.language.dutch.reviews"]);
     assert.equal(after.items.some((item) => item.packageId === "com.sleepymario.language.dutch"), false);
     assert.equal(after.events.some((event) => event.packageId === "com.sleepymario.language.dutch"), false);
   } finally {
@@ -2630,7 +2629,15 @@ async function createInstalledLanguageFixture(targetIds, packageIds) {
   const packageDirectory = join(root, "packages");
   const cataloguePath = join(root, "catalogue", "catalogue.json");
   const dataDir = join(root, "data", "content");
-  for (const targetId of targetIds) {
+  const reviewTargetByReadingTarget = new Map([
+    ["korean-curriculum", "korean-core-reviews"], ["chinese-mandarin-traditional-curriculum", "chinese-traditional-core-reviews"],
+    ["chinese-mandarin-simplified-curriculum", "chinese-simplified-core-reviews"], ["english-curriculum", "english-core-reviews"],
+    ["japanese-curriculum", "japanese-core-reviews"], ["vietnamese-curriculum", "vietnamese-core-reviews"],
+    ["dutch-curriculum", "dutch-core-reviews"], ["german-curriculum", "german-core-reviews"],
+    ["french-curriculum", "french-core-reviews"], ["spanish-curriculum", "spanish-core-reviews"]
+  ]);
+  const allTargets = [...targetIds, ...targetIds.map(target => reviewTargetByReadingTarget.get(target)).filter(Boolean)];
+  for (const targetId of allTargets) {
     await generateContentPackage({
       targetId,
       outputDirectory: packageDirectory,
@@ -2649,6 +2656,11 @@ async function createInstalledLanguageFixture(targetIds, packageIds) {
       packageId,
       installedAt: "2026-07-06T00:00:00Z"
     });
+  }
+  for (const packageId of packageIds.map(id => `${id}.reviews`)) {
+    if ((await listAvailableContentPackages(cataloguePath)).some(entry => entry.packageId === packageId)) {
+      await installContentPackage({ cataloguePath, dataDir, packageId, installedAt: "2026-07-06T00:00:00Z" });
+    }
   }
 
   return {

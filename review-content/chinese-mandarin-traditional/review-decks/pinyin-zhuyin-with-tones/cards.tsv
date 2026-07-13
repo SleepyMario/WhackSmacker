@@ -1,0 +1,207 @@
+deck	direction	front	back	source_chapter	entry_type	notes
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	1st tone: macron on Pinyin vowel	1st tone: no Zhuyin tone mark	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	1st tone: no Zhuyin tone mark	1st tone: macron on Pinyin vowel	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	2nd tone: acute accent on Pinyin vowel	2nd tone: ˊ after Zhuyin syllable	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	2nd tone: ˊ after Zhuyin syllable	2nd tone: acute accent on Pinyin vowel	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	3rd tone: caron on Pinyin vowel	3rd tone: ˇ after Zhuyin syllable	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	3rd tone: ˇ after Zhuyin syllable	3rd tone: caron on Pinyin vowel	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	4th tone: grave accent on Pinyin vowel	4th tone: ˋ after Zhuyin syllable	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	4th tone: ˋ after Zhuyin syllable	4th tone: grave accent on Pinyin vowel	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	neutral tone: unmarked Pinyin syllable	neutral tone: ˙ before Zhuyin syllable	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	neutral tone: ˙ before Zhuyin syllable	neutral tone: unmarked Pinyin syllable	conversion	tone-marker	Tone marker conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	mā	ㄇㄚ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄇㄚ	mā	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	má	ㄇㄚˊ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄇㄚˊ	má	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	mǎ	ㄇㄚˇ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄇㄚˇ	mǎ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	mà	ㄇㄚˋ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄇㄚˋ	mà	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	ma	˙ㄇㄚ	conversion	tone-example	Representative neutral-tone conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	˙ㄇㄚ	ma	conversion	tone-example	Representative neutral-tone conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	bā	ㄅㄚ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄅㄚ	bā	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	bá	ㄅㄚˊ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄅㄚˊ	bá	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	bǎ	ㄅㄚˇ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄅㄚˇ	bǎ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	bà	ㄅㄚˋ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄅㄚˋ	bà	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	pō	ㄆㄛ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄆㄛ	pō	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	pó	ㄆㄛˊ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄆㄛˊ	pó	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	pǒ	ㄆㄛˇ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄆㄛˇ	pǒ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	pò	ㄆㄛˋ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄆㄛˋ	pò	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	mēi	ㄇㄟ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄇㄟ	mēi	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	méi	ㄇㄟˊ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄇㄟˊ	méi	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	měi	ㄇㄟˇ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄇㄟˇ	měi	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	mèi	ㄇㄟˋ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄇㄟˋ	mèi	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	fēn	ㄈㄣ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄈㄣ	fēn	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	fén	ㄈㄣˊ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄈㄣˊ	fén	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	fěn	ㄈㄣˇ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄈㄣˇ	fěn	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	fèn	ㄈㄣˋ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄈㄣˋ	fèn	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	dōng	ㄉㄨㄥ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄉㄨㄥ	dōng	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	dóng	ㄉㄨㄥˊ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄉㄨㄥˊ	dóng	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	dǒng	ㄉㄨㄥˇ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄉㄨㄥˇ	dǒng	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	dòng	ㄉㄨㄥˋ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄉㄨㄥˋ	dòng	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	tiān	ㄊㄧㄢ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄊㄧㄢ	tiān	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	tián	ㄊㄧㄢˊ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄊㄧㄢˊ	tián	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	tiǎn	ㄊㄧㄢˇ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄊㄧㄢˇ	tiǎn	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	tiàn	ㄊㄧㄢˋ	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄊㄧㄢˋ	tiàn	conversion	tone-example	Representative syllable conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	nǚ	ㄋㄩˇ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄋㄩˇ	nǚ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	lǜ	ㄌㄩˋ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄌㄩˋ	lǜ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	jū	ㄐㄩ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄐㄩ	jū	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	jú	ㄐㄩˊ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄐㄩˊ	jú	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	jǔ	ㄐㄩˇ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄐㄩˇ	jǔ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	jù	ㄐㄩˋ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄐㄩˋ	jù	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	qù	ㄑㄩˋ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄑㄩˋ	qù	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	xué	ㄒㄩㄝˊ	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄒㄩㄝˊ	xué	conversion	tone-example	Representative ü-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	zhī	ㄓ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄓ	zhī	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	zhí	ㄓˊ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄓˊ	zhí	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	zhǐ	ㄓˇ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄓˇ	zhǐ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	zhì	ㄓˋ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄓˋ	zhì	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	chī	ㄔ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄔ	chī	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	chí	ㄔˊ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄔˊ	chí	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	chǐ	ㄔˇ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄔˇ	chǐ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	chì	ㄔˋ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄔˋ	chì	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	shī	ㄕ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄕ	shī	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	shí	ㄕˊ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄕˊ	shí	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	shǐ	ㄕˇ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄕˇ	shǐ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	shì	ㄕˋ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄕˋ	shì	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	rì	ㄖˋ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄖˋ	rì	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	zī	ㄗ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄗ	zī	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	zí	ㄗˊ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄗˊ	zí	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	zǐ	ㄗˇ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄗˇ	zǐ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	zì	ㄗˋ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄗˋ	zì	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	cī	ㄘ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄘ	cī	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	cí	ㄘˊ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄘˊ	cí	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	cǐ	ㄘˇ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄘˇ	cǐ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	cì	ㄘˋ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄘˋ	cì	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	sī	ㄙ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄙ	sī	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	sí	ㄙˊ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄙˊ	sí	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	sǐ	ㄙˇ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄙˇ	sǐ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	sì	ㄙˋ	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄙˋ	sì	conversion	tone-example	Apical or empty-rime conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yī	ㄧ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧ	yī	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yí	ㄧˊ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧˊ	yí	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yǐ	ㄧˇ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧˇ	yǐ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yì	ㄧˋ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧˋ	yì	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yāo	ㄧㄠ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧㄠ	yāo	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yáo	ㄧㄠˊ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧㄠˊ	yáo	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yǎo	ㄧㄠˇ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧㄠˇ	yǎo	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yào	ㄧㄠˋ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧㄠˋ	yào	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yōu	ㄧㄡ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧㄡ	yōu	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yóu	ㄧㄡˊ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧㄡˊ	yóu	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yǒu	ㄧㄡˇ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧㄡˇ	yǒu	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yòu	ㄧㄡˋ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄧㄡˋ	yòu	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	wū	ㄨ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄨ	wū	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	wú	ㄨˊ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄨˊ	wú	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	wǔ	ㄨˇ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄨˇ	wǔ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	wù	ㄨˋ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄨˋ	wù	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	wēi	ㄨㄟ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄨㄟ	wēi	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	wéi	ㄨㄟˊ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄨㄟˊ	wéi	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	wěi	ㄨㄟˇ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄨㄟˇ	wěi	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	wèi	ㄨㄟˋ	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄨㄟˋ	wèi	conversion	tone-example	Standalone spelling conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yuē	ㄩㄝ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄝ	yuē	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yué	ㄩㄝˊ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄝˊ	yué	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yuě	ㄩㄝˇ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄝˇ	yuě	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yuè	ㄩㄝˋ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄝˋ	yuè	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yuān	ㄩㄢ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄢ	yuān	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yuán	ㄩㄢˊ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄢˊ	yuán	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yuǎn	ㄩㄢˇ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄢˇ	yuǎn	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yuàn	ㄩㄢˋ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄢˋ	yuàn	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yūn	ㄩㄣ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄣ	yūn	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yún	ㄩㄣˊ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄣˊ	yún	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yǔn	ㄩㄣˇ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄣˇ	yǔn	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yùn	ㄩㄣˋ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄣˋ	yùn	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yōng	ㄩㄥ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄥ	yōng	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yóng	ㄩㄥˊ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄥˊ	yóng	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yǒng	ㄩㄥˇ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄥˇ	yǒng	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Pinyin -> Zhuyin	yòng	ㄩㄥˋ	conversion	tone-example	Standalone y-series conversion.
+Pinyin-Zhuyin with Tones	Zhuyin -> Pinyin	ㄩㄥˋ	yòng	conversion	tone-example	Standalone y-series conversion.

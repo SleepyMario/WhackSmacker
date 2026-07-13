@@ -1,0 +1,39 @@
+deck	direction	front	back	source_chapter	entry_type	notes
+Chapter 1-5	Dutch -> English	hallo	hello	1	vocabulary	Common greeting.
+Chapter 1-5	English -> Dutch	hello	hallo	1	vocabulary	Common greeting.
+Chapter 1-5	Dutch -> English	ik	I	1	function word	Pronoun.
+Chapter 1-5	English -> Dutch	I	ik	1	function word	Pronoun.
+Chapter 1-5	Dutch -> English	ben	am	1	function word	Simple review entry, not a grammar-pattern card.
+Chapter 1-5	English -> Dutch	am	ben	1	function word	Simple review entry, not a grammar-pattern card.
+Chapter 1-5	Dutch -> English	is	is	2	function word	Simple review entry, not a grammar-pattern card.
+Chapter 1-5	English -> Dutch	is	is	2	function word	Simple review entry, not a grammar-pattern card.
+Chapter 1-5	Dutch -> English	dit	this	3	function word	Demonstrative word.
+Chapter 1-5	English -> Dutch	this	dit	3	function word	Demonstrative word.
+Chapter 1-5	Dutch -> English	wat	what	3	function word	Question word.
+Chapter 1-5	English -> Dutch	what	wat	3	function word	Question word.
+Chapter 1-5	Dutch -> English	een	a, an	3	function word	Indefinite article.
+Chapter 1-5	English -> Dutch	a, an	een	3	function word	Indefinite article.
+Chapter 1-5	Dutch -> English	ja	yes	4	vocabulary	Answer word.
+Chapter 1-5	English -> Dutch	yes	ja	4	vocabulary	Answer word.
+Chapter 1-5	Dutch -> English	nee	no	4	vocabulary	Answer word.
+Chapter 1-5	English -> Dutch	no	nee	4	vocabulary	Answer word.
+Chapter 1-5	Dutch -> English	geen	no, not a	4	function word	Simple review entry, not a full negation card.
+Chapter 1-5	English -> Dutch	no, not a	geen	4	function word	Simple review entry, not a full negation card.
+Chapter 1-5	Dutch -> English	er	there, existential marker	5	function word	Simple review entry, not a full `er` lesson.
+Chapter 1-5	English -> Dutch	there, existential marker	er	5	function word	Simple review entry, not a full `er` lesson.
+Chapter 1-5	Dutch -> English	het boek	book	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	English -> Dutch	book	het boek	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	Dutch -> English	de pen	pen	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	English -> Dutch	pen	de pen	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	Dutch -> English	het schrift	notebook	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	English -> Dutch	notebook	het schrift	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	Dutch -> English	de school	school	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	English -> Dutch	school	de school	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	Dutch -> English	het huis	house, home	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	English -> Dutch	house, home	het huis	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	Dutch -> English	de klas	class, classroom	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	English -> Dutch	class, classroom	de klas	3	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	Dutch -> English	de tafel	table	4	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	English -> Dutch	table	de tafel	4	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	Dutch -> English	het raam	window	4	vocabulary	Article-bearing noun citation form; literal source example.
+Chapter 1-5	English -> Dutch	window	het raam	4	vocabulary	Article-bearing noun citation form; literal source example.

@@ -1,0 +1,27 @@
+services:
+  curricula:
+    image: sleepiestmario/whacksmacker-curricula:local
+    volumes:
+      - reading-curricula:/curricula
+    restart: "no"
+
+  app:
+    image: sleepiestmario/whacksmacker:local
+    command: ["web", "--host", "0.0.0.0", "--port", "8787", "--data-dir", "/data", "--catalogue", "/curricula/managed/catalogue.json"]
+    depends_on:
+      curricula:
+        condition: service_completed_successfully
+    volumes:
+      - application-data:/data
+      - reading-curricula:/curricula:ro
+    ports:
+      - "127.0.0.1:18787:8787"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+volumes:
+  application-data:
+  reading-curricula:

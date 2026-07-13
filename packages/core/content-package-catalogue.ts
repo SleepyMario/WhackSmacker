@@ -66,6 +66,8 @@ export interface ContentPackageCatalogueEntry {
   readonly displayName: LocalizedContentValue;
   readonly description: LocalizedContentValue;
   readonly contentType: string;
+  readonly capabilities?: ContentPackageManifest["capabilities"];
+  readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
   readonly languages?: readonly string[];
@@ -196,6 +198,8 @@ async function createCatalogueEntry(packagePath: string): Promise<ContentPackage
     displayName: manifest.displayName,
     description: manifest.description,
     contentType: manifest.contentType,
+    ...(manifest.capabilities === undefined ? {} : { capabilities: manifest.capabilities }),
+    ...(manifest.relatedPackageIds === undefined ? {} : { relatedPackageIds: manifest.relatedPackageIds }),
     contentSchemaVersion: manifest.contentSchemaVersion,
     minimumWhackSmackerVersion: manifest.minimumWhackSmackerVersion,
     ...(manifest.languages === undefined ? {} : { languages: [...manifest.languages].sort() }),

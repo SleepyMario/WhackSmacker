@@ -1,0 +1,47 @@
+deck	direction	front	back	source_chapter	entry_type	notes
+Chapter 1-5	Korean -> English	안녕하세요	hello	1	vocabulary	Fixed greeting expression.
+Chapter 1-5	English -> Korean	hello	안녕하세요	1	vocabulary	Fixed greeting expression.
+Chapter 1-5	Korean -> English	저	I, me	1	vocabulary	Pronoun introduced inside the Chapter 1 pattern.
+Chapter 1-5	English -> Korean	I, me (polite/formal self-reference)	저	1	vocabulary	Pronoun introduced inside the Chapter 1 pattern.
+Chapter 1-5	Korean -> English	학생	student	1	vocabulary	Noun.
+Chapter 1-5	English -> Korean	student	학생	1	vocabulary	Noun.
+Chapter 1-5	Korean -> English	선생님	teacher	1	vocabulary	Noun.
+Chapter 1-5	English -> Korean	teacher	선생님	1	vocabulary	Noun.
+Chapter 1-5	Korean -> English	제	my	2	vocabulary	Possessive form introduced in Chapter 2.
+Chapter 1-5	English -> Korean	my	제	2	vocabulary	Possessive form introduced in Chapter 2.
+Chapter 1-5	Korean -> English	이름	name	2	vocabulary	Noun.
+Chapter 1-5	English -> Korean	name	이름	2	vocabulary	Noun.
+Chapter 1-5	Korean -> English	네	yes	3	vocabulary	Polite response expression.
+Chapter 1-5	English -> Korean	yes	네	3	vocabulary	Polite response expression.
+Chapter 1-5	Korean -> English	아니요	no	3	vocabulary	Polite response expression.
+Chapter 1-5	English -> Korean	no (polite response)	아니요	3	vocabulary	Polite response expression.
+Chapter 1-5	Korean -> English	대학생	university student	3	vocabulary	Noun.
+Chapter 1-5	English -> Korean	university student	대학생	3	vocabulary	Noun.
+Chapter 1-5	Korean -> English	가족	family	3	vocabulary	Noun.
+Chapter 1-5	English -> Korean	family	가족	3	vocabulary	Noun.
+Chapter 1-5	Korean -> English	은/는	topic particle	1	function word	Simple review entry, not a grammar-pattern card.
+Chapter 1-5	English -> Korean	topic particle	은/는	1	function word	Simple review entry, not a grammar-pattern card.
+Chapter 1-5	Korean -> English	여기	here, this place	4	vocabulary	Place word.
+Chapter 1-5	English -> Korean	here, this place	여기	4	vocabulary	Place word.
+Chapter 1-5	Korean -> English	저기	there, that place	4	vocabulary	Place word.
+Chapter 1-5	English -> Korean	there, that place	저기	4	vocabulary	Place word.
+Chapter 1-5	Korean -> English	학교	school	4	vocabulary	Noun.
+Chapter 1-5	English -> Korean	school	학교	4	vocabulary	Noun.
+Chapter 1-5	Korean -> English	집	home, house	4	vocabulary	Noun.
+Chapter 1-5	English -> Korean	home, house	집	4	vocabulary	Noun.
+Chapter 1-5	Korean -> English	오늘	today	4	vocabulary	Time word.
+Chapter 1-5	English -> Korean	today	오늘	4	vocabulary	Time word.
+Chapter 1-5	Korean -> English	날	day	4	vocabulary	Noun.
+Chapter 1-5	English -> Korean	day	날	4	vocabulary	Noun.
+Chapter 1-5	Korean -> English	좋은	good	4	vocabulary	Fixed descriptive word before a noun.
+Chapter 1-5	English -> Korean	good	좋은	4	vocabulary	Fixed descriptive word before a noun.
+Chapter 1-5	Korean -> English	교실	classroom	5	vocabulary	Noun.
+Chapter 1-5	English -> Korean	classroom	교실	5	vocabulary	Noun.
+Chapter 1-5	Korean -> English	도서관	library	5	vocabulary	Noun.
+Chapter 1-5	English -> Korean	library	도서관	5	vocabulary	Noun.
+Chapter 1-5	Korean -> English	회사	company, workplace	5	vocabulary	Noun.
+Chapter 1-5	English -> Korean	company, workplace	회사	5	vocabulary	Noun.
+Chapter 1-5	Korean -> English	병원	hospital, clinic	5	vocabulary	Noun.
+Chapter 1-5	English -> Korean	hospital, clinic	병원	5	vocabulary	Noun.
+Chapter 1-5	Korean -> English	질문	question	5	vocabulary	Noun.
+Chapter 1-5	English -> Korean	question	질문	5	vocabulary	Noun.

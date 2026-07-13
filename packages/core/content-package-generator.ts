@@ -78,6 +78,8 @@ export interface ContentPackageGeneratorTarget {
   readonly displayName: LocalizedContentValue;
   readonly description: LocalizedContentValue;
   readonly contentType: ContentPackageManifest["contentType"];
+  readonly capabilities?: ContentPackageManifest["capabilities"];
+  readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly packageVersion: string;
   readonly sourcePath: string;
@@ -119,7 +121,7 @@ export interface GeneratedContentPackageResult {
 
 export const contentPackageGeneratorName = "whacksmacker-content-builder";
 
-export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
+const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
   {
     id: "linguistic-terminology",
     packageId: "com.sleepymario.language.linguistic-terminology",
@@ -446,6 +448,70 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
   }
 ];
 
+const reviewPackageByReadingPackage = new Map<string, string>([
+  ["com.sleepymario.language.korean", "com.sleepymario.language.korean.reviews"],
+  ["com.sleepymario.language.chinese.mandarin.traditional", "com.sleepymario.language.chinese.mandarin.traditional.reviews"],
+  ["com.sleepymario.language.chinese.mandarin.simplified", "com.sleepymario.language.chinese.mandarin.simplified.reviews"],
+  ["com.sleepymario.language.english", "com.sleepymario.language.english.reviews"],
+  ["com.sleepymario.language.japanese", "com.sleepymario.language.japanese.reviews"],
+  ["com.sleepymario.language.vietnamese", "com.sleepymario.language.vietnamese.reviews"],
+  ["com.sleepymario.language.dutch", "com.sleepymario.language.dutch.reviews"],
+  ["com.sleepymario.language.german", "com.sleepymario.language.german.reviews"],
+  ["com.sleepymario.language.french", "com.sleepymario.language.french.reviews"],
+  ["com.sleepymario.language.spanish", "com.sleepymario.language.spanish.reviews"]
+]);
+
+const readingTargets = legacyGeneratorTargets.map((target): ContentPackageGeneratorTarget => {
+  if (target.contentType === "linguistic-terminology") return { ...target, capabilities: ["technical"] };
+  const baseId = target.localization?.role === "source-language-pack" ? target.localization.basePackageId : target.packageId;
+  const relatedReview = reviewPackageByReadingPackage.get(baseId);
+  return {
+    ...target,
+    capabilities: ["reading-curriculum"],
+    ...(relatedReview === undefined ? {} : { relatedPackageIds: [relatedReview] }),
+    license: {
+      spdx: "CC-BY-NC-4.0",
+      name: "Creative Commons Attribution-NonCommercial 4.0 International",
+      path: "LICENSE-CONTENT"
+    }
+  };
+});
+
+const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
+  ["korean", "Korean", "com.sleepymario.language.korean", ["ko", "en"]],
+  ["chinese-traditional", "Chinese - Mandarin (Traditional)", "com.sleepymario.language.chinese.mandarin.traditional", ["zh-Hant", "en"]],
+  ["chinese-simplified", "Chinese - Mandarin (Simplified)", "com.sleepymario.language.chinese.mandarin.simplified", ["zh-Hans", "en"]],
+  ["english", "English", "com.sleepymario.language.english", ["zh-TW", "en"]],
+  ["japanese", "Japanese", "com.sleepymario.language.japanese", ["ja", "en"]],
+  ["vietnamese", "Vietnamese", "com.sleepymario.language.vietnamese", ["vi", "en"]],
+  ["dutch", "Dutch", "com.sleepymario.language.dutch", ["nl", "en"]],
+  ["german", "German", "com.sleepymario.language.german", ["de", "en"]],
+  ["french", "French", "com.sleepymario.language.french", ["fr", "en"]],
+  ["spanish", "Spanish", "com.sleepymario.language.spanish", ["es", "en"]]
+].map(([slug, name, readingId, languages]) => ({
+  id: `${slug}-core-reviews`,
+  packageId: `${readingId}.reviews`,
+  displayName: `${name} Core Reviews`,
+  description: `GPL core review decks for ${name}, usable without a reading curriculum package.`,
+  contentType: "core-review",
+  capabilities: ["core-review"],
+  relatedPackageIds: [readingId],
+  contentSchemaVersion: "1.0.0",
+  packageVersion: "0.1.0",
+  sourcePath: `review-content/${String(slug).replace(/^chinese-/u, "chinese-mandarin-")}`,
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages,
+  ...(readingId === "com.sleepymario.language.english" ? {
+    targetLanguage: "en",
+    localization: { role: "base-curriculum", schemaVersion: "1.0.0", targetLanguage: "en", defaultSourceLocale: "zh-TW", defaultSourcePackageId: "com.sleepymario.language.english.source.zh-tw" }
+  } : {}),
+  subjects: ["language", "review"],
+  license: { spdx: "GPL-3.0-or-later", name: "GNU General Public License version 3 or later", path: "LICENSE-SOFTWARE" },
+  include: ["README.md", "LICENSE-SOFTWARE", "review-decks"]
+} as ContentPackageGeneratorTarget));
+
+export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...coreReviewTargets];
+
 export async function generateContentPackage(options: GenerateContentPackageOptions): Promise<GeneratedContentPackageResult> {
   const target = getContentPackageGeneratorTarget(options.targetId);
   const sourceResolution = resolveContentPackageSourcePath(target.sourcePath, {
@@ -477,9 +543,9 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const content = buildContentSnapshot(target, sourceRoot, sourceFiles, sourceCommit, sourceDirty);
   const contentBuffer = Buffer.from(`${JSON.stringify(content, null, 2)}\n`, "utf8");
   const contentFile = createFileRecord("content/content.json", "application/json", contentBuffer);
-  const memorizationFiles = target.localization?.role === "source-language-pack" ? [] : buildMemorizationFiles(target, sourceFiles, options.generatedAt);
+  const memorizationFiles = target.capabilities?.includes("core-review") ? buildMemorizationFiles(target, sourceFiles, options.generatedAt) : [];
   const packagedSourceFiles = sourceFiles
-    .filter((file) => target.contentType === "language-curriculum" && file.path === canonicalCastPath)
+    .filter((file) => file.path === canonicalCastPath || file.path === target.license?.path || file.path === "NOTICE")
     .map((file) => ({ record: createFileRecord(file.path, file.mediaType, file.buffer), buffer: file.buffer }));
 
   const manifest: ContentPackageManifest = {
@@ -489,6 +555,8 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     displayName: target.displayName,
     description: target.description,
     contentType: target.contentType,
+    ...(target.capabilities === undefined ? {} : { capabilities: target.capabilities }),
+    ...(target.relatedPackageIds === undefined ? {} : { relatedPackageIds: target.relatedPackageIds }),
     contentSchemaVersion: target.contentSchemaVersion,
     minimumWhackSmackerVersion: whackSmackerApplicationVersion,
     ...(target.languages === undefined ? {} : { languages: [...target.languages].sort() }),
@@ -574,15 +642,22 @@ const repositoryRoot = process.cwd();
 const canonicalCastPath = "name-pools/canonical-cast.json";
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
+  const separatedIncludes = target.capabilities?.includes("reading-curriculum")
+    ? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/"))
+    : [...target.include];
+  if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path)) separatedIncludes.push(target.license.path);
+  if (target.capabilities?.includes("reading-curriculum")) {
+    try { await access(resolve(sourceRoot, "NOTICE")); separatedIncludes.push("NOTICE"); } catch { /* legacy repository without notice */ }
+  }
   const castAlreadyIncluded = target.include.some((include) => canonicalCastPath === include || canonicalCastPath.startsWith(`${include}/`));
   if (target.contentType !== "language-curriculum" || castAlreadyIncluded) {
-    return target.include;
+    return separatedIncludes;
   }
   try {
     await access(resolve(sourceRoot, canonicalCastPath));
-    return [...target.include, canonicalCastPath];
+    return [...separatedIncludes, canonicalCastPath];
   } catch {
-    return target.include;
+    return separatedIncludes;
   }
 }
 
@@ -620,7 +695,7 @@ async function collectPath(sourceRoot: string, absolutePath: string, files: Sour
   }
 
   const relativePath = normalizeArchivePath(relative(sourceRoot, absolutePath));
-  if (!relativePath.endsWith(".md") && !relativePath.endsWith(".tsv") && relativePath !== canonicalCastPath && relativePath !== ".gitignore") {
+  if (!relativePath.endsWith(".md") && !relativePath.endsWith(".tsv") && relativePath !== canonicalCastPath && relativePath !== ".gitignore" && relativePath !== "LICENSE-CONTENT" && relativePath !== "LICENSE-SOFTWARE" && relativePath !== "NOTICE") {
     return;
   }
 
@@ -789,7 +864,7 @@ function reviewDeckRowToItem(
     front,
     back
   });
-  const missingSourceExample = isCoreReviewDeckRow(sourceChapter) && examples.length === 0;
+  const missingSourceExample = !target.capabilities?.includes("core-review") && isCoreReviewDeckRow(sourceChapter) && examples.length === 0;
   if (missingSourceExample) {
     throw new Error(
       `Review deck row ${rowNumber + 1} in ${sourcePath} has no learner-facing source example for ${front} -> ${back}. ` +
@@ -815,7 +890,7 @@ function reviewDeckRowToItem(
     },
     notes: localizedRow ? `Deck: ${deck.split(/\s+\/\s+/u)[1] ?? deck}. ${row[11]}` : localizedReviewNotes(deck, notes),
     ...(examples.length === 0 ? {} : { examples }),
-    tags: [slugForPath(target.id), "review-deck", deckSlug, entrySlug, ...(missingSourceExample ? ["missing-source-example"] : [])],
+    tags: [slugForPath(curriculumIdentityTargetId(target)), "review-deck", deckSlug, entrySlug, ...(missingSourceExample ? ["missing-source-example"] : [])],
     source: {
       path: sourcePath,
       title: target.localization?.role === "base-curriculum" ? (deck.split(/\s+\/\s+/u)[1] ?? deck) : localizedReviewTitle(deck)
@@ -1241,7 +1316,7 @@ function stableDirectionSlug(
   promptLabel: string,
   answerLabel: string
 ): string {
-  if (target.id === "english-curriculum") {
+  if (curriculumIdentityTargetId(target) === "english-curriculum") {
     if (promptLabel === "English Target" && answerLabel === "Chinese (Taiwan)") {
       return slugForPath("English Target -> English");
     }
@@ -1253,7 +1328,7 @@ function stableDirectionSlug(
 }
 
 function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
-  switch (target.id) {
+  switch (curriculumIdentityTargetId(target)) {
     case "korean-curriculum":
       return "Hangul";
     case "chinese-mandarin-traditional-curriculum":
@@ -1277,6 +1352,12 @@ function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
     default:
       return "text";
   }
+}
+
+function curriculumIdentityTargetId(target: ContentPackageGeneratorTarget): string {
+  if (!target.capabilities?.includes("core-review")) return target.id;
+  const relatedId = target.relatedPackageIds?.[0];
+  return legacyGeneratorTargets.find(candidate => candidate.packageId === relatedId)?.id ?? target.id;
 }
 
 function parseTabSeparatedRows(text: string): readonly (readonly string[])[] {

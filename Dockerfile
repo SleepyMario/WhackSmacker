@@ -1,35 +1,22 @@
 FROM node:22-bookworm-slim AS build
-
 WORKDIR /app
-
-COPY whacksmacker/package*.json ./
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+COPY package*.json ./
 RUN npm ci
-
-COPY whacksmacker/ .
-RUN npm run build
-RUN npm prune --omit=dev
-
+COPY . .
+RUN npm run build && node scripts/build-core-review-feed.mjs /core-feed && npm prune --omit=dev
 
 FROM node:22-bookworm-slim AS runtime
-
-ENV NODE_ENV=production
+ENV NODE_ENV=production WHACKSMACKER_DATA_DIR=/data WHACKSMACKER_CORE_CATALOGUE=/core-feed/catalogue.json
 WORKDIR /app
-
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/migrations ./migrations
-
-# Bundle the current local package feed for the first Docker image.
-# The catalogue currently contains absolute file:// paths, so keep that path
-# available inside the container and expose /feed as a stable shortcut.
-RUN mkdir -p /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages
-COPY whacksmacker-packages/catalogue.json /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages/catalogue.json
-COPY whacksmacker-packages/manifests /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages/manifests
-COPY whacksmacker-packages/packages /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages/packages
-RUN ln -s /home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages /feed
-
+COPY --from=build /app/COPYING ./COPYING
+COPY --from=build /app/review-content ./review-content
+COPY --from=build /app/scripts/docker-entrypoint.mjs ./scripts/docker-entrypoint.mjs
+COPY --from=build /core-feed /core-feed
 VOLUME ["/data"]
-
-ENTRYPOINT ["node", "/app/dist/main.js"]
+ENTRYPOINT ["node", "/app/scripts/docker-entrypoint.mjs"]
 CMD ["--help"]
