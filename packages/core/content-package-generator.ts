@@ -8,9 +8,13 @@ import {
 import {
   assertValidMemorizationItemCollection,
   memorizationItemFileMediaType,
+  pedagogicalContentForMemorizationItem,
   type MemorizationItem,
-  type MemorizationItemCollection
+  type MemorizationItemCollection,
+  type MemorizationItemV1,
+  type MemorizationItemV2
 } from "./memorization-item";
+import { pedagogicalFingerprint } from "./pedagogical-fingerprint";
 import type { LocalizedContentValue } from "./localized-content";
 import {
   assertLanguageCurriculumChapter5170Requirements,
@@ -318,7 +322,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     description: "Vietnamese language curriculum content generated from the canonical Vietnamese curriculum repository.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
+    packageVersion: "0.2.0",
     sourcePath: "../vietnamese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
     languages: ["vi", "en"],
@@ -332,6 +336,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "progress.md",
       "backlog.md",
       "decisions.md",
+      "geography-ledger.json",
       "name-pools",
       "review-decks",
       "research",
@@ -496,8 +501,8 @@ const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
   contentType: "core-review",
   capabilities: ["core-review"],
   relatedPackageIds: [readingId],
-  contentSchemaVersion: "1.0.0",
-  packageVersion: "0.1.0",
+  contentSchemaVersion: slug === "vietnamese" ? "2.0.0" : "1.0.0",
+  packageVersion: slug === "vietnamese" ? "0.2.0" : "0.1.0",
   sourcePath: `review-content/${String(slug).replace(/^chinese-/u, "chinese-mandarin-")}`,
   sourceRepository: "https://github.com/SleepyMario/whacksmacker",
   languages,
@@ -507,7 +512,9 @@ const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
   } : {}),
   subjects: ["language", "review"],
   license: { spdx: "GPL-3.0-or-later", name: "GNU General Public License version 3 or later", path: "LICENSE-SOFTWARE" },
-  include: ["README.md", "LICENSE-SOFTWARE", "review-decks"]
+  include: slug === "vietnamese"
+    ? ["README.md", "LICENSE-SOFTWARE", "review-decks/chapter-001-005", "review-decks/chapter-006-010"]
+    : ["README.md", "LICENSE-SOFTWARE", "review-decks"]
 } as ContentPackageGeneratorTarget));
 
 export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...coreReviewTargets];
@@ -545,7 +552,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const contentFile = createFileRecord("content/content.json", "application/json", contentBuffer);
   const memorizationFiles = target.capabilities?.includes("core-review") ? buildMemorizationFiles(target, sourceFiles, options.generatedAt) : [];
   const packagedSourceFiles = sourceFiles
-    .filter((file) => file.path === canonicalCastPath || file.path === target.license?.path || file.path === "NOTICE")
+    .filter((file) => packagedCurriculumMetadataPaths.has(file.path) || file.path === target.license?.path || file.path === "NOTICE")
     .map((file) => ({ record: createFileRecord(file.path, file.mediaType, file.buffer), buffer: file.buffer }));
 
   const manifest: ContentPackageManifest = {
@@ -640,10 +647,12 @@ interface GeneratedMemorizationFile {
 
 const repositoryRoot = process.cwd();
 const canonicalCastPath = "name-pools/canonical-cast.json";
+const geographyLedgerPath = "geography-ledger.json";
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
-    ? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/"))
+    ? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath)
     : [...target.include];
   if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path)) separatedIncludes.push(target.license.path);
   if (target.capabilities?.includes("reading-curriculum")) {
@@ -695,19 +704,37 @@ async function collectPath(sourceRoot: string, absolutePath: string, files: Sour
   }
 
   const relativePath = normalizeArchivePath(relative(sourceRoot, absolutePath));
-  if (!relativePath.endsWith(".md") && !relativePath.endsWith(".tsv") && relativePath !== canonicalCastPath && relativePath !== ".gitignore" && relativePath !== "LICENSE-CONTENT" && relativePath !== "LICENSE-SOFTWARE" && relativePath !== "NOTICE") {
+  if (!isContentPackageSourceFileAllowed(relativePath)) {
     return;
   }
 
   const buffer = await readFile(absolutePath);
+  const text = buffer.toString("utf8");
+  if (relativePath === geographyLedgerPath) {
+    try {
+      JSON.parse(text);
+    } catch (error) {
+      throw new Error(`Invalid ${geographyLedgerPath}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
   files.push({
     path: relativePath,
     mediaType: mediaTypeForPath(relativePath),
     size: buffer.length,
     sha256: sha256Hex(buffer),
-    text: buffer.toString("utf8"),
+    text,
     buffer
   });
+}
+
+export function isContentPackageSourceFileAllowed(path: string): boolean {
+  return path.endsWith(".md")
+    || path.endsWith(".tsv")
+    || packagedCurriculumMetadataPaths.has(path)
+    || path === ".gitignore"
+    || path === "LICENSE-CONTENT"
+    || path === "LICENSE-SOFTWARE"
+    || path === "NOTICE";
 }
 
 function buildContentSnapshot(
@@ -810,13 +837,88 @@ function parseReviewDeckCards(
   const [header, ...body] = rows;
   const legacyHeader = ["deck", "direction", "front", "back", "source_chapter", "entry_type", "notes"];
   const localizedHeader = ["deck", "direction", "front", "back", "front_zh_tw", "back_zh_tw", "front_en", "back_en", "source_chapter", "entry_type", "notes_zh_tw", "notes_en"];
+  const v2Header = ["card_id", "deck", "kind", "source_chapter", "prompt_language", "answer_language", "prompt", "accepted_answers", "distractors", "explanation", "lexical_ids", "grammar_ids", "geographic_ids", "provenance_path", "provenance_locator", "provenance_evidence", "tags"];
+  const usesV2Rows = header.length === v2Header.length && header.every((field, index) => field === v2Header[index]);
   const usesLocalizedRows = header.length === localizedHeader.length && header.every((field, index) => field === localizedHeader[index]);
-  if (!usesLocalizedRows && (header.length !== legacyHeader.length || header.some((field, index) => field !== legacyHeader[index]))) {
+  if (!usesV2Rows && !usesLocalizedRows && (header.length !== legacyHeader.length || header.some((field, index) => field !== legacyHeader[index]))) {
     throw new Error(`Review deck cards file has unsupported header: ${file.path}`);
   }
 
-  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex, usesLocalizedRows));
+  if (usesV2Rows) {
+    const items = body.map((row, index) => reviewDeckV2RowToItem(target, file.path, row, index + 1, generatedAt));
+    return { schemaVersion: 2, items };
+  }
+
+  const items: MemorizationItemV1[] = body.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex, usesLocalizedRows) as MemorizationItemV1);
   return { schemaVersion: 1, items };
+}
+
+function reviewDeckV2RowToItem(
+  target: ContentPackageGeneratorTarget,
+  sourcePath: string,
+  row: readonly string[],
+  rowNumber: number,
+  generatedAt: string
+): MemorizationItemV2 {
+  if (row.length !== 17) throw new Error(`Review deck v2 row ${rowNumber + 1} has the wrong number of tab-separated fields in ${sourcePath}`);
+  const [cardId, deckTitle, kind, chapterText, promptLanguage, answerLanguage, prompt, acceptedJson, distractorsJson,
+    explanation, lexicalJson, grammarJson, geographicJson, provenancePath, provenanceLocator, provenanceEvidence, tagsJson] = row;
+  const range = deckTitle.match(/^Chapter (\d+)-(\d+)$/u);
+  if (range === null) throw new Error(`Review deck v2 row ${rowNumber + 1} has an invalid five-chapter deck title: ${deckTitle}`);
+  const chapterStart = Number.parseInt(range[1], 10);
+  const chapterEnd = Number.parseInt(range[2], 10);
+  const sourceChapter = Number.parseInt(chapterText, 10);
+  const acceptedAnswers = parseV2StringArray(acceptedJson, "accepted_answers", sourcePath, rowNumber);
+  const distractors = parseV2StringArray(distractorsJson, "distractors", sourcePath, rowNumber);
+  const testedLexicalIds = parseV2StringArray(lexicalJson, "lexical_ids", sourcePath, rowNumber);
+  const testedGrammarIds = parseV2StringArray(grammarJson, "grammar_ids", sourcePath, rowNumber);
+  const testedGeographicIds = parseV2StringArray(geographicJson, "geographic_ids", sourcePath, rowNumber);
+  const tags = parseV2StringArray(tagsJson, "tags", sourcePath, rowNumber);
+  if (!Number.isSafeInteger(sourceChapter) || sourceChapter < chapterStart || sourceChapter > chapterEnd) {
+    throw new Error(`Review deck v2 row ${rowNumber + 1} source chapter is outside its deck block in ${sourcePath}`);
+  }
+  const reviewDirection = `${promptLanguage}-to-${answerLanguage}`;
+  const targetLanguage = target.targetLanguage ?? target.languages?.find((language) => language !== "en") ?? answerLanguage;
+  const deckId = `${targetLanguage}-core-review-${String(chapterStart).padStart(3, "0")}-${String(chapterEnd).padStart(3, "0")}`;
+  const item: MemorizationItemV2 = {
+    schemaVersion: 2,
+    id: cardId,
+    cardId,
+    pedagogicalFingerprint: "0".repeat(64),
+    kind: kind as MemorizationItemV2["kind"],
+    deck: { id: deckId, title: deckTitle, chapterStart, chapterEnd },
+    sourceChapters: [sourceChapter],
+    reviewDirection,
+    prompt: { text: prompt, plainText: prompt, language: promptLanguage, mediaType: "text/plain" },
+    answer: { text: acceptedAnswers[0] ?? "", plainText: acceptedAnswers[0] ?? "", language: answerLanguage, mediaType: "text/plain" },
+    acceptedAnswers,
+    distractors,
+    explanation,
+    testedMeaning: acceptedAnswers.join(" | "),
+    testedLexicalIds,
+    testedGrammarIds,
+    testedGeographicIds,
+    testedCastIds: [],
+    testedSkillIds: [],
+    provenance: { path: provenancePath, locator: provenanceLocator, evidence: provenanceEvidence },
+    notes: explanation,
+    tags,
+    source: { path: sourcePath, title: deckTitle },
+    language: { target: targetLanguage, base: "en", script: scriptLabelForTarget(target) },
+    createdAt: generatedAt,
+    updatedAt: generatedAt
+  };
+  return { ...item, pedagogicalFingerprint: pedagogicalFingerprint(pedagogicalContentForMemorizationItem(item)) };
+}
+
+function parseV2StringArray(value: string, field: string, sourcePath: string, rowNumber: number): string[] {
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed) || parsed.some((entry) => typeof entry !== "string")) throw new Error("not a string array");
+    return parsed;
+  } catch (error) {
+    throw new Error(`Review deck v2 row ${rowNumber + 1} ${field} must be a JSON string array in ${sourcePath}: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 function reviewDeckRowToItem(

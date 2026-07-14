@@ -484,7 +484,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       ]
     );
     assert.match(koreanChapter20.text, /Chapter 15 -- Casual Absence I/);
-    assert.match(vietnameseChapter5.text, /Chapter 5 -- There Is \/ There Are I/);
+    assert.match(vietnameseChapter5.text, /Chapter 5 — What Is in the Classroom/);
     assert.match(dutchChapter11.text, /Chapter 11 -- Asking How Someone Is/);
     assert.match(dutchChapter15.text, /Chapter 15 -- Asking Where Someone Lives/);
     assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md"), true);
@@ -572,19 +572,22 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       packageId: "com.sleepymario.language.vietnamese",
       sourcePath: "review-decks/chapter-001-005/cards.tsv"
     });
-    assert.equal(vietnameseItems.length, 46);
-    assert.ok(vietnameseItems.some((item) => item.item.prompt.text === "xin chào" && item.item.answer.text === "hello"));
-    assert.ok(vietnameseItems.some((item) => item.item.prompt.text === "hello" && item.item.answer.text === "xin chào"));
-    const vietnameseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.vietnamese");
-    assert.ok(vietnameseSources.some((source) => source.title === "Chapter 26-30" && source.sourcePath === "review-decks/chapter-026-030/cards.tsv"));
-    const vietnameseItems2630 = await listReadingReviewItems({
+    assert.equal(vietnameseItems.length, 20);
+    assert.ok(vietnameseItems.every((item) => item.item.schemaVersion === 2));
+    assert.ok(vietnameseItems.some((item) => item.item.cardId.endsWith("xin-chao-meaning") && item.item.acceptedAnswers.includes("hello")));
+    const vietnameseItems610 = await listReadingReviewItems({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.vietnamese",
-      sourcePath: "review-decks/chapter-026-030/cards.tsv"
+      sourcePath: "review-decks/chapter-006-010/cards.tsv"
     });
-    assert.equal(vietnameseItems2630.length, 40);
-    assert.ok(vietnameseItems2630.some((item) => item.item.prompt.text === "thư viện" && item.item.answer.text === "library"));
-    assert.ok(vietnameseItems2630.some((item) => item.item.prompt.text === "library" && item.item.answer.text === "thư viện"));
+    assert.equal(vietnameseItems610.length, 20);
+    assert.equal(new Set([...vietnameseItems, ...vietnameseItems610].map((item) => item.item.cardId)).size, 40);
+    assert.ok(vietnameseItems610.some((item) => item.item.cardId.endsWith("destination-production") && item.item.acceptedAnswers.includes("Tôi đi thư viện.")));
+    const vietnameseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.vietnamese");
+    assert.deepEqual(vietnameseSources.map((source) => [source.title, source.sourcePath]), [
+      ["Chapter 1-5", "review-decks/chapter-001-005/cards.tsv"],
+      ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"]
+    ]);
 
     const dutchSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.dutch");
     assert.deepEqual(dutchSources.map((source) => [source.title, source.sourcePath]), [
@@ -721,7 +724,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     }
 
     await assert.rejects(
-      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.vietnamese", "0.1.0", "progress.json")),
+      () => stat(join(fixture.dataDir, "packages", "com.sleepymario.language.vietnamese", "0.2.0", "progress.json")),
       /ENOENT/
     );
     await assert.rejects(
