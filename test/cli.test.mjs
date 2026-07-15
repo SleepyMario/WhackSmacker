@@ -295,8 +295,9 @@ test("leading wrapper globals are forwarded to command mode", async () => {
     assert.match(grammarReads[4].stdout, /KOR-GRAMMAR-015 -- N이\/가 없어/);
     assert.match(grammarReads[5].stdout, /existential and negative-existential/u);
     assert.equal(reviewShow.exitCode, 0);
-    assert.match(reviewShow.stdout, /저는 학생입니다/);
-    assert.match(reviewShow.stdout, /Example\n  - 저는 학생입니다\.\n  - 마리아: 학생입니까\?/u);
+    assert.match(reviewShow.stdout, /Prompt\n  학생/u);
+    assert.match(reviewShow.stdout, /Answer\n  student/u);
+    assert.doesNotMatch(reviewShow.stdout, /Example/u);
     assert.equal(reviewShow.stderr, "");
   } finally {
     await fixture.cleanup();
@@ -323,6 +324,11 @@ async function createInstalledKoreanFixture() {
     outputDirectory: packageDirectory,
     generatedAt: "2026-07-09T00:00:00Z"
   });
+  await generateContentPackage({
+    targetId: "korean-core-reviews",
+    outputDirectory: packageDirectory,
+    generatedAt: "2026-07-09T00:00:00Z"
+  });
   await generateLocalContentPackageCatalogue({
     packagesDirectory: packageDirectory,
     outputPath: cataloguePath,
@@ -332,6 +338,12 @@ async function createInstalledKoreanFixture() {
     cataloguePath,
     dataDir,
     packageId: "com.sleepymario.language.korean",
+    installedAt: "2026-07-09T00:00:00Z"
+  });
+  await installContentPackage({
+    cataloguePath,
+    dataDir,
+    packageId: "com.sleepymario.language.korean.reviews",
     installedAt: "2026-07-09T00:00:00Z"
   });
 
