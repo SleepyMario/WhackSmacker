@@ -1,28 +1,9 @@
-# Chapter 1-5 Review Deck
+# Vietnamese Core Chapters 1–5 Review Deck
 
-Deck name: `Chapter 1-5`
+Deck ID: `vi-core-review-001-005`
 
-This deck reviews vocabulary and simple function-word entries introduced in Vietnamese Core Chapter 1-5.
+This is the one authoritative review deck for Vietnamese Core Chapters 1–5. It contains exactly 20 schema-v2 cards: four reviewed cards sourced from each covered chapter. Cards test vocabulary, grammar, reading, production, and important meaning distinctions using only material legal by the end of Chapter 5.
 
-Scope:
+The stable card ID identifies a card across releases. The generated pedagogical fingerprint changes only when pedagogically material content changes; provenance, ordering, package version, timestamps, and other metadata do not affect it.
 
-- ordinary vocabulary introduced in Core Chapter 1-5;
-- simple function-word and lexical-function entries such as `là`, `có`, `không`, and `có phải`;
-- no fixed cast names or placeholders;
-- no chữ Hán-only reference entries unless the Vietnamese item itself is vocabulary;
-- no full grammar-pattern cards.
-
-Excluded grammar-pattern cards include:
-
-- `Tôi là N`
-- `Tên tôi là N`
-- `Đây là N`
-- `Đây có phải là N không?`
-- `Có N`
-
-The TSV file is bidirectional:
-
-- Vietnamese -> English
-- English -> Vietnamese
-
-Regional notes are chapter content, not ordinary review cards unless a region-specific word is explicitly introduced.
+No Foundation or Chapter 6+ material is required.
