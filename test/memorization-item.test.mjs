@@ -9,19 +9,68 @@ import {
   listInstalledMemorizationItemFiles,
   memorizationItemFileMediaType,
   memorizationItemSchemaVersion,
+  memorizationItemSchemaVersionV2,
   normalizeMemorizationItemCollection,
+  pedagogicalContentForMemorizationItem,
+  pedagogicalFingerprint,
   readInstalledMemorizationItems,
   validateMemorizationItem,
   validateMemorizationItemCollection
 } from "../dist/packages/core/index.js";
 
 const schemaUrl = new URL("../schemas/memorization-item-v1.schema.json", import.meta.url);
+const schemaV2Url = new URL("../schemas/memorization-item-v2.schema.json", import.meta.url);
 
 test("memorization item JSON Schema parses as Draft 2020-12", async () => {
   const schema = JSON.parse(await readFile(schemaUrl, "utf8"));
 
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
   assert.equal(schema.$defs.item.properties.schemaVersion.const, memorizationItemSchemaVersion);
+});
+
+test("memorization item v2 JSON Schema parses and v1 remains authoritative for v1", async () => {
+  const schema = JSON.parse(await readFile(schemaV2Url, "utf8"));
+  assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
+  assert.equal(schema.$defs.item.properties.schemaVersion.const, memorizationItemSchemaVersionV2);
+  assert.equal(validItem().schemaVersion, memorizationItemSchemaVersion);
+});
+
+test("valid v2 cards parse with stable identity and matching fingerprint", () => {
+  const item = validV2Item();
+  assertValidItem(item);
+  assertValidCollection({ schemaVersion: 2, items: [item] });
+});
+
+test("v2 duplicate stable card IDs and invalid fingerprints fail", () => {
+  const item = validV2Item();
+  assertInvalidCollection({ schemaVersion: 2, items: [item, item] }, /Duplicate memorization item ID/);
+  assertInvalidItem({ ...item, pedagogicalFingerprint: "0".repeat(64) }, /does not match pedagogically material content/);
+});
+
+test("pedagogical fingerprints normalize key order and semantically unordered arrays", () => {
+  const content = pedagogicalContentForMemorizationItem(validV2Item());
+  const reordered = {
+    expectedInterpretation: content.expectedInterpretation,
+    distractors: [...content.distractors].reverse(),
+    requiredCanonicalIds: [...content.requiredCanonicalIds].reverse(),
+    cardType: content.cardType,
+    direction: content.direction,
+    testedMeaning: content.testedMeaning,
+    acceptedAnswers: [...content.acceptedAnswers].reverse(),
+    prompt: content.prompt
+  };
+  assert.equal(pedagogicalFingerprint(content), pedagogicalFingerprint(reordered));
+});
+
+test("metadata-only changes preserve fingerprints while pedagogical changes do not", () => {
+  const item = validV2Item();
+  const base = pedagogicalFingerprint(pedagogicalContentForMemorizationItem(item));
+  assert.equal(base, pedagogicalFingerprint(pedagogicalContentForMemorizationItem({ ...item, tags: ["changed"], updatedAt: "2026-07-07T00:00:00Z", provenance: { ...item.provenance, locator: "corrected locator" } })));
+  for (const changed of [
+    { ...item, prompt: { ...item.prompt, text: "Changed prompt" } },
+    { ...item, acceptedAnswers: ["changed answer"] },
+    { ...item, distractors: ["task-changing distractor"] }
+  ]) assert.notEqual(base, pedagogicalFingerprint(pedagogicalContentForMemorizationItem(changed)));
 });
 
 test("valid basic memorization item passes", () => {
@@ -184,6 +233,27 @@ function validItem(id = "hangul/vowels/a") {
     createdAt: "2026-07-06T00:00:00Z",
     updatedAt: "2026-07-06T00:00:00Z"
   };
+}
+
+function validV2Item() {
+  const item = {
+    ...validItem("vi-core-review-001-005/ch001/example"),
+    schemaVersion: 2,
+    cardId: "vi-core-review-001-005/ch001/example",
+    pedagogicalFingerprint: "0".repeat(64),
+    kind: "concept",
+    deck: { id: "vi-core-review-001-005", title: "Chapter 1-5", chapterStart: 1, chapterEnd: 5 },
+    sourceChapters: [1],
+    reviewDirection: "en-to-en",
+    acceptedAnswers: ["hello", "greeting"],
+    distractors: ["goodbye", "name"],
+    explanation: "The expression is a greeting.",
+    testedMeaning: "hello",
+    testedLexicalIds: ["vi.phrase.xin-chao.greeting"],
+    testedGrammarIds: [], testedGeographicIds: [], testedCastIds: [], testedSkillIds: [],
+    provenance: { path: "units/vietnamese-core/chapter-001/chapter.md", locator: "Dialogue", evidence: "Xin chào." }
+  };
+  return { ...item, pedagogicalFingerprint: pedagogicalFingerprint(pedagogicalContentForMemorizationItem(item)) };
 }
 
 async function createInstalledMemoryFixture() {

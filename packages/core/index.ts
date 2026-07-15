@@ -11,6 +11,7 @@ export * from "./language-curriculum-policy";
 export * from "./logging";
 export * from "./localized-content";
 export * from "./memorization-item";
+export * from "./pedagogical-fingerprint";
 export * from "./modules";
 export * from "./paths";
 export * from "./reading-review-integration";

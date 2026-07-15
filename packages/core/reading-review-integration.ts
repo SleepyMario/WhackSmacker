@@ -98,6 +98,9 @@ export interface ReadingReviewItem {
 
 export interface SyncReadingReviewResult {
   readonly created: readonly ReviewItemState[];
+  readonly materiallyChanged: readonly ReviewItemState[];
+  readonly unchanged: readonly ReviewItemState[];
+  readonly retired: readonly ReviewItemState[];
   readonly progressPath: string;
 }
 
@@ -182,24 +185,60 @@ export async function syncReadingReviewItems(options: SyncReadingReviewOptions):
   const progressDir = resolveIntegrationProgressDir(options.dataDir, options.progressDir);
   let store = await loadReviewProgressStore(progressDir);
   const created: ReviewItemState[] = [];
-  for (const reviewItem of await listReadingReviewItems(options)) {
+  const materiallyChanged: ReviewItemState[] = [];
+  const unchanged: ReviewItemState[] = [];
+  const retired: ReviewItemState[] = [];
+  let metadataUpdated = false;
+  const reviewItems = await listReadingReviewItems(options);
+  const currentV2Keys = new Set<string>();
+  const v2PackageIds = new Set<string>();
+  for (const reviewItem of reviewItems) {
+    const pedagogicalFingerprint = reviewItem.item.schemaVersion === 2 ? reviewItem.item.pedagogicalFingerprint : undefined;
     const state = createInitialReviewState(
       {
         packageId: reviewItem.packageId,
         packageVersion: reviewItem.packageVersion,
         ...(reviewItem.sourcePath === undefined ? {} : { sourcePath: reviewItem.sourcePath }),
-        itemId: reviewItem.item.id
+        itemId: reviewItem.item.id,
+        ...(pedagogicalFingerprint === undefined ? {} : { pedagogicalFingerprint })
       },
       options.now
     );
-    if (store.items.some((existing) => reviewIdentityKey(existing) === reviewIdentityKey(state))) {
+    const key = reviewIdentityKey(state);
+    if (pedagogicalFingerprint !== undefined) {
+      currentV2Keys.add(key);
+      v2PackageIds.add(reviewItem.packageId);
+    }
+    const existing = store.items.find((candidate) => reviewIdentityKey(candidate) === key);
+    if (existing === undefined || existing.retiredAt !== undefined) {
+      created.push(state);
+      store = upsertReviewItemState(store, state, options.now);
       continue;
     }
-    created.push(state);
-    store = upsertReviewItemState(store, state, options.now);
+    if (pedagogicalFingerprint === undefined) continue;
+    if (existing.pedagogicalFingerprint !== pedagogicalFingerprint) {
+      materiallyChanged.push(state);
+      store = upsertReviewItemState(store, state, options.now);
+      continue;
+    }
+    const preserved = {
+      ...existing,
+      packageVersion: reviewItem.packageVersion,
+      ...(reviewItem.sourcePath === undefined ? {} : { sourcePath: reviewItem.sourcePath })
+    };
+    metadataUpdated ||= existing.packageVersion !== reviewItem.packageVersion || existing.sourcePath !== reviewItem.sourcePath;
+    unchanged.push(preserved);
+    store = upsertReviewItemState(store, preserved, options.now);
   }
-  const progressPath = created.length === 0 ? reviewProgressStorePath(progressDir) : await saveReviewProgressStore(store, progressDir);
-  return { created, progressPath };
+  for (const existing of [...store.items]) {
+    if (existing.pedagogicalFingerprint === undefined || !v2PackageIds.has(existing.packageId) || currentV2Keys.has(reviewIdentityKey(existing)) || existing.retiredAt !== undefined) continue;
+    const retiredState = { ...existing, status: "suspended" as const, retiredAt: options.now };
+    retired.push(retiredState);
+    store = upsertReviewItemState(store, retiredState, options.now);
+  }
+  const changed = created.length + materiallyChanged.length + retired.length > 0 || metadataUpdated;
+  const progressPath = changed ? await saveReviewProgressStore(store, progressDir) : reviewProgressStorePath(progressDir);
+  return { created, materiallyChanged, unchanged, retired, progressPath };
 }
 
 export async function listIntegratedDueReviewItems(options: ListIntegratedDueReviewOptions): Promise<readonly ReviewItemState[]> {
@@ -233,6 +272,7 @@ export async function recordReadingReviewAnswer(options: RecordReadingReviewAnsw
     packageVersion: reviewItem.packageVersion,
     ...(reviewItem.sourcePath === undefined ? {} : { sourcePath: reviewItem.sourcePath }),
     itemId: reviewItem.item.id,
+    ...(reviewItem.item.schemaVersion === 2 ? { pedagogicalFingerprint: reviewItem.item.pedagogicalFingerprint } : {}),
     rating: options.rating,
     reviewedAt: options.reviewedAt
   });
@@ -284,14 +324,31 @@ async function findReadingReviewItem(options: RenderReadingReviewItemOptions | R
 }
 
 async function selectInstalledPackages(options: ReadingReviewOptions): Promise<readonly InstalledPackageRecord[]> {
-  return (await listInstalledContentPackages(options.dataDir))
+  const matches = (await listInstalledContentPackages(options.dataDir))
     .filter((record) => record.capabilities?.includes("core-review") || (record.capabilities === undefined && record.contentType === "language-curriculum"))
     .filter((record) => options.packageId === undefined || record.packageId === options.packageId || record.relatedPackageIds?.includes(options.packageId))
-    .filter((record) => options.packageVersion === undefined || record.packageVersion === options.packageVersion)
+    .filter((record) => options.packageVersion === undefined || record.packageVersion === options.packageVersion || record.relatedPackageIds?.includes(options.packageId ?? "") === true)
     .sort((left, right) => {
       const packageOrder = left.packageId.localeCompare(right.packageId);
       return packageOrder === 0 ? left.packageVersion.localeCompare(right.packageVersion) : packageOrder;
     });
+  if (options.packageVersion !== undefined) return matches;
+  const newest = new Map<string, InstalledPackageRecord>();
+  for (const record of matches) {
+    const previous = newest.get(record.packageId);
+    if (previous === undefined || comparePackageVersions(record.packageVersion, previous.packageVersion) > 0) newest.set(record.packageId, record);
+  }
+  return [...newest.values()];
+}
+
+function comparePackageVersions(left: string, right: string): number {
+  const leftParts = left.split(".").map(Number);
+  const rightParts = right.split(".").map(Number);
+  for (let index = 0; index < 3; index += 1) {
+    const difference = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
+    if (difference !== 0) return difference;
+  }
+  return 0;
 }
 
 async function safeReadablePathSet(contentPackage: InstalledPackageRecord, dataDir?: string): Promise<ReadonlySet<string>> {
