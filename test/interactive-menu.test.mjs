@@ -6,6 +6,7 @@ import { test } from "node:test";
 
 import { createCommandRegistry, resolveCliCommand } from "../dist/apps/cli/main.js";
 import {
+  applyLanguageSpecificReadableContentMenuPolicy,
   buildLanguageTree,
   buildLanguageMenuItems,
   buildModuleTree,
@@ -195,6 +196,45 @@ test("installed language package discovery is generic and normalizes curriculum 
     "com.sleepymario.language.spanish",
     "com.sleepymario.language.vietnamese"
   ]);
+});
+
+test("Vietnamese menu policy pins Foundation chapters independently of package input order", () => {
+  const item = (filePath, label, curriculumChapterNumber) => ({
+    label,
+    kind: "readable-content",
+    filePath,
+    ...(curriculumChapterNumber === undefined ? {} : { curriculumChapterType: "foundation", curriculumChapterNumber })
+  });
+  const shuffled = [
+    item("units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md", "Chapter 40 -- Later"),
+    item("units/vietnamese-foundation/chapter-004-final-consonants/chapter.md", "Foundation Chapter 4 -- Final Consonants", 4),
+    item("units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "Chapter 1 -- Greetings"),
+    item("units/vietnamese-foundation/chapter-002-tones/chapter.md", "Foundation Chapter 2 -- Tones", 2),
+    item("units/vietnamese-foundation/chapter-005-audio-dependent-drills/chapter.md", "Foundation Chapter 5 -- Drills", 5),
+    item("units/vietnamese-foundation/chapter-001-alphabet/chapter.md", "Foundation Chapter 1 -- Alphabet", 1),
+    item("units/vietnamese-core/chapter-002-basic-sentences-2/chapter.md", "Chapter 2 -- Introductions"),
+    item("units/vietnamese-foundation/chapter-003-vowels/chapter.md", "Foundation Chapter 3 -- Vowels", 3)
+  ];
+
+  const ordered = applyLanguageSpecificReadableContentMenuPolicy("com.sleepymario.language.vietnamese", shuffled);
+
+  assert.deepEqual(ordered.slice(0, 5).map(({ label }) => label), [
+    "Foundation Ch 1",
+    "Foundation Ch 2",
+    "Foundation Ch 3",
+    "Foundation Ch 4",
+    "Foundation Ch 5"
+  ]);
+  assert.equal(ordered[5]?.label, "Chapter 1 -- Greetings");
+  assert.equal(ordered.at(-1)?.label, "Chapter 40 -- Later");
+  assert.deepEqual(
+    applyLanguageSpecificReadableContentMenuPolicy("com.sleepymario.language.vietnamese", [...shuffled].reverse()).map(({ filePath }) => filePath),
+    ordered.map(({ filePath }) => filePath)
+  );
+
+  const dutch = applyLanguageSpecificReadableContentMenuPolicy("com.sleepymario.language.dutch", shuffled);
+  assert.equal(dutch.some(({ label }) => label === "Foundation Chapter 1 -- Alphabet"), true);
+  assert.equal(dutch[0]?.label, "Chapter 1 -- Greetings");
 });
 
 test("new language package IDs appear without hard-coded menu entries", () => {
@@ -695,6 +735,57 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
   }
 });
 
+test("Vietnamese read content starts with five abbreviated Foundation chapters before canonical Chapter 1", async () => {
+  const fixture = await createInstalledLanguageFixture(["vietnamese-curriculum"], ["com.sleepymario.language.vietnamese"]);
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const vietnamese = tree.children.find((node) => node.label === "Vietnamese");
+    const readContent = vietnamese.children.find((node) => node.label === "Read content");
+
+    assert.deepEqual(readContent.children.slice(0, 5).map((node) => node.label), [
+      "Foundation Ch 1",
+      "Foundation Ch 2",
+      "Foundation Ch 3",
+      "Foundation Ch 4",
+      "Foundation Ch 5"
+    ]);
+    assert.deepEqual(readContent.children.slice(0, 5).map((node) => node.filePath), [
+      "units/vietnamese-foundation/chapter-001-alphabet-and-orthography/chapter.md",
+      "units/vietnamese-foundation/chapter-002-tones/chapter.md",
+      "units/vietnamese-foundation/chapter-003-vowels-and-diphthongs/chapter.md",
+      "units/vietnamese-foundation/chapter-004-final-consonants-and-pronunciation-contrasts/chapter.md",
+      "units/vietnamese-foundation/chapter-005-audio-dependent-drills/chapter.md"
+    ]);
+    assert.equal(readContent.children[5]?.filePath, "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md");
+    assert.equal(readContent.children.some((node) => node.filePath === "units/vietnamese-core/chapter-010-basic-sentences-10/chapter.md"), true);
+    assert.equal(readContent.children.some((node) => /units\/vietnamese-core\/chapter-(?:0*(?:1[1-9]|[2-9]\d)|\d{4,})/u.test(node.filePath ?? "")), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Vietnamese menu exposes both authoritative Chapters 1-10 review decks", async () => {
+  const fixture = await createInstalledLanguageFixture(
+    ["vietnamese-curriculum", "vietnamese-core-reviews"],
+    ["com.sleepymario.language.vietnamese"]
+  );
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const vietnamese = tree.children.find((node) => node.label === "Vietnamese");
+    const reviewDecks = vietnamese.children.find((node) => node.label === "Review decks");
+    assert.ok(reviewDecks);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 1-5"), true, reviewDecks.children.map((node) => node.label).join(", "));
+    const first = reviewDecks.children.find((node) => node.label === "Chapter 1-5");
+    const second = reviewDecks.children.find((node) => node.label === "Chapter 6-10");
+    assert.equal(first?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
+    assert.equal(second?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
+    assert.equal(first?.itemCount, 20);
+    assert.equal(second?.itemCount, 20);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("Korean read content tree starts with fixed Hangul chapter entries and keeps review deck read entries", async () => {
   const fixture = await createInstalledLanguageFixture(["korean-curriculum"], ["com.sleepymario.language.korean"]);
   try {
@@ -1132,6 +1223,11 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
       label: "Read content",
       kind: "read-section",
       children: [{
+        id: "foundation-1",
+        label: "Foundation Ch 1",
+        kind: "content",
+        filePath: "units/vietnamese-foundation/chapter-001-alphabet/chapter.md"
+      }, {
         id: "hangul-1",
         label: "Chapter 1 -- Vowels",
         kind: "content",
@@ -1148,9 +1244,10 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
     }]
   };
   const expanded = new Set(["whacksmacker", "read-content"]);
-  const selectedHangulOutput = renderTwoPaneLanguageTree(tree, expanded, 2, "Preview", true);
-  const selectedChapterOutput = renderTwoPaneLanguageTree(tree, expanded, 3, "Preview", true);
-  const selectedGrammarOutput = renderTwoPaneLanguageTree(tree, expanded, 4, "Preview", true);
+  const selectedFoundationOutput = renderTwoPaneLanguageTree(tree, expanded, 2, "Preview", true);
+  const selectedHangulOutput = renderTwoPaneLanguageTree(tree, expanded, 3, "Preview", true);
+  const selectedChapterOutput = renderTwoPaneLanguageTree(tree, expanded, 4, "Preview", true);
+  const selectedGrammarOutput = renderTwoPaneLanguageTree(tree, expanded, 5, "Preview", true);
   const reviewDeckOutput = renderTwoPaneLanguageTree({
     id: "whacksmacker",
     label: "WhackSmacker",
@@ -1167,21 +1264,24 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
       }]
     }]
   }, new Set(["whacksmacker", "review-decks"]), 0, "Preview", true);
-  const output = `${selectedHangulOutput}\n${selectedChapterOutput}\n${selectedGrammarOutput}\n${reviewDeckOutput}`;
+  const output = `${selectedFoundationOutput}\n${selectedHangulOutput}\n${selectedChapterOutput}\n${selectedGrammarOutput}\n${reviewDeckOutput}`;
   const reviewDeckColor = "\x1b[33m";
   const selectedStyle = "\x1b[7m\x1b[1m";
   const reset = "\x1b[0m";
   const stripped = stripAnsi(output);
 
   assert.match(reviewDeckOutput, new RegExp(`${escapeRegExp(reviewDeckColor)}[^\\x1b]*Ch 1-5${escapeRegExp(reset)}`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Foundation Ch 1${escapeRegExp(reset)}`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Han Gul 1${escapeRegExp(reset)} -- Vowels`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Ch 1${escapeRegExp(reset)} -- Names`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Grammar${escapeRegExp(reset)} -- Easy`, "u"));
   assert.doesNotMatch(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Names`, "u"));
   assert.doesNotMatch(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Easy`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(reviewDeckColor)}Foundation Ch 1`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(reviewDeckColor)}Han Gul 1`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(reviewDeckColor)}Ch 1`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(reviewDeckColor)}Grammar`, "u"));
+  assert.match(stripped, /Foundation Ch 1/u);
   assert.match(stripped, /Han Gul 1 -- Vowels/u);
   assert.match(stripped, /Ch 1 -- Names and First/u);
   assert.match(stripped, /Grammar -- Easy/u);
@@ -1305,7 +1405,7 @@ test("two-pane renderer colors review deck rows by review status", () => {
 test("review deck tree status repaints after review progress changes", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
-    const now = "2026-07-10T00:00:00Z";
+    const now = new Date().toISOString().replace(/\.\d{3}Z$/u, "Z");
     await syncReadingReviewItems({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.dutch",

@@ -49,6 +49,35 @@ test("Vietnamese package targets use the approved versions and narrowly scoped i
   const targets = new Map(contentPackageGeneratorTargets.map((target) => [target.id, target]));
   assert.equal(targets.get("vietnamese-curriculum")?.packageVersion, "0.2.0");
   assert.equal(targets.get("vietnamese-curriculum")?.contentSchemaVersion, "1.0.0");
+  assert.deepEqual(targets.get("vietnamese-curriculum")?.readingContentInclude, [
+    "README.md",
+    "philosophy.md",
+    "scope.md",
+    "curriculum-map.md",
+    "progress.md",
+    "backlog.md",
+    "decisions.md",
+    "geography-ledger.json",
+    "name-pools",
+    "units/README.md",
+    "units/vietnamese-foundation",
+    "units/vietnamese-core/README.md",
+    "units/vietnamese-core/cumulative-ledger.md",
+    "units/vietnamese-core/chapter-001-basic-sentences-1",
+    "units/vietnamese-core/chapter-002-basic-sentences-2",
+    "units/vietnamese-core/chapter-003-basic-sentences-3",
+    "units/vietnamese-core/chapter-004-basic-sentences-4",
+    "units/vietnamese-core/chapter-005-basic-sentences-5",
+    "units/vietnamese-core/chapter-001-005-grammar-easy",
+    "units/vietnamese-core/chapter-001-005-grammar-hard",
+    "units/vietnamese-core/chapter-006-basic-sentences-6",
+    "units/vietnamese-core/chapter-007-basic-sentences-7",
+    "units/vietnamese-core/chapter-008-basic-sentences-8",
+    "units/vietnamese-core/chapter-009-basic-sentences-9",
+    "units/vietnamese-core/chapter-010-basic-sentences-10",
+    "units/vietnamese-core/chapter-006-010-grammar-easy",
+    "units/vietnamese-core/chapter-006-010-grammar-hard"
+  ]);
   assert.equal(targets.get("vietnamese-core-reviews")?.packageVersion, "0.2.0");
   assert.deepEqual(targets.get("vietnamese-core-reviews")?.include, [
     "README.md",
@@ -613,15 +642,12 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-001-005-grammar-hard/chapter.md"), true);
     assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-006-010-grammar-easy/chapter.md"), true);
     assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-006-010-grammar-hard/chapter.md"), true);
-    assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-011-basic-sentences-11/chapter.md"), true);
-    assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-026-basic-sentences-26/chapter.md"), true);
-    assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-030-basic-sentences-30/chapter.md"), true);
-    assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-026-030-grammar-easy/chapter.md"), true);
-    assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-026-030-grammar-hard/chapter.md"), true);
-    for (const chapter of [36, 37, 38, 39, 40]) {
-      assert.equal(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-0${chapter}-basic-sentences-${chapter}/chapter.md`), true);
+    assert.equal(readingContent.files.some((file) => /units\/vietnamese-core\/chapter-(?:0*(?:1[1-9]|[2-9]\d)|\d{4,})/u.test(file.path)), false);
+    assert.equal(readingContent.files.some((file) => /units\/vietnamese-core\/chapter-(?:011-015|016-020|021-025|026-030|031-035|036-040)-grammar-(?:easy|hard)/u.test(file.path)), false);
+    for (const rootDocument of ["README.md", "philosophy.md", "scope.md", "curriculum-map.md", "progress.md", "backlog.md", "decisions.md"]) {
+      assert.equal(readingContent.files.some((file) => file.path === rootDocument), true, `missing ${rootDocument}`);
     }
-    assertVietnameseChapters3640(readingContent.files);
+    assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/cumulative-ledger.md"), true);
     assert.ok(chapter9);
     assert.match(chapter9.text, /VIE-GRAMMAR-009/u);
     assert.match(chapter9.text, /S \+ đi \+ place/u);
@@ -657,56 +683,6 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     await rm(directory, { recursive: true, force: true });
   }
 });
-
-function assertVietnameseChapters3640(files) {
-  const expectedTypes = new Map([[36, "narrative"], [37, "dialogue"], [38, "narrative"], [39, "dialogue"], [40, "narrative"]]);
-  const expectedCategories = new Map([
-    [36, ["connector: concessive contrast", "aspect: completive"]],
-    [37, ["connector: additive discourse linker", "speech act: polite request"]],
-    [38, ["connector: temporal subordination", "degree: gradual change"]],
-    [39, ["connector: spoken consequence", "modality: permission"]],
-    [40, ["connector: simultaneous coordination", "voice: passive-like affected construction"]]
-  ]);
-  const grammarIds = [];
-
-  for (const [chapter, expectedType] of expectedTypes) {
-    const path = `units/vietnamese-core/chapter-0${chapter}-basic-sentences-${chapter}/chapter.md`;
-    const markdown = files.find((file) => file.path === path)?.text;
-    assert.ok(markdown, `missing Vietnamese chapter ${chapter}`);
-    const analysis = analyzeChapterReadFormatForTest(markdown);
-    assert.equal(analysis.detected, expectedType, `Vietnamese chapter ${chapter} read format`);
-    assert.deepEqual(analysis.genericSpeakerLabels, []);
-    assert.equal(analysis.dialogueBlockWithoutIntro, false);
-    assert.equal(analysis.misalignedDialogueColons, false);
-
-    const grammarPoint = markdown.match(/^grammar_point:\s*"([^"]+)"$/mu)?.[1] ?? "";
-    const ids = [...grammarPoint.matchAll(/VIE-GRAMMAR-\d{3}[AB]/gu)].map((match) => match[0]);
-    assert.equal(ids.length, 2, `Vietnamese chapter ${chapter} must introduce two grammar IDs`);
-    grammarIds.push(...ids);
-
-    const categories = (markdown.match(/^grammar_categories:\s*"([^"]+)"$/mu)?.[1] ?? "").split("; ");
-    assert.deepEqual(categories, expectedCategories.get(chapter));
-    assert.equal(categories.filter((category) => category.startsWith("connector:")).length, 1);
-
-    const readSection = extractReadSectionsForFormatTest(markdown)[0];
-    const learnerLines = readSection.lines.filter((line) => line.trim().length > 0 && line !== "```text" && line !== "```");
-    assert.ok(learnerLines.length >= 10 && learnerLines.length <= 30, `Vietnamese chapter ${chapter} read-line count`);
-    const vocabularyRows = markdown.split("\n").filter((line) => /^\| [^|-].*\|$/u.test(line) && !/^\| Vietnamese /u.test(line));
-    assert.ok(vocabularyRows.length >= 6 && vocabularyRows.length <= 20, `Vietnamese chapter ${chapter} vocabulary count`);
-    assert.doesNotMatch(markdown, /placeholder|TODO|TBD|\b[ABC]\s*:/iu);
-  }
-
-  assert.equal(grammarIds.length, 10);
-  assert.equal(new Set(grammarIds).size, 10);
-
-  const easy = files.find((file) => file.path === "units/vietnamese-core/chapter-036-040-grammar-easy/chapter.md")?.text ?? "";
-  const hard = files.find((file) => file.path === "units/vietnamese-core/chapter-036-040-grammar-hard/chapter.md")?.text ?? "";
-  const inventory = (markdown) => [...markdown.matchAll(/^- (VIE-GRAMMAR-\d{3}[AB] -- .+)$/gmu)].map((match) => match[1]);
-  assert.equal(easy.includes("Chapters 36-40"), true);
-  assert.equal(hard.includes("Chapters 36-40"), true);
-  assert.deepEqual(inventory(easy), inventory(hard));
-  assert.equal(inventory(easy).length, 10);
-}
 
 test("content package generator creates a valid Dutch package", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-dutch-package-"));

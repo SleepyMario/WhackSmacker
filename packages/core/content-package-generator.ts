@@ -96,6 +96,7 @@ export interface ContentPackageGeneratorTarget {
   readonly dependencies?: ContentPackageManifest["dependencies"];
   readonly license?: ContentPackageManifest["license"];
   readonly include: readonly string[];
+  readonly readingContentInclude?: readonly string[];
 }
 
 export interface GenerateContentPackageOptions {
@@ -341,6 +342,35 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "review-decks",
       "research",
       "units"
+    ],
+    readingContentInclude: [
+      "README.md",
+      "philosophy.md",
+      "scope.md",
+      "curriculum-map.md",
+      "progress.md",
+      "backlog.md",
+      "decisions.md",
+      "geography-ledger.json",
+      "name-pools",
+      "units/README.md",
+      "units/vietnamese-foundation",
+      "units/vietnamese-core/README.md",
+      "units/vietnamese-core/cumulative-ledger.md",
+      "units/vietnamese-core/chapter-001-basic-sentences-1",
+      "units/vietnamese-core/chapter-002-basic-sentences-2",
+      "units/vietnamese-core/chapter-003-basic-sentences-3",
+      "units/vietnamese-core/chapter-004-basic-sentences-4",
+      "units/vietnamese-core/chapter-005-basic-sentences-5",
+      "units/vietnamese-core/chapter-001-005-grammar-easy",
+      "units/vietnamese-core/chapter-001-005-grammar-hard",
+      "units/vietnamese-core/chapter-006-basic-sentences-6",
+      "units/vietnamese-core/chapter-007-basic-sentences-7",
+      "units/vietnamese-core/chapter-008-basic-sentences-8",
+      "units/vietnamese-core/chapter-009-basic-sentences-9",
+      "units/vietnamese-core/chapter-010-basic-sentences-10",
+      "units/vietnamese-core/chapter-006-010-grammar-easy",
+      "units/vietnamese-core/chapter-006-010-grammar-hard"
     ]
   },
   {
@@ -652,7 +682,7 @@ const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLed
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
-    ? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath)
+    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath))]
     : [...target.include];
   if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path)) separatedIncludes.push(target.license.path);
   if (target.capabilities?.includes("reading-curriculum")) {

@@ -116,6 +116,8 @@ export interface MenuItem {
   readonly reviewStatus?: ReviewDeckMenuStatusKind;
   readonly dueCardCount?: number;
   readonly reviewStatusText?: string;
+  readonly curriculumChapterType?: string;
+  readonly curriculumChapterNumber?: number;
 }
 
 export type LanguageTreeNodeKind =
@@ -416,6 +418,44 @@ export function readableContentEntriesToMenuItems(entries: readonly ReadableCont
       filePath: entry.path
     }))
     .sort((left, right) => compareReadableContentLabels(left.filePath ?? left.label, right.filePath ?? right.label));
+}
+
+export function applyLanguageSpecificReadableContentMenuPolicy(
+  packageId: string,
+  items: readonly MenuItem[]
+): readonly MenuItem[] {
+  const canonicallyOrdered = [...items].sort((left, right) =>
+    compareReadableContentLabels(left.filePath ?? left.label, right.filePath ?? right.label)
+  );
+  if (packageId !== "com.sleepymario.language.vietnamese") {
+    return canonicallyOrdered;
+  }
+
+  const foundation: { readonly chapter: number; readonly item: MenuItem }[] = [];
+  const remaining: MenuItem[] = [];
+  for (const item of canonicallyOrdered) {
+    const chapter = vietnameseFoundationChapterNumber(item);
+    if (chapter === undefined) {
+      remaining.push(item);
+    } else {
+      foundation.push({ chapter, item: { ...item, label: `Foundation Ch ${chapter}` } });
+    }
+  }
+  foundation.sort((left, right) => left.chapter - right.chapter);
+  return [...foundation.map(({ item }) => item), ...remaining];
+}
+
+function vietnameseFoundationChapterNumber(item: MenuItem): number | undefined {
+  if (
+    item.curriculumChapterType !== "foundation" ||
+    item.curriculumChapterNumber === undefined ||
+    item.filePath?.startsWith("units/vietnamese-foundation/") !== true ||
+    !item.filePath.endsWith("/chapter.md")
+  ) {
+    return undefined;
+  }
+  const chapter = item.curriculumChapterNumber;
+  return chapter >= 1 && chapter <= 5 ? chapter : undefined;
 }
 
 export function getLinguisticTermsMenuItems(): readonly MenuItem[] {
@@ -3297,12 +3337,32 @@ async function labelReadableContentEntries(
         path: item.filePath,
         locale: options.locale
       });
-      labeled.push({ ...item, label: markdownContentLabel(content.text, item.filePath, options.locale) });
+      labeled.push({
+        ...item,
+        label: markdownContentLabel(content.text, item.filePath, options.locale),
+        ...curriculumChapterMenuMetadata(content.text)
+      });
     } catch {
       labeled.push(item);
     }
   }
-  return labeled;
+  return applyLanguageSpecificReadableContentMenuPolicy(languagePackage.packageId, labeled);
+}
+
+function curriculumChapterMenuMetadata(text: string): Pick<MenuItem, "curriculumChapterType" | "curriculumChapterNumber"> {
+  const frontMatter = text.match(/^---\s*\n([\s\S]*?)\n---(?:\n|$)/u)?.[1];
+  if (frontMatter === undefined) {
+    return {};
+  }
+  const type = frontMatter.match(/^type:\s*["']?([^\s"'#]+)["']?\s*$/mu)?.[1];
+  const chapterText = frontMatter.match(/^foundation_chapter:\s*["']?(\d+)["']?\s*$/mu)?.[1];
+  if (type === undefined || chapterText === undefined) {
+    return {};
+  }
+  return {
+    curriculumChapterType: type,
+    curriculumChapterNumber: Number.parseInt(chapterText, 10)
+  };
 }
 
 function isLanguageLikePackage(packageId: string): boolean {
@@ -3723,7 +3783,7 @@ function reviewDeckContentStyle(): string {
 }
 
 function reviewDeckColoredMenuTokenPattern(): RegExp {
-  return /\b(?:Han Gul\s+\d+(?=\s+--)|Ch\s+\d+(?=\s+--)|Grammar(?=\s+--))/u;
+  return /\b(?:Foundation Ch\s+\d+(?=$)|Han Gul\s+\d+(?=\s+--)|Ch\s+\d+(?=\s+--)|Grammar(?=\s+--))/u;
 }
 
 function displayTreeLabel(node: LanguageTreeNode): string {
