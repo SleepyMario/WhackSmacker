@@ -336,6 +336,7 @@ export interface LanguageCurriculumPolicy {
   readonly grammarSummaryAfterChapters: readonly number[];
   readonly largeNumberCoverageRules: readonly LargeNumberCoverageRule[];
   readonly vocabularyContinuityRules: readonly string[];
+  readonly reviewDeckRules: readonly string[];
   readonly strictExampleRules: readonly string[];
   readonly surfaceFormRules: readonly string[];
 }
@@ -369,6 +370,9 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Lexicalized multiword expressions have their own complete entry and sense; internal untaught morphology remains fixed or unanalyzed rather than implicitly productive.",
     "Review and reintroduction retain the original first-introduction chapter and do not count toward new-vocabulary quotas.",
     "Learner-facing vocabulary Notes use concise labels only and never expose internal lexical identity, citation, history, or morphology fields.",
+    "Normal vocabulary Notes use accessible broad categories; Expert may use only concise grammatical subclasses supported by current authored or structured data, and Developer may retain raw fields.",
+    "Unsupported Expert vocabulary subclasses are not invented, internal metadata stays hidden, and review decks are never rewritten merely to refine read-content Notes.",
+    "Normal reading vocabulary lists hide the raw structured Usage field; necessary distinctions are rewritten as clear learner-facing prose.",
     "Where infinitives apply, a differing encountered verb form stays primary and is followed by a bare-infinitive row with a natural English infinitive and exactly Infinitive in Notes, in the same uninterrupted lexical entry.",
     "The infinitive row shares lexical and sense identity with the encountered row; languages without an applicable infinitive do not invent one, and full structured metadata remains internal.",
     "First-introduced verbs store canonical regularityStatus and optional language-specific verbClass; later forms and reviews inherit them.",
@@ -387,6 +391,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Grammar Easy and Grammar Hard use the same canonical grammar ID and exact learner-facing pattern for every shared point."
   ],
   grammarPatternDisplayRules: [
+    "Every visible top-level grammar section in Normal, Expert, and Developer is named exactly Grammar; Developer distinguishes both variants only with internal Normal and Expert labels.",
     "Grammar ID, learner-facing pattern, learner-facing explanation, and developer description remain separate structured fields.",
     "Chapter and Easy/Hard inventories display the learner-facing pattern and never fall back to a developer description.",
     "Easy and Hard use the same canonical learner-facing pattern for each shared grammar ID.",
@@ -506,6 +511,14 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Chapter 6, Chapter 11, Chapter 16, and later five-chapter block starts must not reset vocabulary.",
     "New vocabulary after Chapter 1 must be deliberate and supported by read content or clear curriculum progression.",
     "Country and place vocabulary must be worked into read content before becoming normal core review content."
+  ],
+  reviewDeckRules: [
+    "One normal vocabulary review deck follows every completed consecutive five-chapter block.",
+    "The deck contains exactly one card for every vocabulary item or lexical sense first introduced in that block; there is no fixed card count.",
+    "Reused vocabulary retains its original first-introduction chapter and is not added again as new in a later block.",
+    "Every normal card prompts in the target language and answers in the source language, with no reverse duplicate.",
+    "Normal vocabulary decks contain no grammar, comprehension, cloze, multiple-choice, production, or distractor-based questions.",
+    "Normal learner-facing five-chapter review decks hide the raw structured Notes field while retaining it for authoring, validation, provenance, migrations, and debugging."
   ],
   strictExampleRules: [
     "Normal core review entries require one to three literal read-content examples.",

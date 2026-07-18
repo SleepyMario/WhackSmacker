@@ -96,6 +96,7 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   if (!isRecord(manifest)) {
     return { valid: false, errors: ["Manifest must be a JSON object."] };
   }
+  validateNoReviewMenuStatusColorMetadata(manifest, "manifest", errors);
 
   for (const field of requiredManifestFields) {
     if (!(field in manifest)) {
@@ -127,6 +128,27 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   validateLocalization(manifest.localization, errors);
 
   return { valid: errors.length === 0, errors };
+}
+
+function validateNoReviewMenuStatusColorMetadata(value: unknown, path: string, errors: string[]): void {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => validateNoReviewMenuStatusColorMetadata(item, `${path}[${index}]`, errors));
+    return;
+  }
+  if (!isRecord(value)) return;
+  for (const [key, child] of Object.entries(value)) {
+    if (isReviewMenuStatusColorMetadataKey(key)) {
+      errors.push(`${path}.${key} is forbidden: review-menu status colours are application-owned.`);
+    } else {
+      validateNoReviewMenuStatusColorMetadata(child, `${path}.${key}`, errors);
+    }
+  }
+}
+
+function isReviewMenuStatusColorMetadataKey(key: string): boolean {
+  return key === "menuStatusPresentation"
+    || /^(?:review(?:Deck)?Menu)?Status(?:Color|Colour|Style)$/iu.test(key)
+    || /^(?:notStarted|noCardsToReview|hasCardsToReview|finished)(?:Color|Colour|Style)$/iu.test(key);
 }
 
 function validateCapabilities(value: unknown, errors: string[]): void {

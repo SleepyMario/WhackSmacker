@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:subject + verb + niet]]. Use [[grammar:niet]] to say that an action or description is not true.",
+      "expert": "This chapter introduces post-finite negator [[grammar:niet]] in simple action and predicative clauses, contrasting it with inherited nominal negation by [[grammar:geen]]."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### action + niet\n\nPut [[grammar:niet]] after the action word in [[grammar:Zij werkt niet.]]. It also negates a description in [[grammar:Het huis is niet druk.]]",
+      "expert": "#### subject + verb + niet\n\nThe attested pattern places [[grammar:niet]] after the finite verb in [[grammar:Zij werkt niet.]] and before the predicative adjective in [[grammar:Het huis is niet druk.]]. Broader scope and placement remain outside this chapter."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:geen]] before an indefinite noun, as in [[grammar:Zij krijgt geen bezoek.]]",
+      "expert": "Contrast sentential or predicative [[grammar:niet]] with determiner-like [[grammar:geen]] in [[grammar:Zij krijgt geen bezoek.]]. The chapter licenses only these transparent environments."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Het is avond.]] sets the time.\n- [[grammar:Marieke is moe.]] says how Marieke feels.\n- [[grammar:Zij werkt niet.]] says that she is not working.\n- [[grammar:Marieke blijft thuis.]] says where she stays.\n- [[grammar:Zij krijgt geen bezoek.]] says that she has no visitors.\n- [[grammar:Marieke kookt soep.]] says what she cooks.\n- [[grammar:Zij eet alleen.]] says that she eats alone.\n- [[grammar:Marieke leest de krant.]] names her evening activity.\n- [[grammar:Het huis is niet druk.]] gives a negative description.\n- [[grammar:Het is een rustige avond.]] closes the narrative.",
+    "expert": "- [[grammar:Het is avond.]] is a temporal setting frame.\n- [[grammar:Marieke is moe.]] uses a predicative adjective.\n- [[grammar:Zij werkt niet.]] places [[grammar:niet]] after the finite verb.\n- [[grammar:Marieke blijft thuis.]] combines a strong-verb form with locative [[grammar:thuis]].\n- [[grammar:Zij krijgt geen bezoek.]] uses nominal negator [[grammar:geen]] before an indefinite noun.\n- [[grammar:Marieke kookt soep.]] and [[grammar:Marieke leest de krant.]] are affirmative third-person action clauses.\n- [[grammar:Zij eet alleen.]] uses an adverbial complement.\n- [[grammar:Het huis is niet druk.]] places [[grammar:niet]] before a predicative adjective.\n- [[grammar:Het is een rustige avond.]] contains supporting attributive adjective agreement."
+  }
+}

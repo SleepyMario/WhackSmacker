@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Waar woon je?]], the informal question “Where do you live?”",
+      "expert": "This chapter introduces the locative content question [[grammar:Waar woon je?]], with initial interrogative adverb [[grammar:waar]], finite [[grammar:woon]], and informal subject [[grammar:je]]."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Waar woon je?\n\nUse [[grammar:Waar woon je?]] to ask someone you know where they live. Answer with [[grammar:Ik woon in ...]].",
+      "expert": "#### Waar woon je?\n\nIn [[grammar:Waar woon je?]], locative interrogative [[grammar:waar]] occupies first position, followed by finite [[grammar:woon]] and informal subject [[grammar:je]]. The answer reuses the [[grammar:in]]-headed residence frame."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:deze straat]] for the street that is being checked. [[grammar:Je adres klopt.]] means the address is correct.",
+      "expert": "Demonstrative determiner [[grammar:deze]] agrees with common-gender [[grammar:straat]], while [[grammar:klopt]] realizes the restricted ‘be correct’ sense of [[grammar:kloppen]]."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "[[grammar:Je]] is an everyday way to speak to a family member or someone else you know.",
+      "expert": "Informal [[grammar:je]] is appropriate to the family setting; formal residence questions remain outside this chapter."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Daan, dit is een formulier.]] introduces the form.\n- [[grammar:Ja, dit is mijn formulier.]] says it belongs to Daan.\n- [[grammar:Waar woon je?]] asks where Daan lives.\n- [[grammar:Ik woon in Utrecht.]] gives the city.\n- [[grammar:Is dit het adres?]] checks the address.\n- [[grammar:Ja, dit is het adres.]] confirms it.\n- [[grammar:Ik woon in deze straat.]] names the street twice in the dialogue.\n- [[grammar:Je adres klopt.]] says that the address is correct.\n- [[grammar:Prima, dank je.]] closes with thanks.",
+    "expert": "- [[grammar:Daan, dit is een formulier.]] combines a vocative with demonstrative identification.\n- [[grammar:Ja, dit is mijn formulier.]] adds possessive determiner [[grammar:mijn]].\n- [[grammar:Waar woon je?]] uses initial locative interrogative, finite verb, and postverbal subject.\n- [[grammar:Ik woon in Utrecht.]] answers with a proper-name complement of locative [[grammar:in]].\n- [[grammar:Is dit het adres?]] and [[grammar:Ja, dit is het adres.]] reuse the identification-question alternation.\n- [[grammar:Ik woon in deze straat.]] uses demonstrative determiner [[grammar:deze]] in the residence frame.\n- [[grammar:Je adres klopt.]] has possessive subject phrase and finite [[grammar:klopt]].\n- [[grammar:Prima, dank je.]] combines confirmation with a thanking formula."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Ik woon in ...]], a simple way to say where you live.",
+      "expert": "This chapter introduces the residence pattern [[grammar:Ik woon in N]], with intransitive [[grammar:wonen]] and an [[grammar:in]]-headed locative complement. Proper-name and common-noun locations remain inside an elementary present-tense frame."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Ik woon in N\n\nUse [[grammar:Ik woon in N]] to say where you live. Put a city, country, or other place after [[grammar:in]].",
+      "expert": "#### Ik woon in N\n\nCurrent chapter scope: [[grammar:woon]] is the regular first-person singular present of intransitive [[grammar:wonen]]; the residence location is expressed by an [[grammar:in]]-headed prepositional phrase. Broader Dutch adposition choice remains outside this chapter."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:in]] here with cities and countries.",
+      "expert": "The locative complement is obligatory for the taught residence frame but may be pragmatically omitted in richer discourse; that alternation is not introduced here."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These are neutral everyday sentences about where someone lives.",
+      "expert": "The residence construction and place-name forms are standard across Netherlandic and Belgian Dutch."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Ik woon in Rotterdam.]] says that the profile speaker lives in Rotterdam.\n- [[grammar:Rotterdam is een stad.]] identifies Rotterdam as a city.\n- [[grammar:Ik woon in Nederland.]] says that the profile speaker lives in the Netherlands.\n- [[grammar:Nederland is een land.]] identifies the Netherlands as a country.\n- [[grammar:Dit is mijn straat.]] identifies the profile speaker’s street.\n- [[grammar:Dit is mijn buurt.]] identifies the profile speaker’s neighborhood.\n- [[grammar:Amsterdam is een stad.]] identifies Amsterdam as a city.\n- [[grammar:België is een land.]] identifies Belgium as a country.",
+    "expert": "- [[grammar:Ik woon in Rotterdam.]] and [[grammar:Ik woon in Nederland.]] use city-name and country-name complements of locative [[grammar:in]].\n- [[grammar:Rotterdam is een stad.]], [[grammar:Amsterdam is een stad.]], [[grammar:Nederland is een land.]], and [[grammar:België is een land.]] use copular classification with indefinite noun complements.\n- [[grammar:Dit is mijn straat.]] and [[grammar:Dit is mijn buurt.]] reuse demonstrative identification with possessive noun phrases."
+  }
+}

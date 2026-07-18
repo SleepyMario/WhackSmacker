@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Ik heb ...]], a simple way to say what you have.",
+      "expert": "This chapter introduces first-person transitive possession with [[grammar:Ik heb N]]. [[grammar:heb]] is the suppletive first-person singular present of [[grammar:hebben]], followed by a nominal object."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Ik heb N\n\nUse [[grammar:Ik heb N]] to say that you have something. [[grammar:Ik]] means “I,” and [[grammar:heb]] means “have.”",
+      "expert": "#### Ik heb N\n\nCurrent chapter scope: [[grammar:heb]] is the first-person singular present of irregular [[grammar:hebben]] in a transitive possession clause. The object may be a count-noun phrase or an articleless mass noun. Expert context: the remaining present-tense forms and auxiliary uses of [[grammar:hebben]] are outside this chapter."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:Ik heb ...]] for something you own or have with you.",
+      "expert": "The chapter uses ordinary alienable possession and immediate availability. It does not yet contrast lexical possession with perfect auxiliary [[grammar:hebben]]."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These are neutral everyday Dutch sentences.",
+      "expert": "The possession frame is standard across Netherlandic and Belgian Dutch; object article choice remains lexical."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Mijn naam is Daan de Vries.]] tells you Daan's name.\n- [[grammar:Ik ben leerling.]] says that Daan is a pupil.\n- [[grammar:Dit is mijn tas.]] identifies Daan's bag.\n- [[grammar:Ik heb de tas.]] says that Daan has the bag.\n- [[grammar:Ik heb de telefoon.]] says that he has the phone.\n- [[grammar:Ik heb een sleutel.]] says that he has a key.\n- [[grammar:Ik heb een appel.]] says that he has an apple.\n- [[grammar:Ik heb brood.]] uses the same pattern with bread.\n- [[grammar:Ik heb een boek.]] says that he has a book.\n- [[grammar:Ik heb geld.]] uses the same pattern with money.\n- [[grammar:Ik heb de fiets.]] says that he has the bicycle.",
+    "expert": "- [[grammar:Mijn naam is Daan de Vries.]] reuses the Chapter 2 identificational frame.\n- [[grammar:Ik ben leerling.]] reuses a bare role noun as a predicative nominal.\n- [[grammar:Dit is mijn tas.]] reuses demonstrative identification with a possessive determiner.\n- [[grammar:Ik heb de tas.]] and [[grammar:Ik heb de telefoon.]] use definite count-noun objects.\n- [[grammar:Ik heb een sleutel.]], [[grammar:Ik heb een appel.]], and [[grammar:Ik heb een boek.]] use indefinite count-noun objects.\n- [[grammar:Ik heb brood.]] and [[grammar:Ik heb geld.]] use articleless mass-noun objects.\n- [[grammar:Ik heb de fiets.]] closes the inventory with another definite object."
+  }
+}

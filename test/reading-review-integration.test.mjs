@@ -128,8 +128,9 @@ test("renderer output works for integrated items and preserves identity", async 
     assert.equal(result.rendered.itemIdentity.packageId, "com.sleepymario.language.memory");
     assert.equal(result.rendered.itemIdentity.packageVersion, "0.1.0");
     assert.equal(result.rendered.itemIdentity.itemId, "hangul/vowels/a");
-    assert.match(result.text, /Prompt/);
-    assert.match(result.text, /Answer/);
+    assert.match(result.text, /Phrase:/);
+    assert.match(result.text, /Answer:/);
+    assert.doesNotMatch(result.text, /Review Prompt|Review Answer|Notes|Metadata/u);
   } finally {
     await fixture.cleanup();
   }
@@ -389,14 +390,14 @@ test("review run shows the front side before reveal prompt and q stops there", a
       "q\n"
     );
 
-    assert.match(result.stdout, /Prompt\n\s+one/);
-    assert.match(result.stdout, /Review Prompt/);
+    assert.match(result.stdout, /Phrase:\n\s+one/);
+    assert.match(result.stdout, /Phrase:/);
     assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
     assert.match(result.stdout, /Review stopped\./);
     assert.doesNotMatch(result.stdout, /com\.sleepymario\.language\.sequence/);
     assert.doesNotMatch(result.stdout, /review-decks\/chapter-001-005\/cards\.tsv/);
     assert.doesNotMatch(result.stdout, /Item:/);
-    assert.doesNotMatch(result.stdout, /Answer\n\s+1/);
+    assert.doesNotMatch(result.stdout, /Answer:\n\s+1/);
     assert.doesNotMatch(result.stdout, /Choose a rating/);
     assert.doesNotMatch(result.stdout, /q\.Press Enter/);
   } finally {
@@ -423,11 +424,11 @@ test("review run shows answer before rating prompt and q stops at rating", async
       "\nq\n"
     );
 
-    const answerIndex = result.stdout.indexOf("Answer\n  1");
+    const answerIndex = result.stdout.indexOf("Answer:\n  1");
     const ratingIndex = result.stdout.indexOf("Choose a rating");
-    assert.match(result.stdout, /Prompt\n\s+one/);
-    assert.match(result.stdout, /Review Prompt/);
-    assert.match(result.stdout, /Review Answer/);
+    assert.match(result.stdout, /Phrase:\n\s+one/);
+    assert.match(result.stdout, /Phrase:/);
+    assert.match(result.stdout, /Answer:/);
     assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
     assert.notEqual(answerIndex, -1);
     assert.notEqual(ratingIndex, -1);
@@ -437,6 +438,7 @@ test("review run shows answer before rating prompt and q stops at rating", async
     assert.doesNotMatch(result.stdout, /review-decks\/chapter-001-005\/cards\.tsv/);
     assert.doesNotMatch(result.stdout, /Item:/);
     assert.doesNotMatch(result.stdout, /Metadata/);
+    assert.doesNotMatch(result.stdout, /Notes|Internal authoring note/u);
     assert.doesNotMatch(result.stdout, /Completed review deck: Chapter 1-5/);
     assert.doesNotMatch(result.stdout, /q\.Press Enter/);
   } finally {
@@ -463,7 +465,7 @@ test("review run accepts numeric ratings without breaking continuation", async (
       "\n3\nn\n"
     );
 
-    assert.match(result.stdout, /Answer\n\s+1/);
+    assert.match(result.stdout, /Answer:\n\s+1/);
     assert.match(result.stdout, /Choose a rating \(1 again \/ 2 hard \/ 3 good \/ 4 easy, or q to stop\):/);
     assert.match(result.stdout, /Completed review deck: Chapter 1-5/);
     assert.match(result.stdout, /Review stopped\./);
@@ -749,7 +751,7 @@ async function createContinuationReviewFixture() {
   const items = {
     schemaVersion: 1,
     items: [
-      memoryItem("deck-001/card-001", "one", "1", sourcePaths[0], "Chapter 1-5"),
+      { ...memoryItem("deck-001/card-001", "one", "1", sourcePaths[0], "Chapter 1-5"), notes: "Internal authoring note." },
       memoryItem("deck-006/card-001", "six", "6", sourcePaths[1], "Chapter 6-10"),
       memoryItem("deck-011/card-001", "eleven", "11", sourcePaths[2], "Chapter 11-15")
     ]
@@ -937,7 +939,7 @@ function sha256(data) {
 }
 
 function firstPromptValue(stdout) {
-  return stdout.match(/Prompt\n\s+(.+)/)?.[1]?.trim();
+  return stdout.match(/Phrase:\n\s+(.+)/)?.[1]?.trim();
 }
 
 function sequenceRandom(values) {

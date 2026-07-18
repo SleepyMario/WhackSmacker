@@ -20,7 +20,10 @@ import {
   removeReadingReviewProgressForPackage,
   syncReadingReviewItems,
   defaultReviewProgressDirectoryForContentDataDirectory,
+  classifyReviewDeckMenuStatus,
   reviewIdentityKey,
+  type ReadingReviewItem,
+  type ReviewItemIdentity,
   type ReviewRating
 } from "../../packages/core";
 import { defaultSettingsDirectoryForContentDataDirectory, loadSourceLanguageSettings, saveSourceLanguage } from "../../src/settings/source-language";
@@ -113,16 +116,39 @@ async function state(options: WebServerOptions) {
   const progressByKey = new Map(progress.items.map(item => [reviewIdentityKey(item), item]));
   const decks = (await listReadingReviewSources({ dataDir: options.dataDir, sourceLocale: locale })).map(source => {
     const deckItems = items.filter(item => item.packageId === source.packageId && item.packageVersion === source.packageVersion && item.sourcePath === source.sourcePath);
-    const states = deckItems.map(item => progressByKey.get(reviewIdentityKey({ packageId: item.packageId, packageVersion: item.packageVersion, sourcePath: item.sourcePath, itemId: item.item.id })));
-    const reviewed = states.filter(item => (item?.reviewCount ?? 0) > 0).length;
-    const due = states.filter(item => item !== undefined && item.nextReviewAt <= now).length;
-    const status = reviewed === 0 ? "not_started" : reviewed === deckItems.length && due === 0 ? "finished" : due > 0 ? "has_cards_to_review" : "no_cards_to_review";
-    return { ...source, title: source.title ?? source.sourcePath.split("/").at(-2) ?? source.sourcePath, reviewed, due, status };
+    const cardIdentities = deckItems.map(readingReviewIdentity);
+    const states = cardIdentities.flatMap(identity => {
+      const saved = progressByKey.get(reviewIdentityKey(identity));
+      return saved === undefined ? [] : [saved];
+    });
+    const classification = classifyReviewDeckMenuStatus({
+      deckId: `${source.packageId}@${source.packageVersion}#${source.sourcePath}`,
+      cardIdentities,
+      savedProgress: states,
+      now
+    });
+    return {
+      ...source,
+      title: source.title ?? source.sourcePath.split("/").at(-2) ?? source.sourcePath,
+      reviewed: states.filter(item => item.reviewCount > 0).length,
+      due: classification.dueCardCount,
+      status: classification.status
+    };
   });
   return { locale, installed, available, decks, review: { total: progress.items.length, due: progress.items.filter(item => item.nextReviewAt <= now).length, reviewed: progress.items.filter(item => item.reviewCount > 0).length } };
 }
 
-async function databaseState(options:WebServerOptions,pool:Pool,user:DatabaseSession){const settings=await userSettings(pool,user.id),selected=await selectedPackages(pool,user.id),keys=new Set(selected.map(x=>x.package_id+"@"+x.package_version)),installed=(await listInstalledContentPackages(options.dataDir)).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)&&x.contentType!=="curriculum-source-language-pack"),available=options.cataloguePath?(await listAvailableContentPackages(options.cataloguePath)).filter(x=>x.contentType!=="curriculum-source-language-pack"):[],now=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z"),items=(await listReadingReviewItems({dataDir:options.dataDir,sourceLocale:settings.locale})).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)),identities=items.map(x=>({packageId:x.packageId,packageVersion:x.packageVersion,...(x.sourcePath?{sourcePath:x.sourcePath}:{}),itemId:x.item.id,...(x.item.schemaVersion===2?{pedagogicalFingerprint:x.item.pedagogicalFingerprint}:{})})),states=await syncUserReviewStates(pool,user.id,identities,now),byKey=new Map(states.map(x=>[reviewIdentityKey(x),x])),sources=(await listReadingReviewSources({dataDir:options.dataDir,sourceLocale:settings.locale})).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)),decks=sources.map(source=>{const deckItems=items.filter(x=>x.packageId===source.packageId&&x.packageVersion===source.packageVersion&&x.sourcePath===source.sourcePath),ss=deckItems.map(x=>byKey.get(reviewIdentityKey({packageId:x.packageId,packageVersion:x.packageVersion,...(x.sourcePath?{sourcePath:x.sourcePath}:{}),itemId:x.item.id,...(x.item.schemaVersion===2?{pedagogicalFingerprint:x.item.pedagogicalFingerprint}:{})}))),reviewed=ss.filter(x=>(x?.reviewCount??0)>0).length,due=ss.filter(x=>x&&x.retiredAt===undefined&&x.nextReviewAt<=now).length;return{...source,title:source.title??source.sourcePath,itemCount:deckItems.length,reviewed,due,status:reviewed===0?"not_started":reviewed===deckItems.length&&due===0?"finished":due>0?"has_cards_to_review":"no_cards_to_review"}}),activeStates=states.filter(x=>x.retiredAt===undefined);return{locale:settings.locale,theme:settings.theme,user:{username:user.username,role:user.role},csrfToken:undefined,installed,available,decks,review:{total:activeStates.length,due:activeStates.filter(x=>x.nextReviewAt<=now).length,reviewed:activeStates.filter(x=>x.reviewCount>0).length}}}
+async function databaseState(options:WebServerOptions,pool:Pool,user:DatabaseSession){const settings=await userSettings(pool,user.id),selected=await selectedPackages(pool,user.id),keys=new Set(selected.map(x=>x.package_id+"@"+x.package_version)),installed=(await listInstalledContentPackages(options.dataDir)).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)&&x.contentType!=="curriculum-source-language-pack"),available=options.cataloguePath?(await listAvailableContentPackages(options.cataloguePath)).filter(x=>x.contentType!=="curriculum-source-language-pack"):[],now=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z"),items=(await listReadingReviewItems({dataDir:options.dataDir,sourceLocale:settings.locale})).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)),identities=items.map(readingReviewIdentity),states=await syncUserReviewStates(pool,user.id,identities,now),byKey=new Map(states.map(x=>[reviewIdentityKey(x),x])),sources=(await listReadingReviewSources({dataDir:options.dataDir,sourceLocale:settings.locale})).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)),decks=sources.map(source=>{const deckItems=items.filter(x=>x.packageId===source.packageId&&x.packageVersion===source.packageVersion&&x.sourcePath===source.sourcePath),cardIdentities=deckItems.map(readingReviewIdentity),ss=cardIdentities.flatMap(identity=>{const saved=byKey.get(reviewIdentityKey(identity));return saved===undefined?[]:[saved]}),classification=classifyReviewDeckMenuStatus({deckId:`${source.packageId}@${source.packageVersion}#${source.sourcePath}`,cardIdentities,savedProgress:ss,now});return{...source,title:source.title??source.sourcePath,itemCount:deckItems.length,reviewed:ss.filter(x=>x.reviewCount>0).length,due:classification.dueCardCount,status:classification.status}}),activeStates=states.filter(x=>x.retiredAt===undefined);return{locale:settings.locale,theme:settings.theme,user:{username:user.username,role:user.role},csrfToken:undefined,installed,available,decks,review:{total:activeStates.length,due:activeStates.filter(x=>x.nextReviewAt<=now).length,reviewed:activeStates.filter(x=>x.reviewCount>0).length}}}
+
+function readingReviewIdentity(item: ReadingReviewItem): ReviewItemIdentity {
+  return {
+    packageId: item.packageId,
+    packageVersion: item.packageVersion,
+    ...(item.sourcePath === undefined ? {} : { sourcePath: item.sourcePath }),
+    itemId: item.item.id,
+    ...(item.item.schemaVersion === 2 ? { pedagogicalFingerprint: item.item.pedagogicalFingerprint } : {})
+  };
+}
 
 async function updateSettings(req:IncomingMessage,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){const body=await bodyJson(req),locale=canonicalWebLocale(String(body.locale??""));if(locale!=="en"&&locale!=="zh-TW")throw new HttpError(400,"Unsupported source language.");const theme=body.theme===undefined?undefined:String(body.theme);if(theme!==undefined&&theme!=="light"&&theme!=="dark")throw new HttpError(400,"Unsupported theme.");if(pool)await updateUserSettings(pool,(id as DatabaseSession).id,locale,theme);else await saveSourceLanguage((locale==="en"?"en-US":"zh-Hant-TW") as SourceLocale,settingsDir(options));json(res,200,{locale,...(theme?{theme}:{})})}
 async function install(req:IncomingMessage,res:ServerResponse,options:WebServerOptions,context:WebContext,id:true|DatabaseSession){if(!options.cataloguePath)throw new HttpError(400,"Package catalogue is unavailable.");const body=await bodyJson(req);if("user_id"in body)throw new HttpError(400,"user_id is not accepted.");const result=await exclusivePackageMutation(context,()=>installContentPackage({cataloguePath:options.cataloguePath!,packageId:required(body.packageId),packageVersion:required(body.packageVersion),dataDir:options.dataDir}));if(context.pool)await selectPackage(context.pool,(id as DatabaseSession).id,result.record.packageId,result.record.packageVersion);json(res,200,result)}

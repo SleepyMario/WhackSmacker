@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Er is ...]]. It means [[grammar:There is ...]]. Use it to say that something is present.",
+      "expert": "This chapter introduces existential [[grammar:er]] with singular copula [[grammar:is]] in [[grammar:Er is N]]. The supporting polar form [[grammar:Is er N?]] places the finite verb before expletive [[grammar:er]]; broader expletive, locative, and discourse uses of [[grammar:er]] remain later material."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "[[grammar:Er is N]] says that N is present. [[grammar:Is er N?]] asks whether N is present.",
+      "expert": "Existential [[grammar:er]] occupies the postverbal field in the polar question and preverbal subject position in the declarative. The construction is taught as a singular existential frame, without generalizing Dutch inversion or the full syntactic status of [[grammar:er]]."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:er]] only in the new presence pattern for now.",
+      "expert": "The chapter isolates existential [[grammar:er]]. Locative, pronominal-adverbial, quantitative, and presentational functions are outside current learner scope."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "This is common neutral Dutch for classrooms, homes, and public places.",
+      "expert": "The existential construction is standard across major Dutch varieties; information-structural preferences become relevant in richer discourse."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Is er een boek?]] asks whether a book is present.\n- [[grammar:Ja, er is een boek.]] says that a book is present.\n- [[grammar:Is er een stoel?]] asks about a chair.\n- [[grammar:Ja, er is een stoel.]] confirms the chair.\n- [[grammar:Is er water?]] asks about water.\n- [[grammar:Ja, er is water.]] confirms the water.\n- [[grammar:Is er koffie?]] asks about coffee.\n- [[grammar:Nee, er is geen koffie.]] says there is no coffee.\n- [[grammar:Is er thee?]] asks about tea.\n- [[grammar:Ja, er is thee.]] confirms the tea.\n- [[grammar:Is er een kamer?]] asks about a room.\n- [[grammar:Ja, er is een kamer.]] confirms the room.",
+    "expert": "- [[grammar:Is er een boek?]] is a singular existential polar question with an indefinite associate.\n- [[grammar:Ja, er is een boek.]] gives the corresponding declarative existential.\n- [[grammar:Is er een stoel?]] repeats finite-before-[[grammar:er]] interrogative order.\n- [[grammar:Ja, er is een stoel.]] repeats the singular existential declarative.\n- [[grammar:Is er water?]] uses a mass-noun associate without an article.\n- [[grammar:Ja, er is water.]] confirms the mass-noun existential.\n- [[grammar:Is er koffie?]] repeats that mass-noun pattern.\n- [[grammar:Nee, er is geen koffie.]] combines negative response [[grammar:nee]] with nominal negator [[grammar:geen]].\n- [[grammar:Is er thee?]] uses another mass-noun associate.\n- [[grammar:Ja, er is thee.]] confirms it in the declarative frame.\n- [[grammar:Is er een kamer?]] returns to an indefinite count-noun associate.\n- [[grammar:Ja, er is een kamer.]] confirms that existential proposition."
+  }
+}

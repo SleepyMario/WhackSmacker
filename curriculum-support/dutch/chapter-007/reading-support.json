@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Heb je ...?]], an informal way to ask whether someone has something.",
+      "expert": "This chapter introduces the possession polar interrogative [[grammar:Heb je N?]], with finite-first [[grammar:heb]] and informal subject [[grammar:je]]. The bounded pattern contrasts affirmative possession with nominal negation."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Heb je N?\n\nUse [[grammar:Heb je N?]] to ask whether someone you know has something. Answer with [[grammar:Ja, ik heb ...]] or [[grammar:Nee, ik heb geen ...]].",
+      "expert": "#### Heb je N?\n\nCurrent chapter scope: [[grammar:Heb je N?]] places finite [[grammar:heb]] before informal second-person subject [[grammar:je]] in a polar question. The answers return to subject-first order. Expert context: this bounded V1 pattern does not establish the full Dutch inversion system."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Je]] is an everyday way to say “you” to someone you know.",
+      "expert": "Unstressed [[grammar:je]] is the informal singular addressee form here. Formal [[grammar:u]] and stressed [[grammar:jij]] are outside the current chapter."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "This question is neutral in a familiar classroom setting.",
+      "expert": "The dialogue uses standard informal address across major Dutch varieties; social deixis beyond [[grammar:je]] is deliberately deferred."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Heb je de laptop?]] asks whether Daan has the laptop.\n- [[grammar:Ja, ik heb een laptop.]] gives a yes answer.\n- [[grammar:Heb je een jas?]] asks about a coat.\n- [[grammar:Ja, ik heb een jas.]] confirms the coat.\n- [[grammar:Heb je de kaart?]] asks about the map.\n- [[grammar:Nee, ik heb geen kaart.]] gives a no answer with [[grammar:geen]].\n- [[grammar:Heb je de melk?]] asks about the milk.\n- [[grammar:Nee, ik heb sap.]] says that Daan has juice instead.\n- [[grammar:Heb je een koek?]] asks about a cookie.\n- [[grammar:Ja, ik heb een koek.]] confirms the cookie.\n- [[grammar:Heb je een krant?]] asks about a newspaper.\n- [[grammar:Nee, ik heb geen krant.]] says that Daan does not have one.",
+    "expert": "- [[grammar:Heb je de laptop?]] is a finite-first polar question with a definite object.\n- [[grammar:Ja, ik heb een laptop.]] restores subject-first declarative order with an indefinite object.\n- [[grammar:Heb je een jas?]] and [[grammar:Ja, ik heb een jas.]] repeat the question-answer alternation.\n- [[grammar:Heb je de kaart?]] and [[grammar:Nee, ik heb geen kaart.]] contrast definite question framing with nominal negation in the answer.\n- [[grammar:Heb je de melk?]] and [[grammar:Nee, ik heb sap.]] contrast two mass-noun objects without introducing a new contrastive construction.\n- [[grammar:Heb je een koek?]] and [[grammar:Ja, ik heb een koek.]] use an indefinite count noun.\n- [[grammar:Heb je een krant?]] and [[grammar:Nee, ik heb geen krant.]] close with the same V1 question and [[grammar:geen]]-negated answer."
+  }
+}

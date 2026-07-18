@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [],
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| nhân viên văn phòng | 人員文房 | office worker | `Tôi là nhân viên văn phòng.` |\n\nThe characters show the word parts in this job phrase. Modern Vietnamese normally writes the phrase with the Vietnamese alphabet.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| nhân viên văn phòng | 人員文房 | office worker | `Tôi là nhân viên văn phòng.` |\n\nExpert context: **nhân viên** corresponds to 人員 and **văn phòng** to 文房. The latter has developed from a study or writing room to an office; the full row records morpheme correspondence, not a claim about current Chinese wording.",
+    "entries": [
+      {
+        "word": "nhân viên văn phòng",
+        "characters": "人員文房",
+        "meaning": "office worker",
+        "lexicalEntryId": "vi.noun.nhan-vien-van-phong",
+        "senseId": "vi.noun.nhan-vien-van-phong.office-worker",
+        "firstIntroductionChapter": 2,
+        "usage": "Tôi là nhân viên văn phòng.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-002-basic-sentences-2/chapter.md",
+          "section": "Learner-facing Narrative",
+          "locator": "profile-card-5-line-2"
+        }
+      }
+    ]
+  }
+}

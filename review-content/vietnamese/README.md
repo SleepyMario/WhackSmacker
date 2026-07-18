@@ -6,7 +6,11 @@ This directory is the authoritative WhackSmacker source for Vietnamese Core revi
 
 Authoritative schema-v2 decks currently implemented:
 
-- `chapter-001-005`: 20 cards for Core Chapters 1–5;
-- `chapter-006-010`: 20 cards for Core Chapters 6–10.
+- `chapter-001-005`: 32 lexical senses represented by 64 bidirectional cards;
+- `chapter-006-010`: 32 lexical senses represented by 64 bidirectional cards.
 
-Each card has an explicit stable identity, accepted-answer set, distractors, explanation, canonical references, literal curriculum provenance, and a deterministic pedagogical fingerprint generated into the package. Reading curricula may refer to these identities but do not own or package these decks.
+Each sense has Vietnamese-to-English and English-to-Vietnamese cards. Every card has an explicit stable identity, an accepted-answer set, no
+distractors, canonical lexical references, literal learner-facing curriculum
+provenance and example text, and a deterministic pedagogical fingerprint
+generated into the package. Reading curricula may refer to these identities
+but do not own or package these decks.

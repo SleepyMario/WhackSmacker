@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches one way to say who you are: `tôi + là + N`. Use it with your name or one of the roles in this chapter. Learn `tôi` as the word for “I” in this practice.",
+      "expert": "Current chapter scope: first-person identity predication with neutral `tôi`, invariant copular `là`, and a licensed nominal complement. Expert context: Vietnamese person reference is socially deictic, and later chapters expand relationship- and age-sensitive self-reference; those alternatives are not yet productive."
+    },
+    {
+      "sourceHeading": "New Grammar",
+      "normal": "#### tôi + là + N\n\nUse `tôi + là + N` to say your name or role. `tôi` means “I.” `là` links “I” to the name or role. `là` does not change in these sentences.",
+      "expert": "#### tôi + là + N\n\nCurrent chapter scope: `tôi` is the first-person subject, `là` is an invariant identity copula, and `N` is a proper-name or nominal predicate. Expert context: the construction is analytic and lacks subject agreement; later work distinguishes identity predication from other predicate types and broadens the pragmatics of person reference."
+    }
+  ],
+  "breakdown": {
+    "normal": "- `Xin chào.` is the complete greeting “Hello.”\n- `Tôi là Maria Garcia.` uses the same pattern with a name.\n- `Tôi là Nguyễn Minh Anh.` uses the same pattern with a name.\n- `Tôi là sinh viên.` means “I am a university student.”\n- `Tôi là học sinh.` means “I am a school student.”\n- `Tôi là Trần Thu Hà.` uses the same pattern with a name.\n- `Tôi là giáo viên.` means “I am a teacher.”",
+    "expert": "- `Xin chào.` functions here as a fixed greeting formula.\n- `Tôi là Maria Garcia.` and `Tôi là Nguyễn Minh Anh.` instantiate subject + copula + proper-name predicate.\n- `Tôi là sinh viên.` and `Tôi là học sinh.` contrast two lexicalized student-role nominals.\n- `Tôi là Trần Thu Hà.` repeats proper-name identity predication.\n- `Tôi là giáo viên.` uses a profession nominal as the predicate. Expert context: later chapters can contrast copular identity clauses with non-copular adjectival and verbal predication."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sinh viên | 生員 | university student | `Tôi là sinh viên.` |\n| học sinh | 學生 | school student | `Tôi là học sinh.` |\n| giáo viên | 教員 | teacher | `Tôi là giáo viên.` |\n\nThese words use Sino-Vietnamese parts. The characters help show those word parts; keep learning the Vietnamese spellings used in the dialogue.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sinh viên | 生員 | university student | `Tôi là sinh viên.` |\n| học sinh | 學生 | school student | `Tôi là học sinh.` |\n| giáo viên | 教員 | teacher | `Tôi là giáo viên.` |\n\nExpert context: these are lexicalized Sino-Vietnamese compounds. The character mapping records morphemic provenance; it does not imply that ordinary modern Vietnamese writes these words in characters.",
+    "entries": [
+      { "word": "sinh viên", "characters": "生員", "meaning": "university student", "lexicalEntryId": "vi.noun.sinh-vien", "senseId": "vi.noun.sinh-vien.university-student", "firstIntroductionChapter": 1, "usage": "Tôi là sinh viên.", "provenance": { "path": "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "section": "Learner-facing Dialogue", "locator": "Maria: Tôi là sinh viên." } },
+      { "word": "học sinh", "characters": "學生", "meaning": "school student", "lexicalEntryId": "vi.noun.hoc-sinh", "senseId": "vi.noun.hoc-sinh.student", "firstIntroductionChapter": 1, "usage": "Tôi là học sinh.", "provenance": { "path": "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "section": "Learner-facing Dialogue", "locator": "Nguyễn Minh Anh: Tôi là học sinh." } },
+      { "word": "giáo viên", "characters": "教員", "meaning": "teacher", "lexicalEntryId": "vi.noun.giao-vien", "senseId": "vi.noun.giao-vien.teacher", "firstIntroductionChapter": 1, "usage": "Tôi là giáo viên.", "provenance": { "path": "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "section": "Learner-facing Dialogue", "locator": "Trần Thu Hà: Tôi là giáo viên." } }
+    ]
+  }
+}

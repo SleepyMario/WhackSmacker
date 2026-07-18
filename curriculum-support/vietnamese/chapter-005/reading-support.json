@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [],
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| phòng học | 房學 | classroom; study room | `Đây có phải là phòng học không?` |\n| điện thoại | 電話 | telephone; phone | `Có điện thoại.` |\n| trà | 茶 | tea | `Có trà.` |\n\nThe characters show the historical word parts. Modern Vietnamese normally uses the Vietnamese spellings shown in the Word column.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| phòng học | 房學 | classroom; study room | `Đây có phải là phòng học không?` |\n| điện thoại | 電話 | telephone; phone | `Có điện thoại.` |\n| trà | 茶 | tea | `Có trà.` |\n\nExpert context: **phòng học** is transparently analyzable as 房 ‘room’ plus 學 ‘study’; the character sequence records Vietnamese morpheme order rather than a modern Chinese lexical form. **điện thoại** 電話 and **trà** 茶 retain direct lexical correspondences.",
+    "entries": [
+      {
+        "word": "phòng học",
+        "characters": "房學",
+        "meaning": "classroom; study room",
+        "lexicalEntryId": "vi.noun.phong-hoc",
+        "senseId": "vi.noun.phong-hoc.classroom-room",
+        "firstIntroductionChapter": 5,
+        "usage": "Đây có phải là phòng học không?",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "Gia Bảo: Đây có phải là phòng học không?"
+        }
+      },
+      {
+        "word": "điện thoại",
+        "characters": "電話",
+        "meaning": "telephone; phone",
+        "lexicalEntryId": "vi.noun.dien-thoai",
+        "senseId": "vi.noun.dien-thoai.telephone",
+        "firstIntroductionChapter": 5,
+        "usage": "Có điện thoại.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "Gia Bảo: Có điện thoại."
+        }
+      },
+      {
+        "word": "trà",
+        "characters": "茶",
+        "meaning": "tea",
+        "lexicalEntryId": "vi.noun.tra",
+        "senseId": "vi.noun.tra.tea",
+        "firstIntroductionChapter": 5,
+        "usage": "Có trà.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "Gia Bảo: Có trà."
+        }
+      }
+    ]
+  }
+}

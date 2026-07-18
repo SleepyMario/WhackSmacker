@@ -109,7 +109,7 @@ test("installed localized package resolves metadata reading content and review f
     assert.deepEqual(chineseReview.rendered.hintLines, ["常見的問候語"]);
     assert.deepEqual(chineseReview.rendered.noteLines, ["來源語言註解"]);
     assert.deepEqual(chineseReview.rendered.exampleLines, ["Sanne zegt: hallo."]);
-    assert.match(chineseReview.text, /Example\n  - Sanne zegt: hallo\./u);
+    assert.match(chineseReview.text, /Examples:\n  - Sanne zegt: hallo\./u);
     assert.doesNotMatch(chineseReview.text, /莎anne|範例翻譯/u);
 
     const chineseTree = await buildModuleTree({ dataDir: fixture.dataDir, locale: "zh-Hant-TW" });

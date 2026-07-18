@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Ik + V stem]]. Use the verb stem after [[grammar:ik]] to say what you do in the present.",
+      "expert": "This chapter introduces the productive first-person singular present pattern [[grammar:Ik + V stem]]. Unlike the third-person forms in Chapter 12, the finite verb carries no final [[grammar:-t]]."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Ik + action word\n\nUse [[grammar:ik]] with the action form you see in [[grammar:Ik studeer ...]], [[grammar:Ik schrijf ...]], and [[grammar:Ik loop ...]].",
+      "expert": "#### Ik + V stem\n\nIn [[grammar:Ik + V stem]], first-person singular subject [[grammar:ik]] selects the bare present stem: [[grammar:studeer]], [[grammar:schrijf]], and [[grammar:loop]]. Earlier forms such as [[grammar:ben]], [[grammar:heb]], and [[grammar:ga]] remain inherited irregular forms."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "After a time word such as [[grammar:daarna]], the action can come before [[grammar:ik]]: [[grammar:Daarna schrijf ik een brief.]]",
+      "expert": "Clause-initial [[grammar:daarna]] triggers finite-second order in [[grammar:Daarna schrijf ik een brief.]], but Chapter 20, not this chapter, makes non-subject-first V2 the principal target."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These are neutral everyday sentences about studying and going home.",
+      "expert": "The simple present receives a current or routine interpretation from context; the forms are standard across major Dutch varieties."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Het is middag.]] sets the time.\n- [[grammar:Ik ga naar de bibliotheek.]] says where Alex goes in his first-person account.\n- [[grammar:Ik studeer in de bibliotheek.]] says what Alex does there in the first person.\n- [[grammar:Ik lees de krant.]] names another action.\n- [[grammar:Daarna schrijf ik een brief.]] says what happens next.\n- [[grammar:Ik drink koffie in de pauze.]] describes the break.\n- [[grammar:Ik loop naar huis.]] says how Alex goes home.\n- [[grammar:Het is rustig thuis.]] describes home.",
+    "expert": "- [[grammar:Het is middag.]] is a temporal setting frame.\n- [[grammar:Ik ga naar de bibliotheek.]] reuses the inherited first-person motion frame without changing narrative perspective.\n- [[grammar:Ik studeer in de bibliotheek.]], [[grammar:Ik lees de krant.]], [[grammar:Ik drink koffie in de pauze.]], and [[grammar:Ik loop naar huis.]] instantiate first-person singular stem forms.\n- [[grammar:Daarna schrijf ik een brief.]] places clause-initial [[grammar:daarna]] before finite [[grammar:schrijf]] and subject [[grammar:ik]].\n- [[grammar:Het is rustig thuis.]] closes with a predicative adjective and locative adverb."
+  }
+}

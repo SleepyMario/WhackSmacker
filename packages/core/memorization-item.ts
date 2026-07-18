@@ -315,6 +315,17 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     errors.push(`${field}.notes must be a string or locale-to-string object when present.`);
   }
   validateStringArray(value.examples, `${field}.examples`, errors, false);
+  if (value.schemaVersion === 2 && value.examples !== undefined) {
+    if (!Array.isArray(value.examples) || value.examples.length < 1 || value.examples.length > 3) {
+      errors.push(`${field}.examples must contain between one and three literal review examples when present.`);
+    } else {
+      for (const [index, example] of value.examples.entries()) {
+        if (typeof example === "string" && (example !== example.normalize("NFC") || example !== example.trim())) {
+          errors.push(`${field}.examples[${index}] must use NFC with no leading or trailing whitespace.`);
+        }
+      }
+    }
+  }
   validateSource(value.source, `${field}.source`, errors);
   validateLanguage(value.language, `${field}.language`, errors);
   validateDifficulty(value.difficulty, `${field}.difficulty`, errors);

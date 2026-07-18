@@ -108,6 +108,13 @@ test("canonical Grammar Easy policy preserves direct US grade 4-8 guidance and p
   assert.match(rules, /same canonical grammar ID.*exact learner-facing pattern/u);
 });
 
+test("canonical grammar display policy requires one exact Grammar heading in every view", () => {
+  const rules = languageCurriculumPolicy.grammarPatternDisplayRules.join("\n");
+  assert.match(rules, /Every visible top-level grammar section.*Normal, Expert, and Developer.*exactly Grammar/u);
+  assert.match(rules, /internal Normal and Expert labels/u);
+  assert.doesNotMatch(rules, /Grammar: Normal|Grammar: Expert/u);
+});
+
 test("canonical grammar records separate patterns from developer descriptions", () => {
   for (const record of dutch1115Patterns) assert.doesNotThrow(() => assertCanonicalGrammarPatternRecord(record));
   assert.throws(() => assertCanonicalGrammarPatternRecord({
@@ -228,6 +235,12 @@ test("language curriculum policy records continuity and strict example rules", (
   assert.deepEqual(languageCurriculumPolicy.grammarSummaryAfterChapters, [75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140]);
   assert.ok(languageCurriculumPolicy.vocabularyContinuityRules.some((rule) => /Chapter 6, Chapter 11, Chapter 16/u.test(rule)));
   assert.ok(languageCurriculumPolicy.vocabularyContinuityRules.some((rule) => /Country and place vocabulary/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /exactly one card.*every vocabulary item or lexical sense/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /no fixed card count/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /target language.*source language/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /no grammar, comprehension, cloze, multiple-choice, production, or distractor/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /five-chapter review decks hide.*Notes/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.lexicalFoundationRules.some((rule) => /hide.*structured Usage/u.test(rule)));
   assert.ok(languageCurriculumPolicy.strictExampleRules.some((rule) => /one to three literal read-content examples/u.test(rule)));
   assert.ok(languageCurriculumPolicy.strictExampleRules.some((rule) => /vocabulary lists/u.test(rule)));
   assert.ok(languageCurriculumPolicy.surfaceFormRules.some((rule) => /Conjugated, inflected/u.test(rule)));

@@ -18,6 +18,7 @@ import {
   localized,
   migrateUserDataBackupFile,
   orderReviewItemsForSession,
+  projectReviewTextForMode,
   readInstalledContentEntry,
   restoreUserDataBackup,
   recordReadingReviewAnswer,
@@ -597,7 +598,7 @@ async function runSingleReviewSource(
       ...(dueItem.sourcePath === undefined ? {} : { sourcePath: dueItem.sourcePath }),
       itemId: dueItem.itemId
     });
-    console.log(formatStudyReviewExercise(prompt.rendered, "prompt").trimEnd());
+    console.log(formatStudyReviewExercise(prompt.rendered, "prompt", !isFiveChapterReviewSource(options.sourcePath)).trimEnd());
 
     const reveal = ((await reader.promptLine("Press Enter to show answer, or q to stop: ")) ?? "q").trim().toLowerCase();
     if (reveal === "q" || reveal === "quit") {
@@ -613,7 +614,7 @@ async function runSingleReviewSource(
       itemId: dueItem.itemId,
       answer: true
     });
-    console.log(formatStudyReviewExercise(answer.rendered, "answer").trimEnd());
+    console.log(formatStudyReviewExercise(answer.rendered, "answer", !isFiveChapterReviewSource(options.sourcePath)).trimEnd());
 
     const rating = await promptForRating(reader);
     if (rating === null) {
@@ -635,9 +636,9 @@ async function runSingleReviewSource(
   return true;
 }
 
-function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer"): string {
+function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", includeNotes = true): string {
   const colorsEnabled = shouldUseReviewColors();
-  const title = side === "prompt" ? "Review Prompt" : "Review Answer";
+  const title = side === "prompt" ? "Phrase:" : "Answer:";
   const width = 64;
   const border = "-".repeat(width);
   const sections: string[] = [
@@ -649,18 +650,26 @@ function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | 
     ""
   ];
   if (side === "prompt") {
-    sections.push("", "Prompt", ...prefixStudyLines(exercise.promptLines));
+    sections.push("", "Phrase:", ...prefixStudyLines(exercise.promptLines.map((line) => projectReviewTextForMode(line, "normal"))));
     if (exercise.hintLines.length > 0) {
       sections.push("", "Hints", ...prefixStudyLines(exercise.hintLines));
     }
   } else {
-    sections.push("", "Answer", ...prefixStudyLines(exercise.answerLines));
-    if (exercise.noteLines.length > 0) {
+    sections.push("", "Answer:", ...prefixStudyLines(exercise.answerLines.map((line) => projectReviewTextForMode(line, "normal"))));
+    if (exercise.exampleLines.length > 0) {
+      sections.push("", "Examples:", ...exercise.exampleLines.map((line) => `  - ${line}`));
+    }
+    if (includeNotes && exercise.noteLines.length > 0) {
       sections.push("", "Notes", ...prefixStudyLines(exercise.noteLines));
     }
   }
   sections.push("", reviewColor(border, side, colorsEnabled));
   return `${sections.join("\n").trimEnd()}\n`;
+}
+
+function isFiveChapterReviewSource(sourcePath: string): boolean {
+  const match = /(?:^|\/)review-decks\/chapter-0*(\d+)-0*(\d+)\/cards\.tsv$/u.exec(sourcePath);
+  return match !== null && Number(match[2]) - Number(match[1]) === 4;
 }
 
 function prefixStudyLines(lines: readonly string[]): readonly string[] {
@@ -955,7 +964,7 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
       noShuffle = true;
     } else if (arg === "--view") {
       const value = readValue(args, index, arg);
-      if (value !== "normal" && value !== "developer") throw new Error("--view must be normal or developer.");
+      if (value !== "normal" && value !== "expert" && value !== "developer") throw new Error("--view must be normal, expert, or developer.");
       view = value;
       index += 1;
     } else {

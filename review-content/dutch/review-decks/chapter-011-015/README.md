@@ -2,30 +2,27 @@
 
 Deck name: `Chapter 11-15`
 
-This deck reviews selected vocabulary and all five principal grammar patterns from Dutch Core Chapters 11-15.
+This authoritative schema-v2 deck contains 66 cards: both ordinary review
+directions for all 33 canonical vocabulary items or lexical senses first
+introduced in Dutch Core Chapters 11–15. The count follows the inventory; it is
+not a quota.
 
 Scope:
 
-- bidirectional Dutch-English vocabulary and grammar recognition;
-- source chapters restricted to 11, 12, 13, 14, and 15;
-- every generated example must be copied literally from learner-facing dialogue or controlled-reading content;
-- no invented example sentence and no Chapter 16-or-later material;
-- only source-chapter people may appear in generated examples.
+- vocabulary/function-word review only;
+- bidirectional directions: Dutch -> English and English -> Dutch;
+- full grammar-pattern cards excluded;
+- fixed cast names excluded;
+- every card has one to three literal examples from the primary Dutch dialogue
+  or narrative, using multiple distinct examples where the chapter provides
+  them;
+- stable card IDs, canonical lexical/sense IDs, first-introduction chapters,
+  and exact provenance are retained internally.
 
-Grammar coverage:
+Excluded grammar-pattern cards include:
 
-- `DUT-GRAMMAR-011` -- literal source: `Het gaat goed, dank je.`
-- `DUT-GRAMMAR-012` -- literal source: `Sophie fietst naar school.`
-- `DUT-GRAMMAR-013` -- literal source: `Ik wil graag een broodje.`
-- `DUT-GRAMMAR-014` -- literal source: `Mark werkt en Mark drinkt koffie.`
-- `DUT-GRAMMAR-015` -- literal source: `Waar woon je?`
-
-Selected vocabulary coverage:
-
-- Chapter 11: `jou`, `goed`
-- Chapter 12: `de krant` (explicit reuse from Chapter 7), `fietst` → `fietsen`
-- Chapter 13: `graag`, `het menu`
-- Chapter 14: `het kantoor`, `koopt` → `kopen`
-- Chapter 15: `waar`, `het adres`
-
-Status: structurally complete; automated literal-source and package validation passed 2026-07-12; human Chapters 11-15 review awaiting user decision.
+- `Hoe gaat het met je? / Het gaat goed.`
+- `Sophie + V stem-t`
+- `Ik + wil + graag + N`
+- `clause + en + clause`
+- `Waar woon je?`

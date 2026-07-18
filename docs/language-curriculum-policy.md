@@ -120,12 +120,23 @@ subject to human linguistic review, never automatic inference from prose.
 
 ## Learner-facing lexical display
 
-Learner-facing vocabulary Notes use concise pedagogical labels: `Noun`, `Verb`, `Infinitive`,
+Normal learner-facing vocabulary Notes use accessible concise labels: `Noun`, `Verb`, `Infinitive`,
 `Adjective`, `Adverb`, `Preposition`, `Conjunction`, `Pronoun`, `Numeral`, `Phrase`, `Sequence word`, `Classifier`,
 `Counter`, or `Measure word`. They do not expose lemma, lexical-entry or sense
 IDs, surface/citation-form terminology, introduction status, first-introduction
 chapter, attestations, or morphology classifications. Internal structured
 metadata retains all of those fields.
+
+Expert read-content Notes may replace a broad category with a concise,
+linguistically accurate subclass only when the current row's authored or
+structured data supports it. Unsupported classifications remain broad.
+Developer may retain raw fields. This display refinement never rewrites review
+decks.
+
+Normal reading vocabulary lists do not display the raw structured `Usage`
+field. It remains available for authoring, validation, lexical disambiguation,
+generation, debugging, and advanced inspection. Rewrite any distinction that
+learners genuinely need as clear learner-facing prose.
 
 When an encountered verb differs meaningfully from its infinitive in a language
 where that concept applies, keep the encounter primary. Directly below it, put
@@ -417,6 +428,23 @@ After each 5-chapter block, add two grammar summary readable-content entries:
 
 Both entries cover the same grammar inventory and technical content. The Easy version explains the same points in simpler language; the Hard version stays compact and technical.
 
+Every visible top-level read-content heading is exactly `Grammar`. Normal
+selects Easy, Expert selects Hard, and Developer presents both inside one
+`Grammar` section with internal `Normal` and `Expert` labels. Never render a
+top-level heading named `Grammar Easy`, `Grammar Hard`, `Grammar: Normal`, or
+`Grammar: Expert`; redundant nested `Grammar Point` or `Grammar Points`
+wrappers are omitted.
+
+Numbered Foundation menu entries use exact derived labels of the form
+`Foundation Chapter -- N`. Only `Foundation` receives the chapter-token color;
+the remainder uses ordinary menu-label styling and no extra `Chapter` prefix.
+
+Normal review display removes terminal technical suffixes such as `in the
+taught frame`, `in the attested frame`, or `in the licensed construction`
+while retaining the ordinary meaning before the suffix. Expert and Developer
+may retain precise or raw wording. Stored card identity, answers, examples,
+provenance, scheduling, and progress remain unchanged.
+
 Grammar Easy addresses the learner directly using language understandable to
 someone roughly at US grade levels 4-8. It uses short, concrete explanations
 and examples, avoids detached references such as `the learner`, `learners`,
@@ -440,6 +468,21 @@ human review.
 
 ## Strict Review Examples
 
+One normal vocabulary review deck follows each completed consecutive
+five-chapter block. Its size is derived from the canonical lexical inventory:
+it contains exactly one card for every vocabulary item or lexical sense first
+introduced in that block, with no fixed card count. Reused vocabulary retains
+its earlier first-introduction chapter and does not enter a later deck again.
+
+Each normal card prompts in the target language and answers in the source
+language. Normal vocabulary decks contain no reverse duplicates, grammar or
+comprehension questions, cloze or multiple-choice questions, production
+exercises, or distractors.
+
+Normal learner-facing five-chapter review decks do not render the raw
+structured `Notes` field or a `Notes:` section. The metadata remains available
+for authorship, validation, provenance, migrations, and debugging.
+
 Normal core review entries require 100% strict read-content example coverage:
 
 - minimum 1 example;
@@ -453,3 +496,50 @@ Normal core review entries require 100% strict read-content example coverage:
 Changed surface forms can satisfy matching when they are normal for the language: conjugated forms, inflected forms, particle-attached forms, plural or declined forms, tone changes, sandhi, phonological changes, and other language-specific surface forms.
 
 Preserve the read-content sentence exactly. Do not rewrite it to dictionary or base form.
+
+## Chapter introduction roles
+
+`Brief Introduction` is reserved for a concise explanation of the principal
+grammar pattern or construction taught in the chapter and what it enables. It
+must not carry character, relationship, plot, or setting exposition.
+
+Every primary Dialogue or Narrative starts with a separate short scene
+introduction immediately below its reading heading. That introduction identifies
+the people or narrative subject and establishes the setting or situation before
+the canonical reading body.
+
+Natural English Translation contains only translated dialogue turns or narrative
+sentences. It starts immediately with translated reading content and never
+repeats or invents a grammar introduction, scene introduction, participant
+introduction, or context paragraph. Structured translation sidecars containing
+such prefatory fields are rejected.
+
+## CLI learner-reading colors
+
+The CLI renderer enforces one global semantic presentation rule across all
+language packages: dialogue speaker labels, including their colons, are purple;
+spoken target-language utterances are pink; and learner-facing target-language
+narrative prose is pink. The speaker-label purple ends at the colon, so an
+entire dialogue line is never made purple.
+
+Natural English translations, Source-language support, headings, vocabulary,
+grammar, exercises, and review metadata do not inherit the target-reading pink
+or speaker-label purple. These colors are renderer-only: curriculum sources and
+generated packages contain no ANSI styling. `NO_COLOR` and non-TTY output emit
+the same content and layout without ANSI escapes.
+
+## CLI translation visibility
+
+The far-right Toggles pane has independent `Source` and `Translation`
+controls. Source selects the language for interface text, explanations,
+headings, grammar descriptions, and other localized learner support.
+`Translation: Off` or `Translation: On` controls only whether the natural
+English translation of target-language dialogue or narrative is shown directly
+in the normal output pane.
+
+The reading translation remains English for every Source selection.
+Translation defaults to off for each fresh CLI session, and changing either
+control does not change the other. The toggle remains visible when a chapter
+lacks a translation; no Source overlay may substitute for missing natural
+English translation content. Target-language content stays visible in both
+states. The default protects immersion and keeps the target language primary.

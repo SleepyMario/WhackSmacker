@@ -124,6 +124,7 @@ export function validateReviewProgressStore(store: unknown): ReviewProgressValid
   if (!isRecord(store)) {
     return { valid: false, errors: ["Review progress store must be a JSON object."] };
   }
+  validateNoPersistedReviewMenuStatusColor(store, "progress", errors);
   if (store.reviewProgressFormatVersion !== 1 && store.reviewProgressFormatVersion !== reviewProgressFormatVersion) {
     errors.push(`Unsupported reviewProgressFormatVersion: ${String(store.reviewProgressFormatVersion)}`);
   }
@@ -131,6 +132,25 @@ export function validateReviewProgressStore(store: unknown): ReviewProgressValid
   validateStates(store.items, errors);
   validateEvents(store.events, errors);
   return { valid: errors.length === 0, errors };
+}
+
+function validateNoPersistedReviewMenuStatusColor(value: unknown, path: string, errors: string[]): void {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => validateNoPersistedReviewMenuStatusColor(item, `${path}[${index}]`, errors));
+    return;
+  }
+  if (!isRecord(value)) return;
+  for (const [key, child] of Object.entries(value)) {
+    if (
+      key === "menuStatusPresentation"
+      || /^(?:review(?:Deck)?Menu)?Status(?:Color|Colour|Style)$/iu.test(key)
+      || /^(?:notStarted|noCardsToReview|hasCardsToReview|finished)(?:Color|Colour|Style)$/iu.test(key)
+    ) {
+      errors.push(`${path}.${key} is forbidden: review-menu status colours are derived at render time.`);
+    } else {
+      validateNoPersistedReviewMenuStatusColor(child, `${path}.${key}`, errors);
+    }
+  }
 }
 
 export function assertValidReviewProgressStore(store: unknown): asserts store is ReviewProgressStore {

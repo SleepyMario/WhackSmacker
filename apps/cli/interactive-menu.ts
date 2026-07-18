@@ -16,11 +16,13 @@ import {
   loadReviewProgressStore,
   defaultReviewProgressDirectoryForContentDataDirectory,
   defaultCurriculumDisplayMode,
+  classifyReviewDeckMenuStatus,
+  combineDeveloperGrammarMarkdown,
   grammarEasyMenuLabel,
   grammarHardMenuLabel,
-  isReviewDue,
   orderReviewItemsForSession,
   projectCurriculumMarkdown,
+  projectReviewTextForMode,
   readInstalledContentEntry,
   recordReadingReviewAnswer,
   removeContentPackage,
@@ -36,6 +38,9 @@ import {
   type ReadableContentEntry,
   type RenderedExercise,
   type ReadingReviewItem,
+  type ReviewDeckMenuStatus as CoreReviewDeckMenuStatus,
+  type ReviewDeckMenuStatusClassification,
+  type ReviewItemIdentity,
   type ReviewItemState,
   type ReviewRating,
   type ReadingReviewSource,
@@ -151,6 +156,9 @@ export interface LanguageTreeNode {
   readonly availableStatus?: "installed" | "available" | "update-available";
   readonly cataloguePath?: string;
   readonly filePath?: string;
+  readonly translationPath?: string;
+  readonly readingSupportPath?: string;
+  readonly grammarVariantPaths?: readonly [string, string];
   readonly sourcePath?: string;
   readonly itemCount?: number;
   readonly reviewStatus?: ReviewDeckMenuStatusKind;
@@ -162,7 +170,7 @@ export interface LanguageTreeNode {
   readonly launchTitle?: string;
 }
 
-export type ReviewDeckMenuStatusKind = "not_started" | "finished" | "no_cards_to_review" | "has_cards_to_review";
+export type ReviewDeckMenuStatusKind = CoreReviewDeckMenuStatus;
 
 export interface ReviewDeckMenuStatus {
   readonly kind: ReviewDeckMenuStatusKind;
@@ -175,6 +183,30 @@ export interface VisibleLanguageTreeNode {
   readonly depth: number;
   readonly expandable: boolean;
   readonly expanded: boolean;
+}
+
+interface StructuredReadingTranslation {
+  readonly schemaVersion: 1;
+  readonly id: string;
+  readonly language: "en";
+  readonly sourceLanguage: string;
+  readonly sourcePath: "chapter.md";
+  readonly sourceSection: string;
+  readonly readingType: "dialogue" | "narrative";
+  readonly turns?: readonly {
+    readonly speaker: string;
+    readonly text: string;
+  }[];
+  readonly paragraphs?: readonly string[];
+}
+
+interface ReadingSupport {
+  readonly schemaVersion: 1;
+  readonly semanticRoleSyntaxVersion?: 1;
+  readonly sourcePath: "chapter.md";
+  readonly audienceSections: readonly { readonly sourceHeading: string; readonly normal: string; readonly expert: string }[];
+  readonly breakdown?: { readonly normal: string; readonly expert: string };
+  readonly characters?: { readonly heading: string; readonly normal: string; readonly expert: string };
 }
 
 interface EmbeddedReviewSession {
@@ -205,10 +237,15 @@ const ansi = {
   green: "\x1b[32m",
   yellow: "\x1b[33m",
   orange: "\x1b[38;5;208m",
+  purple: "\x1b[38;5;141m",
   pink: "\x1b[38;5;213m",
   red: "\x1b[31m",
   gray: "\x1b[90m"
 };
+
+export const menuStyles = {
+  defaultForeground: ""
+} as const;
 
 export const whackSmackerBanner = `██╗    ██╗███████╗███╗   ███╗
 ██║    ██║██╔════╝████╗ ████║
@@ -360,26 +397,24 @@ function reviewSourceChapterStart(sourcePath: string | undefined): number | unde
   return match === null || match === undefined ? undefined : Number.parseInt(match[1], 10);
 }
 
-export function reviewDeckMenuStatusFromStates(
-  sourceItemIds: ReadonlySet<string>,
-  states: readonly ReviewItemState[],
-  now: string,
-  locale: SourceLocale = "en-US"
+function localizeReviewDeckMenuStatus(
+  classification: ReviewDeckMenuStatusClassification,
+  locale: SourceLocale
 ): ReviewDeckMenuStatus {
-  const sourceStates = states.filter((state) => sourceItemIds.has(state.itemId));
-  const hasReviewProgress = sourceStates.some((state) => state.reviewCount > 0 || state.lastReviewedAt !== undefined || state.status !== "new");
-  if (!hasReviewProgress) {
-    return { kind: "not_started", dueCardCount: 0, text: translate(locale, "review.notStarted") };
+  if (classification.status === "finished") {
+    return { kind: classification.status, dueCardCount: 0, text: translate(locale, "review.finished") };
   }
-  const missingNewCount = Math.max(0, sourceItemIds.size - sourceStates.length);
-  const dueCount = sourceStates.filter((state) => isReviewDue(state, now)).length + missingNewCount;
-  if (dueCount > 0) {
-    return { kind: "has_cards_to_review", dueCardCount: dueCount, text: translate(locale, "review.cardsDue", { count: dueCount }) };
+  if (classification.status === "has_cards_to_review") {
+    return {
+      kind: classification.status,
+      dueCardCount: classification.dueCardCount,
+      text: translate(locale, "review.cardsDue", { count: classification.dueCardCount })
+    };
   }
-  if (sourceStates.length > 0 && sourceStates.every((state) => state.status === "suspended")) {
-    return { kind: "finished", dueCardCount: 0, text: translate(locale, "review.finished") };
+  if (classification.status === "no_cards_to_review") {
+    return { kind: classification.status, dueCardCount: 0, text: translate(locale, "review.noneDue") };
   }
-  return { kind: "no_cards_to_review", dueCardCount: 0, text: translate(locale, "review.noneDue") };
+  return { kind: classification.status, dueCardCount: 0, text: translate(locale, "review.notStarted") };
 }
 
 async function describeReviewSourceMenuStatus(source: ReadingReviewSource, options: InteractiveMenuOptions): Promise<ReviewDeckMenuStatus> {
@@ -393,19 +428,21 @@ async function describeReviewSourceMenuStatus(source: ReadingReviewSource, optio
     }),
     loadReviewProgressStore(progressDir)
   ]);
-  const usableIds = new Set(sourceItems.filter((item) => isEmbeddedReviewItemUsable(item, options.locale)).map((item) => item.item.id));
-  const sourceStateKeys = new Set(
-    [...usableIds].map((itemId) =>
-      reviewIdentityKey({
+  const usableItems = sourceItems.filter((item) => isEmbeddedReviewItemUsable(item, options.locale));
+  const cardIdentities: ReviewItemIdentity[] = usableItems.map((item) => ({
         packageId: source.packageId,
         packageVersion: source.packageVersion,
         sourcePath: source.sourcePath,
-        itemId
-      })
-    )
-  );
-  const sourceStates = progress.items.filter((state) => sourceStateKeys.has(reviewIdentityKey(state)));
-  return reviewDeckMenuStatusFromStates(usableIds, sourceStates, currentReviewTimestamp(), options.locale ?? "en-US");
+        itemId: item.item.id,
+        ...(item.item.schemaVersion === 2 ? { pedagogicalFingerprint: item.item.pedagogicalFingerprint } : {})
+      }));
+  const classification = classifyReviewDeckMenuStatus({
+    deckId: `${source.packageId}@${source.packageVersion}#${source.sourcePath}`,
+    cardIdentities,
+    savedProgress: progress.items,
+    now: currentReviewTimestamp()
+  });
+  return localizeReviewDeckMenuStatus(classification, options.locale ?? "en-US");
 }
 
 export function readableContentEntriesToMenuItems(entries: readonly ReadableContentEntry[]): readonly MenuItem[] {
@@ -438,11 +475,15 @@ export function applyLanguageSpecificReadableContentMenuPolicy(
     if (chapter === undefined) {
       remaining.push(item);
     } else {
-      foundation.push({ chapter, item: { ...item, label: `Foundation Ch ${chapter}` } });
+      foundation.push({ chapter, item: { ...item, label: formatFoundationChapterMenuLabel(chapter) } });
     }
   }
   foundation.sort((left, right) => left.chapter - right.chapter);
   return [...foundation.map(({ item }) => item), ...remaining];
+}
+
+export function formatFoundationChapterMenuLabel(chapter: number): string {
+  return `Foundation Chapter -- ${chapter}`;
 }
 
 function vietnameseFoundationChapterNumber(item: MenuItem): number | undefined {
@@ -535,6 +576,9 @@ export interface InteractiveMenuOptions {
   readonly settingsDir?: string;
   readonly locale?: SourceLocale;
   readonly displayMode?: CurriculumDisplayMode;
+  readonly translationsEnabled?: boolean;
+  readonly breakdownEnabled?: boolean;
+  readonly charactersEnabled?: boolean;
 }
 
 export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal(), options: InteractiveMenuOptions = {}): Promise<void> {
@@ -844,7 +888,14 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     options = { ...options, settingsDir: defaultSettingsDirectoryForContentDataDirectory(options.dataDir) };
   }
   const savedSettings = await loadSourceLanguageSettings(options.settingsDir);
-  options = { ...options, locale: options.locale ?? savedSettings.sourceLanguage, displayMode: options.displayMode ?? defaultCurriculumDisplayMode };
+  options = {
+    ...options,
+    locale: options.locale ?? savedSettings.sourceLanguage,
+    displayMode: options.displayMode ?? defaultCurriculumDisplayMode,
+    translationsEnabled: options.translationsEnabled ?? false
+    , breakdownEnabled: options.breakdownEnabled ?? false
+    , charactersEnabled: options.charactersEnabled ?? false
+  };
   let tree = await buildModuleTree(options);
   let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
@@ -859,7 +910,11 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   while (true) {
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
     selection = Math.min(selection, visible.length - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode);
+    const selectedNode = visible[selection]?.node ?? tree;
+    const charactersApplicable = charactersToggleAppliesToNode(selectedNode);
+    const toggleCount = charactersApplicable ? 5 : 4;
+    toggleSelection = Math.min(toggleSelection, toggleCount - 1);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -938,6 +993,13 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       return true;
     }
 
+    if (isTranslationToggle(key) && embeddedReview === null && pendingUninstall === null) {
+      options = { ...options, translationsEnabled: options.translationsEnabled !== true };
+      rightPaneText = await renderLanguageTreeRightPane(selectedNode, options);
+      rightPaneOffset = 0;
+      continue;
+    }
+
     if (focusedPane === "navigation" && isRight(key) && shouldShowTogglesPane(terminal.width)) {
       focusedPane = "toggles";
       toggleSelection = 0;
@@ -966,20 +1028,30 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         continue;
       }
       if (isUp(key) || isDown(key)) {
-        toggleSelection = wrapSelection(toggleSelection + (isUp(key) ? -1 : 1), sourceLanguageToggleCount);
+        toggleSelection = wrapSelection(toggleSelection + (isUp(key) ? -1 : 1), toggleCount);
         continue;
       }
       if (isEnter(key) || isSpace(key)) {
-        if (toggleSelection === 0) options = await persistInteractiveSourceLocale(options, nextSourceLocale(options.locale));
-        else options = { ...options, displayMode: options.displayMode === "developer" ? "normal" : "developer" };
-        embeddedReview = null;
+        const sourceChanged = toggleSelection === 0;
+        if (sourceChanged) options = await persistInteractiveSourceLocale(options, nextSourceLocale(options.locale));
+        else if (toggleSelection === 1) options = { ...options, displayMode: nextCurriculumDisplayMode(options.displayMode ?? defaultCurriculumDisplayMode) };
+        else if (toggleSelection === 2) options = { ...options, translationsEnabled: options.translationsEnabled !== true };
+        else if (charactersApplicable && toggleSelection === 3) options = { ...options, charactersEnabled: options.charactersEnabled !== true };
+        else options = { ...options, breakdownEnabled: options.breakdownEnabled !== true };
+        if (sourceChanged && embeddedReview !== null) {
+          embeddedReview = await reprojectEmbeddedReviewSession(embeddedReview, options);
+        } else {
+          embeddedReview = null;
+          selectedReviewStartId = null;
+        }
         pendingUninstall = null;
-        selectedReviewStartId = null;
         const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
         tree = refreshed.tree;
         expandedIds = refreshed.expandedIds;
         selection = refreshed.selection;
-        rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
+        rightPaneText = embeddedReview === null
+          ? await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options)
+          : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
         rightPaneOffset = 0;
       }
       continue;
@@ -1221,6 +1293,16 @@ function nextSourceLocale(locale: SourceLocale | undefined): SourceLocale {
   return locale === "zh-Hant-TW" ? "en-US" : "zh-Hant-TW";
 }
 
+function nextCurriculumDisplayMode(mode: CurriculumDisplayMode): CurriculumDisplayMode {
+  if (mode === "normal") return "expert";
+  if (mode === "expert") return "developer";
+  return "normal";
+}
+
+function charactersToggleAppliesToNode(node: LanguageTreeNode): boolean {
+  return node.packageId === "com.sleepymario.language.vietnamese" || node.packageId === "com.sleepymario.language.korean";
+}
+
 async function persistInteractiveSourceLocale(options: InteractiveMenuOptions, locale: SourceLocale): Promise<InteractiveMenuOptions> {
   await saveSourceLanguage(locale, options.settingsDir);
   return { ...options, locale };
@@ -1243,7 +1325,7 @@ export async function buildModuleTree(options: InteractiveMenuOptions | string |
     label: "WhackSmacker",
     kind: "root",
     children: [
-      await buildInstalledModulesTree(descriptors, resolvedOptions.dataDir, locale),
+      await buildInstalledModulesTree(descriptors, resolvedOptions.dataDir, locale, resolvedOptions.displayMode ?? defaultCurriculumDisplayMode),
       buildAvailableModulesTree(availableDescriptors, resolvedOptions.cataloguePath, locale)
     ]
   };
@@ -1426,9 +1508,9 @@ function renderUninstallCancelled(node: LanguageTreeNode, locale: SourceLocale =
   ].join("\n");
 }
 
-export async function buildLanguageTree(dataDir?: string): Promise<LanguageTreeNode> {
+export async function buildLanguageTree(dataDir?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): Promise<LanguageTreeNode> {
   const descriptors = (await listFirstClassModuleDescriptors(dataDir)).filter((descriptor) => descriptor.category === "Languages");
-  return buildLanguageTreeFromDescriptors(descriptors, dataDir, "en-US");
+  return buildLanguageTreeFromDescriptors(descriptors, dataDir, "en-US", displayMode);
 }
 
 export async function listFirstClassModuleDescriptors(dataDir?: string, locale: SourceLocale = "en-US"): Promise<readonly FirstClassModuleDescriptor[]> {
@@ -1547,7 +1629,8 @@ function renderAvailableModuleInfo(
 async function buildInstalledModulesTree(
   descriptors: readonly FirstClassModuleDescriptor[],
   dataDir: string | undefined,
-  locale: SourceLocale
+  locale: SourceLocale,
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode
 ): Promise<LanguageTreeNode> {
   return {
     id: "installed-modules",
@@ -1555,7 +1638,7 @@ async function buildInstalledModulesTree(
     kind: "installed-root",
     previewText: `${translate(locale, "menu.installedModules")}\n\n${translate(locale, "pane.installedModulesHelp")}`,
     children: [
-      await buildLanguageTreeFromDescriptors(descriptors.filter((descriptor) => descriptor.category === "Languages"), dataDir, locale),
+      await buildLanguageTreeFromDescriptors(descriptors.filter((descriptor) => descriptor.category === "Languages"), dataDir, locale, displayMode),
       buildModuleCategoryTree("Games", descriptors, locale),
       buildModuleCategoryTree("Geography", descriptors, locale),
       buildModuleCategoryTree("Mathematics", descriptors, locale)
@@ -1650,7 +1733,8 @@ function buildAvailableModuleTreeNode(descriptor: FirstClassModuleDescriptor, ca
 async function buildLanguageTreeFromDescriptors(
   descriptors: readonly FirstClassModuleDescriptor[],
   dataDir: string | undefined,
-  locale: SourceLocale
+  locale: SourceLocale,
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode
 ): Promise<LanguageTreeNode> {
   const packageNodes: LanguageTreeNode[] = [];
 
@@ -1685,9 +1769,22 @@ async function buildLanguageTreeFromDescriptors(
     });
 
     const packageBase = descriptor.packageId;
-    const contentChildren = labeledEntries.map((item) => ({
+    const visibleEntries = labeledEntries.filter((item) => grammarEntryVisibleInMode(item.filePath, displayMode));
+    const contentChildren = visibleEntries.flatMap((item) => {
+      const role = curriculumContentRoleForPath(item.filePath ?? "");
+      if (displayMode === "developer" && role === "grammar-hard") {
+        const easyPath = item.filePath?.replace(/-grammar-hard\//u, "-grammar-easy/");
+        if (easyPath !== undefined && visibleEntries.some((entry) => entry.filePath === easyPath)) return [];
+      }
+      const hardPath = displayMode === "developer" && role === "grammar-easy"
+        ? item.filePath?.replace(/-grammar-easy\//u, "-grammar-hard/")
+        : undefined;
+      const grammarVariantPaths = hardPath !== undefined && visibleEntries.some((entry) => entry.filePath === hardPath)
+        ? [item.filePath as string, hardPath] as const
+        : undefined;
+      return [{
       id: `${packageBase}:content:${item.filePath ?? item.label}`,
-      label: item.label,
+      label: grammarEntryLabelForMode(item.label, item.filePath, displayMode),
       kind: "content" as const,
       moduleId: descriptor.moduleId,
       moduleVersion: descriptor.version,
@@ -1695,8 +1792,12 @@ async function buildLanguageTreeFromDescriptors(
       packageId: descriptor.packageId,
       packageVersion: descriptor.packageVersion,
       packageLabel: descriptor.displayName,
-      filePath: item.filePath
-    }));
+      filePath: item.filePath,
+      ...(grammarVariantPaths === undefined ? {} : { grammarVariantPaths }),
+      ...translationPathForContentEntry(item.filePath, entries),
+      ...readingSupportPathForContentEntry(item.filePath, entries)
+      }];
+    });
     const reviewChildren = reviewSources.map((item) => ({
       id: `${packageBase}:review:${item.sourcePath ?? item.label}`,
       label: item.label,
@@ -1713,6 +1814,9 @@ async function buildLanguageTreeFromDescriptors(
       dueCardCount: item.dueCardCount,
       reviewStatusText: item.reviewStatusText
     }));
+    const readingChildren = descriptor.packageId === "com.sleepymario.language.dutch"
+      ? interleaveDutchReviewSources(contentChildren, reviewChildren)
+      : contentChildren;
 
     packageNodes.push({
       id: packageBase,
@@ -1736,7 +1840,7 @@ async function buildLanguageTreeFromDescriptors(
           packageId: descriptor.packageId,
           packageVersion: descriptor.packageVersion,
           packageLabel: descriptor.displayName,
-          children: contentChildren.length > 0 ? contentChildren : [{
+          children: readingChildren.length > 0 ? readingChildren : [{
             id: `${packageBase}:read:none`,
             label: "No readable content",
             kind: "message",
@@ -1804,6 +1908,32 @@ async function buildLanguageTreeFromDescriptors(
       ].join("\n")
     }]
   };
+}
+
+function interleaveDutchReviewSources(
+  contentChildren: readonly LanguageTreeNode[],
+  reviewChildren: readonly LanguageTreeNode[]
+): readonly LanguageTreeNode[] {
+  const reviewsByEndingChapter = new Map<number, LanguageTreeNode>();
+  for (const review of reviewChildren) {
+    const range = /(?:^|\/)chapter-(\d{3})-(\d{3})(?:\/|$)/u.exec(review.sourcePath ?? "");
+    if (range === null) continue;
+    const start = Number.parseInt(range[1] ?? "", 10);
+    const end = Number.parseInt(range[2] ?? "", 10);
+    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end)) continue;
+    reviewsByEndingChapter.set(end, {
+      ...review,
+      id: `${review.id}:inline`,
+      label: `Review -- Chapters ${start}\u2013${end}`
+    });
+  }
+
+  return contentChildren.flatMap((child) => {
+    const chapter = /(?:^|\/)chapter-(\d{3})-[^/]+\/chapter\.md$/u.exec(child.filePath ?? "")?.[1];
+    if (chapter === undefined) return [child];
+    const review = reviewsByEndingChapter.get(Number.parseInt(chapter, 10));
+    return review === undefined ? [child] : [child, review];
+  });
 }
 
 function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): MenuItem {
@@ -1892,6 +2022,23 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     if (node.packageId === undefined || node.filePath === undefined) {
       return "Readable content item is missing package metadata.";
     }
+    if (node.grammarVariantPaths !== undefined) {
+      const [normalPath, expertPath] = node.grammarVariantPaths;
+      const [normal, expert] = await Promise.all([normalPath, expertPath].map((path) => readInstalledContentEntry({
+        dataDir: options.dataDir,
+        packageId: node.packageId as string,
+        packageVersion: node.packageVersion,
+        path,
+        locale
+      })));
+      if ((options.displayMode ?? defaultCurriculumDisplayMode) === "normal") {
+        return projectCurriculumMarkdown(normal?.text ?? "", "normal", { contentRole: "grammar-easy" });
+      }
+      if (options.displayMode === "expert") {
+        return projectCurriculumMarkdown(expert?.text ?? "", "expert", { contentRole: "grammar-hard" });
+      }
+      return combineDeveloperGrammarMarkdown(normal?.text ?? "", expert?.text ?? "");
+    }
     const result = await readInstalledContentEntry({
       dataDir: options.dataDir,
       packageId: node.packageId,
@@ -1899,7 +2046,61 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
       path: node.filePath,
       locale
     });
-    return projectCurriculumMarkdown(result.text, options.displayMode ?? defaultCurriculumDisplayMode);
+    let markdown = result.text;
+    let readingSupport: ReadingSupport | undefined;
+    if (options.charactersEnabled !== true) {
+      markdown = removeNamedSectionFromMarkdown(markdown, "Sino-Vietnamese Vocabulary");
+      markdown = removeNamedSectionFromMarkdown(markdown, "Sino-Korean Vocabulary");
+      markdown = removeNamedSectionFromMarkdown(markdown, "Hanja");
+    } else if (node.packageId === "com.sleepymario.language.korean") {
+      markdown = renameNamedSectionHeading(markdown, "Hanja", "Sino-Korean Vocabulary");
+    }
+    if (node.readingSupportPath !== undefined) {
+      try {
+        const supportResult = await readInstalledContentEntry({
+          dataDir: options.dataDir,
+          packageId: node.packageId,
+          packageVersion: node.packageVersion,
+          path: node.readingSupportPath,
+          locale
+        });
+        readingSupport = parseReadingSupport(supportResult.text);
+        if (readingSupport !== undefined) markdown = applyReadingSupport(markdown, readingSupport, options);
+      } catch {
+        // Optional learner support must not hide the primary reading.
+      }
+    } else if (options.breakdownEnabled === true && /\/chapter\.md$/u.test(node.filePath)) {
+      markdown = insertBeforeExercises(markdown, "### Line-by-line Breakdown\n\nBreakdown unavailable for this chapter.\n");
+    }
+    let translationAvailable = hasNaturalEnglishTranslation(markdown);
+    if (options.translationsEnabled === true && node.translationPath !== undefined) {
+      try {
+        const translationResult = await readInstalledContentEntry({
+          dataDir: options.dataDir,
+          packageId: node.packageId,
+          packageVersion: node.packageVersion,
+          path: node.translationPath,
+          locale
+        });
+        const translation = parseStructuredReadingTranslation(translationResult.text);
+        if (translation !== undefined) {
+          markdown = insertStructuredReadingTranslation(markdown, translation);
+          translationAvailable = true;
+        }
+      } catch {
+        // A missing or damaged optional prototype translation must not hide the original reading.
+      }
+    }
+    if (options.translationsEnabled === true) {
+      markdown = addSpeakerLabelsToEmbeddedDialogueTranslation(markdown);
+      if (!translationAvailable && /\/chapter\.md$/u.test(node.filePath)) {
+        markdown = `${markdown.trimEnd()}\n\n### Natural English Translation\n\nTranslation unavailable for this chapter.\n`;
+      }
+    }
+    return projectCurriculumMarkdown(markdown, options.displayMode ?? defaultCurriculumDisplayMode, {
+      contentRole: curriculumContentRoleForPath(node.filePath),
+      translationsEnabled: options.translationsEnabled === true
+    });
   }
   if (node.kind === "package-info") {
     return node.previewText ?? [
@@ -1961,6 +2162,238 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     "Escape collapses or backs out",
     "q quits"
   ].join("\n");
+}
+
+function parseStructuredReadingTranslation(text: string): StructuredReadingTranslation | undefined {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+  if (!isObjectRecord(value)
+    || value.schemaVersion !== 1
+    || typeof value.id !== "string"
+    || value.id.trim().length === 0
+    || value.language !== "en"
+    || typeof value.sourceLanguage !== "string"
+    || value.sourceLanguage.trim().length === 0
+    || value.sourcePath !== "chapter.md"
+    || typeof value.sourceSection !== "string"
+    || value.sourceSection.trim().length === 0
+    || (value.readingType !== "dialogue" && value.readingType !== "narrative")
+    || ["introduction", "context", "setting", "participants", "sceneIntroduction"].some((key) => key in value)) {
+    return undefined;
+  }
+  const dialogueIsValid = value.readingType === "dialogue"
+    && Array.isArray(value.turns)
+    && value.turns.length > 0
+    && value.turns.every((turn) => isObjectRecord(turn)
+      && typeof turn.speaker === "string"
+      && turn.speaker.trim().length > 0
+      && typeof turn.text === "string"
+      && turn.text.trim().length > 0);
+  const narrativeIsValid = value.readingType === "narrative"
+    && Array.isArray(value.paragraphs)
+    && value.paragraphs.length > 0
+    && value.paragraphs.every((paragraph) => typeof paragraph === "string" && paragraph.trim().length > 0);
+  if (!dialogueIsValid && !narrativeIsValid) {
+    return undefined;
+  }
+  return value as unknown as StructuredReadingTranslation;
+}
+
+function parseReadingSupport(text: string): ReadingSupport | undefined {
+  try {
+    const value = JSON.parse(text) as ReadingSupport;
+    if (value.schemaVersion !== 1 || value.sourcePath !== "chapter.md" || !Array.isArray(value.audienceSections)) return undefined;
+    if (value.semanticRoleSyntaxVersion !== undefined && value.semanticRoleSyntaxVersion !== 1) return undefined;
+    if (!value.audienceSections.every((section) => typeof section.sourceHeading === "string" && typeof section.normal === "string" && typeof section.expert === "string")) return undefined;
+    return value;
+  } catch {
+    return undefined;
+  }
+}
+
+function applyReadingSupport(markdown: string, support: ReadingSupport, options: InteractiveMenuOptions): string {
+  const mode = options.displayMode ?? defaultCurriculumDisplayMode;
+  let output = markdown;
+  for (const section of support.audienceSections) {
+    const grammarSection = section.sourceHeading === "New Grammar" || section.sourceHeading === "New Grammar / Pattern";
+    const body = mode === "developer"
+      ? grammarSection
+        ? `### Grammar\n\n#### Normal\n\n${section.normal}\n\n#### Expert\n\n${section.expert}`
+        : `### ${section.sourceHeading}: Normal\n\n${section.normal}\n\n### ${section.sourceHeading}: Expert\n\n${section.expert}`
+      : `### ${grammarSection ? "Grammar" : section.sourceHeading}\n\n${mode === "expert" ? section.expert : section.normal}`;
+    output = replaceNamedSection(output, section.sourceHeading, body);
+  }
+  const embeddedBreakdown = markdownSectionBody(output, "Line-by-Line Breakdown")
+    ?? markdownSectionBody(output, "Line-by-line Breakdown");
+  output = removeNamedSectionFromMarkdown(output, "Line-by-Line Breakdown");
+  output = removeNamedSectionFromMarkdown(output, "Line-by-line Breakdown");
+  output = removeNamedSectionFromMarkdown(output, "Sino-Vietnamese Vocabulary");
+  output = removeNamedSectionFromMarkdown(output, "Sino-Korean Vocabulary");
+  if (options.charactersEnabled === true && support.characters !== undefined) {
+    const body = mode === "developer"
+      ? `### ${support.characters.heading}\n\n#### Normal\n\n${support.characters.normal}\n\n#### Expert\n\n${support.characters.expert}`
+      : `### ${support.characters.heading}\n\n${mode === "expert" ? support.characters.expert : support.characters.normal}`;
+    output = insertAfterNamedSection(output, "New Vocabulary", body);
+  }
+  if (options.breakdownEnabled === true) {
+    const body = support.breakdown === undefined
+      ? embeddedBreakdown === undefined
+        ? "### Line-by-line Breakdown\n\nBreakdown unavailable for this chapter."
+        : `### Line-by-line Breakdown\n\n${embeddedBreakdown}`
+      : mode === "developer"
+        ? `### Line-by-line Breakdown: Normal\n\n${support.breakdown.normal}\n\n### Line-by-line Breakdown: Expert\n\n${support.breakdown.expert}`
+        : `### Line-by-line Breakdown\n\n${mode === "expert" ? support.breakdown.expert : support.breakdown.normal}`;
+    output = insertBeforeExercises(output, body);
+  }
+  return output;
+}
+
+function markdownSectionBody(markdown: string, title: string): string | undefined {
+  const range = markdownSectionRange(markdown, title);
+  if (range === undefined) return undefined;
+  const body = range.lines.slice(range.start + 1, range.end).join("\n").trim();
+  return body.length === 0 ? undefined : body;
+}
+
+function markdownSectionRange(markdown: string, title: string): { readonly lines: string[]; readonly start: number; readonly end: number } | undefined {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const escapedTitle = title.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  const start = lines.findIndex((line) => new RegExp(`^#{1,6}\\s+${escapedTitle}\\s*$`, "u").test(line.trim()));
+  if (start < 0) return undefined;
+  const level = /^(#{1,6})/u.exec(lines[start] ?? "")?.[1]?.length ?? 1;
+  const next = lines.findIndex((line, index) => index > start && (() => {
+    const nextLevel = /^(#{1,6})\s+/u.exec(line.trim())?.[1]?.length;
+    return nextLevel !== undefined && (title === "Brief Introduction" || nextLevel <= level);
+  })());
+  return { lines, start, end: next < 0 ? lines.length : next };
+}
+
+function replaceNamedSection(markdown: string, title: string, replacement: string): string {
+  const range = markdownSectionRange(markdown, title);
+  if (range === undefined) return markdown;
+  return [...range.lines.slice(0, range.start), ...replacement.split("\n"), ...range.lines.slice(range.end)].join("\n");
+}
+
+function removeNamedSectionFromMarkdown(markdown: string, title: string): string {
+  const range = markdownSectionRange(markdown, title);
+  if (range === undefined) return markdown;
+  return [...range.lines.slice(0, range.start), ...range.lines.slice(range.end)].join("\n");
+}
+
+function renameNamedSectionHeading(markdown: string, from: string, to: string): string {
+  const escaped = from.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  return markdown.replace(new RegExp(`^(#{1,6})\\s+${escaped}\\s*$`, "gimu"), `$1 ${to}`);
+}
+
+function insertAfterNamedSection(markdown: string, title: string, addition: string): string {
+  const range = markdownSectionRange(markdown, title);
+  if (range === undefined) return markdown;
+  return [...range.lines.slice(0, range.end), "", ...addition.split("\n"), ...range.lines.slice(range.end)].join("\n");
+}
+
+function insertBeforeExercises(markdown: string, addition: string): string {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const index = lines.findIndex((line) => /^##\s+Simple Exercises\s*$/iu.test(line.trim()));
+  const at = index < 0 ? lines.length : index;
+  return [...lines.slice(0, at), "", ...addition.split("\n"), "", ...lines.slice(at)].join("\n");
+}
+
+function insertStructuredReadingTranslation(
+  markdown: string,
+  translation: StructuredReadingTranslation
+): string {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const sourceHeading = `### ${translation.sourceSection}`;
+  const sourceHeadingIndex = lines.findIndex((line) => line.trim() === sourceHeading);
+  if (sourceHeadingIndex < 0) {
+    return markdown;
+  }
+  const nextSectionIndex = lines.findIndex((line, index) => index > sourceHeadingIndex && /^###\s+/u.test(line));
+  if (nextSectionIndex < 0) {
+    return markdown;
+  }
+  const translationBody = translation.readingType === "dialogue"
+    ? formatStructuredTranslationTurns(translation.turns ?? [])
+    : translation.paragraphs ?? [];
+  const translationLines = [
+    "### Natural English Translation",
+    "",
+    ...translationBody,
+    ""
+  ];
+  return [...lines.slice(0, nextSectionIndex), ...translationLines, ...lines.slice(nextSectionIndex)].join("\n");
+}
+
+function formatStructuredTranslationTurns(turns: readonly { readonly speaker: string; readonly text: string }[]): readonly string[] {
+  const speakerWidth = Math.max(...turns.map((turn) => displayWidth(turn.speaker)));
+  return turns.map((turn) => `${turn.speaker}${" ".repeat(Math.max(0, speakerWidth - displayWidth(turn.speaker)))}: ${turn.text}`);
+}
+
+function hasNaturalEnglishTranslation(markdown: string): boolean {
+  return /^#{1,6}\s+(?:Natural English Translation|English translation)\s*$/imu.test(markdown);
+}
+
+function addSpeakerLabelsToEmbeddedDialogueTranslation(markdown: string): string {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const dialogueHeading = lines.findIndex((line) => /^###\s+Learner-facing Dialogue\s*$/iu.test(line.trim()));
+  const translationHeading = lines.findIndex((line) => /^###\s+(?:Natural English Translation|English translation)\s*$/iu.test(line.trim()));
+  if (dialogueHeading < 0 || translationHeading < 0 || translationHeading <= dialogueHeading) return markdown;
+  const sourceEnd = lines.findIndex((line, index) => index > dialogueHeading && /^###\s+/u.test(line.trim()));
+  const translationEnd = lines.findIndex((line, index) => index > translationHeading && /^###\s+/u.test(line.trim()));
+  const sourceLines = lines.slice(dialogueHeading + 1, sourceEnd < 0 ? lines.length : sourceEnd)
+    .map((line) => /^\s*(\S(?:.*?\S)?)\s*[:：]\s*\S/u.exec(line)?.[1])
+    .filter((speaker): speaker is string => speaker !== undefined);
+  const end = translationEnd < 0 ? lines.length : translationEnd;
+  const translatedIndexes = lines.slice(translationHeading + 1, end)
+    .map((line, offset) => ({ index: translationHeading + 1 + offset, line }))
+    .filter(({ line }) => line.trim().length > 0 && !/^```/u.test(line.trim()));
+  if (sourceLines.length === 0 || translatedIndexes.length !== sourceLines.length || translatedIndexes.some(({ line }) => isDialogueSpeakerLine(line))) return markdown;
+  const speakerWidth = Math.max(...sourceLines.map(displayWidth));
+  for (const [index, translated] of translatedIndexes.entries()) {
+    const speaker = sourceLines[index] ?? "";
+    lines[translated.index] = `${speaker}${" ".repeat(Math.max(0, speakerWidth - displayWidth(speaker)))}: ${translated.line.trim()}`;
+  }
+  return lines.join("\n");
+}
+
+function curriculumContentRoleForPath(path: string): "reading" | "grammar-easy" | "grammar-hard" {
+  if (/\/chapter-0*\d+-0*\d+-grammar-easy\/(?:chapter|README)\.md$/u.test(path)) return "grammar-easy";
+  if (/\/chapter-0*\d+-0*\d+-grammar-hard\/(?:chapter|README)\.md$/u.test(path)) return "grammar-hard";
+  return "reading";
+}
+
+function grammarEntryVisibleInMode(path: string | undefined, mode: CurriculumDisplayMode): boolean {
+  if (path === undefined) return true;
+  if (/\/chapter-0*\d+-0*\d+-grammar-(?:easy|hard)\/README\.md$/u.test(path)) return false;
+  const role = curriculumContentRoleForPath(path);
+  return role === "reading" || mode === "developer" || (mode === "normal" && role === "grammar-easy") || (mode === "expert" && role === "grammar-hard");
+}
+
+function grammarEntryLabelForMode(label: string, path: string | undefined, mode: CurriculumDisplayMode): string {
+  if (path === undefined) return label;
+  const role = curriculumContentRoleForPath(path);
+  if (role === "reading") return label;
+  return "Grammar";
+}
+
+function translationPathForContentEntry(filePath: string | undefined, entries: readonly ReadableContentEntry[]): { readonly translationPath?: string } {
+  if (filePath === undefined || !/\/chapter\.md$/u.test(filePath)) return {};
+  const candidate = filePath.replace(/chapter\.md$/u, "reading-translation.en.json");
+  return entries.some((entry) => entry.path === candidate) ? { translationPath: candidate } : {};
+}
+
+function readingSupportPathForContentEntry(filePath: string | undefined, entries: readonly ReadableContentEntry[]): { readonly readingSupportPath?: string } {
+  if (filePath === undefined || !/\/chapter\.md$/u.test(filePath)) return {};
+  const candidate = filePath.replace(/chapter\.md$/u, "reading-support.json");
+  return entries.some((entry) => entry.path === candidate) ? { readingSupportPath: candidate } : {};
+}
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 async function runModuleTreeCommandAction(
@@ -2143,6 +2576,12 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
   return { ...session, side: "answer", answerRendered: answer.rendered, message: undefined };
 }
 
+async function reprojectEmbeddedReviewSession(session: EmbeddedReviewSession, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
+  if (session.side === "complete") return session;
+  const prompt = await renderEmbeddedReviewPrompt(session, options);
+  return session.side === "answer" ? renderEmbeddedReviewAnswer(prompt, options) : prompt;
+}
+
 function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean, locale: SourceLocale = "en-US", displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
   const packageLabel = session.node.packageLabel ?? session.node.packageId ?? "Installed package";
   const header = [
@@ -2163,8 +2602,8 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
     return [...header, "Loading review card..."].join("\n");
   }
   const cards = session.side === "prompt"
-    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled, session.node.packageId)]
-    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled, session.node.packageId)];
+    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode)]
+    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode)];
   const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled, locale);
   return [
     ...header,
@@ -2235,10 +2674,10 @@ function isJapanesePackage(packageId?: string): boolean {
   return packageId === "com.sleepymario.language.japanese";
 }
 
-export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean, packageId?: string): string {
+export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
   const languageLines = formatLanguageSpecificEmbeddedExerciseLines(exercise, side, packageId);
   const lines = formatEmbeddedReviewBody({
-    promptLines: languageLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines),
+    promptLines: projectReviewLinesForMode(languageLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines), displayMode),
     answerLines: [],
     colorsEnabled,
     placeholder: "Answer hidden until reveal."
@@ -2247,20 +2686,24 @@ export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "
     lines.push("", "Hints", ...prefixReviewCardLines(exercise.hintLines));
   }
   if (side === "answer") {
-    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(exercise));
+    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(exercise, !isFiveChapterReviewSource(sourcePath)));
   }
   return lines.join("\n");
 }
 
-export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string): string {
+export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
   const languageReveal = formatLanguageSpecificEmbeddedRevealLines(prompt, packageId);
   const lines = formatEmbeddedReviewBody({
-    promptLines: languageReveal?.promptLines ?? prompt.promptLines,
-    answerLines: languageReveal?.answerLines ?? answer.answerLines,
+    promptLines: projectReviewLinesForMode(languageReveal?.promptLines ?? prompt.promptLines, displayMode),
+    answerLines: projectReviewLinesForMode(languageReveal?.answerLines ?? answer.answerLines, displayMode),
     colorsEnabled
   });
-  appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(answer));
+  appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(answer, !isFiveChapterReviewSource(sourcePath)));
   return lines.join("\n");
+}
+
+function projectReviewLinesForMode(lines: readonly string[], mode: CurriculumDisplayMode): readonly string[] {
+  return lines.map((line) => projectReviewTextForMode(line, mode));
 }
 
 function formatEmbeddedReviewBody(options: {
@@ -2273,10 +2716,10 @@ function formatEmbeddedReviewBody(options: {
   const border = "-".repeat(width);
   return [
     reviewCardColor(border, "prompt", options.colorsEnabled),
-    reviewCardColor(centerText("Review Prompt", width), "prompt", options.colorsEnabled),
+    reviewCardColor(centerText("Phrase:", width), "prompt", options.colorsEnabled),
     ...prefixReviewCardLines(options.promptLines),
     "",
-    reviewCardColor(centerText("Review Answer", width), "answer", options.colorsEnabled),
+    reviewCardColor(centerText("Answer:", width), "answer", options.colorsEnabled),
     ...prefixReviewCardLines(options.answerLines.length > 0 ? options.answerLines : [options.placeholder ?? ""])
   ];
 }
@@ -2286,12 +2729,18 @@ interface EmbeddedReviewSupplement {
   readonly examples: readonly string[];
 }
 
-function embeddedReviewSupplementFromExercise(exercise: RenderedExercise): EmbeddedReviewSupplement {
+function embeddedReviewSupplementFromExercise(exercise: RenderedExercise, includeNotes = true): EmbeddedReviewSupplement {
   const fromNotes = embeddedReviewSupplementFromNotes(exercise.noteLines);
   return {
-    notes: fromNotes.notes,
+    notes: includeNotes ? fromNotes.notes : [],
     examples: [...fromNotes.examples, ...exercise.exampleLines].filter((example, index, all) => all.indexOf(example) === index).slice(0, 3)
   };
+}
+
+function isFiveChapterReviewSource(sourcePath?: string): boolean {
+  if (sourcePath === undefined) return false;
+  const match = /(?:^|\/)review-decks\/chapter-0*(\d+)-0*(\d+)\/cards\.tsv$/u.exec(sourcePath);
+  return match !== null && Number(match[2]) - Number(match[1]) === 4;
 }
 
 function embeddedReviewSupplementFromNotes(lines: readonly string[]): EmbeddedReviewSupplement {
@@ -2325,7 +2774,7 @@ function appendEmbeddedReviewSupplement(lines: string[], supplement: EmbeddedRev
     lines.push("", "Notes", ...prefixReviewCardLines(supplement.notes.map((note) => `- ${note}`)));
   }
   if (supplement.examples.length > 0) {
-    lines.push("", "Example", ...prefixReviewCardLines(supplement.examples.slice(0, 3).map((example) => `- ${example}`)));
+    lines.push("", "Examples:", ...prefixReviewCardLines(supplement.examples.slice(0, 3).map((example) => `- ${example}`)));
   }
 }
 
@@ -3560,14 +4009,17 @@ function renderLanguageTreeMenu(
   sourceLocale: SourceLocale = "en-US",
   focusedPane: FocusablePane = "navigation",
   toggleSelection = 0,
-  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode,
+  translationsEnabled = false,
+  breakdownEnabled = false,
+  charactersEnabled = false,
+  charactersApplicable = false
 ): void {
-  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode)}`);
+  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable)}`);
 }
 
 const rightPanePageSize = 24;
 const reviewBottomBarMarker = "[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]";
-const sourceLanguageToggleCount = 2;
 const minimumThreePaneWidth = 100;
 type FocusablePane = "navigation" | "toggles";
 
@@ -3583,7 +4035,11 @@ export function renderTwoPaneLanguageTree(
   focusedPane: FocusablePane = "navigation",
   terminalWidth?: number,
   toggleSelection = 0,
-  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode,
+  translationsEnabled = false,
+  breakdownEnabled = false,
+  charactersEnabled = false,
+  charactersApplicable = false
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
   const layout = threePaneLayout(terminalWidth);
@@ -3616,7 +4072,7 @@ export function renderTwoPaneLanguageTree(
   lines.push(`${separator} ${padRight(navigationTitle, leftWidth)} ${separator} ${padRight(outputTitle, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(togglesTitle, layout.toggleWidth)} ${separator}` : ""}`);
   lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}${layout.showToggles ? ` ${" ".repeat(layout.toggleWidth)} ${separator}` : ""}`);
 
-  const toggleLines = renderTogglesPane(sourceLocale, displayMode, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
+  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
@@ -3627,7 +4083,7 @@ export function renderTwoPaneLanguageTree(
 
   const scroll = rightLines.length > scrollableHeight ? `Output ${offset + 1}-${Math.min(offset + scrollableHeight, rightLines.length)}/${rightLines.length}` : "";
   const controls = layout.showToggles
-    ? "Left/Right focus  Up/Down move  Enter open/start  Space activate/install  U uninstall  PgUp/PgDn scroll  Home/End jump  Esc back  q quit"
+    ? "Left/Right focus  Up/Down move  Enter open/start  Space activate/install  T translation  U uninstall  PgUp/PgDn scroll  Home/End jump  Esc back  q quit"
     : "Up/Down move  Enter open  Space install  PgUp/PgDn scroll  Esc back  q quit";
   const frameWidth = leftWidth + rightWidth + (layout.showToggles ? layout.toggleWidth + 10 : 7);
   const footer = truncateTextDisplay(scroll === "" ? controls : `${scroll}  ${controls}`, frameWidth);
@@ -3641,8 +4097,15 @@ export function renderSourceLanguageToggle(sourceLocale: SourceLocale, colorsEna
   return colorsEnabled ? `${ansi.bold}${ansi.orange}${label}${ansi.reset}` : label;
 }
 
-function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
-  const raw = [sourceLocaleLabel(sourceLocale, sourceLocale), `View mode: ${displayMode === "normal" ? "Normal" : "Developer"}`];
+function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
+  const viewLabel: Record<CurriculumDisplayMode, string> = { normal: "Normal", expert: "Expert", developer: "Developer" };
+  const raw = [
+    `Source: ${sourceLocaleLabel(sourceLocale, sourceLocale)}`,
+    `View mode: ${viewLabel[displayMode]}`,
+    `Translation: ${translationsEnabled ? "On" : "Off"}`,
+    ...(charactersApplicable ? [`Characters: ${charactersEnabled ? "On" : "Off"}`] : []),
+    `Breakdown: ${breakdownEnabled ? "On" : "Off"}`
+  ];
   return raw.map((value, index) => {
     const selected = focused && selection === index;
     const line = truncateTextDisplay(`${selected ? ">" : " "} ${value}`, width);
@@ -3698,10 +4161,10 @@ function renderTreeLines(entry: VisibleLanguageTreeNode, selected: boolean, widt
   const labelWidth = Math.max(1, width - strippedLength(prefix));
   const labelLines = wrapDisplayText(displayTreeLabel(entry.node), labelWidth);
   const plainLines = labelLines.map((line, index) => truncateTextDisplay(`${index === 0 ? prefix : continuationPrefix}${line}`, width));
-  return plainLines.map((plain) => styleTreeLine(plain, entry, selected, colorsEnabled));
+  return plainLines.map((plain, index) => styleTreeLine(plain, labelLines[index] ?? "", entry, selected, colorsEnabled));
 }
 
-function styleTreeLine(plain: string, entry: VisibleLanguageTreeNode, selected: boolean, colorsEnabled: boolean): string {
+function styleTreeLine(plain: string, semanticLabel: string, entry: VisibleLanguageTreeNode, selected: boolean, colorsEnabled: boolean): string {
   if (!colorsEnabled) {
     return plain;
   }
@@ -3709,7 +4172,7 @@ function styleTreeLine(plain: string, entry: VisibleLanguageTreeNode, selected: 
     return styleReviewDeckColoredMenuToken(plain, selected);
   }
   if (entry.node.kind === "review-source") {
-    return styleReviewSourceLine(plain, entry.node.reviewStatus, selected);
+    return styleReviewSourceLine(plain, semanticLabel, entry.node.reviewStatus, selected);
   }
   if (selected) {
     return `${ansi.inverse}${ansi.bold}${plain}${ansi.reset}`;
@@ -3738,15 +4201,24 @@ function styleTreeLine(plain: string, entry: VisibleLanguageTreeNode, selected: 
   return plain;
 }
 
-function styleReviewSourceLine(plain: string, status: ReviewDeckMenuStatusKind | undefined, selected: boolean): string {
+function styleReviewSourceLine(plain: string, semanticLabel: string, status: ReviewDeckMenuStatusKind | undefined, selected: boolean): string {
   const statusStyle = reviewDeckStatusStyle(status ?? "not_started");
+  const labelIndex = plain.lastIndexOf(semanticLabel);
+  const before = labelIndex < 0 ? "" : plain.slice(0, labelIndex);
+  const label = labelIndex < 0 ? plain : semanticLabel;
+  const after = labelIndex < 0 ? "" : plain.slice(labelIndex + semanticLabel.length);
   if (!selected) {
-    return `${statusStyle}${plain}${ansi.reset}`;
+    return statusStyle === menuStyles.defaultForeground
+      ? `${ansi.reset}${plain}`
+      : `${before}${statusStyle}${label}${ansi.reset}${after}`;
   }
-  return `${ansi.inverse}${ansi.bold}${statusStyle}${plain}${ansi.reset}`;
+  const selectedStyle = `${ansi.inverse}${ansi.bold}`;
+  return statusStyle === menuStyles.defaultForeground
+    ? `${selectedStyle}${plain}${ansi.reset}`
+    : `${selectedStyle}${before}${statusStyle}${label}${ansi.reset}${selectedStyle}${after}${ansi.reset}`;
 }
 
-function reviewDeckStatusStyle(status: ReviewDeckMenuStatusKind): string {
+export function reviewDeckStatusStyle(status: ReviewDeckMenuStatusKind): string {
   if (status === "not_started") {
     return ansi.magenta;
   }
@@ -3754,9 +4226,9 @@ function reviewDeckStatusStyle(status: ReviewDeckMenuStatusKind): string {
     return ansi.green;
   }
   if (status === "no_cards_to_review") {
-    return ansi.blue;
+    return menuStyles.defaultForeground;
   }
-  return ansi.yellow;
+  return ansi.blue;
 }
 
 function hasReviewDeckColoredMenuToken(line: string): boolean {
@@ -3783,19 +4255,31 @@ function reviewDeckContentStyle(): string {
 }
 
 function reviewDeckColoredMenuTokenPattern(): RegExp {
-  return /\b(?:Foundation Ch\s+\d+(?=$)|Han Gul\s+\d+(?=\s+--)|Ch\s+\d+(?=\s+--)|Grammar(?=\s+--))/u;
+  return /\b(?:Foundation(?=\s+Chapter\s+--\s+\d+)|Han Gul\s+\d+(?=\s+--)|Ch\s+\d+(?=\s+--)|Grammar(?=\s*(?:--|$)))/u;
 }
 
 function displayTreeLabel(node: LanguageTreeNode): string {
   const label = node.label;
-  if (label === grammarEasyMenuLabel) {
-    return "Grammar -- Easy";
-  }
-  if (label === grammarHardMenuLabel) {
-    return "Grammar -- Hard";
+  if (
+    (node.kind === "content" && node.filePath !== undefined && curriculumContentRoleForPath(node.filePath) !== "reading")
+    || label === grammarEasyMenuLabel
+    || label === grammarHardMenuLabel
+  ) {
+    return "Grammar";
   }
   if (node.kind === "content" && node.filePath !== undefined && isHangulChapterOverviewPath(node.filePath)) {
     return label.replace(/^Chapter\s+(\d+)\b/u, "Han Gul $1");
+  }
+  if (node.kind === "content" && node.packageId === "com.sleepymario.language.vietnamese") {
+    const foundationChapter = /(?:^|\/)units\/vietnamese-foundation\/chapter-(\d+)-/u.exec(node.filePath ?? "")?.[1];
+    if (foundationChapter !== undefined) {
+      const chapter = Number.parseInt(foundationChapter, 10);
+      if (chapter >= 1 && chapter <= 5) return formatFoundationChapterMenuLabel(chapter);
+    }
+    const chapter = /(?:^|\/)chapter-(\d+)-/u.exec(node.filePath ?? "")?.[1]
+      ?? /^(?:Chapter|Ch)\s+(\d+)\b/u.exec(label)?.[1];
+    const topic = label.replace(/^(?:Chapter|Ch)\s+\d+\s*(?:--|—|–|:|-)?\s*/u, "").trim();
+    if (chapter !== undefined && topic.length > 0) return `Ch ${Number.parseInt(chapter, 10)} -- ${topic}`;
   }
   return label.replace(/^Chapter\s+(\d+)\b/u, "Ch $1");
 }
@@ -3803,12 +4287,34 @@ function displayTreeLabel(node: LanguageTreeNode): string {
 function formatPaneText(text: string, width: number, colorsEnabled: boolean): readonly string[] {
   const lines: string[] = [];
   let inCodeBlock = false;
-  const rawLines = text.replace(/\t/gu, "  ").split("\n");
+  let learnerReadingSection: LearnerReadingSection = undefined;
+  let primaryReadingSection: LearnerReadingSection = undefined;
+  let breakdownSection = false;
+  let narrativeIntroduction = false;
+  let narrativeIntroductionStarted = false;
+  const rawLines = reflowMarkdownSourceLines(text.replace(/\t/gu, "  ").split("\n"));
   for (let index = 0; index < rawLines.length; index += 1) {
     const rawLine = rawLines[index] ?? "";
     if (/^\s*```/u.test(rawLine)) {
       inCodeBlock = !inCodeBlock;
       continue;
+    }
+    if (!inCodeBlock) {
+      const heading = rawLine.match(/^(#{1,6})\s+(.+)$/u);
+      if (heading !== null && (heading[1]?.length ?? 0) <= 4) {
+        const title = heading[2]?.trim() ?? "";
+        breakdownSection = /^Line-by-line Breakdown(?:\s*:\s*(?:Normal|Expert))?$/iu.test(title);
+        const nextSection = learnerReadingSectionForHeading(title);
+        if (nextSection !== undefined) primaryReadingSection = nextSection;
+        const translationHeading = /^(?:Natural English Translation|English translation)$/iu.test(title);
+        learnerReadingSection = translationHeading
+          ? primaryReadingSection
+          : nextSection;
+        narrativeIntroduction = !translationHeading
+          && learnerReadingSection === "narrative"
+          && narrativeSectionHasIntroduction(rawLines, index);
+        narrativeIntroductionStarted = false;
+      }
     }
     if (!inCodeBlock && isMarkdownTableLine(rawLine)) {
       const tableLines = [rawLine];
@@ -3821,12 +4327,168 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
     }
     if (rawLine.length === 0) {
       lines.push("");
+      if (narrativeIntroductionStarted) narrativeIntroduction = false;
       continue;
     }
-    const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled);
+    if (learnerReadingSection === "dialogue" && (inCodeBlock || isDialogueSpeakerLine(rawLine))) {
+      lines.push(...formatLearnerDialogueLine(rawLine, width, colorsEnabled));
+      continue;
+    }
+    if (learnerReadingSection === "narrative" && narrativeIntroduction && !/^#{1,6}\s+/u.test(rawLine)) {
+      narrativeIntroductionStarted = true;
+      const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled, breakdownSection);
+      lines.push(...wrapDisplayText(prepared.text, width).map((line) => prepared.style(line)));
+      continue;
+    }
+    if (learnerReadingSection === "narrative" && !/^#{1,6}\s+/u.test(rawLine)) {
+      const narrative = stripInlineMarkdown(rawLine, false);
+      lines.push(...wrapDisplayText(narrative, width).map((line) => applyTargetReadingStyle(line, colorsEnabled)));
+      continue;
+    }
+    const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled, breakdownSection);
     lines.push(...wrapDisplayText(prepared.text, width).map((line) => prepared.style(line)));
   }
   return lines;
+}
+
+function reflowMarkdownSourceLines(sourceLines: readonly string[]): readonly string[] {
+  const output: string[] = [];
+  let paragraph: string[] = [];
+  let inCodeBlock = false;
+  let inFrontmatter = sourceLines[0]?.trim() === "---";
+  const chapterNumber = chapterNumberFromMarkdown(sourceLines);
+  const earlyNarrative = chapterNumber !== undefined && chapterNumber <= 20;
+  let readingSection: LearnerReadingSection = undefined;
+  let primaryReadingSection: LearnerReadingSection = undefined;
+  let narrativeIntroduction = false;
+  let narrativeIntroductionStarted = false;
+  const flush = (): void => {
+    if (paragraph.length > 0) output.push(paragraph.join(" ").replace(/\s+/gu, " ").trimEnd());
+    paragraph = [];
+  };
+  for (const [index, line] of sourceLines.entries()) {
+    const trimmed = line.trim();
+    if (inFrontmatter) {
+      output.push(line);
+      if (index > 0 && trimmed === "---") inFrontmatter = false;
+      continue;
+    }
+    if (/^```/u.test(trimmed)) {
+      flush();
+      output.push(line);
+      inCodeBlock = !inCodeBlock;
+      if (inCodeBlock && narrativeIntroduction) narrativeIntroduction = false;
+      continue;
+    }
+    if (inCodeBlock) {
+      output.push(line);
+      continue;
+    }
+    if (trimmed.length === 0) {
+      flush();
+      output.push("");
+      if (narrativeIntroductionStarted) narrativeIntroduction = false;
+      continue;
+    }
+    const heading = /^#{1,6}\s+(.+)$/u.exec(trimmed);
+    if (heading !== null) {
+      const title = heading[1]?.trim() ?? "";
+      const nextSection = learnerReadingSectionForHeading(title);
+      if (nextSection !== undefined) primaryReadingSection = nextSection;
+      const translationHeading = /^(?:Natural English Translation|English translation)$/iu.test(title);
+      readingSection = translationHeading
+        ? primaryReadingSection
+        : nextSection;
+      narrativeIntroduction = !translationHeading
+        && readingSection === "narrative"
+        && narrativeSectionHasIntroduction(sourceLines, index);
+      narrativeIntroductionStarted = false;
+    }
+    if (/^#{1,6}\s+/u.test(trimmed) || isMarkdownTableLine(line) || isDialogueSpeakerLine(line) || /^\s*(?:[-*+] |\d+[.)] |>)/u.test(line)) {
+      flush();
+      output.push(line);
+      continue;
+    }
+    if (narrativeIntroduction && readingSection === "narrative") {
+      narrativeIntroductionStarted = true;
+      paragraph.push(trimmed);
+      continue;
+    }
+    if (earlyNarrative && readingSection === "narrative") {
+      flush();
+      output.push(trimmed);
+      continue;
+    }
+    paragraph.push(trimmed);
+  }
+  flush();
+  return output;
+}
+
+function narrativeSectionHasIntroduction(lines: readonly string[], headingIndex: number): boolean {
+  let index = headingIndex + 1;
+  while (index < lines.length && (lines[index] ?? "").trim().length === 0) index += 1;
+  if (index >= lines.length || /^#{1,6}\s+/u.test((lines[index] ?? "").trim()) || /^```/u.test((lines[index] ?? "").trim())) return false;
+  while (index < lines.length && (lines[index] ?? "").trim().length > 0 && !/^#{1,6}\s+/u.test((lines[index] ?? "").trim())) index += 1;
+  if (index >= lines.length || /^#{1,6}\s+/u.test((lines[index] ?? "").trim())) return false;
+  while (index < lines.length && (lines[index] ?? "").trim().length === 0) index += 1;
+  return index < lines.length && !/^#{1,6}\s+/u.test((lines[index] ?? "").trim());
+}
+
+function chapterNumberFromMarkdown(sourceLines: readonly string[]): number | undefined {
+  for (const line of sourceLines) {
+    const match = /^chapter:\s*["']?(\d+)["']?\s*$/iu.exec(line.trim())
+      ?? /^#\s+(?:Chapter|Ch)\s+(\d+)\b/iu.exec(line.trim());
+    if (match !== null) return Number.parseInt(match[1] ?? "", 10);
+  }
+  return undefined;
+}
+
+type LearnerReadingSection = "dialogue" | "narrative" | undefined;
+
+function learnerReadingSectionForHeading(title: string): LearnerReadingSection {
+  if (/^(?:Dialogue|Learner-facing Dialogue|Model Dialogue|Model Mini Dialogue|Chapter \d+ Target Dialogue|對話(?:\s*\/\s*Learner-facing Dialogue)?)$/iu.test(title)) {
+    return "dialogue";
+  }
+  if (/^(?:Narrative|Learner-facing (?:Controlled Reading|Narrative|Read Content)|Controlled Reading|Model Mini Text|閱讀短文(?:\s*\/\s*Learner-facing Controlled Reading)?)$/iu.test(title)) {
+    return "narrative";
+  }
+  return undefined;
+}
+
+function isDialogueSpeakerLine(line: string): boolean {
+  const semanticText = stripInlineMarkdown(line, false);
+  return /^(?:\s*)(?:\S(?:.*?\S)?)(?:\s*)[:：](?:\s*)\S/u.test(semanticText);
+}
+
+function formatLearnerDialogueLine(rawLine: string, width: number, colorsEnabled: boolean): readonly string[] {
+  const plain = stripInlineMarkdown(rawLine, false);
+  const match = /^(\s*)(\S(?:.*?\S)?)(\s*)([:：])(\s*)(.*)$/u.exec(plain);
+  if (match === null) {
+    return wrapDisplayText(plain, width).map((line) => applyTargetReadingStyle(line, colorsEnabled));
+  }
+
+  const leading = match[1] ?? "";
+  const speaker = match[2] ?? "";
+  const alignment = match[3] ?? "";
+  const colon = match[4] ?? ":";
+  const separator = match[5] ?? "";
+  const utterance = match[6] ?? "";
+  const prefix = `${leading}${speaker}${alignment}${colon}${separator}`;
+  const continuation = " ".repeat(displayWidth(prefix));
+  const utteranceWidth = Math.max(1, width - displayWidth(prefix));
+  const utteranceLines = wrapDisplayText(utterance, utteranceWidth);
+
+  return utteranceLines.map((line, index) => {
+    const styledUtterance = applyTargetReadingStyle(line, colorsEnabled);
+    if (index > 0) return `${continuation}${styledUtterance}`;
+    if (!colorsEnabled) return `${prefix}${line}`;
+    return `${leading}${ansi.purple}${speaker}${alignment}${colon}${ansi.reset}${separator}${styledUtterance}`;
+  });
+}
+
+function applyTargetReadingStyle(text: string, colorsEnabled: boolean): string {
+  return colorsEnabled ? `${ansi.pink}${text}${ansi.reset}` : text;
 }
 
 function isMarkdownTableLine(line: string): boolean {
@@ -3923,11 +4585,11 @@ function isMarkdownTableSeparatorRow(row: readonly string[]): boolean {
   return row.every((cell) => /^:?-{3,}:?$/u.test(cell.trim()));
 }
 
-function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean): { text: string; style(line: string): string } {
+function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean, breakdownSection = false): { text: string; style(line: string): string } {
   if (inCodeBlock) {
     return {
       text: rawLine.trimEnd(),
-      style: (line) => colorsEnabled ? `${ansi.pink}${line}${ansi.reset}` : line
+      style: (line) => line
     };
   }
   const heading = rawLine.match(/^(#{1,6})\s+(.+)$/u);
@@ -3945,6 +4607,13 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
   }
   const bullet = rawLine.match(/^(\s*)[-*]\s+(.+)$/u);
   if (bullet !== null) {
+    if (breakdownSection) {
+      const marker = colorsEnabled ? `${ansi.yellow}•${ansi.reset}` : "•";
+      return {
+        text: `${bullet[1] ?? ""}${marker} ${stripInlineMarkdown(bullet[2] ?? "", colorsEnabled)}`,
+        style: (line) => line
+      };
+    }
     return {
       text: `${bullet[1] ?? ""}• ${stripInlineMarkdown(bullet[2] ?? "", colorsEnabled)}`,
       style: (line) => colorsEnabled ? `${ansi.yellow}${line}${ansi.reset}` : line
@@ -3957,7 +4626,9 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
 }
 
 function stripInlineMarkdown(text: string, colorsEnabled: boolean): string {
-  let result = text.replace(/\*\*([^*]+)\*\*/gu, colorsEnabled ? `${ansi.bold}$1${ansi.reset}` : "$1");
+  let result = text.replace(/\[\[grammar:([^\]\n]+)\]\]/gu, colorsEnabled ? `${ansi.blue}$1${ansi.reset}` : "$1");
+  result = result.replace(/\[\[emphasis:([^\]\n]+)\]\]/gu, colorsEnabled ? `${ansi.bold}$1${ansi.reset}` : "$1");
+  result = result.replace(/\*\*([^*]+)\*\*/gu, colorsEnabled ? `${ansi.bold}$1${ansi.reset}` : "$1");
   result = result.replace(/`([^`]+)`/gu, colorsEnabled ? `${ansi.blue}$1${ansi.reset}` : "$1");
   result = result.replace(/\*([^*]+)\*/gu, "$1");
   return result;
@@ -4014,21 +4685,61 @@ function wrapDisplayText(text: string, width: number): readonly string[] {
 }
 
 function findDisplayBreakIndex(text: string, width: number): number {
+  const protectedSpaces = protectedAnsiSpanSpaces(text, width);
   let displayColumn = 0;
   let lastSpaceIndex = -1;
   let index = 0;
-  for (const character of [...text]) {
-    const nextWidth = displayColumn + (isWideCharacter(character) ? 2 : 1);
+  while (index < text.length) {
+    const ansiMatch = /^\x1b\[[0-9;]*m/u.exec(text.slice(index));
+    if (ansiMatch !== null) {
+      index += ansiMatch[0].length;
+      continue;
+    }
+    const character = String.fromCodePoint(text.codePointAt(index) ?? 0);
+    const characterWidth = /\p{Mark}/u.test(character) ? 0 : isWideCharacter(character) ? 2 : 1;
+    const nextWidth = displayColumn + characterWidth;
     if (nextWidth > width) {
       return lastSpaceIndex > 0 ? lastSpaceIndex : Math.max(index, character.length);
     }
-    if (/\s/u.test(character)) {
+    if (/\s/u.test(character) && !protectedSpaces.has(index)) {
       lastSpaceIndex = index;
     }
     displayColumn = nextWidth;
     index += character.length;
   }
   return text.length;
+}
+
+function protectedAnsiSpanSpaces(text: string, width: number): ReadonlySet<number> {
+  const protectedSpaces = new Set<number>();
+  let spanStart: number | undefined;
+  let index = 0;
+  while (index < text.length) {
+    const ansiMatch = /^\x1b\[([0-9;]*)m/u.exec(text.slice(index));
+    if (ansiMatch !== null) {
+      const codes = ansiMatch[1] ?? "";
+      if (codes === "" || codes.split(";").includes("0")) {
+        if (spanStart !== undefined) {
+          const spanText = text.slice(spanStart, index);
+          if (displayWidth(spanText.replace(/\x1b\[[0-9;]*m/gu, "")) <= width) {
+            for (let spanIndex = spanStart; spanIndex < index;) {
+              const character = String.fromCodePoint(text.codePointAt(spanIndex) ?? 0);
+              if (/\s/u.test(character)) protectedSpaces.add(spanIndex);
+              spanIndex += character.length;
+            }
+          }
+        }
+        spanStart = undefined;
+      } else if (spanStart === undefined) {
+        spanStart = index + ansiMatch[0].length;
+      }
+      index += ansiMatch[0].length;
+      continue;
+    }
+    const character = String.fromCodePoint(text.codePointAt(index) ?? 0);
+    index += character.length;
+  }
+  return protectedSpaces;
 }
 
 function takeDisplayWidth(text: string, width: number): string {
@@ -4056,7 +4767,7 @@ function padRightDisplay(text: string, width: number): string {
 function displayWidth(text: string): number {
   let width = 0;
   for (const character of [...text]) {
-    width += isWideCharacter(character) ? 2 : 1;
+    width += /\p{Mark}/u.test(character) ? 0 : isWideCharacter(character) ? 2 : 1;
   }
   return width;
 }
@@ -4159,6 +4870,10 @@ function isEnter(key: KeyPress): boolean {
 
 function isSpace(key: KeyPress): boolean {
   return key.name === "space" || key.sequence === " ";
+}
+
+function isTranslationToggle(key: KeyPress): boolean {
+  return key.ctrl !== true && (key.name === "t" || key.sequence === "t" || key.sequence === "T");
 }
 
 function isUninstall(key: KeyPress): boolean {

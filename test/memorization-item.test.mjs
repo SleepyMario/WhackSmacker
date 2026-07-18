@@ -41,6 +41,15 @@ test("valid v2 cards parse with stable identity and matching fingerprint", () =>
   assertValidCollection({ schemaVersion: 2, items: [item] });
 });
 
+test("v2 review examples allow one to three literal NFC strings", () => {
+  const item = validV2Item();
+  assertValidItem({ ...item, examples: ["Xin chào."] });
+  assertValidItem({ ...item, examples: ["Một.", "Hai.", "Ba."] });
+  assertInvalidItem({ ...item, examples: [] }, /between one and three/u);
+  assertInvalidItem({ ...item, examples: ["Một.", "Hai.", "Ba.", "Bốn."] }, /between one and three/u);
+  assertInvalidItem({ ...item, examples: [" Xin chào."] }, /no leading or trailing whitespace/u);
+});
+
 test("v2 duplicate stable card IDs and invalid fingerprints fail", () => {
   const item = validV2Item();
   assertInvalidCollection({ schemaVersion: 2, items: [item, item] }, /Duplicate memorization item ID/);

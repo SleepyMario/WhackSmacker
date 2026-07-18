@@ -260,6 +260,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
 
     const allReviewItems = reviewCollections.flatMap(({ collection }) => collection.items);
     assertKoreanStrictReadContentExamples(allReviewItems, content.files);
+    assertOrdinaryBidirectionalItems(allReviewItems, "Korean");
     assert.ok(allReviewItems.some((item) => item.prompt.text === "안녕하세요" && item.answer.text === "hello"));
     assert.ok(allReviewItems.some((item) => item.prompt.text === "hello" && item.answer.text === "안녕하세요"));
     assert.ok(allReviewItems.some((item) => item.prompt.text === "topic particle" && item.answer.text === "은/는"));
@@ -279,7 +280,7 @@ test("content package generator creates a valid Korean Curriculum package", asyn
     const helloItem = allReviewItems.find((item) => item.prompt.text === "안녕하세요" && item.answer.text === "hello");
     const existsItem = allReviewItems.find((item) => item.prompt.text === "있다" && item.answer.text === "to exist / to have");
     const markerItem = allReviewItems.find((item) => item.prompt.text === "이/가" && item.answer.text === "subject/existence marker");
-    assert.equal([helloItem, studentItem, existsItem, markerItem].every(item => item.examples === undefined), true);
+    assert.equal([helloItem, studentItem, existsItem, markerItem].every(item => item.examples?.length >= 1 && item.examples.length <= 3), true);
     assert.deepEqual(findReviewTerms(allReviewItems, ["사람", "언니", "연필", "소파", "시간"]), []);
     assert.ok(findReviewTerms(allReviewItems, ["학생", "나", "문", "지도", "식탁"]).length >= 5);
 
@@ -417,7 +418,7 @@ test("content package generator creates a valid Chinese - Mandarin Traditional p
     assert.ok(coreItems.some((item) => item.prompt.text === "Meaning: hello" && item.answer.text.includes("Characters: 你好")));
     assert.ok(coreItems.some((item) => item.prompt.text === "Characters: 學生" && item.answer.text.includes("Pinyin: xuéshēng")));
     assert.ok(coreItems.some((item) => item.prompt.text.includes("Pinyin: nǐ hǎo") && item.prompt.text.includes("Zhuyin: ㄋㄧˇ ㄏㄠˇ")));
-    assert.ok(coreItems.every((item) => item.examples === undefined));
+    assert.ok(coreItems.every((item) => item.examples?.length >= 1 && item.examples.length <= 3));
     const pinyinIntro = content.files.find((file) => file.path === "units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md").text;
     const chapter1 = content.files.find((file) => file.path === "units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md").text;
     assert.match(pinyinIntro, /Hanyu Pinyin is the standard romanization system/);
@@ -548,7 +549,7 @@ test("content package generator creates a valid Japanese package with Core revie
     assert.ok(reviewItems.some((item) => item.prompt.text === "Meaning: hello" && item.answer.text.includes("Japanese: こんにちは")));
     assert.ok(reviewItems.some((item) => item.prompt.text === "Japanese: 学生" && item.answer.text.includes("Reading: がくせい")));
     assert.ok(reviewItems.some((item) => item.prompt.text === "Reading: がくせい" && item.answer.text.includes("Japanese: 学生")));
-    assert.ok(reviewItems.every((item) => item.examples === undefined));
+    assert.ok(reviewItems.every((item) => item.examples?.length >= 1 && item.examples.length <= 3));
     for (const [block, title] of [["011-015", "Chapter 11-15"], ["016-020", "Chapter 16-20"]]) {
       const sourcePath = `review-decks/chapter-${block}/cards.tsv`;
       const itemPath = `content/memorization/review-decks/chapter-${block}.json`;
@@ -624,6 +625,11 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.equal(reviewManifest.packageVersion, "0.2.0");
     assert.equal(reviewManifest.contentSchemaVersion, "2.0.0");
     assert.deepEqual(reviewManifest.relatedPackageIds, ["com.sleepymario.language.vietnamese"]);
+    assert.deepEqual(reviewManifest.dependencies, [{
+      packageId: "com.sleepymario.language.vietnamese",
+      version: ">=0.2.0 <0.3.0",
+      optional: true
+    }]);
     assert.equal(reviewManifest.license.path, "LICENSE-SOFTWARE");
     assert.equal(reviewArchive.has("LICENSE-SOFTWARE"), true);
     assertManifestFilesExist(reviewManifest, reviewArchive);
@@ -637,6 +643,26 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.ok(readingContent.files.some((file) => file.path === "units/vietnamese-foundation/chapter-001-alphabet-and-orthography/chapter.md"));
     assert.ok(readingContent.files.some((file) => file.path === "units/vietnamese-foundation/chapter-005-audio-dependent-drills/chapter.md"));
     assert.ok(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md"));
+    const vietnameseChapter1 = readingContent.files.find((file) => file.path === "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md");
+    const vietnameseChapter1Support = readingContent.files.find((file) => file.path === "units/vietnamese-core/chapter-001-basic-sentences-1/reading-support.json");
+    assert.ok(vietnameseChapter1);
+    assert.ok(vietnameseChapter1Support);
+    assert.match(vietnameseChapter1Support.text, /Sino-Vietnamese Vocabulary/u);
+    for (const chapter of [1, 2, 3, 4, 5]) {
+      const support = readingContent.files.find((file) => file.path === `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/reading-support.json`);
+      assert.ok(support, `Vietnamese Chapter ${chapter} support is packaged`);
+      const parsed = JSON.parse(support.text);
+      assert.ok(Array.isArray(parsed.characters.entries));
+      for (const entry of parsed.characters.entries) {
+        assert.match(entry.lexicalEntryId, /^vi\./u);
+        assert.match(entry.senseId, /^vi\./u);
+        assert.equal(entry.firstIntroductionChapter >= 1, true);
+        assert.equal(typeof entry.provenance.path, "string");
+        assert.equal(typeof entry.provenance.locator, "string");
+      }
+    }
+    assert.match(vietnameseChapter1.text, /### Learner-facing Dialogue[\s\S]*Maria\s+: Xin chào\./u);
+    assert.doesNotMatch(vietnameseChapter1.text, /Complete Rereading|Reread the nine-line Learner-facing Dialogue/u);
     assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-006-basic-sentences-6/chapter.md"), true);
     assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-001-005-grammar-easy/chapter.md"), true);
     assert.equal(readingContent.files.some((file) => file.path === "units/vietnamese-core/chapter-001-005-grammar-hard/chapter.md"), true);
@@ -664,18 +690,21 @@ test("content package generator creates a valid Vietnamese Curriculum package", 
     assert.deepEqual([...reviewArchive.keys()].filter((path) => path.startsWith("content/memorization/")).sort(), [itemPath, itemPath610]);
     assert.equal([...reviewArchive.keys()].some((path) => /chapter-(?:011-015|016-020|021-025|026-030|036-040)/u.test(path)), false);
     assert.equal(reviewItems.schemaVersion, 2);
-    assert.equal(reviewItems.items.length, 20);
+    assert.equal(reviewItems.items.length, 64);
     assert.equal(reviewItems610.schemaVersion, 2);
-    assert.equal(reviewItems610.items.length, 20);
+    assert.equal(reviewItems610.items.length, 64);
     const allReviewItems = [...reviewItems.items, ...reviewItems610.items];
-    assert.equal(new Set(allReviewItems.map((item) => item.cardId)).size, 40);
+    assert.equal(new Set(allReviewItems.map((item) => item.cardId)).size, 128);
     assert.equal(allReviewItems.every((item) => item.schemaVersion === 2 && /^[0-9a-f]{64}$/u.test(item.pedagogicalFingerprint)), true);
-    assertCoreReviewItemsHaveExamples(reviewItems.items, "Vietnamese");
+    assert.equal(allReviewItems.every((item) => item.kind === "vocabulary"), true);
+    assert.deepEqual(new Set(allReviewItems.map((item) => item.reviewDirection)), new Set(["vi-to-en", "en-to-vi"]));
+    assert.equal(allReviewItems.every((item) => item.prompt.language !== item.answer.language && ["vi", "en"].includes(item.prompt.language) && ["vi", "en"].includes(item.answer.language)), true);
+    assert.equal(allReviewItems.every((item) => item.distractors.length === 0 && item.testedGrammarIds.length === 0), true);
+    assert.equal(allReviewItems.every((item) => item.examples?.length >= 1 && item.examples.length <= 3 && item.examples.includes(item.provenance.evidence)), true);
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
-    assert.ok(reviewItems.items.some((item) => item.cardId.endsWith("xin-chao-meaning") && item.acceptedAnswers.includes("hello")));
-    assert.ok(reviewItems610.items.some((item) => item.cardId.endsWith("destination-production") && item.acceptedAnswers.includes("Tôi đi thư viện.")));
-    assert.equal(JSON.stringify(allReviewItems).includes("VIE-GRAMMAR-009"), true);
-    assert.equal(JSON.stringify(allReviewItems).includes("S + đi + place"), true);
+    assert.ok(reviewItems.items.some((item) => item.prompt.text === "xin chào" && item.acceptedAnswers.includes("hello")));
+    assert.ok(reviewItems610.items.some((item) => item.prompt.text === "đi" && item.acceptedAnswers.includes("go; be going in context")));
+    assert.equal(JSON.stringify(allReviewItems).includes("VIE-GRAMMAR-009"), false);
     assert.equal(allReviewItems.some((item) => JSON.stringify(item).includes("Tôi đi đến thư viện.") || JSON.stringify(item).includes("vi.preposition.den")), false);
     assert.equal(reviewItems.items.some((item) => item.source.title === "Lessons 1-5"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Tôi là N" || item.answer.text === "Tôi là N"), false);
@@ -744,6 +773,74 @@ test("content package generator creates a valid Dutch package", async () => {
     assertDialogueBlocksHaveIntroductionsAndAlignedColons(content.files, "Dutch");
     assert.ok(content.files.some((file) => file.path === "name-pools/initial-name-pools.md"));
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-005-basic-sentences-5/chapter.md"));
+    const chapter1Path = "units/dutch-core/chapter-001-basic-sentences-1/chapter.md";
+    const translationPath = "units/dutch-core/chapter-001-basic-sentences-1/reading-translation.en.json";
+    const supportPath = "units/dutch-core/chapter-001-basic-sentences-1/reading-support.json";
+    const chapter1Source = await readFile(join(sourceRepositoryPath("dutch-curriculum"), chapter1Path));
+    const translationSource = await readFile(join(sourceRepositoryPath("dutch-curriculum"), translationPath));
+    const chapter1Entry = content.files.find((file) => file.path === chapter1Path);
+    const translationEntries = content.files.filter((file) => file.path.endsWith("/reading-translation.en.json"));
+    assert.ok(chapter1Entry);
+    assert.doesNotMatch(chapter1Entry.text, /Complete Rereading/u);
+    assert.equal(chapter1Entry.text, chapter1Source.toString("utf8").split("\n").filter((line) => !/^#{1,6}\s+Content\s*$/iu.test(line.trim())).join("\n"));
+    assert.equal(createHash("sha256").update(chapter1Source).digest("hex"), "41751c7642ced56bdd526ef8121509049e5c14c8de449bb6ffeb131f9631ba64");
+    assert.equal(translationEntries.length, 25);
+    for (let chapterNumber = 1; chapterNumber <= 25; chapterNumber += 1) {
+      const padded = String(chapterNumber).padStart(3, "0");
+      const chapterFile = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/chapter.md") && !file.path.includes("grammar"));
+      const translationFile = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/reading-translation.en.json"));
+      assert.ok(chapterFile, `Chapter ${chapterNumber} source is packaged`);
+      assert.ok(translationFile, `Chapter ${chapterNumber} translation is packaged`);
+      assertChapterIntroductionRoles(chapterFile.text, JSON.parse(translationFile.text), chapterNumber);
+    }
+    assert.equal(content.files.some((file) => file.path === supportPath), true);
+    for (let chapterNumber = 1; chapterNumber <= 25; chapterNumber += 1) {
+      const padded = String(chapterNumber).padStart(3, "0");
+      const supportEntry = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/reading-support.json"));
+      assert.ok(supportEntry, `Chapter ${chapterNumber} semantic support is packaged`);
+      const support = JSON.parse(supportEntry.text);
+      assert.equal(support.semanticRoleSyntaxVersion, 1);
+      assert.match(supportEntry.text, /\[\[grammar:[^\]\n]+\]\]/u);
+      assert.doesNotMatch(supportEntry.text, /\*\*[^*]+\*\*/u);
+      const introduction = support.audienceSections.find((section) => section.sourceHeading === "Brief Introduction");
+      assert.ok(introduction, `Chapter ${chapterNumber} has semantic Brief Introduction support`);
+      assert.notEqual(introduction.normal, introduction.expert, `Chapter ${chapterNumber} Normal and Expert introductions differ`);
+    }
+    const chapter1TranslationEntry = translationEntries.find((entry) => entry.path === translationPath);
+    assert.ok(chapter1TranslationEntry);
+    assert.equal(chapter1TranslationEntry.mediaType, "application/json");
+    assert.deepEqual(Buffer.from(chapter1TranslationEntry.text, "utf8"), translationSource);
+    const translation = JSON.parse(chapter1TranslationEntry.text);
+    assert.deepEqual({
+      schemaVersion: translation.schemaVersion,
+      id: translation.id,
+      language: translation.language,
+      sourceLanguage: translation.sourceLanguage,
+      sourcePath: translation.sourcePath,
+      sourceSection: translation.sourceSection,
+      readingType: translation.readingType
+    }, {
+      schemaVersion: 1,
+      id: "dutch-core.chapter-001.learner-facing-dialogue.en",
+      language: "en",
+      sourceLanguage: "nl",
+      sourcePath: "chapter.md",
+      sourceSection: "Dialogue",
+      readingType: "dialogue"
+    });
+    assert.deepEqual(translation.turns, [
+      { speaker: "Alex", text: "Hello." },
+      { speaker: "Sophie", text: "Hello." },
+      { speaker: "Alex", text: "I'm Alex Chen." },
+      { speaker: "Sophie", text: "I'm Sophie de Vries." },
+      { speaker: "Alex", text: "I'm a student." },
+      { speaker: "Sophie", text: "I'm a student." },
+      { speaker: "Alex", text: "Hi, friend." },
+      { speaker: "Marieke", text: "I'm Marieke Smit." },
+      { speaker: "Marieke", text: "I'm a teacher." }
+    ]);
+    assert.equal(content.files.some((file) => file.path.startsWith("units/dutch-core/chapter-002-") && file.path.endsWith("reading-translation.en.json")), true);
+    assert.match(readingArchive.get("content/content.json").toString("utf8"), /dutch-core\.chapter-001\.learner-facing-dialogue\.en/u);
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-006-basic-sentences-6/chapter.md"));
     assert.ok(content.files.some((file) => file.path === "units/dutch-core/chapter-010-basic-sentences-10/chapter.md"));
     const chapter11Path = "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md";
@@ -769,13 +866,15 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(archive.has(itemPath1115), true);
     assert.equal(archive.has(itemPath1620), true);
     assert.equal(archive.has(itemPath2125), true);
-    assert.equal(reviewItems0105.items.length, 38);
-    assert.equal(reviewItems0610.items.length, 40);
-    assert.equal(reviewItems1115.items.length, 30);
-    assert.equal(reviewItems1620.items.length, 30);
-    assert.equal(reviewItems2125.items.length, 15);
+    assert.equal(reviewItems0105.items.length, 70);
+    assert.equal(reviewItems0610.items.length, 80);
+    assert.equal(reviewItems0610.items.every((item) => item.schemaVersion === 2), true);
+    assert.equal(reviewItems1115.items.length, 66);
+    assert.equal(reviewItems1620.items.length, 84);
+    assert.equal(reviewItems2125.items.length, 80);
     assertCoreReviewItemsHaveExamples(allReviewItems, "Dutch");
     assertDutchReviewExamplesComeFromReadContent(allReviewItems, content.files);
+    assertOrdinaryBidirectionalItems(allReviewItems, "Dutch");
     assert.equal(reviewItems0105.items[0].source.title, "Chapter 1-5");
     assert.equal(reviewItems0610.items[0].source.title, "Chapter 6-10");
     assert.equal(reviewItems1115.items[0].source.title, "Chapter 11-15");
@@ -788,13 +887,13 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "woon" && item.answer.text === "live"));
     assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "live" && item.answer.text === "woon"));
     const halloItem = reviewItems0105.items.find((item) => item.prompt.text === "hallo" && item.answer.text === "hello");
-    assert.equal(halloItem.examples, undefined);
+    assert.deepEqual(halloItem.examples, ["Hallo."]);
     const bookItem = reviewItems0105.items.find((item) => item.prompt.text === "het boek" && item.answer.text === "book");
-    assert.equal(bookItem.examples, undefined);
+    assert.deepEqual(bookItem.examples, ["Dit is een boek."]);
     const hebItem = reviewItems0610.items.find((item) => item.prompt.text === "heb" && item.answer.text === "have");
-    assert.equal(hebItem.examples, undefined);
+    assert.deepEqual(hebItem.examples, ["Ik heb de tas.", "Ik heb de telefoon.", "Ik heb een sleutel."]);
     const woonItem = reviewItems0610.items.find((item) => item.prompt.text === "woon" && item.answer.text === "live");
-    assert.equal(woonItem.examples, undefined);
+    assert.equal(woonItem.examples?.length >= 1 && woonItem.examples.length <= 3, true);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik heb N" || item.answer.text === "Ik heb N"), false);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "${FOREIGN-NAME-1}" || item.answer.text === "${FOREIGN-NAME-1}"), false);
@@ -846,15 +945,16 @@ test("content package generator creates a valid English package", async () => {
     assert.equal(reviewItems.items.length, 40);
     assertCoreReviewItemsHaveExamples(reviewItems.items, "English");
     assertEnglishReviewExamplesComeFromReadContent(reviewItems.items, englishZhFiles);
+    assertOrdinaryBidirectionalItems(reviewItems.items, "English");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.equal(reviewItems.items[0].id, "review-decks/chapter-001-005/0001-english-target---english-vocabulary");
     assert.equal(reviewItems.items[1].id, "review-decks/chapter-001-005/0002-english---english-target-vocabulary");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "greeting"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "greeting" && item.answer.text === "hello"));
     const helloItem = reviewItems.items.find((item) => item.prompt.text === "hello");
-    assert.equal(helloItem.examples, undefined);
+    assert.deepEqual(helloItem.examples, ["Hello."]);
     const questionItem = reviewItems.items.find((item) => item.prompt.text === "question");
-    assert.equal(questionItem.examples, undefined);
+    assert.equal(questionItem.examples?.length >= 1 && questionItem.examples.length <= 3, true);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "I am N" || item.answer.text === "I am N"), false);
     assert.ok(reviewItems.items.every((item) => item.language.target === "en" && item.language.base === "en"));
     assert.ok(reviewItems.items.some((item) => item.prompt.language === "zh-TW" && item.answer.language === "en"));
@@ -932,6 +1032,7 @@ test("content package generator creates a valid German package", async () => {
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 54);
     assertCoreReviewItemsHaveExamples(reviewItems.items, "German");
+    assertOrdinaryBidirectionalItems(reviewItems.items, "German");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hallo" && item.answer.text === "hello"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello" && item.answer.text === "hallo"));
@@ -976,11 +1077,12 @@ test("content package generator creates a valid French package", async () => {
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 32);
     assertCoreReviewItemsHaveExamples(reviewItems.items, "French");
+    assertOrdinaryBidirectionalItems(reviewItems.items, "French");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello; good day" && item.answer.text === "bonjour"));
     const bonjourItem = reviewItems.items.find((item) => item.prompt.text === "bonjour" && item.answer.text === "hello; good day");
-    assert.equal(bonjourItem.examples, undefined);
+    assert.deepEqual(bonjourItem.examples, ["Bonjour."]);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Je suis N" || item.answer.text === "Je suis N"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Ça va ?" || item.answer.text === "Ça va ?"), false);
     assert.equal(reviewItems.items.some((item) => item.prompt.text === "Alex Chen" || item.answer.text === "Alex Chen"), false);
@@ -1022,6 +1124,7 @@ test("content package generator creates a valid Spanish package", async () => {
     assert.equal(archive.has(itemPath), true);
     assert.equal(reviewItems.items.length, 30);
     assertCoreReviewItemsHaveExamples(reviewItems.items, "Spanish");
+    assertOrdinaryBidirectionalItems(reviewItems.items, "Spanish");
     assert.equal(reviewItems.items[0].source.title, "Chapter 1-5");
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hola" && item.answer.text === "hello; hi"));
     assert.ok(reviewItems.items.some((item) => item.prompt.text === "hello; hi" && item.answer.text === "hola"));
@@ -1175,6 +1278,10 @@ function assertOddEvenChapterFormats(files, label, packageId) {
     const expected = chapter % 2 === 1 ? "dialogue" : "narrative";
     const analysis = analyzeChapterReadFormatForTest(file.text);
 
+    if (/^#{1,6}\s+Content\s*$/imu.test(file.text)) {
+      failures.push(`${label} (${packageId}) chapter ${chapter}: generated reading retains structural Content wrapper in ${file.path}`);
+    }
+
     if (analysis.genericSpeakerLabels.length > 0) {
       failures.push(`${label} (${packageId}) chapter ${chapter}: placeholder speaker labels ${analysis.genericSpeakerLabels.join(", ")} in ${file.path}`);
     }
@@ -1192,8 +1299,30 @@ function assertOddEvenChapterFormats(files, label, packageId) {
   assert.deepEqual(failures, [], `${label} generated package chapters must follow odd dialogue / even narrative format`);
 }
 
+function assertChapterIntroductionRoles(markdown, translation, chapterNumber) {
+  const brief = /^##\s+Brief Introduction\s*$\n([\s\S]*?)(?=^#{1,6}\s+)/mu.exec(markdown)?.[1]?.trim();
+  assert.ok(brief, `Chapter ${chapterNumber} has Brief Introduction`);
+  assert.match(brief, /`[^`]+`|\[\[grammar:[^\]\n]+\]\]/u, `Chapter ${chapterNumber} Brief Introduction identifies taught grammar`);
+
+  const reading = /^###\s+(?:Learner-facing\s+)?(?:Dialogue|Narrative|Controlled Reading|Read Content)\s*$\n([\s\S]*?)(?=^#{1,3}\s+|(?![\s\S]))/mu.exec(markdown);
+  assert.ok(reading, `Chapter ${chapterNumber} has a primary Dialogue or Narrative`);
+  const blocks = reading[1].trim().split(/\n\s*\n/u).filter(Boolean);
+  assert.ok(blocks.length >= 2, `Chapter ${chapterNumber} reading starts with a separate scene introduction`);
+  const scene = blocks[0].trim();
+  assert.doesNotMatch(scene, /^\s*[^:\n]{1,40}\s*:\s*\S/mu, `Chapter ${chapterNumber} scene introduction precedes dialogue turns`);
+  assert.match(scene, /[.!?]$/u, `Chapter ${chapterNumber} scene introduction is prose`);
+
+  for (const key of ["introduction", "context", "setting", "participants", "sceneIntroduction"]) {
+    assert.equal(Object.hasOwn(translation, key), false, `Chapter ${chapterNumber} translation has no ${key} preface`);
+  }
+  const serializedTranslation = JSON.stringify(translation);
+  assert.equal(serializedTranslation.includes(brief), false, `Chapter ${chapterNumber} translation omits Brief Introduction`);
+  assert.equal(serializedTranslation.includes(scene), false, `Chapter ${chapterNumber} translation omits scene introduction`);
+}
+
 function analyzeChapterReadFormatForTest(markdown) {
   const sections = extractReadSectionsForFormatTest(markdown);
+  const hasSeparateIntroduction = /^##\s+Brief Introduction\s*$[\s\S]+?(?=^#{1,6}\s+)/imu.test(markdown);
   const speakerLines = sections.flatMap((section) => section.lines.filter(isDialogueSpeakerLineForTest));
   const headingSuggestsDialogue = sections.some((section) => /dialogue/iu.test(section.heading));
   const genericSpeakerLabels = speakerLines
@@ -1209,7 +1338,8 @@ function analyzeChapterReadFormatForTest(markdown) {
         continue;
       }
       const previous = previousNonBlankLineForTest(section.lines, block.start - 1);
-      if (previous === undefined || /^#{1,6}\s/u.test(previous) || /^(?:Pinyin|Meaning):$/u.test(previous)) {
+      if ((previous === undefined || /^#{1,6}\s/u.test(previous) || /^(?:Pinyin|Meaning):$/u.test(previous))
+        && !hasSeparateIntroduction) {
         dialogueBlockWithoutIntro = true;
       }
       const colonColumns = block.lines.map((line) => displayWidthForTest(line.slice(0, line.indexOf(":"))));
@@ -1227,7 +1357,7 @@ function extractReadSectionsForFormatTest(markdown) {
   const sections = [];
 
   for (let index = 0; index < lines.length; index++) {
-    if (!/^#{2,4}\s+(?:對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Learner-facing |Model Mini Dialogue|Model Dialogue|Model Mini Scene|Model Mini Text|Controlled Reading)/iu.test(lines[index])) {
+    if (!/^#{2,4}\s+(?:Dialogue|Narrative|對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Learner-facing |Model Mini Dialogue|Model Dialogue|Model Mini Scene|Model Mini Text|Controlled Reading)/iu.test(lines[index])) {
       continue;
     }
     let end = lines.length;
@@ -1279,7 +1409,25 @@ function previousNonBlankLineForTest(lines, start) {
 }
 
 function assertCoreReviewItemsHaveExamples(items, label) {
-  assert.equal(items.every(item => item.examples === undefined), true, `${label} independent core reviews must not embed CC reading examples`);
+  assert.equal(items.every(item => item.examples?.length >= 1 && item.examples.length <= 3), true, `${label} core review items must contain one to three literal primary-reading examples`);
+}
+
+function assertOrdinaryBidirectionalItems(items, label) {
+  const groups = new Map();
+  for (const item of items) {
+    const targetLanguage = item.language.target;
+    const targetToSource = item.prompt.language === targetLanguage && item.answer.language !== targetLanguage;
+    const sourceToTarget = item.answer.language === targetLanguage && item.prompt.language !== targetLanguage;
+    const targetForm = targetToSource ? item.prompt.text : sourceToTarget ? item.answer.text : undefined;
+    if (targetForm === undefined) continue;
+    const key = `${typeof item.source.title === "string" ? item.source.title : item.source.title.en}\0${targetForm}`;
+    const record = groups.get(key) ?? { targetToSource: false, sourceToTarget: false };
+    record.targetToSource ||= targetToSource;
+    record.sourceToTarget ||= sourceToTarget;
+    groups.set(key, record);
+  }
+  const missing = [...groups].filter(([, record]) => !record.targetToSource || !record.sourceToTarget).map(([key]) => key);
+  assert.deepEqual(missing, [], `${label} ordinary review must contain both directions for every target form`);
 }
 
 function assertDutchReviewExamplesComeFromReadContent(items, contentFiles) {
@@ -1309,7 +1457,7 @@ function extractLearnerFacingReadContentLinesForTest(markdown) {
   const readLines = [];
 
   for (let index = 0; index < lines.length; index++) {
-    if (!/^### (?:對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Learner-facing (?:Dialogue|Controlled Reading))$/u.test(lines[index])) {
+    if (!/^### (?:Dialogue|Narrative|對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Learner-facing (?:Dialogue|Controlled Reading))$/u.test(lines[index])) {
       continue;
     }
     for (index += 1; index < lines.length && !/^### (?:新單字 \/ New Vocabulary|New Vocabulary)$/u.test(lines[index]); index++) {
@@ -1317,11 +1465,22 @@ function extractLearnerFacingReadContentLinesForTest(markdown) {
       if (line.trim() === "" || line === "```text" || line === "```") {
         continue;
       }
-      readLines.push(line);
+      const normalized = line.replace(/^.*?\s*:\s*(?=\S)/u, "");
+      if (/^\s*[^:\n]{1,40}\s*:\s*\S/u.test(line)) {
+        readLines.push(normalized);
+      } else {
+        readLines.push(...splitSentencesForTest(normalized));
+      }
     }
   }
 
   return readLines;
+}
+
+function splitSentencesForTest(text) {
+  return [...new Intl.Segmenter("nl", { granularity: "sentence" }).segment(text)]
+    .map(({ segment }) => segment.trim())
+    .filter(Boolean);
 }
 
 function assertNoGenericDialogueSpeakerLabels(files, label, reviewItems = []) {
@@ -1346,6 +1505,7 @@ function assertDialogueBlocksHaveIntroductionsAndAlignedColons(files, label) {
 
   for (const file of files.filter((candidate) => candidate.path.startsWith("units/") && candidate.path.endsWith("/chapter.md"))) {
     const lines = file.text.split(/\r?\n/u);
+    const hasSeparateIntroduction = /^##\s+Brief Introduction\s*$[\s\S]+?(?=^#{1,6}\s+)/imu.test(file.text);
     for (let index = 0; index < lines.length; index++) {
       if (lines[index] !== "```text") {
         continue;
@@ -1364,7 +1524,8 @@ function assertDialogueBlocksHaveIntroductionsAndAlignedColons(files, label) {
       while (previous >= 0 && lines[previous].trim() === "") {
         previous--;
       }
-      if (previous < 0 || /^#{1,6}\s/u.test(lines[previous]) || /^(?:Pinyin|Meaning):$/u.test(lines[previous])) {
+      if ((previous < 0 || /^#{1,6}\s/u.test(lines[previous]) || /^(?:Pinyin|Meaning):$/u.test(lines[previous]))
+        && !hasSeparateIntroduction) {
         missingIntroductions.push(`${file.path}:${index + 1}`);
       }
 
@@ -1407,7 +1568,8 @@ function assertDialogueBlocksHaveIntroductionsAndAlignedColons(files, label) {
       while (previous >= 0 && lines[previous].trim() === "") {
         previous--;
       }
-      if (previous < 0 || /^#{1,6}\s/u.test(lines[previous]) || /^(?:Pinyin|Meaning):$/u.test(lines[previous])) {
+      if ((previous < 0 || /^#{1,6}\s/u.test(lines[previous]) || /^(?:Pinyin|Meaning):$/u.test(lines[previous]))
+        && !hasSeparateIntroduction) {
         missingIntroductions.push(`${file.path}:${start + 1}`);
       }
 
@@ -1691,6 +1853,7 @@ function extractKoreanReadContentLinesForTest(markdown) {
   let inReadSection = false;
   let inFence = false;
   let inTextFence = false;
+  let readKind;
   for (const [index, rawLine] of markdown.replace(/\r\n?/gu, "\n").split("\n").entries()) {
     const trimmed = rawLine.trim();
     if (index === 0 && trimmed === "---") {
@@ -1705,10 +1868,12 @@ function extractKoreanReadContentLinesForTest(markdown) {
     }
     if (/^#{2,4}\s+(?:Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Learner-facing Controlled Reading|Controlled Reading)\b/iu.test(trimmed)) {
       inReadSection = true;
+      readKind = /Dialogue/iu.test(trimmed) ? "dialogue" : "narrative";
       continue;
     }
     if (/^#{2,4}\s+/u.test(trimmed)) {
       inReadSection = false;
+      readKind = undefined;
       continue;
     }
     if (trimmed.startsWith("```")) {
@@ -1722,11 +1887,11 @@ function extractKoreanReadContentLinesForTest(markdown) {
       continue;
     }
     if (inReadSection && !inFence && trimmed.length > 0) {
-      lines.push(trimmed);
+      lines.push(readKind === "dialogue" ? trimmed.replace(/^[^:]{1,40}?\s*:\s+/u, "") : trimmed);
       continue;
     }
     if (inTextFence && trimmed.length > 0) {
-      lines.push(trimmed);
+      lines.push(readKind === "dialogue" ? trimmed.replace(/^[^:]{1,40}?\s*:\s+/u, "") : trimmed);
     }
   }
   return lines;

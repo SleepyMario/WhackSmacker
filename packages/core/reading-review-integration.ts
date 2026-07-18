@@ -2,7 +2,8 @@ import { listInstalledContentPackages, type InstalledPackageRecord } from "./con
 import { listReadableContentEntries } from "./content-package-reader";
 import { isSafeContentPackagePath } from "./content-package-spec";
 import { localized } from "./localized-content";
-import { formatRenderedExercise, renderMemorizationExercise, type RenderedExercise } from "./exercise-renderer";
+import { renderMemorizationExercise, type RenderedExercise } from "./exercise-renderer";
+import { projectReviewTextForMode } from "./curriculum-display";
 import { listInstalledMemorizationItemFiles, readInstalledMemorizationItems, type MemorizationItem } from "./memorization-item";
 import {
   defaultReviewProgressDirectoryForContentDataDirectory,
@@ -259,8 +260,17 @@ export async function renderReadingReviewItem(options: RenderReadingReviewItemOp
   });
   return {
     rendered,
-    text: formatRenderedExercise(rendered, options.answer === true ? "full" : "prompt")
+    text: formatLearnerReviewExercise(rendered, options.answer === true)
   };
+}
+
+function formatLearnerReviewExercise(exercise: RenderedExercise, answerVisible: boolean): string {
+  const lines = [exercise.title, "", "Phrase:", ...exercise.promptLines.map((line) => `  ${projectReviewTextForMode(line, "normal")}`)];
+  if (answerVisible) {
+    lines.push("", "Answer:", ...exercise.answerLines.map((line) => `  ${projectReviewTextForMode(line, "normal")}`));
+    if (exercise.exampleLines.length > 0) lines.push("", "Examples:", ...exercise.exampleLines.map((line) => `  - ${line}`));
+  }
+  return `${lines.join("\n").trimEnd()}\n`;
 }
 
 export async function recordReadingReviewAnswer(options: RecordReadingReviewAnswerOptions): Promise<RecordStoredReviewOutcomeResult> {

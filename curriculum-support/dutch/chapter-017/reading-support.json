@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Wat doe je?]]. Use it informally to ask what someone is doing or plans to do.",
+      "expert": "This chapter introduces the informal activity question [[grammar:Wat doe je?]], with interrogative [[grammar:wat]], finite [[grammar:doe]], and postverbal subject [[grammar:je]]."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Wat doe je?\n\nUse [[grammar:Wat doe je?]] with someone you know. Add a time word, as in [[grammar:Wat doe je morgen?]], when you ask about a plan.",
+      "expert": "#### Wat doe je?\n\nIn [[grammar:Wat doe je?]], the content word fills first position, finite [[grammar:doe]] remains second, and informal subject [[grammar:je]] follows. [[grammar:morgen]] may be added without changing the core interrogative order."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Answer with an [[grammar:ik]] sentence, such as [[grammar:Ik studeer in de bibliotheek.]]",
+      "expert": "Answers reuse Chapter 16 first-person predicates. [[grammar:Hoe laat beginnen we?]] and plural [[grammar:we beginnen]] are bounded supporting forms, not a second principal pattern."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Dag Marieke, wat doe je morgen?]] greets Marieke and asks about tomorrow.\n- [[grammar:Morgen werk ik in de bibliotheek.]] gives Marieke's plan.\n- [[grammar:Ik studeer in de bibliotheek.]] gives Alex's plan.\n- [[grammar:Prima. We werken samen.]] says they will work together.\n- [[grammar:Hoe laat beginnen we?]] asks for the starting time.\n- [[grammar:We beginnen vroeg.]] says they start early.\n- [[grammar:Ik help met het werk.]] says Alex will help.\n- [[grammar:Goed, het plan is klaar.]] confirms the plan.\n- [[grammar:Dag Marieke.]] closes the conversation.",
+    "expert": "- [[grammar:Dag Marieke, wat doe je morgen?]] combines a greeting with the activity question and temporal adverb [[grammar:morgen]].\n- [[grammar:Morgen werk ik in de bibliotheek.]] uses a clause-initial temporal adverb with finite-second order.\n- [[grammar:Ik studeer in de bibliotheek.]] reuses the Chapter 16 first-person stem pattern.\n- [[grammar:Prima. We werken samen.]] introduces a plural subject and finite form as bounded support.\n- [[grammar:Hoe laat beginnen we?]] is a situation-bound time question.\n- [[grammar:We beginnen vroeg.]] answers with a plural finite predicate and temporal adverb.\n- [[grammar:Ik help met het werk.]] returns to the first-person singular pattern.\n- [[grammar:Goed, het plan is klaar.]] uses a predicative adjective.\n- [[grammar:Dag Marieke.]] is a closing formula with a vocative."
+  }
+}

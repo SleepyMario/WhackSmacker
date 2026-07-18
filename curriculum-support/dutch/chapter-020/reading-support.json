@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:time + verb + subject + ...]]. When a time phrase comes first, keep the action word second and put the subject after it.",
+      "expert": "This chapter introduces Dutch main-clause V2 after a clause-initial time phrase: [[grammar:time + finite verb + subject + ...]]."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### time + action + person\n\nSay the time first in [[grammar:Om negen uur vertrekt Mark ...]]. The action [[grammar:vertrekt]] comes before [[grammar:Mark]].",
+      "expert": "#### time + verb + subject + ...\n\nWhen [[grammar:Om negen uur]] fills first position, finite [[grammar:vertrekt]] occupies second position and subject [[grammar:Mark]] follows. The same order appears after [[grammar:Daarna]] and [[grammar:In de middag]]."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Compare [[grammar:Mark vertrekt om negen uur.]] with [[grammar:Om negen uur vertrekt Mark naar het station.]]",
+      "expert": "The contrast shows subject-first order when the subject is initial and inversion after a non-subject initial constituent. Separable [[grammar:komen ... terug]] remains supporting vocabulary."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Het is ochtend.]] sets the time.\n- [[grammar:Mark heeft een afspraak in de stad.]] says why Mark is going into town.\n- [[grammar:Het adres is in de agenda.]] says where the address is.\n- [[grammar:Om negen uur vertrekt Mark naar het station.]] puts the time first.\n- [[grammar:Daan gaat met Mark.]] says who goes with him.\n- [[grammar:Om tien uur begint de afspraak.]] gives the appointment time.\n- [[grammar:Daarna lopen Mark en Daan naar de markt.]] says what happens next.\n- [[grammar:In de middag komen zij terug.]] says when they return.\n- [[grammar:Thuis drinkt Mark koffie en Daan leest een boek.]] describes the two actions at home.\n- [[grammar:Het plan klopt.]] confirms that the plan is correct.",
+    "expert": "- [[grammar:Het is ochtend.]] is a temporal setting frame.\n- [[grammar:Mark heeft een afspraak in de stad.]] uses inherited [[grammar:hebben]] with a locative complement.\n- [[grammar:Het adres is in de agenda.]] is a copular locative clause.\n- [[grammar:Om negen uur vertrekt Mark naar het station.]] and [[grammar:Om tien uur begint de afspraak.]] place a time phrase first, finite verb second, and subject after the verb.\n- [[grammar:Daan gaat met Mark.]] retains ordinary subject-first order.\n- [[grammar:Daarna lopen Mark en Daan naar de markt.]] and [[grammar:In de middag komen zij terug.]] provide additional non-subject-first V2 examples.\n- [[grammar:Thuis drinkt Mark koffie en Daan leest een boek.]] combines clause-initial locative V2 with coordination.\n- [[grammar:Het plan klopt.]] uses the restricted “be correct” sense of [[grammar:kloppen]]."
+  }
+}

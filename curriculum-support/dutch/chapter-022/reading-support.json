@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:subject + is + adjective]]. Put a describing word after [[grammar:is]] to say what a person, place, or thing is like.",
+      "expert": "This chapter introduces productive predicative-adjective clauses of the form [[grammar:subject + is + adjective]]. The adjective appears uninflected in predicative position."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### person or thing + is + describing word\n\nUse lines such as [[grammar:Oma Anja is blij.]] and [[grammar:Het huis is rustig.]]",
+      "expert": "#### subject + is + adjective\n\nFinite copula [[grammar:is]] links the subject to an uninflected predicative adjective. This differs from the nominal complements in the inherited identity pattern."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "The describing word has no extra ending after [[grammar:is]] in these sentences.",
+      "expert": "Predicative adjectives are morphologically bare here; attributive adjective inflection is outside this chapter."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Het is hier gezellig.]] describes the atmosphere.\n- [[grammar:Oma Anja is oud, maar zij is blij.]] gives two descriptions of Oma Anja.\n- [[grammar:Daan is jong en Daan leest een boek.]] describes Daan and tells what he does.\n- [[grammar:Eva is moe en zit in de tuin.]] describes Eva and places her in the garden.\n- [[grammar:Noor zit naast Eva.]] says where Noor is sitting.\n- [[grammar:Sophie kookt.]] says what Sophie does.\n- [[grammar:Het huis is rustig.]] describes the house.\n- [[grammar:Iedereen is samen.]] says that everyone is together.",
+    "expert": "- [[grammar:Het is hier gezellig.]], [[grammar:Oma Anja is oud]], [[grammar:zij is blij]], [[grammar:Daan is jong]], and [[grammar:Het huis is rustig.]] instantiate predicative adjectives.\n- [[grammar:maar]] and [[grammar:en]] coordinate simple clauses without becoming new principal grammar.\n- [[grammar:zit]] is the third-person present of [[grammar:zitten]]; [[grammar:naast Eva]] is a bounded spatial complement.\n- The three source paragraphs preserve scene-level discourse rather than sentence-per-line formatting after Chapter 21."
+  }
+}

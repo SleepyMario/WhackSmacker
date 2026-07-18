@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Ik wil graag ...]], a polite pattern for ordering food or drink.",
+      "expert": "This chapter introduces [[grammar:Ik + wil + graag + N]]. Adverbial [[grammar:graag]] extends the established volitional frame and gives a direct want-statement its conventional polite ordering value."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Ik wil graag N\n\nUse [[grammar:Ik wil graag N]] to say politely what you would like. Put the food or drink after [[grammar:graag]].",
+      "expert": "#### Ik wil graag N\n\nThe pattern [[grammar:Ik wil graag N]] is realized in [[grammar:Ik wil graag een broodje.]] Finite modal [[grammar:wil]] occupies second position, [[grammar:graag]] functions adverbially, and the nominal complement follows. The chapter confines this value to attested café orders."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Ook]] adds another item. [[grammar:Samen?]] checks whether the orders go together.",
+      "expert": "Additive [[grammar:ook]] scopes over Mark's order, while fragment [[grammar:Samen?]] and confirmation [[grammar:Ja, samen.]] are licensed by the shared situation."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "[[grammar:Ik wil graag ...]] is a neutral, polite way to order in this setting.",
+      "expert": "The construction is standard and conventionally polite, though broader request strategies and register contrasts are deferred."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Heb je het menu?]] asks whether Sophie has the menu.\n- [[grammar:Ja, dit is het menu.]] identifies it.\n- [[grammar:Dank je.]] thanks Sophie.\n- [[grammar:Ik wil graag een broodje.]] is Sophie's polite food order.\n- [[grammar:Ik wil graag soep.]] is Mark's polite food order.\n- [[grammar:Ik wil graag een glas sap.]] orders juice in a glass.\n- [[grammar:Ik wil ook graag koffie.]] adds coffee to the order.\n- [[grammar:Samen?]] asks whether the orders are together.\n- [[grammar:Ja, samen.]] confirms that they are.\n- [[grammar:Prima.]] closes the choice.",
+    "expert": "- [[grammar:Heb je het menu?]] reuses the finite-first possession question with a definite object.\n- [[grammar:Ja, dit is het menu.]] uses demonstrative identification.\n- [[grammar:Dank je.]] is a fixed thanking formula.\n- [[grammar:Ik wil graag een broodje.]], [[grammar:Ik wil graag soep.]], and [[grammar:Ik wil graag een glas sap.]] instantiate the polite volitional frame with different nominal complements.\n- [[grammar:Ik wil ook graag koffie.]] adds [[grammar:ook]] before [[grammar:graag]], preserving finite-second order.\n- [[grammar:Samen?]] and [[grammar:Ja, samen.]] are context-supported fragments.\n- [[grammar:Prima.]] is an evaluative one-word confirmation."
+  }
+}
