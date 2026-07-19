@@ -1360,7 +1360,7 @@ test("Vietnamese read content starts with five canonical Foundation labels befor
   }
 });
 
-test("Vietnamese menu exposes both authoritative Chapters 1-10 review decks", async () => {
+test("Vietnamese read content interleaves reviews after Core Chapters 5 and 10", async () => {
   const fixture = await createInstalledLanguageFixture(
     ["vietnamese-curriculum", "vietnamese-core-reviews"],
     ["com.sleepymario.language.vietnamese"]
@@ -1368,9 +1368,52 @@ test("Vietnamese menu exposes both authoritative Chapters 1-10 review decks", as
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
     const vietnamese = tree.children.find((node) => node.label === "Vietnamese");
+    const readContent = vietnamese.children.find((node) => node.label === "Read content");
+    assert.ok(readContent);
+
+    const firstReviews = readContent.children.filter((node) => node.label === "Review -- Chapters 1–5");
+    const secondReviews = readContent.children.filter((node) => node.label === "Review -- Chapters 6–10");
+    assert.equal(firstReviews.length, 1);
+    assert.equal(secondReviews.length, 1);
+    const [firstReview] = firstReviews;
+    const [secondReview] = secondReviews;
+    assert.equal(firstReview?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
+    assert.equal(secondReview?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
+    assert.equal(firstReview?.itemCount, 64);
+    assert.equal(secondReview?.itemCount, 64);
+    assert.match(firstReview?.id ?? "", /:inline:1-5$/u);
+    assert.match(secondReview?.id ?? "", /:inline:6-10$/u);
+    assert.notEqual(firstReview?.id, secondReview?.id);
+
+    const labels = readContent.children.map((node) => node.label);
+    const indexOfPath = (path) => readContent.children.findIndex((node) => node.filePath === path);
+    const chapterIndices = Array.from({ length: 10 }, (_, index) => {
+      const chapter = index + 1;
+      return indexOfPath(`units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/chapter.md`);
+    });
+    const [chapter1, , , , chapter5, chapter6, , , , chapter10] = chapterIndices;
+    const grammar15 = indexOfPath("units/vietnamese-core/chapter-001-005-grammar-easy/chapter.md");
+    const grammar610 = indexOfPath("units/vietnamese-core/chapter-006-010-grammar-easy/chapter.md");
+    const firstReviewIndex = readContent.children.indexOf(firstReview);
+    const secondReviewIndex = readContent.children.indexOf(secondReview);
+
+    assert.deepEqual(readContent.children.slice(0, chapter1).map((node) => node.label), [
+      "Foundation Chapter -- 1",
+      "Foundation Chapter -- 2",
+      "Foundation Chapter -- 3",
+      "Foundation Chapter -- 4",
+      "Foundation Chapter -- 5"
+    ]);
+    assert.equal(readContent.children.slice(0, chapter1).some((node) => node.kind === "review-source"), false);
+    assert.deepEqual(chapterIndices.slice(0, 5), Array.from({ length: 5 }, (_, index) => chapter1 + index));
+    assert.deepEqual(chapterIndices.slice(5), Array.from({ length: 5 }, (_, index) => chapter6 + index));
+    assert.deepEqual([chapter5 + 1, firstReviewIndex + 1, grammar15 + 1], [firstReviewIndex, grammar15, chapter6]);
+    assert.deepEqual([chapter10 + 1, secondReviewIndex + 1], [secondReviewIndex, grammar610]);
+    assert.equal(labels[firstReviewIndex], "Review -- Chapters 1–5");
+    assert.equal(labels[secondReviewIndex], "Review -- Chapters 6–10");
+
     const reviewDecks = vietnamese.children.find((node) => node.label === "Review decks");
     assert.ok(reviewDecks);
-    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 1-5"), true, reviewDecks.children.map((node) => node.label).join(", "));
     const first = reviewDecks.children.find((node) => node.label === "Chapter 1-5");
     const second = reviewDecks.children.find((node) => node.label === "Chapter 6-10");
     assert.equal(first?.sourcePath, "review-decks/chapter-001-005/cards.tsv");

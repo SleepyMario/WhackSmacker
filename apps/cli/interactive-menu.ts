@@ -1815,8 +1815,14 @@ async function buildLanguageTreeFromDescriptors(
       reviewStatusText: item.reviewStatusText
     }));
     const readingChildren = descriptor.packageId === "com.sleepymario.language.dutch"
-      ? interleaveDutchReviewSources(contentChildren, reviewChildren)
-      : contentChildren;
+      ? interleaveReviewSources(contentChildren, reviewChildren)
+      : descriptor.packageId === "com.sleepymario.language.vietnamese"
+        ? interleaveReviewSources(
+            contentChildren,
+            reviewChildren,
+            /^units\/vietnamese-core\/chapter-(\d{3})-[^/]+\/chapter\.md$/u
+          )
+        : contentChildren;
 
     packageNodes.push({
       id: packageBase,
@@ -1910,9 +1916,10 @@ async function buildLanguageTreeFromDescriptors(
   };
 }
 
-function interleaveDutchReviewSources(
+function interleaveReviewSources(
   contentChildren: readonly LanguageTreeNode[],
-  reviewChildren: readonly LanguageTreeNode[]
+  reviewChildren: readonly LanguageTreeNode[],
+  chapterPathPattern = /(?:^|\/)chapter-(\d{3})-[^/]+\/chapter\.md$/u
 ): readonly LanguageTreeNode[] {
   const reviewsByEndingChapter = new Map<number, LanguageTreeNode>();
   for (const review of reviewChildren) {
@@ -1923,13 +1930,13 @@ function interleaveDutchReviewSources(
     if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end)) continue;
     reviewsByEndingChapter.set(end, {
       ...review,
-      id: `${review.id}:inline`,
+      id: `${review.id}:inline:${start}-${end}`,
       label: `Review -- Chapters ${start}\u2013${end}`
     });
   }
 
   return contentChildren.flatMap((child) => {
-    const chapter = /(?:^|\/)chapter-(\d{3})-[^/]+\/chapter\.md$/u.exec(child.filePath ?? "")?.[1];
+    const chapter = chapterPathPattern.exec(child.filePath ?? "")?.[1];
     if (chapter === undefined) return [child];
     const review = reviewsByEndingChapter.get(Number.parseInt(chapter, 10));
     return review === undefined ? [child] : [child, review];
