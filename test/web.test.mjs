@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { JSDOM } from "jsdom";
@@ -33,7 +34,7 @@ test("web server serves a data-free public landing page, logo, health, and priva
     assert.match(landing, /\/ui-locale\.js/);
     assert.match(landing, />Log in</);
     assert.match(landing, /href="\/login"[^>]*>Log in</);
-    assert.equal((landing.match(/href="\/login\?returnTo=\/app"/g) ?? []).length, 3);
+    assert.equal((landing.match(/href="\/login\?returnTo=%2Fapp"/g) ?? []).length, 3);
     assert.match(landing, />GitHub</);
     assert.match(landing, />Developer notes</);
     assert.doesNotMatch(landing, /\/api\/state|Installed packages|Cards due/);
@@ -67,10 +68,63 @@ test("password mode keeps landing and health public while protecting app state",
     assert.equal((await fetch(`${base}/api/health`)).status, 200);
     const appNavigation=await fetch(`${base}/app`,{redirect:"manual"});
     assert.equal(appNavigation.status,302);
-    assert.equal(appNavigation.headers.get("location"),"/login?returnTo=/app");
+    assert.equal(appNavigation.headers.get("location"),"/login?returnTo=%2Fapp");
     assert.equal((await fetch(`${base}/api/state`)).status, 401);
     assert.equal((await fetch(`${base}/api/state`, { headers: { authorization: `Basic ${Buffer.from("user:secret").toString("base64")}` } })).status, 200);
   } finally { await new Promise(resolve => server.close(resolve)); }
+});
+
+test("public-site CTAs cross origins into the visible Node login flow over HTTP", { skip: !process.env.WHACKSMACKER_PACKAGE_SOURCE_ROOT }, async () => {
+  const siteHtml = await readFile(join(process.env.WHACKSMACKER_PACKAGE_SOURCE_ROOT, "whacksmacker-site", "index.html"), "utf8");
+  const publicServer = createServer((_request, response) => {
+    response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    response.end(siteHtml);
+  });
+  const appServer = await startWebServer({ host: "127.0.0.1", port: 0, password: "secret" });
+  await new Promise((resolve, reject) => publicServer.listen(0, "127.0.0.1", error => error ? reject(error) : resolve()));
+  try {
+    const publicAddress = publicServer.address();
+    const appAddress = appServer.address();
+    assert.ok(publicAddress && typeof publicAddress === "object");
+    assert.ok(appAddress && typeof appAddress === "object");
+    const publicBase = `http://127.0.0.1:${publicAddress.port}`;
+    const appBase = `http://127.0.0.1:${appAddress.port}`;
+    const landingResponse = await fetch(publicBase);
+    assert.equal(landingResponse.status, 200);
+    const dom = new JSDOM(await landingResponse.text(), { url: publicBase });
+    const anchors = [...dom.window.document.querySelectorAll("a")];
+    const loginUrl = new URL(anchors.find(anchor => anchor.textContent.trim() === "Log in").href);
+    const openUrls = anchors.filter(anchor => anchor.textContent.includes("Open web app")).map(anchor => new URL(anchor.href));
+    assert.equal(loginUrl.href, "https://www.whacksmacker.com/login");
+    assert.equal(openUrls.length, 3);
+    assert.ok(openUrls.every(url => url.href === "https://www.whacksmacker.com/login?returnTo=%2Fapp"));
+
+    for (const target of [loginUrl, openUrls[0]]) {
+      const response = await fetch(`${appBase}${target.pathname}${target.search}`, { redirect: "manual" });
+      assert.equal(response.status, 200);
+      assert.match(await response.text(), /id="login-form"/);
+    }
+
+    const appRedirect = await fetch(`${appBase}/app`, { redirect: "manual" });
+    assert.equal(appRedirect.status, 302);
+    assert.equal(appRedirect.headers.get("location"), "/login?returnTo=%2Fapp");
+    const redirectedLogin = await fetch(new URL(appRedirect.headers.get("location"), appBase));
+    assert.equal(redirectedLogin.status, 200);
+    assert.match(await redirectedLogin.text(), /id="login-form"/);
+
+    const authenticated = await fetch(`${appBase}/api/login`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ password: "secret" }) });
+    assert.equal(authenticated.status, 200);
+    const cookie = authenticated.headers.get("set-cookie")?.split(";")[0] ?? "";
+    const loginWithSession = await fetch(`${appBase}/login?returnTo=%2Fapp`, { headers: { cookie }, redirect: "manual" });
+    assert.equal(loginWithSession.status, 200);
+    assert.match(await loginWithSession.text(), /id="login-form"/);
+    const destination = await fetch(`${appBase}/app`, { headers: { cookie } });
+    assert.equal(destination.status, 200);
+    assert.match(await destination.text(), /Curriculum reader/);
+  } finally {
+    await new Promise(resolve => publicServer.close(resolve));
+    await new Promise(resolve => appServer.close(resolve));
+  }
 });
 
 test("styled login creates a session without signup or default credentials", async () => {

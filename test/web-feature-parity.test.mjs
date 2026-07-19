@@ -48,7 +48,7 @@ test('public landing page describes the whole modular platform', async () => {
   assert.match(html, /Build knowledge that sticks/);
   assert.match(html, />Developer notes</);
   assert.match(html, /href="\/login"[^>]*>Log in</);
-  assert.equal((html.match(/href="\/login\?returnTo=\/app"/g) ?? []).length, 3);
+  assert.equal((html.match(/href="\/login\?returnTo=%2Fapp"/g) ?? []).length, 3);
 });
 
 test('successful login honors the safe app return route', async () => {
