@@ -32,6 +32,8 @@ test("web server serves a data-free public landing page, logo, health, and priva
     assert.match(landing, /value="zh-TW">中文（臺灣）/);
     assert.match(landing, /\/ui-locale\.js/);
     assert.match(landing, />Log in</);
+    assert.match(landing, /href="\/login"[^>]*>Log in</);
+    assert.equal((landing.match(/href="\/login\?returnTo=\/app"/g) ?? []).length, 3);
     assert.match(landing, />GitHub</);
     assert.match(landing, />Developer notes</);
     assert.doesNotMatch(landing, /\/api\/state|Installed packages|Cards due/);
@@ -65,7 +67,7 @@ test("password mode keeps landing and health public while protecting app state",
     assert.equal((await fetch(`${base}/api/health`)).status, 200);
     const appNavigation=await fetch(`${base}/app`,{redirect:"manual"});
     assert.equal(appNavigation.status,302);
-    assert.match(appNavigation.headers.get("location")??"",/^\/login\?returnTo=/);
+    assert.equal(appNavigation.headers.get("location"),"/login?returnTo=/app");
     assert.equal((await fetch(`${base}/api/state`)).status, 401);
     assert.equal((await fetch(`${base}/api/state`, { headers: { authorization: `Basic ${Buffer.from("user:secret").toString("base64")}` } })).status, 200);
   } finally { await new Promise(resolve => server.close(resolve)); }
@@ -84,6 +86,9 @@ test("styled login creates a session without signup or default credentials", asy
     assert.equal(login.status, 200);
     const cookie = login.headers.get("set-cookie");
     assert.match(cookie ?? "", /wsm_session=.*HttpOnly.*SameSite=Strict/);
+    const visibleLogin = await fetch(`${base}/login`, { headers: { cookie: cookie?.split(";")[0] ?? "" }, redirect: "manual" });
+    assert.equal(visibleLogin.status, 200);
+    assert.match(await visibleLogin.text(), /id="login-form"/);
     assert.equal((await fetch(`${base}/app`, { headers: { cookie: cookie?.split(";")[0] ?? "" } })).status, 200);
   } finally { await new Promise(resolve => server.close(resolve)); }
 });

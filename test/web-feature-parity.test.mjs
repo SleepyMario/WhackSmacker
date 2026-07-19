@@ -47,6 +47,39 @@ test('public landing page describes the whole modular platform', async () => {
   assert.match(html, /Feature parity/);
   assert.match(html, /Build knowledge that sticks/);
   assert.match(html, />Developer notes</);
+  assert.match(html, /href="\/login"[^>]*>Log in</);
+  assert.equal((html.match(/href="\/login\?returnTo=\/app"/g) ?? []).length, 3);
+});
+
+test('successful login honors the safe app return route', async () => {
+  const source = await read('apps/web/public/login.js');
+  let submit;
+  let assigned;
+  const button = { disabled: false };
+  const error = { textContent: '' };
+  const form = {
+    username: { value: 'learner' },
+    password: { value: 'secret' },
+    addEventListener: (_name, handler) => { submit = handler; },
+    querySelector: () => button
+  };
+  const context = {
+    URL,
+    URLSearchParams,
+    location: {
+      origin: 'https://www.whacksmacker.com',
+      search: '?returnTo=/app',
+      assign: destination => { assigned = destination; }
+    },
+    document: { querySelector: selector => selector === '#login-form' ? form : selector === '#login-error' ? error : {} },
+    WhackSmackerUiLocale: { installSelector: () => 'en', translate: () => 'error' },
+    fetch: async () => new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'content-type': 'application/json' } }),
+    Response,
+    JSON
+  };
+  vm.runInNewContext(source, context);
+  await submit({ preventDefault() {} });
+  assert.equal(assigned, '/app');
 });
 
 

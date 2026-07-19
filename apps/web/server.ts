@@ -89,7 +89,6 @@ async function handle(request: IncomingMessage, response: ServerResponse, option
     const url = new URL(request.url ?? "/", "http://localhost");
     if (url.pathname === "/api/health") return json(response, 200, { ok: true, service: "whacksmacker-web" });
     if (url.pathname === "/api/login" && request.method === "POST") return await login(request, response, options, context);
-    if(url.pathname==="/login"&&request.method==="GET"&&cookie(request,"wsm_session")){const existing=await authorized(request,options,context);if(existing!==false){response.writeHead(302,securityHeaders({Location:"/app","Cache-Control":"no-store"}));response.end();return}}
     const publicFiles: Record<string, [string, string]> = {
       "/": ["landing.html", "text/html; charset=utf-8"],
       "/login": ["login.html", "text/html; charset=utf-8"],
@@ -101,7 +100,7 @@ async function handle(request: IncomingMessage, response: ServerResponse, option
     };
     const publicFile = publicFiles[url.pathname];
     if (publicFile) return await staticFile(request, response, publicFile);
-    const identity=await authorized(request,options,context);if(identity===false){if(url.pathname==="/app"){response.writeHead(302,securityHeaders({Location:`/login?returnTo=${encodeURIComponent(request.url??"/app")}`,"Cache-Control":"no-store"}));response.end();return}response.setHeader("WWW-Authenticate",'Session realm="WhackSmacker"');return json(response,401,{error:"Authentication required.",requestId})}
+    const identity=await authorized(request,options,context);if(identity===false){if(url.pathname==="/app"){const returnTo=request.url??"/app";response.writeHead(302,securityHeaders({Location:returnTo==="/app"?"/login?returnTo=/app":`/login?returnTo=${encodeURIComponent(returnTo)}`,"Cache-Control":"no-store"}));response.end();return}response.setHeader("WWW-Authenticate",'Session realm="WhackSmacker"');return json(response,401,{error:"Authentication required.",requestId})}
     if(context.pool&&isMutation(request)){if(!validOrigin(request,options)||!csrfMatches(String(request.headers["x-csrf-token"]??""),identity===true?"":identity.csrfTokenHash))return json(response,403,{error:"Request verification failed."})}
     if (url.pathname === "/api/logout" && request.method === "POST") return await logout(request,response,options,context,identity);
     if (url.pathname === "/api/state" && request.method === "GET") return json(response, 200, context.pool?await databaseState(options,context.pool,(identity as DatabaseSession)):await state(options));

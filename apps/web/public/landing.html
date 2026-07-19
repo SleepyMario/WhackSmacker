@@ -14,7 +14,7 @@
     <nav aria-label="Primary navigation"><a href="#features" data-i18n="landing.featuresLink">Features</a><a href="#modules" data-i18n="landing.modulesLink">Modules</a><a href="#interfaces" data-i18n="landing.interfacesLink">Interfaces</a><a href="https://github.com/SleepyMario/WhackSmacker" target="_blank" rel="noopener noreferrer">GitHub</a></nav>
     <label class="locale-control"><span data-i18n="landing.language">Language</span><select id="ui-locale" aria-label="Language" data-i18n-attr="aria-label:landing.language"><option value="en">English</option><option value="zh-TW">中文（臺灣）</option></select></label>
     <a class="button button-quiet button-small" href="/login" data-i18n="landing.login">Log in</a>
-    <a class="button button-small" href="/app" data-i18n="landing.open">Open web app</a>
+    <a class="button button-small" href="/login?returnTo=/app" data-i18n="landing.open">Open web app</a>
   </header>
 
   <main class="landing"><span class="sr-only">Build knowledge that sticks.</span>
@@ -23,11 +23,13 @@
         <p class="pill" data-i18n="landing.eyebrow">Modular learning built for long-term mastery</p>
         <h1><span data-i18n="landing.headingLine1">Learn deeply.</span><strong data-i18n="landing.headingLine2">Remember longer.</strong></h1>
         <p class="intro" data-i18n="landing.intro">WhackSmacker is a modular learning platform for languages, chess, geography, mathematics, and more—built around structured curricula, active review, and long-term retention.</p>
-        <div class="actions"><a class="button primary" href="/app" data-i18n="landing.open">Open web app</a><a class="button button-quiet" href="https://github.com/SleepyMario/WhackSmacker" target="_blank" rel="noopener noreferrer" data-i18n="landing.github">View on GitHub</a></div>
+        <div class="actions"><a class="button primary" href="/login?returnTo=/app" data-i18n="landing.open">Open web app</a><a class="button button-quiet" href="https://github.com/SleepyMario/WhackSmacker" target="_blank" rel="noopener noreferrer" data-i18n="landing.github">View on GitHub</a></div>
         <ul class="trust"><li data-i18n="landing.openSource">Open source</li><li data-i18n="landing.private">Privacy focused</li><li data-i18n="landing.crossPlatform">Cross-platform</li><li data-i18n="landing.localFirst">Local-first</li></ul>
       </div>
       <div class="interface-previews" id="interfaces">
-        <article class="preview terminal-preview"><h2>CLI</h2><div class="window"><div class="window-bar"><i></i><i></i><i></i><span>whacksmacker</span></div><pre><b>WhackSmacker</b>  Modular Learning Platform
+        <article class="preview terminal-preview"><h2>CLI</h2><div class="window"><div class="window-bar"><i></i><i></i><i></i><span>whacksmacker</span></div><pre><b>WhackSmacker 1.0.0</b>
+Modular Learning Platform
+----------------------------------------
 
 Select a module:
 
@@ -35,12 +37,14 @@ Select a module:
 2) Chess
 3) Geography
 4) Mathematics
-5) Content packages
+5) Custom Modules
 6) Settings
+7) Exit
 
-Review due: 43    Streak: 12
+----------------------------------------
+Streak: 12 | Reviews: 43 | Time: 00:08:21
 &gt; _</pre></div></article>
-        <article class="preview gui-preview"><h2>GUI</h2><div class="window"><div class="window-bar"><i></i><i></i><i></i><span>WhackSmacker</span></div><div class="gui-card"><div class="gui-top"><span>Dutch Core</span><span>8 / 20</span></div><div class="progress"><i></i></div><div class="question"><small>What is the meaning of:</small><strong>het boek</strong><em>the book</em></div><div class="ratings"><span>Again</span><span>Hard</span><span>Good</span><span>Easy</span></div><div class="gui-nav"><span>Modules</span><b>Review</b><span>Progress</span><span>Settings</span></div></div></div></article>
+        <article class="preview gui-preview"><h2>GUI</h2><div class="window"><div class="window-bar gui-window-bar"><i></i><i></i><i></i><span class="history" aria-hidden="true">‹ ›</span><span class="window-title">WhackSmacker</span></div><div class="gui-card"><div class="gui-top"><span>Spanish Core⌄</span><span>8 / 20</span></div><div class="progress"><i></i></div><div class="question"><small>What is the meaning of:</small><strong>el libro <span aria-hidden="true">♬</span></strong><em>book</em><b aria-label="Correct">✓</b></div><div class="ratings"><span><strong>Again</strong><small>&lt; 1 min</small></span><span><strong>Hard</strong><small>&lt; 6 min</small></span><span><strong>Good</strong><small>&lt; 1 day</small></span><span><strong>Easy</strong><small>4 days</small></span></div><div class="gui-nav"><span><i aria-hidden="true">▱</i>Decks</span><b><i aria-hidden="true">▣</i>Review</b><span><i aria-hidden="true">⌁</i>Progress</span><span><i aria-hidden="true">⌘</i>Stats</span><span><i aria-hidden="true">⚙</i>Settings</span></div></div></div></article>
         <p data-i18n="landing.currentBuild">Languages lead the current build. Chess, geography, mathematics, and additional modules share the same learning platform.</p>
       </div>
     </section>
@@ -49,7 +53,7 @@ Review due: 43    Streak: 12
 
     <section class="features" id="features"><header><h2 data-i18n="landing.parity.title">Feature parity. Your choice.</h2><p data-i18n="landing.parity.text">The command line and graphical interface provide the same core workflows. Use the interface that fits your work.</p></header><div class="feature-grid"><article><span>▰</span><h3 data-i18n="landing.feature.curricula">Structured curricula</h3></article><article><span>◷</span><h3 data-i18n="landing.feature.review">Spaced review</h3></article><article><span>⌁</span><h3 data-i18n="landing.feature.progress">Progress tracking</h3></article><article><span>✚</span><h3 data-i18n="landing.feature.modules">Modular content</h3></article><article><span>◎</span><h3 data-i18n="landing.feature.languages">Source languages</h3></article><article><span>⬡</span><h3 data-i18n="landing.feature.packages">Package management</h3></article><article><span>▱</span><h3 data-i18n="landing.feature.interfaces">CLI &amp; web</h3></article><article><span>▣</span><h3 data-i18n="landing.feature.local">Local-first</h3></article></div></section>
 
-    <section class="cta"><div><span>➶</span><div><h2 data-i18n="landing.cta.title">Choose what to learn. Keep what you learn.</h2><p data-i18n="landing.cta.text">Explore structured modules through the web interface or the complete command-line application.</p></div></div><div class="actions"><a class="button primary" href="/app" data-i18n="landing.open">Open web app</a><a class="button button-quiet" href="https://github.com/SleepyMario/WhackSmacker" target="_blank" rel="noopener noreferrer" data-i18n="landing.exploreCli">Explore the CLI</a></div></section>
+    <section class="cta"><div><span>➶</span><div><h2 data-i18n="landing.cta.title">Choose what to learn. Keep what you learn.</h2><p data-i18n="landing.cta.text">Explore structured modules through the web interface or the complete command-line application.</p></div></div><div class="actions"><a class="button primary" href="/login?returnTo=/app" data-i18n="landing.open">Open web app</a><a class="button button-quiet" href="https://github.com/SleepyMario/WhackSmacker" target="_blank" rel="noopener noreferrer" data-i18n="landing.exploreCli">Explore the CLI</a></div></section>
   </main>
   <footer><strong>WhackSmacker</strong><nav><a href="https://github.com/SleepyMario/WhackSmacker" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://whacksmacker.com/human-voice/" target="_blank" rel="noopener noreferrer" data-i18n="landing.notes">Developer notes</a></nav></footer>
   <script src="/ui-locale.js"></script><script src="/landing.js"></script>
