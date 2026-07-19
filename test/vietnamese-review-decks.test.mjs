@@ -18,7 +18,7 @@ test("Vietnamese review decks exactly cover the canonical newly introduced lexic
 
   assert.deepEqual(report, {
     "chapter-001-005": { inventoryCount: 32, cardCount: 64 },
-    "chapter-006-010": { inventoryCount: 32, cardCount: 64 }
+    "chapter-006-010": { inventoryCount: 36, cardCount: 72 }
   });
 });
 

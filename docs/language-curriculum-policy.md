@@ -93,6 +93,40 @@ must be memorized.
 
 ## Lexical identity, verb forms, and expressions
 
+### Canonical lexical-topic expansion
+
+A practical lexical topic begins when its first canonical sense appears in
+learner-facing Dialogue or Narrative content. Register that topic, its first
+attested chapter, and the anchor sense immediately. A topic may remain
+represented by one sense for any number of chapters: there is no expansion
+quota, deadline, required interval, or penalty for deferral.
+
+Expansion continues incrementally in later natural chapters. Every newly
+introduced anchor or expansion sense must have a literal learner-facing
+attestation, one to three literal examples, stable lexical-entry and sense IDs,
+chapter-ledger and cumulative-ledger entries, and exactly one card in each
+direction in the five-chapter review block containing its first introduction.
+Reinforcement keeps its original first-introduction chapter and does not count
+as new or enter a later review block.
+
+Repositories keep a versioned `lexical-topics.json` inventory with stable
+topic IDs, display names, first attested chapters and senses,
+anchor/initial/later senses, descriptive status, and chapter attestations.
+Allowed statuses are `observed`, `active`, `expanding`, and
+`well-established`; none closes a topic or imposes an expansion schedule.
+Canonical sense metadata may additionally carry
+`lexical_topic`, `topic_role`, `topic_first_chapter`, and
+`topic_expansion_stage`; `topic_role` is one of `anchor`,
+`initial-expansion`, `later-expansion`, or `reinforcement`.
+
+The following remain distinct internal topics even when closely related:
+measurement units, container nouns, classifiers/counters, quantity
+expressions, and dimension/weight vocabulary. Language-specific citation,
+article, classifier, regional-variant, and lexical-identity rules continue to
+apply. Regional variants share an identity only when they are variants of the
+same lexical sense; culturally or semantically distinct words retain distinct
+identities.
+
 Canonical vocabulary distinguishes surface form, lemma/citation form, part of
 speech, stable lexical-entry ID, stable sense ID, meaning, introduction status,
 first-introduction chapter, encountered forms, related senses, and later

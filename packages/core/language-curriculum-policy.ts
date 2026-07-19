@@ -167,6 +167,10 @@ export interface LexicalIdentityMetadata {
   readonly relatedSenseIds?: readonly string[];
   readonly morphologyStatus?: LexicalMorphologyStatus;
   readonly attestationChapters?: readonly number[];
+  readonly lexical_topic?: string;
+  readonly topic_role?: "anchor" | "initial-expansion" | "later-expansion" | "reinforcement";
+  readonly topic_first_chapter?: number;
+  readonly topic_expansion_stage?: number;
 }
 export interface NounVocabularyRecord extends Partial<LexicalIdentityMetadata> {
   readonly lexicalType: "noun";
@@ -378,7 +382,13 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "The infinitive row shares lexical and sense identity with the encountered row; languages without an applicable infinitive do not invent one, and full structured metadata remains internal.",
     "First-introduced verbs store canonical regularityStatus and optional language-specific verbClass; later forms and reviews inherit them.",
     "Use regular/irregular only where meaningful, not-applicable for systems such as ordinary Chinese, and undetermined only for pending legacy migration.",
-    "Verb regularity/class survives package and memorization metadata but does not appear in learner-facing Notes."
+    "Verb regularity/class survives package and memorization metadata but does not appear in learner-facing Notes.",
+    "A practical lexical topic begins with its first canonical learner-facing sense; register its first attested chapter and anchor sense immediately.",
+    "A lexical topic may remain represented by one sense for any number of chapters; there is no expansion quota, deadline, required interval, or penalty for deferral.",
+    "Topic expansion is gradual and opportunistic in later natural chapters; vocabulary is never added where the Dialogue or Narrative cannot support a literal attestation.",
+    "Every newly introduced topic expansion sense retains canonical lexical/sense identity, chapter and cumulative ledger inclusion, literal examples, and exactly two cards in its first-introduction five-chapter review block.",
+    "Reinforcement retains the original first-introduction chapter and is not counted as newly introduced or added again to a later inventory-derived review block.",
+    "Measurement units, container nouns, classifiers/counters, quantity expressions, and dimension/weight vocabulary remain separate lexical topics even when one reading uses several together."
   ],
   normalViewVoiceRules: [
     "Normal-view instructional prose uses direct address, neutral reference to the language/construction/example, or an ordinary imperative.",

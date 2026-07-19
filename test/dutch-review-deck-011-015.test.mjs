@@ -7,12 +7,12 @@ const deckPath = "review-content/dutch/review-decks/chapter-011-015/cards.tsv";
 const curriculumRoot = join(process.cwd(), "..", "dutch-curriculum");
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 
-test("Dutch Chapters 11–15 review exactly covers 33 canonical senses in both directions", async () => {
+test("Dutch Chapters 11–15 review exactly covers 37 canonical senses in both directions", async () => {
   const original = await readFile(deckPath, "utf8");
   const rows = parseDeck(original);
-  assert.equal(rows.length, 66);
-  assert.deepEqual(countBy(rows, (row) => row.sourceChapter), { 11: 16, 12: 12, 13: 12, 14: 14, 15: 12 });
-  assert.deepEqual(countBy(rows, (row) => row.examples.length), { 1: 40, 2: 20, 3: 6 });
+  assert.equal(rows.length, 74);
+  assert.deepEqual(countBy(rows, (row) => row.sourceChapter), { 11: 16, 12: 12, 13: 20, 14: 14, 15: 12 });
+  assert.deepEqual(countBy(rows, (row) => row.examples.length), { 1: 48, 2: 20, 3: 6 });
   assert.equal(await readFile(deckPath, "utf8"), original);
 
   const ids = new Set();
@@ -67,13 +67,13 @@ test("Dutch Chapters 11–15 review exactly covers 33 canonical senses in both d
     }
   }
 
-  assert.equal(directionsBySense.size, 33);
+  assert.equal(directionsBySense.size, 37);
   for (const [senseId, directions] of directionsBySense) assert.deepEqual([...directions].sort(), ["en-to-nl", "nl-to-en"], senseId);
 
   const ledgerInventory = await canonicalLedgerInventory();
-  assert.equal(ledgerInventory.length, 33);
+  assert.equal(ledgerInventory.length, 37);
   const targetRows = rows.filter((row) => row.promptLanguage === "nl");
-  assert.deepEqual(targetRows.map((row) => ({ form: row.prompt, first: row.sourceChapter })), ledgerInventory);
+  assert.deepEqual(targetRows.map((row) => ({ form: row.prompt, first: row.sourceChapter })).sort(compareInventory), ledgerInventory.sort(compareInventory));
   assert.equal(targetRows.some((row) => row.sourceChapter <= 10 || row.sourceChapter >= 16), false);
 });
 
@@ -94,6 +94,8 @@ async function canonicalLedgerInventory() {
   return inventory.sort((left, right) => left.first - right.first || left.ledgerOrder - right.ledgerOrder)
     .map(({ form, first }) => ({ form, first }));
 }
+
+function compareInventory(left, right) { return left.first - right.first || left.form.localeCompare(right.form, "nl"); }
 
 function parseDeck(text) {
   const lines = text.trimEnd().split("\n");

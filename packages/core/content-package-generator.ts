@@ -340,6 +340,8 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "decisions.md",
       "geography-ledger.json",
       "number-progression.json",
+      "lexical-topics.json",
+      "lexical-topic-audit.md",
       "name-pools",
       "review-decks",
       "research",
@@ -355,6 +357,8 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "decisions.md",
       "geography-ledger.json",
       "number-progression.json",
+      "lexical-topics.json",
+      "lexical-topic-audit.md",
       "name-pools",
       "units/README.md",
       "units/vietnamese-foundation",
@@ -382,6 +386,8 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "progress.md",
       "backlog.md",
       "decisions.md",
+      "lexical-topics.json",
+      "lexical-topic-audit.md",
       "name-pools",
       "review-decks",
       "research",
@@ -801,11 +807,12 @@ const repositoryRoot = process.cwd();
 const canonicalCastPath = "name-pools/canonical-cast.json";
 const geographyLedgerPath = "geography-ledger.json";
 const numberProgressionPath = "number-progression.json";
-const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath]);
+const lexicalTopicsPath = "lexical-topics.json";
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
-    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath))]
+    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath || include === lexicalTopicsPath || include === "lexical-topic-audit.md"))]
     : [...target.include];
   if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path)) separatedIncludes.push(target.license.path);
   if (target.capabilities?.includes("reading-curriculum")) {

@@ -891,7 +891,7 @@ test("Dutch Chapters 6–10 expose complete audience support, translations, brea
     assert.equal(review610?.label, "Review -- Chapters 6–10");
     assert.equal(review610?.kind, "review-source");
     assert.equal(review610?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
-    assert.equal(review610?.itemCount, 80);
+    assert.equal(review610?.itemCount, 84);
     assert.equal(chapter10Index < chapter11Index && chapter10Index + 1 < chapter11Index, true);
     assert.equal(readContent.children.some((node) => /Review -- Chapters 5[–-]10/u.test(node.label)), false);
   } finally {
@@ -1389,7 +1389,7 @@ test("Vietnamese read content interleaves reviews after Core Chapters 5 and 10",
     assert.equal(firstReview?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
     assert.equal(secondReview?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
     assert.equal(firstReview?.itemCount, 64);
-    assert.equal(secondReview?.itemCount, 64);
+    assert.equal(secondReview?.itemCount, 72);
     assert.match(firstReview?.id ?? "", /:inline:1-5$/u);
     assert.match(secondReview?.id ?? "", /:inline:6-10$/u);
     assert.notEqual(firstReview?.id, secondReview?.id);
@@ -1428,7 +1428,7 @@ test("Vietnamese read content interleaves reviews after Core Chapters 5 and 10",
     assert.equal(first?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
     assert.equal(second?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
     assert.equal(first?.itemCount, 64);
-    assert.equal(second?.itemCount, 64);
+    assert.equal(second?.itemCount, 72);
   } finally {
     await fixture.cleanup();
   }

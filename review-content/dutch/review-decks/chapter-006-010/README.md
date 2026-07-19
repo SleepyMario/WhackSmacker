@@ -2,8 +2,8 @@
 
 Deck name: `Chapter 6-10`
 
-This authoritative schema-v2 deck contains 80 cards: both ordinary review
-directions for all 40 canonical vocabulary items or lexical senses first
+This authoritative schema-v2 deck contains 84 cards: both ordinary review
+directions for all 42 canonical vocabulary items or lexical senses first
 introduced in Dutch Core Chapters 6–10. The count follows the inventory; it is
 not a quota.
 

@@ -2,8 +2,8 @@
 
 Deck name: `Chapter 11-15`
 
-This authoritative schema-v2 deck contains 66 cards: both ordinary review
-directions for all 33 canonical vocabulary items or lexical senses first
+This authoritative schema-v2 deck contains 74 cards: both ordinary review
+directions for all 37 canonical vocabulary items or lexical senses first
 introduced in Dutch Core Chapters 11–15. The count follows the inventory; it is
 not a quota.
 
