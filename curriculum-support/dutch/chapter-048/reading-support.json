@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + waardoor + clause]] and [[grammar:number + meter/centimeter/gram]]. Use [[grammar:waardoor]] for as a result of which. Put the number before the unit: twee [[grammar:meter]], vijftig [[grammar:centimeter]].",
+      "expert": "This chapter introduces [[grammar:clause + waardoor + clause]]: [[grammar:Waardoor]] introduces a relative-result clause that links the consequence to the preceding event.; [[grammar:number + meter/centimeter/gram]]: Exact metric measurements use a numeral followed by the unit noun; abbreviations are deferred to later practice."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + waardoor + clause\n\nUse [[grammar:waardoor]] for as a result of which. Example: [[grammar:De kast is tien centimeter te breed, waardoor de deur niet sluit.]]\n\n#### number + meter/centimeter/gram\n\nPut the number before the unit: twee [[grammar:meter]], vijftig [[grammar:centimeter]]. Example: [[grammar:Milan meet een plank van twee meter.]]",
+      "expert": "#### clause + waardoor + clause\n\n[[grammar:Waardoor]] introduces a relative-result clause that links the consequence to the preceding event. Literal example: [[grammar:De kast is tien centimeter te breed, waardoor de deur niet sluit.]]\n\n#### number + meter/centimeter/gram\n\nExact metric measurements use a numeral followed by the unit noun; abbreviations are deferred to later practice. Literal example: [[grammar:Milan meet een plank van twee meter.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Waardoor]] presents a result. Dutch measurement phrases put the number before the metric unit.",
+      "expert": "[[grammar:Waardoor]] presents a result. Dutch measurement phrases put the number before the metric unit. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Mark meet de nieuwe kamer met een meetlint.]] — Mark measures the new room with a tape measure.\n- [[grammar:De lange muur is vijf meter lang.]] — The long wall is five meters long.\n- [[grammar:De korte muur is drie meter breed.]] — The short wall is three meters wide.\n- [[grammar:Milan meet een plank van twee meter.]] — Milan measures a shelf of two meters.\n- [[grammar:De kast is tien centimeter te breed, waardoor de deur niet sluit.]] — The cupboard is ten centimeters too wide, as a result of which the door does not close.\n- [[grammar:Pieter verplaatst de kast vijftig centimeter naar links.]] — Pieter moves the cupboard fifty centimeters to the left.\n- [[grammar:Een kleine doos weegt negentig gram.]] — A small box weighs ninety grams.\n- [[grammar:De grote doos is zwaar, waardoor Milan hulp vraagt.]] — The large box is heavy, so Milan asks for help.\n- [[grammar:Mark meet elke muur nog een keer.]] — Mark measures every wall one more time.\n- [[grammar:Daarna passen de planken precies in de kamer.]] — Afterward the shelves fit exactly in the room.",
+    "expert": "- [[grammar:Mark meet de nieuwe kamer met een meetlint.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:De lange muur is vijf meter lang.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:De korte muur is drie meter breed.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Milan meet een plank van twee meter.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:De kast is tien centimeter te breed, waardoor de deur niet sluit.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Pieter verplaatst de kast vijftig centimeter naar links.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Een kleine doos weegt negentig gram.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:De grote doos is zwaar, waardoor Milan hulp vraagt.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Mark meet elke muur nog een keer.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Daarna passen de planken precies in de kamer.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

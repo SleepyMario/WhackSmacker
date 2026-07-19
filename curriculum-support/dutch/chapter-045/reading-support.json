@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:ook al + subordinate clause]] and [[grammar:zestig tot honderd and compounds]]. Use [[grammar:ook al]] when the main event continues despite another fact. Learn sixty through one hundred and keep using [[grammar:unit + en + tens]] for compound numbers.",
+      "expert": "This chapter introduces [[grammar:ook al + subordinate clause]]: [[grammar:Ook al]] introduces a concessive subordinate clause with verb-final order.; [[grammar:zestig tot honderd and compounds]]: Decade forms are lexical bases; compounds retain [[grammar:unit-before-ten]] order, while [[grammar:honderd]] is the hundred base."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### ook al + subordinate clause\n\nUse [[grammar:ook al]] when the main event continues despite another fact. Example: [[grammar:Ook al traint hij voor honderd kilometer, wij kiezen een kortere route.]]\n\n#### zestig tot honderd and compounds\n\nLearn sixty through one hundred and keep using [[grammar:unit + en + tens]] for compound numbers. Example: [[grammar:De tweede route is tweeënzeventig kilometer.]]",
+      "expert": "#### ook al + subordinate clause\n\n[[grammar:Ook al]] introduces a concessive subordinate clause with verb-final order. Literal example: [[grammar:Ook al traint hij voor honderd kilometer, wij kiezen een kortere route.]]\n\n#### zestig tot honderd and compounds\n\nDecade forms are lexical bases; compounds retain [[grammar:unit-before-ten]] order, while [[grammar:honderd]] is the hundred base. Literal example: [[grammar:De tweede route is tweeënzeventig kilometer.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Ook al]] introduces a concession. Dutch compound numbers continue to use [[grammar:unit + en + tens]] up to 99; [[grammar:honderd]] introduces 100.",
+      "expert": "[[grammar:Ook al]] introduces a concession. Dutch compound numbers continue to use [[grammar:unit + en + tens]] up to 99; [[grammar:honderd]] introduces 100. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Welke route fietsen we zaterdag?]] — Which route are we cycling on Saturday?\n- [[grammar:De korte route is zestig kilometer.]] — The short route is sixty kilometers.\n- [[grammar:De tweede route is tweeënzeventig kilometer.]] — The second route is seventy-two kilometers.\n- [[grammar:Ook al is die langer, hij gaat langs het water.]] — Although it is longer, it runs along the water.\n- [[grammar:De derde route is tachtig kilometer.]] — The third route is eighty kilometers.\n- [[grammar:Negentig kilometer is voor mij te ver.]] — Ninety kilometers is too far for me.\n- [[grammar:Alex fietste vorig jaar negenennegentig kilometer.]] — Alex cycled ninety-nine kilometers last year.\n- [[grammar:Ook al traint hij voor honderd kilometer, wij kiezen een kortere route.]] — Although he is training for one hundred kilometers, we choose a shorter route.\n- [[grammar:Voor ons is zeventig kilometer genoeg.]] — For us, seventy kilometers is enough.\n- [[grammar:Dan is de route van tweeënzeventig kilometer net te lang.]] — Then the seventy-two-kilometer route is just a little too long.\n- [[grammar:Goed, we kiezen de route van zestig kilometer.]] — Good, we choose the sixty-kilometer route.\n- [[grammar:We vertrekken vroeg, ook al regent het een beetje.]] — We will leave early even if it rains a little.",
+    "expert": "- [[grammar:Welke route fietsen we zaterdag?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:De korte route is zestig kilometer.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:De tweede route is tweeënzeventig kilometer.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Ook al is die langer, hij gaat langs het water.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:De derde route is tachtig kilometer.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Negentig kilometer is voor mij te ver.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Alex fietste vorig jaar negenennegentig kilometer.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Ook al traint hij voor honderd kilometer, wij kiezen een kortere route.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Voor ons is zeventig kilometer genoeg.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Dan is de route van tweeënzeventig kilometer net te lang.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Goed, we kiezen de route van zestig kilometer.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:We vertrekken vroeg, ook al regent het een beetje.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

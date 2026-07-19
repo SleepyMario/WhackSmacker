@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + bovendien + clause]] and [[grammar:zes, zeven, acht, negen, tien]]. Use [[grammar:bovendien]] for in addition or moreover. Learn six through ten and combine them with ordinary plural nouns.",
+      "expert": "This chapter introduces [[grammar:clause + bovendien + clause]]: [[grammar:Bovendien]] is an additive connective adverb and triggers V2 when placed first.; [[grammar:zes, zeven, acht, negen, tien]]: Cardinals 6-10 precede plural count nouns and do not require a classifier."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + bovendien + clause\n\nUse [[grammar:bovendien]] for in addition or moreover. Example: [[grammar:Bovendien komen er vier nieuwe bestellingen binnen.]]\n\n#### zes, zeven, acht, negen, tien\n\nLearn six through ten and combine them with ordinary plural nouns. Example: [[grammar:Lotte zet negen kopjes op de ontbijttafel.]]",
+      "expert": "#### clause + bovendien + clause\n\n[[grammar:Bovendien]] is an additive connective adverb and triggers V2 when placed first. Literal example: [[grammar:Bovendien komen er vier nieuwe bestellingen binnen.]]\n\n#### zes, zeven, acht, negen, tien\n\nCardinals 6-10 precede plural count nouns and do not require a classifier. Literal example: [[grammar:Lotte zet negen kopjes op de ontbijttafel.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Bovendien]] adds information and can begin a V2 main clause. Numbers six through ten use ordinary plural nouns.",
+      "expert": "[[grammar:Bovendien]] adds information and can begin a V2 main clause. Numbers six through ten use ordinary plural nouns. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Milan leest zes bestellingen bij de kassa.]] — Milan reads six orders at the register.\n- [[grammar:Bovendien komen er vier nieuwe bestellingen binnen.]] — In addition, four new orders come in.\n- [[grammar:Samen zijn dat tien ontbijten.]] — Together that makes ten breakfasts.\n- [[grammar:Lotte zet negen kopjes op de ontbijttafel.]] — Lotte puts nine cups on the breakfast table.\n- [[grammar:Pieter brengt zeven borden uit de keuken.]] — Pieter brings seven plates from the kitchen.\n- [[grammar:Milan telt acht croissants en twee broodjes.]] — Milan counts eight croissants and two rolls.\n- [[grammar:Mark helpt, omdat de bestelling groot is.]] — Mark helps because the order is large.\n- [[grammar:Bovendien vult hij zes glazen met water.]] — In addition, he fills six glasses with water.\n- [[grammar:Lotte controleert alle tien bestellingen.]] — Lotte checks all ten orders.\n- [[grammar:Om negen uur staat het ontbijt klaar.]] — At nine o’clock breakfast is ready.",
+    "expert": "- [[grammar:Milan leest zes bestellingen bij de kassa.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Bovendien komen er vier nieuwe bestellingen binnen.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Samen zijn dat tien ontbijten.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Lotte zet negen kopjes op de ontbijttafel.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Pieter brengt zeven borden uit de keuken.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Milan telt acht croissants en twee broodjes.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Mark helpt, omdat de bestelling groot is.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Bovendien vult hij zes glazen met water.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Lotte controleert alle tien bestellingen.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Om negen uur staat het ontbijt klaar.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

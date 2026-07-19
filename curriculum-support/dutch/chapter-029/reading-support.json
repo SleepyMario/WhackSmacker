@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Welke + noun + ...?]] and [[grammar:noun + van mij/jou/hem/haar]]. Use [[grammar:welke]] before a [[grammar:de-word]] when you ask which one. Put [[grammar:van mij]], [[grammar:van jou]], [[grammar:van hem]], or [[grammar:van haar]] after a noun to identify the owner.",
+      "expert": "This chapter introduces [[grammar:Welke + noun + ...?]]: [[grammar:Welke]] functions as an interrogative determiner and agrees here with a common-gender count noun.; [[grammar:noun + van mij/jou/hem/haar]]: The possessor is expressed analytically in a postnominal prepositional phrase headed by [[grammar:van]]."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Welke + noun + ...?\n\nUse [[grammar:welke]] before a [[grammar:de-word]] when you ask which one. Example: [[grammar:Welke weide kiezen we in het park?]]\n\n#### noun + van mij/jou/hem/haar\n\nPut [[grammar:van mij]], [[grammar:van jou]], [[grammar:van hem]], or [[grammar:van haar]] after a noun to identify the owner. Example: [[grammar:De deken op de stoel is van mij.]]",
+      "expert": "#### Welke + noun + ...?\n\n[[grammar:Welke]] functions as an interrogative determiner and agrees here with a common-gender count noun. Literal example: [[grammar:Welke weide kiezen we in het park?]]\n\n#### noun + van mij/jou/hem/haar\n\nThe possessor is expressed analytically in a postnominal prepositional phrase headed by [[grammar:van]]. Literal example: [[grammar:De deken op de stoel is van mij.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Welke]] is used here with de-words. A [[grammar:van-phrase]] can identify an owner without changing the noun.",
+      "expert": "[[grammar:Welke]] is used here with de-words. A [[grammar:van-phrase]] can identify an owner without changing the noun. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Morgen is het zonnig. Gaan we picknicken?]] — It is sunny tomorrow. Shall we have a picnic?\n- [[grammar:Ja. Welke mand nemen we?]] — Yes. Which basket shall we take?\n- [[grammar:De mand bij de deur is van jou, Sophie.]] — The basket by the door is yours, Sophie.\n- [[grammar:Klopt. Welke deken nemen we?]] — That’s right. Which blanket shall we take?\n- [[grammar:De deken op de stoel is van mij.]] — The blanket on the chair is mine.\n- [[grammar:Is de fles van jou, Daan?]] — Is the bottle yours, Daan?\n- [[grammar:Ja, de fles is van mij.]] — Yes, the bottle is mine.\n- [[grammar:We nemen brood, fruit en water mee.]] — We will take bread, fruit, and water along.\n- [[grammar:Welke weide kiezen we in het park?]] — Which meadow shall we choose in the park?\n- [[grammar:De weide naast de tuin.]] — The meadow next to the garden.\n- [[grammar:Dan draag ik de mand.]] — Then I will carry the basket.\n- [[grammar:En ik neem de deken mee.]] — And I will take the blanket along.",
+    "expert": "- [[grammar:Morgen is het zonnig. Gaan we picknicken?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Ja. Welke mand nemen we?]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:De mand bij de deur is van jou, Sophie.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Klopt. Welke deken nemen we?]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:De deken op de stoel is van mij.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Is de fles van jou, Daan?]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Ja, de fles is van mij.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:We nemen brood, fruit en water mee.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Welke weide kiezen we in het park?]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:De weide naast de tuin.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Dan draag ik de mand.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:En ik neem de deken mee.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:hoewel + subordinate clause]] and [[grammar:de/het + adjective-e + noun]]. Use [[grammar:hoewel]] for an unexpected contrast: although. An adjective before a noun usually gets [[grammar:-e]] after [[grammar:de]] or [[grammar:het]].",
+      "expert": "This chapter introduces [[grammar:hoewel + subordinate clause]]: [[grammar:Hoewel]] marks concessive subordination and places the finite verb at the clause end.; [[grammar:de/het + adjective-e + noun]]: Definite attributive adjectives take the weak ending [[grammar:-e]] in the taught environments."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### hoewel + subordinate clause\n\nUse [[grammar:hoewel]] for an unexpected contrast: although. Example: [[grammar:Hoewel de foto donker is, zijn de gezichten duidelijk.]]\n\n#### de/het + adjective-e + noun\n\nAn adjective before a noun usually gets [[grammar:-e]] after [[grammar:de]] or [[grammar:het]]. Example: [[grammar:Sophie bekijkt de oude foto op tafel.]]",
+      "expert": "#### hoewel + subordinate clause\n\n[[grammar:Hoewel]] marks concessive subordination and places the finite verb at the clause end. Literal example: [[grammar:Hoewel de foto donker is, zijn de gezichten duidelijk.]]\n\n#### de/het + adjective-e + noun\n\nDefinite attributive adjectives take the weak ending [[grammar:-e]] in the taught environments. Literal example: [[grammar:Sophie bekijkt de oude foto op tafel.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Hoewel]] introduces a concession. Definite attributive adjectives usually end in [[grammar:-e]].",
+      "expert": "[[grammar:Hoewel]] introduces a concession. Definite attributive adjectives usually end in [[grammar:-e]]. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Sophie bekijkt de oude foto op tafel.]] — Sophie looks at the old photo on the table.\n- [[grammar:Hoewel de foto donker is, zijn de gezichten duidelijk.]] — Although the photo is dark, the faces are clear.\n- [[grammar:Oma Anja wijst naar de jonge vrouw naast het raam.]] — Grandma Anja points to the young woman next to the window.\n- [[grammar:Dat is Oma Anja zelf voor het kleine huis.]] — That is Grandma Anja herself in front of the small house.\n- [[grammar:Mark ziet een lange straat met weinig auto’s.]] — Mark sees a long street with few cars.\n- [[grammar:Hoewel de straat nu druk is, herinnert Oma Anja zich de stilte.]] — Although the street is busy now, Grandma Anja remembers the quiet.\n- [[grammar:In een lichte hoek ziet Mark de tuin.]] — In a light corner Mark sees the garden.\n- [[grammar:Sophie kiest de mooiste foto voor een lijst.]] — Sophie chooses the most beautiful photo for a frame.\n- [[grammar:Mark schrijft de namen achterop.]] — Mark writes the names on the back.\n- [[grammar:Hoewel het laat wordt, bekijken ze nog één album.]] — Although it is getting late, they look through one more album.",
+    "expert": "- [[grammar:Sophie bekijkt de oude foto op tafel.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Hoewel de foto donker is, zijn de gezichten duidelijk.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Oma Anja wijst naar de jonge vrouw naast het raam.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Dat is Oma Anja zelf voor het kleine huis.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Mark ziet een lange straat met weinig auto’s.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Hoewel de straat nu druk is, herinnert Oma Anja zich de stilte.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:In een lichte hoek ziet Mark de tuin.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Sophie kiest de mooiste foto voor een lijst.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Mark schrijft de namen achterop.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Hoewel het laat wordt, bekijken ze nog één album.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

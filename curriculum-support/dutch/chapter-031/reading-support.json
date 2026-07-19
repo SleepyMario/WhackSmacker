@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + maar + clause]] and [[grammar:singular noun → plural noun in -en]]. Use [[grammar:maar]] when the second idea contrasts with the first. Many Dutch nouns form the plural by adding [[grammar:-en]].",
+      "expert": "This chapter introduces [[grammar:clause + maar + clause]]: [[grammar:Maar]] coordinates two finite clauses and signals adversative discourse relation.; [[grammar:singular noun → plural noun in -en]]: The regular plural suffix [[grammar:-en]] may trigger ordinary spelling adjustments while preserving lexical identity."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + maar + clause\n\nUse [[grammar:maar]] when the second idea contrasts with the first. Example: [[grammar:Ik verzamel de foto’s, maar Sophie maakt de poster.]]\n\n#### singular noun → plural noun in -en\n\nMany Dutch nouns form the plural by adding [[grammar:-en]]. Example: [[grammar:We verdelen eerst de taken.]]",
+      "expert": "#### clause + maar + clause\n\n[[grammar:Maar]] coordinates two finite clauses and signals adversative discourse relation. Literal example: [[grammar:Ik verzamel de foto’s, maar Sophie maakt de poster.]]\n\n#### singular noun → plural noun in -en\n\nThe regular plural suffix [[grammar:-en]] may trigger ordinary spelling adjustments while preserving lexical identity. Literal example: [[grammar:We verdelen eerst de taken.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Maar]] connects a contrast. Regular [[grammar:plurals in -en]] are one common way to mark more than one.",
+      "expert": "[[grammar:Maar]] connects a contrast. Regular [[grammar:plurals in -en]] are one common way to mark more than one. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Jullie groep maakt een project over de stad.]] — Your group is making a project about the city.\n- [[grammar:Ik verzamel de foto’s, maar Sophie maakt de poster.]] — I am collecting the photos, but Sophie is making the poster.\n- [[grammar:Goed. We verdelen eerst de taken.]] — Good. We will divide the tasks first.\n- [[grammar:Welke taak heeft Alex?]] — Which task does Alex have?\n- [[grammar:Hij schrijft de teksten en kiest de foto’s.]] — He writes the texts and chooses the photos.\n- [[grammar:Sophie tekent de straten, maar ik controleer de namen.]] — Sophie draws the streets, but I check the names.\n- [[grammar:Wanneer presenteert de groep het project?]] — When does the group present the project?\n- [[grammar:Vrijdag presenteert onze groep de poster.]] — On Friday our group presents the poster.\n- [[grammar:Er zijn veel taken, maar het plan is duidelijk.]] — There are many tasks, but the plan is clear.\n- [[grammar:Controleer ook de teksten van de andere groepen.]] — Also check the texts of the other groups.\n- [[grammar:Dat doen we morgen.]] — We will do that tomorrow.\n- [[grammar:Dan is het project op tijd klaar.]] — Then the project will be ready on time.",
+    "expert": "- [[grammar:Jullie groep maakt een project over de stad.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Ik verzamel de foto’s, maar Sophie maakt de poster.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Goed. We verdelen eerst de taken.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Welke taak heeft Alex?]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Hij schrijft de teksten en kiest de foto’s.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Sophie tekent de straten, maar ik controleer de namen.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Wanneer presenteert de groep het project?]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Vrijdag presenteert onze groep de poster.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Er zijn veel taken, maar het plan is duidelijk.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Controleer ook de teksten van de andere groepen.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Dat doen we morgen.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Dan is het project op tijd klaar.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

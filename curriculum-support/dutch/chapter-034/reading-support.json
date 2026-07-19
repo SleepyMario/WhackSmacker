@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:voordat + subordinate clause]] and [[grammar:subject + reflexive pronoun + verb]]. Use [[grammar:voordat]] to say that one action happens before another. Some daily actions use a reflexive pronoun, such as [[grammar:zich aankleden]].",
+      "expert": "This chapter introduces [[grammar:voordat + subordinate clause]]: [[grammar:Voordat]] introduces temporal subordination and places the finite verb at the clause end.; [[grammar:subject + reflexive pronoun + verb]]: The reflexive object is co-referential with the grammatical subject and changes with person."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### voordat + subordinate clause\n\nUse [[grammar:voordat]] to say that one action happens before another. Example: [[grammar:Daan zoekt zijn jas voordat hij vertrekt.]]\n\n#### subject + reflexive pronoun + verb\n\nSome daily actions use a reflexive pronoun, such as [[grammar:zich aankleden]]. Example: [[grammar:Eva kleedt zich aan voor haar dienst.]]",
+      "expert": "#### voordat + subordinate clause\n\n[[grammar:Voordat]] introduces temporal subordination and places the finite verb at the clause end. Literal example: [[grammar:Daan zoekt zijn jas voordat hij vertrekt.]]\n\n#### subject + reflexive pronoun + verb\n\nThe reflexive object is co-referential with the grammatical subject and changes with person. Literal example: [[grammar:Eva kleedt zich aan voor haar dienst.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Voordat]] introduces a later event in a subordinate clause. Reflexive pronouns refer back to the subject.",
+      "expert": "[[grammar:Voordat]] introduces a later event in a subordinate clause. Reflexive pronouns refer back to the subject. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:De wekker gaat vroeg omdat Daan naar school moet.]] — The alarm clock goes off early because Daan has to go to school.\n- [[grammar:Hij wast zich voordat hij zich aankleedt.]] — He washes himself before he gets dressed.\n- [[grammar:Daarna kijkt hij in de spiegel.]] — After that he looks in the mirror.\n- [[grammar:Daan poetst zijn tanden voordat hij ontbijt.]] — Daan brushes his teeth before he eats breakfast.\n- [[grammar:Eva kleedt zich aan voor haar dienst.]] — Eva gets dressed for her shift.\n- [[grammar:Zij is niet gehaast, omdat haar tas al klaarstaat.]] — She is not rushed because her bag is already ready.\n- [[grammar:Daan zoekt zijn jas voordat hij vertrekt.]] — Daan looks for his jacket before he leaves.\n- [[grammar:Hij vindt de jas bij de spiegel.]] — He finds the jacket by the mirror.\n- [[grammar:Moeder en zoon sluiten samen de deur.]] — Mother and son close the door together.\n- [[grammar:Ze vertrekken op tijd naar werk en school.]] — They leave on time for work and school.",
+    "expert": "- [[grammar:De wekker gaat vroeg omdat Daan naar school moet.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Hij wast zich voordat hij zich aankleedt.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Daarna kijkt hij in de spiegel.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Daan poetst zijn tanden voordat hij ontbijt.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Eva kleedt zich aan voor haar dienst.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Zij is niet gehaast, omdat haar tas al klaarstaat.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Daan zoekt zijn jas voordat hij vertrekt.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Hij vindt de jas bij de spiegel.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Moeder en zoon sluiten samen de deur.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Ze vertrekken op tijd naar werk en school.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:hij/zij + heeft + noun]]. Use [[grammar:heeft]] after [[grammar:hij]], [[grammar:zij]], or a person’s name to say what that person has.",
+      "expert": "This chapter introduces [[grammar:hij/zij + heeft + noun]]: Finite [[grammar:heeft]] is the third-person singular present of [[grammar:hebben]] and takes the possessor as subject."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### hij/zij + heeft + noun\n\nUse [[grammar:heeft]] after [[grammar:hij]], [[grammar:zij]], or a person’s name to say what that person has. Example: [[grammar:Eva heeft een vroege dienst in het ziekenhuis.]]",
+      "expert": "#### hij/zij + heeft + noun\n\nFinite [[grammar:heeft]] is the third-person singular present of [[grammar:hebben]] and takes the possessor as subject. Literal example: [[grammar:Eva heeft een vroege dienst in het ziekenhuis.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:heeft]] with [[grammar:hij]], [[grammar:zij]], or a singular name. The inherited first-person form remains [[grammar:ik heb]].",
+      "expert": "Use [[grammar:heeft]] with [[grammar:hij]], [[grammar:zij]], or a singular name. The inherited first-person form remains [[grammar:ik heb]]. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Eva heeft een vroege dienst in het ziekenhuis.]] — Eva has an early shift at the hospital.\n- [[grammar:Zij controleert zorgvuldig haar agenda.]] — She carefully checks her planner.\n- [[grammar:De lunchdoos staat naast de werkjas.]] — The lunch box is next to the work jacket.\n- [[grammar:Eva heeft koffie en brood voor de pauze.]] — Eva has coffee and bread for the break.\n- [[grammar:Sophie heeft de sleutel van de fiets.]] — Sophie has the bicycle key.\n- [[grammar:Daan heeft de tas met de telefoon.]] — Daan has the bag with the phone.\n- [[grammar:Eva heeft vandaag een nieuwe badge.]] — Eva has a new badge today.\n- [[grammar:Sophie helpt in de keuken en Daan sluit de deur.]] — Sophie helps in the kitchen and Daan closes the door.\n- [[grammar:Eva zegt dag en vertrekt vroeg.]] — Eva says goodbye and leaves early.\n- [[grammar:Het huis is daarna weer rustig.]] — The house is quiet again afterward.",
+    "expert": "- [[grammar:Eva heeft een vroege dienst in het ziekenhuis.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Zij controleert zorgvuldig haar agenda.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:De lunchdoos staat naast de werkjas.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Eva heeft koffie en brood voor de pauze.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Sophie heeft de sleutel van de fiets.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Daan heeft de tas met de telefoon.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Eva heeft vandaag een nieuwe badge.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Sophie helpt in de keuken en Daan sluit de deur.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Eva zegt dag en vertrekt vroeg.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Het huis is daarna weer rustig.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

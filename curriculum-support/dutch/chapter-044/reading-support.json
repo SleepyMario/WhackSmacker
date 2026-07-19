@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + daarentegen + V2 clause]] and [[grammar:unit + en + ten]]. Use [[grammar:daarentegen]] for by contrast or on the other hand. Dutch says the unit first, then [[grammar:en]], then the tens: eenentwintig.",
+      "expert": "This chapter introduces [[grammar:clause + daarentegen + V2 clause]]: [[grammar:Daarentegen]] is a contrastive connective adverb and takes first position before the finite verb.; [[grammar:unit + en + ten]]: Compound cardinals place the unit before the decade and join them orthographically with [[grammar:en]]."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + daarentegen + V2 clause\n\nUse [[grammar:daarentegen]] for by contrast or on the other hand. Example: [[grammar:De kleine kast is vol; de grote kast is daarentegen leeg.]]\n\n#### unit + en + ten\n\nDutch says the unit first, then [[grammar:en]], then the tens: eenentwintig. Example: [[grammar:De club heeft vijfendertig leesboeken en veertig tijdschriften.]]",
+      "expert": "#### clause + daarentegen + V2 clause\n\n[[grammar:Daarentegen]] is a contrastive connective adverb and takes first position before the finite verb. Literal example: [[grammar:De kleine kast is vol; de grote kast is daarentegen leeg.]]\n\n#### unit + en + ten\n\nCompound cardinals place the unit before the decade and join them orthographically with [[grammar:en]]. Literal example: [[grammar:De club heeft vijfendertig leesboeken en veertig tijdschriften.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Daarentegen]] creates a strong contrast. Dutch compound numbers such as vijfendertig place the unit before the tens.",
+      "expert": "[[grammar:Daarentegen]] creates a strong contrast. Dutch compound numbers such as vijfendertig place the unit before the tens. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Oma Anja leest de voorraadlijst van de club.]] — Grandma Anja reads the club’s inventory list.\n- [[grammar:Er staan dertig kinderboeken op de eerste plank.]] — There are thirty children’s books on the first shelf.\n- [[grammar:De kleine kast is vol; de grote kast is daarentegen leeg.]] — The small cupboard is full; the large cupboard, by contrast, is empty.\n- [[grammar:Milan brengt eenentwintig nieuwe boeken binnen.]] — Milan brings in twenty-one new books.\n- [[grammar:De club heeft vijfendertig leesboeken en veertig tijdschriften.]] — The club has thirty-five reading books and forty magazines.\n- [[grammar:Lotte telt achtenveertig namen op de ledenlijst.]] — Lotte counts forty-eight names on the membership list.\n- [[grammar:Pieter verwacht vijftig bezoekers in de maand.]] — Pieter expects fifty visitors during the month.\n- [[grammar:Oma Anja vergelijkt de nieuwe voorraad met de oude lijst.]] — Grandma Anja compares the new stock with the old list.\n- [[grammar:Milan schrijft alles zorgvuldig op de voorraadlijst.]] — Milan carefully writes everything on the inventory list.\n- [[grammar:Lotte bewaart daarentegen de oude lijst voor controle.]] — Lotte, by contrast, keeps the old list for checking.",
+    "expert": "- [[grammar:Oma Anja leest de voorraadlijst van de club.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Er staan dertig kinderboeken op de eerste plank.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:De kleine kast is vol; de grote kast is daarentegen leeg.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Milan brengt eenentwintig nieuwe boeken binnen.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:De club heeft vijfendertig leesboeken en veertig tijdschriften.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Lotte telt achtenveertig namen op de ledenlijst.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Pieter verwacht vijftig bezoekers in de maand.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Oma Anja vergelijkt de nieuwe voorraad met de oude lijst.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Milan schrijft alles zorgvuldig op de voorraadlijst.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Lotte bewaart daarentegen de oude lijst voor controle.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

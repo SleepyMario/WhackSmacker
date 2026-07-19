@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:eerst + clause; vervolgens + clause]] and [[grammar:nul, één, twee, drie, vier, vijf]]. Use [[grammar:eerst]] for the first step and [[grammar:vervolgens]] for the next one. Learn the words for zero through five and use them before count nouns.",
+      "expert": "This chapter introduces [[grammar:eerst + clause; vervolgens + clause]]: The paired sequencing adverbs structure successive discourse units and retain ordinary V2 syntax.; [[grammar:nul, één, twee, drie, vier, vijf]]: Dutch cardinals precede the counted noun without a classifier; plural marking follows ordinary noun rules."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### eerst + clause; vervolgens + clause\n\nUse [[grammar:eerst]] for the first step and [[grammar:vervolgens]] for the next one. Example: [[grammar:Eerst tellen we de dozen; vervolgens vullen we de plank.]]\n\n#### nul, één, twee, drie, vier, vijf\n\nLearn the words for zero through five and use them before count nouns. Example: [[grammar:Ik tel vijf dozen.]]",
+      "expert": "#### eerst + clause; vervolgens + clause\n\nThe paired sequencing adverbs structure successive discourse units and retain ordinary V2 syntax. Literal example: [[grammar:Eerst tellen we de dozen; vervolgens vullen we de plank.]]\n\n#### nul, één, twee, drie, vier, vijf\n\nDutch cardinals precede the counted noun without a classifier; plural marking follows ordinary noun rules. Literal example: [[grammar:Ik tel vijf dozen.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Eerst]] and [[grammar:vervolgens]] make a sequence explicit. Dutch cardinal numbers normally stand directly before a noun.",
+      "expert": "[[grammar:Eerst]] and [[grammar:vervolgens]] make a sequence explicit. Dutch cardinal numbers normally stand directly before a noun. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Er staat een nieuwe levering bij de deur.]] — There is a new delivery by the door.\n- [[grammar:Eerst tellen we de dozen; vervolgens vullen we de plank.]] — First we count the boxes; next we fill the shelf.\n- [[grammar:Ik tel vijf dozen.]] — I count five boxes.\n- [[grammar:In de eerste doos zitten vier lampen.]] — There are four lamps in the first box.\n- [[grammar:In de tweede doos zitten drie vazen.]] — There are three vases in the second box.\n- [[grammar:Hier liggen twee spiegels en één klok.]] — Here are two mirrors and one clock.\n- [[grammar:Op de lijst staan vijf glazen, maar hier staan er nul.]] — The list shows five glasses, but there are zero here.\n- [[grammar:Dan klopt de lijst niet.]] — Then the list is incorrect.\n- [[grammar:Eerst schrijf ik het aantal op.]] — First I write down the quantity.\n- [[grammar:Vervolgens zet ik de dozen in de kast.]] — Next I put the boxes in the cupboard.\n- [[grammar:De voorraad klopt nu precies.]] — The stock count is now exactly right.\n- [[grammar:Goed, dan kan de winkel open.]] — Good, then the shop can open.",
+    "expert": "- [[grammar:Er staat een nieuwe levering bij de deur.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Eerst tellen we de dozen; vervolgens vullen we de plank.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Ik tel vijf dozen.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:In de eerste doos zitten vier lampen.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:In de tweede doos zitten drie vazen.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Hier liggen twee spiegels en één klok.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Op de lijst staan vijf glazen, maar hier staan er nul.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Dan klopt de lijst niet.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Eerst schrijf ik het aantal op.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vervolgens zet ik de dozen in de kast.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:De voorraad klopt nu precies.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Goed, dan kan de winkel open.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

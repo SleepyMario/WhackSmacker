@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + of + clause]] and [[grammar:deze/dit + noun]]. Use [[grammar:of]] between two choices. Use [[grammar:deze]] with a [[grammar:de-word]] and [[grammar:dit]] with a [[grammar:het-word]].",
+      "expert": "This chapter introduces [[grammar:clause + of + clause]]: [[grammar:Of]] coordinates alternatives and can also introduce an embedded polar question in later chapters.; [[grammar:deze/dit + noun]]: The proximal demonstrative agrees with the noun’s grammatical gender class."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + of + clause\n\nUse [[grammar:of]] between two choices. Example: [[grammar:Nemen we tomaten of komkommers?]]\n\n#### deze/dit + noun\n\nUse [[grammar:deze]] with a [[grammar:de-word]] and [[grammar:dit]] with a [[grammar:het-word]]. Example: [[grammar:Deze tomaat is rijp, maar deze komkommer is hard.]]",
+      "expert": "#### clause + of + clause\n\n[[grammar:Of]] coordinates alternatives and can also introduce an embedded polar question in later chapters. Literal example: [[grammar:Nemen we tomaten of komkommers?]]\n\n#### deze/dit + noun\n\nThe proximal demonstrative agrees with the noun’s grammatical gender class. Literal example: [[grammar:Deze tomaat is rijp, maar deze komkommer is hard.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Of]] links alternatives. [[grammar:Deze]] goes with [[grammar:de-words]]; [[grammar:dit]] goes with [[grammar:het-words]].",
+      "expert": "[[grammar:Of]] links alternatives. [[grammar:Deze]] goes with [[grammar:de-words]]; [[grammar:dit]] goes with [[grammar:het-words]]. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Bij deze kraam is de groente vers.]] — At this stall the vegetables are fresh.\n- [[grammar:Nemen we tomaten of komkommers?]] — Shall we take tomatoes or cucumbers?\n- [[grammar:Deze tomaat is rijp, maar deze komkommer is hard.]] — This tomato is ripe, but this cucumber is hard.\n- [[grammar:Wil je dit mandje gebruiken?]] — Do you want to use this basket?\n- [[grammar:Ja, dit mandje is licht.]] — Yes, this basket is light.\n- [[grammar:Dan kies ik de tomaten voor de soep.]] — Then I choose the tomatoes for the soup.\n- [[grammar:Ik neem ook deze komkommer; hij ruikt fris.]] — I will also take this cucumber; it smells fresh.\n- [[grammar:Kiezen we ook fruit of alleen groente?]] — Are we also choosing fruit or only vegetables?\n- [[grammar:Alleen groente; thuis hebben we appels.]] — Only vegetables; at home we have apples.\n- [[grammar:Sophie neemt de tomaten en Noor draagt het mandje.]] — Sophie takes the tomatoes and Noor carries the basket.\n- [[grammar:Goed. Dan is onze keuze klaar.]] — Good. Then our choice is settled.\n- [[grammar:En ik betaal bij de kraam.]] — And I will pay at the stall.",
+    "expert": "- [[grammar:Bij deze kraam is de groente vers.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Nemen we tomaten of komkommers?]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Deze tomaat is rijp, maar deze komkommer is hard.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Wil je dit mandje gebruiken?]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Ja, dit mandje is licht.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Dan kies ik de tomaten voor de soep.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Ik neem ook deze komkommer; hij ruikt fris.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Kiezen we ook fruit of alleen groente?]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Alleen groente; thuis hebben we appels.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Sophie neemt de tomaten en Noor draagt het mandje.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Goed. Dan is onze keuze klaar.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:En ik betaal bij de kraam.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

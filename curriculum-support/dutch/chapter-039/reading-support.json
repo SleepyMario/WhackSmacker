@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:als + subordinate clause]] and [[grammar:subject + finite verb + vaak/soms/nooit]]. Use [[grammar:als]] for when or whenever in a repeated situation. Use [[grammar:vaak]], [[grammar:soms]], or [[grammar:nooit]] after the finite verb to say how often something happens.",
+      "expert": "This chapter introduces [[grammar:als + subordinate clause]]: [[grammar:Als]] introduces subordinate verb-final order and leaves the main clause as the outcome.; [[grammar:subject + finite verb + vaak/soms/nooit]]: The frequency adverb occupies the middle field and scopes over the event."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### als + subordinate clause\n\nUse [[grammar:als]] for when or whenever in a repeated situation. Example: [[grammar:Als het regent, trainen we binnen.]]\n\n#### subject + finite verb + vaak/soms/nooit\n\nUse [[grammar:vaak]], [[grammar:soms]], or [[grammar:nooit]] after the finite verb to say how often something happens. Example: [[grammar:Ik train vaak op vrijdag.]]",
+      "expert": "#### als + subordinate clause\n\n[[grammar:Als]] introduces subordinate verb-final order and leaves the main clause as the outcome. Literal example: [[grammar:Als het regent, trainen we binnen.]]\n\n#### subject + finite verb + vaak/soms/nooit\n\nThe frequency adverb occupies the middle field and scopes over the event. Literal example: [[grammar:Ik train vaak op vrijdag.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Als]] can mean when or if. Frequency adverbs normally stand after the finite verb in these main clauses.",
+      "expert": "[[grammar:Als]] can mean when or if. Frequency adverbs normally stand after the finite verb in these main clauses. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Wanneer heb jij training, Noor?]] — When do you have practice, Noor?\n- [[grammar:Ik train vaak op vrijdag.]] — I often train on Friday.\n- [[grammar:Ik oefen soms op woensdag in de tuin.]] — I sometimes practise on Wednesday in the garden.\n- [[grammar:Als het regent, trainen we binnen.]] — When it rains, we practise indoors.\n- [[grammar:Onze wedstrijd is meestal op zaterdag.]] — Our match is usually on Saturday.\n- [[grammar:Ik speel nooit op zondag.]] — I never play on Sunday.\n- [[grammar:Als ik huiswerk heb, oefen ik later.]] — When I have homework, I practise later.\n- [[grammar:Zeg je soms een training af?]] — Do you sometimes cancel a training session?\n- [[grammar:Alleen als ik ziek ben.]] — Only when I am ill.\n- [[grammar:Als de wedstrijd vroeg begint, vertrek ik met de bus.]] — When the match starts early, I leave by bus.\n- [[grammar:Ik fiets vaak, maar bij regen neem ik de tram.]] — I often cycle, but in rain I take the tram.\n- [[grammar:Dan schrijven we het hele schema in de agenda.]] — Then we will write the whole schedule in the planner.",
+    "expert": "- [[grammar:Wanneer heb jij training, Noor?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Ik train vaak op vrijdag.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Ik oefen soms op woensdag in de tuin.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Als het regent, trainen we binnen.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Onze wedstrijd is meestal op zaterdag.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Ik speel nooit op zondag.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Als ik huiswerk heb, oefen ik later.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Zeg je soms een training af?]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Alleen als ik ziek ben.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Als de wedstrijd vroeg begint, vertrek ik met de bus.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Ik fiets vaak, maar bij regen neem ik de tram.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Dan schrijven we het hele schema in de agenda.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

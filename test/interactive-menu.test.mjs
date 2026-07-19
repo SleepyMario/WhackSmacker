@@ -574,7 +574,7 @@ test("language tree exposes Dutch content and review deck labels", async () => {
     assert.equal(inlineReview?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
     assert.equal(chapter5Index < chapter6Index && chapter5Index + 1 < chapter6Index, true);
     assert.equal(readContent.children.some((node) => /^Ch (?:1|5) -- Review/u.test(node.label)), false);
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70"]);
   } finally {
     await fixture.cleanup();
   }
@@ -676,7 +676,8 @@ test("Dutch Chapter 1 Normal and Developer projections preserve one complete sou
     assert.doesNotMatch(normal, /It does not introduce `je`, `jij`, or `u` yet\./u);
     assert.doesNotMatch(normal, /Do not turn this into a full verb-conjugation chapter yet\./u);
     assert.doesNotMatch(normal, /grammar_id:|DUT-GRAMMAR-001|See `ledger\.md`/u);
-    assert.match(normal, /row marked `Infinitive` gives the base verb form\./u);
+    assert.match(normal, /row marked Infinitive gives the base verb form\./u);
+    assert.doesNotMatch(normal, /\[\[grammar:Infinitive\]\]/u);
     assert.match(developer, /It does not introduce `je`, `jij`, or `u` yet\./u);
     assert.equal((developer.match(/^### Grammar$/gmu) ?? []).length, 1);
     assert.match(developer, /^#### Normal$/mu);
@@ -783,7 +784,7 @@ test("Dutch Chapters 2–5 expose distinct views, independent support, and stage
       const grammarOnly = sectionBody(both, "Grammar");
       assert.doesNotMatch(grammarOnly, /Natural English Translation|Line-by-line Breakdown/u);
       const briefIntroduction = sectionBody(normal, "Brief Introduction");
-      assert.match(briefIntroduction, /^This chapter (?:teaches|introduces)/u);
+      assert.match(briefIntroduction.trimStart(), /^This chapter (?:teaches|introduces)/u);
       const readingBlocks = sectionBody(normal, expectedType.get(chapterNumber)).split(/\n\s*\n/u).filter(Boolean);
       assert.ok(readingBlocks.length >= 2, `Chapter ${chapterNumber} has a separate scene introduction and reading body`);
       const sceneIntroduction = readingBlocks[0];
@@ -861,7 +862,7 @@ test("Dutch Chapters 6–10 expose complete audience support, translations, brea
       assert.match(both, /### Natural English Translation[\s\S]*### Line-by-line Breakdown/u);
       assert.doesNotMatch(sectionBody(both, "Grammar"), /Natural English Translation|Line-by-line Breakdown/u);
       const briefIntroduction = sectionBody(normal, "Brief Introduction");
-      assert.match(briefIntroduction, /^This chapter (?:teaches|introduces)/u);
+      assert.match(briefIntroduction.trimStart(), /^This chapter (?:teaches|introduces)/u);
       const readingBlocks = sectionBody(normal, expectedType.get(chapterNumber)).split(/\n\s*\n/u).filter(Boolean);
       assert.ok(readingBlocks.length >= 2, `Chapter ${chapterNumber} has a separate scene introduction and reading body`);
       const sceneIntroduction = readingBlocks[0];
@@ -931,31 +932,32 @@ test("Chapter 1 audience support, Breakdown, and Vietnamese Characters change vi
     const nlExpert = await renderLanguageTreeRightPane(nl, { dataDir: fixture.dataDir, displayMode: "expert" });
     const nlBreakdown = await renderLanguageTreeRightPane(nl, { dataDir: fixture.dataDir, displayMode: "normal", breakdownEnabled: true });
     assert.notEqual(nlNormal, nlExpert);
-    assert.match(nlNormal, /learn `de student` and `de docent` as complete phrases/u);
+    assert.match(nlNormal, /such as \[\[grammar:de student\]\] and \[\[grammar:de docent\]\]/u);
     assert.doesNotMatch(nlNormal, /suppletive|article syncretism|later chapters/u);
     assert.match(nlExpert, /suppletive present form|article syncretism|Expert context/u);
     assert.match(nlBreakdown, /### Line-by-line Breakdown[\s\S]*friendly greeting/u);
-    assert.match(nlBreakdown, /- `Ik ben Alex Chen\.` uses the same pattern with a name\./u);
-    assert.match(nlBreakdown, /- `Ik ben Sophie de Vries\.` uses the same pattern with a name\./u);
-    assert.match(nlBreakdown, /- `Ik ben Marieke Smit\.` uses the same pattern with a name\./u);
-    assert.doesNotMatch(nlBreakdown, /`Ik ben (?:Alex Chen|Sophie de Vries)\.` use the same pattern/u);
+    assert.match(nlBreakdown, /- \[\[grammar:Ik ben Alex Chen\.\]\] uses the same pattern with a name\./u);
+    assert.match(nlBreakdown, /- \[\[grammar:Ik ben Sophie de Vries\.\]\] uses the same pattern with a name\./u);
+    assert.match(nlBreakdown, /- \[\[grammar:Ik ben Marieke Smit\.\]\] uses the same pattern with a name\./u);
+    assert.doesNotMatch(nlBreakdown, /\[\[grammar:Ik ben (?:Alex Chen|Sophie de Vries)\.\]\] use the same pattern/u);
     assert.match(viBreakdown, /- `Tôi là Maria Garcia\.` uses the same pattern with a name\./u);
     assert.match(viBreakdown, /- `Tôi là Nguyễn Minh Anh\.` uses the same pattern with a name\./u);
     assert.match(viBreakdown, /- `Tôi là Trần Thu Hà\.` uses the same pattern with a name\./u);
     assert.doesNotMatch(viBreakdown, /`Tôi là (?:Maria Garcia|Nguyễn Minh Anh)\.` use the same pattern/u);
 
-    const colored = renderTwoPaneLanguageTree(tree, new Set(), 0, nlExpert, true, 0, 40, "en-US", "navigation", 130);
+    const usageNotes = `### Dutch Usage Notes\n\n${sectionBody(nlNormal, "Dutch Usage Notes")}`;
+    const colored = renderTwoPaneLanguageTree(tree, new Set(), 0, usageNotes, true, 0, 40, "en-US", "navigation", 130);
     const completeBluePhrase = "\x1b[34mde student\x1b[0m";
     assert.ok(colored.includes(completeBluePhrase));
     assert.doesNotMatch(colored, /\x1b\[34mde\x1b\[0m\s+student/u);
     assert.doesNotMatch(colored, /\x1b\[34mde\x1b\[0m|\x1b\[0mstudent/u);
     const normalWidthPhraseLine = colored.split("\n").map(stripAnsi).find((line) => line.includes("de student"));
-    assert.match(normalWidthPhraseLine, /So learn de student as one complete/u);
+    assert.match(normalWidthPhraseLine, /such as de student/u);
 
-    const narrow = renderTwoPaneLanguageTree(tree, new Set(), 0, nlExpert, true, 0, 40, "en-US", "navigation", 60);
+    const narrow = renderTwoPaneLanguageTree(tree, new Set(), 0, usageNotes, true, 0, 40, "en-US", "navigation", 60);
     assert.ok(narrow.includes(completeBluePhrase));
     const narrowPhraseLine = narrow.split("\n").map(stripAnsi).find((line) => line.includes("de student"));
-    assert.match(narrowPhraseLine, /de student as one complete phrase\./u);
+    assert.match(narrowPhraseLine, /such as de student/u);
     assert.doesNotMatch(narrowPhraseLine, /^student\b/u);
 
     for (const breakdown of [nlBreakdown, viBreakdown]) {
@@ -1469,7 +1471,7 @@ test("Developer language tree exposes both grammar variants inside one Grammar s
   }
 });
 
-test("Dutch read tree includes the complete zero-padded Chapters 11-25 blocks", async () => {
+test("Dutch read tree includes the complete zero-padded Chapters 11-70 blocks", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
@@ -1480,18 +1482,21 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-25 blocks", 
     const chapter16 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-016-working-at-the-library/chapter.md");
     const chapter20 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-020-an-appointment-in-town/chapter.md");
     const chapter25 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-025-going-to-the-museum/chapter.md");
+    const chapter70 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-070-reporting-the-meeting/chapter.md");
 
     assert.equal(chapter11?.label, "Chapter 11 -- Asking How Someone Is");
     assert.equal(chapter15?.label, "Chapter 15 -- Asking Where Someone Lives");
     assert.equal(chapter16?.label, "Chapter 16 -- Working at the Library");
     assert.equal(chapter20?.label, "Chapter 20 -- An Appointment in Town");
     assert.equal(chapter25?.label, "Chapter 25 -- Going to the Museum");
-    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-026-/u.test(node.filePath ?? "")), false);
+    assert.equal(chapter70?.label, "Chapter 70 -- Reporting the Meeting");
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-071-/u.test(node.filePath ?? "")), false);
     assert.equal(readContent.children.some((node) => /chapter-011-015-grammar-(?:easy|hard)/u.test(node.filePath ?? "")), true);
     const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 11-15"), true);
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 16-20"), true);
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 21-25"), true);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 66-70"), true);
   } finally {
     await fixture.cleanup();
   }
@@ -2413,7 +2418,7 @@ test("Dutch review sources submenu uses clean selectable deck labels", async () 
     });
     const items = reviewSourcesToMenuItems(sources);
 
-    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
+    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70"]);
     assert.equal(items.some((item) => item.label.includes("com.sleepymario.language.dutch")), false);
     assert.equal(items.some((item) => item.label.includes("cards.tsv")), false);
   } finally {

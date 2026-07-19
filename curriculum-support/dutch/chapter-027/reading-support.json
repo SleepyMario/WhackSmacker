@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Wil je + noun/infinitive?]]. Put [[grammar:wil]] before [[grammar:je]] to ask whether someone wants an item or wants to do something: [[grammar:Wil je een sjaal bekijken?]]",
+      "expert": "This chapter introduces [[grammar:Wil je + noun/infinitive?]]: The finite modal occupies clause-initial position in a polar question; the lexical infinitive, when present, remains final."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Wil je + noun/infinitive?\n\nPut [[grammar:wil]] before [[grammar:je]] to ask whether someone wants an item or wants to do something: [[grammar:Wil je een sjaal bekijken?]] Example: [[grammar:Wil je een sjaal bekijken, Daan?]]",
+      "expert": "#### Wil je + noun/infinitive?\n\nThe finite modal occupies clause-initial position in a polar question; the lexical infinitive, when present, remains final. Literal example: [[grammar:Wil je een sjaal bekijken, Daan?]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "In a yes/no question, [[grammar:wil]] comes before [[grammar:je]]. With an action, the infinitive normally stays near the end.",
+      "expert": "In a yes/no question, [[grammar:wil]] comes before [[grammar:je]]. With an action, the infinitive normally stays near the end. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Morgen is Eva jarig. We kiezen een cadeau voor haar verjaardag.]] — Eva’s birthday is tomorrow. We are choosing a gift for her birthday.\n- [[grammar:Wil je een sjaal bekijken, Daan?]] — Do you want to look at a scarf, Daan?\n- [[grammar:Ja. Is de kleur blauw?]] — Yes. Is the color blue?\n- [[grammar:Ja, de kleur is blauw.]] — Yes, the color is blue.\n- [[grammar:Wil je ook een wenskaart bekijken?]] — Do you also want to look at a greeting card?\n- [[grammar:Ja, ik kies de wenskaart voor Eva.]] — Yes, I choose the greeting card for Eva.\n- [[grammar:De sjaal is mooi, maar hij is duur.]] — The scarf is beautiful, but it is expensive.\n- [[grammar:Ik heb genoeg geld voor het cadeau.]] — I have enough money for the gift.\n- [[grammar:Wil je de sjaal meenemen, Sophie?]] — Do you want to take the scarf along, Sophie?\n- [[grammar:Ja, ik neem de sjaal mee.]] — Yes, I will take the scarf along.\n- [[grammar:Dan neem ik de wenskaart.]] — Then I will take the greeting card.\n- [[grammar:Goed. Ik betaal bij de kassa.]] — Good. I will pay at the register.",
+    "expert": "- [[grammar:Morgen is Eva jarig. We kiezen een cadeau voor haar verjaardag.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Wil je een sjaal bekijken, Daan?]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Ja. Is de kleur blauw?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Ja, de kleur is blauw.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Wil je ook een wenskaart bekijken?]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Ja, ik kies de wenskaart voor Eva.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:De sjaal is mooi, maar hij is duur.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Ik heb genoeg geld voor het cadeau.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Wil je de sjaal meenemen, Sophie?]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Ja, ik neem de sjaal mee.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Dan neem ik de wenskaart.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Goed. Ik betaal bij de kassa.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

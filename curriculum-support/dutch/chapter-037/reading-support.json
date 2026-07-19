@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + dus + clause]] and [[grammar:even + imperative/request]]. Use [[grammar:dus]] when the second clause follows logically from the first. Use [[grammar:even]] in a friendly request for a quick or small action.",
+      "expert": "This chapter introduces [[grammar:clause + dus + clause]]: [[grammar:Dus]] coordinates a consequential relation and normally retains main-clause word order.; [[grammar:even + imperative/request]]: The modal particle reduces imposition without changing the core propositional content."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + dus + clause\n\nUse [[grammar:dus]] when the second clause follows logically from the first. Example: [[grammar:Het boek is niet beschikbaar, dus ik reserveer het.]]\n\n#### even + imperative/request\n\nUse [[grammar:even]] in a friendly request for a quick or small action. Example: [[grammar:Kijk even in de catalogus.]]",
+      "expert": "#### clause + dus + clause\n\n[[grammar:Dus]] coordinates a consequential relation and normally retains main-clause word order. Literal example: [[grammar:Het boek is niet beschikbaar, dus ik reserveer het.]]\n\n#### even + imperative/request\n\nThe modal particle reduces imposition without changing the core propositional content. Literal example: [[grammar:Kijk even in de catalogus.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Dus]] introduces a consequence. [[grammar:Even]] can soften a short request or instruction.",
+      "expert": "[[grammar:Dus]] introduces a consequence. [[grammar:Even]] can soften a short request or instruction. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Ik zoek een boek over fotografie.]] — I am looking for a book about photography.\n- [[grammar:Kijk even in de catalogus.]] — Take a quick look in the catalogue.\n- [[grammar:Het boek staat daar niet, dus ik ga naar de balie.]] — The book is not listed there, so I am going to the counter.\n- [[grammar:Kijk even of een andere bibliotheek het heeft.]] — Check whether another library has it.\n- [[grammar:Het boek is niet beschikbaar, dus ik reserveer het.]] — The book is unavailable, so I reserve it.\n- [[grammar:Wanneer is het weer beschikbaar?]] — When is it available again?\n- [[grammar:Volgende week kan ik het lenen.]] — Next week I can borrow it.\n- [[grammar:Schrijf even je telefoonnummer op.]] — Write down your phone number for a moment.\n- [[grammar:Goed, dan krijg ik een bericht.]] — Good, then I will receive a message.\n- [[grammar:De catalogus is handig, maar niet altijd compleet.]] — The catalogue is useful, but not always complete.\n- [[grammar:Precies, dus controleer het ook bij de balie.]] — Exactly, so check it at the counter too.\n- [[grammar:Dank u, ik regel het bij de balie.]] — Thank you, I will arrange it at the counter.",
+    "expert": "- [[grammar:Ik zoek een boek over fotografie.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Kijk even in de catalogus.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Het boek staat daar niet, dus ik ga naar de balie.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Kijk even of een andere bibliotheek het heeft.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Het boek is niet beschikbaar, dus ik reserveer het.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Wanneer is het weer beschikbaar?]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Volgende week kan ik het lenen.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Schrijf even je telefoonnummer op.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Goed, dan krijg ik een bericht.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:De catalogus is handig, maar niet altijd compleet.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Precies, dus controleer het ook bij de balie.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Dank u, ik regel het bij de balie.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

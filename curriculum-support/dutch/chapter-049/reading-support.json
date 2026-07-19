@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:imperative + anders + consequence]] and [[grammar:euro amount + cent amount]]. Use [[grammar:anders]] for otherwise. Say the euros first and the cents after them.",
+      "expert": "This chapter introduces [[grammar:imperative + anders + consequence]]: [[grammar:Anders]] links an implicit negative condition to its consequence and keeps main-clause V2 order.; [[grammar:euro amount + cent amount]]: Dutch price expressions may be spoken as euro and cent units; decimal comma notation corresponds to the same value."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### imperative + anders + consequence\n\nUse [[grammar:anders]] for otherwise. Example: [[grammar:Neem ook een tas mee, anders valt het brood.]]\n\n#### euro amount + cent amount\n\nSay the euros first and the cents after them. Example: [[grammar:De appels kosten drie euro en vijftig cent.]]",
+      "expert": "#### imperative + anders + consequence\n\n[[grammar:Anders]] links an implicit negative condition to its consequence and keeps main-clause V2 order. Literal example: [[grammar:Neem ook een tas mee, anders valt het brood.]]\n\n#### euro amount + cent amount\n\nDutch price expressions may be spoken as euro and cent units; decimal comma notation corresponds to the same value. Literal example: [[grammar:De appels kosten drie euro en vijftig cent.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Anders]] introduces an undesirable alternative consequence. Prices can be spoken with separate [[grammar:euro]] and [[grammar:cent]] units.",
+      "expert": "[[grammar:Anders]] introduces an undesirable alternative consequence. Prices can be spoken with separate [[grammar:euro]] and [[grammar:cent]] units. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:De appels kosten drie euro en vijftig cent.]] — The apples cost three euros and fifty cents.\n- [[grammar:Dat is een goede prijs.]] — That is a good price.\n- [[grammar:De komkommers kosten twee euro en twintig cent.]] — The cucumbers cost two euros and twenty cents.\n- [[grammar:Is de kaas goedkoop vandaag?]] — Is the cheese cheap today?\n- [[grammar:Ja, de prijs is vier euro en tien cent.]] — Yes, the price is four euros and ten cents.\n- [[grammar:Ik betaal contant met tien euro.]] — I will pay ten euros in cash.\n- [[grammar:Dan krijg je twintig cent wisselgeld.]] — Then you receive twenty cents in change.\n- [[grammar:Controleer het bedrag, anders klopt de kassa niet.]] — Check the amount, otherwise the register will not balance.\n- [[grammar:Precies. Neem ook een tas mee, anders valt het brood.]] — Exactly. Take a bag too, otherwise the bread will fall.\n- [[grammar:Hoeveel kost alles samen?]] — How much does everything cost together?\n- [[grammar:De totale prijs is negen euro en tachtig cent.]] — The total price is nine euros and eighty cents.\n- [[grammar:Goed, het wisselgeld klopt precies.]] — Good, the change is exactly right.",
+    "expert": "- [[grammar:De appels kosten drie euro en vijftig cent.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Dat is een goede prijs.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:De komkommers kosten twee euro en twintig cent.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Is de kaas goedkoop vandaag?]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Ja, de prijs is vier euro en tien cent.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Ik betaal contant met tien euro.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Dan krijg je twintig cent wisselgeld.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Controleer het bedrag, anders klopt de kassa niet.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Precies. Neem ook een tas mee, anders valt het brood.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Hoeveel kost alles samen?]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:De totale prijs is negen euro en tachtig cent.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Goed, het wisselgeld klopt precies.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

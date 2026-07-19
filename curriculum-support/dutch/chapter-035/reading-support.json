@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + terwijl + clause]] and [[grammar:adjective-er + dan]]. Use [[grammar:terwijl]] when two things happen at the same time. Add [[grammar:-er]] to many adjectives and use [[grammar:dan]] for the second item.",
+      "expert": "This chapter introduces [[grammar:clause + terwijl + clause]]: [[grammar:Terwijl]] introduces a subordinate clause with verb-final order and can carry temporal or contrastive force.; [[grammar:adjective-er + dan]]: The comparative degree is marked morphologically and the comparison standard is introduced by [[grammar:dan]]."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + terwijl + clause\n\nUse [[grammar:terwijl]] when two things happen at the same time. Example: [[grammar:De trein rijdt snel, terwijl de tram vaak stopt.]]\n\n#### adjective-er + dan\n\nAdd [[grammar:-er]] to many adjectives and use [[grammar:dan]] for the second item. Example: [[grammar:De trein is sneller dan de tram.]]",
+      "expert": "#### clause + terwijl + clause\n\n[[grammar:Terwijl]] introduces a subordinate clause with verb-final order and can carry temporal or contrastive force. Literal example: [[grammar:De trein rijdt snel, terwijl de tram vaak stopt.]]\n\n#### adjective-er + dan\n\nThe comparative degree is marked morphologically and the comparison standard is introduced by [[grammar:dan]]. Literal example: [[grammar:De trein is sneller dan de tram.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Terwijl]] connects simultaneous situations. The comparative usually takes [[grammar:-er]] and introduces the standard with [[grammar:dan]].",
+      "expert": "[[grammar:Terwijl]] connects simultaneous situations. The comparative usually takes [[grammar:-er]] and introduces the standard with [[grammar:dan]]. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Welke route nemen we naar het concert?]] — Which route shall we take to the concert?\n- [[grammar:De trein is sneller dan de tram.]] — The train is faster than the tram.\n- [[grammar:Ja, maar bij de trein moet je overstappen.]] — Yes, but with the train you have to transfer.\n- [[grammar:De tram rijdt rechtstreeks naar het centrum.]] — The tram goes directly to the city center.\n- [[grammar:De trein rijdt snel, terwijl de tram vaak stopt.]] — The train goes fast, while the tram stops often.\n- [[grammar:De tram is langzamer dan de trein.]] — The tram is slower than the train.\n- [[grammar:Welke route is goedkoper?]] — Which route is cheaper?\n- [[grammar:De tramkaart is goedkoper, maar de reis duurt langer.]] — The tram ticket is cheaper, but the journey takes longer.\n- [[grammar:Ik lees terwijl we in de tram zitten.]] — I read while we are sitting on the tram.\n- [[grammar:Dan kiezen we de rustige route.]] — Then we will choose the calm route.\n- [[grammar:Goed, we vertrekken om zeven uur.]] — Good, we will leave at seven o’clock.\n- [[grammar:Dan zijn we ruim op tijd.]] — Then we will be there well on time.",
+    "expert": "- [[grammar:Welke route nemen we naar het concert?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:De trein is sneller dan de tram.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Ja, maar bij de trein moet je overstappen.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:De tram rijdt rechtstreeks naar het centrum.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:De trein rijdt snel, terwijl de tram vaak stopt.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:De tram is langzamer dan de trein.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Welke route is goedkoper?]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:De tramkaart is goedkoper, maar de reis duurt langer.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Ik lees terwijl we in de tram zitten.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Dan kiezen we de rustige route.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Goed, we vertrekken om zeven uur.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Dan zijn we ruim op tijd.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

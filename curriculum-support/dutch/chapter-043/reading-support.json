@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + toch + clause]] and [[grammar:elf tot en met twintig]]. Use [[grammar:toch]] when something happens despite the situation. Learn the number words from eleven to twenty and use them in scores and counts.",
+      "expert": "This chapter introduces [[grammar:clause + toch + clause]]: [[grammar:Toch]] functions as a concessive connective adverb and may occupy the middle field or first position.; [[grammar:elf tot en met twintig]]: The teen numerals are lexicalized forms; [[grammar:twintig]] establishes the next decade base."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + toch + clause\n\nUse [[grammar:toch]] when something happens despite the situation. Example: [[grammar:Het regent, maar de wedstrijd gaat toch door.]]\n\n#### elf tot en met twintig\n\nLearn the number words from eleven to twenty and use them in scores and counts. Example: [[grammar:Lotte heeft nu twintig punten.]]",
+      "expert": "#### clause + toch + clause\n\n[[grammar:Toch]] functions as a concessive connective adverb and may occupy the middle field or first position. Literal example: [[grammar:Het regent, maar de wedstrijd gaat toch door.]]\n\n#### elf tot en met twintig\n\nThe teen numerals are lexicalized forms; [[grammar:twintig]] establishes the next decade base. Literal example: [[grammar:Lotte heeft nu twintig punten.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Toch]] marks an outcome that is surprising or contrary to expectation. Eleven through twenty are learned as their own number forms.",
+      "expert": "[[grammar:Toch]] marks an outcome that is surprising or contrary to expectation. Eleven through twenty are learned as their own number forms. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Het regent, maar de wedstrijd gaat toch door.]] — It is raining, but the competition continues anyway.\n- [[grammar:De eerste groep heeft elf punten.]] — The first group has eleven points.\n- [[grammar:De tweede groep heeft twaalf punten.]] — The second group has twelve points.\n- [[grammar:Wij hebben dertien punten na het lopen.]] — We have thirteen points after the running event.\n- [[grammar:De volgende teams hebben veertien en vijftien punten.]] — The next teams have fourteen and fifteen points.\n- [[grammar:Milan krijgt zestien punten voor het fietsen.]] — Milan gets sixteen points for cycling.\n- [[grammar:Lotte heeft zeventien punten bij het springen.]] — Lotte has seventeen points in the jumping event.\n- [[grammar:Alex telt achttien deelnemers op het veld.]] — Alex counts eighteen participants on the field.\n- [[grammar:Negentien leerlingen komen toch nog over de finish.]] — Nineteen pupils still cross the finish line after all.\n- [[grammar:Lotte heeft nu twintig punten.]] — Lotte now has twenty points.\n- [[grammar:Dat is het hoogste aantal van vandaag.]] — That is the highest total today.\n- [[grammar:Mooi, maar we helpen toch eerst de andere groep.]] — Great, but we will still help the other group first.",
+    "expert": "- [[grammar:Het regent, maar de wedstrijd gaat toch door.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:De eerste groep heeft elf punten.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:De tweede groep heeft twaalf punten.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Wij hebben dertien punten na het lopen.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:De volgende teams hebben veertien en vijftien punten.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Milan krijgt zestien punten voor het fietsen.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Lotte heeft zeventien punten bij het springen.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Alex telt achttien deelnemers op het veld.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Negentien leerlingen komen toch nog over de finish.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Lotte heeft nu twintig punten.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Dat is het hoogste aantal van vandaag.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Mooi, maar we helpen toch eerst de andere groep.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

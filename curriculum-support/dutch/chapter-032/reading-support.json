@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:main clause + omdat + subordinate clause]] and [[grammar:verb + hem/haar]]. Use [[grammar:omdat]] to explain why something happens. Use [[grammar:hem]] for him and [[grammar:haar]] for her when the person or animal receives the action.",
+      "expert": "This chapter introduces [[grammar:main clause + omdat + subordinate clause]]: [[grammar:Omdat]] marks causal subordination; the subordinate finite verb appears at the end of its clause.; [[grammar:verb + hem/haar]]: Object pronouns occupy the object field and distinguish referential roles from possessive determiners."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### main clause + omdat + subordinate clause\n\nUse [[grammar:omdat]] to explain why something happens. Example: [[grammar:De hond is oud, maar hij blijft rustig omdat Eva hem helpt.]]\n\n#### verb + hem/haar\n\nUse [[grammar:hem]] for him and [[grammar:haar]] for her when the person or animal receives the action. Example: [[grammar:Noor voert haar voorzichtig en praat zacht.]]",
+      "expert": "#### main clause + omdat + subordinate clause\n\n[[grammar:Omdat]] marks causal subordination; the subordinate finite verb appears at the end of its clause. Literal example: [[grammar:De hond is oud, maar hij blijft rustig omdat Eva hem helpt.]]\n\n#### verb + hem/haar\n\nObject pronouns occupy the object field and distinguish referential roles from possessive determiners. Literal example: [[grammar:Noor voert haar voorzichtig en praat zacht.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Omdat]] gives a reason and sends the finite verb to the end of its subordinate clause. [[grammar:Hem]] and [[grammar:haar]] can function as objects.",
+      "expert": "[[grammar:Omdat]] gives a reason and sends the finite verb to the end of its subordinate clause. [[grammar:Hem]] and [[grammar:haar]] can function as objects. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Eva bezoekt de opvang omdat zij vrije tijd heeft.]] — Eva visits the shelter because she has free time.\n- [[grammar:Daan verzorgt een hond en geeft hem water.]] — Daan cares for a dog and gives him water.\n- [[grammar:De hond is oud, maar hij blijft rustig omdat Eva hem helpt.]] — The dog is old, but he remains calm because Eva helps him.\n- [[grammar:Noor ziet een kat bij een mand.]] — Noor sees a cat by a basket.\n- [[grammar:De kat is jong en bang omdat het buiten druk is.]] — The cat is young and afraid because it is busy outside.\n- [[grammar:Noor voert haar voorzichtig en praat zacht.]] — Noor feeds her carefully and speaks softly.\n- [[grammar:Eva controleert de manden omdat een deur openstaat.]] — Eva checks the baskets because a door is open.\n- [[grammar:Daan sluit de deur en daarna zijn de dieren rustig.]] — Daan closes the door and afterward the animals are calm.\n- [[grammar:Na de dienst wassen ze hun handen.]] — After the shift they wash their hands.\n- [[grammar:Eva controleert nog één keer of alles klaar is.]] — Eva checks one more time whether everything is ready.\n- [[grammar:Noor geeft de kat nog wat water.]] — Noor gives the cat a little more water.\n- [[grammar:Ze gaan moe maar tevreden naar huis.]] — They go home tired but satisfied.",
+    "expert": "- [[grammar:Eva bezoekt de opvang omdat zij vrije tijd heeft.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Daan verzorgt een hond en geeft hem water.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:De hond is oud, maar hij blijft rustig omdat Eva hem helpt.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Noor ziet een kat bij een mand.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:De kat is jong en bang omdat het buiten druk is.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Noor voert haar voorzichtig en praat zacht.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Eva controleert de manden omdat een deur openstaat.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Daan sluit de deur en daarna zijn de dieren rustig.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Na de dienst wassen ze hun handen.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Eva controleert nog één keer of alles klaar is.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Noor geeft de kat nog wat water.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3.\n- [[grammar:Ze gaan moe maar tevreden naar huis.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 4."
+  }
+}

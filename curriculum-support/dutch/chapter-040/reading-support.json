@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + daarom + V2 clause]] and [[grammar:iets/niets + adjective]]. Use [[grammar:daarom]] for therefore or that is why. Use [[grammar:iets]] for something and [[grammar:niets]] for nothing.",
+      "expert": "This chapter introduces [[grammar:clause + daarom + V2 clause]]: [[grammar:Daarom]] is a causal connective adverb; when fronted, the finite verb follows immediately in V2 order.; [[grammar:iets/niets + adjective]]: [[grammar:Iets]] and [[grammar:niets]] are indefinite pronominal heads; an adjective may follow in the fixed uninflected form."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + daarom + V2 clause\n\nUse [[grammar:daarom]] for therefore or that is why. Example: [[grammar:Alex vindt ook een natte jas; daarom hangt Marieke hem op.]]\n\n#### iets/niets + adjective\n\nUse [[grammar:iets]] for something and [[grammar:niets]] for nothing. Example: [[grammar:Alex vindt iets vreemds onder een oude tas.]]",
+      "expert": "#### clause + daarom + V2 clause\n\n[[grammar:Daarom]] is a causal connective adverb; when fronted, the finite verb follows immediately in V2 order. Literal example: [[grammar:Alex vindt ook een natte jas; daarom hangt Marieke hem op.]]\n\n#### iets/niets + adjective\n\n[[grammar:Iets]] and [[grammar:niets]] are indefinite pronominal heads; an adjective may follow in the fixed uninflected form. Literal example: [[grammar:Alex vindt iets vreemds onder een oude tas.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Daarom]] begins a consequence and triggers V2 word order. [[grammar:Iets]] and [[grammar:niets]] refer to unspecified things.",
+      "expert": "[[grammar:Daarom]] begins a consequence and triggers V2 word order. [[grammar:Iets]] and [[grammar:niets]] refer to unspecified things. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Na school opent Marieke de doos met gevonden spullen.]] — After school Marieke opens the box of found belongings.\n- [[grammar:Daan zoekt zijn handschoen, omdat hij één handschoen kwijt is.]] — Daan looks for his glove because he has lost one glove.\n- [[grammar:Alex vindt iets vreemds onder een oude tas.]] — Alex finds something strange under an old bag.\n- [[grammar:Het is een kleine rode paraplu.]] — It is a small red umbrella.\n- [[grammar:Niemand herkent de paraplu; daarom schrijft Marieke een bericht.]] — Nobody recognizes the umbrella; therefore Marieke writes a message.\n- [[grammar:In de eerste doos ligt niets van Daan.]] — There is nothing belonging to Daan in the first box.\n- [[grammar:In de tweede doos ligt zijn handschoen.]] — His glove is in the second box.\n- [[grammar:Alex vindt ook een natte jas; daarom hangt Marieke hem op.]] — Alex also finds a wet coat; therefore Marieke hangs it up.\n- [[grammar:Alex bewaart de gevonden sleutel bij de balie.]] — Alex keeps the found key at the counter.\n- [[grammar:Daarna sluit Marieke de doos en gaat iedereen naar huis.]] — Afterward Marieke closes the box and everyone goes home.",
+    "expert": "- [[grammar:Na school opent Marieke de doos met gevonden spullen.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Daan zoekt zijn handschoen, omdat hij één handschoen kwijt is.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Alex vindt iets vreemds onder een oude tas.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Het is een kleine rode paraplu.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Niemand herkent de paraplu; daarom schrijft Marieke een bericht.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:In de eerste doos ligt niets van Daan.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:In de tweede doos ligt zijn handschoen.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Alex vindt ook een natte jas; daarom hangt Marieke hem op.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Alex bewaart de gevonden sleutel bij de balie.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Daarna sluit Marieke de doos en gaat iedereen naar huis.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

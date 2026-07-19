@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:nadat + subordinate clause]] and [[grammar:geven/sturen + object + aan + person]]. Use [[grammar:nadat]] when the main event happens after another event. Use [[grammar:aan]] before the person who receives something.",
+      "expert": "This chapter introduces [[grammar:nadat + subordinate clause]]: [[grammar:Nadat]] introduces temporal subordination; the subordinate clause presents the prior event.; [[grammar:geven/sturen + object + aan + person]]: The recipient is realized in a prepositional phrase, distinct from the direct object being transferred."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### nadat + subordinate clause\n\nUse [[grammar:nadat]] when the main event happens after another event. Example: [[grammar:Nadat hij het pakket sluit, schrijft Noor het adres.]]\n\n#### geven/sturen + object + aan + person\n\nUse [[grammar:aan]] before the person who receives something. Example: [[grammar:Mark geeft het pakket aan Noor.]]",
+      "expert": "#### nadat + subordinate clause\n\n[[grammar:Nadat]] introduces temporal subordination; the subordinate clause presents the prior event. Literal example: [[grammar:Nadat hij het pakket sluit, schrijft Noor het adres.]]\n\n#### geven/sturen + object + aan + person\n\nThe recipient is realized in a prepositional phrase, distinct from the direct object being transferred. Literal example: [[grammar:Mark geeft het pakket aan Noor.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Nadat]] introduces the earlier event. [[grammar:Aan]] can introduce the recipient of an object.",
+      "expert": "[[grammar:Nadat]] introduces the earlier event. [[grammar:Aan]] can introduce the recipient of an object. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Mark legt een boek en een kaart in het pakket.]] — Mark puts a book and a card in the parcel.\n- [[grammar:Nadat hij het pakket sluit, schrijft Noor het adres.]] — After he closes the parcel, Noor writes the address.\n- [[grammar:De ontvanger woont in Amsterdam.]] — The recipient lives in Amsterdam.\n- [[grammar:Mark schrijft zijn naam bij afzender.]] — Mark writes his name by sender.\n- [[grammar:Noor plakt de postzegel op het adreslabel.]] — Noor sticks the stamp on the address label.\n- [[grammar:Mark geeft het pakket aan Noor.]] — Mark gives the parcel to Noor.\n- [[grammar:Nadat zij alles controleert, gaan ze naar het postkantoor.]] — After she checks everything, they go to the post office.\n- [[grammar:Noor legt het pakket op de balie.]] — Noor puts the parcel on the counter.\n- [[grammar:Het postkantoor verstuurt het dezelfde middag.]] — The post office sends it that same afternoon.\n- [[grammar:Nadat alles klaar is, drinken Mark en Noor koffie.]] — After everything is finished, Mark and Noor drink coffee.",
+    "expert": "- [[grammar:Mark legt een boek en een kaart in het pakket.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nadat hij het pakket sluit, schrijft Noor het adres.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:De ontvanger woont in Amsterdam.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Mark schrijft zijn naam bij afzender.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Noor plakt de postzegel op het adreslabel.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Mark geeft het pakket aan Noor.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Nadat zij alles controleert, gaan ze naar het postkantoor.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Noor legt het pakket op de balie.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Het postkantoor verstuurt het dezelfde middag.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Nadat alles klaar is, drinken Mark en Noor koffie.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

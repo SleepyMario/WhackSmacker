@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:subject + moet + infinitive]]. Use [[grammar:moet]] plus an infinitive to say that a person has to do something.",
+      "expert": "This chapter introduces [[grammar:subject + moet + infinitive]]: The finite modal [[grammar:moet]] occupies the finite position; the lexical infinitive closes the verbal bracket."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### subject + moet + infinitive\n\nUse [[grammar:moet]] plus an infinitive to say that a person has to do something. Example: [[grammar:Hij moet eerst een rekening betalen.]]",
+      "expert": "#### subject + moet + infinitive\n\nThe finite modal [[grammar:moet]] occupies the finite position; the lexical infinitive closes the verbal bracket. Literal example: [[grammar:Hij moet eerst een rekening betalen.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "The finite form [[grammar:moet]] comes early in the main clause; the action infinitive normally appears at the end.",
+      "expert": "The finite form [[grammar:moet]] comes early in the main clause; the action infinitive normally appears at the end. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Mark moet vandaag vroeg naar het kantoor.]] — Mark has to go to the office early today.\n- [[grammar:Hij moet eerst een rekening betalen.]] — He first has to pay a bill.\n- [[grammar:Daarna brengt hij een brief naar het postkantoor.]] — After that he brings a letter to the post office.\n- [[grammar:Daan haalt ondertussen een pakket op.]] — Meanwhile Daan picks up a parcel.\n- [[grammar:Mark heeft om tien uur een afspraak.]] — Mark has an appointment at ten o’clock.\n- [[grammar:Hij heeft haast, maar hij wil op tijd zijn.]] — He is in a hurry, but he wants to be on time.\n- [[grammar:Daan controleert het adres en sluit de tas.]] — Daan checks the address and closes the bag.\n- [[grammar:Mark betaalt de rekening bij de bank.]] — Mark pays the bill at the bank.\n- [[grammar:Daarna fietst hij rustig naar zijn werk.]] — Afterward he cycles calmly to work.\n- [[grammar:Hij komt precies op tijd bij de afspraak.]] — He arrives exactly on time for the appointment.",
+    "expert": "- [[grammar:Mark moet vandaag vroeg naar het kantoor.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Hij moet eerst een rekening betalen.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Daarna brengt hij een brief naar het postkantoor.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Daan haalt ondertussen een pakket op.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Mark heeft om tien uur een afspraak.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Hij heeft haast, maar hij wil op tijd zijn.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Daan controleert het adres en sluit de tas.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Mark betaalt de rekening bij de bank.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Daarna fietst hij rustig naar zijn werk.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Hij komt precies op tijd bij de afspraak.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:zijn/haar + noun]] and [[grammar:er zijn + plural noun]]. Use [[grammar:zijn]] for his and [[grammar:haar]] for her before the thing that belongs to the person. Use [[grammar:er zijn]] when the thing that exists is plural.",
+      "expert": "This chapter introduces [[grammar:zijn/haar + noun]]: Possessive determiners occupy the determiner position and do not encode the gender of the possessed noun.; [[grammar:er zijn + plural noun]]: Plural agreement selects [[grammar:zijn]] rather than singular [[grammar:is]] in the existential construction."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### zijn/haar + noun\n\nUse [[grammar:zijn]] for his and [[grammar:haar]] for her before the thing that belongs to the person. Example: [[grammar:Sophie legt haar boeken op de plank.]]\n\n#### er zijn + plural noun\n\nUse [[grammar:er zijn]] when the thing that exists is plural. Example: [[grammar:Er zijn drie dozen bij de kast.]]",
+      "expert": "#### zijn/haar + noun\n\nPossessive determiners occupy the determiner position and do not encode the gender of the possessed noun. Literal example: [[grammar:Sophie legt haar boeken op de plank.]]\n\n#### er zijn + plural noun\n\nPlural agreement selects [[grammar:zijn]] rather than singular [[grammar:is]] in the existential construction. Literal example: [[grammar:Er zijn drie dozen bij de kast.]]"
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Zijn]] and [[grammar:haar]] agree with the owner, not with the noun. Use [[grammar:er zijn]] with a plural noun phrase.",
+      "expert": "[[grammar:Zijn]] and [[grammar:haar]] agree with the owner, not with the noun. Use [[grammar:er zijn]] with a plural noun phrase. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:De familie ordent samen de spullen in de kamer.]] — The family organizes the things in the room together.\n- [[grammar:Er zijn drie dozen bij de kast.]] — There are three boxes by the cupboard.\n- [[grammar:Sophie legt haar boeken op de plank.]] — Sophie puts her books on the shelf.\n- [[grammar:Daan zoekt zijn boek onder de tafel.]] — Daan looks for his book under the table.\n- [[grammar:Mark ordent de spullen in de kast.]] — Mark organizes the belongings in the cupboard.\n- [[grammar:Eva legt haar werkjas naast de deur.]] — Eva puts her work jacket next to the door.\n- [[grammar:Er zijn ook twee tassen op de stoel.]] — There are also two bags on the chair.\n- [[grammar:Daan vindt zijn boek en sluit de doos.]] — Daan finds his book and closes the box.\n- [[grammar:Sophie controleert haar boeken nog één keer.]] — Sophie checks her books one more time.\n- [[grammar:Daarna is de kamer ruim en rustig.]] — Afterward the room is spacious and calm.",
+    "expert": "- [[grammar:De familie ordent samen de spullen in de kamer.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Er zijn drie dozen bij de kast.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Sophie legt haar boeken op de plank.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Daan zoekt zijn boek onder de tafel.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Mark ordent de spullen in de kast.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Eva legt haar werkjas naast de deur.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Er zijn ook twee tassen op de stoel.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Daan vindt zijn boek en sluit de doos.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Sophie controleert haar boeken nog één keer.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Daarna is de kamer ruim en rustig.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}
