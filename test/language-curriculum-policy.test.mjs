@@ -98,6 +98,44 @@ test("canonical policy requires direct or neutral Normal-view instructional voic
   assert.match(rules, /dialogue, narrative, and quoted examples/u);
 });
 
+test("informal dialogue remains valid at advanced chapter numbers", () => {
+  const rules = languageCurriculumPolicy.registerSelectionRules.join("\n");
+  assert.match(rules, /Informal, neutral, formal, and mixed registers are all valid/u);
+  assert.match(rules, /Dialogues do not become uniformly formal merely because they occur in later chapters/u);
+});
+
+test("formal written prose is valid when its context and genre support it", () => {
+  const rules = languageCurriculumPolicy.registerSelectionRules.join("\n");
+  assert.match(rules, /Written texts may become more formal, structured, abstract, or institutionally styled/u);
+  assert.match(rules, /curriculum, genre, learner level, and communicative situation/u);
+});
+
+test("mixed-register interaction and contextual register shifts remain valid", () => {
+  const rules = languageCurriculumPolicy.registerSelectionRules.join("\n");
+  assert.match(rules, /mixed registers are all valid/u);
+  assert.match(rules, /different participants in the same text may naturally use different registers/u);
+  assert.match(rules, /text may shift register when its context changes/u);
+});
+
+test("chapter number alone never selects or mechanically increases register", () => {
+  const rules = languageCurriculumPolicy.registerSelectionRules.join("\n");
+  assert.match(rules, /chapter number alone never determines or mechanically increases register/u);
+  assert.doesNotMatch(rules, /(?:Chapter|Chapters)\s+\d/u);
+});
+
+test("canonical register policy disallows forced unnatural formality", () => {
+  const rules = languageCurriculumPolicy.registerSelectionRules.join("\n");
+  assert.match(rules, /Formality remains natural and supported by the chapter's grammar and vocabulary/u);
+  assert.match(rules, /must not become archaic, needlessly bureaucratic, inflated, or harder than that support/u);
+  assert.match(rules, /private, public, professional, institutional, academic, and everyday contexts/u);
+});
+
+test("register development has no upper chapter limit or fixed progression deadline", () => {
+  const rules = languageCurriculumPolicy.registerSelectionRules.join("\n");
+  assert.match(rules, /no maximum chapter, upper endpoint, deadline, or required speed/u);
+  assert.match(rules, /may proceed quickly or slowly/u);
+});
+
 test("canonical Grammar Easy policy preserves direct US grade 4-8 guidance and pattern identity", () => {
   const rules = languageCurriculumPolicy.grammarEasyRules.join("\n");
   assert.match(rules, /addresses the learner directly/u);

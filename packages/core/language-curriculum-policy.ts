@@ -327,6 +327,7 @@ export interface LanguageCurriculumPolicy {
   readonly grammarPatternDisplayRules: readonly string[];
   readonly pacingRules: readonly LanguageCurriculumPacingRule[];
   readonly chapterFormatRules: readonly string[];
+  readonly registerSelectionRules: readonly string[];
   readonly numberContinuationRules: readonly string[];
   readonly chapterSizeRules: readonly LanguageCurriculumChapterSizeRule[];
   readonly unifiedGrammar3150Rules: readonly string[];
@@ -445,6 +446,15 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "The odd/even dialogue/narrative rule applies across all languages and all chapter ranges.",
     "Chapter 26 onward remains topic-centered: odd chapters are topic-centered dialogues; even chapters are topic-centered narratives.",
     "Generation, package tests, and audits must check the chapter format rule before accepting chapters."
+  ],
+  registerSelectionRules: [
+    "Every learner-facing dialogue, narrative, reading passage, explanation, letter, report, message, or other text uses the register appropriate to its situation, participants, relationships, purpose, medium, and genre.",
+    "Informal, neutral, formal, and mixed registers are all valid; different participants in the same text may naturally use different registers, and a text may shift register when its context changes.",
+    "Dialogues do not become uniformly formal merely because they occur in later chapters; chapter number alone never determines or mechanically increases register.",
+    "Written texts may become more formal, structured, abstract, or institutionally styled whenever the curriculum, genre, learner level, and communicative situation make that appropriate.",
+    "Development toward more advanced written register has no maximum chapter, upper endpoint, deadline, or required speed and may proceed quickly or slowly according to the language, curriculum stage, genre, and communicative situation.",
+    "Formality remains natural and supported by the chapter's grammar and vocabulary; it must not become archaic, needlessly bureaucratic, inflated, or harder than that support.",
+    "Register choice preserves authentic differences between spoken and written language and among private, public, professional, institutional, academic, and everyday contexts."
   ],
   numberContinuationRules: [
     "Numbers may be used freely in every chapter; Chapters 51-70 have no upper or lower numeric restriction.",
