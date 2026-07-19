@@ -1,57 +1,38 @@
-/* Browser UI language is intentionally separate from the authenticated source-content locale.
- * /app maps this preference to its existing en-US/zh-Hant-TW setting after authentication. */
+/* Browser UI language is intentionally separate from the authenticated source-content locale. */
 (() => {
+  "use strict";
   const storageKey = "whacksmacker.ui-locale";
   const locales = ["en", "zh-TW"];
   const copy = {
     en: {
-      "page.landing.title": "WhackSmacker — Learn for the long term",
-      "page.landing.description": "WhackSmacker is a local-first language learning system for modules, review decks, and long-term mastery.",
-      "landing.eyebrow": "Local-first language learning", "landing.heading": "Build knowledge that sticks.",
-      "landing.intro": "A calm, focused study system for modules, review decks, and long-term mastery. Install language packs, review cards, track progress, and switch source languages from one clean interface.",
-      "landing.login": "Log in", "landing.notes": "Developer notes", "landing.features": "WhackSmacker features",
-      "landing.modules.title": "Modules", "landing.modules.text": "Keep installed and available language packs organized in one place.",
-      "landing.decks.title": "Review decks", "landing.decks.text": "Move through focused card sessions with clear scheduling and ratings.",
-      "landing.progress.title": "Progress", "landing.progress.text": "Preserve your learning history locally and see what is ready to review.",
-      "landing.source.title": "Source language", "landing.source.text": "Study with English or 中文（臺灣）, with dependable localized fallback.",
-      "page.app.title": "WhackSmacker", "app.sourceLanguage": "Source language", "app.menu": "Toggle navigation", "app.theme": "Toggle theme",
-      "app.nav.dashboard": "Dashboard", "app.nav.packages": "Packages", "app.nav.review": "Review", "app.nav.content": "Content", "app.nav.progress": "Progress", "app.nav.settings": "Settings",
-      "landing.language": "Language", "login.title": "Log in — WhackSmacker", "login.back": "← Back to WhackSmacker",
-      "login.eyebrow": "Private local study space", "login.heading": "Log in", "login.text": "Enter the password configured by the person running this WhackSmacker server. There is no public registration or default account.",
-      "login.password": "Password", "login.submit": "Log in", "login.error": "Unable to log in.", "login.incorrect": "Incorrect password."
+      "page.landing.title":"WhackSmacker — Learn deeply. Remember longer.",
+      "page.landing.description":"WhackSmacker is a modular learning platform for languages, chess, geography, mathematics, and future learning modules.",
+      "landing.language":"Language","landing.featuresLink":"Features","landing.modulesLink":"Modules","landing.interfacesLink":"Interfaces","landing.login":"Log in","landing.open":"Open web app","landing.github":"View on GitHub","landing.notes":"Developer notes",
+      "landing.eyebrow":"Modular learning built for long-term mastery","landing.headingLine1":"Learn deeply.","landing.headingLine2":"Remember longer.","landing.intro":"WhackSmacker is a modular learning platform for languages, chess, geography, mathematics, and more—built around structured curricula, active review, and long-term retention.",
+      "landing.openSource":"Open source","landing.private":"Privacy focused","landing.crossPlatform":"Cross-platform","landing.localFirst":"Local-first","landing.currentBuild":"Languages lead the current build. Chess, geography, mathematics, and additional modules share the same learning platform.",
+      "landing.languages.title":"Languages","landing.languages.status":"Most developed","landing.languages.text":"Structured curricula, grammar, source overlays, and spaced review.","landing.chess.title":"Chess","landing.chess.text":"Apply moves and inspect legal destinations.","landing.geography.title":"Geography","landing.geography.text":"Map-based continent recall.","landing.mathematics.title":"Mathematics","landing.mathematics.text":"Reproducible beginner workbooks.","landing.available":"Available",
+      "landing.parity.title":"Feature parity. Your choice.","landing.parity.text":"The command line and graphical interface provide the same core workflows. Use the interface that fits your work.","landing.feature.curricula":"Structured curricula","landing.feature.review":"Spaced review","landing.feature.progress":"Progress tracking","landing.feature.modules":"Modular content","landing.feature.languages":"Source languages","landing.feature.packages":"Package management","landing.feature.interfaces":"CLI & web","landing.feature.local":"Local-first",
+      "landing.cta.title":"Choose what to learn. Keep what you learn.","landing.cta.text":"Explore structured modules through the web interface or the complete command-line application.","landing.exploreCli":"Explore the CLI",
+      "login.title":"Log in — WhackSmacker","login.back":"← Back to WhackSmacker","login.eyebrow":"Your private learning workspace","login.headingLine1":"Continue learning.","login.headingLine2":"Keep what you learn.","login.text":"Sign in to your WhackSmacker server. Accounts are created by the server administrator; public registration is not enabled.","login.heading":"Log in","login.formText":"Enter your account details to open the complete web interface.","login.username":"Username","login.password":"Password","login.submit":"Log in","login.error":"Unable to log in.","login.incorrect":"Incorrect username or password.",
+      "page.app.title":"WhackSmacker","app.sourceLanguage":"Source language","app.menu":"Toggle navigation","app.theme":"Toggle theme","app.nav.dashboard":"Dashboard","app.nav.modules":"Modules","app.nav.reader":"Reader","app.nav.review":"Review","app.nav.content":"Content","app.nav.packages":"Packages","app.nav.progress":"Progress","app.nav.settings":"Settings"
     },
     "zh-TW": {
-      "page.landing.title": "WhackSmacker — 長期學習", "page.landing.description": "WhackSmacker 是一套以本機優先為核心的語言學習系統，支援模組、複習牌組與長期精熟。",
-      "landing.eyebrow": "本機優先的語言學習", "landing.heading": "讓知識真正留下來。",
-      "landing.intro": "專為模組、複習牌組與長期精熟打造，平靜而專注的學習系統。可安裝語言套件、複習牌卡、追蹤進度，並在一個簡潔介面中切換來源語言。",
-      "landing.login": "登入", "landing.notes": "開發者筆記", "landing.features": "WhackSmacker 功能",
-      "landing.modules.title": "模組", "landing.modules.text": "在同一處整理已安裝與可取得的語言套件。",
-      "landing.decks.title": "複習牌組", "landing.decks.text": "以清楚的排程與評分，進行專注的牌卡複習。",
-      "landing.progress.title": "進度", "landing.progress.text": "在本機保留學習歷程，隨時查看待複習的內容。",
-      "landing.source.title": "來源語言", "landing.source.text": "以英文或中文（臺灣）學習，並享有可靠的在地化備援。",
-      "page.app.title": "WhackSmacker", "app.sourceLanguage": "來源語言", "app.menu": "切換導覽選單", "app.theme": "切換佈景主題",
-      "app.nav.dashboard": "儀表板", "app.nav.packages": "套件", "app.nav.review": "複習", "app.nav.content": "內容", "app.nav.progress": "進度", "app.nav.settings": "設定",
-      "landing.language": "介面語言", "login.title": "登入 — WhackSmacker", "login.back": "← 回到 WhackSmacker",
-      "login.eyebrow": "私人的本機學習空間", "login.heading": "登入", "login.text": "請輸入此 WhackSmacker 伺服器管理者設定的密碼。沒有公開註冊，也沒有預設帳號。",
-      "login.password": "密碼", "login.submit": "登入", "login.error": "無法登入。", "login.incorrect": "密碼不正確。"
+      "page.landing.title":"WhackSmacker — 深入學習，長久記憶","page.landing.description":"WhackSmacker 是一個支援語言、棋類、地理、數學與未來學習模組的模組化學習平台。",
+      "landing.language":"介面語言","landing.featuresLink":"功能","landing.modulesLink":"模組","landing.interfacesLink":"介面","landing.login":"登入","landing.open":"開啟網頁版","landing.github":"前往 GitHub","landing.notes":"開發者筆記",
+      "landing.eyebrow":"為長期精熟而設計的模組化學習","landing.headingLine1":"深入學習。","landing.headingLine2":"記得更久。","landing.intro":"WhackSmacker 是一個涵蓋語言、棋類、地理、數學等領域的模組化學習平台，以結構化課程、主動複習與長期記憶為核心。",
+      "landing.openSource":"開放原始碼","landing.private":"重視隱私","landing.crossPlatform":"跨平台","landing.localFirst":"本機優先","landing.currentBuild":"語言是目前最成熟的部分；棋類、地理、數學與其他模組共用同一套學習平台。",
+      "landing.languages.title":"語言","landing.languages.status":"最成熟","landing.languages.text":"結構化課程、文法、來源語言覆蓋與間隔複習。","landing.chess.title":"棋類","landing.chess.text":"輸入走法並查看合法目的格。","landing.geography.title":"地理","landing.geography.text":"以地圖進行洲別主動回想。","landing.mathematics.title":"數學","landing.mathematics.text":"產生可重現的初階練習冊。","landing.available":"可使用",
+      "landing.parity.title":"功能一致，由你選擇。","landing.parity.text":"命令列與圖形介面提供相同的核心工作流程，選擇最適合你的方式。","landing.feature.curricula":"結構化課程","landing.feature.review":"間隔複習","landing.feature.progress":"進度追蹤","landing.feature.modules":"模組化內容","landing.feature.languages":"來源語言","landing.feature.packages":"套件管理","landing.feature.interfaces":"CLI 與網頁","landing.feature.local":"本機優先",
+      "landing.cta.title":"選擇要學的內容，保留學到的知識。","landing.cta.text":"透過網頁介面或完整命令列程式探索結構化模組。","landing.exploreCli":"探索 CLI",
+      "login.title":"登入 — WhackSmacker","login.back":"← 返回 WhackSmacker","login.eyebrow":"你的私人學習空間","login.headingLine1":"繼續學習。","login.headingLine2":"保留所學。","login.text":"登入你的 WhackSmacker 伺服器。帳號由管理員建立，目前沒有公開註冊。","login.heading":"登入","login.formText":"輸入帳號資料，開啟完整網頁介面。","login.username":"使用者名稱","login.password":"密碼","login.submit":"登入","login.error":"無法登入。","login.incorrect":"使用者名稱或密碼不正確。",
+      "page.app.title":"WhackSmacker","app.sourceLanguage":"來源語言","app.menu":"切換導覽","app.theme":"切換佈景","app.nav.dashboard":"儀表板","app.nav.modules":"模組","app.nav.reader":"閱讀器","app.nav.review":"複習","app.nav.content":"內容","app.nav.packages":"套件","app.nav.progress":"進度","app.nav.settings":"設定"
     }
   };
-
-  function normalize(value) { return value === "zh-TW" || value === "zh-Hant-TW" ? "zh-TW" : "en"; }
-  function preferredLocale() {
-    try { const stored = localStorage.getItem(storageKey); if (locales.includes(stored)) return stored; } catch { /* Storage can be unavailable in privacy modes. */ }
-    const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
-    return languages.some(language => /^zh(?:[-_]TW|[-_]Hant)(?:[-_]|$)/iu.test(language ?? "")) ? "zh-TW" : "en";
-  }
-  function setLocale(locale) { const resolved = normalize(locale); try { localStorage.setItem(storageKey, resolved); } catch { /* Keep the current page usable without storage. */ } return resolved; }
-  function translate(locale, key) { return copy[normalize(locale)][key] ?? copy.en[key] ?? key; }
-  function apply(locale) {
-    const resolved = normalize(locale); document.documentElement.lang = resolved === "zh-TW" ? "zh-Hant-TW" : "en";
-    document.querySelectorAll("[data-i18n]").forEach(node => { node.textContent = translate(resolved, node.dataset.i18n); });
-    document.querySelectorAll("[data-i18n-attr]").forEach(node => { const [attribute, key] = node.dataset.i18nAttr.split(":"); node.setAttribute(attribute, translate(resolved, key)); });
-    document.title = translate(resolved, document.body.dataset.titleKey || "page.landing.title");
-    return resolved;
-  }
-  function installSelector(selector, onChange) { const locale = apply(preferredLocale()); selector.value = locale; selector.addEventListener("change", () => { const next = setLocale(selector.value); selector.value = apply(next); onChange?.(next); }); return locale; }
-  window.WhackSmackerUiLocale = { storageKey, appLocale: locale => normalize(locale) === "zh-TW" ? "zh-Hant-TW" : "en-US", apply, installSelector, preferredLocale, setLocale, translate };
+  function normalize(value){return value==="zh-TW"||value==="zh-Hant-TW"?"zh-TW":"en"}
+  function preferredLocale(){try{const stored=localStorage.getItem(storageKey);if(locales.includes(stored))return stored}catch{}const values=navigator.languages?.length?navigator.languages:[navigator.language];return values.some(value=>/^zh(?:[-_]TW|[-_]Hant)(?:[-_]|$)/iu.test(value??""))?"zh-TW":"en"}
+  function setLocale(locale){const resolved=normalize(locale);try{localStorage.setItem(storageKey,resolved)}catch{}return resolved}
+  function translate(locale,key){return copy[normalize(locale)][key]??copy.en[key]??key}
+  function apply(locale){const resolved=normalize(locale);document.documentElement.lang=resolved==="zh-TW"?"zh-Hant-TW":"en";document.querySelectorAll("[data-i18n]").forEach(node=>{node.textContent=translate(resolved,node.dataset.i18n)});document.querySelectorAll("[data-i18n-attr]").forEach(node=>{const split=node.dataset.i18nAttr.indexOf(":");if(split<0)return;const attribute=node.dataset.i18nAttr.slice(0,split),key=node.dataset.i18nAttr.slice(split+1);node.setAttribute(attribute,translate(resolved,key))});document.title=translate(resolved,document.body.dataset.titleKey||"page.landing.title");return resolved}
+  function installSelector(selector,onChange){const locale=apply(preferredLocale());if(!selector)return locale;selector.value=locale;selector.addEventListener("change",()=>{const next=setLocale(selector.value);selector.value=apply(next);onChange?.(next)});return locale}
+  window.WhackSmackerUiLocale={storageKey,appLocale:locale=>normalize(locale)==="zh-TW"?"zh-Hant-TW":"en-US",apply,installSelector,preferredLocale,setLocale,translate};
 })();

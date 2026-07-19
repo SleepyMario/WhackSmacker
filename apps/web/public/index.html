@@ -3,50 +3,86 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WhackSmacker Reader</title>
+  <meta name="color-scheme" content="dark light">
+  <title>WhackSmacker</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="/app">WhackSmacker</a>
-    <span id="username" class="username"></span>
-    <button id="logout" type="button">Log out</button>
-  </header>
-  <main>
-    <h1>Curriculum reader</h1>
-    <div id="status" class="status" role="status" aria-live="polite">Loading your curricula…</div>
-    <section id="controls" class="controls" aria-label="Reading choices" hidden>
-      <label>Curriculum
-        <select id="curriculum"></select>
-      </label>
-      <label>Exact version
-        <select id="version"></select>
-      </label>
-      <fieldset>
-        <legend>Source-content language</legend>
-        <label><input type="radio" name="source-locale" value="en"> English</label>
-        <label><input type="radio" name="source-locale" value="zh-TW"> 中文（臺灣）</label>
-      </fieldset>
-    </section>
-    <aside id="overlay" class="overlay" aria-live="polite" hidden></aside>
-    <div class="reader-layout">
-      <nav id="chapters-panel" aria-label="Chapters" hidden>
-        <h2>Chapters</h2>
-        <ol id="chapters" class="chapters"></ol>
+<body data-title-key="page.app.title"><span class="sr-only">Curriculum reader</span>
+  <div class="app-shell">
+    <header class="app-header">
+      <button id="menu-toggle" class="icon-button menu-toggle" type="button" aria-label="Toggle navigation" title="Toggle navigation">☰</button>
+      <a class="app-brand" href="/app"><span aria-hidden="true">W</span><strong>WhackSmacker</strong></a>
+      <div class="header-context"><span id="page-eyebrow">Workspace</span><strong id="page-title">Dashboard</strong></div>
+      <div class="header-actions">
+        <label class="compact-select"><span>Source</span><select id="source-locale"><option value="en">English</option><option value="zh-TW">中文（臺灣）</option></select></label><fieldset class="sr-only" aria-hidden="true"><legend>Legacy source-content language control</legend><label><input type="radio" name="source-locale" value="en"> English</label><label><input type="radio" name="source-locale" value="zh-TW"> 中文（臺灣）</label></fieldset>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle theme" title="Toggle theme">◐</button>
+        <span id="username" class="username"></span>
+        <button id="logout" class="button button-quiet button-small" type="button">Log out</button>
+      </div>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+      <nav class="primary-nav" aria-label="Application navigation">
+        <button data-view="dashboard" class="active"><span>⌂</span><b data-i18n="app.nav.dashboard">Dashboard</b></button>
+        <button data-view="modules"><span>✚</span><b data-i18n="app.nav.modules">Modules</b></button>
+        <button data-view="reader"><span>▰</span><b data-i18n="app.nav.reader">Reader</b></button>
+        <button data-view="review"><span>◷</span><b data-i18n="app.nav.review">Review</b><em id="review-due-badge" hidden>0</em></button>
+        <button data-view="content"><span>☷</span><b data-i18n="app.nav.content">Content</b></button>
+        <button data-view="packages"><span>⬡</span><b data-i18n="app.nav.packages">Packages</b></button>
+        <button data-view="progress"><span>⌁</span><b data-i18n="app.nav.progress">Progress</b></button>
+        <button data-view="settings"><span>⚙</span><b data-i18n="app.nav.settings">Settings</b></button>
       </nav>
-      <article id="reader" tabindex="-1" hidden>
-        <header class="reader-header">
-          <p id="chapter-position"></p>
-          <h2 id="chapter-title"></h2>
-        </header>
-        <div id="chapter-content" class="chapter-content"></div>
-        <nav class="chapter-navigation" aria-label="Chapter navigation">
-          <button id="previous" type="button" aria-label="Previous chapter">Previous chapter</button>
-          <button id="next" type="button" aria-label="Next chapter">Next chapter</button>
-        </nav>
-      </article>
-    </div>
-  </main>
-  <script src="/app.js" defer></script>
+      <div class="sidebar-footer"><span class="parity-dot"></span><div><strong>CLI parity</strong><small>Shared modules and data</small></div></div>
+    </aside>
+
+    <main class="workspace">
+      <div id="status" class="status" role="status" aria-live="polite">Loading your workspace…</div>
+
+      <section id="view-dashboard" class="view active" data-title="Dashboard" data-eyebrow="Overview">
+        <div class="hero-panel"><div><p class="eyebrow">Your learning workspace</p><h1>Choose what to learn.<br><span>Keep what you learn.</span></h1><p>Curricula, reviews, modules, package management, and local tools—available from the same data as the CLI.</p><div class="actions"><button class="button" data-open-view="review">Start review</button><button class="button button-quiet" data-open-view="reader">Open reader</button></div></div><div class="hero-orbit" aria-hidden="true"><span>W</span></div></div>
+        <div id="dashboard-stats" class="stat-grid"></div>
+        <div class="dashboard-grid"><section class="panel"><header><div><p class="eyebrow">Modules</p><h2>Continue learning</h2></div><button class="text-button" data-open-view="modules">View all →</button></header><div id="dashboard-modules" class="module-cards compact"></div></section><section class="panel"><header><div><p class="eyebrow">Review</p><h2>Deck status</h2></div><button class="text-button" data-open-view="review">Open review →</button></header><div id="dashboard-decks" class="deck-list compact"></div></section></div>
+      </section>
+
+      <section id="view-modules" class="view" data-title="Modules" data-eyebrow="CLI feature parity">
+        <div class="view-heading"><div><p class="eyebrow">One platform, multiple subjects</p><h1>Modules</h1><p>Use the same built-in tools and installed learning packages available from the command line.</p></div></div>
+        <div id="module-grid" class="module-cards"></div>
+        <section id="module-workbench" class="panel workbench" hidden></section>
+      </section>
+
+      <section id="view-reader" class="view" data-title="Curriculum Reader" data-eyebrow="Languages">
+        <div class="reader-toolbar panel">
+          <label>Curriculum<select id="curriculum"></select></label>
+          <label>Exact version<select id="version"></select></label>
+          <div class="mode-control" role="group" aria-label="Reading mode"><span>View</span><button type="button" data-mode="normal" class="active">Normal</button><button type="button" data-mode="expert">Expert</button><button type="button" data-mode="developer">Developer</button></div>
+          <label class="switch"><input id="translation-toggle" type="checkbox"><span></span>Translation</label>
+          <label class="switch"><input id="characters-toggle" type="checkbox"><span></span>Characters</label>
+          <label class="switch"><input id="breakdown-toggle" type="checkbox"><span></span>Breakdown</label>
+        </div>
+        <aside id="overlay" class="overlay" aria-live="polite" hidden></aside>
+        <div class="reader-layout"><nav id="chapters-panel" class="panel chapters-panel" aria-label="Chapters"><header><p class="eyebrow">Contents</p><h2>Chapters</h2></header><ol id="chapters" class="chapters"></ol></nav><article id="reader" class="panel reader" tabindex="-1"><header class="reader-header"><p id="chapter-position"></p><h1 id="chapter-title">Choose a chapter</h1></header><div id="chapter-content" class="chapter-content empty-state">Select a curriculum and chapter to begin.</div><nav class="chapter-navigation" aria-label="Chapter navigation"><button id="previous" class="button button-quiet" type="button">← Previous</button><button id="next" class="button" type="button">Next →</button></nav></article></div>
+      </section>
+
+      <section id="view-review" class="view" data-title="Review" data-eyebrow="Spaced repetition">
+        <div class="review-layout"><aside class="panel deck-panel"><header><p class="eyebrow">Review sources</p><h2>Decks</h2></header><div id="deck-list" class="deck-list"></div></aside><section id="review-session" class="panel review-session"><div class="empty-state"><h2>Choose a review deck</h2><p>Prompts, answers, examples, and Again/Hard/Good/Easy ratings use the same saved review state as the CLI.</p></div></section></div>
+      </section>
+
+      <section id="view-content" class="view" data-title="Content Browser" data-eyebrow="Installed files">
+        <div class="content-layout"><aside class="panel content-controls"><header><p class="eyebrow">Readable content</p><h2>Packages</h2></header><label>Package<select id="content-package"></select></label><label>Exact version<select id="content-version"></select></label><div id="content-files" class="content-files"></div></aside><article class="panel content-viewer"><header><p id="content-path" class="eyebrow">No file selected</p><h2 id="content-title">Content</h2></header><div id="content-output" class="chapter-content empty-state">Choose an installed package and readable file.</div></article></div>
+      </section>
+
+      <section id="view-packages" class="view" data-title="Packages" data-eyebrow="Content management">
+        <div class="view-heading"><div><p class="eyebrow">Install and manage modules</p><h1>Content packages</h1><p>Inspect installed versions, add catalogue packages, or remove package content while choosing whether to retain progress.</p></div><button id="refresh-packages" class="button button-quiet">Refresh</button></div>
+        <div class="package-columns"><section class="panel"><header><p class="eyebrow">On this server</p><h2>Installed</h2></header><div id="installed-packages" class="package-list"></div></section><section class="panel"><header><p class="eyebrow">Catalogue</p><h2>Available</h2></header><div id="available-packages" class="package-list"></div></section></div>
+      </section>
+
+      <section id="view-progress" class="view" data-title="Progress" data-eyebrow="Learning history"><div id="progress-stats" class="stat-grid"></div><section class="panel"><header><p class="eyebrow">Deck progress</p><h2>Review status</h2></header><div id="progress-decks" class="progress-list"></div></section></section>
+
+      <section id="view-settings" class="view" data-title="Settings" data-eyebrow="Preferences & data">
+        <div class="settings-grid"><section class="panel"><header><p class="eyebrow">Reading</p><h2>Interface defaults</h2></header><div class="settings-form"><label>Source-content language<select id="settings-locale"><option value="en">English</option><option value="zh-TW">中文（臺灣）</option></select></label><label>Theme<select id="settings-theme"><option value="dark">Dark</option><option value="light">Light</option></select></label><label>Default reader mode<select id="settings-mode"><option value="normal">Normal</option><option value="expert">Expert</option><option value="developer">Developer</option></select></label><label class="switch"><input id="settings-translation" type="checkbox"><span></span>Show translations by default</label><label class="switch"><input id="settings-characters" type="checkbox"><span></span>Show character sections by default</label><label class="switch"><input id="settings-breakdown" type="checkbox"><span></span>Show breakdowns by default</label><button id="save-settings" class="button">Save settings</button></div></section><section class="panel"><header><p class="eyebrow">Local data</p><h2>Backup & restore</h2></header><p class="muted">Create or restore the same local user-data backup format available from the CLI. Hosted PostgreSQL accounts may restrict restore operations.</p><div class="actions vertical"><button id="backup-download" class="button button-quiet">Download backup</button><label class="file-button button button-quiet">Choose backup file<input id="backup-file" type="file" accept="application/json,.json"></label><label class="switch"><input id="backup-force" type="checkbox"><span></span>Overwrite existing local data</label><button id="backup-restore" class="button danger">Restore selected backup</button></div><div id="backup-result" class="inline-result"></div></section></div>
+      </section>
+    </main>
+  </div>
+  <script src="/ui-locale.js"></script><script src="/app.js" defer></script>
 </body>
 </html>
