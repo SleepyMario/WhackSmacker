@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + nghe + N]]. Use nghe before a sound, song, or program to say what someone listens to or hears.",
+      "expert": "This chapter introduces [[grammar:S + nghe + N]]: Nghe is introduced as an auditory-perception predicate with sound and media complements."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + nghe + N\n\nUse nghe before a sound, song, or program to say what someone listens to or hears. Example: [[grammar:Tôi nghe nhạc.]]",
+      "expert": "#### S + nghe + N\n\nNghe is introduced as an auditory-perception predicate with sound and media complements. Literal example: [[grammar:Tôi nghe nhạc.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Nghe is neutral for listening and hearing in these controlled contexts. Thích nhất marks the strongest preference among understood options.",
+      "expert": "Nghe is neutral for listening and hearing in these controlled contexts. Thích nhất marks the strongest preference among understood options. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Tôi nghe nhạc.]] — I listen to music.\n- [[grammar:Tôi nghe radio.]] — I listen to the radio.\n- [[grammar:Đây là bài hát.]] — This is a song.\n- [[grammar:Tôi nghe bài hát.]] — I listen to the song.\n- [[grammar:Tôi có tai nghe.]] — I have headphones.\n- [[grammar:Âm thanh rõ.]] — The sound is clear.\n- [[grammar:Bài hát rất rõ.]] — The song is very clear.\n- [[grammar:Tôi thích bài hát nhất.]] — I like the song best.\n- [[grammar:Tôi cũng nghe nhạc.]] — I listen to music too.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Tôi nghe nhạc.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi nghe radio.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Đây là bài hát.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi nghe bài hát.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Tôi có tai nghe.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Âm thanh rõ.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Bài hát rất rõ.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi thích bài hát nhất.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi cũng nghe nhạc.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+  }
+}

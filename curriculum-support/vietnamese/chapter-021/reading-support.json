@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + mua + N]]. Use mua before an item to say what someone buys.",
+      "expert": "This chapter introduces [[grammar:S + mua + N]]: Mua is introduced as a transitive acquisition verb with a purchasable nominal complement."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + mua + N\n\nUse mua before an item to say what someone buys. Example: [[grammar:Tôi muốn mua áo sơ mi.]]",
+      "expert": "#### S + mua + N\n\nMua is introduced as a transitive acquisition verb with a purchasable nominal complement. Literal example: [[grammar:Tôi muốn mua áo sơ mi.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Mua identifies the acquired item. Vừa is restricted here to clothing that fits; its temporal and adverbial uses are separate.",
+      "expert": "Mua identifies the acquired item. Vừa is restricted here to clothing that fits; its temporal and adverbial uses are separate. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Tôi muốn mua áo sơ mi.]] — I want to buy a shirt.\n- [[grammar:Cửa hàng có áo sơ mi.]] — The shop has shirts.\n- [[grammar:Tôi muốn mua quần.]] — I want to buy trousers.\n- [[grammar:Cửa hàng có giày.]] — The shop has shoes.\n- [[grammar:Tôi thích màu xanh.]] — I like blue.\n- [[grammar:Thử áo sơ mi.]] — Try on the shirt.\n- [[grammar:Áo sơ mi vừa.]] — The shirt fits.\n- [[grammar:Quần cũng vừa.]] — The trousers fit too.\n- [[grammar:Tôi mua áo sơ mi và quần.]] — I buy the shirt and trousers.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Tôi muốn mua áo sơ mi.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Cửa hàng có áo sơ mi.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi muốn mua quần.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Cửa hàng có giày.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Tôi thích màu xanh.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Thử áo sơ mi.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Áo sơ mi vừa.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Quần cũng vừa.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi mua áo sơ mi và quần.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+  }
+}

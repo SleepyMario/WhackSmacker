@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + làm + N]]. Use làm before a task or product to say what someone does or makes.",
+      "expert": "This chapter introduces [[grammar:S + làm + N]]: Làm is introduced as a light transitive verb with task and product nouns; its wider lexical and causative uses remain outside this chapter."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + làm + N\n\nUse làm before a task or product to say what someone does or makes. Example: [[grammar:Tôi làm bài tập.]]",
+      "expert": "#### S + làm + N\n\nLàm is introduced as a light transitive verb with task and product nouns; its wider lexical and causative uses remain outside this chapter. Literal example: [[grammar:Tôi làm bài tập.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Làm has a broad range, but this chapter limits it to doing an assignment and making a report.",
+      "expert": "Làm has a broad range, but this chapter limits it to doing an assignment and making a report. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Tôi làm bài tập.]] — I do the assignment.\n- [[grammar:Tôi làm báo cáo.]] — I make the report.\n- [[grammar:Đây là câu hỏi.]] — This is a question.\n- [[grammar:Tôi trả lời câu hỏi.]] — I answer the question.\n- [[grammar:Nhóm làm bài tập.]] — The group does the assignment.\n- [[grammar:Nhóm làm báo cáo.]] — The group makes the report.\n- [[grammar:Tôi và Nguyễn Quốc Huy cùng nhau làm bài tập.]] — Nguyễn Quốc Huy and I do the assignment together.\n- [[grammar:Báo cáo hoàn thành.]] — The report is complete.\n- [[grammar:Bài tập hoàn thành.]] — The assignment is complete.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Tôi làm bài tập.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi làm báo cáo.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Đây là câu hỏi.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi trả lời câu hỏi.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Nhóm làm bài tập.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Nhóm làm báo cáo.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi và Nguyễn Quốc Huy cùng nhau làm bài tập.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Báo cáo hoàn thành.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Bài tập hoàn thành.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+  }
+}

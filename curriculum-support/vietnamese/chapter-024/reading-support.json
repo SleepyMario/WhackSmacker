@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + đóng + N]]. Use đóng before a door or place to say that someone closes it.",
+      "expert": "This chapter introduces [[grammar:S + đóng + N]]: Đóng is introduced as a transitive closing predicate, contrasting with the previously introduced mở."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + đóng + N\n\nUse đóng before a door or place to say that someone closes it. Example: [[grammar:Nguyễn Mai Chi đóng cửa chính.]]",
+      "expert": "#### S + đóng + N\n\nĐóng is introduced as a transitive closing predicate, contrasting with the previously introduced mở. Literal example: [[grammar:Nguyễn Mai Chi đóng cửa chính.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Đóng is the ordinary opposite of mở for doors and business premises. Tắt is used separately for switching off a light or device.",
+      "expert": "Đóng is the ordinary opposite of mở for doors and business premises. Tắt is used separately for switching off a light or device. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Nguyễn Mai Chi đóng cửa chính.]] — Nguyễn Mai Chi closes the front door.\n- [[grammar:Nguyễn Thị Lan đóng cửa sau.]] — Nguyễn Thị Lan closes the back door.\n- [[grammar:Nguyễn Gia Bảo tắt đèn.]] — Nguyễn Gia Bảo turns off the lights.\n- [[grammar:Nguyễn Mai Chi kiểm tra cửa hàng.]] — Nguyễn Mai Chi checks the shop.\n- [[grammar:Cuối ngày, cửa hàng yên tĩnh.]] — At the end of the day, the shop is quiet.\n- [[grammar:Cửa chính an toàn.]] — The front door is secure.\n- [[grammar:Cửa sau an toàn.]] — The back door is secure.\n- [[grammar:Nguyễn Gia Bảo kiểm tra đèn.]] — Nguyễn Gia Bảo checks the lights.\n- [[grammar:Nguyễn Thị Lan kiểm tra cửa chính.]] — Nguyễn Thị Lan checks the front door.",
+    "expert": "- [[grammar:Nguyễn Mai Chi đóng cửa chính.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nguyễn Thị Lan đóng cửa sau.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Gia Bảo tắt đèn.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Nguyễn Mai Chi kiểm tra cửa hàng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Cuối ngày, cửa hàng yên tĩnh.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Cửa chính an toàn.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Cửa sau an toàn.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Nguyễn Gia Bảo kiểm tra đèn.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Nguyễn Thị Lan kiểm tra cửa chính.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+  }
+}

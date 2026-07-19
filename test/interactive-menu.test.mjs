@@ -1322,12 +1322,21 @@ test("Vietnamese read content starts with five canonical Foundation labels befor
     ]);
     assert.equal(readContent.children[5]?.filePath, "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md");
     assert.equal(readContent.children.some((node) => node.filePath === "units/vietnamese-core/chapter-010-basic-sentences-10/chapter.md"), true);
-    assert.equal(readContent.children.some((node) => /units\/vietnamese-core\/chapter-(?:0*(?:1[1-9]|[2-9]\d)|\d{4,})/u.test(node.filePath ?? "")), false);
+    assert.equal(readContent.children.some((node) => node.filePath === "units/vietnamese-core/chapter-050-basic-sentences-50/chapter.md"), true);
+    assert.equal(readContent.children.some((node) => /units\/vietnamese-core\/chapter-(?:0*(?:5[1-9]|[6-9]\d)|[1-9]\d{3,})/u.test(node.filePath ?? "")), false);
     const grammarNodes = readContent.children.filter((node) => /grammar-(?:easy|hard)\/chapter\.md$/u.test(node.filePath ?? ""));
-    assert.deepEqual(grammarNodes.map((node) => node.label), ["Grammar", "Grammar"]);
+    assert.deepEqual(grammarNodes.map((node) => node.label), Array(10).fill("Grammar"));
     assert.deepEqual(grammarNodes.map((node) => node.filePath), [
       "units/vietnamese-core/chapter-001-005-grammar-easy/chapter.md",
-      "units/vietnamese-core/chapter-006-010-grammar-easy/chapter.md"
+      "units/vietnamese-core/chapter-006-010-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-011-015-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-016-020-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-021-025-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-026-030-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-031-035-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-036-040-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-041-045-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-046-050-grammar-easy/chapter.md"
     ]);
     assert.equal(readContent.children.some((node) => /^Ch (?:1|6) -- Grammar$/u.test(node.label)), false);
     assert.match(readContent.children.find((node) => node.filePath?.includes("chapter-001-basic-sentences-1"))?.label ?? "", /^Chapter 1\b/u);

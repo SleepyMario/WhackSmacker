@@ -339,6 +339,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "backlog.md",
       "decisions.md",
       "geography-ledger.json",
+      "number-progression.json",
       "name-pools",
       "review-decks",
       "research",
@@ -353,25 +354,11 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "backlog.md",
       "decisions.md",
       "geography-ledger.json",
+      "number-progression.json",
       "name-pools",
       "units/README.md",
       "units/vietnamese-foundation",
-      "units/vietnamese-core/README.md",
-      "units/vietnamese-core/cumulative-ledger.md",
-      "units/vietnamese-core/chapter-001-basic-sentences-1",
-      "units/vietnamese-core/chapter-002-basic-sentences-2",
-      "units/vietnamese-core/chapter-003-basic-sentences-3",
-      "units/vietnamese-core/chapter-004-basic-sentences-4",
-      "units/vietnamese-core/chapter-005-basic-sentences-5",
-      "units/vietnamese-core/chapter-001-005-grammar-easy",
-      "units/vietnamese-core/chapter-001-005-grammar-hard",
-      "units/vietnamese-core/chapter-006-basic-sentences-6",
-      "units/vietnamese-core/chapter-007-basic-sentences-7",
-      "units/vietnamese-core/chapter-008-basic-sentences-8",
-      "units/vietnamese-core/chapter-009-basic-sentences-9",
-      "units/vietnamese-core/chapter-010-basic-sentences-10",
-      "units/vietnamese-core/chapter-006-010-grammar-easy",
-      "units/vietnamese-core/chapter-006-010-grammar-hard"
+      "units/vietnamese-core"
     ]
   },
   {
@@ -546,9 +533,7 @@ const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
     ? [{ packageId: readingId, version: ">=0.2.0 <0.3.0", optional: true }]
     : [],
   license: { spdx: "GPL-3.0-or-later", name: "GNU General Public License version 3 or later", path: "LICENSE-SOFTWARE" },
-  include: slug === "vietnamese"
-    ? ["README.md", "LICENSE-SOFTWARE", "review-decks/chapter-001-005", "review-decks/chapter-006-010"]
-    : ["README.md", "LICENSE-SOFTWARE", "review-decks"]
+  include: ["README.md", "LICENSE-SOFTWARE", "review-decks"]
 } as ContentPackageGeneratorTarget));
 
 export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...coreReviewTargets];
@@ -676,7 +661,7 @@ interface SourceFile {
 }
 
 const readingSupportPackages: Readonly<Record<string, readonly { readonly source: string; readonly destination: string }[]>> = {
-  "vietnamese-curriculum": [1, 2, 3, 4, 5].map((chapter) => ({
+  "vietnamese-curriculum": Array.from({ length: 50 }, (_, index) => index + 1).map((chapter) => ({
     source: `curriculum-support/vietnamese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/reading-support.json`
   })),
@@ -815,7 +800,8 @@ interface GeneratedMemorizationFile {
 const repositoryRoot = process.cwd();
 const canonicalCastPath = "name-pools/canonical-cast.json";
 const geographyLedgerPath = "geography-ledger.json";
-const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath]);
+const numberProgressionPath = "number-progression.json";
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")

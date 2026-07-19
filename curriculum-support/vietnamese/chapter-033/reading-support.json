@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:N/clause + hoặc + N/clause]]. Use hoặc to connect alternatives. This chapter teaches [[grammar:N + này / N + kia]]. Put này after a noun for this one and kia after a noun for that one.",
+      "expert": "This chapter introduces [[grammar:N/clause + hoặc + N/clause]]: Hoặc coordinates alternative constituents or propositions without asserting both. This chapter introduces [[grammar:N + này / N + kia]]: Vietnamese demonstratives follow the noun in this controlled nominal pattern; này is proximal and kia is distal."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### N/clause + hoặc + N/clause\n\nUse hoặc to connect alternatives. Example: [[grammar:Tôi chọn bí đỏ hoặc dưa chuột.]]\n\n#### N + này / N + kia\n\nPut này after a noun for this one and kia after a noun for that one. Example: [[grammar:Nông sản này tươi.]]",
+      "expert": "#### N/clause + hoặc + N/clause\n\nHoặc coordinates alternative constituents or propositions without asserting both. Literal example: [[grammar:Tôi chọn bí đỏ hoặc dưa chuột.]]\n\n#### N + này / N + kia\n\nVietnamese demonstratives follow the noun in this controlled nominal pattern; này is proximal and kia is distal. Literal example: [[grammar:Nông sản này tươi.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Hoặc presents alternatives. Demonstratives follow the noun; other classifier and definiteness patterns are introduced later.",
+      "expert": "Hoặc presents alternatives. Demonstratives follow the noun; other classifier and definiteness patterns are introduced later. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Tôi chọn bí đỏ hoặc dưa chuột.]] — I choose pumpkin or cucumber.\n- [[grammar:Nông sản này tươi.]] — This produce is fresh.\n- [[grammar:Nông sản kia rẻ.]] — That produce is inexpensive.\n- [[grammar:Giỏ này có bí đỏ.]] — This basket has pumpkin.\n- [[grammar:Giỏ kia có dưa chuột.]] — That basket has cucumbers.\n- [[grammar:Nguyễn Gia Bảo muốn bí đỏ hoặc dưa chuột?]] — Does Nguyễn Gia Bảo want pumpkin or cucumber?\n- [[grammar:Tôi muốn bí đỏ.]] — I want pumpkin.\n- [[grammar:Chọn lựa này rất rõ.]] — This choice is very clear.\n- [[grammar:Tôi bán nông sản này.]] — I sell this produce.\n- [[grammar:Tôi mua giỏ kia.]] — I buy that basket.\n- [[grammar:Dưa chuột hoặc bí đỏ đều tươi.]] — Either cucumbers or pumpkin are fresh.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Tôi chọn bí đỏ hoặc dưa chuột.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Nông sản này tươi.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Nông sản kia rẻ.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Giỏ này có bí đỏ.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Giỏ kia có dưa chuột.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Nguyễn Gia Bảo muốn bí đỏ hoặc dưa chuột?]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi muốn bí đỏ.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Chọn lựa này rất rõ.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi bán nông sản này.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Tôi mua giỏ kia.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Dưa chuột hoặc bí đỏ đều tươi.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:mặc dù + clause, clause]]. Use mặc dù to introduce a fact that does not prevent the main result. This chapter teaches [[grammar:V + xong]]. Put xong after an action to say that the action is finished.",
+      "expert": "This chapter introduces [[grammar:mặc dù + clause, clause]]: Mặc dù introduces a concessive subordinate relation; vẫn may appear in the main clause to reinforce persistence. This chapter introduces [[grammar:V + xong]]: Postverbal xong marks attainment of an action's endpoint; it differs structurally from preverbal đã."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### mặc dù + clause, clause\n\nUse mặc dù to introduce a fact that does not prevent the main result. Example: [[grammar:Mặc dù bưu điện có hàng đợi, Nguyễn Thị Lan vẫn chờ.]]\n\n#### V + xong\n\nPut xong after an action to say that the action is finished. Example: [[grammar:Mặc dù bưu điện có hàng đợi, Nguyễn Thị Lan vẫn chờ.]]",
+      "expert": "#### mặc dù + clause, clause\n\nMặc dù introduces a concessive subordinate relation; vẫn may appear in the main clause to reinforce persistence. Literal example: [[grammar:Mặc dù bưu điện có hàng đợi, Nguyễn Thị Lan vẫn chờ.]]\n\n#### V + xong\n\nPostverbal xong marks attainment of an action's endpoint; it differs structurally from preverbal đã. Literal example: [[grammar:Mặc dù bưu điện có hàng đợi, Nguyễn Thị Lan vẫn chờ.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Mặc dù expresses concession, often paired with vẫn. Xong follows the verb and focuses on reaching completion.",
+      "expert": "Mặc dù expresses concession, often paired with vẫn. Xong follows the verb and focuses on reaching completion. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Mặc dù bưu điện có hàng đợi, Nguyễn Thị Lan vẫn chờ.]] — Although the post office has a queue, Nguyễn Thị Lan still waits.\n- [[grammar:Nguyễn Minh Anh viết nhãn địa chỉ.]] — Nguyễn Minh Anh writes the address label.\n- [[grammar:Nguyễn Thị Lan mua tem.]] — Nguyễn Thị Lan buys a stamp.\n- [[grammar:Nguyễn Minh Anh kiểm tra người nhận.]] — Nguyễn Minh Anh checks the recipient.\n- [[grammar:Nguyễn Thị Lan gửi bưu kiện xong.]] — Nguyễn Thị Lan finishes sending the parcel.\n- [[grammar:Mặc dù bưu kiện nặng, Nguyễn Thị Lan vẫn mang.]] — Although the parcel is heavy, Nguyễn Thị Lan still carries it.\n- [[grammar:Người nhận có địa chỉ.]] — The recipient has an address.\n- [[grammar:Hàng đợi vẫn dài.]] — The queue is still long.\n- [[grammar:Bưu điện đã đóng.]] — The post office has closed.\n- [[grammar:Bưu kiện đã gửi xong.]] — The parcel has been sent completely.",
+    "expert": "- [[grammar:Mặc dù bưu điện có hàng đợi, Nguyễn Thị Lan vẫn chờ.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nguyễn Minh Anh viết nhãn địa chỉ.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Thị Lan mua tem.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Nguyễn Minh Anh kiểm tra người nhận.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Nguyễn Thị Lan gửi bưu kiện xong.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Mặc dù bưu kiện nặng, Nguyễn Thị Lan vẫn mang.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Người nhận có địa chỉ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Hàng đợi vẫn dài.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Bưu điện đã đóng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Bưu kiện đã gửi xong.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  }
+}

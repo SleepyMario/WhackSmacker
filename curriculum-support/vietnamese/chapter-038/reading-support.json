@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:sau khi + clause]]. Use sau khi to place the main action after another completed event. This chapter teaches [[grammar:càng ngày càng + adjective]]. Put càng ngày càng before an adjective to say that a condition is increasing over time.",
+      "expert": "This chapter introduces [[grammar:sau khi + clause]]: Sau khi introduces the earlier event and locates the main-clause event subsequently. This chapter introduces [[grammar:càng ngày càng + adjective]]: Càng ngày càng marks a progressive increase along a gradable scale over successive time points."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### sau khi + clause\n\nUse sau khi to place the main action after another completed event. Example: [[grammar:Sau khi xem dự báo, Nguyễn Mai Chi mang áo mưa.]]\n\n#### càng ngày càng + adjective\n\nPut càng ngày càng before an adjective to say that a condition is increasing over time. Example: [[grammar:Thời tiết càng ngày càng ấm.]]",
+      "expert": "#### sau khi + clause\n\nSau khi introduces the earlier event and locates the main-clause event subsequently. Literal example: [[grammar:Sau khi xem dự báo, Nguyễn Mai Chi mang áo mưa.]]\n\n#### càng ngày càng + adjective\n\nCàng ngày càng marks a progressive increase along a gradable scale over successive time points. Literal example: [[grammar:Thời tiết càng ngày càng ấm.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Sau khi orders events. Càng ngày càng describes gradual change and requires a property that can naturally vary in degree.",
+      "expert": "Sau khi orders events. Càng ngày càng describes gradual change and requires a property that can naturally vary in degree. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Thời tiết càng ngày càng ấm.]] — The weather is getting warmer and warmer.\n- [[grammar:Sau khi xem dự báo, Nguyễn Mai Chi mang áo mưa.]] — After checking the forecast, Nguyễn Mai Chi carries a raincoat.\n- [[grammar:Nguyễn Thị Lan cũng mang áo mưa.]] — Nguyễn Thị Lan also carries a raincoat.\n- [[grammar:Buổi sáng, trời mưa.]] — In the morning, it rains.\n- [[grammar:Sau khi trời mưa, tuyến đường chưa khô.]] — After it rains, the route is not dry yet.\n- [[grammar:Cuối ngày, thời tiết khô.]] — At the end of the day, the weather is dry.\n- [[grammar:Áo mưa ở cửa.]] — The raincoat is by the door.\n- [[grammar:Nguyễn Quốc Huy xem dự báo.]] — Nguyễn Quốc Huy checks the forecast.\n- [[grammar:Dự báo rất rõ.]] — The forecast is very clear.\n- [[grammar:Trời càng ngày càng ấm.]] — The weather is getting increasingly warm.",
+    "expert": "- [[grammar:Thời tiết càng ngày càng ấm.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Sau khi xem dự báo, Nguyễn Mai Chi mang áo mưa.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Thị Lan cũng mang áo mưa.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Buổi sáng, trời mưa.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Sau khi trời mưa, tuyến đường chưa khô.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Cuối ngày, thời tiết khô.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Áo mưa ở cửa.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Nguyễn Quốc Huy xem dự báo.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Dự báo rất rõ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Trời càng ngày càng ấm.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  }
+}

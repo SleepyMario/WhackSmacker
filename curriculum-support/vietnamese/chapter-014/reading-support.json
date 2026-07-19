@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + ăn + N]]. Use ăn before food to say what someone eats.",
+      "expert": "This chapter introduces [[grammar:S + ăn + N]]: Ăn is introduced as a transitive consumption verb with a food-denoting nominal complement."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + ăn + N\n\nUse ăn before food to say what someone eats. Example: [[grammar:Maria Garcia ăn bún.]]",
+      "expert": "#### S + ăn + N\n\nĂn is introduced as a transitive consumption verb with a food-denoting nominal complement. Literal example: [[grammar:Maria Garcia ăn bún.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Ăn is used directly before food nouns. Cơm continues its earlier cooked-rice/meal context without becoming a new lexical sense here.",
+      "expert": "Ăn is used directly before food nouns. Cơm continues its earlier cooked-rice/meal context without becoming a new lexical sense here. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Maria Garcia ở nhà hàng.]] — Maria Garcia is at a restaurant.\n- [[grammar:Trần Thu Hà ở nhà hàng.]] — Trần Thu Hà is at the restaurant.\n- [[grammar:Maria Garcia gọi món.]] — Maria Garcia orders food.\n- [[grammar:Maria Garcia ăn bún.]] — Maria Garcia eats rice noodles.\n- [[grammar:Trần Thu Hà ăn cơm.]] — Trần Thu Hà eats rice.\n- [[grammar:Maria Garcia ăn rau.]] — Maria Garcia eats vegetables.\n- [[grammar:Trần Thu Hà ăn thịt.]] — Trần Thu Hà eats meat.\n- [[grammar:Maria Garcia không ăn cá.]] — Maria Garcia does not eat fish.\n- [[grammar:Bữa tối rất ngon.]] — Dinner is very tasty.",
+    "expert": "- [[grammar:Maria Garcia ở nhà hàng.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Trần Thu Hà ở nhà hàng.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Maria Garcia gọi món.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Maria Garcia ăn bún.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Trần Thu Hà ăn cơm.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Maria Garcia ăn rau.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Trần Thu Hà ăn thịt.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Maria Garcia không ăn cá.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Bữa tối rất ngon.]] — Literal reading evidence at Narrative > line 9."
+  }
+}

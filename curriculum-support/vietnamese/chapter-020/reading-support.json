@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + học + N]]. Use học before a language or subject to say what someone studies or learns.",
+      "expert": "This chapter introduces [[grammar:S + học + N]]: Học is introduced as a learning predicate with language, subject, and instructional-material complements."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + học + N\n\nUse học before a language or subject to say what someone studies or learns. Example: [[grammar:Maria Garcia học tiếng Việt.]]",
+      "expert": "#### S + học + N\n\nHọc is introduced as a learning predicate with language, subject, and instructional-material complements. Literal example: [[grammar:Maria Garcia học tiếng Việt.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Học covers both studying and learning in this introductory frame. Tiếng Việt names the language, not nationality or residence.",
+      "expert": "Học covers both studying and learning in this introductory frame. Tiếng Việt names the language, not nationality or residence. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Maria Garcia học tiếng Việt.]] — Maria Garcia studies Vietnamese.\n- [[grammar:Nguyễn Minh Anh học tiếng Việt.]] — Nguyễn Minh Anh studies Vietnamese.\n- [[grammar:Trần Thu Hà học từ mới.]] — Trần Thu Hà studies new words.\n- [[grammar:Nguyễn Minh Anh học phát âm.]] — Nguyễn Minh Anh studies pronunciation.\n- [[grammar:Maria Garcia học ngữ pháp.]] — Maria Garcia studies grammar.\n- [[grammar:Lớp có giáo trình.]] — The class has a coursebook.\n- [[grammar:Maria Garcia luyện tập.]] — Maria Garcia practices.\n- [[grammar:Trần Thu Hà luyện tập.]] — Trần Thu Hà practices.\n- [[grammar:Tiếng Việt rất thú vị.]] — Vietnamese is very interesting.",
+    "expert": "- [[grammar:Maria Garcia học tiếng Việt.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Nguyễn Minh Anh học tiếng Việt.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Trần Thu Hà học từ mới.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Nguyễn Minh Anh học phát âm.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Maria Garcia học ngữ pháp.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Lớp có giáo trình.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Maria Garcia luyện tập.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Trần Thu Hà luyện tập.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Tiếng Việt rất thú vị.]] — Literal reading evidence at Narrative > line 9."
+  }
+}

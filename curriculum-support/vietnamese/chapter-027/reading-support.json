@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:N + giá bao nhiêu?]]. Put giá bao nhiêu after an item to ask its price. This chapter teaches [[grammar:cho tôi + N]]. Use cho tôi before an item to ask for it in a shop or market.",
+      "expert": "This chapter introduces [[grammar:N + giá bao nhiêu?]]: The interrogative quantity expression bao nhiêu follows giá in a predicate-like price question. This chapter introduces [[grammar:cho tôi + N]]: Cho tôi introduces a recipient-oriented request with a first-person beneficiary and nominal complement."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### N + giá bao nhiêu?\n\nPut giá bao nhiêu after an item to ask its price. Example: [[grammar:Cà chua giá bao nhiêu?]]\n\n#### cho tôi + N\n\nUse cho tôi before an item to ask for it in a shop or market. Example: [[grammar:Cho tôi cà chua và khoai tây.]]",
+      "expert": "#### N + giá bao nhiêu?\n\nThe interrogative quantity expression bao nhiêu follows giá in a predicate-like price question. Literal example: [[grammar:Cà chua giá bao nhiêu?]]\n\n#### cho tôi + N\n\nCho tôi introduces a recipient-oriented request with a first-person beneficiary and nominal complement. Literal example: [[grammar:Cho tôi cà chua và khoai tây.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Bao nhiêu asks for an unknown amount; price questions and later classifier questions use different surrounding frames. Cho tôi is a direct but ordinary service request here.",
+      "expert": "Bao nhiêu asks for an unknown amount; price questions and later classifier questions use different surrounding frames. Cho tôi is a direct but ordinary service request here. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Cà chua giá bao nhiêu?]] — How much are the tomatoes?\n- [[grammar:Cà chua rẻ.]] — The tomatoes are inexpensive.\n- [[grammar:Khoai tây giá bao nhiêu?]] — How much are the potatoes?\n- [[grammar:Khoai tây không đắt.]] — The potatoes are not expensive.\n- [[grammar:Cho tôi cà chua và khoai tây.]] — Give me tomatoes and potatoes.\n- [[grammar:Đây là túi giấy.]] — Here is a paper bag.\n- [[grammar:Hành tươi không?]] — Are the onions fresh?\n- [[grammar:Vâng, hành tươi.]] — Yes, the onions are fresh.\n- [[grammar:Tôi có tiền mặt.]] — I have cash.\n- [[grammar:Không cần trả giá.]] — There is no need to bargain.\n- [[grammar:Tôi thanh toán.]] — I will pay.\n- [[grammar:Cảm ơn.]] — Thank you.",
+    "expert": "- [[grammar:Cà chua giá bao nhiêu?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Cà chua rẻ.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Khoai tây giá bao nhiêu?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Khoai tây không đắt.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Cho tôi cà chua và khoai tây.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Đây là túi giấy.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Hành tươi không?]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Vâng, hành tươi.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi có tiền mặt.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Không cần trả giá.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tôi thanh toán.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Cảm ơn.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

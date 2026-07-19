@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter continues Vietnamese Core Chapter 6 with current-scope reading and grammar.",
+      "expert": "Vietnamese Core Chapter 6 is retained as the canonical early-stage source; no future material is introduced by this support record."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "Use the chapter’s authored Grammar section.",
+      "expert": "The chapter’s canonical grammar identity remains stored in the source and hidden from ordinary reader output."
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Follow the chapter’s authored Vietnamese usage notes.",
+      "expert": "No additional grammatical generalization is introduced here."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Quốc Huy is an office worker. Before leaving home, he checks the everyday things he has with him.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tên tôi là Nguyễn Quốc Huy.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi là nhân viên văn phòng.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi có điện thoại.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi có chìa khóa.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi có tiền.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi có xe đạp.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi có máy tính.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi có thẻ.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi có áo khoác.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:My name is Nguyễn Quốc Huy.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:I am an office worker.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:I have a phone.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:I have a key.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:I have money.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:I have a bicycle.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:I have a computer.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:I have a card.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:I have a jacket.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:- The first two lines reuse the naming and identity patterns from Chapters 1–2.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:- Each remaining line uses `tôi + có + N` for possession.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:- Vietnamese does not add an English-style article before these controlled]] — Current-scope Vietnamese reading evidence.\n- [[grammar:complements. No classifier or number phrase is introduced.]] — Current-scope Vietnamese reading evidence.",
+    "expert": "- [[grammar:Quốc Huy is an office worker. Before leaving home, he checks the everyday things he has with him.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Tên tôi là Nguyễn Quốc Huy.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Tôi là nhân viên văn phòng.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Tôi có điện thoại.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Tôi có chìa khóa.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Tôi có tiền.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Tôi có xe đạp.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Tôi có máy tính.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Tôi có thẻ.]] — Literal reading evidence at Narrative > line 9.\n- [[grammar:Tôi có áo khoác.]] — Literal reading evidence at Narrative > line 10.\n- [[grammar:My name is Nguyễn Quốc Huy.]] — Literal reading evidence at Narrative > line 11.\n- [[grammar:I am an office worker.]] — Literal reading evidence at Narrative > line 12.\n- [[grammar:I have a phone.]] — Literal reading evidence at Narrative > line 13.\n- [[grammar:I have a key.]] — Literal reading evidence at Narrative > line 14.\n- [[grammar:I have money.]] — Literal reading evidence at Narrative > line 15.\n- [[grammar:I have a bicycle.]] — Literal reading evidence at Narrative > line 16.\n- [[grammar:I have a computer.]] — Literal reading evidence at Narrative > line 17.\n- [[grammar:I have a card.]] — Literal reading evidence at Narrative > line 18.\n- [[grammar:I have a jacket.]] — Literal reading evidence at Narrative > line 19.\n- [[grammar:- The first two lines reuse the naming and identity patterns from Chapters 1–2.]] — Literal reading evidence at Narrative > line 20.\n- [[grammar:- Each remaining line uses `tôi + có + N` for possession.]] — Literal reading evidence at Narrative > line 21.\n- [[grammar:- Vietnamese does not add an English-style article before these controlled]] — Literal reading evidence at Narrative > line 22.\n- [[grammar:complements. No classifier or number phrase is introduced.]] — Literal reading evidence at Narrative > line 23."
+  }
+}

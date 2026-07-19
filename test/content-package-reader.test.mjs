@@ -602,10 +602,10 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.equal(new Set([...vietnameseItems, ...vietnameseItems610].map((item) => item.item.cardId)).size, 128);
     assert.ok(vietnameseItems610.some((item) => item.item.prompt.text === "đi" && item.item.acceptedAnswers.includes("go; be going in context")));
     const vietnameseSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.vietnamese");
-    assert.deepEqual(vietnameseSources.map((source) => [source.title, source.sourcePath]), [
-      ["Chapter 1-5", "review-decks/chapter-001-005/cards.tsv"],
-      ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"]
-    ]);
+    assert.deepEqual(vietnameseSources.map((source) => [source.title, source.sourcePath]), Array.from({ length: 10 }, (_, index) => {
+      const start = index * 5 + 1;
+      return [`Chapter ${start}-${start + 4}`, `review-decks/chapter-${String(start).padStart(3, "0")}-${String(start + 4).padStart(3, "0")}/cards.tsv`];
+    }));
 
     const dutchSources = reviewSources.filter((source) => source.packageId === "com.sleepymario.language.dutch");
     assert.deepEqual(dutchSources.map((source) => [source.title, source.sourcePath]), [

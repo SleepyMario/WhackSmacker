@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:cuối cùng, clause]]. Use cuối cùng to introduce the final step or result. This chapter teaches [[grammar:tất cả / khoảng + quantity phrase]]. Use tất cả for the whole set and khoảng for an approximate quantity.",
+      "expert": "This chapter introduces [[grammar:cuối cùng, clause]]: Cuối cùng is a discourse-sequencing expression marking the last stage or eventual result. This chapter introduces [[grammar:tất cả / khoảng + quantity phrase]]: Tất cả quantifies an exhaustive set, whereas khoảng approximates a numeral or measure phrase; neither changes lexical identity."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### cuối cùng, clause\n\nUse cuối cùng to introduce the final step or result. Example: [[grammar:Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.]]\n\n#### tất cả / khoảng + quantity phrase\n\nUse tất cả for the whole set and khoảng for an approximate quantity. Example: [[grammar:Tất cả năm mươi phiếu đã kiểm tra xong.]]",
+      "expert": "#### cuối cùng, clause\n\nCuối cùng is a discourse-sequencing expression marking the last stage or eventual result. Literal example: [[grammar:Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.]]\n\n#### tất cả / khoảng + quantity phrase\n\nTất cả quantifies an exhaustive set, whereas khoảng approximates a numeral or measure phrase; neither changes lexical identity. Literal example: [[grammar:Tất cả năm mươi phiếu đã kiểm tra xong.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Cuối cùng closes a sequence. Tất cả states exhaustivity, while khoảng deliberately leaves the quantity approximate.",
+      "expert": "Cuối cùng closes a sequence. Tất cả states exhaustivity, while khoảng deliberately leaves the quantity approximate. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.]] — Finally, Phạm Ngọc Linh opens the summary table.\n- [[grammar:Tất cả năm mươi phiếu đã kiểm tra xong.]] — All fifty forms have been checked.\n- [[grammar:Lê Bình An xác nhận khoảng bốn mươi bản tài liệu.]] — Lê Bình An confirms about forty copies of the document.\n- [[grammar:Lê Thảo Vy xác nhận số còn lại.]] — Lê Thảo Vy confirms the remaining number.\n- [[grammar:Số phiếu của đội này gấp đôi số phiếu của đội kia.]] — The number of forms for this team is double that of the other team.\n- [[grammar:Trung bình mỗi người có hai tờ giấy.]] — On average, each person has two sheets of paper.\n- [[grammar:Nguyễn Quốc Huy kiểm tra tất cả các phần.]] — Nguyễn Quốc Huy checks all the shares.\n- [[grammar:Khoảng mười phần còn lại.]] — About ten shares remain.\n- [[grammar:Bảng tổng kết rất rõ.]] — The summary table is very clear.\n- [[grammar:Cuối cùng, báo cáo đã hoàn thành.]] — Finally, the report is complete.",
+    "expert": "- [[grammar:Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Tất cả năm mươi phiếu đã kiểm tra xong.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Lê Bình An xác nhận khoảng bốn mươi bản tài liệu.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Lê Thảo Vy xác nhận số còn lại.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Số phiếu của đội này gấp đôi số phiếu của đội kia.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Trung bình mỗi người có hai tờ giấy.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Nguyễn Quốc Huy kiểm tra tất cả các phần.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Khoảng mười phần còn lại.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Bảng tổng kết rất rõ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Cuối cùng, báo cáo đã hoàn thành.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  }
+}

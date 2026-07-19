@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:ngoài ra, clause]]. Use ngoài ra to add another relevant point. This chapter teaches [[grammar:làm ơn + V]]. Put làm ơn before an action to make a polite request.",
+      "expert": "This chapter introduces [[grammar:ngoài ra, clause]]: Ngoài ra functions as an additive discourse linker introducing an additional proposition. This chapter introduces [[grammar:làm ơn + V]]: Làm ơn is a conventional politeness expression preceding an imperative/request predicate."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### ngoài ra, clause\n\nUse ngoài ra to add another relevant point. Example: [[grammar:Tôi tìm tiểu thuyết.]]\n\n#### làm ơn + V\n\nPut làm ơn before an action to make a polite request. Example: [[grammar:Làm ơn tra cứu danh mục.]]",
+      "expert": "#### ngoài ra, clause\n\nNgoài ra functions as an additive discourse linker introducing an additional proposition. Literal example: [[grammar:Tôi tìm tiểu thuyết.]]\n\n#### làm ơn + V\n\nLàm ơn is a conventional politeness expression preceding an imperative/request predicate. Literal example: [[grammar:Làm ơn tra cứu danh mục.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Ngoài ra adds a separate point. Làm ơn makes a request polite, but actual register also depends on voice, relationship, and the rest of the sentence.",
+      "expert": "Ngoài ra adds a separate point. Làm ơn makes a request polite, but actual register also depends on voice, relationship, and the rest of the sentence. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Tôi tìm tiểu thuyết.]] — I am looking for a novel.\n- [[grammar:Làm ơn tra cứu danh mục.]] — Please consult the catalogue.\n- [[grammar:Danh mục có tác giả không?]] — Does the catalogue list the author?\n- [[grammar:Có. Mục lục ở đây.]] — Yes. The table of contents is here.\n- [[grammar:Bàn thông tin ở đây.]] — The information desk is here.\n- [[grammar:Ngoài ra, thư viện có tạp chí.]] — In addition, the library has magazines.\n- [[grammar:Tôi đọc mục lục.]] — I read the table of contents.\n- [[grammar:Làm ơn chọn tiểu thuyết.]] — Please choose a novel.\n- [[grammar:Tôi chọn tác giả này.]] — I choose this author.\n- [[grammar:Ngoài ra, tác giả có báo cáo.]] — In addition, the author has a report.\n- [[grammar:Tôi tra cứu tài liệu.]] — I look up the document.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Tôi tìm tiểu thuyết.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Làm ơn tra cứu danh mục.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Danh mục có tác giả không?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Có. Mục lục ở đây.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Bàn thông tin ở đây.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Ngoài ra, thư viện có tạp chí.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi đọc mục lục.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Làm ơn chọn tiểu thuyết.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi chọn tác giả này.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Ngoài ra, tác giả có báo cáo.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tôi tra cứu tài liệu.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

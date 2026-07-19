@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause, rồi + clause]]. Use rồi between steps to show that one action is followed by another. This chapter teaches [[grammar:numeral + người + human role]]. Use người between a number and a human role when counting people.",
+      "expert": "This chapter introduces [[grammar:clause, rồi + clause]]: Rồi functions here as a sequential linker between clauses; this is distinct from its completion-particle uses. This chapter introduces [[grammar:numeral + người + human role]]: Người is introduced as a human classifier/unit noun in numeral phrases."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause, rồi + clause\n\nUse rồi between steps to show that one action is followed by another. Example: [[grammar:Đội có mười một người.]]\n\n#### numeral + người + human role\n\nUse người between a number and a human role when counting people. Example: [[grammar:Đội có mười một người.]]",
+      "expert": "#### clause, rồi + clause\n\nRồi functions here as a sequential linker between clauses; this is distinct from its completion-particle uses. Literal example: [[grammar:Đội có mười một người.]]\n\n#### numeral + người + human role\n\nNgười is introduced as a human classifier/unit noun in numeral phrases. Literal example: [[grammar:Đội có mười một người.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Rồi orders actions in discourse. Người counts people and also exists as an ordinary noun in other constructions; the classifier use is tracked separately.",
+      "expert": "Rồi orders actions in discourse. Người counts people and also exists as an ordinary noun in other constructions; the classifier use is tracked separately. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Đội có mười một người.]] — The team has eleven people.\n- [[grammar:Mười hai người tham gia không?]] — Are twelve people participating?\n- [[grammar:Vâng, mười hai người tham gia.]] — Yes, twelve people are participating.\n- [[grammar:Nhóm kia có mười ba người.]] — That group has thirteen people.\n- [[grammar:Tôi ghi mười bốn người.]] — I record fourteen people.\n- [[grammar:Đội này có mười lăm người.]] — This team has fifteen people.\n- [[grammar:Trước hết, tôi đăng ký.]] — First, I register.\n- [[grammar:Rồi tôi ký tên.]] — Then I sign my name.\n- [[grammar:Người tham gia ở khu vực này.]] — The participants are in this area.\n- [[grammar:Đội đã sẵn sàng.]] — The team is ready.\n- [[grammar:Danh sách có mười lăm người.]] — The list has fifteen people.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Đội có mười một người.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Mười hai người tham gia không?]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Vâng, mười hai người tham gia.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Nhóm kia có mười ba người.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Tôi ghi mười bốn người.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Đội này có mười lăm người.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Trước hết, tôi đăng ký.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Rồi tôi ký tên.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Người tham gia ở khu vực này.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Đội đã sẵn sàng.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Danh sách có mười lăm người.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

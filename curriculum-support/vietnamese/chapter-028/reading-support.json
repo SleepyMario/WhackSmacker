@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + đã + V; S + đã + V + chưa?]]. Put đã before an action to present it as completed. Use đã ... chưa? to ask whether it is complete yet.",
+      "expert": "This chapter introduces [[grammar:S + đã + V; S + đã + V + chưa?]]: Đã is treated as a perfect/completive marker rather than a simple obligatory past tense; the polar frame đã ... chưa? asks about completion."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + đã + V; S + đã + V + chưa?\n\nPut đã before an action to present it as completed. Use đã ... chưa? to ask whether it is complete yet. Example: [[grammar:Lê Hoàng Nam đã chuẩn bị bữa tối.]]",
+      "expert": "#### S + đã + V; S + đã + V + chưa?\n\nĐã is treated as a perfect/completive marker rather than a simple obligatory past tense; the polar frame đã ... chưa? asks about completion. Literal example: [[grammar:Lê Hoàng Nam đã chuẩn bị bữa tối.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Đã often presents a situation as prior or completed, but Vietnamese does not require it for every past event. Chưa in the question leaves completion open.",
+      "expert": "Đã often presents a situation as prior or completed, but Vietnamese does not require it for every past event. Chưa in the question leaves completion open. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Lê Hoàng Nam đã chuẩn bị bữa tối.]] — Lê Hoàng Nam has prepared dinner.\n- [[grammar:Nguyễn Gia Bảo đã rửa rau.]] — Nguyễn Gia Bảo has washed the vegetables.\n- [[grammar:Lê Hoàng Nam đã cắt thịt.]] — Lê Hoàng Nam has cut the meat.\n- [[grammar:Nguyễn Gia Bảo đã nấu súp.]] — Nguyễn Gia Bảo has cooked soup.\n- [[grammar:Bếp có nguyên liệu.]] — The kitchen has ingredients.\n- [[grammar:Nguyên liệu đã sẵn sàng.]] — The ingredients are ready.\n- [[grammar:Lê Hoàng Nam đã nấu chưa?]] — Has Lê Hoàng Nam cooked yet?\n- [[grammar:Vâng, Lê Hoàng Nam đã nấu.]] — Yes, Lê Hoàng Nam has cooked.\n- [[grammar:Nguyễn Gia Bảo kiểm tra bếp.]] — Nguyễn Gia Bảo checks the kitchen.\n- [[grammar:Bữa tối đã sẵn sàng.]] — Dinner is ready.",
+    "expert": "- [[grammar:Lê Hoàng Nam đã chuẩn bị bữa tối.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nguyễn Gia Bảo đã rửa rau.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Lê Hoàng Nam đã cắt thịt.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Nguyễn Gia Bảo đã nấu súp.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Bếp có nguyên liệu.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Nguyên liệu đã sẵn sàng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Lê Hoàng Nam đã nấu chưa?]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Vâng, Lê Hoàng Nam đã nấu.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Nguyễn Gia Bảo kiểm tra bếp.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Bữa tối đã sẵn sàng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  }
+}

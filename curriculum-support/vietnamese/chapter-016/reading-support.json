@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + đọc + N]]. Use đọc before written material to say what someone reads.",
+      "expert": "This chapter introduces [[grammar:S + đọc + N]]: Đọc is introduced as a transitive reading predicate selecting written or textual material."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + đọc + N\n\nUse đọc before written material to say what someone reads. Example: [[grammar:Trần Thu Hà đọc báo.]]",
+      "expert": "#### S + đọc + N\n\nĐọc is introduced as a transitive reading predicate selecting written or textual material. Literal example: [[grammar:Trần Thu Hà đọc báo.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Đọc is used with newspapers, magazines, stories, letters, and news. Reading aloud and studying a text are not distinguished yet.",
+      "expert": "Đọc is used with newspapers, magazines, stories, letters, and news. Reading aloud and studying a text are not distinguished yet. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Trần Thu Hà ở thư viện.]] — Trần Thu Hà is at the library.\n- [[grammar:Trần Thu Hà đọc báo.]] — Trần Thu Hà reads a newspaper.\n- [[grammar:Trần Thu Hà đọc tạp chí.]] — Trần Thu Hà reads a magazine.\n- [[grammar:Trần Thu Hà đọc truyện.]] — Trần Thu Hà reads a story.\n- [[grammar:Trần Thu Hà đọc thư.]] — Trần Thu Hà reads a letter.\n- [[grammar:Trần Thu Hà đọc tin tức.]] — Trần Thu Hà reads the news.\n- [[grammar:Mỗi ngày, Trần Thu Hà đọc.]] — Every day, Trần Thu Hà reads.\n- [[grammar:Nguyễn Quốc Huy chọn tạp chí.]] — Nguyễn Quốc Huy chooses a magazine.\n- [[grammar:Thư viện yên tĩnh.]] — The library is quiet.",
+    "expert": "- [[grammar:Trần Thu Hà ở thư viện.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Trần Thu Hà đọc báo.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Trần Thu Hà đọc tạp chí.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Trần Thu Hà đọc truyện.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Trần Thu Hà đọc thư.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Trần Thu Hà đọc tin tức.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Mỗi ngày, Trần Thu Hà đọc.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Nguyễn Quốc Huy chọn tạp chí.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Thư viện yên tĩnh.]] — Literal reading evidence at Narrative > line 9."
+  }
+}

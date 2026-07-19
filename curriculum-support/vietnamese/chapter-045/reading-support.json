@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:dù + clause, vẫn + clause]]. Use dù with vẫn to say that a result continues despite another fact. This chapter teaches [[grammar:numeral + con + animal noun]]. Use con between a number and many animal nouns.",
+      "expert": "This chapter introduces [[grammar:dù + clause, vẫn + clause]]: Dù ... vẫn realizes a concessive dependency in which the main-clause event persists despite the subordinate proposition. This chapter introduces [[grammar:numeral + con + animal noun]]: Con is introduced as a prototypical animate/animal classifier, while acknowledging that its real lexical distribution extends beyond a simple animacy rule."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### dù + clause, vẫn + clause\n\nUse dù with vẫn to say that a result continues despite another fact. Example: [[grammar:Dù có chín mươi chín con vật, nhân viên vẫn chăm sóc cẩn thận.]]\n\n#### numeral + con + animal noun\n\nUse con between a number and many animal nouns. Example: [[grammar:Trạm cứu hộ có ba mươi con mèo.]]",
+      "expert": "#### dù + clause, vẫn + clause\n\nDù ... vẫn realizes a concessive dependency in which the main-clause event persists despite the subordinate proposition. Literal example: [[grammar:Dù có chín mươi chín con vật, nhân viên vẫn chăm sóc cẩn thận.]]\n\n#### numeral + con + animal noun\n\nCon is introduced as a prototypical animate/animal classifier, while acknowledging that its real lexical distribution extends beyond a simple animacy rule. Literal example: [[grammar:Trạm cứu hộ có ba mươi con mèo.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Vietnamese compounds use mốt after tens for 21 and lăm after tens for 35. Con is a useful animal classifier, but real usage has lexical exceptions.",
+      "expert": "Vietnamese compounds use mốt after tens for 21 and lăm after tens for 35. Con is a useful animal classifier, but real usage has lexical exceptions. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Trạm cứu hộ có ba mươi con mèo.]] — The rescue center has thirty cats.\n- [[grammar:Có bốn mươi con chó.]] — There are forty dogs.\n- [[grammar:Danh sách có năm mươi con chim.]] — The list has fifty birds.\n- [[grammar:Có sáu mươi con thỏ.]] — There are sixty rabbits.\n- [[grammar:Khu vực một có bảy mươi con vật.]] — Area one has seventy animals.\n- [[grammar:Khu vực hai có tám mươi con vật.]] — Area two has eighty animals.\n- [[grammar:Số lượng là chín mươi.]] — The quantity is ninety.\n- [[grammar:Số lượng là một trăm.]] — The quantity is one hundred.\n- [[grammar:Đội một chăm sóc hai mươi mốt con mèo.]] — Team one cares for twenty-one cats.\n- [[grammar:Đội hai chăm sóc ba mươi lăm con chó.]] — Team two cares for thirty-five dogs.\n- [[grammar:Đội ba chăm sóc bốn mươi tám con chim.]] — Team three cares for forty-eight birds.\n- [[grammar:Đội bốn chăm sóc bảy mươi hai con thỏ.]] — Team four cares for seventy-two rabbits.\n- [[grammar:Dù có chín mươi chín con vật, nhân viên vẫn chăm sóc cẩn thận.]] — Even though there are ninety-nine animals, the staff still care for them carefully.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Trạm cứu hộ có ba mươi con mèo.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Có bốn mươi con chó.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Danh sách có năm mươi con chim.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Có sáu mươi con thỏ.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Khu vực một có bảy mươi con vật.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Khu vực hai có tám mươi con vật.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Số lượng là chín mươi.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Số lượng là một trăm.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Đội một chăm sóc hai mươi mốt con mèo.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Đội hai chăm sóc ba mươi lăm con chó.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Đội ba chăm sóc bốn mươi tám con chim.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Đội bốn chăm sóc bảy mươi hai con thỏ.]] — Literal reading evidence at Dialogue > line 12.\n- [[grammar:Dù có chín mươi chín con vật, nhân viên vẫn chăm sóc cẩn thận.]] — Literal reading evidence at Dialogue > line 13.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 14."
+  }
+}

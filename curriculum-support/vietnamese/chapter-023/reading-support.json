@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + mở + N]]. Use mở before a door, file, or device to say that someone opens or turns it on.",
+      "expert": "This chapter introduces [[grammar:S + mở + N]]: Mở is introduced as a causative change-of-state verb across a tightly controlled set of physical and functional objects."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + mở + N\n\nUse mở before a door, file, or device to say that someone opens or turns it on. Example: [[grammar:Tôi mở phòng họp.]]",
+      "expert": "#### S + mở + N\n\nMở is introduced as a causative change-of-state verb across a tightly controlled set of physical and functional objects. Literal example: [[grammar:Tôi mở phòng họp.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Mở can apply to a physical opening or activating a device. The context determines the English translation.",
+      "expert": "Mở can apply to a physical opening or activating a device. The context determines the English translation. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Buổi họp bắt đầu đúng giờ.]] — The meeting begins on time.\n- [[grammar:Tôi mở phòng họp.]] — I open the meeting room.\n- [[grammar:Tôi mở tài liệu.]] — I open the document.\n- [[grammar:Tôi mở máy chiếu.]] — I turn on the projector.\n- [[grammar:Lịch ở phòng họp.]] — The schedule is in the meeting room.\n- [[grammar:Buổi họp bắt đầu.]] — The meeting begins.\n- [[grammar:Tài liệu ở đây.]] — The document is here.\n- [[grammar:Tôi mở máy chiếu.]] — I turn on the projector.\n- [[grammar:Vâng.]] — Yes.\n- [[grammar:Đúng giờ.]] — On time.",
+    "expert": "- [[grammar:Buổi họp bắt đầu đúng giờ.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi mở phòng họp.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi mở tài liệu.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi mở máy chiếu.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Lịch ở phòng họp.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Buổi họp bắt đầu.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tài liệu ở đây.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi mở máy chiếu.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Đúng giờ.]] — Literal reading evidence at Dialogue > line 10."
+  }
+}

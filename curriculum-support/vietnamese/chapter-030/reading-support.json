@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + bị + ailment]]. Use bị before an illness or problem to say that someone is adversely affected by it. This chapter teaches [[grammar:S + nên + V]]. Use nên before an action to give practical advice about what someone should do.",
+      "expert": "This chapter introduces [[grammar:S + bị + ailment]]: Bị introduces an adverse affected-subject construction; with ailment nouns it presents the subject as experiencing an unwanted condition. This chapter introduces [[grammar:S + nên + V]]: Nên is a modal of recommendation followed by a bare predicate; it is weaker than an obligation marker."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + bị + ailment\n\nUse bị before an illness or problem to say that someone is adversely affected by it. Example: [[grammar:Lê Hoàng Nam bị đau đầu.]]\n\n#### S + nên + V\n\nUse nên before an action to give practical advice about what someone should do. Example: [[grammar:Lê Hoàng Nam nên nghỉ.]]",
+      "expert": "#### S + bị + ailment\n\nBị introduces an adverse affected-subject construction; with ailment nouns it presents the subject as experiencing an unwanted condition. Literal example: [[grammar:Lê Hoàng Nam bị đau đầu.]]\n\n#### S + nên + V\n\nNên is a modal of recommendation followed by a bare predicate; it is weaker than an obligation marker. Literal example: [[grammar:Lê Hoàng Nam nên nghỉ.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Bị is not a mechanically interchangeable passive marker; here it marks an unwanted condition. Nên gives advice rather than a command.",
+      "expert": "Bị is not a mechanically interchangeable passive marker; here it marks an unwanted condition. Nên gives advice rather than a command. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Lê Hoàng Nam bị đau đầu.]] — Lê Hoàng Nam has a headache.\n- [[grammar:Trần Thu Hà bị sốt.]] — Trần Thu Hà has a fever.\n- [[grammar:Bác sĩ ở phòng.]] — The doctor is in the room.\n- [[grammar:Bác sĩ có thuốc.]] — The doctor has medicine.\n- [[grammar:Lê Hoàng Nam nên nghỉ.]] — Lê Hoàng Nam should rest.\n- [[grammar:Trần Thu Hà nên uống nước.]] — Trần Thu Hà should drink water.\n- [[grammar:Lê Hoàng Nam muốn khỏe.]] — Lê Hoàng Nam wants to be well.\n- [[grammar:Trần Thu Hà cũng muốn khỏe.]] — Trần Thu Hà also wants to be well.\n- [[grammar:Lê Hoàng Nam uống thuốc.]] — Lê Hoàng Nam takes medicine.\n- [[grammar:Bác sĩ kiểm tra Trần Thu Hà.]] — The doctor examines Trần Thu Hà.",
+    "expert": "- [[grammar:Lê Hoàng Nam bị đau đầu.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Trần Thu Hà bị sốt.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Bác sĩ ở phòng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Bác sĩ có thuốc.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Lê Hoàng Nam nên nghỉ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Trần Thu Hà nên uống nước.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Lê Hoàng Nam muốn khỏe.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Trần Thu Hà cũng muốn khỏe.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Lê Hoàng Nam uống thuốc.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Bác sĩ kiểm tra Trần Thu Hà.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  }
+}

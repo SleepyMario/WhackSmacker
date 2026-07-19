@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause, thế nên + clause]]. Use thế nên to introduce a result that follows from the previous idea. This chapter teaches [[grammar:được phép + V]]. Use được phép before an action to say that the action is permitted.",
+      "expert": "This chapter introduces [[grammar:clause, thế nên + clause]]: Thế nên is a resultative discourse linker connecting a prior cause or premise to its consequence. This chapter introduces [[grammar:được phép + V]]: Được phép forms a permission predicate followed by a bare verbal complement; it is distinct from the beneficial affected-subject construction introduced next."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause, thế nên + clause\n\nUse thế nên to introduce a result that follows from the previous idea. Example: [[grammar:Khu vực này có quy định.]]\n\n#### được phép + V\n\nUse được phép before an action to say that the action is permitted. Example: [[grammar:Tôi được phép đăng ký không?]]",
+      "expert": "#### clause, thế nên + clause\n\nThế nên is a resultative discourse linker connecting a prior cause or premise to its consequence. Literal example: [[grammar:Khu vực này có quy định.]]\n\n#### được phép + V\n\nĐược phép forms a permission predicate followed by a bare verbal complement; it is distinct from the beneficial affected-subject construction introduced next. Literal example: [[grammar:Tôi được phép đăng ký không?]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Thế nên states a consequence. Được phép explicitly encodes permission and should be kept separate from other uses of được.",
+      "expert": "Thế nên states a consequence. Được phép explicitly encodes permission and should be kept separate from other uses of được. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Khu vực này có quy định.]] — This area has rules.\n- [[grammar:Tôi được phép đăng ký không?]] — Am I allowed to register?\n- [[grammar:Vâng, Lê Hoàng Nam được phép đăng ký.]] — Yes, Lê Hoàng Nam is allowed to register.\n- [[grammar:Tôi ký tên ở đây không?]] — Do I sign my name here?\n- [[grammar:Vâng, ký tên ở đây.]] — Yes, sign here.\n- [[grammar:Tôi cần giữ im lặng không?]] — Do I need to keep quiet?\n- [[grammar:Vâng. Đây là khu vực yên tĩnh.]] — Yes. This is a quiet area.\n- [[grammar:Tôi đăng ký, thế nên tôi được phép đọc.]] — I register, so I am allowed to read.\n- [[grammar:Nhân viên kiểm tra phiếu.]] — A staff member checks the form.\n- [[grammar:Thế nên tôi giữ im lặng.]] — Therefore I keep quiet.\n- [[grammar:Quy định rất rõ.]] — The rule is very clear.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Khu vực này có quy định.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi được phép đăng ký không?]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Vâng, Lê Hoàng Nam được phép đăng ký.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi ký tên ở đây không?]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Vâng, ký tên ở đây.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi cần giữ im lặng không?]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Vâng. Đây là khu vực yên tĩnh.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi đăng ký, thế nên tôi được phép đọc.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Nhân viên kiểm tra phiếu.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Thế nên tôi giữ im lặng.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Quy định rất rõ.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

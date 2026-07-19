@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:trong khi + clause]]. Use trong khi to connect actions or situations happening at the same time. This chapter teaches [[grammar:A + adjective + hơn + B]]. Put hơn after an adjective to compare A with B.",
+      "expert": "This chapter introduces [[grammar:trong khi + clause]]: Trong khi introduces a simultaneous frame and can also support contrast; this chapter emphasizes temporal overlap. This chapter introduces [[grammar:A + adjective + hơn + B]]: The comparative marker hơn follows the gradable predicate; the comparison standard follows it without a copula."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### trong khi + clause\n\nUse trong khi to connect actions or situations happening at the same time. Example: [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]]\n\n#### A + adjective + hơn + B\n\nPut hơn after an adjective to compare A with B. Example: [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]]",
+      "expert": "#### trong khi + clause\n\nTrong khi introduces a simultaneous frame and can also support contrast; this chapter emphasizes temporal overlap. Literal example: [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]]\n\n#### A + adjective + hơn + B\n\nThe comparative marker hơn follows the gradable predicate; the comparison standard follows it without a copula. Literal example: [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Trong khi establishes simultaneous context. Hơn follows the property being compared; do not copy English word order mechanically.",
+      "expert": "Trong khi establishes simultaneous context. Hơn follows the property being compared; do not copy English word order mechanically. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]] — This route is shorter than that route.\n- [[grammar:Tuyến đường kia dài hơn tuyến đường này.]] — That route is longer than this route.\n- [[grammar:Tôi đi nhanh.]] — I go quickly.\n- [[grammar:Tôi đi chậm.]] — I go slowly.\n- [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]] — While I look at the guide, Nguyễn Mai Chi looks at the map.\n- [[grammar:Đi tuyến đường này nhanh hơn.]] — Taking this route is faster.\n- [[grammar:Tuyến đường kia chậm hơn.]] — The other route is slower.\n- [[grammar:Bản hướng dẫn rất rõ.]] — The guide is very clear.\n- [[grammar:Tôi chọn tuyến đường ngắn.]] — I choose the short route.\n- [[grammar:Trong khi đi, tôi nghe radio.]] — While traveling, I listen to the radio.\n- [[grammar:Tuyến đường dài không nhanh hơn.]] — The long route is not faster.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tuyến đường kia dài hơn tuyến đường này.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi đi nhanh.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi đi chậm.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Đi tuyến đường này nhanh hơn.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tuyến đường kia chậm hơn.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Bản hướng dẫn rất rõ.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi chọn tuyến đường ngắn.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Trong khi đi, tôi nghe radio.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tuyến đường dài không nhanh hơn.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

@@ -1,3 +1,10 @@
-# Vietnamese Chapter 36-40 Review Deck
+# Vietnamese Review -- Chapters 36–40
 
-This normal core deck reviews selected new vocabulary and both new grammar forms from each chapter. Generated examples must remain literal learner-facing read-content lines.
+Authoritative ordinary bidirectional review for every canonical lexical sense first introduced in Vietnamese Core Chapters 36–40.
+
+- New senses: 44
+- Directional cards: 88
+- Directions: Vietnamese → English and English/Arabic digits → Vietnamese
+- Examples: one to three literal primary-reading examples per card
+- Schema: canonical 18-column TSV v2
+- No fixed card-count quota and no quota-filling cards

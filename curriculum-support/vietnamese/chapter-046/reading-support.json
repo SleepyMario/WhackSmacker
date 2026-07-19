@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:A + clause, còn B + clause]]. Use còn to contrast what is true of one person or item with another. This chapter teaches [[grammar:numeral + chai/lon + liquid noun]]. Use chai or lon between a number and a drink to count bottles or cans.",
+      "expert": "This chapter introduces [[grammar:A + clause, còn B + clause]]: Còn functions as a contrastive topic linker between parallel propositions. This chapter introduces [[grammar:numeral + chai/lon + liquid noun]]: Chai and lon function as container measure expressions in numeral phrases; they retain lexical container meaning."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### A + clause, còn B + clause\n\nUse còn to contrast what is true of one person or item with another. Example: [[grammar:Trong kho có ba mươi chai nước khoáng.]]\n\n#### numeral + chai/lon + liquid noun\n\nUse chai or lon between a number and a drink to count bottles or cans. Example: [[grammar:Trong kho có ba mươi chai nước khoáng.]]",
+      "expert": "#### A + clause, còn B + clause\n\nCòn functions as a contrastive topic linker between parallel propositions. Literal example: [[grammar:Trong kho có ba mươi chai nước khoáng.]]\n\n#### numeral + chai/lon + liquid noun\n\nChai and lon function as container measure expressions in numeral phrases; they retain lexical container meaning. Literal example: [[grammar:Trong kho có ba mươi chai nước khoáng.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Còn contrasts parallel topics. Chai and lon count containers, not an abstract amount of liquid; exact volume remains separate.",
+      "expert": "Còn contrasts parallel topics. Chai and lon count containers, not an abstract amount of liquid; exact volume remains separate. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Trong kho có ba mươi chai nước khoáng.]] — There are thirty bottles of mineral water in the storeroom.\n- [[grammar:Lê Thảo Vy kiểm tra các chai đầy.]] — Lê Thảo Vy checks the full bottles.\n- [[grammar:Maria Garcia kiểm tra các chai rỗng.]] — Maria Garcia checks the empty bottles.\n- [[grammar:Lê Hoàng Nam có nửa chai nước.]] — Lê Hoàng Nam has half a bottle of water.\n- [[grammar:Phạm Ngọc Linh có năm lon nước.]] — Phạm Ngọc Linh has five cans of water.\n- [[grammar:Chai này đầy, còn chai kia rỗng.]] — This bottle is full, whereas that bottle is empty.\n- [[grammar:Kho rất sạch sẽ.]] — The storeroom is very clean.\n- [[grammar:Lê Thảo Vy xếp chai, còn Maria Garcia xếp lon.]] — Lê Thảo Vy arranges bottles, while Maria Garcia arranges cans.\n- [[grammar:Lê Hoàng Nam viết số lượng.]] — Lê Hoàng Nam writes the quantity.\n- [[grammar:Phạm Ngọc Linh kiểm kê kho.]] — Phạm Ngọc Linh inventories the storeroom.",
+    "expert": "- [[grammar:Trong kho có ba mươi chai nước khoáng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Lê Thảo Vy kiểm tra các chai đầy.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Maria Garcia kiểm tra các chai rỗng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Lê Hoàng Nam có nửa chai nước.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Phạm Ngọc Linh có năm lon nước.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Chai này đầy, còn chai kia rỗng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Kho rất sạch sẽ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Lê Thảo Vy xếp chai, còn Maria Garcia xếp lon.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Lê Hoàng Nam viết số lượng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Phạm Ngọc Linh kiểm kê kho.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + nhưng + clause]]. Use nhưng to connect two ideas that contrast. This chapter teaches [[grammar:những + N]]. Put những before a noun to refer to more than one item in a non-exhaustive or context-dependent group.",
+      "expert": "This chapter introduces [[grammar:clause + nhưng + clause]]: Nhưng coordinates or links clauses in an adversative discourse relation. This chapter introduces [[grammar:những + N]]: Những is introduced as a plural marker in the nominal domain; it does not encode a simple English-style plural suffix."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + nhưng + clause\n\nUse nhưng to connect two ideas that contrast. Example: [[grammar:Tôi thu thập những hình vẽ, nhưng Lê Hoàng Nam làm áp phích.]]\n\n#### những + N\n\nPut những before a noun to refer to more than one item in a non-exhaustive or context-dependent group. Example: [[grammar:Tôi thu thập những hình vẽ, nhưng Lê Hoàng Nam làm áp phích.]]",
+      "expert": "#### clause + nhưng + clause\n\nNhưng coordinates or links clauses in an adversative discourse relation. Literal example: [[grammar:Tôi thu thập những hình vẽ, nhưng Lê Hoàng Nam làm áp phích.]]\n\n#### những + N\n\nNhững is introduced as a plural marker in the nominal domain; it does not encode a simple English-style plural suffix. Literal example: [[grammar:Tôi thu thập những hình vẽ, nhưng Lê Hoàng Nam làm áp phích.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Nhưng marks a contrast between clauses. Những presents a plural group, but its distribution and definiteness effects are not identical to English plural -s.",
+      "expert": "Nhưng marks a contrast between clauses. Những presents a plural group, but its distribution and definiteness effects are not identical to English plural -s. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Nhóm có một dự án.]] — The group has a project.\n- [[grammar:Tôi thu thập những hình vẽ, nhưng Lê Hoàng Nam làm áp phích.]] — I collect the drawings, but Lê Hoàng Nam makes the poster.\n- [[grammar:Đây là những nhiệm vụ.]] — These are the tasks.\n- [[grammar:Nguyễn Mai Chi trình bày dự án.]] — Nguyễn Mai Chi presents the project.\n- [[grammar:Tôi làm báo cáo, nhưng Lê Hoàng Nam trình bày áp phích.]] — I make the report, but Lê Hoàng Nam presents the poster.\n- [[grammar:Những hình vẽ ở đây.]] — The drawings are here.\n- [[grammar:Áp phích rất rõ.]] — The poster is very clear.\n- [[grammar:Nhiệm vụ đã hoàn thành.]] — The task is complete.\n- [[grammar:Dự án đã hoàn thành.]] — The project is complete.\n- [[grammar:Nhưng báo cáo chưa hoàn thành.]] — But the report is not complete yet.\n- [[grammar:Tôi sẽ hoàn thành báo cáo.]] — I will complete the report.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Nhóm có một dự án.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi thu thập những hình vẽ, nhưng Lê Hoàng Nam làm áp phích.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Đây là những nhiệm vụ.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Nguyễn Mai Chi trình bày dự án.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Tôi làm báo cáo, nhưng Lê Hoàng Nam trình bày áp phích.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Những hình vẽ ở đây.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Áp phích rất rõ.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Nhiệm vụ đã hoàn thành.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Dự án đã hoàn thành.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Nhưng báo cáo chưa hoàn thành.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tôi sẽ hoàn thành báo cáo.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

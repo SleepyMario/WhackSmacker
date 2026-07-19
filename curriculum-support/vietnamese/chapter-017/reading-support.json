@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + viết + N]]. Use viết before written material to say what someone writes.",
+      "expert": "This chapter introduces [[grammar:S + viết + N]]: Viết is introduced as a transitive production verb whose complement denotes written content or a written object."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + viết + N\n\nUse viết before written material to say what someone writes. Example: [[grammar:Tôi viết email.]]",
+      "expert": "#### S + viết + N\n\nViết is introduced as a transitive production verb whose complement denotes written content or a written object. Literal example: [[grammar:Tôi viết email.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Viết covers producing written text. Gửi is supporting vocabulary for sending the completed message or postcard.",
+      "expert": "Viết covers producing written text. Gửi is supporting vocabulary for sending the completed message or postcard. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Tôi viết email.]] — I write an email.\n- [[grammar:Tôi viết ghi chú.]] — I write a note.\n- [[grammar:Tôi viết địa chỉ.]] — I write the address.\n- [[grammar:Tôi viết số điện thoại.]] — I write the phone number.\n- [[grammar:Đây là bưu thiếp.]] — This is a postcard.\n- [[grammar:Tôi viết bưu thiếp.]] — I write a postcard.\n- [[grammar:Tôi gửi email.]] — I send the email.\n- [[grammar:Tôi gửi bưu thiếp.]] — I send the postcard.\n- [[grammar:Viết cẩn thận.]] — Write carefully.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Tôi viết email.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi viết ghi chú.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi viết địa chỉ.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi viết số điện thoại.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Đây là bưu thiếp.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi viết bưu thiếp.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi gửi email.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi gửi bưu thiếp.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Viết cẩn thận.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+  }
+}

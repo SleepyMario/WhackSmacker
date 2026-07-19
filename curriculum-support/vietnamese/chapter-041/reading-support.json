@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:trước hết + clause; tiếp theo + clause]]. Use trước hết for the first step and tiếp theo for the next step. This chapter teaches [[grammar:numeral + cái + inanimate noun]]. Put a number before cái and an ordinary inanimate noun when counting suitable objects.",
+      "expert": "This chapter introduces [[grammar:trước hết + clause; tiếp theo + clause]]: Trước hết and tiếp theo form an ordered discourse sequence and together constitute one sequencing construction. This chapter introduces [[grammar:numeral + cái + inanimate noun]]: The numeral–classifier–noun order is introduced with cái as a broad inanimate classifier; actual classifier choice remains lexically constrained."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### trước hết + clause; tiếp theo + clause\n\nUse trước hết for the first step and tiếp theo for the next step. Example: [[grammar:Trước hết, tôi kiểm kê.]]\n\n#### numeral + cái + inanimate noun\n\nPut a number before cái and an ordinary inanimate noun when counting suitable objects. Example: [[grammar:Có một cái hộp.]]",
+      "expert": "#### trước hết + clause; tiếp theo + clause\n\nTrước hết and tiếp theo form an ordered discourse sequence and together constitute one sequencing construction. Literal example: [[grammar:Trước hết, tôi kiểm kê.]]\n\n#### numeral + cái + inanimate noun\n\nThe numeral–classifier–noun order is introduced with cái as a broad inanimate classifier; actual classifier choice remains lexically constrained. Literal example: [[grammar:Có một cái hộp.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Vietnamese counting generally places numeral before classifier before noun. Cái is broad but not universally interchangeable with every classifier.",
+      "expert": "Vietnamese counting generally places numeral before classifier before noun. Cái is broad but not universally interchangeable with every classifier. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Trước hết, tôi kiểm kê.]] — First, I take inventory.\n- [[grammar:Số lượng ở đây.]] — The quantities are here.\n- [[grammar:Có một cái hộp.]] — There is one box.\n- [[grammar:Có hai cái túi.]] — There are two bags.\n- [[grammar:Có ba cái bàn.]] — There are three tables.\n- [[grammar:Có bốn cái ghế.]] — There are four chairs.\n- [[grammar:Có năm cái đèn.]] — There are five lights.\n- [[grammar:Đây là số không.]] — This is the number zero.\n- [[grammar:Tiếp theo, tôi viết số lượng.]] — Next, I write the quantities.\n- [[grammar:Kiểm kê đã xong.]] — The inventory check is complete.\n- [[grammar:Số lượng là năm.]] — The quantity is five.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Trước hết, tôi kiểm kê.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Số lượng ở đây.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Có một cái hộp.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Có hai cái túi.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Có ba cái bàn.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Có bốn cái ghế.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Có năm cái đèn.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Đây là số không.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tiếp theo, tôi viết số lượng.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Kiểm kê đã xong.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Số lượng là năm.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

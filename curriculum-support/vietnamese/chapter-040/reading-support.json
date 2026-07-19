@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:đồng thời + clause]]. Use đồng thời to add an action or situation occurring at the same time. This chapter teaches [[grammar:S + được + V]]. Use được before an action when the subject receives a welcome or beneficial result.",
+      "expert": "This chapter introduces [[grammar:đồng thời + clause]]: Đồng thời is a simultaneous/additive discourse linker with a more formal written flavor than simple và. This chapter introduces [[grammar:S + được + V]]: Preverbal được marks a positively evaluated affected-subject construction. It is not treated as a mechanically equivalent English passive auxiliary."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### đồng thời + clause\n\nUse đồng thời to add an action or situation occurring at the same time. Example: [[grammar:Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.]]\n\n#### S + được + V\n\nUse được before an action when the subject receives a welcome or beneficial result. Example: [[grammar:Nguyễn Mai Chi được hướng dẫn trực tuyến.]]",
+      "expert": "#### đồng thời + clause\n\nĐồng thời is a simultaneous/additive discourse linker with a more formal written flavor than simple và. Literal example: [[grammar:Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.]]\n\n#### S + được + V\n\nPreverbal được marks a positively evaluated affected-subject construction. It is not treated as a mechanically equivalent English passive auxiliary. Literal example: [[grammar:Nguyễn Mai Chi được hướng dẫn trực tuyến.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Đồng thời links simultaneous information. Được presents a beneficially affected subject here; adverse bị and permission được phép remain separate constructions.",
+      "expert": "Đồng thời links simultaneous information. Được presents a beneficially affected subject here; adverse bị and permission được phép remain separate constructions. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Thư viện có dịch vụ trực tuyến.]] — The library has an online service.\n- [[grammar:Nguyễn Mai Chi được hướng dẫn trực tuyến.]] — Nguyễn Mai Chi receives online guidance.\n- [[grammar:Nguyễn Thị Lan được hỗ trợ miễn phí.]] — Nguyễn Thị Lan receives free support.\n- [[grammar:Nhân viên giải thích tài liệu cho Lê Hoàng Nam.]] — A staff member explains the document to Lê Hoàng Nam.\n- [[grammar:Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.]] — The staff member supports Nguyễn Mai Chi and Nguyễn Thị Lan at the same time.\n- [[grammar:Dịch vụ trực tuyến rất rõ.]] — The online service is very clear.\n- [[grammar:Hướng dẫn miễn phí.]] — The guidance is free.\n- [[grammar:Trần Thu Hà được hỗ trợ.]] — Trần Thu Hà receives support.\n- [[grammar:Đồng thời, Trần Thu Hà đọc tài liệu.]] — At the same time, Trần Thu Hà reads the document.\n- [[grammar:Nhân viên giải thích rõ.]] — The staff member explains clearly.",
+    "expert": "- [[grammar:Thư viện có dịch vụ trực tuyến.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nguyễn Mai Chi được hướng dẫn trực tuyến.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Thị Lan được hỗ trợ miễn phí.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Nhân viên giải thích tài liệu cho Lê Hoàng Nam.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Dịch vụ trực tuyến rất rõ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Hướng dẫn miễn phí.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Trần Thu Hà được hỗ trợ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Đồng thời, Trần Thu Hà đọc tài liệu.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Nhân viên giải thích rõ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  }
+}

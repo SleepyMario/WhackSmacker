@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + vì + clause]]. Use vì to give the reason for an action or situation. This chapter teaches [[grammar:các + N]]. Put các before a noun to refer to a contextually identifiable or more inclusive set of items.",
+      "expert": "This chapter introduces [[grammar:clause + vì + clause]]: Vì introduces a causal reason relation; this chapter keeps the reason clause after the main clause. This chapter introduces [[grammar:các + N]]: Các is introduced as a plural marker often associated with a contextually established or inclusive set; its distribution contrasts with những."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### clause + vì + clause\n\nUse vì to give the reason for an action or situation. Example: [[grammar:Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.]]\n\n#### các + N\n\nPut các before a noun to refer to a contextually identifiable or more inclusive set of items. Example: [[grammar:Các động vật cần chăm sóc.]]",
+      "expert": "#### clause + vì + clause\n\nVì introduces a causal reason relation; this chapter keeps the reason clause after the main clause. Literal example: [[grammar:Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.]]\n\n#### các + N\n\nCác is introduced as a plural marker often associated with a contextually established or inclusive set; its distribution contrasts with những. Literal example: [[grammar:Các động vật cần chăm sóc.]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Vì supplies a reason. Các and những both express plurality, but they are not freely interchangeable; this block introduces only a practical contrast.",
+      "expert": "Vì supplies a reason. Các and những both express plurality, but they are not freely interchangeable; this block introduces only a practical contrast. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.]] — Nguyễn Thị Lan and Maria Garcia are at the rescue center.\n- [[grammar:Các động vật cần chăm sóc.]] — The animals need care.\n- [[grammar:Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.]] — Nguyễn Thị Lan volunteers because the rescue center needs people.\n- [[grammar:Maria Garcia rửa chuồng vì chuồng chưa sạch sẽ.]] — Maria Garcia washes the enclosure because it is not clean yet.\n- [[grammar:Các động vật có đồ ăn.]] — The animals have food.\n- [[grammar:Nguyễn Thị Lan chăm sóc động vật.]] — Nguyễn Thị Lan cares for the animals.\n- [[grammar:Maria Garcia làm chuồng sạch sẽ.]] — Maria Garcia makes the enclosure clean.\n- [[grammar:Trạm cứu hộ có các động vật.]] — The rescue center has the animals.\n- [[grammar:Nguyễn Thị Lan kiểm tra chuồng vì một động vật đang nghỉ.]] — Nguyễn Thị Lan checks the enclosure because one animal is resting.\n- [[grammar:Maria Garcia tình nguyện mỗi ngày.]] — Maria Garcia volunteers every day.",
+    "expert": "- [[grammar:Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Các động vật cần chăm sóc.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Maria Garcia rửa chuồng vì chuồng chưa sạch sẽ.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Các động vật có đồ ăn.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Nguyễn Thị Lan chăm sóc động vật.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Maria Garcia làm chuồng sạch sẽ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Trạm cứu hộ có các động vật.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Nguyễn Thị Lan kiểm tra chuồng vì một động vật đang nghỉ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Maria Garcia tình nguyện mỗi ngày.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  }
+}

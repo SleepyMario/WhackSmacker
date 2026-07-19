@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter continues Vietnamese Core Chapter 7 with current-scope reading and grammar.",
+      "expert": "Vietnamese Core Chapter 7 is retained as the canonical early-stage source; no future material is introduced by this support record."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "Use the chapter’s authored Grammar section.",
+      "expert": "The chapter’s canonical grammar identity remains stored in the source and hidden from ordinary reader output."
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Follow the chapter’s authored Vietnamese usage notes.",
+      "expert": "No additional grammatical generalization is introduced here."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Em có điện thoại không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có điện thoại.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có máy tính không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có máy tính.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có máy ảnh không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có máy ảnh.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có bản đồ không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có bản đồ.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có ô không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có ô.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có mũ không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có mũ.]] — Current-scope Vietnamese reading evidence.",
+    "expert": "- [[grammar:Em có điện thoại không?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Em có điện thoại.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Chị có máy tính không?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Chị có máy tính.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Em có máy ảnh không?]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Em có máy ảnh.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Chị có bản đồ không?]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Chị có bản đồ.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Em có ô không?]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Em có ô.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Chị có mũ không?]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Chị có mũ.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:S + thích + N]]. Put thích after the person to say what that person likes.",
+      "expert": "This chapter introduces [[grammar:S + thích + N]]: Thích is a transitive preference predicate followed directly by a nominal complement; Vietnamese does not require a copula in this frame."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### S + thích + N\n\nPut thích after the person to say what that person likes. Example: [[grammar:Maria Garcia thích phở không?]]",
+      "expert": "#### S + thích + N\n\nThích is a transitive preference predicate followed directly by a nominal complement; Vietnamese does not require a copula in this frame. Literal example: [[grammar:Maria Garcia thích phở không?]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Thích normally precedes the thing liked. Very simple noun complements are used here; broader preference comparisons come later.",
+      "expert": "Thích normally precedes the thing liked. Very simple noun complements are used here; broader preference comparisons come later. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Maria Garcia thích phở không?]] — Does Maria Garcia like phở?\n- [[grammar:Tôi thích phở.]] — I like phở.\n- [[grammar:Tôi thích bánh mì.]] — I like bánh mì.\n- [[grammar:Phở rất ngon.]] — Phở is very tasty.\n- [[grammar:Bánh mì cũng ngon.]] — Bánh mì is tasty too.\n- [[grammar:Tôi thích trái cây.]] — I like fruit.\n- [[grammar:Tôi thích món ăn Việt Nam.]] — I like Vietnamese food.\n- [[grammar:Tôi thích phở và bánh mì.]] — I like phở and bánh mì.\n- [[grammar:Tôi thích bánh mì và trái cây.]] — I like bánh mì and fruit.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Maria Garcia thích phở không?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi thích phở.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi thích bánh mì.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Phở rất ngon.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Bánh mì cũng ngon.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi thích trái cây.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi thích món ăn Việt Nam.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi thích phở và bánh mì.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi thích bánh mì và trái cây.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+  }
+}

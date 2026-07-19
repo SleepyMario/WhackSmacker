@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:nếu + clause, thì + clause]]. Use nếu for a condition and thì for its result. This chapter teaches [[grammar:bao nhiêu + classifier + N?]]. Put bao nhiêu before a classifier and noun to ask for an unknown count.",
+      "expert": "This chapter introduces [[grammar:nếu + clause, thì + clause]]: Nếu introduces the conditional antecedent; thì explicitly marks the consequent and may be omitted in other contexts. This chapter introduces [[grammar:bao nhiêu + classifier + N?]]: The interrogative quantifier precedes the classifier–noun sequence in a Vietnamese quantity question."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### nếu + clause, thì + clause\n\nUse nếu for a condition and thì for its result. Example: [[grammar:Nếu có mười người, thì cần mười phiếu dự phòng.]]\n\n#### bao nhiêu + classifier + N?\n\nPut bao nhiêu before a classifier and noun to ask for an unknown count. Example: [[grammar:Cần bao nhiêu tờ giấy?]]",
+      "expert": "#### nếu + clause, thì + clause\n\nNếu introduces the conditional antecedent; thì explicitly marks the consequent and may be omitted in other contexts. Literal example: [[grammar:Nếu có mười người, thì cần mười phiếu dự phòng.]]\n\n#### bao nhiêu + classifier + N?\n\nThe interrogative quantifier precedes the classifier–noun sequence in a Vietnamese quantity question. Literal example: [[grammar:Cần bao nhiêu tờ giấy?]]"
+    },
+    {
+      "sourceHeading": "Vietnamese Usage Notes",
+      "normal": "Nếu ... thì presents an explicit condition-result relation. Bao nhiêu comes before the classifier when asking how many countable items there are.",
+      "expert": "Nếu ... thì presents an explicit condition-result relation. Bao nhiêu comes before the classifier when asking how many countable items there are. The grammar IDs remain distinct and cumulative."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Cần bao nhiêu tờ giấy?]] — How many sheets of paper are needed?\n- [[grammar:Cần mười tờ giấy.]] — Ten sheets of paper are needed.\n- [[grammar:Cần bao nhiêu bản tài liệu?]] — How many copies of the document are needed?\n- [[grammar:Cần sáu bản tài liệu.]] — Six copies of the document are needed.\n- [[grammar:Nếu có mười người, thì cần mười phiếu dự phòng.]] — If there are ten people, then ten spare forms are needed.\n- [[grammar:Tôi in các phiếu.]] — I print the forms.\n- [[grammar:Tờ này cần thiết.]] — This sheet is necessary.\n- [[grammar:Bản kia là dự phòng.]] — That copy is a backup.\n- [[grammar:Nếu tài liệu chưa sẵn sàng, thì tôi in.]] — If the materials are not ready, then I print them.\n- [[grammar:Các bản đã sẵn sàng.]] — The copies are ready.\n- [[grammar:Phiếu ở bàn thông tin.]] — The forms are at the information desk.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Cần bao nhiêu tờ giấy?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Cần mười tờ giấy.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Cần bao nhiêu bản tài liệu?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Cần sáu bản tài liệu.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Nếu có mười người, thì cần mười phiếu dự phòng.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi in các phiếu.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tờ này cần thiết.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Bản kia là dự phòng.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Nếu tài liệu chưa sẵn sàng, thì tôi in.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Các bản đã sẵn sàng.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Phiếu ở bàn thông tin.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  }
+}
