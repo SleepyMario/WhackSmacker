@@ -726,7 +726,7 @@ function declaredGrammarEntries(markdown: string): readonly DeclaredGrammarEntry
       inGrammarSection = true;
       continue;
     }
-    if (/^#{2,4}\s+/u.test(line)) {
+    if (/^#{2,3}\s+/u.test(line)) {
       inGrammarSection = false;
       continue;
     }
@@ -939,29 +939,24 @@ function vocabularyKey(entry: string): string {
 }
 
 function learnerFacingReadContent(markdown: string): { readonly format: "dialogue" | "narrative" | "missing"; readonly lines: readonly string[] } {
-  const lines: string[] = [];
-  let format: "dialogue" | "narrative" | "missing" = "missing";
-  let inReadContent = false;
-  for (const rawLine of markdown.replace(/\r\n?/gu, "\n").split("\n")) {
-    const line = rawLine.trim();
-    if (/^#{2,4}\s+(?:對話(?:\s*\/\s*Learner-facing Dialogue)?|Learner-facing Dialogue|Model Dialogue|Model Mini Dialogue)\b/iu.test(line)) {
-      format = "dialogue";
-      inReadContent = true;
-      continue;
-    }
-    if (/^#{2,4}\s+(?:閱讀短文(?:\s*\/\s*Learner-facing Controlled Reading)?|Learner-facing Controlled Reading|Controlled Reading|Model Mini Text)\b/iu.test(line)) {
-      format = "narrative";
-      inReadContent = true;
-      continue;
-    }
-    if (/^#{2,4}\s+/u.test(line)) {
-      inReadContent = false;
-      continue;
-    }
-    if (!inReadContent || line === "" || /^[-*_]{3,}$/u.test(line) || /^([^:]{1,40}):\s*$/u.test(line)) continue;
-    lines.push(line);
+  const normalized = markdown.replace(/\r\n?/gu, "\n");
+  const heading = /^#{2,4}\s+(Dialogue|Narrative|對話(?:\s*\/\s*Learner-facing Dialogue)?|Learner-facing Dialogue|Model Dialogue|Model Mini Dialogue|閱讀短文(?:\s*\/\s*Learner-facing Controlled Reading)?|Learner-facing Controlled Reading|Controlled Reading|Model Mini Text)\s*$/gimu;
+  const match = heading.exec(normalized);
+  if (match === null) return { format: "missing", lines: [] };
+  const label = match[1];
+  const format: "dialogue" | "narrative" = /Dialogue|對話/iu.test(label) ? "dialogue" : "narrative";
+  const start = match.index + match[0].length;
+  const rest = normalized.slice(start);
+  const nextHeading = rest.search(/^#{2,4}\s+/mu);
+  const section = (nextHeading < 0 ? rest : rest.slice(0, nextHeading)).trim();
+  const blocks = section.split(/\n\s*\n/u).filter(Boolean);
+  const hasCanonicalContextIntroduction = /^(?:Dialogue|Narrative)$/iu.test(label);
+  const body = hasCanonicalContextIntroduction && blocks.length > 1 ? blocks.slice(1) : blocks;
+  if (format === "dialogue") {
+    return { format, lines: body.join("\n").split("\n").map((line) => line.trim()).filter((line) => line !== "" && !/^[-*_]{3,}$/u.test(line) && !/^([^:]{1,40}):\s*$/u.test(line)) };
   }
-  return { format, lines };
+  const segmenter = new Intl.Segmenter("nl", { granularity: "sentence" });
+  return { format, lines: body.flatMap((paragraph) => [...segmenter.segment(paragraph)].map(({ segment }) => segment.trim()).filter(Boolean)) };
 }
 
 export function activeCastSizeForChapter(chapter: number): number {

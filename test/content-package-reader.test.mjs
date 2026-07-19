@@ -494,7 +494,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.match(dutchChapter15.text, /Chapter 15 -- Asking Where Someone Lives/);
     assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md"), true);
     assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-015-asking-where-someone-lives/chapter.md"), true);
-    assert.equal(dutchEntries.filter((entry) => entry.path.endsWith("/reading-translation.en.json")).length, 20);
+    assert.equal(dutchEntries.filter((entry) => entry.path.endsWith("/reading-translation.en.json")).length, 70);
     assert.equal(dutchChapter1Translation.entry.mediaType, "application/json");
     const installedTranslation = JSON.parse(dutchChapter1Translation.text);
     assert.equal(installedTranslation.id, "dutch-core.chapter-001.learner-facing-dialogue.en");
@@ -509,7 +509,8 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-020-/u.test(entry.path)), true);
     assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-021-/u.test(entry.path)), true);
     assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-025-/u.test(entry.path)), true);
-    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-026-/u.test(entry.path)), false);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-070-/u.test(entry.path)), true);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-071-/u.test(entry.path)), false);
     assert.match(chineseTraditionalPinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
     assert.match(chineseTraditionalChapter1.text, /我是馬莉亞/);
     assert.match(chineseTraditionalChapter1.text, /我是林雅婷/);
@@ -612,7 +613,16 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       ["Chapter 6-10", "review-decks/chapter-006-010/cards.tsv"],
       ["Chapter 11-15", "review-decks/chapter-011-015/cards.tsv"],
       ["Chapter 16-20", "review-decks/chapter-016-020/cards.tsv"],
-      ["Chapter 21-25", "review-decks/chapter-021-025/cards.tsv"]
+      ["Chapter 21-25", "review-decks/chapter-021-025/cards.tsv"],
+      ["Chapter 26-30", "review-decks/chapter-026-030/cards.tsv"],
+      ["Chapter 31-35", "review-decks/chapter-031-035/cards.tsv"],
+      ["Chapter 36-40", "review-decks/chapter-036-040/cards.tsv"],
+      ["Chapter 41-45", "review-decks/chapter-041-045/cards.tsv"],
+      ["Chapter 46-50", "review-decks/chapter-046-050/cards.tsv"],
+      ["Chapter 51-55", "review-decks/chapter-051-055/cards.tsv"],
+      ["Chapter 56-60", "review-decks/chapter-056-060/cards.tsv"],
+      ["Chapter 61-65", "review-decks/chapter-061-065/cards.tsv"],
+      ["Chapter 66-70", "review-decks/chapter-066-070/cards.tsv"]
     ]);
     const dutchItems = await listReadingReviewItems({
       dataDir: fixture.dataDir,
