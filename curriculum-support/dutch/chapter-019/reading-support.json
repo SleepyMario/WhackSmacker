@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Kun je + infinitive?]]. Use it informally to ask whether someone can do something or to make a simple request.",
+      "expert": "This chapter introduces modal question order in [[grammar:Kun je + infinitive?]], with finite [[grammar:kun]] before subject [[grammar:je]] and the lexical infinitive later in the clause."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Kun je + action word?\n\nUse [[grammar:Kun je helpen?]] for a short request. Name the task before the final action word in [[grammar:Kun je deze vraag uitleggen?]]",
+      "expert": "#### Kun je + infinitive?\n\nFinite modal [[grammar:kun]] occupies first position, subject [[grammar:je]] follows, and the complement remains infinitival in [[grammar:Kun je helpen?]] and [[grammar:Kun je deze vraag uitleggen?]]. Context distinguishes ability from a request."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Kun je helpen?]] asks Mark for help.\n- [[grammar:Ja, natuurlijk.]] agrees.\n- [[grammar:Kun je deze vraag uitleggen?]] names the task.\n- [[grammar:Ja. Lees de vraag langzaam.]] tells Sophie what to do first.\n- [[grammar:Waar woon je?]] is the question on the form.\n- [[grammar:Je weet het adres.]] reminds Sophie that she knows it.\n- [[grammar:Ja, maar ik schrijf langzaam.]] explains the problem.\n- [[grammar:Wacht even. Ik help je.]] asks her to wait and promises help.\n- [[grammar:Dank je. Het antwoord is klaar.]] thanks Mark and confirms the answer.",
+    "expert": "- [[grammar:Kun je helpen?]] has finite modal [[grammar:kun]], postverbal subject [[grammar:je]], and infinitive [[grammar:helpen]].\n- [[grammar:Ja, natuurlijk.]] is an affirmative response with stance adverb.\n- [[grammar:Kun je deze vraag uitleggen?]] places the object before final infinitive [[grammar:uitleggen]].\n- [[grammar:Ja. Lees de vraag langzaam.]] contains a bounded imperative plus manner adverb.\n- [[grammar:Waar woon je?]] reuses the Chapter 15 locative content question.\n- [[grammar:Je weet het adres.]] uses irregular finite [[grammar:weet]] with a definite object.\n- [[grammar:Ja, maar ik schrijf langzaam.]] coordinates with supporting [[grammar:maar]] and reuses a first-person stem.\n- [[grammar:Wacht even. Ik help je.]] combines an imperative with a first-person promise.\n- [[grammar:Dank je. Het antwoord is klaar.]] closes with thanks and a predicative adjective."
+  }
+}

@@ -18,6 +18,7 @@ import {
   localized,
   migrateUserDataBackupFile,
   orderReviewItemsForSession,
+  projectReviewTextForMode,
   readInstalledContentEntry,
   restoreUserDataBackup,
   recordReadingReviewAnswer,
@@ -30,6 +31,7 @@ import {
   writeUserDataBackup,
   isReviewRating,
   type DomainModule,
+  type CurriculumDisplayMode,
   type FirstClassModuleDescriptor,
   type InstalledPackageRecord,
   type RenderedExercise,
@@ -211,7 +213,7 @@ export const contentModule: DomainModule = {
           packageVersion: parsed.options.version,
           path: parsed.options.file
         });
-        console.log(renderReadingContent(result));
+        console.log(renderReadingContent(result, parsed.options.view));
       }
     });
 
@@ -493,6 +495,7 @@ interface ParsedOptions {
   readonly now?: string;
   readonly output: string;
   readonly noShuffle?: boolean;
+  readonly view: CurriculumDisplayMode;
 }
 
 function printInstalled(packages: readonly InstalledPackageRecord[]): void {
@@ -595,7 +598,7 @@ async function runSingleReviewSource(
       ...(dueItem.sourcePath === undefined ? {} : { sourcePath: dueItem.sourcePath }),
       itemId: dueItem.itemId
     });
-    console.log(formatStudyReviewExercise(prompt.rendered, "prompt").trimEnd());
+    console.log(formatStudyReviewExercise(prompt.rendered, "prompt", !isFiveChapterReviewSource(options.sourcePath)).trimEnd());
 
     const reveal = ((await reader.promptLine("Press Enter to show answer, or q to stop: ")) ?? "q").trim().toLowerCase();
     if (reveal === "q" || reveal === "quit") {
@@ -611,7 +614,7 @@ async function runSingleReviewSource(
       itemId: dueItem.itemId,
       answer: true
     });
-    console.log(formatStudyReviewExercise(answer.rendered, "answer").trimEnd());
+    console.log(formatStudyReviewExercise(answer.rendered, "answer", !isFiveChapterReviewSource(options.sourcePath)).trimEnd());
 
     const rating = await promptForRating(reader);
     if (rating === null) {
@@ -633,9 +636,9 @@ async function runSingleReviewSource(
   return true;
 }
 
-function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer"): string {
+function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", includeNotes = true): string {
   const colorsEnabled = shouldUseReviewColors();
-  const title = side === "prompt" ? "Review Prompt" : "Review Answer";
+  const title = side === "prompt" ? "Phrase:" : "Answer:";
   const width = 64;
   const border = "-".repeat(width);
   const sections: string[] = [
@@ -647,18 +650,26 @@ function formatStudyReviewExercise(exercise: RenderedExercise, side: "prompt" | 
     ""
   ];
   if (side === "prompt") {
-    sections.push("", "Prompt", ...prefixStudyLines(exercise.promptLines));
+    sections.push("", "Phrase:", ...prefixStudyLines(exercise.promptLines.map((line) => projectReviewTextForMode(line, "normal"))));
     if (exercise.hintLines.length > 0) {
       sections.push("", "Hints", ...prefixStudyLines(exercise.hintLines));
     }
   } else {
-    sections.push("", "Answer", ...prefixStudyLines(exercise.answerLines));
-    if (exercise.noteLines.length > 0) {
+    sections.push("", "Answer:", ...prefixStudyLines(exercise.answerLines.map((line) => projectReviewTextForMode(line, "normal"))));
+    if (exercise.exampleLines.length > 0) {
+      sections.push("", "Examples:", ...exercise.exampleLines.map((line) => `  - ${line}`));
+    }
+    if (includeNotes && exercise.noteLines.length > 0) {
       sections.push("", "Notes", ...prefixStudyLines(exercise.noteLines));
     }
   }
   sections.push("", reviewColor(border, side, colorsEnabled));
   return `${sections.join("\n").trimEnd()}\n`;
+}
+
+function isFiveChapterReviewSource(sourcePath: string): boolean {
+  const match = /(?:^|\/)review-decks\/chapter-0*(\d+)-0*(\d+)\/cards\.tsv$/u.exec(sourcePath);
+  return match !== null && Number(match[2]) - Number(match[1]) === 4;
 }
 
 function prefixStudyLines(lines: readonly string[]): readonly string[] {
@@ -909,6 +920,7 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
   let now: string | undefined;
   let output = "";
   let noShuffle = false;
+  let view: CurriculumDisplayMode = "normal";
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
@@ -950,6 +962,11 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
       index += 1;
     } else if (arg === "--no-shuffle") {
       noShuffle = true;
+    } else if (arg === "--view") {
+      const value = readValue(args, index, arg);
+      if (value !== "normal" && value !== "expert" && value !== "developer") throw new Error("--view must be normal, expert, or developer.");
+      view = value;
+      index += 1;
     } else {
       throw new Error(`Unknown content option: ${arg}`);
     }
@@ -970,7 +987,7 @@ function parseOptions(args: readonly string[], required: readonly string[]): Par
     }
   }
 
-  return { catalogue, dataDir, version, package: packageId, force, all, file, source, limit, answer, rating, now, output, noShuffle };
+  return { catalogue, dataDir, version, package: packageId, force, all, file, source, limit, answer, rating, now, output, noShuffle, view };
 }
 
 function readValue(args: readonly string[], index: number, option: string): string {

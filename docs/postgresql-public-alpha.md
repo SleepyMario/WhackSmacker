@@ -50,3 +50,27 @@ TEST_DATABASE_URL='postgresql://…/whacksmacker_restore_test' ./scripts/postgre
 ```
 
 Btrfs snapshots can supplement these portable dumps but do not replace them.
+
+## Deployment verification and rollback
+
+Use `scripts/deploy-production.sh` on the deployment VM to change only the core
+and curricula image references in the protected production environment file.
+The canonical check waits for the Compose `app` container, requires Docker to
+report it `healthy`, and then validates the JSON response from `/api/health`
+using Node inside that container. It does not require the VM host to reach
+`127.0.0.1:8787`: the published port may be bound only to a configured address,
+such as a ZeroTier address. Set `WHACKSMACKER_DEPLOY_PUBLIC_URL` or pass
+`--public-url` to add an optional, recommended public-path verification.
+
+Before the first deployment change, the script retains a mode-preserving copy
+of the exact prior environment file and captures the running core and curricula
+image references. Any command failure, signal, timeout, unhealthy result, or
+explicit shell exit after that point reaches its `EXIT` cleanup. The cleanup
+restores the prior file and image references, reruns the prior Compose
+configuration, and verifies restored container health. It never runs
+`docker compose down` or `down -v`, so PostgreSQL, application, and curricula
+named volumes are preserved. Diagnostic logs and backups are retained whether
+deployment or rollback succeeds.
+
+This is an operator-side automation correction. Existing alpha images do not
+need to be rebuilt or republished for it.

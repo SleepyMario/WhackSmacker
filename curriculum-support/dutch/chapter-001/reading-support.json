@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Ik ben N]], a simple way to say who you are or what your role is.",
+      "expert": "This chapter introduces the first-person copular identity frame [[grammar:Ik ben N]]: subject [[grammar:ik]], suppletive finite copula [[grammar:ben]], and a proper-name or nominal predicate."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Ik ben N\n\nUse [[grammar:Ik ben N]] to say your name or role. [[grammar:Ik]] means “I,” and [[grammar:ben]] means “am.”",
+      "expert": "#### Ik ben N\n\nCurrent chapter scope: [[grammar:ik]] is a first-person singular subject, [[grammar:ben]] is the suppletive first-person singular present of [[grammar:zijn]], and [[grammar:N]] is a proper-name or nominal predicate. Expert context: later chapters supply the remaining agreement paradigm and broader copular predicate types."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Ik ben ...]] is a natural basic self-introduction. Learn nouns with their article, such as [[grammar:de student]] and [[grammar:de docent]]. The row marked Infinitive gives the base verb form.",
+      "expert": "The identity frame permits proper-name and bare role-noun predicates. Article choice belongs to lexical noun learning rather than the principal grammar point; later chapters develop the wider article and copular systems."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Hallo.]] means “Hello.”\n- [[grammar:Ik ben Alex Chen.]] uses the same pattern with a name.\n- [[grammar:Ik ben Sophie de Vries.]] uses the same pattern with a name.\n- [[grammar:Ik ben student.]] means “I am a student.”\n- [[grammar:Dag, vriend.]] is a friendly greeting.\n- [[grammar:Ik ben Marieke Smit.]] uses the same pattern with a name.\n- [[grammar:Ik ben docent.]] means “I am a teacher.”",
+    "expert": "- [[grammar:Hallo.]] and [[grammar:Dag, vriend.]] are greeting formulas; the latter includes direct address.\n- [[grammar:Ik ben Alex Chen.]], [[grammar:Ik ben Sophie de Vries.]], and [[grammar:Ik ben Marieke Smit.]] use proper-name nominal predicates.\n- [[grammar:Ik ben student.]] and [[grammar:Ik ben docent.]] use bare profession or role nouns as predicative nominals.\n- Expert context: [[grammar:ben]] is suppletive within the present paradigm of [[grammar:zijn]], while predicative profession nouns normally occur without an article."
+  }
+}

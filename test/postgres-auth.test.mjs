@@ -48,7 +48,7 @@ test("real PostgreSQL migrations, sessions, and two-user state are isolated", { 
   let restarted;
   try {
     const concurrent=await Promise.all([migrateDatabase(pool),migrateDatabase(pool)]);
-    assert.deepEqual(concurrent.flat(), ["001_public_alpha_users.sql", "002_user_package_indexes.sql", "003_state_constraints.sql"]);
+    assert.deepEqual(concurrent.flat(), ["001_public_alpha_users.sql", "002_user_package_indexes.sql", "003_state_constraints.sql", "004_review_card_lifecycle.sql"]);
     assert.ok((await databaseMigrationStatus(pool)).every(x => x.applied));
     assert.deepEqual(await migrateDatabase(pool), []);
 

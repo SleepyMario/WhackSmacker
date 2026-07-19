@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Is dit ...?]]. It means [[grammar:Is this ...?]]. Use it to check what a nearby thing is.",
+      "expert": "This chapter introduces the polar interrogative [[grammar:Is dit N?]], formed with finite copula before the demonstrative subject. Expert context: this is an early bounded instance of Dutch subject-verb inversion, not a complete interrogative syntax lesson."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "[[grammar:Is dit N?]] asks whether the nearby thing is N. Answer with [[grammar:ja]] or [[grammar:nee]]. Use [[grammar:geen]] before a noun to say it is not that thing.",
+      "expert": "The polar question places finite [[grammar:is]] before subject [[grammar:dit]]. Negative identificational clauses use the nominal negator [[grammar:geen]] with an indefinite nominal complement; the broader distribution of [[grammar:geen]] and [[grammar:niet]] is later expert context, not Normal scope."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:geen]] before a noun here: [[grammar:Dit is geen pen.]]",
+      "expert": "In these bounded nominal predicates, [[grammar:geen]] negates the indefinite classification. The chapter does not generalize sentential negation."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "[[grammar:Ja]] and [[grammar:nee]] are common neutral answers.",
+      "expert": "The response particles and question frame are standard across major Dutch varieties; conversational mitigation is outside the current scope."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Dit is een boek.]] says what the object is.\n- [[grammar:Is dit een boek?]] checks whether it is a book.\n- [[grammar:Ja, dit is een boek.]] gives a yes answer.\n- [[grammar:Dit is een pen.]] identifies a pen.\n- [[grammar:Is dit een pen?]] checks whether it is a pen.\n- [[grammar:Nee, dit is geen pen.]] gives a no answer with [[grammar:geen]] before the noun.\n- [[grammar:Dit is een school.]] identifies a school.\n- [[grammar:Dit is geen huis.]] says it is not a house.\n- [[grammar:Dit is de tafel.]] identifies the table.\n- [[grammar:Is dit de tafel?]] checks the table's identity.\n- [[grammar:Ja, dit is de tafel.]] confirms it.\n- [[grammar:Dit is het raam.]] identifies the window.\n- [[grammar:Is dit een deur?]] checks whether it is a door.\n- [[grammar:Nee, dit is geen deur.]] denies it with [[grammar:geen]].",
+    "expert": "- [[grammar:Dit is een boek.]] is a declarative demonstrative-subject copular clause with an indefinite nominal complement.\n- [[grammar:Is dit een boek?]] uses finite-before-subject order for a polar interrogative.\n- [[grammar:Ja, dit is een boek.]] combines an affirmative response particle with the declarative clause.\n- [[grammar:Dit is een pen.]] repeats the indefinite identificational predicate.\n- [[grammar:Is dit een pen?]] repeats the copular polar-question structure.\n- [[grammar:Nee, dit is geen pen.]] combines negative response [[grammar:nee]] with nominal negator [[grammar:geen]].\n- [[grammar:Dit is een school.]] uses another indefinite predicate nominal.\n- [[grammar:Dit is geen huis.]] negates classification with [[grammar:geen]].\n- [[grammar:Dit is de tafel.]] uses a definite identifying complement.\n- [[grammar:Is dit de tafel?]] questions a definite identification.\n- [[grammar:Ja, dit is de tafel.]] confirms that definite identification.\n- [[grammar:Dit is het raam.]] contrasts a neuter definite noun phrase lexically.\n- [[grammar:Is dit een deur?]] uses the same polar-question syntax with an indefinite noun phrase.\n- [[grammar:Nee, dit is geen deur.]] repeats nominal negation; the later [[grammar:niet]] contrast is explicitly outside the Normal chapter."
+  }
+}

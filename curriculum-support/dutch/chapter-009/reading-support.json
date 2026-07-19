@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Ik ga naar ...]], a simple way to say where you are going.",
+      "expert": "This chapter introduces first-person directed motion with [[grammar:Ik ga naar N]]. [[grammar:ga]] combines with destination phrases headed by [[grammar:naar]], including common nouns, conventional articleless destinations, and proper place names."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Ik ga naar N\n\nUse [[grammar:Ik ga naar N]] to say where you are going. [[grammar:Naar]] points to the destination.",
+      "expert": "#### Ik ga naar N\n\nCurrent chapter scope: [[grammar:ga]] is the irregular first-person singular present of motion verb [[grammar:gaan]], followed by a destination phrase headed by [[grammar:naar]]. The chapter records lexical article behavior but does not generalize preposition or determiner selection."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:naar]] before the destination phrases shown here. Learn [[grammar:de markt]] and [[grammar:het station]] with their articles.",
+      "expert": "The complement of [[grammar:naar]] varies lexically: definite common-noun phrases, bare conventional destinations such as [[grammar:school]] and [[grammar:huis]], and proper geographic names."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These are neutral ways to talk about simple plans.",
+      "expert": "The motion construction is standard across major Dutch varieties; present forms may receive ongoing or planned readings from context."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Ik ga naar de markt.]] says that Alex is going to the market.\n- [[grammar:Ik ga naar het park.]] says that Sophie is going to the park.\n- [[grammar:Ik ga naar het station.]] names the station as Alex's destination.\n- [[grammar:Ik ga naar het werk.]] says that Sophie is going to work.\n- [[grammar:Ik ga naar school.]] uses the same pattern with school.\n- [[grammar:Ik ga naar huis.]] uses the same pattern with home.\n- [[grammar:Ik ga naar Nederland.]] names the Netherlands as Alex's destination.\n- [[grammar:Ik ga naar België.]] names Belgium as Sophie's destination.",
+    "expert": "- [[grammar:Ik ga naar de markt.]], [[grammar:Ik ga naar het park.]], and [[grammar:Ik ga naar het station.]] use article-bearing destination noun phrases.\n- [[grammar:Ik ga naar het werk.]] uses the lexicalized place/activity noun [[grammar:het werk]].\n- [[grammar:Ik ga naar school.]] and [[grammar:Ik ga naar huis.]] use conventional articleless destinations.\n- [[grammar:Ik ga naar Nederland.]] and [[grammar:Ik ga naar België.]] use proper geographic complements without articles."
+  }
+}

@@ -146,6 +146,24 @@ test("Unicode display names and descriptions remain valid", async () => {
   assertValid(manifest);
 });
 
+test("split package capabilities and related package IDs validate explicitly", async () => {
+  const manifest = await readJson(koreanExampleUrl);
+  manifest.capabilities = ["reading-curriculum"];
+  manifest.relatedPackageIds = ["com.sleepymario.language.korean.reviews"];
+  manifest.license = { spdx: "CC-BY-NC-4.0", name: "Creative Commons Attribution-NonCommercial 4.0 International", path: manifest.files[0].path };
+  assertValid(manifest);
+  manifest.capabilities = ["not-a-capability"];
+  assertInvalid(manifest, /capabilities\[0\] is unsupported/);
+});
+
+test("legacy combined manifests remain valid only as manifests without inferred capabilities", async () => {
+  const manifest = await readJson(koreanExampleUrl);
+  delete manifest.capabilities;
+  delete manifest.relatedPackageIds;
+  assertValid(manifest);
+  assert.equal(manifest.contentType, "language-curriculum");
+});
+
 function assertValid(manifest) {
   const result = validateContentPackageManifest(manifest);
 

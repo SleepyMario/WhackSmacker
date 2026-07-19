@@ -10,6 +10,7 @@ import {
 } from "./content-package-spec";
 import { isLocalizedContentValue, type LocalizedContentValue } from "./localized-content";
 import { assertCanonicalLexicalRecord, type CanonicalLexicalRecord, type LearnerFacingVocabularyRecord } from "./language-curriculum-policy";
+import { pedagogicalFingerprint, type PedagogicalContent } from "./pedagogical-fingerprint";
 
 type BufferValue = {
   toString(encoding: "utf8"): string;
@@ -27,10 +28,11 @@ const { readFile } = require("node:fs/promises");
 const { join, relative } = require("node:path");
 
 export const memorizationItemSchemaVersion = 1;
+export const memorizationItemSchemaVersionV2 = 2;
 export const memorizationItemFileMediaType = "application/vnd.whacksmacker.memorization-items+json";
 export const memorizationItemKinds = ["basic-card", "cloze", "vocabulary", "sentence", "concept"] as const;
 
-export interface MemorizationItem {
+export interface MemorizationItemV1 {
   readonly schemaVersion: 1;
   readonly id: string;
   readonly kind: (typeof memorizationItemKinds)[number];
@@ -48,6 +50,36 @@ export interface MemorizationItem {
   readonly createdAt?: string;
   readonly updatedAt?: string;
 }
+
+export interface MemorizationItemV2 extends Omit<MemorizationItemV1, "schemaVersion"> {
+  readonly schemaVersion: 2;
+  readonly cardId: string;
+  readonly pedagogicalFingerprint: string;
+  readonly deck: {
+    readonly id: string;
+    readonly title: string;
+    readonly chapterStart: number;
+    readonly chapterEnd: number;
+  };
+  readonly sourceChapters: readonly number[];
+  readonly reviewDirection: string;
+  readonly acceptedAnswers: readonly string[];
+  readonly distractors: readonly string[];
+  readonly explanation: string;
+  readonly testedMeaning: string;
+  readonly testedLexicalIds: readonly string[];
+  readonly testedGrammarIds: readonly string[];
+  readonly testedGeographicIds: readonly string[];
+  readonly testedCastIds: readonly string[];
+  readonly testedSkillIds: readonly string[];
+  readonly provenance: {
+    readonly path: string;
+    readonly locator: string;
+    readonly evidence: string;
+  };
+}
+
+export type MemorizationItem = MemorizationItemV1 | MemorizationItemV2;
 
 export interface MemorizationContentBlock {
   readonly text: LocalizedContentValue;
@@ -73,10 +105,9 @@ export interface MemorizationDifficultyMetadata {
   readonly label?: LocalizedContentValue;
 }
 
-export interface MemorizationItemCollection {
-  readonly schemaVersion: 1;
-  readonly items: readonly MemorizationItem[];
-}
+export type MemorizationItemCollection =
+  | { readonly schemaVersion: 1; readonly items: readonly MemorizationItemV1[] }
+  | { readonly schemaVersion: 2; readonly items: readonly MemorizationItemV2[] };
 
 export interface MemorizationItemValidationResult {
   readonly valid: boolean;
@@ -115,8 +146,8 @@ export function validateMemorizationItemCollection(collection: unknown): Memoriz
   if (!isRecord(collection)) {
     return { valid: false, errors: ["collection must be a JSON object."] };
   }
-  if (collection.schemaVersion !== memorizationItemSchemaVersion) {
-    errors.push(`collection.schemaVersion must be ${memorizationItemSchemaVersion}.`);
+  if (collection.schemaVersion !== 1 && collection.schemaVersion !== 2) {
+    errors.push("collection.schemaVersion must be 1 or 2.");
   }
   if (!Array.isArray(collection.items)) {
     errors.push("collection.items must be an array.");
@@ -124,6 +155,9 @@ export function validateMemorizationItemCollection(collection: unknown): Memoriz
     const ids = new Set<string>();
     for (const [index, item] of collection.items.entries()) {
       validateItem(item, `collection.items[${index}]`, errors);
+      if (isRecord(item) && item.schemaVersion !== collection.schemaVersion) {
+        errors.push(`collection.items[${index}].schemaVersion must match collection.schemaVersion.`);
+      }
       if (isRecord(item) && typeof item.id === "string") {
         if (ids.has(item.id)) {
           errors.push(`Duplicate memorization item ID: ${item.id}`);
@@ -149,7 +183,9 @@ export function normalizeMemorizationItemCollection(value: unknown): Memorizatio
     return value;
   }
   assertValidMemorizationItem(value);
-  return { schemaVersion: memorizationItemSchemaVersion, items: [value] };
+  return value.schemaVersion === 2
+    ? { schemaVersion: 2, items: [value] as MemorizationItemV2[] }
+    : { schemaVersion: 1, items: [value] as MemorizationItemV1[] };
 }
 
 export async function listInstalledMemorizationItemFiles(
@@ -250,15 +286,20 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     "difficulty",
     "lexicalMetadata",
     "createdAt",
-    "updatedAt"
+    "updatedAt",
+    ...(value.schemaVersion === 2 ? [
+      "cardId", "pedagogicalFingerprint", "deck", "sourceChapters", "reviewDirection",
+      "acceptedAnswers", "distractors", "explanation", "testedMeaning", "testedLexicalIds",
+      "testedGrammarIds", "testedGeographicIds", "testedCastIds", "testedSkillIds", "provenance"
+    ] : [])
   ]);
   for (const key of Object.keys(value)) {
     if (!allowed.has(key)) {
       errors.push(`${field}.${key} is not allowed in memorization items.`);
     }
   }
-  if (value.schemaVersion !== memorizationItemSchemaVersion) {
-    errors.push(`${field}.schemaVersion must be ${memorizationItemSchemaVersion}.`);
+  if (value.schemaVersion !== 1 && value.schemaVersion !== 2) {
+    errors.push(`${field}.schemaVersion must be 1 or 2.`);
   }
   if (!isSafeItemId(readString(value.id))) {
     errors.push(`${field}.id must be stable, package-relative, and safe.`);
@@ -274,17 +315,120 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     errors.push(`${field}.notes must be a string or locale-to-string object when present.`);
   }
   validateStringArray(value.examples, `${field}.examples`, errors, false);
+  if (value.schemaVersion === 2 && value.examples !== undefined) {
+    if (!Array.isArray(value.examples) || value.examples.length < 1 || value.examples.length > 3) {
+      errors.push(`${field}.examples must contain between one and three literal review examples when present.`);
+    } else {
+      for (const [index, example] of value.examples.entries()) {
+        if (typeof example === "string" && (example !== example.normalize("NFC") || example !== example.trim())) {
+          errors.push(`${field}.examples[${index}] must use NFC with no leading or trailing whitespace.`);
+        }
+      }
+    }
+  }
   validateSource(value.source, `${field}.source`, errors);
   validateLanguage(value.language, `${field}.language`, errors);
   validateDifficulty(value.difficulty, `${field}.difficulty`, errors);
   validateLexicalMetadata(value.lexicalMetadata, `${field}.lexicalMetadata`, errors);
   validateTimestamp(value.createdAt, `${field}.createdAt`, errors);
   validateTimestamp(value.updatedAt, `${field}.updatedAt`, errors);
+  if (value.schemaVersion === 2) validateV2Fields(value, field, errors);
   for (const forbidden of ["dueAt", "interval", "easeFactor", "reviewHistory", "progress", "settings", "providerDeck", "providerNoteId"]) {
     if (forbidden in value) {
       errors.push(`${field}.${forbidden} is user progress, scheduler state, settings, or provider-specific data and is not allowed.`);
     }
   }
+}
+
+function validateV2Fields(value: Record<string, unknown>, field: string, errors: string[]): void {
+  if (!isSafeItemId(readString(value.cardId)) || value.cardId !== value.id) {
+    errors.push(`${field}.cardId must be a safe stable ID equal to id.`);
+  }
+  if (!/^[a-f0-9]{64}$/u.test(readString(value.pedagogicalFingerprint))) {
+    errors.push(`${field}.pedagogicalFingerprint must be a lowercase SHA-256 hex digest.`);
+  }
+  if (!isRecord(value.deck) || !isSafeItemId(readString(value.deck.id)) || typeof value.deck.title !== "string") {
+    errors.push(`${field}.deck must declare a safe id and non-empty title.`);
+  } else {
+    validateChapter(value.deck.chapterStart, `${field}.deck.chapterStart`, errors);
+    validateChapter(value.deck.chapterEnd, `${field}.deck.chapterEnd`, errors);
+    if (typeof value.deck.chapterStart === "number" && typeof value.deck.chapterEnd === "number" && value.deck.chapterEnd - value.deck.chapterStart !== 4) {
+      errors.push(`${field}.deck must cover exactly five consecutive chapters.`);
+    }
+  }
+  validateChapterArray(value.sourceChapters, `${field}.sourceChapters`, errors);
+  validateNonEmptyString(value.reviewDirection, `${field}.reviewDirection`, errors);
+  validateNonEmptyUniqueNfcStrings(value.acceptedAnswers, `${field}.acceptedAnswers`, errors, false);
+  validateNonEmptyUniqueNfcStrings(value.distractors, `${field}.distractors`, errors, true);
+  validateNonEmptyString(value.explanation, `${field}.explanation`, errors);
+  validateNonEmptyString(value.testedMeaning, `${field}.testedMeaning`, errors);
+  for (const name of ["testedLexicalIds", "testedGrammarIds", "testedGeographicIds", "testedCastIds", "testedSkillIds"] as const) {
+    validateNonEmptyUniqueNfcStrings(value[name], `${field}.${name}`, errors, true);
+  }
+  if (Array.isArray(value.acceptedAnswers) && Array.isArray(value.distractors)) {
+    const accepted = new Set(value.acceptedAnswers.map(normalizedText));
+    for (const distractor of value.distractors) if (accepted.has(normalizedText(distractor))) errors.push(`${field}.acceptedAnswers and distractors must not overlap.`);
+  }
+  if (!isRecord(value.provenance) || !isSafeContentPackagePath(readString(value.provenance.path))) {
+    errors.push(`${field}.provenance must declare a safe curriculum path.`);
+  } else {
+    validateNonEmptyString(value.provenance.locator, `${field}.provenance.locator`, errors);
+    validateNonEmptyString(value.provenance.evidence, `${field}.provenance.evidence`, errors);
+  }
+  if (isV2Shape(value)) {
+    const expected = pedagogicalFingerprint(pedagogicalContentForMemorizationItem(value));
+    if (value.pedagogicalFingerprint !== expected) errors.push(`${field}.pedagogicalFingerprint does not match pedagogically material content.`);
+  }
+}
+
+export function pedagogicalContentForMemorizationItem(item: MemorizationItemV2): PedagogicalContent {
+  const requiredCanonicalIds = [
+    ...item.testedLexicalIds, ...item.testedGrammarIds, ...item.testedGeographicIds,
+    ...item.testedCastIds, ...item.testedSkillIds
+  ];
+  return {
+    prompt: item.prompt.text,
+    acceptedAnswers: item.acceptedAnswers,
+    testedMeaning: item.testedMeaning,
+    direction: item.reviewDirection,
+    cardType: item.kind,
+    requiredCanonicalIds,
+    distractors: item.distractors,
+    expectedInterpretation: item.explanation
+  };
+}
+
+function isV2Shape(value: Record<string, unknown>): value is Record<string, unknown> & MemorizationItemV2 {
+  return value.schemaVersion === 2 && Array.isArray(value.acceptedAnswers) && Array.isArray(value.distractors)
+    && Array.isArray(value.testedLexicalIds) && Array.isArray(value.testedGrammarIds)
+    && Array.isArray(value.testedGeographicIds) && Array.isArray(value.testedCastIds) && Array.isArray(value.testedSkillIds)
+    && isRecord(value.prompt) && typeof value.reviewDirection === "string" && typeof value.testedMeaning === "string" && typeof value.explanation === "string";
+}
+
+function validateChapter(value: unknown, field: string, errors: string[]): void {
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 1) errors.push(`${field} must be a positive integer.`);
+}
+
+function validateChapterArray(value: unknown, field: string, errors: string[]): void {
+  if (!Array.isArray(value) || value.length === 0) { errors.push(`${field} must be a non-empty chapter array.`); return; }
+  for (const [index, chapter] of value.entries()) validateChapter(chapter, `${field}[${index}]`, errors);
+  if (new Set(value).size !== value.length) errors.push(`${field} must not contain duplicates.`);
+}
+
+function validateNonEmptyUniqueNfcStrings(value: unknown, field: string, errors: string[], allowEmpty: boolean): void {
+  if (!Array.isArray(value) || (!allowEmpty && value.length === 0)) { errors.push(`${field} must be ${allowEmpty ? "an" : "a non-empty"} array.`); return; }
+  const seen = new Set<string>();
+  for (const [index, entry] of value.entries()) {
+    if (typeof entry !== "string" || entry.trim() === "") { errors.push(`${field}[${index}] must be a non-empty string.`); continue; }
+    if (entry !== entry.normalize("NFC")) errors.push(`${field}[${index}] must use Unicode NFC.`);
+    const normalized = normalizedText(entry);
+    if (seen.has(normalized)) errors.push(`${field} contains duplicate value: ${entry}`);
+    seen.add(normalized);
+  }
+}
+
+function normalizedText(value: unknown): string {
+  return typeof value === "string" ? value.normalize("NFC").trim().replace(/\s+/gu, " ") : "";
 }
 
 function validateLexicalMetadata(value: unknown, field: string, errors: string[]): void {

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Dit is ...]]. It means [[grammar:This is ...]]. Use it to identify a thing nearby.",
+      "expert": "This chapter introduces proximal demonstrative [[grammar:dit]] in the identificational copular frame [[grammar:Dit is N]]. Expert context: Dutch demonstrative agreement and de/het contrasts extend beyond this bounded construction and are not part of the Normal lesson."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "[[grammar:Dit is N]] means This is N. Put the thing you are identifying after [[grammar:is]].",
+      "expert": "[[grammar:Dit is N]] is a demonstrative-subject copular clause with an identifying nominal complement. The interrogative support line [[grammar:Wat is dit?]] supplies discourse context without establishing a general wh-question system."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Learn each new noun with [[grammar:de]] or [[grammar:het]], such as [[grammar:de pen]] and [[grammar:het boek]].",
+      "expert": "The article-bearing citation forms preserve common-versus-neuter lexical classification. Indefinite [[grammar:een]] is introduced only in simple noun phrases here; broader article selection remains later material."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These classroom examples are neutral everyday Dutch.",
+      "expert": "The demonstrative identification frame is standard in spoken and written Dutch across the Netherlands and Belgium."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Wat is dit?]] asks what the nearby thing is.\n- [[grammar:Dit is een boek.]] identifies a book.\n- [[grammar:Dit is de pen.]] identifies the pen.\n- [[grammar:Dit is het schrift.]] identifies the notebook.\n- [[grammar:Dit is de school.]] identifies the school.\n- [[grammar:Dit is het huis.]] identifies the house.\n- [[grammar:Dit is de klas.]] identifies the classroom.\n- [[grammar:Ja, dit is de klas.]] confirms the same identification.",
+    "expert": "- [[grammar:Wat is dit?]] uses interrogative [[grammar:wat]] as the predicative complement of the copula.\n- [[grammar:Dit is een boek.]] pairs proximal demonstrative subject [[grammar:dit]] with an indefinite nominal complement.\n- [[grammar:Dit is de pen.]] pairs [[grammar:dit]] with a definite common-gender noun phrase.\n- [[grammar:Dit is het schrift.]] uses a neuter article-bearing complement.\n- [[grammar:Dit is de school.]] uses a common-gender definite complement.\n- [[grammar:Dit is het huis.]] uses a neuter definite complement.\n- [[grammar:Dit is de klas.]] uses a common-gender definite complement.\n- [[grammar:Ja, dit is de klas.]] adds an affirmative response particle before the identificational clause."
+  }
+}

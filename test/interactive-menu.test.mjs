@@ -6,6 +6,7 @@ import { test } from "node:test";
 
 import { createCommandRegistry, resolveCliCommand } from "../dist/apps/cli/main.js";
 import {
+  applyLanguageSpecificReadableContentMenuPolicy,
   buildLanguageTree,
   buildLanguageMenuItems,
   buildModuleTree,
@@ -24,12 +25,13 @@ import {
   installedLanguagePackagesToMenuItems,
   languageMenuHeading,
   listAvailableModuleDescriptors,
+  menuStyles,
   renderTwoPaneLanguageTree,
   renderLanguageTreeRightPane,
   renderSourceLanguageToggle,
   renderWhackSmackerHeader,
   readableContentEntriesToMenuItems,
-  reviewDeckMenuStatusFromStates,
+  reviewDeckStatusStyle,
   reviewSourcesToMenuItems,
   runInteractiveMenu,
   shouldShowTogglesPane,
@@ -40,12 +42,14 @@ import {
 import {
   generateContentPackage,
   generateLocalContentPackageCatalogue,
+  classifyReviewDeckMenuStatus,
   createInitialReviewState,
   getBuiltInFirstClassModules,
   installContentPackage,
   InMemoryCliCommandRegistry,
   installedPackageToFirstClassModuleDescriptor,
   listInstalledContentPackages,
+  listAvailableContentPackages,
   listReadingReviewItems,
   listReadingReviewSources,
   loadReviewProgressStore,
@@ -87,6 +91,19 @@ class FakeTerminal {
 
 function key(name, extra = {}) {
   return { name, ...extra };
+}
+
+function sectionBody(markdown, title) {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const start = lines.findIndex((line) => new RegExp(`^(#{1,6})\\s+${escapeRegExp(title)}\\s*$`, "u").test(line));
+  if (start < 0) return "";
+  const level = /^(#{1,6})\s/u.exec(lines[start])?.[1].length ?? 1;
+  const endOffset = lines.slice(start + 1).findIndex((line) => {
+    const heading = /^(#{1,6})\s/u.exec(line);
+    return heading !== null && heading[1].length <= level;
+  });
+  const end = endOffset < 0 ? lines.length : start + 1 + endOffset;
+  return lines.slice(start + 1, end).join("\n");
 }
 
 function createStubRegistry(calls, options = {}) {
@@ -194,6 +211,45 @@ test("installed language package discovery is generic and normalizes curriculum 
     "com.sleepymario.language.spanish",
     "com.sleepymario.language.vietnamese"
   ]);
+});
+
+test("Vietnamese menu policy pins Foundation chapters independently of package input order", () => {
+  const item = (filePath, label, curriculumChapterNumber) => ({
+    label,
+    kind: "readable-content",
+    filePath,
+    ...(curriculumChapterNumber === undefined ? {} : { curriculumChapterType: "foundation", curriculumChapterNumber })
+  });
+  const shuffled = [
+    item("units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md", "Chapter 40 -- Later"),
+    item("units/vietnamese-foundation/chapter-004-final-consonants/chapter.md", "Foundation Chapter 4 -- Final Consonants", 4),
+    item("units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "Chapter 1 -- Greetings"),
+    item("units/vietnamese-foundation/chapter-002-tones/chapter.md", "Foundation Chapter 2 -- Tones", 2),
+    item("units/vietnamese-foundation/chapter-005-audio-dependent-drills/chapter.md", "Foundation Chapter 5 -- Drills", 5),
+    item("units/vietnamese-foundation/chapter-001-alphabet/chapter.md", "Foundation Chapter 1 -- Alphabet", 1),
+    item("units/vietnamese-core/chapter-002-basic-sentences-2/chapter.md", "Chapter 2 -- Introductions"),
+    item("units/vietnamese-foundation/chapter-003-vowels/chapter.md", "Foundation Chapter 3 -- Vowels", 3)
+  ];
+
+  const ordered = applyLanguageSpecificReadableContentMenuPolicy("com.sleepymario.language.vietnamese", shuffled);
+
+  assert.deepEqual(ordered.slice(0, 5).map(({ label }) => label), [
+    "Foundation Chapter -- 1",
+    "Foundation Chapter -- 2",
+    "Foundation Chapter -- 3",
+    "Foundation Chapter -- 4",
+    "Foundation Chapter -- 5"
+  ]);
+  assert.equal(ordered[5]?.label, "Chapter 1 -- Greetings");
+  assert.equal(ordered.at(-1)?.label, "Chapter 40 -- Later");
+  assert.deepEqual(
+    applyLanguageSpecificReadableContentMenuPolicy("com.sleepymario.language.vietnamese", [...shuffled].reverse()).map(({ filePath }) => filePath),
+    ordered.map(({ filePath }) => filePath)
+  );
+
+  const dutch = applyLanguageSpecificReadableContentMenuPolicy("com.sleepymario.language.dutch", shuffled);
+  assert.equal(dutch.some(({ label }) => label === "Foundation Chapter 1 -- Alphabet"), true);
+  assert.equal(dutch[0]?.label, "Chapter 1 -- Greetings");
 });
 
 test("new language package IDs appear without hard-coded menu entries", () => {
@@ -427,8 +483,67 @@ test("language tree lists installed packages and package sections", async () => 
     const englishReadContent = english.children.find((node) => node.label === "Read content");
     const englishReviewDecks = english.children.find((node) => node.label === "Review decks");
     assert.ok(englishReadContent.children.some((node) => node.label === "Chapter 1 -- First Introductions"));
-    assert.ok(englishReadContent.children.some((node) => node.label === "Grammar - Easy"));
+    assert.ok(englishReadContent.children.some((node) => node.label === "Grammar"));
+    assert.equal(englishReadContent.children.some((node) => node.label === "Grammar - Hard"), false);
     assert.deepEqual(englishReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
+
+    for (const mode of ["normal", "expert", "developer"]) {
+      const modeTree = mode === "normal" ? tree : await buildLanguageTree(fixture.dataDir, mode);
+      for (const languagePackage of modeTree.children) {
+        const readContent = languagePackage.children.find((node) => node.label === "Read content");
+        const grammarNode = readContent.children.find((node) => node.label === "Grammar");
+        assert.ok(grammarNode, `${languagePackage.label} exposes Grammar in ${mode}`);
+        const markdown = await renderLanguageTreeRightPane(grammarNode, { dataDir: fixture.dataDir, displayMode: mode });
+        assert.equal((markdown.match(/^# Grammar$/gmu) ?? []).length, 1, `${languagePackage.label} has one Grammar heading in ${mode}`);
+        assert.doesNotMatch(markdown, /^#{1,6} Grammar(?: Easy| Hard|: Normal|: Expert| Points?| Section)$/mu);
+      }
+    }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("installed curricula share the global purple-dialogue and pink-reading semantics", async () => {
+  const fixture = await createInstalledLanguageFixture(
+    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    [
+      "com.sleepymario.language.korean", "com.sleepymario.language.chinese.mandarin.traditional",
+      "com.sleepymario.language.japanese", "com.sleepymario.language.vietnamese",
+      "com.sleepymario.language.dutch", "com.sleepymario.language.english",
+      "com.sleepymario.language.german", "com.sleepymario.language.french",
+      "com.sleepymario.language.spanish"
+    ]
+  );
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const expectedLanguages = ["Korean", "Chinese - Mandarin (Traditional)", "Japanese", "Vietnamese", "Dutch", "English", "German", "French", "Spanish"];
+    const purple = "\x1b[38;5;141m";
+    const pink = "\x1b[38;5;213m";
+    const reset = "\x1b[0m";
+
+    for (const languageLabel of expectedLanguages) {
+      const language = tree.children.find((node) => node.label === languageLabel);
+      assert.ok(language, `${languageLabel} package is installed`);
+      const readContent = language.children.find((node) => node.label === "Read content");
+      assert.ok(readContent, `${languageLabel} has readable content`);
+      let dialogue;
+      let narrative;
+      for (const chapter of readContent.children) {
+        if (dialogue !== undefined && narrative !== undefined) break;
+        if (chapter.kind !== "content") continue;
+        const markdown = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal" });
+        assert.doesNotMatch(markdown, /^#{1,6}\s+Content\s*$/imu, `${languageLabel} omits the structural Content heading`);
+        dialogue ??= firstLearnerDialogueTurn(markdown);
+        narrative ??= firstLearnerNarrativeLine(markdown);
+      }
+      assert.ok(dialogue, `${languageLabel} has a learner-facing dialogue turn`);
+      assert.ok(narrative, `${languageLabel} has learner-facing narrative prose`);
+
+      const dialogueOutput = renderTwoPaneLanguageTree(tree, new Set(), 0, dialogue.markdown, true, 0, 200, "en-US", "navigation", 180);
+      const narrativeOutput = renderTwoPaneLanguageTree(tree, new Set(), 0, narrative.markdown, true, 0, 200, "en-US", "navigation", 180);
+      assert.ok(dialogueOutput.includes(`${purple}${dialogue.label}${reset}${dialogue.separator}${pink}`), `${languageLabel} speaker boundary is purple-to-pink`);
+      assert.ok(narrativeOutput.includes(`${pink}${narrative.prefix}`), `${languageLabel} narrative begins pink`);
+    }
   } finally {
     await fixture.cleanup();
   }
@@ -446,9 +561,653 @@ test("language tree exposes Dutch content and review deck labels", async () => {
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- There Is / There Are I"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 10 -- Living Here"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 15 -- Asking Where Someone Lives"));
-    assert.ok(readContent.children.some((node) => node.label === "Grammar - Easy"));
-    assert.ok(readContent.children.some((node) => node.label === "Grammar - Hard"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 20 -- An Appointment in Town"));
+    assert.ok(readContent.children.some((node) => node.label === "Chapter 25 -- Going to the Museum"));
+    assert.ok(readContent.children.some((node) => node.label === "Grammar"));
+    assert.equal(readContent.children.some((node) => node.label === "Grammar - Hard"), false);
+    const chapter5Index = readContent.children.findIndex((node) => node.label === "Chapter 5 -- There Is / There Are I");
+    const inlineReview = readContent.children[chapter5Index + 1];
+    const chapter6Index = readContent.children.findIndex((node) => node.label === "Chapter 6 -- Having Things");
+    assert.equal(inlineReview?.label, "Review -- Chapters 1–5");
+    assert.equal(inlineReview?.kind, "review-source");
+    assert.equal(inlineReview?.packageId, "com.sleepymario.language.dutch");
+    assert.equal(inlineReview?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
+    assert.equal(chapter5Index < chapter6Index && chapter5Index + 1 < chapter6Index, true);
+    assert.equal(readContent.children.some((node) => /^Ch (?:1|5) -- Review/u.test(node.label)), false);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapter 1 Normal and Developer projections preserve one complete source", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const chapter = readContent.children.find((node) => node.label === "Chapter 1 -- Greetings and Identity");
+    const chapter2 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-002-basic-sentences-2/chapter.md");
+    const normal = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const developer = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const translatedNormal = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal", translationsEnabled: true });
+    const translatedDeveloper = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "developer", translationsEnabled: true });
+    const chineseSourceOff = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, locale: "zh-Hant-TW", displayMode: "normal", translationsEnabled: false });
+    const chineseSourceOn = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, locale: "zh-Hant-TW", displayMode: "normal", translationsEnabled: true });
+    const turnedOffAgain = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal", translationsEnabled: false });
+
+    assert.equal(chapter.translationPath, "units/dutch-core/chapter-001-basic-sentences-1/reading-translation.en.json");
+    assert.equal(chapter2.translationPath, "units/dutch-core/chapter-002-basic-sentences-2/reading-translation.en.json");
+    assert.doesNotMatch(normal, /English translation|I'm Alex Chen|I'm a teacher/u);
+    assert.doesNotMatch(developer, /English translation|I'm Alex Chen|I'm a teacher/u);
+    assert.equal(turnedOffAgain, normal);
+    assert.match(translatedNormal, /### Natural English Translation/u);
+    assert.match(translatedDeveloper, /### Natural English Translation/u);
+    assert.doesNotMatch(chineseSourceOff, /English translation|I'm Alex Chen|I'm a teacher/u);
+    assert.match(chineseSourceOff, /Alex\s+: Hallo\./u);
+    assert.match(chineseSourceOn, /### Natural English Translation|I'm Alex Chen|I'm a teacher/u);
+    assert.match(chineseSourceOn, /Alex\s+: Hallo\./u);
+    const originalStart = translatedNormal.indexOf("Alex   : Hallo.");
+    const originalEnd = translatedNormal.indexOf("Marieke: Ik ben docent.");
+    const translationHeading = translatedNormal.indexOf("### Natural English Translation");
+    const translationStart = translatedNormal.indexOf("Alex   : Hello.");
+    const translationEnd = translatedNormal.indexOf("Marieke: I'm a teacher.");
+    const vocabularyHeading = translatedNormal.indexOf("### New Vocabulary");
+    assert.ok(originalStart >= 0);
+    assert.ok(originalStart < originalEnd);
+    assert.ok(originalEnd < translationHeading);
+    assert.ok(translationHeading < translationStart);
+    assert.ok(translationStart < translationEnd);
+    assert.ok(translationEnd < vocabularyHeading);
+    assert.doesNotMatch(translatedNormal.slice(originalStart, originalEnd), /English translation|I'm |Hello\./u);
+    assert.deepEqual(
+      translatedNormal.slice(translationStart, translationEnd + "Marieke: I'm a teacher.".length).split("\n"),
+      [
+        "Alex   : Hello.",
+        "Sophie : Hello.",
+        "Alex   : I'm Alex Chen.",
+        "Sophie : I'm Sophie de Vries.",
+        "Alex   : I'm a student.",
+        "Sophie : I'm a student.",
+        "Alex   : Hi, friend.",
+        "Marieke: I'm Marieke Smit.",
+        "Marieke: I'm a teacher."
+      ]
+    );
+    assert.deepEqual(
+      chineseSourceOn.slice(chineseSourceOn.indexOf("### Natural English Translation"), chineseSourceOn.indexOf("### New Vocabulary")),
+      translatedNormal.slice(translatedNormal.indexOf("### Natural English Translation"), translatedNormal.indexOf("### New Vocabulary"))
+    );
+
+    const styledChapterToggleOff = renderTwoPaneLanguageTree(chapter, new Set(), 0, normal, true, 0, 36, "en-US", "toggles", 150, 2, "normal", false);
+    const styledChapterToggleOn = renderTwoPaneLanguageTree(chapter, new Set(), 0, translatedNormal, true, 0, 36, "en-US", "toggles", 150, 2, "normal", true);
+    const chapterToggleOff = stripAnsi(styledChapterToggleOff);
+    const chapterToggleOn = stripAnsi(styledChapterToggleOn);
+    const chineseToggleOff = stripAnsi(renderTwoPaneLanguageTree(chapter, new Set(), 0, chineseSourceOff, true, 0, 36, "zh-Hant-TW", "toggles", 150, 2, "normal", false));
+    const chineseToggleOn = stripAnsi(renderTwoPaneLanguageTree(chapter, new Set(), 0, chineseSourceOn, true, 0, 36, "zh-Hant-TW", "toggles", 150, 2, "normal", true));
+    const chapter2TranslatedMarkdown = await renderLanguageTreeRightPane(chapter2, { dataDir: fixture.dataDir, translationsEnabled: true });
+    const chapter2Translated = stripAnsi(renderTwoPaneLanguageTree(chapter2, new Set(), 0, chapter2TranslatedMarkdown, true, 0, 36, "en-US", "toggles", 150, 2, "normal", true));
+    assert.match(chapterToggleOff, /> Translation: Off/u);
+    assert.match(chapterToggleOn, /> Translation: On/u);
+    assert.match(chapterToggleOff, /Source: English/u);
+    assert.match(chapterToggleOff, /Alex\s+: Hallo\./u);
+    assert.doesNotMatch(chapterToggleOff, /I'm Alex Chen|I'm a teacher/u);
+    assert.match(chapterToggleOn, /Source: English/u);
+    assert.match(chapterToggleOn, /Alex\s+: Hallo\./u);
+    assert.match(chapterToggleOn, /Natural English Translation/u);
+    assert.match(chapterToggleOn, /Alex\s+: Hello\./u);
+    assert.match(styledChapterToggleOff, /\x1b\[38;5;141mAlex   :\x1b\[0m \x1b\[38;5;213mHallo\.\x1b\[0m/u);
+    assert.match(styledChapterToggleOn, /\x1b\[38;5;141mAlex   :\x1b\[0m \x1b\[38;5;213mHallo\.\x1b\[0m/u);
+    assert.match(styledChapterToggleOn, /\x1b\[38;5;141mAlex   :\x1b\[0m \x1b\[38;5;213mHello\.\x1b\[0m/u);
+    assert.match(chineseToggleOff, /Source: 中文（臺灣）/u);
+    assert.match(chineseToggleOff, /Translation: Off/u);
+    assert.match(chineseToggleOff, /Alex\s+: Hallo\./u);
+    assert.doesNotMatch(chineseToggleOff, /I'm Alex Chen|I'm a teacher/u);
+    assert.match(chineseToggleOn, /Source: 中文（臺灣）/u);
+    assert.match(chineseToggleOn, /Translation: On/u);
+    assert.match(chineseToggleOn, /Alex\s+: Hallo\./u);
+    assert.match(chineseToggleOn, /Natural English Translation/u);
+    assert.match(chineseToggleOn, /Alex\s+: Hello\./u);
+    assert.match(chapter2Translated, /> Translation: On/u);
+    assert.match(chapter2TranslatedMarkdown, /### Natural English Translation[\s\S]*I am Daan de Vries\./u);
+    assert.doesNotMatch(sectionBody(chapter2TranslatedMarkdown, "Natural English Translation"), /This chapter teaches|Daan and Sophie are brother and sister/u);
+    assert.doesNotMatch(chapter2Translated, /I'm Alex Chen/u);
+
+    assert.doesNotMatch(normal, /It does not introduce `je`, `jij`, or `u` yet\./u);
+    assert.doesNotMatch(normal, /Do not turn this into a full verb-conjugation chapter yet\./u);
+    assert.doesNotMatch(normal, /grammar_id:|DUT-GRAMMAR-001|See `ledger\.md`/u);
+    assert.match(normal, /row marked `Infinitive` gives the base verb form\./u);
+    assert.match(developer, /It does not introduce `je`, `jij`, or `u` yet\./u);
+    assert.equal((developer.match(/^### Grammar$/gmu) ?? []).length, 1);
+    assert.match(developer, /^#### Normal$/mu);
+    assert.match(developer, /^#### Expert$/mu);
+    assert.doesNotMatch(developer, /Grammar: Normal|Grammar: Expert/u);
+    assert.doesNotMatch(developer, /grammar_id:|DUT-GRAMMAR-001/u);
+    assert.match(developer, /See `ledger\.md`/u);
+
+    const renderedNormal = renderTwoPaneLanguageTree(tree, new Set(), 0, normal, false, 0, 80, "en-US", "navigation", 180);
+    const renderedDeveloper = renderTwoPaneLanguageTree(tree, new Set(), 0, developer, false, 0, 80, "en-US", "navigation", 180, 1, "developer");
+    const outputLines = renderedNormal.split("\n").map(rightPaneCell);
+    const entryIndexes = Object.fromEntries(["hallo", "dag", "ik", "ben", "zijn", "de student", "de docent", "de vriend"].map((entry) => [entry, outputLines.findIndex((line) => new RegExp(`^\\| ${escapeRegExp(entry)}\\s+\\|`, "u").test(line))]));
+    assert.equal(entryIndexes.dag - entryIndexes.hallo, 2);
+    assert.equal(entryIndexes.ik - entryIndexes.dag, 2);
+    assert.equal(entryIndexes.ben - entryIndexes.ik, 2);
+    assert.equal(entryIndexes.zijn - entryIndexes.ben, 1);
+    assert.equal(entryIndexes["de student"] - entryIndexes.zijn, 2);
+    assert.equal(entryIndexes["de docent"] - entryIndexes["de student"], 2);
+    assert.equal(entryIndexes["de vriend"] - entryIndexes["de docent"], 2);
+    assert.match(outputLines[entryIndexes.ben], /ben\s+\| am\s+\| Verb\s+\|$/u);
+    assert.match(outputLines[entryIndexes.zijn], /zijn\s+\| to be\s+\| Infinitive\s+\|$/u);
+    for (const index of [entryIndexes.hallo + 1, entryIndexes.dag + 1, entryIndexes.ik + 1, entryIndexes.zijn + 1, entryIndexes["de student"] + 1, entryIndexes["de docent"] + 1]) {
+      assert.match(outputLines[index], /^\|\s+\|\s+\|\s+\|$/u);
+    }
+    const vocabularyRows = (rendered) => {
+      const lines = rendered.split("\n").map(rightPaneCell);
+      const start = lines.findIndex((line) => /^\| Dutch\s+\| English\s+\| Notes\s+\|$/u.test(line));
+      const end = lines.findIndex((line) => /^\| de vriend\s+\|/u.test(line));
+      return lines.slice(start, end + 1);
+    };
+    assert.deepEqual(vocabularyRows(renderedDeveloper), vocabularyRows(renderedNormal));
+    assert.doesNotMatch(renderedNormal, /<br\s*\/?\s*>/iu);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Vietnamese Chapter 1 uses the public output-pane translation path in every view", async () => {
+  const fixture = await createInstalledLanguageFixture(["vietnamese-curriculum"], ["com.sleepymario.language.vietnamese"]);
+  try {
+    for (const displayMode of ["normal", "expert", "developer"]) {
+      const tree = await buildLanguageTree(fixture.dataDir, displayMode);
+      const vietnamese = tree.children.find((node) => node.label === "Vietnamese");
+      const readContent = vietnamese.children.find((node) => node.label === "Read content");
+      const chapter = readContent.children.find((node) => node.filePath === "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md");
+      const off = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode, translationsEnabled: false });
+      const on = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode, translationsEnabled: true });
+      assert.match(off, /Maria\s+: Xin chào\./u);
+      assert.doesNotMatch(off, /Natural English Translation|Maria\s+: Hello\./u);
+      assert.match(on, /### Natural English Translation[\s\S]*Maria\s+: Hello\./u);
+      assert.doesNotMatch(on, /Complete Rereading|Reread the nine-line/u);
+      if (displayMode === "developer") assert.match(on, /^id: vie-core-001$/mu);
+      else assert.doesNotMatch(on, /vie-core-001|grammar_easy_reference|ledger_before/u);
+
+      const dialogueHeading = "### Dialogue";
+      const readingExcerpt = on.slice(on.indexOf(dialogueHeading), on.indexOf("### New Vocabulary"));
+      const visible = renderTwoPaneLanguageTree(tree, new Set(), 0, readingExcerpt, true, 0, 80, "zh-Hant-TW", "navigation", 170, 0, displayMode, true);
+      assert.match(visible, /Source: 中文（臺灣）/u);
+      assert.match(visible, /Translation: On/u);
+      assert.match(visible, /\x1b\[38;5;141mMaria\s+:\x1b\[0m \x1b\[38;5;213mXin chào\.\x1b\[0m/u);
+      assert.match(visible, /\x1b\[38;5;141mMaria\s+:\x1b\[0m \x1b\[38;5;213mHello\.\x1b\[0m/u);
+    }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapters 2–5 expose distinct views, independent support, and staged reading structure", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir, "developer");
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const expectedType = new Map([[2, "Narrative"], [3, "Dialogue"], [4, "Narrative"], [5, "Dialogue"]]);
+    for (const chapterNumber of [2, 3, 4, 5]) {
+      const chapter = readContent.children.find((node) => node.filePath?.includes(`chapter-${String(chapterNumber).padStart(3, "0")}-`));
+      assert.ok(chapter);
+      const normal = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal" });
+      const expert = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "expert" });
+      const developer = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "developer" });
+      const translated = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal", translationsEnabled: true });
+      const breakdown = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal", breakdownEnabled: true });
+      const both = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "expert", translationsEnabled: true, breakdownEnabled: true });
+
+      assert.notEqual(normal, expert, `Chapter ${chapterNumber} Normal and Expert differ`);
+      assert.match(normal, new RegExp(`### ${expectedType.get(chapterNumber)}`, "u"));
+      assert.doesNotMatch(normal, /^#{1,6}\s+(?:Content|Learner-facing Dialogue|Learner-facing Narrative|Complete Rereading)\s*$/imu);
+      assert.doesNotMatch(expert, /^#{1,6}\s+(?:Content|Complete Rereading)\s*$/imu);
+      assert.match(normal, /### Grammar/u);
+      assert.doesNotMatch(normal, /Grammar: Expert|Expert context/u);
+      assert.match(expert, /### Grammar/u);
+      assert.match(expert, /Expert context|copular|interrogative|existential/u);
+      assert.equal((developer.match(/^### Grammar$/gmu) ?? []).length, 1);
+      assert.match(developer, /^#### Normal$/mu);
+      assert.match(developer, /^#### Expert$/mu);
+      assert.doesNotMatch(developer, /Grammar: Normal|Grammar: Expert/u);
+      assert.doesNotMatch(developer, /^#{1,6}\s+(?:Content|Complete Rereading)\s*$/imu);
+      assert.doesNotMatch(normal, /Natural English Translation|Line-by-line Breakdown/u);
+      assert.match(translated, /### Natural English Translation/u);
+      assert.doesNotMatch(translated, /Line-by-line Breakdown/u);
+      assert.match(breakdown, /### Line-by-line Breakdown/u);
+      assert.doesNotMatch(breakdown, /Natural English Translation/u);
+      assert.match(both, /### Natural English Translation[\s\S]*### Line-by-line Breakdown/u);
+      const grammarOnly = sectionBody(both, "Grammar");
+      assert.doesNotMatch(grammarOnly, /Natural English Translation|Line-by-line Breakdown/u);
+      const briefIntroduction = sectionBody(normal, "Brief Introduction");
+      assert.match(briefIntroduction, /^This chapter (?:teaches|introduces)/u);
+      const readingBlocks = sectionBody(normal, expectedType.get(chapterNumber)).split(/\n\s*\n/u).filter(Boolean);
+      assert.ok(readingBlocks.length >= 2, `Chapter ${chapterNumber} has a separate scene introduction and reading body`);
+      const sceneIntroduction = readingBlocks[0];
+      assert.doesNotMatch(sceneIntroduction, /^This chapter (?:teaches|introduces)/u);
+      assert.doesNotMatch(sectionBody(translated, "Natural English Translation"), new RegExp(escapeRegExp(sceneIntroduction), "u"));
+
+      const targets = new Map([
+        [2, { normal: "Mijn naam is N", expert: "Mijn naam is N", developer: "Mijn naam is N" }],
+        [3, { normal: "Dit is N", expert: "Dit is N", developer: "Dit is N" }],
+        [4, { normal: "Is dit N?", expert: "is", developer: "Is dit N?" }],
+        [5, { normal: "Er is N", expert: "er", developer: "Er is N" }]
+      ]).get(chapterNumber);
+      for (const [mode, markdown] of [["normal", normal], ["expert", expert], ["developer", developer]]) {
+        const target = targets[mode];
+        const grammarMarkdown = `### Grammar\n\n${sectionBody(markdown, "Grammar")}`;
+        const colored = renderTwoPaneLanguageTree(tree, new Set(), 0, grammarMarkdown, true, 0, 80, "en-US", "navigation", 220, 0, mode);
+        const blueTarget = `\x1b[34m${target}\x1b[0m`;
+        assert.ok(colored.includes(blueTarget), `Chapter ${chapterNumber} ${mode} has one semantic blue grammar span`);
+        assert.doesNotMatch(colored, new RegExp(`\\x1b\\[1m${escapeRegExp(target)}\\x1b\\[0m`, "u"));
+        assert.doesNotMatch(blueTarget, /\x1b\[0m[^\x1b]+\x1b\[34m/u);
+      }
+    }
+
+    const semanticFixture = renderTwoPaneLanguageTree(tree, new Set(), 0, "### Grammar\n\n**Important explanation** uses `Dit is N`.", true, 0, 20, "en-US", "navigation", 140);
+    assert.match(semanticFixture, /\x1b\[1mImportant explanation\x1b\[0m uses \x1b\[34mDit is N\x1b\[0m\./u);
+    assert.doesNotMatch(semanticFixture, /\x1b\[34mImportant explanation/u);
+
+    const chapter2 = readContent.children.find((node) => node.filePath?.includes("chapter-002-"));
+    const chapter4 = readContent.children.find((node) => node.filePath?.includes("chapter-004-"));
+    for (const chapter of [chapter2, chapter4]) {
+      const translated = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal", translationsEnabled: true });
+      const rendered = stripAnsi(renderTwoPaneLanguageTree(chapter, new Set(), 0, translated, true, 0, 50, "en-US", "navigation", 180));
+      const cells = rendered.split("\n").map(rightPaneCell).filter(Boolean);
+      assert.equal(cells.some((line) => /Hallo\. Ik ben Daan|Dit is een boek\. Is dit een boek/u.test(line)), false);
+      assert.equal(cells.some((line) => /Hello\. I am Daan|This is a book\. Is this a book/u.test(line)), false);
+    }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapters 6–10 expose complete audience support, translations, breakdowns, and the 6–10 review block", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir, "developer");
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const expectedType = new Map([[6, "Narrative"], [7, "Dialogue"], [8, "Narrative"], [9, "Dialogue"], [10, "Narrative"]]);
+    for (const chapterNumber of [6, 7, 8, 9, 10]) {
+      const chapter = readContent.children.find((node) => node.filePath?.includes("chapter-" + String(chapterNumber).padStart(3, "0") + "-"));
+      assert.ok(chapter);
+      assert.match(chapter.translationPath ?? "", /reading-translation\.en\.json$/u);
+      assert.match(chapter.readingSupportPath ?? "", /reading-support\.json$/u);
+      const normal = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal" });
+      const expert = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "expert" });
+      const developer = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "developer" });
+      const translated = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal", translationsEnabled: true });
+      const breakdown = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal", breakdownEnabled: true });
+      const both = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "expert", translationsEnabled: true, breakdownEnabled: true });
+
+      assert.notEqual(normal, expert, "Chapter " + chapterNumber + " Normal and Expert differ");
+      assert.match(normal, new RegExp("### " + expectedType.get(chapterNumber), "u"));
+      assert.doesNotMatch(normal, /^#{1,6}\s+(?:Content|Learner-facing Dialogue|Learner-facing Controlled Reading|Complete Rereading)\s*$/imu);
+      assert.doesNotMatch(normal, /Canonical Identity|DUT-GRAMMAR-\d+|Original Vocabulary Source Notes|Raw Usage/u);
+      assert.doesNotMatch(expert, /Canonical Identity|DUT-GRAMMAR-\d+|Original Vocabulary Source Notes/u);
+      assert.doesNotMatch(developer, /Canonical Identity|DUT-GRAMMAR-\d+/u);
+      assert.match(normal, /### Grammar/u);
+      assert.match(expert, /### Grammar/u);
+      assert.equal((developer.match(/^### Grammar$/gmu) ?? []).length, 1);
+      assert.match(developer, /^#### Normal$/mu);
+      assert.match(developer, /^#### Expert$/mu);
+      assert.doesNotMatch(normal, /Natural English Translation|Line-by-line Breakdown/u);
+      assert.match(translated, /### Natural English Translation/u);
+      assert.match(breakdown, /### Line-by-line Breakdown/u);
+      assert.match(both, /### Natural English Translation[\s\S]*### Line-by-line Breakdown/u);
+      assert.doesNotMatch(sectionBody(both, "Grammar"), /Natural English Translation|Line-by-line Breakdown/u);
+      const briefIntroduction = sectionBody(normal, "Brief Introduction");
+      assert.match(briefIntroduction, /^This chapter (?:teaches|introduces)/u);
+      const readingBlocks = sectionBody(normal, expectedType.get(chapterNumber)).split(/\n\s*\n/u).filter(Boolean);
+      assert.ok(readingBlocks.length >= 2, `Chapter ${chapterNumber} has a separate scene introduction and reading body`);
+      const sceneIntroduction = readingBlocks[0];
+      assert.doesNotMatch(sceneIntroduction, /^This chapter (?:teaches|introduces)/u);
+      assert.doesNotMatch(sectionBody(translated, "Natural English Translation"), new RegExp(escapeRegExp(sceneIntroduction), "u"));
+
+      const grammarMarkdown = "### Grammar\n\n" + sectionBody(normal, "Grammar");
+      const colored = renderTwoPaneLanguageTree(tree, new Set(), 0, grammarMarkdown, true, 0, 80, "en-US", "navigation", 220);
+      const expectedTarget = new Map([[6, "Ik heb N"], [7, "Heb je N?"], [8, "Ik wil N"], [9, "Ik ga naar N"], [10, "Ik woon in N"]]).get(chapterNumber);
+      assert.ok(colored.includes("\x1b[34m" + expectedTarget + "\x1b[0m"));
+      assert.doesNotMatch(colored, new RegExp("\\x1b\\[1m" + escapeRegExp(expectedTarget) + "\\x1b\\[0m", "u"));
+
+      if (expectedType.get(chapterNumber) === "Narrative") {
+        const narrativeBlocks = sectionBody(normal, "Narrative").split(/\n\s*\n/u).filter(Boolean);
+        const targetLines = narrativeBlocks.slice(1).join("\n").split("\n").filter((line) => line.trim().length > 0);
+        const translatedLines = sectionBody(translated, "Natural English Translation").split("\n").filter((line) => line.trim().length > 0);
+        assert.equal(targetLines.every((line) => sentenceCountForTest(line) === 1), true);
+        assert.equal(translatedLines.length, targetLines.length);
+        assert.equal(translatedLines.every((line) => sentenceCountForTest(line) === 1), true);
+      }
+    }
+
+    const chapter10Index = readContent.children.findIndex((node) => node.filePath?.includes("chapter-010-basic-sentences-10/chapter.md"));
+    const review610 = readContent.children[chapter10Index + 1];
+    const chapter11Index = readContent.children.findIndex((node) => node.filePath?.includes("chapter-011-"));
+    assert.equal(review610?.label, "Review -- Chapters 6–10");
+    assert.equal(review610?.kind, "review-source");
+    assert.equal(review610?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
+    assert.equal(review610?.itemCount, 80);
+    assert.equal(chapter10Index < chapter11Index && chapter10Index + 1 < chapter11Index, true);
+    assert.equal(readContent.children.some((node) => /Review -- Chapters 5[–-]10/u.test(node.label)), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Chapter 1 audience support, Breakdown, and Vietnamese Characters change visible output independently", async () => {
+  const fixture = await createInstalledLanguageFixture(["vietnamese-curriculum", "dutch-curriculum"], ["com.sleepymario.language.vietnamese", "com.sleepymario.language.dutch"]);
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const chapterFor = (language, path) => tree.children.find((node) => node.label === language).children
+      .find((node) => node.label === "Read content").children.find((node) => node.filePath === path);
+    const vi = chapterFor("Vietnamese", "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md");
+    const nl = chapterFor("Dutch", "units/dutch-core/chapter-001-basic-sentences-1/chapter.md");
+    assert.match(vi.readingSupportPath, /reading-support\.json$/u);
+    assert.match(nl.readingSupportPath, /reading-support\.json$/u);
+
+    const viNormal = await renderLanguageTreeRightPane(vi, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const viExpert = await renderLanguageTreeRightPane(vi, { dataDir: fixture.dataDir, displayMode: "expert" });
+    const viBreakdown = await renderLanguageTreeRightPane(vi, { dataDir: fixture.dataDir, displayMode: "normal", breakdownEnabled: true });
+    const viCharacters = await renderLanguageTreeRightPane(vi, { dataDir: fixture.dataDir, displayMode: "normal", charactersEnabled: true });
+    const viDeveloper = await renderLanguageTreeRightPane(vi, { dataDir: fixture.dataDir, displayMode: "developer", breakdownEnabled: true, charactersEnabled: true });
+    assert.notEqual(viNormal, viExpert);
+    assert.match(viNormal, /### Dialogue/u);
+    assert.doesNotMatch(viNormal, /Learner-facing Dialogue|Line-by-line Breakdown|Sino-Vietnamese/u);
+    assert.match(viNormal, /one way to say who you are/u);
+    assert.doesNotMatch(viNormal, /socially deictic|later chapters expand/u);
+    assert.match(viExpert, /socially deictic|analytic and lacks subject agreement/u);
+    assert.match(viBreakdown, /### Line-by-line Breakdown[\s\S]*complete greeting/u);
+    assert.doesNotMatch(viBreakdown, /Sino-Vietnamese/u);
+    assert.match(viCharacters, /### Sino-Vietnamese Vocabulary[\s\S]*sinh viên \| 生員/u);
+    assert.doesNotMatch(viCharacters, /Line-by-line Breakdown/u);
+    assert.match(viDeveloper, /Brief Introduction: Normal[\s\S]*Brief Introduction: Expert/u);
+    assert.match(viDeveloper, /Line-by-line Breakdown: Normal[\s\S]*Line-by-line Breakdown: Expert/u);
+
+    const nlNormal = await renderLanguageTreeRightPane(nl, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const nlExpert = await renderLanguageTreeRightPane(nl, { dataDir: fixture.dataDir, displayMode: "expert" });
+    const nlBreakdown = await renderLanguageTreeRightPane(nl, { dataDir: fixture.dataDir, displayMode: "normal", breakdownEnabled: true });
+    assert.notEqual(nlNormal, nlExpert);
+    assert.match(nlNormal, /learn `de student` and `de docent` as complete phrases/u);
+    assert.doesNotMatch(nlNormal, /suppletive|article syncretism|later chapters/u);
+    assert.match(nlExpert, /suppletive present form|article syncretism|Expert context/u);
+    assert.match(nlBreakdown, /### Line-by-line Breakdown[\s\S]*friendly greeting/u);
+    assert.match(nlBreakdown, /- `Ik ben Alex Chen\.` uses the same pattern with a name\./u);
+    assert.match(nlBreakdown, /- `Ik ben Sophie de Vries\.` uses the same pattern with a name\./u);
+    assert.match(nlBreakdown, /- `Ik ben Marieke Smit\.` uses the same pattern with a name\./u);
+    assert.doesNotMatch(nlBreakdown, /`Ik ben (?:Alex Chen|Sophie de Vries)\.` use the same pattern/u);
+    assert.match(viBreakdown, /- `Tôi là Maria Garcia\.` uses the same pattern with a name\./u);
+    assert.match(viBreakdown, /- `Tôi là Nguyễn Minh Anh\.` uses the same pattern with a name\./u);
+    assert.match(viBreakdown, /- `Tôi là Trần Thu Hà\.` uses the same pattern with a name\./u);
+    assert.doesNotMatch(viBreakdown, /`Tôi là (?:Maria Garcia|Nguyễn Minh Anh)\.` use the same pattern/u);
+
+    const colored = renderTwoPaneLanguageTree(tree, new Set(), 0, nlExpert, true, 0, 40, "en-US", "navigation", 130);
+    const completeBluePhrase = "\x1b[34mde student\x1b[0m";
+    assert.ok(colored.includes(completeBluePhrase));
+    assert.doesNotMatch(colored, /\x1b\[34mde\x1b\[0m\s+student/u);
+    assert.doesNotMatch(colored, /\x1b\[34mde\x1b\[0m|\x1b\[0mstudent/u);
+    const normalWidthPhraseLine = colored.split("\n").map(stripAnsi).find((line) => line.includes("de student"));
+    assert.match(normalWidthPhraseLine, /So learn de student as one complete/u);
+
+    const narrow = renderTwoPaneLanguageTree(tree, new Set(), 0, nlExpert, true, 0, 40, "en-US", "navigation", 60);
+    assert.ok(narrow.includes(completeBluePhrase));
+    const narrowPhraseLine = narrow.split("\n").map(stripAnsi).find((line) => line.includes("de student"));
+    assert.match(narrowPhraseLine, /de student as one complete phrase\./u);
+    assert.doesNotMatch(narrowPhraseLine, /^student\b/u);
+
+    for (const breakdown of [nlBreakdown, viBreakdown]) {
+      const breakdownExcerpt = breakdown.slice(breakdown.indexOf("### Line-by-line Breakdown"));
+      const visibleBreakdown = renderTwoPaneLanguageTree(tree, new Set(), 0, breakdownExcerpt, true, 0, 40, "en-US", "navigation", 100);
+      assert.match(visibleBreakdown, /\x1b\[34m(?:Ik ben|Tôi là)[^\x1b]+\.\x1b\[0m uses the same/u);
+      const explanatoryLines = visibleBreakdown.split("\n")
+        .map(rightPaneCell)
+        .filter((line) => /uses the same|pattern with a name/u.test(stripAnsi(line)));
+      assert.ok(explanatoryLines.length > 0);
+      for (const line of explanatoryLines) {
+        const explanation = line.includes("uses") ? line.slice(line.indexOf("uses")) : line;
+        assert.doesNotMatch(explanation, /\x1b\[(?:33|38;5;208)m/u);
+      }
+    }
+    const togglePane = stripAnsi(renderTwoPaneLanguageTree(tree, new Set(), 0, viNormal, false, 0, 20, "en-US", "toggles", 170, 4, "normal", false, false, false, true));
+    assert.match(togglePane, /Translation: Off/u);
+    assert.match(togglePane, /Characters: Off/u);
+    assert.match(togglePane, /> Breakdown: Off/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Vietnamese and Korean Characters views use reader-safe tables while retaining packaged identity", async () => {
+  const fixture = await createInstalledLanguageFixture(
+    ["vietnamese-curriculum", "korean-curriculum"],
+    ["com.sleepymario.language.vietnamese", "com.sleepymario.language.korean"]
+  );
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const language = (label) => tree.children.find((node) => node.label === label).children.find((node) => node.label === "Read content");
+    const vietnamese = language("Vietnamese");
+    const expected = new Map([
+      [2, ["nhân viên văn phòng", "人員文房"]],
+      [3, ["sách", "冊", "bút", "筆", "bàn", "盤"]],
+      [4, ["Chapter 4"]],
+      [5, ["phòng học", "房學", "điện thoại", "電話", "trà", "茶"]]
+    ]);
+    for (const [chapter, values] of expected) {
+      const node = vietnamese.children.find((candidate) => candidate.filePath?.includes(`units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-`));
+      assert.ok(node?.readingSupportPath, `Chapter ${chapter} support is installed`);
+      const off = await renderLanguageTreeRightPane(node, { dataDir: fixture.dataDir, displayMode: "normal", charactersEnabled: false });
+      assert.doesNotMatch(off, /Sino-Vietnamese Vocabulary/u);
+      for (const mode of ["normal", "expert", "developer"]) {
+        const output = await renderLanguageTreeRightPane(node, { dataDir: fixture.dataDir, displayMode: mode, charactersEnabled: true });
+        assert.match(output, /### Sino-Vietnamese Vocabulary/u);
+        assert.doesNotMatch(output, /Canonical Identity|Canonical ID|Lexical identity|Sense identity|canonicalIdentity|lexicalEntryId|senseId/u);
+        for (const value of values) assert.match(output, new RegExp(value, "u"));
+        if (chapter !== 4 && mode !== "developer") {
+          assert.match(output, /\| Word \| Characters \| Meaning \| Usage \|/u);
+          assert.doesNotMatch(output, /\bEvidence\b/u);
+        }
+      }
+      const support = JSON.parse((await readInstalledContentEntry({
+        dataDir: fixture.dataDir,
+        packageId: node.packageId,
+        packageVersion: node.packageVersion,
+        path: node.readingSupportPath,
+        locale: "en-US"
+      })).text);
+      for (const entry of support.characters.entries) {
+        assert.match(entry.lexicalEntryId, /^vi\./u);
+        assert.match(entry.senseId, /^vi\./u);
+        assert.equal(typeof entry.provenance.locator, "string");
+      }
+    }
+
+    const korean = language("Korean");
+    const koreanChapter = korean.children.find((node) => node.filePath?.endsWith("chapter-001-basic-life-sentences-1/chapter.md"));
+    assert.ok(koreanChapter);
+    const rawKorean = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: koreanChapter.packageId,
+      packageVersion: koreanChapter.packageVersion,
+      path: koreanChapter.filePath,
+      locale: "en-US"
+    });
+    assert.match(rawKorean.text, /\| Korean Word \| Hanja Form \| Meaning in This Usage\s+\| Status\s+\| Note/u);
+    const koreanOff = await renderLanguageTreeRightPane(koreanChapter, { dataDir: fixture.dataDir, displayMode: "normal", charactersEnabled: false });
+    assert.doesNotMatch(koreanOff, /Sino-Korean Vocabulary|### Hanja/u);
+    for (const mode of ["normal", "expert", "developer"]) {
+      const output = await renderLanguageTreeRightPane(koreanChapter, { dataDir: fixture.dataDir, displayMode: mode, charactersEnabled: true });
+      assert.match(output, /### Sino-Korean Vocabulary/u);
+      assert.doesNotMatch(output, /Canonical Identity|Canonical ID|Lexical identity|Sense identity|canonicalIdentity/u);
+      if (mode !== "developer") assert.match(output, /\| Word \| Characters \| Meaning \| Usage \|/u);
+    }
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("target narrative introductions use base color while translations begin directly with pink body text", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const markdown = [
+    "# Chapter 2 -- Narrative fixture", "",
+    "### Narrative", "", "Context for this narrative wraps", "across a source line.", "",
+    "Dit is de eerste zin.", "Dit is de tweede zin.", "",
+    "### Natural English Translation", "",
+    "This is the first sentence.", "This is the second sentence."
+  ].join("\n");
+  const colored = renderTwoPaneLanguageTree(tree, new Set(), 0, markdown, true, 0, 80, "en-US", "navigation", 150);
+  assert.match(colored, /Context for this narrative wraps across a source line\./u);
+  assert.doesNotMatch(colored, /\x1b\[38;5;213mContext for/u);
+  assert.match(colored, /\x1b\[38;5;213mDit is de eerste zin\.\x1b\[0m/u);
+  assert.doesNotMatch(colored, /Context for the English narrative/u);
+  assert.match(colored, /\x1b\[38;5;213mThis is the first sentence\.\x1b\[0m/u);
+});
+
+test("ordinary source hard wraps reflow at pane width without changing dialogue turns", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const markdown = [
+    "### Learner-facing Narrative", "",
+    "Maria walks", "beside the canal and meets Marieke before class.", "",
+    "### Learner-facing Dialogue", "",
+    "Nguyễn Minh: Đây là một lời thoại dài cần xuống dòng theo chiều rộng của ô nội dung."
+  ].join("\n");
+  const output = stripAnsi(renderTwoPaneLanguageTree(tree, new Set(), 0, markdown, false, 0, 20, "en-US", "navigation", 100));
+  assert.match(output, /Maria walks beside the canal/u);
+  assert.equal((output.match(/Nguyễn Minh:/gu) ?? []).length, 1);
+  assert.match(output, /lời thoại dài/u);
+});
+
+test("Chapter 20 narratives preserve sentence lines while Chapter 21 narratives use paragraphs", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const renderCells = (markdown) => stripAnsi(renderTwoPaneLanguageTree(tree, new Set(), 0, markdown, false, 0, 20, "en-US", "navigation", 180))
+    .split("\n").map(rightPaneCell).filter((line) => line.length > 0);
+  const early = renderCells([
+    "# Chapter 20 -- Early Narrative", "", "### Narrative", "",
+    "Dit is een boek.", "Is dit een boek?", "", "### Natural English Translation", "",
+    "This is a book.", "Is this a book?"
+  ].join("\n"));
+  assert.ok(early.includes("Dit is een boek."));
+  assert.ok(early.includes("Is dit een boek?"));
+  assert.ok(early.includes("This is a book."));
+  assert.ok(early.includes("Is this a book?"));
+  assert.equal(early.some((line) => line.includes("Dit is een boek. Is dit een boek?")), false);
+
+  const later = renderCells([
+    "# Chapter 21 -- Later Narrative", "", "### Narrative", "",
+    "Dit is een boek.", "Is dit een boek?"
+  ].join("\n"));
+  assert.ok(later.includes("Dit is een boek. Is dit een boek?"));
+});
+
+test("Dutch Chapter 12 uses neutral audience-authored Normal and Developer wording", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir, "developer");
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const chapter = readContent.children.find((node) => node.label === "Chapter 12 -- A Simple Daily Routine");
+    const normal = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const developer = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "developer" });
+
+    assert.doesNotMatch(normal, /the learner/iu);
+    assert.match(normal, /The name \[\[grammar:Sophie\]\] comes before the action/u);
+    assert.match(developer, /The name \[\[grammar:Sophie\]\] comes before the action/u);
+    assert.match(developer, /The pattern \[\[grammar:Sophie \+ V stem-t\]\] keeps an overt third-person singular subject/u);
+    assert.doesNotMatch(developer, /the learner/iu);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapters 11-15 summaries render canonical patterns instead of developer descriptions", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir, "developer");
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const easyNode = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-011-015-grammar-easy/chapter.md");
+    const chapter14Node = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-014-two-places-in-a-day/chapter.md");
+    const easyNormal = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const hardNormal = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const hardExpert = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "expert" });
+    const easyDeveloper = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const hardDeveloper = easyDeveloper;
+    const chapter14Normal = await renderLanguageTreeRightPane(chapter14Node, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const chapter14Developer = await renderLanguageTreeRightPane(chapter14Node, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const patterns = ["Hoe gaat het met je? / Het gaat goed.", "Sophie + V stem-t", "Ik + wil + graag + N", "clause + en + clause", "Waar woon je?"];
+
+    for (const pattern of patterns) {
+      assert.match(easyNormal, new RegExp(escapeRegExp(pattern), "u"));
+      assert.match(hardExpert, new RegExp(escapeRegExp(pattern), "u"));
+    }
+    assert.doesNotMatch(easyNormal, /controlled third-person present actions with a named subject|DUT-GRAMMAR-/u);
+    assert.equal(hardNormal, easyNormal);
+    assert.doesNotMatch(hardExpert, /controlled third-person present actions with a named subject|DUT-GRAMMAR-/u);
+    assert.doesNotMatch(easyDeveloper, /DUT-GRAMMAR-/u);
+    assert.match(easyDeveloper, /Sophie \+ V stem-t/u);
+    assert.match(hardDeveloper, /controlled third-person present actions with a named subject/u);
+    assert.match(chapter14Normal, /#### idea \+ en \+ idea[\s\S]*Use \[\[grammar:en\]\] to join two complete ideas/u);
+    assert.doesNotMatch(chapter14Normal, /DUT-GRAMMAR-014/u);
+    assert.doesNotMatch(chapter14Developer, /DUT-GRAMMAR-/u);
+    assert.match(chapter14Developer, /clause \+ en \+ clause/u);
+
+    const renderedEasy = renderTwoPaneLanguageTree(tree, new Set(), 0, easyNormal, false, 0, 100, "en-US", "navigation", 180);
+    const renderedHard = renderTwoPaneLanguageTree(tree, new Set(), 0, hardExpert, false, 0, 100, "en-US", "navigation", 180);
+    assert.match(renderedEasy, /Sophie \+ V stem-t/u);
+    assert.match(renderedHard, /clause \+ en \+ clause/u);
+    assert.doesNotMatch(`${renderedEasy}\n${renderedHard}`, /controlled third-person present actions with a named subject/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapters 16-20 summaries share canonical patterns and hide IDs in Normal", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir, "developer");
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const readContent = dutch.children.find((node) => node.label === "Read content");
+    const easyNode = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-016-020-grammar-easy/chapter.md");
+    const chapter19Node = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-019-asking-for-help/chapter.md");
+    const easyNormal = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const hardNormal = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const hardExpert = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "expert" });
+    const easyDeveloper = await renderLanguageTreeRightPane(easyNode, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const chapter19Normal = await renderLanguageTreeRightPane(chapter19Node, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const chapter19Developer = await renderLanguageTreeRightPane(chapter19Node, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const patterns = ["Ik + V stem", "Wat doe je?", "subject + verb + niet", "Kun je + infinitive?", "time + verb + subject + ..."];
+    for (const pattern of patterns) {
+      assert.match(easyNormal, new RegExp(escapeRegExp(pattern), "u"));
+      assert.match(hardExpert, new RegExp(escapeRegExp(pattern), "u"));
+    }
+    assert.equal(hardNormal, easyNormal);
+    assert.doesNotMatch(`${easyNormal}\n${hardExpert}\n${chapter19Normal}`, /DUT-GRAMMAR-/u);
+    assert.doesNotMatch(easyDeveloper, /DUT-GRAMMAR-/u);
+    assert.doesNotMatch(chapter19Developer, /DUT-GRAMMAR-/u);
+    assert.match(chapter19Developer, /Kun je \+ infinitive\?/u);
+    assert.match(chapter19Normal, /kun[\s\S]*kunnen[\s\S]*to be able to[\s\S]*Infinitive[\s\S]*natuurlijk/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Normal deck preview is unchanged while Developer adds package metadata", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const dutch = tree.children.find((node) => node.label === "Dutch");
+    const decks = dutch.children.find((node) => node.label === "Review decks");
+    const deck = decks.children[0];
+    const before = (await listReadingReviewItems({ dataDir: fixture.dataDir, packageId: deck.packageId, packageVersion: deck.packageVersion, sourcePath: deck.sourcePath })).map((item) => [item.item.id, item.item.prompt.text, item.item.answer.text]);
+    const normal = await renderLanguageTreeRightPane(deck, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const developer = await renderLanguageTreeRightPane(deck, { dataDir: fixture.dataDir, displayMode: "developer" });
+    const after = (await listReadingReviewItems({ dataDir: fixture.dataDir, packageId: deck.packageId, packageVersion: deck.packageVersion, sourcePath: deck.sourcePath })).map((item) => [item.item.id, item.item.prompt.text, item.item.answer.text]);
+    assert.deepEqual(after, before);
+    assert.doesNotMatch(normal, /Developer metadata|Package ID:|Source path:/u);
+    assert.equal(developer.startsWith(normal), true);
+    assert.match(developer, /Developer metadata[\s\S]*Package ID:[\s\S]*Source path:/u);
   } finally {
     await fixture.cleanup();
   }
@@ -509,8 +1268,8 @@ test("language tree exposes Japanese writing placeholders and core review deck",
     assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 20 -- A Day Trip to Kyoto"));
-    assert.ok(readContent.children.filter((node) => node.label === "Grammar - Easy").length >= 4);
-    assert.ok(readContent.children.filter((node) => node.label === "Grammar - Hard").length >= 4);
+    assert.ok(readContent.children.filter((node) => node.label === "Grammar").length >= 4);
+    assert.equal(readContent.children.some((node) => node.label === "Grammar - Hard"), false);
     assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20"]);
   } finally {
     await fixture.cleanup();
@@ -533,6 +1292,89 @@ test("language tree exposes Korean and Chinese review deck labels cleanly", asyn
     assert.deepEqual(chineseReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
     assert.equal(koreanReview.children.some((node) => node.label.includes("com.sleepymario")), false);
     assert.equal(chineseReview.children.some((node) => node.label.includes("cards.tsv")), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Vietnamese read content starts with five canonical Foundation labels before canonical Chapter 1", async () => {
+  const fixture = await createInstalledLanguageFixture(["vietnamese-curriculum"], ["com.sleepymario.language.vietnamese"]);
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const vietnamese = tree.children.find((node) => node.label === "Vietnamese");
+    const readContent = vietnamese.children.find((node) => node.label === "Read content");
+
+    assert.deepEqual(readContent.children.slice(0, 5).map((node) => node.label), [
+      "Foundation Chapter -- 1",
+      "Foundation Chapter -- 2",
+      "Foundation Chapter -- 3",
+      "Foundation Chapter -- 4",
+      "Foundation Chapter -- 5"
+    ]);
+    assert.deepEqual(readContent.children.slice(0, 5).map((node) => node.filePath), [
+      "units/vietnamese-foundation/chapter-001-alphabet-and-orthography/chapter.md",
+      "units/vietnamese-foundation/chapter-002-tones/chapter.md",
+      "units/vietnamese-foundation/chapter-003-vowels-and-diphthongs/chapter.md",
+      "units/vietnamese-foundation/chapter-004-final-consonants-and-pronunciation-contrasts/chapter.md",
+      "units/vietnamese-foundation/chapter-005-audio-dependent-drills/chapter.md"
+    ]);
+    assert.equal(readContent.children[5]?.filePath, "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md");
+    assert.equal(readContent.children.some((node) => node.filePath === "units/vietnamese-core/chapter-010-basic-sentences-10/chapter.md"), true);
+    assert.equal(readContent.children.some((node) => /units\/vietnamese-core\/chapter-(?:0*(?:1[1-9]|[2-9]\d)|\d{4,})/u.test(node.filePath ?? "")), false);
+    const grammarNodes = readContent.children.filter((node) => /grammar-(?:easy|hard)\/chapter\.md$/u.test(node.filePath ?? ""));
+    assert.deepEqual(grammarNodes.map((node) => node.label), ["Grammar", "Grammar"]);
+    assert.deepEqual(grammarNodes.map((node) => node.filePath), [
+      "units/vietnamese-core/chapter-001-005-grammar-easy/chapter.md",
+      "units/vietnamese-core/chapter-006-010-grammar-easy/chapter.md"
+    ]);
+    assert.equal(readContent.children.some((node) => /^Ch (?:1|6) -- Grammar$/u.test(node.label)), false);
+    assert.match(readContent.children.find((node) => node.filePath?.includes("chapter-001-basic-sentences-1"))?.label ?? "", /^Chapter 1\b/u);
+
+    for (const [mode, expectedRole, expectedText] of [
+      ["normal", "grammar-easy", "Use `tôi + là + N`"],
+      ["expert", "grammar-hard", "restricted first-person nominal identity clause"],
+      ["developer", "grammar-easy", "## Normal"]
+    ]) {
+      const modeTree = await buildLanguageTree(fixture.dataDir, mode);
+      const modeReadContent = modeTree.children.find((node) => node.label === "Vietnamese").children.find((node) => node.label === "Read content");
+      const modeGrammar = modeReadContent.children.find((node) => node.filePath?.includes(`chapter-001-005-${expectedRole}`));
+      assert.equal(modeGrammar?.label, "Grammar");
+      const output = await renderLanguageTreeRightPane(modeGrammar, { dataDir: fixture.dataDir, displayMode: mode });
+      assert.doesNotMatch(output, /VIE-GRAMMAR-|grammarId|grammar_id/u);
+      assert.match(output, new RegExp(escapeRegExp(expectedText), "u"));
+      assert.match(output, /^### tôi \+ là \+ N$/mu);
+    }
+    const rawGrammar = await readInstalledContentEntry({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.vietnamese",
+      packageVersion: vietnamese.packageVersion,
+      path: "units/vietnamese-core/chapter-001-005-grammar-easy/chapter.md",
+      locale: "en-US"
+    });
+    assert.match(rawGrammar.text, /grammarId: VIE-GRAMMAR-001/u);
+    assert.match(rawGrammar.text, /### VIE-GRAMMAR-001/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Vietnamese menu exposes both authoritative Chapters 1-10 review decks", async () => {
+  const fixture = await createInstalledLanguageFixture(
+    ["vietnamese-curriculum", "vietnamese-core-reviews"],
+    ["com.sleepymario.language.vietnamese"]
+  );
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const vietnamese = tree.children.find((node) => node.label === "Vietnamese");
+    const reviewDecks = vietnamese.children.find((node) => node.label === "Review decks");
+    assert.ok(reviewDecks);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 1-5"), true, reviewDecks.children.map((node) => node.label).join(", "));
+    const first = reviewDecks.children.find((node) => node.label === "Chapter 1-5");
+    const second = reviewDecks.children.find((node) => node.label === "Chapter 6-10");
+    assert.equal(first?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
+    assert.equal(second?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
+    assert.equal(first?.itemCount, 64);
+    assert.equal(second?.itemCount, 64);
   } finally {
     await fixture.cleanup();
   }
@@ -564,18 +1406,16 @@ test("Korean read content tree starts with fixed Hangul chapter entries and keep
     assert.match(output, /Han Gul 7 -- Compound[\s\S]+받침/u);
     assert.match(output, /Ch 1 -- Names and/u);
     assert.doesNotMatch(output, /Ch 1 -- Vowels/u);
-    assert.equal(readContent.children.some((node) => node.filePath === "review-decks/chapter-001-005/README.md"), true);
-    assert.equal(readContent.children.some((node) => node.filePath === "review-decks/chapter-006-010/README.md"), true);
-    assert.equal(readContent.children.some((node) => node.filePath === "review-decks/chapter-011-015/README.md"), true);
+    assert.equal(readContent.children.some((node) => node.filePath?.startsWith("review-decks/")), false);
   } finally {
     await fixture.cleanup();
   }
 });
 
-test("language tree exposes Korean Grammar Easy and Hard summaries after each completed five-chapter block", async () => {
+test("Developer language tree exposes both grammar variants inside one Grammar section per block", async () => {
   const fixture = await createInstalledLanguageFixture(["korean-curriculum"], ["com.sleepymario.language.korean"]);
   try {
-    const tree = await buildLanguageTree(fixture.dataDir);
+    const tree = await buildLanguageTree(fixture.dataDir, "developer");
     const korean = tree.children.find((node) => node.label === "Korean");
     const readContent = korean.children.find((node) => node.label === "Read content");
     const labels = readContent.children.map((node) => node.label);
@@ -590,47 +1430,35 @@ test("language tree exposes Korean Grammar Easy and Hard summaries after each co
         node.filePath === `units/korean-core/chapter-${paddedEnd}-basic-life-sentences-${blockEnd}/chapter.md` ||
         node.filePath === `units/korean-core/chapter-${paddedEnd}-basic-sentences-${blockEnd}/chapter.md`
       );
-      const easyIndex = readContent.children.findIndex((node, index) => index > coreChapterIndex && node.label === "Grammar - Easy");
-      const hardIndex = readContent.children.findIndex((node, index) => index > easyIndex && node.label === "Grammar - Hard");
-      const easyNode = readContent.children[easyIndex];
-      const hardNode = readContent.children[hardIndex];
+      const grammarIndex = readContent.children.findIndex((node, index) => index > coreChapterIndex && node.label === "Grammar");
+      const grammarNode = readContent.children[grammarIndex];
 
       assert.notEqual(chapterIndex, -1);
       assert.notEqual(coreChapterIndex, -1);
-      assert.equal(easyIndex, coreChapterIndex + 1);
-      assert.equal(hardIndex, easyIndex + 1);
-      assert.equal(easyNode.kind, "content");
-      assert.equal(hardNode.kind, "content");
-      assert.equal(easyNode.filePath, `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-easy/chapter.md`);
-      assert.equal(hardNode.filePath, `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-hard/chapter.md`);
-
-      const easyContent = await readInstalledContentEntry({
-        dataDir: fixture.dataDir,
-        packageId: "com.sleepymario.language.korean",
-        path: easyNode.filePath
-      });
-      const hardContent = await readInstalledContentEntry({
-        dataDir: fixture.dataDir,
-        packageId: "com.sleepymario.language.korean",
-        path: hardNode.filePath
-      });
-      const easyOutput = renderTwoPaneLanguageTree(
+      assert.equal(grammarIndex, coreChapterIndex + 1);
+      assert.equal(grammarNode.kind, "content");
+      assert.equal(grammarNode.filePath, `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-easy/chapter.md`);
+      assert.deepEqual(grammarNode.grammarVariantPaths, [
+        `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-easy/chapter.md`,
+        `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-hard/chapter.md`
+      ]);
+      const grammarMarkdown = await renderLanguageTreeRightPane(grammarNode, { dataDir: fixture.dataDir, displayMode: "developer" });
+      const grammarOutput = renderTwoPaneLanguageTree(
         tree,
         expanded,
-        visible.findIndex((entry) => entry.node.id === easyNode.id),
-        easyContent.text,
+        visible.findIndex((entry) => entry.node.id === grammarNode.id),
+        grammarMarkdown,
         false
       );
-      const hardOutput = renderTwoPaneLanguageTree(tree, expanded, visible.findIndex((entry) => entry.node.id === hardNode.id), hardContent.text, false);
 
-      assert.match(easyOutput, /Grammar - Easy/);
-      assert.match(hardOutput, /Grammar - Hard/);
-      assert.match(easyOutput, /\|\s*>\s+Grammar -- Easy\s+\|/u);
-      assert.match(hardOutput, /\|\s*>\s+Grammar -- Hard\s+\|/u);
-      assert.doesNotMatch(easyOutput, /\|\s*>\s+(?:\.\.\.|…)\s+\|/u);
-      assert.doesNotMatch(hardOutput, /\|\s*>\s+(?:\.\.\.|…)\s+\|/u);
-      assert.match(easyContent.text, /Plain Summary/);
-      assert.match(hardContent.text, /Technical Summary/);
+      assert.equal((grammarMarkdown.match(/^# Grammar$/gmu) ?? []).length, 1);
+      assert.match(grammarMarkdown, /^## Normal$/mu);
+      assert.match(grammarMarkdown, /^## Expert$/mu);
+      assert.match(grammarMarkdown, /Plain Summary[\s\S]*Technical Summary/u);
+      assert.doesNotMatch(grammarMarkdown, /Grammar Easy|Grammar Hard|Grammar: Normal|Grammar: Expert/u);
+      assert.doesNotMatch(grammarMarkdown, /^#{1,6} Grammar Points?$/mu);
+      assert.match(grammarOutput, /\|\s*>\s+Grammar\s+\|/u);
+      assert.doesNotMatch(grammarOutput, /\|\s*>\s+(?:\.\.\.|…)\s+\|/u);
     }
 
     assert.equal(labels.includes("Grammar Summary"), false);
@@ -641,7 +1469,7 @@ test("language tree exposes Korean Grammar Easy and Hard summaries after each co
   }
 });
 
-test("Dutch read tree includes the complete zero-padded Chapters 11-15 block", async () => {
+test("Dutch read tree includes the complete zero-padded Chapters 11-25 blocks", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
@@ -649,13 +1477,21 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-15 block", a
     const readContent = dutch.children.find((node) => node.label === "Read content");
     const chapter11 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md");
     const chapter15 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-015-asking-where-someone-lives/chapter.md");
+    const chapter16 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-016-working-at-the-library/chapter.md");
+    const chapter20 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-020-an-appointment-in-town/chapter.md");
+    const chapter25 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-025-going-to-the-museum/chapter.md");
 
     assert.equal(chapter11?.label, "Chapter 11 -- Asking How Someone Is");
     assert.equal(chapter15?.label, "Chapter 15 -- Asking Where Someone Lives");
-    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-016-/u.test(node.filePath ?? "")), false);
+    assert.equal(chapter16?.label, "Chapter 16 -- Working at the Library");
+    assert.equal(chapter20?.label, "Chapter 20 -- An Appointment in Town");
+    assert.equal(chapter25?.label, "Chapter 25 -- Going to the Museum");
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-026-/u.test(node.filePath ?? "")), false);
     assert.equal(readContent.children.some((node) => /chapter-011-015-grammar-(?:easy|hard)/u.test(node.filePath ?? "")), true);
     const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 11-15"), true);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 16-20"), true);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 21-25"), true);
   } finally {
     await fixture.cleanup();
   }
@@ -681,14 +1517,14 @@ test("language tree exposes Mandarin variant readable content with script-specif
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Introduction to Hanyu Pinyin"));
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(traditionalReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.ok(traditionalReadContent.children.some((node) => node.label === "Grammar - Easy"));
-    assert.ok(traditionalReadContent.children.some((node) => node.label === "Grammar - Hard"));
+    assert.ok(traditionalReadContent.children.some((node) => node.label === "Grammar"));
+    assert.equal(traditionalReadContent.children.some((node) => node.label === "Grammar - Hard"), false);
     assert.deepEqual(traditionalReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Introduction to Hanyu Pinyin"));
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(simplifiedReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Grammar - Easy"));
-    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Grammar - Hard"));
+    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Grammar"));
+    assert.equal(simplifiedReadContent.children.some((node) => node.label === "Grammar - Hard"), false);
     assert.deepEqual(simplifiedReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
   } finally {
     await fixture.cleanup();
@@ -790,7 +1626,7 @@ test("two-pane renderer styles tree state and markdown-like right pane content",
   assert.doesNotMatch(output, /# Heading/);
   assert.doesNotMatch(output, /```/);
   assert.doesNotMatch(output, /^.*\|\s+code\s+\|.*$/mu);
-  assert.match(output, /\x1b\[38;5;213mraw code\x1b\[0m/u);
+  assert.doesNotMatch(output, /\x1b\[38;5;213mraw code\x1b\[0m/u);
   assert.match(output, /Example/u);
   assert.match(output, /Language/u);
   assert.doesNotMatch(output, /^\s*\.\.\.\s*$/mu);
@@ -819,22 +1655,35 @@ test("three-pane renderer separates navigation output and toggles", () => {
   assert.match(englishPlain, /Output/u);
   assert.match(englishPlain, /Toggles/u);
   assert.equal(cells[2].includes("English"), false);
-  assert.equal(cells[3].trim(), "English");
-  assert.match(english, /\x1b\[1m\x1b\[38;5;208mEnglish\x1b\[0m/u);
-  assert.match(chinese, /\x1b\[7m\x1b\[1m> 中文（臺灣）\x1b\[0m/u);
+  assert.equal(cells[3].trim(), "Source: English");
+  assert.match(english, /\x1b\[1m\x1b\[38;5;208mSource: English\x1b\[0m/u);
+  assert.match(chinese, /\x1b\[7m\x1b\[1m> Source: 中文（臺灣）\x1b\[0m/u);
   assert.match(englishPlain, /Left\/Right focus/u);
+  assert.match(englishPlain, /View mode: Normal/u);
+  assert.match(englishPlain, /Translation: Off/u);
+  assert.doesNotMatch(englishPlain, /● Normal|○ Developer/u);
+});
+
+test("Normal is the default and the view mode uses one toggle row", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const normal = stripAnsi(renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "navigation", 150));
+  const developer = stripAnsi(renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "toggles", 150, 1, "developer"));
+  assert.match(normal, /View mode: Normal/u);
+  assert.doesNotMatch(normal, /View mode: Developer/u);
+  assert.match(developer, /> View mode: Developer/u);
+  assert.equal((developer.match(/View mode:/gu) ?? []).length, 1);
 });
 
 test("focus selector jumps between navigation and the toggle row while skipping titles and Output", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
   const navigation = renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "navigation", 150);
   const toggles = renderTwoPaneLanguageTree(tree, new Set(), 0, "Preview", true, 0, 28, "en-US", "toggles", 150);
-  const selectedToggleRow = stripAnsi(toggles).split("\n").find((line) => line.includes("> English"));
+  const selectedToggleRow = stripAnsi(toggles).split("\n").find((line) => line.includes("> Source: English"));
 
   assert.match(navigation, /\x1b\[7m\x1b\[1m>\s+WhackSmacker\x1b\[0m/u);
-  assert.match(toggles, /\x1b\[7m\x1b\[1m> English\x1b\[0m/u);
+  assert.match(toggles, /\x1b\[7m\x1b\[1m> Source: English\x1b\[0m/u);
   assert.equal((toggles.match(/\x1b\[7m/gu) ?? []).length, 1);
-  assert.equal(selectedToggleRow?.split("|")[3].trim(), "> English");
+  assert.equal(selectedToggleRow?.split("|")[3].trim(), "> Source: English");
   assert.doesNotMatch(toggles, /\x1b\[7m[^\n]*Toggles/u);
   assert.doesNotMatch(toggles, /\x1b\[7m[^\n]*Output/u);
 });
@@ -941,8 +1790,8 @@ test("two-pane renderer preserves read content chapter titles without ellipsis-o
   assert.match(output, /Greetings/u);
   assert.match(output, /Ch 15 -- Casual Absence/u);
   assert.match(output, /Ch 15 -- Casual Absence I/u);
-  assert.match(output, /Grammar -- Easy/u);
-  assert.match(output, /Grammar -- Hard/u);
+  assert.equal((output.match(/Grammar/gu) ?? []).length >= 2, true);
+  assert.doesNotMatch(output, /Grammar -- (?:Easy|Hard)/u);
   assert.doesNotMatch(output, /Ch 1\s*--\s*\.\.\./u);
   assert.doesNotMatch(output, /\|\s*(?:\.\.\.|…)\s+\|/u);
 });
@@ -957,6 +1806,12 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
       label: "Read content",
       kind: "read-section",
       children: [{
+        id: "foundation-1",
+        label: "Foundation Chapter -- 1",
+        kind: "content",
+        packageId: "com.sleepymario.language.vietnamese",
+        filePath: "units/vietnamese-foundation/chapter-001-alphabet/chapter.md"
+      }, {
         id: "hangul-1",
         label: "Chapter 1 -- Vowels",
         kind: "content",
@@ -973,9 +1828,10 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
     }]
   };
   const expanded = new Set(["whacksmacker", "read-content"]);
-  const selectedHangulOutput = renderTwoPaneLanguageTree(tree, expanded, 2, "Preview", true);
-  const selectedChapterOutput = renderTwoPaneLanguageTree(tree, expanded, 3, "Preview", true);
-  const selectedGrammarOutput = renderTwoPaneLanguageTree(tree, expanded, 4, "Preview", true);
+  const selectedFoundationOutput = renderTwoPaneLanguageTree(tree, expanded, 2, "Preview", true);
+  const selectedHangulOutput = renderTwoPaneLanguageTree(tree, expanded, 3, "Preview", true);
+  const selectedChapterOutput = renderTwoPaneLanguageTree(tree, expanded, 4, "Preview", true);
+  const selectedGrammarOutput = renderTwoPaneLanguageTree(tree, expanded, 5, "Preview", true);
   const reviewDeckOutput = renderTwoPaneLanguageTree({
     id: "whacksmacker",
     label: "WhackSmacker",
@@ -992,26 +1848,61 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
       }]
     }]
   }, new Set(["whacksmacker", "review-decks"]), 0, "Preview", true);
-  const output = `${selectedHangulOutput}\n${selectedChapterOutput}\n${selectedGrammarOutput}\n${reviewDeckOutput}`;
-  const reviewDeckColor = "\x1b[33m";
+  const output = `${selectedFoundationOutput}\n${selectedHangulOutput}\n${selectedChapterOutput}\n${selectedGrammarOutput}\n${reviewDeckOutput}`;
+  const chapterTokenColor = "\x1b[33m";
+  const reviewStatusColor = "\x1b[34m";
   const selectedStyle = "\x1b[7m\x1b[1m";
   const reset = "\x1b[0m";
   const stripped = stripAnsi(output);
 
-  assert.match(reviewDeckOutput, new RegExp(`${escapeRegExp(reviewDeckColor)}[^\\x1b]*Ch 1-5${escapeRegExp(reset)}`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Han Gul 1${escapeRegExp(reset)} -- Vowels`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Ch 1${escapeRegExp(reset)} -- Names`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Grammar${escapeRegExp(reset)} -- Easy`, "u"));
-  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Names`, "u"));
-  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(reviewDeckColor)}Easy`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(reviewDeckColor)}Han Gul 1`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(reviewDeckColor)}Ch 1`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(reviewDeckColor)}Grammar`, "u"));
+  assert.match(reviewDeckOutput, new RegExp(`${escapeRegExp(reviewStatusColor)}[^\\x1b]*Ch 1-5${escapeRegExp(reset)}`, "u"));
+  assert.doesNotMatch(reviewDeckOutput, /\x1b\[33m[^\x1b]*Ch 1-5/u);
+  assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Foundation${escapeRegExp(reset)} Chapter -- 1`, "u"));
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Foundation Chapter`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Han Gul 1${escapeRegExp(reset)} -- Vowels`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Ch 1${escapeRegExp(reset)} -- Names`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Grammar${escapeRegExp(reset)}`, "u"));
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Names`, "u"));
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Easy`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(chapterTokenColor)}Foundation${escapeRegExp(reset)}${escapeRegExp(selectedStyle)} Chapter -- 1`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(chapterTokenColor)}Han Gul 1`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(chapterTokenColor)}Ch 1`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(chapterTokenColor)}Grammar`, "u"));
+  assert.match(stripped, /Foundation Chapter -- 1/u);
   assert.match(stripped, /Han Gul 1 -- Vowels/u);
   assert.match(stripped, /Ch 1 -- Names and First/u);
-  assert.match(stripped, /Grammar -- Easy/u);
+  assert.match(stripped, /Grammar/u);
+  assert.doesNotMatch(stripped, /Grammar -- Easy/u);
   assert.doesNotMatch(stripped, /Ch 1\s*--\s*\.\.\./u);
   assert.doesNotMatch(stripped, /\|\s*(?:\.\.\.|…)\s+\|/u);
+});
+
+test("Vietnamese numbered chapter labels use exact dynamic Ch N -- topic formatting", () => {
+  const chapters = [
+    { number: 1, label: "Chapter 1 — Names and First Greetings" },
+    { number: 10, label: "Chapter 10: Places" },
+    { number: 123, label: "Chapter 123 - Future Topic" }
+  ];
+  const tree = {
+    id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
+      id: "read-content", label: "Read content", kind: "read-section",
+      children: chapters.map(({ number, label }) => ({
+        id: `vi-${number}`, label, kind: "content",
+        packageId: "com.sleepymario.language.vietnamese",
+        filePath: `units/vietnamese-core/chapter-${String(number).padStart(3, "0")}-topic/chapter.md`
+      }))
+    }]
+  };
+  const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker", "read-content"]), 2, "Preview", true, 0, 15, "en-US", "navigation", 160);
+  const plain = stripAnsi(output);
+  assert.match(plain, /Ch 1 -- Names and First Greetings/u);
+  assert.match(plain, /Ch 10 -- Places/u);
+  assert.match(plain, /Ch 123 -- Future Topic/u);
+  assert.doesNotMatch(plain, /Ch \d+(?:—|:|-\s(?!-))/u);
+  for (const { number } of chapters) {
+    assert.match(output, new RegExp(`${escapeRegExp("\x1b[33m")}Ch ${number}${escapeRegExp("\x1b[0m")}(?:\\x1b\\[[0-9;]*m)* --`, "u"));
+  }
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp("\x1b[33m")}[^\x1b]*(?:Names|Places|Future Topic)`, "u"));
 });
 
 test("review deck menu status distinguishes not started finished waiting and due decks", () => {
@@ -1022,7 +1913,7 @@ test("review deck menu status distinguishes not started finished waiting and due
     sourcePath: "review-decks/test/cards.tsv",
     itemId
   });
-  const sourceIds = new Set(["card-1", "card-2"]);
+  const cardIdentities = [identity("card-1"), identity("card-2")];
   const initial1 = createInitialReviewState(identity("card-1"), now);
   const initial2 = createInitialReviewState(identity("card-2"), now);
   const due = {
@@ -1041,6 +1932,7 @@ test("review deck menu status distinguishes not started finished waiting and due
   };
   const suspended1 = {
     ...waiting,
+    nextReviewAt: "2026-07-09T00:00:00Z",
     status: "suspended"
   };
   const suspended2 = {
@@ -1051,36 +1943,34 @@ test("review deck menu status distinguishes not started finished waiting and due
     status: "suspended"
   };
 
-  assert.deepEqual(reviewDeckMenuStatusFromStates(sourceIds, [], now), {
-    kind: "not_started",
-    dueCardCount: 0,
-    text: "Not started yet."
+  assert.deepEqual(classifyReviewDeckMenuStatus({ deckId: "test", cardIdentities, savedProgress: [], now }), {
+    status: "not_started",
+    dueCardCount: 0
   });
-  assert.deepEqual(reviewDeckMenuStatusFromStates(sourceIds, [initial1, initial2], now), {
-    kind: "not_started",
-    dueCardCount: 0,
-    text: "Not started yet."
+  assert.deepEqual(classifyReviewDeckMenuStatus({ deckId: "test", cardIdentities, savedProgress: [initial1, initial2], now }), {
+    status: "not_started",
+    dueCardCount: 0
   });
-  assert.deepEqual(reviewDeckMenuStatusFromStates(sourceIds, [suspended1, suspended2], now), {
-    kind: "finished",
-    dueCardCount: 0,
-    text: "Finished."
+  assert.deepEqual(classifyReviewDeckMenuStatus({ deckId: "test", cardIdentities, savedProgress: [suspended1, suspended2], now }), {
+    status: "finished",
+    dueCardCount: 0
   });
-  assert.deepEqual(reviewDeckMenuStatusFromStates(new Set(["card-1"]), [waiting], now), {
-    kind: "no_cards_to_review",
-    dueCardCount: 0,
-    text: "No new cards to review right now."
+  assert.deepEqual(classifyReviewDeckMenuStatus({ deckId: "test", cardIdentities: [identity("card-1")], savedProgress: [waiting], now }), {
+    status: "no_cards_to_review",
+    dueCardCount: 0
   });
-  assert.deepEqual(reviewDeckMenuStatusFromStates(sourceIds, [due], now), {
-    kind: "has_cards_to_review",
-    dueCardCount: 2,
-    text: "There are 2 cards to review."
+  assert.deepEqual(classifyReviewDeckMenuStatus({ deckId: "test", cardIdentities, savedProgress: [due], now }), {
+    status: "has_cards_to_review",
+    dueCardCount: 2
   });
-  assert.deepEqual(reviewDeckMenuStatusFromStates(new Set(), [], now), {
-    kind: "not_started",
-    dueCardCount: 0,
-    text: "Not started yet."
+  assert.deepEqual(classifyReviewDeckMenuStatus({ deckId: "test", cardIdentities: [], savedProgress: [], now }), {
+    status: "not_started",
+    dueCardCount: 0
   });
+  assert.deepEqual(classifyReviewDeckMenuStatus({ deckId: "other", cardIdentities: [identity("other-card")], savedProgress: [due], now }), {
+    status: "not_started",
+    dueCardCount: 0
+  }, "progress remains isolated by deck item identity");
 });
 
 test("two-pane renderer colors review deck rows by review status", () => {
@@ -1118,19 +2008,87 @@ test("two-pane renderer colors review deck rows by review status", () => {
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker", "review-decks"]), 5, "There are 17 cards to review.", true);
   const selectedStyle = "\x1b[7m\x1b[1m";
 
+  assert.equal(reviewDeckStatusStyle("not_started"), "\x1b[35m");
+  assert.equal(reviewDeckStatusStyle("no_cards_to_review"), menuStyles.defaultForeground);
+  assert.equal(reviewDeckStatusStyle("has_cards_to_review"), "\x1b[34m");
+  assert.equal(reviewDeckStatusStyle("finished"), "\x1b[32m");
   assert.match(output, /\x1b\[35m[^\x1b\n]*Not Started/u);
   assert.doesNotMatch(output, /\x1b\[36m[^\x1b\n]*Not Started/u);
   assert.match(output, /\x1b\[32m[^\x1b\n]*Finished/u);
-  assert.match(output, /\x1b\[34m[^\x1b\n]*Waiting/u);
-  assert.match(output, /\x1b\[33m[^\x1b\n]*Due Now/u);
-  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}${escapeRegExp("\x1b[33m")}[^\\x1b]*Due Now`, "u"));
+  const waitingLine = output.split("\n").find((line) => stripAnsi(line).includes("Waiting"));
+  assert.ok(waitingLine);
+  assert.doesNotMatch(statusSequenceBeforeLabel(waitingLine, "Waiting"), /\x1b\[(?:3[2-5]|38;5;\d+)m/u, "waiting row uses the default foreground without inheriting another status color");
+  assert.match(output, /\x1b\[34m[^\x1b\n]*Due Now/u);
+  assert.doesNotMatch(output, /\x1b\[33m[^\x1b\n]*Due Now/u);
+  assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp("\x1b[34m")}Due Now`, "u"));
   assert.match(stripAnsi(output), /There are 17 cards to review\./u);
+});
+
+test("complete review labels use the global status palette across languages and NO_COLOR", () => {
+  const states = [
+    ["not_started", "\x1b[35m"],
+    ["no_cards_to_review", ""],
+    ["has_cards_to_review", "\x1b[34m"],
+    ["finished", "\x1b[32m"]
+  ];
+  for (const [status, color] of states) {
+    const tree = {
+      id: "whacksmacker",
+      label: "WhackSmacker",
+      kind: "root",
+      children: [{
+        id: "review-decks",
+        label: "Review decks",
+        kind: "review-section",
+        children: [{
+          id: `review-${status}`,
+          label: "Review -- Chapters 1–5",
+          kind: "review-source",
+          reviewStatus: status
+        }]
+      }]
+    };
+    const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker", "review-decks"]), 0, "", true, 0, 80, "en-US", "navigation", 180);
+    const line = output.split("\n").find((candidate) => stripAnsi(candidate).includes("Review -- Chapters 1–5"));
+    assert.ok(line);
+    if (color === "") {
+      assert.doesNotMatch(statusSequenceBeforeLabel(line, "Review -- Chapters 1–5"), /\x1b\[(?:3[2-5]|38;5;\d+)m/u);
+    } else {
+      assert.match(line, new RegExp(`${escapeRegExp(color)}[^\\x1b\\n]*Review -- Chapters 1–5${escapeRegExp("\x1b[0m")}`, "u"));
+    }
+    assert.doesNotMatch(line, /\x1b\[33m/u, "yellow is never a review status color");
+    const noColor = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker", "review-decks"]), 0, "", false, 0, 80, "en-US", "navigation", 180);
+    assert.doesNotMatch(noColor, /\x1b\[/u);
+    assert.match(noColor, /Review -- Chapters 1–5/u);
+  }
+
+  const languages = ["Dutch", "Vietnamese", "Korean", "Chinese", "Japanese"];
+  const tree = {
+    id: "whacksmacker",
+    label: "WhackSmacker",
+    kind: "root",
+    children: languages.map((language) => ({
+      id: language.toLowerCase(),
+      label: language,
+      kind: "package",
+      children: [{
+        id: `${language.toLowerCase()}:review`,
+        label: "Review -- Chapters 1–5",
+        kind: "review-source",
+        reviewStatus: "has_cards_to_review"
+      }]
+    }))
+  };
+  const expanded = new Set(["whacksmacker", ...languages.map((language) => language.toLowerCase())]);
+  const output = renderTwoPaneLanguageTree(tree, expanded, 0, "", true, 0, 80, "en-US", "navigation", 220);
+  assert.equal((output.match(/\x1b\[34m[^\x1b\n]*Review -- Chapters 1–5\x1b\[0m/gu) ?? []).length, languages.length);
+  assert.doesNotMatch(output, /\x1b\[33m[^\x1b\n]*Review -- Chapters/u);
 });
 
 test("review deck tree status repaints after review progress changes", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
-    const now = "2026-07-10T00:00:00Z";
+    const now = new Date().toISOString().replace(/\.\d{3}Z$/u, "Z");
     await syncReadingReviewItems({
       dataDir: fixture.dataDir,
       packageId: "com.sleepymario.language.dutch",
@@ -1167,6 +2125,19 @@ test("review deck tree status repaints after review progress changes", async () 
     assert.equal(partiallyReviewedDeck.reviewStatus, "has_cards_to_review");
     assert.equal(partiallyReviewedDeck.reviewStatusText, `There are ${partiallyReviewedDeck.dueCardCount} cards to review.`);
     assert.ok((partiallyReviewedDeck.dueCardCount ?? 0) > 0);
+    const dueOutput = renderTwoPaneLanguageTree({
+      id: "whacksmacker",
+      label: "WhackSmacker",
+      kind: "root",
+      children: [{
+        id: "review-decks",
+        label: "Review decks",
+        kind: "review-section",
+        children: [partiallyReviewedDeck]
+      }]
+    }, new Set(["whacksmacker", "review-decks"]), 0, partiallyReviewedDeck.reviewStatusText, true);
+    assert.match(dueOutput, /\x1b\[34m[^\x1b\n]*Ch 1-5/u);
+    assert.doesNotMatch(dueOutput, /\x1b\[33m[^\x1b\n]*Ch 1-5/u);
 
     for (const item of sourceItems) {
       await recordReadingReviewAnswer({
@@ -1196,8 +2167,9 @@ test("review deck tree status repaints after review progress changes", async () 
 
     assert.equal(refreshedDeck.reviewStatus, "no_cards_to_review");
     assert.equal(refreshedDeck.reviewStatusText, "No new cards to review right now.");
-    assert.match(output, /\x1b\[34m[^\x1b\n]*Ch 1-5/u);
-    assert.doesNotMatch(output, /\x1b\[33m[^\x1b\n]*Ch 1-5/u);
+    const refreshedLine = output.split("\n").find((line) => stripAnsi(line).includes("Ch 1-5"));
+    assert.ok(refreshedLine);
+    assert.doesNotMatch(statusSequenceBeforeLabel(refreshedLine, "Ch 1-5"), /\x1b\[(?:3[2-5]|38;5;\d+)m/u);
     assert.match(stripAnsi(output), /No new cards to review right now\./u);
   } finally {
     await fixture.cleanup();
@@ -1268,26 +2240,32 @@ test("Korean read content menu pins seven Hangul chapter entries before numbered
   assert.equal(items.some((item) => item.filePath === "review-decks/chapter-006-010/README.md"), true);
 });
 
-test("two-pane renderer styles Korean read-content blocks pink without affecting alignment", () => {
+test("learner-facing dialogue uses purple labels and pink utterances without affecting alignment", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
-    "```text",
-    "마리아: 안녕하세요. 저는 마리아 가르시아입니다.",
-    "김민준: 안녕하세요. 저는 김민준입니다.",
-    "```",
+    "### Learner-facing Dialogue",
     "",
     "```text",
-    "제 이름은 ____입니다.",
-    "```"
+    "마리아  : 안녕하세요. 저는 마리아 가르시아입니다.",
+    "김민준  : 안녕하세요. 저는 김민준입니다.",
+    "```",
+    "",
+    "### Learner-facing Narrative",
+    "",
+    "마리아는 학생입니다. 제 이름은 ____입니다."
   ].join("\n"), true);
   const stripped = stripAnsi(output);
   const pink = "\x1b[38;5;213m";
+  const purple = "\x1b[38;5;141m";
+  const reset = "\x1b[0m";
 
-  assert.match(output, new RegExp(`${escapeRegExp(pink)}마리아:`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(pink)}김민준:`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(pink)}제 이름은 ____입니다\\.`, "u"));
-  assert.match(stripped, /마리아: 안녕하세요/u);
-  assert.match(stripped, /김민준: 안녕하세요/u);
+  assert.match(output, new RegExp(`${escapeRegExp(purple)}마리아  :${escapeRegExp(reset)} ${escapeRegExp(pink)}안녕하세요\\. 저는 마리아 가르시아입니다\\.${escapeRegExp(reset)}`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(purple)}김민준  :${escapeRegExp(reset)} ${escapeRegExp(pink)}안녕하세요\\. 저는 김민준입니다\\.${escapeRegExp(reset)}`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(pink)}마리아는 학생입니다\\. 제 이름은 ____입니다\\.${escapeRegExp(reset)}`, "u"));
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(purple)}마리아  : 안녕하세요`, "u"));
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(purple)}마리아는`, "u"));
+  assert.match(stripped, /마리아\s+: 안녕하세요/u);
+  assert.match(stripped, /김민준\s+: 안녕하세요/u);
   assert.match(stripped, /제 이름은 ____입니다\./u);
   assert.doesNotMatch(stripped, /^.*\|\s+code\s+\|.*$/mu);
 
@@ -1301,6 +2279,57 @@ test("two-pane renderer styles Korean read-content blocks pink without affecting
   assert.equal(dialogueLines.length, 2);
   assert.deepEqual(new Set(colonColumns).size, 1);
   assert.deepEqual(new Set(sentenceColumns).size, 1);
+});
+
+test("learner-facing dialogue wrapping keeps continuation utterances pink and Unicode labels aligned", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
+    "### Learner-facing Dialogue",
+    "",
+    "Nguyễn Minh: Đây là một câu nói rất dài để buộc phần lời thoại xuống dòng tiếp theo trong ô nội dung.",
+    "Ánh        : Chào bạn!",
+    "張偉       : 你好！"
+  ].join("\n"), true, 0, 12, "en-US", "navigation", 100);
+  const pink = "\x1b[38;5;213m";
+  const purple = "\x1b[38;5;141m";
+  const reset = "\x1b[0m";
+  const stripped = stripAnsi(output);
+
+  assert.match(output, new RegExp(`${escapeRegExp(purple)}Nguyễn Minh:${escapeRegExp(reset)} ${escapeRegExp(pink)}Đây là`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(pink)}dài để buộc phần lời${escapeRegExp(reset)}`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(purple)}Ánh        :${escapeRegExp(reset)} ${escapeRegExp(pink)}Chào bạn!${escapeRegExp(reset)}`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(purple)}張偉       :${escapeRegExp(reset)} ${escapeRegExp(pink)}你好！${escapeRegExp(reset)}`, "u"));
+  const aligned = stripped.split("\n").map(rightPaneCell).filter((line) => /Chào bạn|你好/u.test(line));
+  assert.equal(aligned.length, 2);
+  assert.deepEqual(new Set(aligned.map((line) => displayColumnOf(line, ":"))).size, 1);
+});
+
+test("Source and Translation state preserve shared reading colors", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const text = [
+    "### Learner-facing Dialogue", "", "Maria: Xin chào.", "",
+    "### Natural English Translation", "", "Maria: Hello."
+  ].join("\n");
+  const semanticBoundary = "\x1b[38;5;141mMaria:\x1b[0m \x1b[38;5;213mXin chào.\x1b[0m";
+  for (const [sourceLocale, translationEnabled] of [["en-US", false], ["en-US", true], ["zh-Hant-TW", false], ["zh-Hant-TW", true]]) {
+    const output = renderTwoPaneLanguageTree(tree, new Set(), 0, text, true, 0, 20, sourceLocale, "toggles", 150, 2, "normal", translationEnabled);
+    assert.ok(output.includes(semanticBoundary));
+    assert.ok(output.includes("\x1b[38;5;141mMaria:\x1b[0m \x1b[38;5;213mHello.\x1b[0m"));
+  }
+});
+
+test("NO_COLOR and non-TTY rendering preserve semantic reading text without ANSI", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const text = [
+    "### Learner-facing Dialogue", "", "Nguyễn Minh: Chào bạn!", "",
+    "### Learner-facing Narrative", "", "Maria đi học."
+  ].join("\n");
+  for (const colorsEnabled of [shouldUseTerminalColors(true, { NO_COLOR: "1" }), shouldUseTerminalColors(false, {})]) {
+    const output = renderTwoPaneLanguageTree(tree, new Set(), 0, text, colorsEnabled, 0, 20, "en-US", "navigation", 150);
+    assert.doesNotMatch(output, /\x1b\[/u);
+    assert.match(output, /Nguyễn Minh: Chào bạn!/u);
+    assert.match(output, /Maria đi học\./u);
+  }
 });
 
 test("two-pane renderer starts chapter content near the content pane border", () => {
@@ -1340,7 +2369,7 @@ test("two-pane renderer supports right pane scroll offsets", () => {
     label: "WhackSmacker",
     kind: "root"
   };
-  const longText = Array.from({ length: 40 }, (_, index) => `Line ${index + 1}`).join("\n");
+  const longText = Array.from({ length: 40 }, (_, index) => `- Line ${index + 1}`).join("\n");
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, longText, false, 10);
 
   assert.match(output, /Line 11/);
@@ -1356,11 +2385,11 @@ test("two-pane renderer pins embedded review controls to the bottom bar", () => 
     kind: "root"
   };
   const longReview = [
-    "Review Prompt",
+    "Phrase:",
     "",
     "question",
     "",
-    "Review Answer",
+    "Answer:",
     "",
     ...Array.from({ length: 35 }, (_, index) => `answer detail ${index + 1}`),
     "[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]",
@@ -1384,7 +2413,7 @@ test("Dutch review sources submenu uses clean selectable deck labels", async () 
     });
     const items = reviewSourcesToMenuItems(sources);
 
-    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15"]);
+    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25"]);
     assert.equal(items.some((item) => item.label.includes("com.sleepymario.language.dutch")), false);
     assert.equal(items.some((item) => item.label.includes("cards.tsv")), false);
   } finally {
@@ -1444,9 +2473,9 @@ test("selecting an installed review source runs review inside the right pane", a
     assert.match(terminal.output, /Review decks/);
     assert.match(terminal.output, /Chapter 1-5/);
     assert.match(terminal.output, /Press Enter or Space to start review in this pane\./);
-    assert.match(terminal.output, /Review Prompt/);
-    assert.match(terminal.output, /Review Answer/);
-    assert.match(terminal.output, /Review Prompt[\s\S]+Review Answer/);
+    assert.match(terminal.output, /Phrase:/);
+    assert.match(terminal.output, /Answer:/);
+    assert.match(terminal.output, /Phrase:[\s\S]+Answer:/);
     assert.doesNotMatch(stripAnsi(terminal.output), /^Prompt$/m);
     assert.doesNotMatch(stripAnsi(terminal.output), /^Answer$/m);
     assert.doesNotMatch(stripAnsi(terminal.output), /^Deck: Chapter 1-5$/m);
@@ -1462,6 +2491,44 @@ test("selecting an installed review source runs review inside the right pane", a
     assert.doesNotMatch(terminal.output, /Press Enter to show answer, or q to stop:/);
     assert.doesNotMatch(terminal.output, /> com\.sleepymario\.language\.dutch 0\.1\.0 review-decks\/chapter-001-005\/cards\.tsv Chapter 1-5 \(80 items\)/);
     assert.doesNotMatch(terminal.output, /q\.Press Enter/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("changing Source reprojects the active Dutch review card without resetting its order or side", async () => {
+  const fixture = await createInstalledDutchFixture();
+  const terminal = new FakeTerminal([
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("return"),
+    key("return"),
+    key("right"),
+    key("return"),
+    key("q", { sequence: "q" }),
+    key("q", { sequence: "q" })
+  ], { colorsEnabled: false, width: 150 });
+
+  try {
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi);
+    const english = screens.find((screen) => screen.includes("Source: English") && screen.includes("Review: Dutch / Chapter 1-5") && screen.includes("1 Again"));
+    const traditionalChinese = screens.find((screen) => screen.includes("Source: 中文（臺灣）") && screen.includes("Review: Dutch / Chapter 1-5") && screen.includes("Examples:"));
+    assert.ok(english, "answer side is visible before Source changes");
+    assert.ok(traditionalChinese, "the same answer-side session remains visible after Source changes");
+    assert.match(english, /Card: 1\/70/u);
+    assert.match(traditionalChinese, /Card: 1\/70/u);
+    assert.match(traditionalChinese, /Phrase:/u);
+    assert.match(traditionalChinese, /Answer:/u);
+    assert.match(traditionalChinese, /Examples:/u);
+    assert.doesNotMatch(traditionalChinese, /目前有 70 張牌卡需要複習|Press Enter or Space to start review/u);
   } finally {
     await fixture.cleanup();
   }
@@ -1490,7 +2557,7 @@ test("embedded review controls render plainly when terminal colors are disabled"
     await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
 
     assert.doesNotMatch(terminal.output, /\x1b\[[0-9;]*m/);
-    assert.match(terminal.output, /Review Prompt[\s\S]+Review Answer/);
+    assert.match(terminal.output, /Phrase:[\s\S]+Answer:/);
     assert.doesNotMatch(terminal.output, /^Prompt$/m);
     assert.doesNotMatch(terminal.output, /^Answer$/m);
     assert.doesNotMatch(terminal.output, /^Deck: Chapter 1-5$/m);
@@ -1529,7 +2596,7 @@ test("embedded review hides internal notes and renders compact learner notes and
   assert.doesNotMatch(output, /Simple review entry/);
   assert.doesNotMatch(output, /not a grammar-pattern card/);
   assert.doesNotMatch(output, /template generated/);
-  assert.match(output, /Notes\n  - noun\n  - kinship noun\n\nExample\n  - Ik ben student\.\n  - De student is hier\.\n  - Sophie is student\./);
+  assert.match(output, /Notes\n  - noun\n  - kinship noun\n\nExamples:\n  - Ik ben student\.\n  - De student is hier\.\n  - Sophie is student\./);
   assert.doesNotMatch(output, /Extra example should be capped/);
   assert.doesNotMatch(output, /\x1b\[[0-9;]*m/);
 });
@@ -1545,8 +2612,51 @@ test("Korean embedded review reveal shows strict read-content examples", () => {
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.korean");
 
-  assert.match(output, /Example\n  - 저는 학생입니다\.\n  - 마리아: 학생입니까\?\n  - 김민준: 네, 학생입니다\./u);
+  assert.match(output, /Examples:\n  - 저는 학생입니다\.\n  - 마리아: 학생입니까\?\n  - 김민준: 네, 학생입니다\./u);
   assert.doesNotMatch(output, /missing-source-example/);
+});
+
+test("normal five-chapter review reveal hides raw Notes but retains literal examples", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "vi",
+    answerLanguage: "en",
+    promptLines: ["xin chào"],
+    answerLines: ["hello; greetings"],
+    noteLines: ["Internal provenance note."],
+    exampleLines: ["Xin chào!"]
+  });
+  const output = formatEmbeddedReviewReveal(
+    exercise,
+    exercise,
+    false,
+    "com.sleepymario.language.vietnamese.reviews",
+    "review-decks/chapter-001-005/cards.tsv"
+  );
+  assert.doesNotMatch(output, /Notes|Internal provenance note/u);
+  assert.match(output, /Examples:\n  - Xin chào!/u);
+});
+
+test("Normal review removes a terminal taught-frame qualification without changing raw Expert or Developer data", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "en",
+    answerLanguage: "vi",
+    promptLines: ["this; there in the taught frame"],
+    answerLines: ["đây"],
+    noteLines: [],
+    exampleLines: ["Đây là sách."]
+  });
+  const normal = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.vietnamese.reviews", undefined, "normal");
+  const expert = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.vietnamese.reviews", undefined, "expert");
+  const developer = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.vietnamese.reviews", undefined, "developer");
+
+  assert.match(normal, /Phrase:\s*\n  this; there/u);
+  assert.doesNotMatch(normal, /in the taught frame/iu);
+  assert.match(expert, /Phrase:\s*\n  this; there in the taught frame/u);
+  assert.match(developer, /Phrase:\s*\n  this; there in the taught frame/u);
+  for (const output of [normal, expert, developer]) {
+    assert.match(output, /Answer:\s*\n  đây/u);
+    assert.match(output, /Examples:\n  - Đây là sách\./u);
+  }
 });
 
 test("two-pane renderer aligns Korean markdown table columns by display width", () => {
@@ -1564,11 +2674,13 @@ test("two-pane renderer aligns Korean markdown table columns by display width", 
     .filter((line) => line.startsWith("| "));
   const pipeColumns = tableLines.map(displayPipeColumns);
 
-  assert.equal(tableLines.length, 5);
+  assert.equal(tableLines.length, 7);
   assert.deepEqual(new Set(pipeColumns.map((columns) => JSON.stringify(columns))).size, 1);
   assert.match(tableLines[0], /^\| Korean\s+\| Meaning\s+\| Notes\s+\|$/u);
   assert.match(tableLines[2], /^\| 안녕하세요\s+\| hello\s+\| Fixed greeting expression\.\s+\|$/u);
-  assert.match(tableLines[4], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
+  assert.match(tableLines[3], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[5], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[6], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
   assert.doesNotMatch(tableLines.join("\n"), /New noun; not self-ID here|Can fill the N slot/u);
 });
 
@@ -1597,6 +2709,8 @@ test("two-pane renderer hides useless Status table columns and wraps remaining c
 test("two-pane renderer preserves origin-based Korean dialogue name alignment by display width", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
+    "### Learner-facing Dialogue",
+    "",
     "```text",
     "마리아: 안녕하세요. 저는 마리아 가르시아입니다.",
     "김민준: 안녕하세요. 저는 김민준입니다.",
@@ -1635,8 +2749,8 @@ test("Chinese A prompt reveals pronunciation and characters", () => {
     answerLines: ["Pinyin: nǐ hǎo", "Zhuyin: ㄋㄧˇ ㄏㄠˇ", "Characters: 你好"]
   }), false, "com.sleepymario.language.chinese.mandarin.traditional");
 
-  assert.match(output, /Review Prompt[\s\S]+hello/);
-  assert.match(output, /Review Answer[\s\S]+Pinyin: nǐ hǎo/);
+  assert.match(output, /Phrase:[\s\S]+hello/);
+  assert.match(output, /Answer:[\s\S]+Pinyin: nǐ hǎo/);
   assert.match(output, /Zhuyin: ㄋㄧˇ ㄏㄠˇ/);
   assert.match(output, /Characters: 你好/);
   assert.doesNotMatch(output, /com\.sleepymario/);
@@ -1654,8 +2768,8 @@ test("Chinese C prompt reveals meaning and pronunciation", () => {
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.chinese.mandarin.traditional");
 
-  assert.match(output, /Review Prompt[\s\S]+你好/);
-  assert.match(output, /Review Answer[\s\S]+Meaning: hello/);
+  assert.match(output, /Phrase:[\s\S]+你好/);
+  assert.match(output, /Answer:[\s\S]+Meaning: hello/);
   assert.match(output, /Pinyin: nǐ hǎo/);
   assert.match(output, /Zhuyin: ㄋㄧˇ ㄏㄠˇ/);
 });
@@ -1669,8 +2783,8 @@ test("Chinese compound B prompt reveals meaning and characters", () => {
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.chinese.mandarin.simplified");
 
-  assert.match(output, /Review Prompt[\s\S]+nǐ hǎo[\s\S]+ㄋㄧˇ ㄏㄠˇ/);
-  assert.match(output, /Review Answer[\s\S]+Meaning: hello/);
+  assert.match(output, /Phrase:[\s\S]+nǐ hǎo[\s\S]+ㄋㄧˇ ㄏㄠˇ/);
+  assert.match(output, /Answer:[\s\S]+Meaning: hello/);
   assert.match(output, /Characters: 你好/);
 });
 
@@ -1694,8 +2808,8 @@ test("Japanese A prompt reveals reading and mixed written form", () => {
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.japanese");
 
-  assert.match(output, /Review Prompt[\s\S]+together/);
-  assert.match(output, /Review Answer[\s\S]+Reading: いっしょに/);
+  assert.match(output, /Phrase:[\s\S]+together/);
+  assert.match(output, /Answer:[\s\S]+Reading: いっしょに/);
   assert.match(output, /Japanese: 一緒に/);
   assert.doesNotMatch(output, /com\.sleepymario/);
   assert.doesNotMatch(output, /review-decks\//);
@@ -1712,8 +2826,8 @@ test("Japanese C prompt reveals meaning and kana-only reading", () => {
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.japanese");
 
-  assert.match(output, /Review Prompt[\s\S]+一緒に/);
-  assert.match(output, /Review Answer[\s\S]+Meaning: together/);
+  assert.match(output, /Phrase:[\s\S]+一緒に/);
+  assert.match(output, /Answer:[\s\S]+Meaning: together/);
   assert.match(output, /Reading: いっしょに/);
   assert.doesNotMatch(output, /Japanese: 一緒に/);
 });
@@ -1727,8 +2841,8 @@ test("Japanese two-plus mora B prompt reveals meaning and written form", () => {
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.japanese");
 
-  assert.match(output, /Review Prompt[\s\S]+いっしょに/);
-  assert.match(output, /Review Answer[\s\S]+Meaning: together/);
+  assert.match(output, /Phrase:[\s\S]+いっしょに/);
+  assert.match(output, /Answer:[\s\S]+Meaning: together/);
   assert.match(output, /Japanese: 一緒に/);
 });
 
@@ -1753,8 +2867,8 @@ test("non-Chinese embedded review rendering remains unchanged", () => {
   });
   const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.dutch");
 
-  assert.match(output, /Review Prompt[\s\S]+hallo/);
-  assert.match(output, /Review Answer[\s\S]+hello/);
+  assert.match(output, /Phrase:[\s\S]+hallo/);
+  assert.match(output, /Answer:[\s\S]+hello/);
   assert.doesNotMatch(output, /Pinyin:/);
   assert.doesNotMatch(output, /Characters:/);
 });
@@ -1806,7 +2920,7 @@ test("Enter on an available module does not install but Space installs and refre
     let installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "Languages");
 
     assert.equal(installedLanguages.children.some((node) => node.label === "Chinese - Mandarin (Traditional)"), false);
-    assert.match(enterOnly.output, /Enter shows this information only; it does not install/);
+    assert.match(enterOnly.output, /Modules available/u);
 
     const install = new FakeTerminal([
       key("down"),
@@ -1868,7 +2982,7 @@ test("installed modules expose uninstall and cancel leaves package and progress 
     assert.match(terminal.output, /Uninstall Dutch/);
     assert.match(terminal.output, /Esc: cancel/);
     assert.match(terminal.output, /Uninstall cancelled: Dutch/);
-    assert.equal((await listInstalledContentPackages(fixture.dataDir)).length, 1);
+    assert.equal((await listInstalledContentPackages(fixture.dataDir)).length, 2);
     assert.equal((await loadDutchReviewProgress(fixture.dataDir)).items.some((item) => item.packageId === "com.sleepymario.language.dutch"), true);
   } finally {
     await fixture.cleanup();
@@ -1892,7 +3006,7 @@ test("package-only uninstall removes installed module but keeps saved review pro
 
     assert.match(terminal.output, /Module uninstalled\./);
     assert.match(terminal.output, /Saved user data was kept/);
-    assert.deepEqual(await listInstalledContentPackages(fixture.dataDir), []);
+    assert.deepEqual((await listInstalledContentPackages(fixture.dataDir)).map(item => item.packageId), ["com.sleepymario.language.dutch.reviews"]);
     assert.equal((await loadDutchReviewProgress(fixture.dataDir)).items.some((item) => item.packageId === "com.sleepymario.language.dutch"), true);
   } finally {
     await fixture.cleanup();
@@ -1920,7 +3034,7 @@ test("destructive uninstall removes only selected package review progress", asyn
 
     assert.match(terminal.output, /Saved review progress deleted for this package only/);
     assert.match(terminal.output, /Removed review states: 1/);
-    assert.deepEqual(await listInstalledContentPackages(fixture.dataDir), []);
+    assert.deepEqual((await listInstalledContentPackages(fixture.dataDir)).map(item => item.packageId), ["com.sleepymario.language.dutch.reviews"]);
     assert.equal(after.items.some((item) => item.packageId === "com.sleepymario.language.dutch"), false);
     assert.equal(after.events.some((event) => event.packageId === "com.sleepymario.language.dutch"), false);
   } finally {
@@ -2152,7 +3266,7 @@ test("former language shortcut no longer changes the persisted source language",
     await runInteractiveMenu(createStubRegistry([]), terminal, { settingsDir });
 
     assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "en-US");
-    assert.match(terminal.output, /\x1b\[1m\x1b\[38;5;208mEnglish\x1b\[0m/u);
+    assert.match(terminal.output, /\x1b\[1m\x1b\[38;5;208mSource: English\x1b\[0m/u);
     assert.doesNotMatch(stripAnsi(terminal.output), /中文（臺灣）|已安裝模組/u);
     assert.match(stripAnsi(terminal.output), /Installed modules/u);
   } finally {
@@ -2178,15 +3292,16 @@ test("left and right arrows focus Toggles while Enter and Space cycle its langua
     const screens = terminal.output.split("\x1b[2J\x1b[H").filter((screen) => screen !== "");
     assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "en-US");
     assert.ok(screens.length >= 7);
-    assert.match(screens[1], /\x1b\[7m\x1b\[1m> English\x1b\[0m/u);
+    assert.match(screens[1], /\x1b\[7m\x1b\[1m> Source: English\x1b\[0m/u);
     assert.equal((screens[1].match(/\x1b\[7m/gu) ?? []).length, 1);
-    assert.match(screens[2], /\x1b\[7m\x1b\[1m> 中文（臺灣）\x1b\[0m/u);
+    assert.match(screens[2], /\x1b\[7m\x1b\[1m> Source: 中文（臺灣）\x1b\[0m/u);
     assert.match(screens[3], /\x1b\[7m\x1b\[1m>[^\n]*已安裝模組/u);
-    assert.match(screens[3], /\x1b\[1m\x1b\[38;5;208m中文（臺灣）\x1b\[0m/u);
-    assert.match(screens[4], /\x1b\[7m\x1b\[1m> 中文（臺灣）\x1b\[0m/u);
-    assert.match(screens[5], /\x1b\[7m\x1b\[1m> English\x1b\[0m/u);
+    assert.match(screens[3], /\x1b\[1m\x1b\[38;5;208mSource: 中文（臺灣）\x1b\[0m/u);
+    assert.match(screens[4], /\x1b\[7m\x1b\[1m> Source: 中文（臺灣）\x1b\[0m/u);
+    assert.match(screens[5], /\x1b\[7m\x1b\[1m> Source: English\x1b\[0m/u);
     assert.match(screens[6], /\x1b\[7m\x1b\[1m>[^\n]*Installed modules/u);
-    assert.match(screens[6], /\x1b\[1m\x1b\[38;5;208mEnglish\x1b\[0m/u);
+    assert.match(screens[6], /\x1b\[1m\x1b\[38;5;208mSource: English\x1b\[0m/u);
+    assert.ok(screens.every((screen) => stripAnsi(screen).includes("Translation: Off")));
     assert.doesNotMatch(terminal.output, /\x1b\[7m[^\n]*Toggles/u);
     assert.doesNotMatch(terminal.output, /\x1b\[7m[^\n]*Output/u);
     assert.match(stripAnsi(terminal.output), /已安裝模組/u);
@@ -2196,8 +3311,169 @@ test("left and right arrows focus Toggles while Enter and Space cycle its langua
   }
 });
 
+test("Enter cycles Normal to Expert to Developer while navigation preserves the selection", async () => {
+  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-display-mode-"));
+  try {
+    const terminal = new FakeTerminal([
+      key("right"),
+      key("down"),
+      key("return"),
+      key("left"),
+      key("down"),
+      key("right"),
+      key("down"),
+      key("return"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: true, width: 150 });
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { settingsDir });
+
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter((screen) => screen !== "").map(stripAnsi);
+    assert.match(screens[0], /View mode: Normal/u);
+    assert.match(screens[2], /> View mode: Normal/u);
+    assert.match(screens[3], /> View mode: Expert/u);
+    assert.match(screens[4], /View mode: Expert/u);
+    assert.match(screens[5], /View mode: Expert/u);
+    assert.match(screens[6], /View mode: Expert/u);
+    assert.match(screens[7], /> View mode: Expert/u);
+    assert.match(screens[8], /> View mode: Developer/u);
+  } finally {
+    await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
+test("source selection and translation visibility change independently", async () => {
+  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-independent-translation-toggle-"));
+  try {
+    const terminal = new FakeTerminal([
+      key("right"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("up"),
+      key("up"),
+      key("return"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), terminal, { settingsDir });
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi);
+    assert.ok(screens.some((screen) => screen.includes("Source: English") && screen.includes("Translation: On")));
+    assert.ok(screens.some((screen) => screen.includes("Source: 中文（臺灣）") && screen.includes("Translation: On")));
+    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "zh-Hant-TW");
+  } finally {
+    await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Source still shows natural English reading translation in the ordinary output pane", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const terminal = new FakeTerminal([
+      ...openDutchChapter1Keys(),
+      key("right"),
+      key("return"),
+      key("t", { sequence: "t" }),
+      key("pagedown"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi);
+    const visibleTranslation = screens.find((screen) =>
+      screen.includes("Source: 中文（臺灣）")
+      && screen.includes("Translation: On")
+      && screen.includes("Natural English Translation")
+      && /Alex\s+: Hello\./u.test(screen)
+    );
+    assert.ok(visibleTranslation, screens.at(-1));
+    assert.match(visibleTranslation, /Marieke: Ik ben docent\./u);
+    assert.doesNotMatch(visibleTranslation, /Chinese translation|中文翻譯/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapter 1 right-pane translation item toggles with Enter and Space", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const terminal = new FakeTerminal([
+      ...openDutchChapter1Keys(),
+      key("right"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("pagedown"),
+      key("space", { sequence: " " }),
+      key("left"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter((screen) => screen !== "").map(stripAnsi);
+    assert.ok(screens.some((screen) => screen.includes("> Translation: Off")));
+    assert.ok(screens.some((screen) => screen.includes("> Translation: On")));
+    const onScreen = screens.find((screen) => screen.includes("> Translation: On") && screen.includes("Natural English Translation"));
+    assert.match(onScreen, /Natural English Translation/u);
+    const finalScreen = screens.at(-1);
+    assert.match(finalScreen, /Translation: Off/u);
+    assert.doesNotMatch(finalScreen, /Natural English Translation|I'm Alex Chen|I'm a teacher/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Dutch Chapter 1 t shortcut preserves translations across navigation and a new session resets Off", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const firstSession = new FakeTerminal([
+      ...openDutchChapter1Keys(),
+      key("t", { sequence: "t" }),
+      key("down"),
+      key("up"),
+      key("pagedown"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), firstSession, { dataDir: fixture.dataDir });
+    const firstScreens = firstSession.output.split("\x1b[2J\x1b[H").filter((screen) => screen !== "").map(stripAnsi);
+    const chapter2Screen = firstScreens.find((screen) => screen.includes("Translation: On") && />\s+Ch 2 -- Saying My Name/u.test(screen));
+    const returnedChapter1Screen = firstScreens.at(-1);
+    assert.match(chapter2Screen, /Translation: On/u);
+    assert.match(chapter2Screen, /Natural English Translation[\s\S]*I am Daan de Vries\./u);
+    assert.doesNotMatch(chapter2Screen, /I'm Alex Chen/u);
+    assert.match(returnedChapter1Screen, /Translation: On/u);
+    assert.match(returnedChapter1Screen, /Alex\s+: Hello\.|I'm Alex Chen/u);
+
+    const secondSession = new FakeTerminal([
+      ...openDutchChapter1Keys(),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), secondSession, { dataDir: fixture.dataDir });
+    const secondFinalScreen = secondSession.output.split("\x1b[2J\x1b[H").filter((screen) => screen !== "").map(stripAnsi).at(-1);
+    assert.match(secondFinalScreen, /Translation: Off/u);
+    assert.doesNotMatch(secondFinalScreen, /Natural English Translation|I'm Alex Chen|I'm a teacher/u);
+
+    const unrelatedScreen = new FakeTerminal([
+      key("t", { sequence: "t" }),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), unrelatedScreen, { dataDir: fixture.dataDir });
+    assert.match(unrelatedScreen.output, /Translation: On/u);
+    assert.doesNotMatch(unrelatedScreen.output, /Natural English Translation/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 function stripAnsi(text) {
   return text.replace(/\x1b\[[0-9;]*m/g, "");
+}
+
+function statusSequenceBeforeLabel(line, label) {
+  const labelIndex = line.indexOf(label);
+  assert.notEqual(labelIndex, -1, `label appears in rendered line: ${label}`);
+  const before = line.slice(0, labelIndex);
+  const lastReset = before.lastIndexOf("\x1b[0m");
+  return before.slice(lastReset < 0 ? 0 : lastReset + "\x1b[0m".length);
 }
 
 function escapeRegExp(text) {
@@ -2238,6 +3514,18 @@ function embeddedDutchReviewKeys(ratingKey) {
     key(ratingKey, { sequence: ratingKey }),
     key("q", { sequence: "q" }),
     key("q", { sequence: "q" })
+  ];
+}
+
+function openDutchChapter1Keys() {
+  return [
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("down")
   ];
 }
 
@@ -2372,7 +3660,11 @@ async function loadDutchReviewProgress(dataDir) {
 }
 
 function rightPaneCell(line) {
-  const withoutToggles = line.replace(/ \| {2,}(?:English|中文（臺灣）)?\s*\|$/u, " |");
+  const styledBorder = "\x1b[2m\x1b[36m|\x1b[0m";
+  if (line.includes(styledBorder)) {
+    return (line.split(styledBorder)[2] ?? "").replace(/^ /u, "").trimEnd();
+  }
+  const withoutToggles = line.replace(/ \| [^|]*\|$/u, " |");
   const match = withoutToggles.match(/^\| .+? \| (.*) \|$/u);
   return (match?.[1] ?? "").trimEnd();
 }
@@ -2384,7 +3676,7 @@ function displayPipeColumns(line) {
     if (character === "|") {
       columns.push(column);
     }
-    column += isWideCharacterForTest(character) ? 2 : 1;
+    column += /\p{Mark}/u.test(character) ? 0 : isWideCharacterForTest(character) ? 2 : 1;
   }
   return columns;
 }
@@ -2399,9 +3691,54 @@ function displayColumnOf(line, expectedCharacter, occurrence = 1) {
         return column;
       }
     }
-    column += isWideCharacterForTest(character) ? 2 : 1;
+    column += /\p{Mark}/u.test(character) ? 0 : isWideCharacterForTest(character) ? 2 : 1;
   }
   return -1;
+}
+
+function sentenceCountForTest(line) {
+  return [...new Intl.Segmenter(undefined, { granularity: "sentence" }).segment(line)]
+    .filter((part) => part.segment.trim().length > 0).length;
+}
+
+function firstLearnerDialogueTurn(markdown) {
+  let inDialogue = false;
+  for (const line of markdown.split("\n")) {
+    const heading = /^#{1,6}\s+(.+)$/u.exec(line);
+    if (heading !== null) {
+      inDialogue = /^(?:Dialogue|Learner-facing Dialogue|Model Dialogue|Model Mini Dialogue|Chapter \d+ Target Dialogue|對話(?:\s*\/\s*Learner-facing Dialogue)?)$/iu.test(heading[1] ?? "");
+      continue;
+    }
+    if (!inDialogue || /^\s*```/u.test(line)) continue;
+    const match = /^(\s*)(\S(?:.*?\S)?)(\s*)([:：])(\s*)(\S.*)$/u.exec(line);
+    if (match === null) continue;
+    return {
+      markdown,
+      label: `${match[2] ?? ""}${match[3] ?? ""}${match[4] ?? ":"}`,
+      separator: match[5] ?? ""
+    };
+  }
+  return undefined;
+}
+
+function firstLearnerNarrativeLine(markdown) {
+  let inNarrative = false;
+  const section = [];
+  for (const line of markdown.split("\n")) {
+    const heading = /^#{1,6}\s+(.+)$/u.exec(line);
+    if (heading !== null) {
+      if (inNarrative) break;
+      inNarrative = /^(?:Narrative|Learner-facing (?:Controlled Reading|Narrative|Read Content)|Controlled Reading|Model Mini Text|閱讀短文(?:\s*\/\s*Learner-facing Controlled Reading)?)$/iu.test(heading[1] ?? "");
+      continue;
+    }
+    if (inNarrative) section.push(line);
+  }
+  const blocks = section.join("\n").split(/\n\s*\n/gu)
+    .map((block) => block.split("\n").filter((line) => line.trim().length > 0 && !/^\s*```/u.test(line)))
+    .filter((block) => block.length > 0);
+  const body = blocks.length > 1 ? blocks[1] : blocks[0];
+  const line = body?.[0];
+  return line === undefined ? undefined : { markdown, prefix: [...line].slice(0, 8).join("") };
 }
 
 function isWideCharacterForTest(character) {
@@ -2421,7 +3758,15 @@ async function createInstalledLanguageFixture(targetIds, packageIds) {
   const packageDirectory = join(root, "packages");
   const cataloguePath = join(root, "catalogue", "catalogue.json");
   const dataDir = join(root, "data", "content");
-  for (const targetId of targetIds) {
+  const reviewTargetByReadingTarget = new Map([
+    ["korean-curriculum", "korean-core-reviews"], ["chinese-mandarin-traditional-curriculum", "chinese-traditional-core-reviews"],
+    ["chinese-mandarin-simplified-curriculum", "chinese-simplified-core-reviews"], ["english-curriculum", "english-core-reviews"],
+    ["japanese-curriculum", "japanese-core-reviews"], ["vietnamese-curriculum", "vietnamese-core-reviews"],
+    ["dutch-curriculum", "dutch-core-reviews"], ["german-curriculum", "german-core-reviews"],
+    ["french-curriculum", "french-core-reviews"], ["spanish-curriculum", "spanish-core-reviews"]
+  ]);
+  const allTargets = [...targetIds, ...targetIds.map(target => reviewTargetByReadingTarget.get(target)).filter(Boolean)];
+  for (const targetId of allTargets) {
     await generateContentPackage({
       targetId,
       outputDirectory: packageDirectory,
@@ -2440,6 +3785,11 @@ async function createInstalledLanguageFixture(targetIds, packageIds) {
       packageId,
       installedAt: "2026-07-06T00:00:00Z"
     });
+  }
+  for (const packageId of packageIds.map(id => `${id}.reviews`)) {
+    if ((await listAvailableContentPackages(cataloguePath)).some(entry => entry.packageId === packageId)) {
+      await installContentPackage({ cataloguePath, dataDir, packageId, installedAt: "2026-07-06T00:00:00Z" });
+    }
   }
 
   return {

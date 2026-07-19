@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sleepymario.com/whacksmacker/schemas/memorization-item-v2.schema.json",
+  "title": "WhackSmacker Memorization Item v2",
+  "oneOf": [
+    { "$ref": "#/$defs/item" },
+    { "$ref": "#/$defs/collection" }
+  ],
+  "$defs": {
+    "collection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "items"],
+      "properties": {
+        "schemaVersion": { "const": 2 },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/item" } }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "id", "cardId", "pedagogicalFingerprint", "kind", "deck", "sourceChapters", "reviewDirection", "prompt", "answer", "acceptedAnswers", "distractors", "explanation", "testedMeaning", "testedLexicalIds", "testedGrammarIds", "testedGeographicIds", "testedCastIds", "testedSkillIds", "provenance"],
+      "properties": {
+        "schemaVersion": { "const": 2 },
+        "id": { "$ref": "#/$defs/safeId" },
+        "cardId": { "$ref": "#/$defs/safeId" },
+        "pedagogicalFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "kind": { "enum": ["basic-card", "cloze", "vocabulary", "sentence", "concept"] },
+        "deck": {
+          "type": "object", "additionalProperties": false,
+          "required": ["id", "title", "chapterStart", "chapterEnd"],
+          "properties": {
+            "id": { "$ref": "#/$defs/safeId" }, "title": { "type": "string", "minLength": 1 },
+            "chapterStart": { "type": "integer", "minimum": 1 }, "chapterEnd": { "type": "integer", "minimum": 5 }
+          }
+        },
+        "sourceChapters": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "integer", "minimum": 1 } },
+        "reviewDirection": { "type": "string", "minLength": 1 },
+        "prompt": { "$ref": "#/$defs/contentBlock" },
+        "answer": { "$ref": "#/$defs/contentBlock" },
+        "acceptedAnswers": { "$ref": "#/$defs/nonEmptyStrings" },
+        "distractors": { "$ref": "#/$defs/strings" },
+        "explanation": { "type": "string", "minLength": 1 },
+        "testedMeaning": { "type": "string", "minLength": 1 },
+        "testedLexicalIds": { "$ref": "#/$defs/strings" },
+        "testedGrammarIds": { "$ref": "#/$defs/strings" },
+        "testedGeographicIds": { "$ref": "#/$defs/strings" },
+        "testedCastIds": { "$ref": "#/$defs/strings" },
+        "testedSkillIds": { "$ref": "#/$defs/strings" },
+        "provenance": {
+          "type": "object", "additionalProperties": false, "required": ["path", "locator", "evidence"],
+          "properties": { "path": { "$ref": "#/$defs/safePath" }, "locator": { "type": "string", "minLength": 1 }, "evidence": { "type": "string", "minLength": 1 } }
+        },
+        "hints": { "type": "array", "items": { "$ref": "#/$defs/localizedContent" } },
+        "notes": { "$ref": "#/$defs/localizedContent" },
+        "examples": { "$ref": "#/$defs/reviewExamples" },
+        "tags": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" } },
+        "source": { "type": "object", "additionalProperties": false, "required": ["path"], "properties": { "path": { "$ref": "#/$defs/safePath" }, "anchor": { "type": "string", "minLength": 1 }, "title": { "$ref": "#/$defs/localizedContent" } } },
+        "language": { "type": "object", "additionalProperties": false, "properties": { "target": { "type": "string", "minLength": 2 }, "base": { "type": "string", "minLength": 2 }, "script": { "type": "string", "minLength": 1 } } },
+        "difficulty": { "type": "object", "additionalProperties": false, "properties": { "level": { "type": "integer", "minimum": 1, "maximum": 10 }, "label": { "$ref": "#/$defs/localizedContent" } } },
+        "lexicalMetadata": { "$ref": "language-vocabulary-v1.schema.json" },
+        "createdAt": { "$ref": "#/$defs/timestamp" }, "updatedAt": { "$ref": "#/$defs/timestamp" }
+      }
+    },
+    "contentBlock": { "type": "object", "additionalProperties": false, "required": ["text"], "properties": { "text": { "$ref": "#/$defs/localizedContent" }, "plainText": { "$ref": "#/$defs/localizedContentAllowEmpty" }, "language": { "type": "string", "minLength": 2 }, "mediaType": { "enum": ["text/plain", "text/markdown"] } } },
+    "localizedContent": { "oneOf": [{ "type": "string", "minLength": 1 }, { "type": "object", "minProperties": 1, "propertyNames": { "minLength": 1 }, "additionalProperties": { "type": "string", "minLength": 1 } }] },
+    "localizedContentAllowEmpty": { "oneOf": [{ "type": "string" }, { "type": "object", "minProperties": 1, "propertyNames": { "minLength": 1 }, "additionalProperties": { "type": "string" } }] },
+    "strings": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "reviewExamples": { "type": "array", "minItems": 1, "maxItems": 3, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "nonEmptyStrings": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "safeId": { "type": "string", "pattern": "^[a-z0-9](?:[a-z0-9._/-]*[a-z0-9])?$" },
+    "safePath": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//)[^\\u0000]+$" },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" }
+  }
+}

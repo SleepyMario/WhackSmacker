@@ -88,6 +88,8 @@ export interface InstalledPackageRecord {
   readonly packageVersion: string;
   readonly displayName: string;
   readonly contentType: string;
+  readonly capabilities?: ContentPackageManifest["capabilities"];
+  readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
   readonly source: ContentPackageSourceProvenance;
@@ -271,6 +273,8 @@ export async function installContentPackage(options: InstallContentPackageOption
     packageVersion: manifest.packageVersion,
     displayName: localized(manifest.displayName, "en-US"),
     contentType: manifest.contentType,
+    ...(manifest.capabilities === undefined ? {} : { capabilities: manifest.capabilities }),
+    ...(manifest.relatedPackageIds === undefined ? {} : { relatedPackageIds: manifest.relatedPackageIds }),
     contentSchemaVersion: manifest.contentSchemaVersion,
     minimumWhackSmackerVersion: manifest.minimumWhackSmackerVersion,
     source: manifest.source,

@@ -8,9 +8,13 @@ import {
 import {
   assertValidMemorizationItemCollection,
   memorizationItemFileMediaType,
+  pedagogicalContentForMemorizationItem,
   type MemorizationItem,
-  type MemorizationItemCollection
+  type MemorizationItemCollection,
+  type MemorizationItemV1,
+  type MemorizationItemV2
 } from "./memorization-item";
+import { pedagogicalFingerprint } from "./pedagogical-fingerprint";
 import type { LocalizedContentValue } from "./localized-content";
 import {
   assertLanguageCurriculumChapter5170Requirements,
@@ -18,6 +22,7 @@ import {
   assertLanguageCurriculumStage71140Coverage,
   type BroaderTopicRecord
 } from "./language-curriculum-policy";
+import { removeCompleteRereadingSection, removeContentWrapperHeading } from "./curriculum-display";
 
 type BufferValue = {
   readonly length: number;
@@ -78,6 +83,8 @@ export interface ContentPackageGeneratorTarget {
   readonly displayName: LocalizedContentValue;
   readonly description: LocalizedContentValue;
   readonly contentType: ContentPackageManifest["contentType"];
+  readonly capabilities?: ContentPackageManifest["capabilities"];
+  readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly packageVersion: string;
   readonly sourcePath: string;
@@ -90,6 +97,7 @@ export interface ContentPackageGeneratorTarget {
   readonly dependencies?: ContentPackageManifest["dependencies"];
   readonly license?: ContentPackageManifest["license"];
   readonly include: readonly string[];
+  readonly readingContentInclude?: readonly string[];
 }
 
 export interface GenerateContentPackageOptions {
@@ -119,7 +127,7 @@ export interface GeneratedContentPackageResult {
 
 export const contentPackageGeneratorName = "whacksmacker-content-builder";
 
-export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
+const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
   {
     id: "linguistic-terminology",
     packageId: "com.sleepymario.language.linguistic-terminology",
@@ -316,7 +324,7 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
     description: "Vietnamese language curriculum content generated from the canonical Vietnamese curriculum repository.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
+    packageVersion: "0.2.0",
     sourcePath: "../vietnamese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
     languages: ["vi", "en"],
@@ -330,10 +338,40 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
       "progress.md",
       "backlog.md",
       "decisions.md",
+      "geography-ledger.json",
       "name-pools",
       "review-decks",
       "research",
       "units"
+    ],
+    readingContentInclude: [
+      "README.md",
+      "philosophy.md",
+      "scope.md",
+      "curriculum-map.md",
+      "progress.md",
+      "backlog.md",
+      "decisions.md",
+      "geography-ledger.json",
+      "name-pools",
+      "units/README.md",
+      "units/vietnamese-foundation",
+      "units/vietnamese-core/README.md",
+      "units/vietnamese-core/cumulative-ledger.md",
+      "units/vietnamese-core/chapter-001-basic-sentences-1",
+      "units/vietnamese-core/chapter-002-basic-sentences-2",
+      "units/vietnamese-core/chapter-003-basic-sentences-3",
+      "units/vietnamese-core/chapter-004-basic-sentences-4",
+      "units/vietnamese-core/chapter-005-basic-sentences-5",
+      "units/vietnamese-core/chapter-001-005-grammar-easy",
+      "units/vietnamese-core/chapter-001-005-grammar-hard",
+      "units/vietnamese-core/chapter-006-basic-sentences-6",
+      "units/vietnamese-core/chapter-007-basic-sentences-7",
+      "units/vietnamese-core/chapter-008-basic-sentences-8",
+      "units/vietnamese-core/chapter-009-basic-sentences-9",
+      "units/vietnamese-core/chapter-010-basic-sentences-10",
+      "units/vietnamese-core/chapter-006-010-grammar-easy",
+      "units/vietnamese-core/chapter-006-010-grammar-hard"
     ]
   },
   {
@@ -446,6 +484,75 @@ export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTar
   }
 ];
 
+const reviewPackageByReadingPackage = new Map<string, string>([
+  ["com.sleepymario.language.korean", "com.sleepymario.language.korean.reviews"],
+  ["com.sleepymario.language.chinese.mandarin.traditional", "com.sleepymario.language.chinese.mandarin.traditional.reviews"],
+  ["com.sleepymario.language.chinese.mandarin.simplified", "com.sleepymario.language.chinese.mandarin.simplified.reviews"],
+  ["com.sleepymario.language.english", "com.sleepymario.language.english.reviews"],
+  ["com.sleepymario.language.japanese", "com.sleepymario.language.japanese.reviews"],
+  ["com.sleepymario.language.vietnamese", "com.sleepymario.language.vietnamese.reviews"],
+  ["com.sleepymario.language.dutch", "com.sleepymario.language.dutch.reviews"],
+  ["com.sleepymario.language.german", "com.sleepymario.language.german.reviews"],
+  ["com.sleepymario.language.french", "com.sleepymario.language.french.reviews"],
+  ["com.sleepymario.language.spanish", "com.sleepymario.language.spanish.reviews"]
+]);
+
+const readingTargets = legacyGeneratorTargets.map((target): ContentPackageGeneratorTarget => {
+  if (target.contentType === "linguistic-terminology") return { ...target, capabilities: ["technical"] };
+  const baseId = target.localization?.role === "source-language-pack" ? target.localization.basePackageId : target.packageId;
+  const relatedReview = reviewPackageByReadingPackage.get(baseId);
+  return {
+    ...target,
+    capabilities: ["reading-curriculum"],
+    ...(relatedReview === undefined ? {} : { relatedPackageIds: [relatedReview] }),
+    license: {
+      spdx: "CC-BY-NC-4.0",
+      name: "Creative Commons Attribution-NonCommercial 4.0 International",
+      path: "LICENSE-CONTENT"
+    }
+  };
+});
+
+const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
+  ["korean", "Korean", "com.sleepymario.language.korean", ["ko", "en"]],
+  ["chinese-traditional", "Chinese - Mandarin (Traditional)", "com.sleepymario.language.chinese.mandarin.traditional", ["zh-Hant", "en"]],
+  ["chinese-simplified", "Chinese - Mandarin (Simplified)", "com.sleepymario.language.chinese.mandarin.simplified", ["zh-Hans", "en"]],
+  ["english", "English", "com.sleepymario.language.english", ["zh-TW", "en"]],
+  ["japanese", "Japanese", "com.sleepymario.language.japanese", ["ja", "en"]],
+  ["vietnamese", "Vietnamese", "com.sleepymario.language.vietnamese", ["vi", "en"]],
+  ["dutch", "Dutch", "com.sleepymario.language.dutch", ["nl", "en"]],
+  ["german", "German", "com.sleepymario.language.german", ["de", "en"]],
+  ["french", "French", "com.sleepymario.language.french", ["fr", "en"]],
+  ["spanish", "Spanish", "com.sleepymario.language.spanish", ["es", "en"]]
+].map(([slug, name, readingId, languages]) => ({
+  id: `${slug}-core-reviews`,
+  packageId: `${readingId}.reviews`,
+  displayName: `${name} Core Reviews`,
+  description: `GPL core review decks for ${name}, usable without a reading curriculum package.`,
+  contentType: "core-review",
+  capabilities: ["core-review"],
+  relatedPackageIds: [readingId],
+  contentSchemaVersion: slug === "vietnamese" || slug === "dutch" ? "2.0.0" : "1.0.0",
+  packageVersion: slug === "vietnamese" ? "0.2.0" : "0.1.0",
+  sourcePath: `review-content/${String(slug).replace(/^chinese-/u, "chinese-mandarin-")}`,
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages,
+  ...(readingId === "com.sleepymario.language.english" ? {
+    targetLanguage: "en",
+    localization: { role: "base-curriculum", schemaVersion: "1.0.0", targetLanguage: "en", defaultSourceLocale: "zh-TW", defaultSourcePackageId: "com.sleepymario.language.english.source.zh-tw" }
+  } : {}),
+  subjects: ["language", "review"],
+  dependencies: slug === "vietnamese"
+    ? [{ packageId: readingId, version: ">=0.2.0 <0.3.0", optional: true }]
+    : [],
+  license: { spdx: "GPL-3.0-or-later", name: "GNU General Public License version 3 or later", path: "LICENSE-SOFTWARE" },
+  include: slug === "vietnamese"
+    ? ["README.md", "LICENSE-SOFTWARE", "review-decks/chapter-001-005", "review-decks/chapter-006-010"]
+    : ["README.md", "LICENSE-SOFTWARE", "review-decks"]
+} as ContentPackageGeneratorTarget));
+
+export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...coreReviewTargets];
+
 export async function generateContentPackage(options: GenerateContentPackageOptions): Promise<GeneratedContentPackageResult> {
   const target = getContentPackageGeneratorTarget(options.targetId);
   const sourceResolution = resolveContentPackageSourcePath(target.sourcePath, {
@@ -456,7 +563,10 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   let sourceFiles: readonly SourceFile[];
   try {
     await access(sourceRoot);
-    sourceFiles = await collectSourceFiles(sourceRoot, await sourceIncludesForTarget(target, sourceRoot));
+    sourceFiles = [
+      ...await collectSourceFiles(sourceRoot, await sourceIncludesForTarget(target, sourceRoot)),
+      ...await packagedReadingSupportFiles(target, sourceRoot)
+    ];
   } catch (error) {
     throw contentPackageSourceError(sourceResolution, error);
   }
@@ -477,9 +587,12 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const content = buildContentSnapshot(target, sourceRoot, sourceFiles, sourceCommit, sourceDirty);
   const contentBuffer = Buffer.from(`${JSON.stringify(content, null, 2)}\n`, "utf8");
   const contentFile = createFileRecord("content/content.json", "application/json", contentBuffer);
-  const memorizationFiles = target.localization?.role === "source-language-pack" ? [] : buildMemorizationFiles(target, sourceFiles, options.generatedAt);
+  const reviewEvidenceFiles = target.capabilities?.includes("core-review")
+    ? await collectReviewEvidenceFiles(target, options.env)
+    : [];
+  const memorizationFiles = target.capabilities?.includes("core-review") ? buildMemorizationFiles(target, sourceFiles, reviewEvidenceFiles, options.generatedAt) : [];
   const packagedSourceFiles = sourceFiles
-    .filter((file) => target.contentType === "language-curriculum" && file.path === canonicalCastPath)
+    .filter((file) => packagedCurriculumMetadataPaths.has(file.path) || file.path === target.license?.path || file.path === "NOTICE")
     .map((file) => ({ record: createFileRecord(file.path, file.mediaType, file.buffer), buffer: file.buffer }));
 
   const manifest: ContentPackageManifest = {
@@ -489,6 +602,8 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     displayName: target.displayName,
     description: target.description,
     contentType: target.contentType,
+    ...(target.capabilities === undefined ? {} : { capabilities: target.capabilities }),
+    ...(target.relatedPackageIds === undefined ? {} : { relatedPackageIds: target.relatedPackageIds }),
     contentSchemaVersion: target.contentSchemaVersion,
     minimumWhackSmackerVersion: whackSmackerApplicationVersion,
     ...(target.languages === undefined ? {} : { languages: [...target.languages].sort() }),
@@ -560,6 +675,88 @@ interface SourceFile {
   readonly buffer: BufferValue;
 }
 
+const readingSupportPackages: Readonly<Record<string, readonly { readonly source: string; readonly destination: string }[]>> = {
+  "vietnamese-curriculum": [1, 2, 3, 4, 5].map((chapter) => ({
+    source: `curriculum-support/vietnamese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/reading-support.json`
+  })),
+  "dutch-curriculum": [
+    [1, "chapter-001-basic-sentences-1"],
+    [2, "chapter-002-basic-sentences-2"],
+    [3, "chapter-003-basic-sentences-3"],
+    [4, "chapter-004-basic-sentences-4"],
+    [5, "chapter-005-basic-sentences-5"],
+    [6, "chapter-006-basic-sentences-6"],
+    [7, "chapter-007-basic-sentences-7"],
+    [8, "chapter-008-basic-sentences-8"],
+    [9, "chapter-009-basic-sentences-9"],
+    [10, "chapter-010-basic-sentences-10"],
+    [11, "chapter-011-asking-how-someone-is"],
+    [12, "chapter-012-a-simple-daily-routine"],
+    [13, "chapter-013-ordering-politely"],
+    [14, "chapter-014-two-places-in-a-day"],
+    [15, "chapter-015-asking-where-someone-lives"],
+    [16, "chapter-016-working-at-the-library"],
+    [17, "chapter-017-making-a-plan"],
+    [18, "chapter-018-a-quiet-evening"],
+    [19, "chapter-019-asking-for-help"],
+    [20, "chapter-020-an-appointment-in-town"],
+    [21, "chapter-021-meeting-the-family"],
+    [22, "chapter-022-an-afternoon-together"],
+    [23, "chapter-023-planning-the-evening"],
+    [24, "chapter-024-dinner-at-home"],
+    [25, "chapter-025-going-to-the-museum"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/dutch/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/dutch-core/${directory}/reading-support.json`
+  }))
+};
+
+async function packagedReadingSupportFiles(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly SourceFile[]> {
+  return Promise.all((readingSupportPackages[target.id] ?? []).map(async ({ source, destination }) => {
+    const buffer = await readFile(resolve(repositoryRoot, source));
+    const text = buffer.toString("utf8");
+    const support = JSON.parse(text) as unknown;
+    await assertValidReadingSupportCharacters(support, source, sourceRoot, destination);
+    return { path: destination, mediaType: "application/json", size: buffer.length, sha256: sha256Hex(buffer), text, buffer };
+  }));
+}
+
+async function assertValidReadingSupportCharacters(value: unknown, source: string, sourceRoot: string, destination: string): Promise<void> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error(`${source}: reading support must be an object`);
+  const characters = (value as Record<string, unknown>).characters;
+  if (characters === undefined) return;
+  if (typeof characters !== "object" || characters === null || Array.isArray(characters)) throw new Error(`${source}: characters must be an object`);
+  const entries = (characters as Record<string, unknown>).entries;
+  if (!Array.isArray(entries)) throw new Error(`${source}: characters.entries must preserve internal identity and evidence`);
+  const chapterPath = resolve(sourceRoot, dirname(destination), "chapter.md");
+  const chapter = (await readFile(chapterPath)).toString("utf8");
+  for (const [index, candidate] of entries.entries()) {
+    if (typeof candidate !== "object" || candidate === null || Array.isArray(candidate)) throw new Error(`${source}: characters.entries[${index}] must be an object`);
+    const entry = candidate as Record<string, unknown>;
+    for (const key of ["word", "characters", "meaning", "lexicalEntryId", "senseId", "usage"] as const) {
+      if (typeof entry[key] !== "string" || entry[key].trim().length === 0 || entry[key] !== entry[key].normalize("NFC")) {
+        throw new Error(`${source}: characters.entries[${index}].${key} must be a nonempty NFC string`);
+      }
+    }
+    if (!Number.isInteger(entry.firstIntroductionChapter) || (entry.firstIntroductionChapter as number) < 1) {
+      throw new Error(`${source}: characters.entries[${index}].firstIntroductionChapter must be a positive integer`);
+    }
+    const provenance = entry.provenance;
+    if (typeof provenance !== "object" || provenance === null || Array.isArray(provenance)
+      || ["path", "section", "locator"].some((key) => typeof (provenance as Record<string, unknown>)[key] !== "string" || ((provenance as Record<string, unknown>)[key] as string).trim().length === 0)) {
+      throw new Error(`${source}: characters.entries[${index}].provenance must contain path, section, and locator`);
+    }
+    if ((provenance as Record<string, unknown>).path !== destination.replace(/reading-support\.json$/u, "chapter.md")) {
+      throw new Error(`${source}: characters.entries[${index}].provenance.path must identify the packaged canonical chapter`);
+    }
+    if (!/^Learner-facing (?:Dialogue|Narrative|Controlled Reading|Read Content)$/u.test((provenance as Record<string, unknown>).section as string)) {
+      throw new Error(`${source}: characters.entries[${index}].provenance.section must identify primary reading content`);
+    }
+    if (!chapter.includes(entry.usage as string)) throw new Error(`${source}: characters.entries[${index}].usage is not literal primary reading evidence`);
+  }
+}
+
 interface ArchiveEntry {
   readonly path: string;
   readonly data: BufferValue;
@@ -572,17 +769,26 @@ interface GeneratedMemorizationFile {
 
 const repositoryRoot = process.cwd();
 const canonicalCastPath = "name-pools/canonical-cast.json";
+const geographyLedgerPath = "geography-ledger.json";
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
+  const separatedIncludes = target.capabilities?.includes("reading-curriculum")
+    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath))]
+    : [...target.include];
+  if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path)) separatedIncludes.push(target.license.path);
+  if (target.capabilities?.includes("reading-curriculum")) {
+    try { await access(resolve(sourceRoot, "NOTICE")); separatedIncludes.push("NOTICE"); } catch { /* legacy repository without notice */ }
+  }
   const castAlreadyIncluded = target.include.some((include) => canonicalCastPath === include || canonicalCastPath.startsWith(`${include}/`));
   if (target.contentType !== "language-curriculum" || castAlreadyIncluded) {
-    return target.include;
+    return separatedIncludes;
   }
   try {
     await access(resolve(sourceRoot, canonicalCastPath));
-    return [...target.include, canonicalCastPath];
+    return [...separatedIncludes, canonicalCastPath];
   } catch {
-    return target.include;
+    return separatedIncludes;
   }
 }
 
@@ -620,19 +826,63 @@ async function collectPath(sourceRoot: string, absolutePath: string, files: Sour
   }
 
   const relativePath = normalizeArchivePath(relative(sourceRoot, absolutePath));
-  if (!relativePath.endsWith(".md") && !relativePath.endsWith(".tsv") && relativePath !== canonicalCastPath && relativePath !== ".gitignore") {
+  if (!isContentPackageSourceFileAllowed(relativePath)) {
     return;
   }
 
-  const buffer = await readFile(absolutePath);
+  const sourceBuffer = await readFile(absolutePath);
+  const sourceText = sourceBuffer.toString("utf8");
+  const text = /\/chapter(?:\.(?:en|zh-TW))?\.md$/u.test(relativePath)
+    ? removeContentWrapperHeading(removeCompleteRereadingSection(sourceText))
+    : sourceText;
+  const buffer = text === sourceText ? sourceBuffer : Buffer.from(text, "utf8");
+  if (relativePath === geographyLedgerPath) {
+    try {
+      JSON.parse(text);
+    } catch (error) {
+      throw new Error(`Invalid ${geographyLedgerPath}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  if (relativePath.endsWith("/reading-translation.en.json")) {
+    assertNaturalEnglishTranslationHasNoIntroduction(relativePath, text);
+  }
   files.push({
     path: relativePath,
     mediaType: mediaTypeForPath(relativePath),
     size: buffer.length,
     sha256: sha256Hex(buffer),
-    text: buffer.toString("utf8"),
+    text,
     buffer
   });
+}
+
+function assertNaturalEnglishTranslationHasNoIntroduction(path: string, text: string): void {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch (error) {
+    throw new Error(`Invalid ${path}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error(`Invalid ${path}: structured reading translation must be a JSON object.`);
+  }
+  for (const key of ["introduction", "context", "setting", "participants", "sceneIntroduction"]) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      throw new Error(`Invalid ${path}: Natural English Translation must contain translated reading content only; prefatory field ${key} is prohibited.`);
+    }
+  }
+}
+
+export function isContentPackageSourceFileAllowed(path: string): boolean {
+  return path.endsWith(".md")
+    || path.endsWith(".tsv")
+    || packagedCurriculumMetadataPaths.has(path)
+    || path.endsWith("/reading-translation.en.json")
+    || path.endsWith("/reading-support.json")
+    || path === ".gitignore"
+    || path === "LICENSE-CONTENT"
+    || path === "LICENSE-SOFTWARE"
+    || path === "NOTICE";
 }
 
 function buildContentSnapshot(
@@ -705,9 +955,10 @@ function createFileRecord(path: string, mediaType: string, data: BufferValue): C
 function buildMemorizationFiles(
   target: ContentPackageGeneratorTarget,
   sourceFiles: readonly SourceFile[],
+  evidenceFiles: readonly SourceFile[],
   generatedAt: string
 ): readonly GeneratedMemorizationFile[] {
-  const reviewExampleIndex = buildReviewExampleIndex(target, sourceFiles);
+  const reviewExampleIndex = buildReviewExampleIndex(target, evidenceFiles);
   return sourceFiles
     .filter((file) => isReviewDeckCardsPath(file.path))
     .map((file) => {
@@ -720,6 +971,22 @@ function buildMemorizationFiles(
         buffer
       };
     });
+}
+
+async function collectReviewEvidenceFiles(
+  target: ContentPackageGeneratorTarget,
+  env: Readonly<Record<string, string | undefined>> | undefined
+): Promise<readonly SourceFile[]> {
+  const readingPackageId = target.relatedPackageIds?.[0];
+  const readingTarget = readingTargets.find((candidate) => candidate.packageId === readingPackageId && candidate.localization?.role !== "source-language-pack");
+  if (readingTarget === undefined) return [];
+  const resolution = resolveContentPackageSourcePath(readingTarget.sourcePath, { env });
+  try {
+    await access(resolution.resolvedPath);
+    return collectSourceFiles(resolution.resolvedPath, await sourceIncludesForTarget(readingTarget, resolution.resolvedPath));
+  } catch (error) {
+    throw contentPackageSourceError(resolution, error);
+  }
 }
 
 function parseReviewDeckCards(
@@ -735,13 +1002,149 @@ function parseReviewDeckCards(
   const [header, ...body] = rows;
   const legacyHeader = ["deck", "direction", "front", "back", "source_chapter", "entry_type", "notes"];
   const localizedHeader = ["deck", "direction", "front", "back", "front_zh_tw", "back_zh_tw", "front_en", "back_en", "source_chapter", "entry_type", "notes_zh_tw", "notes_en"];
+  const v2Header = ["card_id", "deck", "kind", "source_chapter", "prompt_language", "answer_language", "prompt", "accepted_answers", "distractors", "explanation", "lexical_ids", "grammar_ids", "geographic_ids", "provenance_path", "provenance_locator", "provenance_evidence", "tags"];
+  const v2ExamplesHeader = [...v2Header.slice(0, -1), "examples", "tags"];
+  const usesV2Rows = (header.length === v2Header.length && header.every((field, index) => field === v2Header[index]))
+    || (header.length === v2ExamplesHeader.length && header.every((field, index) => field === v2ExamplesHeader[index]));
   const usesLocalizedRows = header.length === localizedHeader.length && header.every((field, index) => field === localizedHeader[index]);
-  if (!usesLocalizedRows && (header.length !== legacyHeader.length || header.some((field, index) => field !== legacyHeader[index]))) {
+  if (!usesV2Rows && !usesLocalizedRows && (header.length !== legacyHeader.length || header.some((field, index) => field !== legacyHeader[index]))) {
     throw new Error(`Review deck cards file has unsupported header: ${file.path}`);
   }
 
-  const items: MemorizationItem[] = body.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex, usesLocalizedRows));
+  if (usesV2Rows) {
+    const items = body.map((row, index) => reviewDeckV2RowToItem(target, file.path, row, index + 1, generatedAt, header.length === v2ExamplesHeader.length));
+    return { schemaVersion: 2, items };
+  }
+
+  const completeBody = ordinaryReviewRowsWithRequiredDirections(target, body, usesLocalizedRows);
+  const items: MemorizationItemV1[] = completeBody.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex, usesLocalizedRows) as MemorizationItemV1);
   return { schemaVersion: 1, items };
+}
+
+function ordinaryReviewRowsWithRequiredDirections(
+  target: ContentPackageGeneratorTarget,
+  rows: readonly (readonly string[])[],
+  localizedRows: boolean
+): readonly (readonly string[])[] {
+  if (/^(?:chinese-|japanese-)/u.test(target.id)) return rows;
+  const targetLanguage = target.targetLanguage ?? target.languages?.find((language) => language !== "en") ?? "en";
+  const seen = new Map<string, { targetToSource: boolean; sourceToTarget: boolean; row: readonly string[] }>();
+  for (const row of rows) {
+    const direction = row[1]?.match(/^(.+?) -> (.+?)$/u);
+    if (direction === null || direction === undefined) continue;
+    const promptLanguage = languageCodeForReviewLabel(direction[1]);
+    const answerLanguage = languageCodeForReviewLabel(direction[2]);
+    const targetToSource = promptLanguage === targetLanguage && answerLanguage !== targetLanguage;
+    const sourceToTarget = answerLanguage === targetLanguage && promptLanguage !== targetLanguage;
+    if (!targetToSource && !sourceToTarget) continue;
+    const targetForm = decodeReviewDeckField(row[targetToSource ? 2 : 3] ?? "");
+    const key = `${row[0]}\0${targetForm}`;
+    const record = seen.get(key) ?? { targetToSource: false, sourceToTarget: false, row };
+    record.targetToSource ||= targetToSource;
+    record.sourceToTarget ||= sourceToTarget;
+    if (targetToSource) record.row = row;
+    seen.set(key, record);
+  }
+  const additions: readonly string[][] = [...seen.values()].flatMap((record) => {
+    if (record.targetToSource === record.sourceToTarget) return [];
+    const row = [...record.row];
+    const direction = row[1]?.match(/^(.+?) -> (.+?)$/u);
+    if (direction === null || direction === undefined) return [];
+    row[1] = `${direction[2]} -> ${direction[1]}`;
+    [row[2], row[3]] = [row[3] ?? "", row[2] ?? ""];
+    if (localizedRows) {
+      [row[4], row[5]] = [row[5] ?? "", row[4] ?? ""];
+      [row[6], row[7]] = [row[7] ?? "", row[6] ?? ""];
+    }
+    return [row];
+  });
+  return [...rows, ...additions];
+}
+
+function reviewDeckV2RowToItem(
+  target: ContentPackageGeneratorTarget,
+  sourcePath: string,
+  row: readonly string[],
+  rowNumber: number,
+  generatedAt: string,
+  includesExamples: boolean
+): MemorizationItemV2 {
+  if (row.length !== (includesExamples ? 18 : 17)) throw new Error(`Review deck v2 row ${rowNumber + 1} has the wrong number of tab-separated fields in ${sourcePath}`);
+  const [cardId, deckTitle, kind, chapterText, promptLanguage, answerLanguage, prompt, acceptedJson, distractorsJson,
+    explanation, lexicalJson, grammarJson, geographicJson, provenancePath, provenanceLocator, provenanceEvidence] = row;
+  const examples = includesExamples
+    ? parseV2StringArray(row[16] ?? "", "examples", sourcePath, rowNumber)
+    : [provenanceEvidence];
+  const tagsJson = row[includesExamples ? 17 : 16] ?? "";
+  const range = deckTitle.match(/^Chapter (\d+)-(\d+)$/u);
+  if (range === null) throw new Error(`Review deck v2 row ${rowNumber + 1} has an invalid five-chapter deck title: ${deckTitle}`);
+  const chapterStart = Number.parseInt(range[1], 10);
+  const chapterEnd = Number.parseInt(range[2], 10);
+  const sourceChapter = Number.parseInt(chapterText, 10);
+  const acceptedAnswers = parseV2StringArray(acceptedJson, "accepted_answers", sourcePath, rowNumber);
+  const distractors = parseV2StringArray(distractorsJson, "distractors", sourcePath, rowNumber);
+  const testedLexicalIds = parseV2StringArray(lexicalJson, "lexical_ids", sourcePath, rowNumber);
+  const testedGrammarIds = parseV2StringArray(grammarJson, "grammar_ids", sourcePath, rowNumber);
+  const testedGeographicIds = parseV2StringArray(geographicJson, "geographic_ids", sourcePath, rowNumber);
+  const tags = parseV2StringArray(tagsJson, "tags", sourcePath, rowNumber);
+  if (!Number.isSafeInteger(sourceChapter) || sourceChapter < chapterStart || sourceChapter > chapterEnd) {
+    throw new Error(`Review deck v2 row ${rowNumber + 1} source chapter is outside its deck block in ${sourcePath}`);
+  }
+  const reviewDirection = `${promptLanguage}-to-${answerLanguage}`;
+  const targetLanguage = target.targetLanguage ?? target.languages?.find((language) => language !== "en") ?? answerLanguage;
+  const sourceLanguage = target.languages?.find((language) => language !== targetLanguage) ?? "en";
+  if (target.capabilities?.includes("core-review")) {
+    if (kind !== "vocabulary") throw new Error(`Normal core review row ${rowNumber + 1} must be a vocabulary card in ${sourcePath}`);
+    const targetToSource = promptLanguage === targetLanguage && answerLanguage === sourceLanguage;
+    const sourceToTarget = promptLanguage === sourceLanguage && answerLanguage === targetLanguage;
+    if (!targetToSource && !sourceToTarget) {
+      throw new Error(`Normal core review row ${rowNumber + 1} has an unsupported review direction in ${sourcePath}`);
+    }
+    if (distractors.length > 0) throw new Error(`Normal core review row ${rowNumber + 1} must not contain distractors in ${sourcePath}`);
+    if (testedLexicalIds.length === 0) throw new Error(`Normal core review row ${rowNumber + 1} must identify its canonical lexical item in ${sourcePath}`);
+    if (testedGrammarIds.length > 0) throw new Error(`Normal core review row ${rowNumber + 1} must not test grammar in ${sourcePath}`);
+  }
+  const deckId = `${targetLanguage}-core-review-${String(chapterStart).padStart(3, "0")}-${String(chapterEnd).padStart(3, "0")}`;
+  const item: MemorizationItemV2 = {
+    schemaVersion: 2,
+    id: cardId,
+    cardId,
+    pedagogicalFingerprint: "0".repeat(64),
+    kind: kind as MemorizationItemV2["kind"],
+    deck: { id: deckId, title: deckTitle, chapterStart, chapterEnd },
+    sourceChapters: [sourceChapter],
+    reviewDirection,
+    prompt: { text: prompt, plainText: prompt, language: promptLanguage, mediaType: "text/plain" },
+    answer: { text: acceptedAnswers[0] ?? "", plainText: acceptedAnswers[0] ?? "", language: answerLanguage, mediaType: "text/plain" },
+    acceptedAnswers,
+    distractors,
+    explanation,
+    testedMeaning: acceptedAnswers.join(" | "),
+    testedLexicalIds,
+    testedGrammarIds,
+    testedGeographicIds,
+    testedCastIds: [],
+    testedSkillIds: [],
+    provenance: { path: provenancePath, locator: provenanceLocator, evidence: provenanceEvidence },
+    examples,
+    notes: explanation,
+    tags,
+    source: { path: sourcePath, title: deckTitle },
+    language: { target: targetLanguage, base: "en", script: scriptLabelForTarget(target) },
+    createdAt: generatedAt,
+    updatedAt: generatedAt
+  };
+  return { ...item, pedagogicalFingerprint: pedagogicalFingerprint(pedagogicalContentForMemorizationItem(item)) };
+}
+
+function parseV2StringArray(value: string, field: string, sourcePath: string, rowNumber: number): string[] {
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed) || parsed.some((entry) => typeof entry !== "string")) throw new Error("not a string array");
+    return parsed;
+  } catch (error) {
+    throw new Error(`Review deck v2 row ${rowNumber + 1} ${field} must be a JSON string array in ${sourcePath}: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 function reviewDeckRowToItem(
@@ -789,7 +1192,7 @@ function reviewDeckRowToItem(
     front,
     back
   });
-  const missingSourceExample = isCoreReviewDeckRow(sourceChapter) && examples.length === 0;
+  const missingSourceExample = target.capabilities?.includes("core-review") && isCoreReviewDeckRow(sourceChapter) && examples.length === 0;
   if (missingSourceExample) {
     throw new Error(
       `Review deck row ${rowNumber + 1} in ${sourcePath} has no learner-facing source example for ${front} -> ${back}. ` +
@@ -815,7 +1218,7 @@ function reviewDeckRowToItem(
     },
     notes: localizedRow ? `Deck: ${deck.split(/\s+\/\s+/u)[1] ?? deck}. ${row[11]}` : localizedReviewNotes(deck, notes),
     ...(examples.length === 0 ? {} : { examples }),
-    tags: [slugForPath(target.id), "review-deck", deckSlug, entrySlug, ...(missingSourceExample ? ["missing-source-example"] : [])],
+    tags: [slugForPath(curriculumIdentityTargetId(target)), "review-deck", deckSlug, entrySlug, ...(missingSourceExample ? ["missing-source-example"] : [])],
     source: {
       path: sourcePath,
       title: target.localization?.role === "base-curriculum" ? (deck.split(/\s+\/\s+/u)[1] ?? deck) : localizedReviewTitle(deck)
@@ -1104,7 +1507,7 @@ function extractLearnerFacingExampleLines(markdown: string): readonly string[] {
       continue;
     }
     if (/^##\s+(?:Brief Introduction|Content|Simple Exercises|Model Mini Dialogue|Model Mini Text)\b/iu.test(trimmed)
-      || /^###\s+(?:Learner-facing Dialogue|Controlled Reading|New Vocabulary|New Grammar|New Grammar \/ Pattern|Hanja|Usage Notes|.* Usage Notes|Register|Register \/ Regional Notes|Register and Context Notes|Model Mini Dialogue|Model Mini Text)\b/iu.test(trimmed)) {
+      || /^###\s+(?:Dialogue|Narrative|Learner-facing Dialogue|Controlled Reading|New Vocabulary|New Grammar|New Grammar \/ Pattern|Hanja|Usage Notes|.* Usage Notes|Register|Register \/ Regional Notes|Register and Context Notes|Model Mini Dialogue|Model Mini Text)\b/iu.test(trimmed)) {
       inExampleSection = true;
       continue;
     }
@@ -1133,6 +1536,7 @@ function extractStrictReadContentExampleLines(markdown: string): readonly string
   let inReadContentSection = false;
   let inCodeFence = false;
   let inReadContentTextFence = false;
+  let readContentKind: "dialogue" | "narrative" | undefined;
   for (const [index, rawLine] of markdown.replace(/\r\n?/gu, "\n").split("\n").entries()) {
     const trimmed = rawLine.trim();
     if (index === 0 && trimmed === "---") {
@@ -1145,12 +1549,14 @@ function extractStrictReadContentExampleLines(markdown: string): readonly string
       }
       continue;
     }
-    if (/^#{2,4}\s+(?:對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Model Dialogue|Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Learner-facing Controlled Reading|Controlled Reading)(?:\b|$)/iu.test(trimmed)) {
+    if (/^#{2,4}\s+(?:Dialogue|Narrative|對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Model Dialogue|Model Mini Dialogue|Model Mini Text|Learner-facing Dialogue|Learner-facing Controlled Reading|Controlled Reading)(?:\b|$)/iu.test(trimmed)) {
       inReadContentSection = true;
+      readContentKind = /(?:Dialogue|對話)/iu.test(trimmed) ? "dialogue" : "narrative";
       continue;
     }
     if (/^#{2,4}\s+/u.test(trimmed)) {
       inReadContentSection = false;
+      readContentKind = undefined;
       continue;
     }
     if (trimmed.startsWith("```")) {
@@ -1166,13 +1572,26 @@ function extractStrictReadContentExampleLines(markdown: string): readonly string
     if (!inReadContentSection || (inCodeFence && !inReadContentTextFence)) {
       continue;
     }
-    const line = normalizeExampleSourceLine(rawLine);
-    if (line === undefined || examples.includes(line)) {
-      continue;
+    const normalized = normalizeExampleSourceLine(rawLine);
+    const lines = normalized === undefined
+      ? []
+      : readContentKind === "dialogue"
+        ? [normalized.replace(/^[^:]{1,40}?\s*:\s+/u, "")]
+        : splitExampleSentences(normalized);
+    for (const line of lines) {
+      if (examples.includes(line)) {
+        continue;
+      }
+      examples.push(line);
     }
-    examples.push(line);
   }
   return examples;
+}
+
+function splitExampleSentences(text: string): readonly string[] {
+  return [...new Intl.Segmenter(undefined, { granularity: "sentence" }).segment(text)]
+    .map(({ segment }) => segment.trim())
+    .filter((segment) => segment.length > 0);
 }
 
 function normalizeExampleSourceLine(line: string): string | undefined {
@@ -1200,7 +1619,7 @@ function normalizeExampleSourceLine(line: string): string | undefined {
 }
 
 function isLanguageCurriculumTarget(target: ContentPackageGeneratorTarget): boolean {
-  return target.contentType === "language-curriculum";
+  return target.contentType === "language-curriculum" || target.contentType === "core-review";
 }
 
 function languageCodeForReviewLabel(label: string): string | undefined {
@@ -1241,7 +1660,7 @@ function stableDirectionSlug(
   promptLabel: string,
   answerLabel: string
 ): string {
-  if (target.id === "english-curriculum") {
+  if (curriculumIdentityTargetId(target) === "english-curriculum") {
     if (promptLabel === "English Target" && answerLabel === "Chinese (Taiwan)") {
       return slugForPath("English Target -> English");
     }
@@ -1253,7 +1672,7 @@ function stableDirectionSlug(
 }
 
 function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
-  switch (target.id) {
+  switch (curriculumIdentityTargetId(target)) {
     case "korean-curriculum":
       return "Hangul";
     case "chinese-mandarin-traditional-curriculum":
@@ -1277,6 +1696,12 @@ function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
     default:
       return "text";
   }
+}
+
+function curriculumIdentityTargetId(target: ContentPackageGeneratorTarget): string {
+  if (!target.capabilities?.includes("core-review")) return target.id;
+  const relatedId = target.relatedPackageIds?.[0];
+  return legacyGeneratorTargets.find(candidate => candidate.packageId === relatedId)?.id ?? target.id;
 }
 
 function parseTabSeparatedRows(text: string): readonly (readonly string[])[] {

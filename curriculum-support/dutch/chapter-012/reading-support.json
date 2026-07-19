@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches a controlled third-person present-action pattern, such as [[grammar:Sophie staat op.]]. Notice the action word in each sentence.",
+      "expert": "This chapter introduces controlled third-person singular present predicates in the pattern [[grammar:Sophie + V stem-t]]. It includes a separable verb and several strong-verb forms without presenting the full conjugational system."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Sophie + action word\n\nThe name [[grammar:Sophie]] comes before the action in lines such as [[grammar:Sophie leest ...]] and [[grammar:Sophie fietst ...]]. Learn the action forms you see in this chapter.",
+      "expert": "#### Sophie + V stem-t\n\nThe pattern [[grammar:Sophie + V stem-t]] keeps an overt third-person singular subject before finite forms such as [[grammar:staat op]], [[grammar:eet]], [[grammar:drinkt]], [[grammar:leest]], and [[grammar:fietst]]. [[grammar:Staat op]] additionally shows main-clause separation of [[grammar:opstaan]]."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Daarna]] means that the next action happens after the earlier one.",
+      "expert": "Temporal adverb [[grammar:daarna]] appears in the middle field here; repeated overt subject [[grammar:Sophie]] keeps reference explicit in the controlled narrative."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These are neutral everyday sentences about a routine.",
+      "expert": "The simple present receives a habitual reading from the routine discourse; the forms are standard across major Dutch varieties."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Het is ochtend.]] tells you when the routine starts.\n- [[grammar:Sophie staat op.]] says that Sophie gets up.\n- [[grammar:Sophie eet brood.]] says what she eats.\n- [[grammar:Sophie leest daarna een boek.]] says that reading happens next.\n- [[grammar:Sophie fietst naar school.]] says how and where she goes.\n- [[grammar:Sophie drinkt melk.]] says what she drinks.\n- [[grammar:Sophie fietst daarna naar huis.]] says that she cycles home next.\n- [[grammar:Sophie leest thuis de krant.]] says what she reads at home.",
+    "expert": "- [[grammar:Het is ochtend.]] is a fixed temporal setting frame.\n- [[grammar:Sophie staat op.]] contains a separated finite form of [[grammar:opstaan]].\n- [[grammar:Sophie eet brood.]] uses an irregular strong-verb form with an articleless mass-noun object.\n- [[grammar:Sophie leest daarna een boek.]] combines finite [[grammar:leest]] with a medial temporal adverb and indefinite object.\n- [[grammar:Sophie fietst naar school.]] uses a regular third-person form plus an articleless conventional destination.\n- [[grammar:Sophie drinkt melk.]] reuses the Chapter 8 drinking sense in a finite form.\n- [[grammar:Sophie fietst daarna naar huis.]] places [[grammar:daarna]] before the destination phrase.\n- [[grammar:Sophie leest thuis de krant.]] uses locative adverb [[grammar:thuis]] and a definite object."
+  }
+}

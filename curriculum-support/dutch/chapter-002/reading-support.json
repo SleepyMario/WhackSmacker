@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Mijn naam is ...]]. It means [[grammar:My name is ...]]. Use it when you want to say your name clearly.",
+      "expert": "This chapter introduces the identificational copular frame [[grammar:Mijn naam is N]]. The possessive determiner [[grammar:mijn]] modifies [[grammar:naam]], while finite third-person singular [[grammar:is]] links the noun phrase to the identifying complement. Expert context: casual Dutch often prefers the inherited [[grammar:Ik ben N]] for self-introduction."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "[[grammar:Mijn naam is N]] means My name is N. Replace [[grammar:N]] with a person's name.",
+      "expert": "[[grammar:Mijn naam is N]] is a subject-initial copular clause: possessive determiner + common-gender noun + finite copula + identifying complement. The chapter treats the frame as a bounded introduction, not as a general possessive paradigm."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Mijn naam is ...]] is correct and useful. In a casual introduction, [[grammar:Ik ben ...]] often sounds more natural.",
+      "expert": "The nominal self-identification formula is neutral but somewhat explicit or formal relative to conversational [[grammar:Ik ben ...]]. This is a register contrast, not a difference in truth conditions."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These forms are neutral in both the Netherlands and Belgium.",
+      "expert": "The forms are standard across Netherlandic and Belgian Dutch; local preferences affect conversational choice more than the grammatical frame itself."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Hallo.]] is a greeting.\n- [[grammar:Ik ben Daan de Vries.]] uses the Chapter 1 pattern with a name.\n- [[grammar:Mijn naam is Daan de Vries.]] says Daan's name with the new pattern.\n- [[grammar:Ik ben leerling.]] says that Daan is a pupil.\n- [[grammar:Ik ben Nederlander.]] says that Daan is Dutch.\n- [[grammar:Hallo, Sophie de Vries.]] greets Sophie by name.\n- [[grammar:Mijn naam is Sophie de Vries.]] says Sophie's name with the new pattern.\n- [[grammar:Ik ben leerling.]] says that Sophie is a pupil.\n- [[grammar:Ik ben scholier.]] says that Sophie is a secondary-school pupil.",
+    "expert": "- [[grammar:Hallo.]] is a standalone greeting formula.\n- [[grammar:Ik ben Daan de Vries.]] reuses the first-person singular copular identity frame.\n- [[grammar:Mijn naam is Daan de Vries.]] realizes a possessive noun phrase as subject and a proper-name identifying complement.\n- [[grammar:Ik ben leerling.]] has a bare profession or role noun as the predicative complement.\n- [[grammar:Ik ben Nederlander.]] uses a bare demonym as the predicative complement.\n- [[grammar:Hallo, Sophie de Vries.]] combines a greeting with a vocative proper name.\n- [[grammar:Mijn naam is Sophie de Vries.]] repeats the new identificational frame with a different referent.\n- [[grammar:Ik ben leerling.]] repeats the bare role-noun predicate.\n- [[grammar:Ik ben scholier.]] uses a bare role-noun predicate that matches Sophie’s established school role."
+  }
+}

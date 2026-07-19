@@ -9,19 +9,77 @@ import {
   listInstalledMemorizationItemFiles,
   memorizationItemFileMediaType,
   memorizationItemSchemaVersion,
+  memorizationItemSchemaVersionV2,
   normalizeMemorizationItemCollection,
+  pedagogicalContentForMemorizationItem,
+  pedagogicalFingerprint,
   readInstalledMemorizationItems,
   validateMemorizationItem,
   validateMemorizationItemCollection
 } from "../dist/packages/core/index.js";
 
 const schemaUrl = new URL("../schemas/memorization-item-v1.schema.json", import.meta.url);
+const schemaV2Url = new URL("../schemas/memorization-item-v2.schema.json", import.meta.url);
 
 test("memorization item JSON Schema parses as Draft 2020-12", async () => {
   const schema = JSON.parse(await readFile(schemaUrl, "utf8"));
 
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
   assert.equal(schema.$defs.item.properties.schemaVersion.const, memorizationItemSchemaVersion);
+});
+
+test("memorization item v2 JSON Schema parses and v1 remains authoritative for v1", async () => {
+  const schema = JSON.parse(await readFile(schemaV2Url, "utf8"));
+  assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
+  assert.equal(schema.$defs.item.properties.schemaVersion.const, memorizationItemSchemaVersionV2);
+  assert.equal(validItem().schemaVersion, memorizationItemSchemaVersion);
+});
+
+test("valid v2 cards parse with stable identity and matching fingerprint", () => {
+  const item = validV2Item();
+  assertValidItem(item);
+  assertValidCollection({ schemaVersion: 2, items: [item] });
+});
+
+test("v2 review examples allow one to three literal NFC strings", () => {
+  const item = validV2Item();
+  assertValidItem({ ...item, examples: ["Xin chào."] });
+  assertValidItem({ ...item, examples: ["Một.", "Hai.", "Ba."] });
+  assertInvalidItem({ ...item, examples: [] }, /between one and three/u);
+  assertInvalidItem({ ...item, examples: ["Một.", "Hai.", "Ba.", "Bốn."] }, /between one and three/u);
+  assertInvalidItem({ ...item, examples: [" Xin chào."] }, /no leading or trailing whitespace/u);
+});
+
+test("v2 duplicate stable card IDs and invalid fingerprints fail", () => {
+  const item = validV2Item();
+  assertInvalidCollection({ schemaVersion: 2, items: [item, item] }, /Duplicate memorization item ID/);
+  assertInvalidItem({ ...item, pedagogicalFingerprint: "0".repeat(64) }, /does not match pedagogically material content/);
+});
+
+test("pedagogical fingerprints normalize key order and semantically unordered arrays", () => {
+  const content = pedagogicalContentForMemorizationItem(validV2Item());
+  const reordered = {
+    expectedInterpretation: content.expectedInterpretation,
+    distractors: [...content.distractors].reverse(),
+    requiredCanonicalIds: [...content.requiredCanonicalIds].reverse(),
+    cardType: content.cardType,
+    direction: content.direction,
+    testedMeaning: content.testedMeaning,
+    acceptedAnswers: [...content.acceptedAnswers].reverse(),
+    prompt: content.prompt
+  };
+  assert.equal(pedagogicalFingerprint(content), pedagogicalFingerprint(reordered));
+});
+
+test("metadata-only changes preserve fingerprints while pedagogical changes do not", () => {
+  const item = validV2Item();
+  const base = pedagogicalFingerprint(pedagogicalContentForMemorizationItem(item));
+  assert.equal(base, pedagogicalFingerprint(pedagogicalContentForMemorizationItem({ ...item, tags: ["changed"], updatedAt: "2026-07-07T00:00:00Z", provenance: { ...item.provenance, locator: "corrected locator" } })));
+  for (const changed of [
+    { ...item, prompt: { ...item.prompt, text: "Changed prompt" } },
+    { ...item, acceptedAnswers: ["changed answer"] },
+    { ...item, distractors: ["task-changing distractor"] }
+  ]) assert.notEqual(base, pedagogicalFingerprint(pedagogicalContentForMemorizationItem(changed)));
 });
 
 test("valid basic memorization item passes", () => {
@@ -53,16 +111,21 @@ test("language-adaptive lexical metadata survives packaged memorization collecti
 test("memorization items preserve encountered form citation form and lexical sense identity", () => {
   const item = validItem();
   item.lexicalMetadata = {
-    lexicalType: "verb", learnerFacingForm: "klopt — dictionary form: kloppen",
+    lexicalType: "verb", learnerFacingForm: "klopt — kloppen",
     lexicalEntryId: "nl.verb.kloppen", senseId: "nl.verb.kloppen.be-correct",
     surfaceForm: "klopt", lemma: "kloppen", citationForm: "kloppen",
     partOfSpeech: "verb", meaning: "to be correct", introductionStatus: "new-entry",
-    firstIntroductionChapter: 2, encounteredForms: ["klopt"], morphologyStatus: "supporting-form"
+    firstIntroductionChapter: 2, encounteredForms: ["klopt"], morphologyStatus: "supporting-form",
+    regularityStatus: "regular", verbClass: "weak verb"
   };
   const collection = normalizeMemorizationItemCollection(JSON.parse(JSON.stringify({ schemaVersion: 1, items: [item] })));
   assert.equal(collection.items[0].lexicalMetadata.surfaceForm, "klopt");
   assert.equal(collection.items[0].lexicalMetadata.citationForm, "kloppen");
   assert.equal(collection.items[0].lexicalMetadata.senseId, "nl.verb.kloppen.be-correct");
+  assert.equal(collection.items[0].lexicalMetadata.regularityStatus, "regular");
+  assert.equal(collection.items[0].lexicalMetadata.verbClass, "weak verb");
+  assert.doesNotMatch(collection.items[0].prompt.text, /regular|weak verb/u);
+  assert.doesNotMatch(collection.items[0].answer.text, /regular|weak verb/u);
 });
 
 test("single item normalizes to a collection", () => {
@@ -126,6 +189,8 @@ test("installed memorization item files can be discovered and read", async () =>
     assert.equal(files[0].mediaType, memorizationItemFileMediaType);
     assert.equal(result.items.length, 2);
     assert.equal(result.items[0].id, "hangul/vowels/a");
+    assert.equal(result.items[1].lexicalMetadata.regularityStatus, "irregular");
+    assert.equal(result.items[1].lexicalMetadata.verbClass, "Korean ㅂ-irregular conjugation");
   } finally {
     await fixture.cleanup();
   }
@@ -179,14 +244,44 @@ function validItem(id = "hangul/vowels/a") {
   };
 }
 
+function validV2Item() {
+  const item = {
+    ...validItem("vi-core-review-001-005/ch001/example"),
+    schemaVersion: 2,
+    cardId: "vi-core-review-001-005/ch001/example",
+    pedagogicalFingerprint: "0".repeat(64),
+    kind: "concept",
+    deck: { id: "vi-core-review-001-005", title: "Chapter 1-5", chapterStart: 1, chapterEnd: 5 },
+    sourceChapters: [1],
+    reviewDirection: "en-to-en",
+    acceptedAnswers: ["hello", "greeting"],
+    distractors: ["goodbye", "name"],
+    explanation: "The expression is a greeting.",
+    testedMeaning: "hello",
+    testedLexicalIds: ["vi.phrase.xin-chao.greeting"],
+    testedGrammarIds: [], testedGeographicIds: [], testedCastIds: [], testedSkillIds: [],
+    provenance: { path: "units/vietnamese-core/chapter-001/chapter.md", locator: "Dialogue", evidence: "Xin chào." }
+  };
+  return { ...item, pedagogicalFingerprint: pedagogicalFingerprint(pedagogicalContentForMemorizationItem(item)) };
+}
+
 async function createInstalledMemoryFixture() {
   const root = await mkdtemp(join(tmpdir(), "wsm-memory-items-"));
   const dataDir = join(root, "data");
   const installPath = "packages/com.sleepymario.language.memory/0.1.0";
   const packageRoot = join(dataDir, installPath);
+  const installedVerb = validItem("hangul/vowels/eo");
+  installedVerb.lexicalMetadata = {
+    lexicalType: "verb", learnerFacingForm: "도와요\n돕다\nVerb",
+    lexicalEntryId: "ko.verb.dopda", senseId: "ko.verb.dopda.help",
+    surfaceForm: "도와요", lemma: "돕다", citationForm: "돕다",
+    partOfSpeech: "verb", meaning: "to help", introductionStatus: "new-entry",
+    firstIntroductionChapter: 12, encounteredForms: ["도와요"], morphologyStatus: "supporting-form",
+    regularityStatus: "irregular", verbClass: "Korean ㅂ-irregular conjugation"
+  };
   const items = {
     schemaVersion: 1,
-    items: [validItem("hangul/vowels/a"), validItem("hangul/vowels/eo")]
+    items: [validItem("hangul/vowels/a"), installedVerb]
   };
   const itemBuffer = Buffer.from(`${JSON.stringify(items, null, 2)}\n`, "utf8");
   const itemPath = "content/memorization/hangul/items.json";

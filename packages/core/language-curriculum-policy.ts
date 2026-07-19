@@ -24,12 +24,40 @@ export interface LanguageCurriculumChapterSource {
   readonly markdown: string;
 }
 
+export interface CumulativeCurriculumChapterState {
+  readonly chapter: number;
+  readonly inheritedChapterNumbers: readonly number[];
+}
+
+export function assertCanonicalCumulativeContinuity(states: readonly CumulativeCurriculumChapterState[]): void {
+  const ordered = [...states].sort((left, right) => left.chapter - right.chapter);
+  for (let index = 0; index < ordered.length; index += 1) {
+    const state = ordered[index];
+    assertPositiveIntegerChapter(state.chapter);
+    if (state.chapter !== index + 1) throw new Error(`Canonical cumulative continuity must be an unbroken sequence from Chapter 1; found Chapter ${state.chapter} at position ${index + 1}.`);
+    const expected = Array.from({ length: state.chapter - 1 }, (_, priorIndex) => priorIndex + 1);
+    if (state.inheritedChapterNumbers.length !== expected.length || state.inheritedChapterNumbers.some((chapter, priorIndex) => chapter !== expected[priorIndex])) {
+      throw new Error(`Chapter ${state.chapter} must inherit the complete curriculum state from Chapters 1-${state.chapter - 1}; the immediate predecessor alone is insufficient.`);
+    }
+  }
+}
+
 export type LanguageCurriculumChapterFormat = "dialogue" | "narrative" | "missing";
 export type NarrativeScope = "concrete-real-life" | "broader";
 export type BroaderTopicDomain = "social" | "cultural" | "ethical" | "institutional" | "environmental" | "conceptual";
 
 export interface LanguageCurriculumChapter5170ValidationResult {
   readonly chapter: number;
+  readonly newPrincipalGrammarPointCount: number;
+  readonly newVocabularyItemCount: number;
+  readonly learnerFacingReadContentLineCount: number;
+  readonly format: LanguageCurriculumChapterFormat;
+}
+
+export interface LanguageCurriculumChapter3150ValidationResult {
+  readonly chapter: number;
+  readonly newPrincipalGrammarPointCount: number;
+  readonly connectorPrincipalGrammarPointCount: number;
   readonly newVocabularyItemCount: number;
   readonly learnerFacingReadContentLineCount: number;
   readonly format: LanguageCurriculumChapterFormat;
@@ -171,7 +199,12 @@ export interface VerbVocabularyRecord extends LexicalIdentityMetadata {
   readonly lexicalType: "verb";
   readonly learnerFacingForm: string;
   readonly encounteredForms: readonly string[];
+  readonly regularityStatus: VerbRegularityStatus;
+  readonly verbClass?: string;
+  readonly regularityMigrationStatus?: "pending-legacy-migration";
+  readonly regularityCorrectionAudit?: string;
 }
+export type VerbRegularityStatus = "regular" | "irregular" | "not-applicable" | "undetermined";
 export interface MultiwordExpressionVocabularyRecord extends LexicalIdentityMetadata {
   readonly lexicalType: "multiword-expression";
   readonly learnerFacingForm: string;
@@ -182,6 +215,18 @@ export interface MultiwordExpressionVocabularyRecord extends LexicalIdentityMeta
 }
 export type CanonicalLexicalRecord = (NounVocabularyRecord | MeasureExpressionVocabularyRecord) & LexicalIdentityMetadata | VerbVocabularyRecord | MultiwordExpressionVocabularyRecord;
 export type LearnerFacingVocabularyRecord = NounVocabularyRecord | MeasureExpressionVocabularyRecord | VerbVocabularyRecord | MultiwordExpressionVocabularyRecord | SimpleVocabularyRecord;
+export type LearnerFacingLexicalLabel = "Noun" | "Verb" | "Infinitive" | "Adjective" | "Adverb" | "Preposition" | "Conjunction" | "Pronoun" | "Numeral" | "Phrase" | "Sequence word" | "Classifier" | "Counter" | "Measure word";
+export interface LearnerFacingLexicalDisplayRecord {
+  readonly lexicalType: "noun" | "verb" | "adjective" | "adverb" | "preposition" | "conjunction" | "pronoun" | "numeral" | "phrase" | "sequence-word" | "classifier" | "counter" | "measure-word";
+  readonly notesLabel: string;
+  readonly surfaceForm: string;
+  readonly citationForm: string;
+  readonly infinitiveFormLine?: string;
+  readonly infinitiveTranslation?: string;
+  readonly infinitiveNotesLabel?: string;
+  readonly infinitiveApplicable?: boolean;
+  readonly infinitiveMappingUseful?: boolean;
+}
 export interface LexicalInventoryAuditResult {
   readonly newVocabularyCount: number;
   readonly newSenseIds: readonly string[];
@@ -225,19 +270,73 @@ export interface LargeNumberCoverageRule {
   readonly max: number;
 }
 
+export interface CanonicalGrammarPatternRecord {
+  readonly grammarId: string;
+  readonly learnerFacingPattern?: string;
+  readonly learnerFacingExplanation?: string;
+  readonly developerDescription?: string;
+  readonly components?: readonly string[];
+  readonly indivisibleExpression?: boolean;
+  readonly patternSource?: "learner-facing-pattern" | "developer-description";
+}
+
+export function formatGrammarPatternComponents(components: readonly string[]): string {
+  if (components.length === 0 || components.some((component) => component.trim().length === 0)) {
+    throw new Error("Grammar pattern components must be nonempty.");
+  }
+  return components.map((component) => component.trim()).join(" + ");
+}
+
+export function assertCanonicalGrammarPatternRecord(record: CanonicalGrammarPatternRecord): void {
+  const pattern = record.learnerFacingPattern?.trim();
+  if (pattern === undefined || pattern.length === 0) throw new Error(`${record.grammarId}: learner-facing grammar pattern is required.`);
+  if (record.patternSource === "developer-description") throw new Error(`${record.grammarId}: Normal grammar pattern cannot fall back to developer description.`);
+  if (record.developerDescription !== undefined && normalizeGrammarPattern(pattern) === normalizeGrammarPattern(record.developerDescription)) {
+    throw new Error(`${record.grammarId}: learner-facing pattern must not be populated from the developer description.`);
+  }
+  if ((record.components?.length ?? 0) > 0) {
+    if (record.indivisibleExpression) throw new Error(`${record.grammarId}: an indivisible expression must not also declare compositional components.`);
+    const expected = formatGrammarPatternComponents(record.components ?? []);
+    if (pattern !== expected) throw new Error(`${record.grammarId}: compositional learner-facing pattern must be ${expected}.`);
+  }
+}
+
+export function assertGrammarSummaryPatternAgreement(
+  easy: readonly CanonicalGrammarPatternRecord[],
+  hard: readonly CanonicalGrammarPatternRecord[]
+): void {
+  for (const record of [...easy, ...hard]) assertCanonicalGrammarPatternRecord(record);
+  const hardById = new Map(hard.map((record) => [record.grammarId, record.learnerFacingPattern?.trim()]));
+  if (easy.length !== hard.length) throw new Error("Grammar Easy and Hard must contain the same grammar inventory.");
+  for (const record of easy) {
+    if (!hardById.has(record.grammarId)) throw new Error(`Grammar Hard is missing ${record.grammarId}.`);
+    if (hardById.get(record.grammarId) !== record.learnerFacingPattern?.trim()) throw new Error(`${record.grammarId}: Grammar Easy and Hard patterns disagree.`);
+  }
+}
+
+function normalizeGrammarPattern(value: string): string {
+  return value.normalize("NFKC").replace(/\s+/gu, " ").trim().toLocaleLowerCase();
+}
+
 export interface LanguageCurriculumPolicy {
+  readonly cumulativeContinuityRules: readonly string[];
   readonly activeCastRules: readonly string[];
   readonly lexicalFoundationRules: readonly string[];
+  readonly normalViewVoiceRules: readonly string[];
+  readonly grammarEasyRules: readonly string[];
+  readonly grammarPatternDisplayRules: readonly string[];
   readonly pacingRules: readonly LanguageCurriculumPacingRule[];
-  readonly decisionBoundaryChapter: number;
   readonly chapterFormatRules: readonly string[];
   readonly numberContinuationRules: readonly string[];
   readonly chapterSizeRules: readonly LanguageCurriculumChapterSizeRule[];
+  readonly unifiedGrammar3150Rules: readonly string[];
+  readonly intensiveGrammar5170Rules: readonly string[];
   readonly expandedGrammarAndDiscourseRules: readonly string[];
   readonly broaderTopicDomains: readonly BroaderTopicDomain[];
   readonly grammarSummaryAfterChapters: readonly number[];
   readonly largeNumberCoverageRules: readonly LargeNumberCoverageRule[];
   readonly vocabularyContinuityRules: readonly string[];
+  readonly reviewDeckRules: readonly string[];
   readonly strictExampleRules: readonly string[];
   readonly surfaceFormRules: readonly string[];
 }
@@ -246,6 +345,10 @@ export const grammarEasyMenuLabel = "Grammar - Easy";
 export const grammarHardMenuLabel = "Grammar - Hard";
 
 export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
+  cumulativeContinuityRules: [
+    "Every chapter through Chapter 140 inherits the complete curriculum state from Chapter 1 through the immediately preceding chapter.",
+    "Five-chapter blocks, reviews, summaries, units, packages, and installation boundaries never reset cumulative curriculum identity or history."
+  ],
   activeCastRules: [
     "Canonical-cast metadata declares one explicit versioned progression containing exactly thirty unique canonical person IDs.",
     "The active pool is the first min(30, 5 + 3 * floor((chapter - 1) / 20)) progression IDs.",
@@ -265,7 +368,34 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Lexical identity uses stable entry and sense IDs, so identical surface forms may carry genuinely distinct senses or parts of speech without being merged.",
     "An encountered inflected verb form and its language-appropriate citation form are one lexical introduction; ordinary later inflections are reuse.",
     "Lexicalized multiword expressions have their own complete entry and sense; internal untaught morphology remains fixed or unanalyzed rather than implicitly productive.",
-    "Review and reintroduction retain the original first-introduction chapter and do not count toward new-vocabulary quotas."
+    "Review and reintroduction retain the original first-introduction chapter and do not count toward new-vocabulary quotas.",
+    "Learner-facing vocabulary Notes use concise labels only and never expose internal lexical identity, citation, history, or morphology fields.",
+    "Normal vocabulary Notes use accessible broad categories; Expert may use only concise grammatical subclasses supported by current authored or structured data, and Developer may retain raw fields.",
+    "Unsupported Expert vocabulary subclasses are not invented, internal metadata stays hidden, and review decks are never rewritten merely to refine read-content Notes.",
+    "Normal reading vocabulary lists hide the raw structured Usage field; necessary distinctions are rewritten as clear learner-facing prose.",
+    "Where infinitives apply, a differing encountered verb form stays primary and is followed by a bare-infinitive row with a natural English infinitive and exactly Infinitive in Notes, in the same uninterrupted lexical entry.",
+    "The infinitive row shares lexical and sense identity with the encountered row; languages without an applicable infinitive do not invent one, and full structured metadata remains internal.",
+    "First-introduced verbs store canonical regularityStatus and optional language-specific verbClass; later forms and reviews inherit them.",
+    "Use regular/irregular only where meaningful, not-applicable for systems such as ordinary Chinese, and undetermined only for pending legacy migration.",
+    "Verb regularity/class survives package and memorization metadata but does not appear in learner-facing Notes."
+  ],
+  normalViewVoiceRules: [
+    "Normal-view instructional prose uses direct address, neutral reference to the language/construction/example, or an ordinary imperative.",
+    "Normal view does not label the reader as the learner, learners, the student, students, the user, or another detached third-person role.",
+    "Genuine people in dialogue, narrative, and quoted examples are not reader labels and remain unchanged.",
+    "Developer view may retain complete original authoring, validator, and technical wording in structurally classified developer-only content."
+  ],
+  grammarEasyRules: [
+    "Grammar Easy addresses the learner directly using language understandable at roughly US grade levels 4-8.",
+    "Grammar Easy uses short, concrete explanations and examples, avoids detached reader labels such as the learner, learners, the student, students, or the user, and remains technically accurate.",
+    "Grammar Easy and Grammar Hard use the same canonical grammar ID and exact learner-facing pattern for every shared point."
+  ],
+  grammarPatternDisplayRules: [
+    "Every visible top-level grammar section in Normal, Expert, and Developer is named exactly Grammar; Developer distinguishes both variants only with internal Normal and Expert labels.",
+    "Grammar ID, learner-facing pattern, learner-facing explanation, and developer description remain separate structured fields.",
+    "Chapter and Easy/Hard inventories display the learner-facing pattern and never fall back to a developer description.",
+    "Easy and Hard use the same canonical learner-facing pattern for each shared grammar ID.",
+    "Declared compositional components render with exactly one space on both sides of +; fixed indivisible expressions remain whole."
   ],
   pacingRules: [
     {
@@ -277,12 +407,28 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       newVocabularyItems: { min: 6, max: 10 }
     },
     {
-      label: "Chapters 26-50",
+      label: "Chapters 26-30",
       chapterStart: 26,
-      chapterEnd: 50,
+      chapterEnd: 30,
       grammarPoints: { min: 1, max: 2 },
       readContentLines: { min: 10, max: 30 },
       newVocabularyItems: { min: 6, max: 20 }
+    },
+    {
+      label: "Chapters 31-50",
+      chapterStart: 31,
+      chapterEnd: 50,
+      grammarPoints: { min: 2, max: 2 },
+      readContentLines: { min: 10, max: 30 },
+      newVocabularyItems: { min: 6, max: 20 }
+    },
+    {
+      label: "Chapters 51-70",
+      chapterStart: 51,
+      chapterEnd: 70,
+      grammarPoints: { min: 2, max: 2 },
+      readContentLines: { min: 15, max: 30 },
+      newVocabularyItems: { min: 10, max: 30 }
     },
     {
       label: "Chapters 71-140",
@@ -293,7 +439,6 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       newVocabularyItems: { min: 10, max: 30 }
     }
   ],
-  decisionBoundaryChapter: 51,
   chapterFormatRules: [
     "Odd-numbered chapters are dialogues.",
     "Even-numbered chapters are narratives.",
@@ -324,6 +469,22 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       learnerFacingReadContentLines: { min: 20, max: 40 }
     }
   ],
+  unifiedGrammar3150Rules: [
+    "Every Chapter 31-50 introduces exactly two genuinely new principal grammar IDs.",
+    "Exactly one principal point is a connector, conjunction, linking form, sequencing construction, or comparable discourse-linking point.",
+    "Exactly one principal point belongs to a different broad grammatical domain; two connector-domain points fail.",
+    "Reused grammar satisfies neither point and supporting variants or morphology do not increase the count.",
+    "Each chapter retains 6-20 genuinely new vocabulary items, 10-30 learner-facing lines, topic-centered content, and odd dialogue / even narrative."
+  ],
+  intensiveGrammar5170Rules: [
+    "Every Chapter 51-70 introduces exactly two genuinely new principal grammar points; zero, one, or three or more fail.",
+    "The main domains are language-appropriate tense, time reference, aspect, event structure, mood, and modality.",
+    "Both points are pedagogically compatible and subordinate to coherent topic-centered content.",
+    "Supporting morphology, agreement, pronunciation, spelling, and required inflectional variants do not count separately.",
+    "Previously introduced or reused grammar satisfies neither required new point.",
+    "Do not force English-style tense categories onto languages organized differently or pair two extreme distinctions from one narrow subsystem unless the language requires it.",
+    "Chapters 31-70 form the steepest grammar-acquisition section; Chapter 71 transitions to exactly one new principal point with deeper integration."
+  ],
   expandedGrammarAndDiscourseRules: [
     "Chapters 71-140 form one seventy-chapter Expanded Grammar and Broader Discourse stage.",
     "Each chapter introduces exactly one genuinely new principal grammar point; supporting forms and previously introduced grammar do not increase that count.",
@@ -351,6 +512,14 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "New vocabulary after Chapter 1 must be deliberate and supported by read content or clear curriculum progression.",
     "Country and place vocabulary must be worked into read content before becoming normal core review content."
   ],
+  reviewDeckRules: [
+    "One normal vocabulary review deck follows every completed consecutive five-chapter block.",
+    "The deck contains exactly one card for every vocabulary item or lexical sense first introduced in that block; there is no fixed card count.",
+    "Reused vocabulary retains its original first-introduction chapter and is not added again as new in a later block.",
+    "Every normal card prompts in the target language and answers in the source language, with no reverse duplicate.",
+    "Normal vocabulary decks contain no grammar, comprehension, cloze, multiple-choice, production, or distractor-based questions.",
+    "Normal learner-facing five-chapter review decks hide the raw structured Notes field while retaining it for authoring, validation, provenance, migrations, and debugging."
+  ],
   strictExampleRules: [
     "Normal core review entries require one to three literal read-content examples.",
     "Examples must not be invented.",
@@ -364,11 +533,8 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
   ]
 };
 
-export function pacingRuleForChapter(chapter: number): LanguageCurriculumPacingRule | "decision-boundary" {
+export function pacingRuleForChapter(chapter: number): LanguageCurriculumPacingRule {
   assertPositiveIntegerChapter(chapter);
-  if (chapter === languageCurriculumPolicy.decisionBoundaryChapter) {
-    return "decision-boundary";
-  }
   const matches = languageCurriculumPolicy.pacingRules
     .filter((rule) => chapter >= rule.chapterStart && chapter <= rule.chapterEnd)
     .sort((left, right) => right.chapterStart - left.chapterStart);
@@ -385,12 +551,52 @@ export function assertLanguageCurriculumPacing(values: {
   readonly newVocabularyItemCount: number;
 }): void {
   const rule = pacingRuleForChapter(values.chapter);
-  if (rule === "decision-boundary") {
-    throw new Error("Chapter 51 is a language curriculum pacing decision boundary; do not generate a new pacing band automatically.");
-  }
   assertInRange(values.grammarPointCount, rule.grammarPoints, `Chapter ${values.chapter} grammar point count`);
   assertInRange(values.readContentLineCount, rule.readContentLines, `Chapter ${values.chapter} read-content line count`);
   assertInRange(values.newVocabularyItemCount, rule.newVocabularyItems, `Chapter ${values.chapter} new vocabulary item count`);
+}
+
+export function assertLanguageCurriculumChapter3150Requirements(
+  chapters: readonly LanguageCurriculumChapterSource[]
+): readonly LanguageCurriculumChapter3150ValidationResult[] {
+  const chapterSources = [...chapters]
+    .filter((chapter) => Number.isInteger(chapter.chapter) && chapter.chapter >= 1)
+    .sort((left, right) => left.chapter - right.chapter);
+  const previouslyIntroducedVocabulary = new Set<string>();
+  const previouslyIntroducedGrammar = new Set<string>();
+  const results: LanguageCurriculumChapter3150ValidationResult[] = [];
+
+  for (const source of chapterSources) {
+    const vocabularyEntries = declaredLearnerFacingVocabulary(source.markdown);
+    const newVocabulary = new Set(vocabularyEntries.map(vocabularyKey).filter((key) => key !== "" && !previouslyIntroducedVocabulary.has(key)));
+    const grammarEntries = declaredGrammarEntries(source.markdown);
+    const newPrincipalGrammar = grammarEntries.filter((entry) => entry.kind === "principal" && entry.key !== "" && !previouslyIntroducedGrammar.has(entry.key));
+
+    if (source.chapter >= 31 && source.chapter <= 50) {
+      const readContent = learnerFacingReadContent(source.markdown);
+      const expectedFormat = source.chapter % 2 === 1 ? "dialogue" : "narrative";
+      const connectorCount = newPrincipalGrammar.filter(isConnectorGrammarEntry).length;
+      assertInRange(newPrincipalGrammar.length, { min: 2, max: 2 }, `Chapter ${source.chapter} new principal grammar point count`);
+      assertInRange(connectorCount, { min: 1, max: 1 }, `Chapter ${source.chapter} connector-domain principal grammar point count`);
+      assertInRange(newVocabulary.size, { min: 6, max: 20 }, `Chapter ${source.chapter} new learner-facing vocabulary item count`);
+      assertInRange(readContent.lines.length, { min: 10, max: 30 }, `Chapter ${source.chapter} learner-facing dialogue or narrative line count`);
+      if (readContent.format !== expectedFormat) throw new Error(`Chapter ${source.chapter} must use learner-facing ${expectedFormat} content; detected ${readContent.format}.`);
+      results.push({
+        chapter: source.chapter,
+        newPrincipalGrammarPointCount: newPrincipalGrammar.length,
+        connectorPrincipalGrammarPointCount: connectorCount,
+        newVocabularyItemCount: newVocabulary.size,
+        learnerFacingReadContentLineCount: readContent.lines.length,
+        format: readContent.format
+      });
+    }
+
+    for (const entry of vocabularyEntries) previouslyIntroducedVocabulary.add(vocabularyKey(entry));
+    for (const entry of grammarEntries) {
+      if (entry.kind === "principal" || entry.kind === "reused" || entry.kind === "legacy") previouslyIntroducedGrammar.add(entry.key);
+    }
+  }
+  return results;
 }
 
 export function assertLanguageCurriculumChapter5170Requirements(
@@ -400,6 +606,7 @@ export function assertLanguageCurriculumChapter5170Requirements(
     .filter((chapter) => Number.isInteger(chapter.chapter) && chapter.chapter >= 1)
     .sort((left, right) => left.chapter - right.chapter);
   const previouslyIntroducedVocabulary = new Set<string>();
+  const previouslyIntroducedGrammar = new Set<string>();
   const results: LanguageCurriculumChapter5170ValidationResult[] = [];
 
   for (const source of chapterSources) {
@@ -411,6 +618,11 @@ export function assertLanguageCurriculumChapter5170Requirements(
         newVocabulary.add(key);
       }
     }
+    const grammarEntries = declaredGrammarEntries(source.markdown);
+    const newPrincipalGrammar = new Set(grammarEntries
+      .filter((entry) => entry.kind === "principal")
+      .map((entry) => entry.key)
+      .filter((key) => key !== "" && !previouslyIntroducedGrammar.has(key)));
 
     if (source.chapter >= 51 && source.chapter <= 70) {
       const rule = languageCurriculumPolicy.chapterSizeRules[0];
@@ -418,10 +630,12 @@ export function assertLanguageCurriculumChapter5170Requirements(
       const expectedFormat = source.chapter % 2 === 1 ? "dialogue" : "narrative";
       const result: LanguageCurriculumChapter5170ValidationResult = {
         chapter: source.chapter,
+        newPrincipalGrammarPointCount: newPrincipalGrammar.size,
         newVocabularyItemCount: newVocabulary.size,
         learnerFacingReadContentLineCount: readContent.lines.length,
         format: readContent.format
       };
+      assertInRange(result.newPrincipalGrammarPointCount, { min: 2, max: 2 }, `Chapter ${source.chapter} new principal grammar point count`);
       assertInRange(result.newVocabularyItemCount, rule.newVocabularyItems, `Chapter ${source.chapter} new learner-facing vocabulary item count`);
       assertInRange(result.learnerFacingReadContentLineCount, rule.learnerFacingReadContentLines, `Chapter ${source.chapter} learner-facing dialogue or narrative line count`);
       if (result.format !== expectedFormat) {
@@ -433,6 +647,9 @@ export function assertLanguageCurriculumChapter5170Requirements(
     for (const entry of vocabularyEntries) {
       const key = vocabularyKey(entry);
       if (key !== "") previouslyIntroducedVocabulary.add(key);
+    }
+    for (const entry of grammarEntries) {
+      if (entry.kind === "principal" || entry.kind === "reused" || entry.kind === "legacy") previouslyIntroducedGrammar.add(entry.key);
     }
   }
 
@@ -498,7 +715,7 @@ export function assertLanguageCurriculumChapter71140Requirements(
   return results;
 }
 
-type DeclaredGrammarEntry = { readonly kind: "principal" | "supporting" | "reused" | "legacy"; readonly key: string };
+type DeclaredGrammarEntry = { readonly kind: "principal" | "supporting" | "reused" | "legacy"; readonly key: string; readonly description: string };
 
 function declaredGrammarEntries(markdown: string): readonly DeclaredGrammarEntry[] {
   const entries: DeclaredGrammarEntry[] = [];
@@ -514,15 +731,19 @@ function declaredGrammarEntries(markdown: string): readonly DeclaredGrammarEntry
       continue;
     }
     if (!inGrammarSection) continue;
-    const match = line.match(/^[-*]\s+(Principal|Supporting|Reused)\s*:\s*([^|]+?)(?:\s*\|.*)?$/iu);
+    const match = line.match(/^[-*]\s+(Principal|Supporting|Reused)\s*:\s*([^|]+?)(?:\s*\|\s*(.*))?$/iu);
     if (match !== null) {
-      entries.push({ kind: match[1].toLocaleLowerCase() as DeclaredGrammarEntry["kind"], key: grammarKey(match[2]) });
+      entries.push({ kind: match[1].toLocaleLowerCase() as DeclaredGrammarEntry["kind"], key: grammarKey(match[2]), description: match[3]?.trim() ?? "" });
       continue;
     }
     const legacy = line.match(/^`([^`]+?)(?:\s+--\s+[^`]*)?`$/u);
-    if (legacy !== null) entries.push({ kind: "legacy", key: grammarKey(legacy[1]) });
+    if (legacy !== null) entries.push({ kind: "legacy", key: grammarKey(legacy[1]), description: "" });
   }
   return entries;
+}
+
+function isConnectorGrammarEntry(entry: DeclaredGrammarEntry): boolean {
+  return /^(?:connector|conjunction|linking form|sequencing construction|discourse[- ]linking(?: point| form)?)\s*:/iu.test(entry.description);
 }
 
 function grammarKey(value: string): string {
@@ -978,6 +1199,20 @@ export function assertLearnerFacingVocabularyRecord(record: LearnerFacingVocabul
   if (hasCanonicalLexicalIdentity(record)) assertCanonicalLexicalRecord(record);
 }
 
+export function assertLearnerFacingLexicalDisplay(record: LearnerFacingLexicalDisplayRecord): void {
+  const expectedLabels: Readonly<Record<LearnerFacingLexicalDisplayRecord["lexicalType"], LearnerFacingLexicalLabel>> = {
+    noun: "Noun", verb: "Verb", adjective: "Adjective", adverb: "Adverb", preposition: "Preposition", conjunction: "Conjunction", pronoun: "Pronoun", numeral: "Numeral", phrase: "Phrase",
+    "sequence-word": "Sequence word", classifier: "Classifier", counter: "Counter", "measure-word": "Measure word"
+  };
+  if (record.notesLabel !== expectedLabels[record.lexicalType]) throw new Error(`Learner-facing Notes for ${record.surfaceForm} must be exactly ${expectedLabels[record.lexicalType]}.`);
+  if (/(?:lemma|lexical|sense\s*id|surface[- ]form|citation[- ]form|first[- ]introduction|attestation|morphology)/iu.test(record.notesLabel)) throw new Error(`Learner-facing Notes for ${record.surfaceForm} expose internal lexical metadata.`);
+  const needsInfinitive = record.lexicalType === "verb" && record.infinitiveApplicable !== false && record.surfaceForm !== record.citationForm && record.infinitiveMappingUseful !== false;
+  if (needsInfinitive && record.infinitiveFormLine !== record.citationForm) throw new Error(`${record.surfaceForm}: differing encountered verb form must show bare infinitive ${record.citationForm}.`);
+  if (needsInfinitive && (record.infinitiveTranslation === undefined || record.infinitiveTranslation.trim() === "")) throw new Error(`${record.surfaceForm}: infinitive row requires a natural English infinitive translation.`);
+  if (needsInfinitive && record.infinitiveNotesLabel !== "Infinitive") throw new Error(`${record.surfaceForm}: infinitive row Notes must be exactly Infinitive.`);
+  if (!needsInfinitive && (record.infinitiveFormLine !== undefined || record.infinitiveTranslation !== undefined || record.infinitiveNotesLabel !== undefined)) throw new Error(`${record.surfaceForm}: omit the infinitive row when no useful or applicable mapping is required.`);
+}
+
 export function assertCanonicalLexicalRecord(record: CanonicalLexicalRecord): void {
   for (const [field, value] of Object.entries({ lexicalEntryId: record.lexicalEntryId, senseId: record.senseId, surfaceForm: record.surfaceForm, lemma: record.lemma, citationForm: record.citationForm, partOfSpeech: record.partOfSpeech, meaning: record.meaning })) {
     if (typeof value !== "string" || value.trim() === "") throw new Error(`Canonical lexical record requires non-empty ${field}.`);
@@ -985,7 +1220,11 @@ export function assertCanonicalLexicalRecord(record: CanonicalLexicalRecord): vo
   assertPositiveIntegerChapter(record.firstIntroductionChapter);
   if (record.lexicalType === "verb") {
     if (record.encounteredForms.length === 0 || !record.encounteredForms.includes(record.surfaceForm)) throw new Error(`${record.lexicalEntryId}: verb encounteredForms must include the introduced surface form.`);
-    if (record.surfaceForm !== record.citationForm && record.citationForm.trim() === "") throw new Error(`${record.lexicalEntryId}: inflected verb requires a dictionary or citation form.`);
+    if (record.surfaceForm !== record.citationForm && record.citationForm.trim() === "") throw new Error(`${record.lexicalEntryId}: inflected verb requires an infinitive or other applicable citation form.`);
+    if (!["regular", "irregular", "not-applicable", "undetermined"].includes(record.regularityStatus)) throw new Error(`${record.lexicalEntryId}: verb requires canonical regularityStatus.`);
+    if (record.regularityStatus === "undetermined" && record.regularityMigrationStatus !== "pending-legacy-migration") throw new Error(`${record.lexicalEntryId}: undetermined verb regularity is permitted only for pending legacy migration.`);
+    if (record.verbClass !== undefined && record.verbClass.trim() === "") throw new Error(`${record.lexicalEntryId}: verbClass must be non-empty when supplied.`);
+    if (record.regularityCorrectionAudit !== undefined && record.regularityCorrectionAudit.trim() === "") throw new Error(`${record.lexicalEntryId}: regularity correction audit must be non-empty when supplied.`);
   }
   if (record.lexicalType === "multiword-expression") {
     if (!record.multiwordExpression || !/\s/u.test(record.citationForm)) throw new Error(`${record.lexicalEntryId}: idiom or fixed expression must be stored under its complete multiword citation form.`);
@@ -1004,6 +1243,7 @@ export function auditLexicalInventory(records: readonly CanonicalLexicalRecord[]
   const newSenseIds: string[] = [];
   const reviewSenseIds: string[] = [];
   const warnings: string[] = [];
+  const verbClassificationBySense = new Map<string, { regularityStatus: VerbRegularityStatus; verbClass?: string }>();
   for (const record of records) {
     assertCanonicalLexicalRecord(record);
     const existing = senseDefinitions.get(record.senseId);
@@ -1014,6 +1254,13 @@ export function auditLexicalInventory(records: readonly CanonicalLexicalRecord[]
     const existingSenseForEntryMeaning = identityByEntryAndMeaning.get(entryMeaningKey);
     if (existingSenseForEntryMeaning !== undefined && existingSenseForEntryMeaning !== record.senseId) throw new Error(`${record.lexicalEntryId}: ordinary forms of one lexical meaning cannot be counted under separate sense IDs ${existingSenseForEntryMeaning} and ${record.senseId}.`);
     identityByEntryAndMeaning.set(entryMeaningKey, record.senseId);
+    if (record.lexicalType === "verb") {
+      const established = verbClassificationBySense.get(record.senseId);
+      if (established !== undefined && (established.regularityStatus !== record.regularityStatus || established.verbClass !== record.verbClass)) {
+        if (!record.regularityCorrectionAudit) throw new Error(`${record.senseId}: verb regularity/class must inherit the established ${established.regularityStatus}${established.verbClass ? ` (${established.verbClass})` : ""}.`);
+        warnings.push(`${record.senseId}: verb regularity/class correction audited: ${record.regularityCorrectionAudit}`);
+      } else if (established === undefined) verbClassificationBySense.set(record.senseId, { regularityStatus: record.regularityStatus, ...(record.verbClass === undefined ? {} : { verbClass: record.verbClass }) });
+    }
     const isNew = ["new-entry", "new-sense", "new-part-of-speech", "new-multiword-expression"].includes(record.introductionStatus);
     if (isNew) {
       if (newlyCounted.has(record.senseId)) throw new Error(`Sense ${record.senseId} is counted as newly introduced more than once.`);

@@ -107,7 +107,8 @@ export function reviewProgressStorePath(progressDir?: string): string {
 export async function loadReviewProgressStore(progressDir?: string): Promise<ReviewProgressStore> {
   const path = reviewProgressStorePath(progressDir);
   try {
-    const store = JSON.parse((await readFile(path)).toString("utf8")) as unknown;
+    const value = JSON.parse((await readFile(path)).toString("utf8")) as unknown;
+    const store = migrateLegacyReviewProgressStore(value);
     assertValidReviewProgressStore(store);
     return store;
   } catch (error) {
@@ -118,13 +119,14 @@ export async function loadReviewProgressStore(progressDir?: string): Promise<Rev
   }
 }
 
-export async function saveReviewProgressStore(store: ReviewProgressStore, progressDir?: string): Promise<string> {
-  assertValidReviewProgressStore(store);
+export async function saveReviewProgressStore(store: ReviewProgressStore | (Omit<ReviewProgressStore, "reviewProgressFormatVersion"> & { readonly reviewProgressFormatVersion: 1 }), progressDir?: string): Promise<string> {
+  const normalized = migrateLegacyReviewProgressStore(store);
+  assertValidReviewProgressStore(normalized);
   const directory = resolveReviewProgressDirectory(progressDir);
   const path = join(directory, "review-progress.json");
   ensureInside(directory, path);
   await mkdir(dirname(path), { recursive: true });
-  await writeFile(path, `${JSON.stringify(store, null, 2)}\n`);
+  await writeFile(path, `${JSON.stringify(normalized, null, 2)}\n`);
   return path;
 }
 
@@ -138,7 +140,7 @@ export async function syncReviewProgressFromInstalledMemorizationItems(options: 
     for (const file of await listInstalledMemorizationItemFiles(contentPackage.packageId, options.contentDataDir, contentPackage.packageVersion)) {
       const collection = await readInstalledMemorizationItems(contentPackage.packageId, file.path, options.contentDataDir, contentPackage.packageVersion);
       for (const item of collection.items) {
-        const identity = toIdentity(contentPackage, item.id, item.source?.path);
+        const identity = toIdentity(contentPackage, item.id, item.source?.path, item.schemaVersion === 2 ? item.pedagogicalFingerprint : undefined);
         if (store.items.some((state) => reviewIdentityKey(state) === reviewIdentityKey(identity))) {
           continue;
         }
@@ -167,7 +169,8 @@ export async function recordStoredReviewOutcome(options: RecordStoredReviewOutco
     packageId: options.packageId,
     packageVersion: options.packageVersion,
     ...(options.sourcePath === undefined ? {} : { sourcePath: options.sourcePath }),
-    itemId: options.itemId
+    itemId: options.itemId,
+    ...(options.pedagogicalFingerprint === undefined ? {} : { pedagogicalFingerprint: options.pedagogicalFingerprint })
   };
   const current = store.items.find((state) => reviewIdentityKey(state) === reviewIdentityKey(identity)) ?? createInitialReviewState(identity, options.reviewedAt);
   const outcome = recordReviewOutcome(current, options.rating, options.reviewedAt);
@@ -195,13 +198,20 @@ export async function removeReviewProgressForPackage(
   return { removedItemCount, removedEventCount, progressPath };
 }
 
-function toIdentity(contentPackage: InstalledPackageRecord, itemId: string, sourcePath?: string): ReviewItemIdentity {
+function toIdentity(contentPackage: InstalledPackageRecord, itemId: string, sourcePath?: string, pedagogicalFingerprint?: string): ReviewItemIdentity {
   return {
     packageId: contentPackage.packageId,
     packageVersion: contentPackage.packageVersion,
     ...(sourcePath === undefined ? {} : { sourcePath }),
-    itemId
+    itemId,
+    ...(pedagogicalFingerprint === undefined ? {} : { pedagogicalFingerprint })
   };
+}
+
+function migrateLegacyReviewProgressStore(value: unknown): unknown {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return value;
+  const record = value as Record<string, unknown>;
+  return record.reviewProgressFormatVersion === 1 ? { ...record, reviewProgressFormatVersion } : value;
 }
 
 function matchesPackage(

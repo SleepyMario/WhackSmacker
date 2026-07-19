@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches the exchange [[grammar:Hoe gaat het met je?]] and [[grammar:Het gaat goed.]]. Use it to ask how someone is and answer politely.",
+      "expert": "This chapter introduces the familiar-register wellbeing exchange [[grammar:Hoe gaat het met je?]] / [[grammar:Het gaat goed.]], including an elliptical return question and a stressed object pronoun after a preposition."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Hoe gaat het met je? / Het gaat goed.\n\nUse [[grammar:Hoe gaat het met je?]] to ask someone you know how they are. Answer with [[grammar:Het gaat goed.]] or [[grammar:Het gaat prima.]]",
+      "expert": "#### Hoe gaat het met je? / Het gaat goed.\n\nThe fixed interrogative [[grammar:Hoe gaat het met je?]] contains [[grammar:hoe]], finite [[grammar:gaat]], dummy subject [[grammar:het]], and the prepositional phrase [[grammar:met je]]. The response [[grammar:Het gaat goed.]] uses the distinct wellbeing sense of [[grammar:gaan]], not its motion sense."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Use [[grammar:En met jou?]] to ask the same question back without repeating the whole sentence.",
+      "expert": "[[grammar:En met jou?]] is an elliptical return question; stressed object form [[grammar:jou]] follows [[grammar:met]], contrasting with unstressed [[grammar:je]] in the full question."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These are friendly, everyday expressions for people who know each other.",
+      "expert": "The exchange is neutral informal Dutch across major varieties; formal address and broader response scales remain outside this chapter."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Hallo, Sophie.]] is Alex's greeting.\n- [[grammar:Hallo, Alex.]] is Sophie's greeting.\n- [[grammar:Hoe gaat het met je?]] asks how Sophie is.\n- [[grammar:Het gaat goed, dank je.]] gives a positive answer and thanks Alex.\n- [[grammar:En met jou?]] asks the same question back.\n- [[grammar:Het gaat prima, dank je.]] gives another positive answer.\n- [[grammar:Ik ga naar school.]] says where Alex is going.\n- [[grammar:Ik ga naar huis.]] says where Sophie is going.\n- [[grammar:Dag, Sophie.]] is Alex's goodbye.\n- [[grammar:Dag, Alex.]] is Sophie's goodbye.",
+    "expert": "- [[grammar:Hallo, Sophie.]] and [[grammar:Hallo, Alex.]] are reciprocal greeting turns with vocatives.\n- [[grammar:Hoe gaat het met je?]] realizes the fixed wellbeing construction with interrogative [[grammar:hoe]] and a [[grammar:met]] complement.\n- [[grammar:Het gaat goed, dank je.]] uses dummy [[grammar:het]], the wellbeing sense of [[grammar:gaan]], and an adverbial response.\n- [[grammar:En met jou?]] is elliptical and retains the stressed object pronoun licensed by the preposition.\n- [[grammar:Het gaat prima, dank je.]] substitutes a second positive predicative response.\n- [[grammar:Ik ga naar school.]] and [[grammar:Ik ga naar huis.]] reuse the earlier motion construction with conventional articleless destinations.\n- [[grammar:Dag, Sophie.]] and [[grammar:Dag, Alex.]] close the exchange symmetrically."
+  }
+}

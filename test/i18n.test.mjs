@@ -4,7 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { buildModuleTree, reviewDeckMenuStatusFromStates } from "../dist/apps/cli/interactive-menu.js";
+import { buildModuleTree } from "../dist/apps/cli/interactive-menu.js";
+import { classifyReviewDeckMenuStatus } from "../dist/packages/core/index.js";
 import { sourceLocaleLabel, translate } from "../dist/src/i18n/index.js";
 import {
   loadSourceLanguageSettings,
@@ -58,7 +59,7 @@ test("module tree displays Traditional Chinese Taiwan roots without the former s
   assert.equal(tree.children.some((node) => node.id === "settings"), false);
 });
 
-test("review deck status text localizes without changing status kinds", () => {
+test("review deck status text localizes without changing the central semantic status", () => {
   const now = "2026-07-10T00:00:00Z";
   const due = {
     packageId: "example.package",
@@ -73,15 +74,14 @@ test("review deck status text localizes without changing status kinds", () => {
     easeFactor: 2.5,
     status: "review"
   };
-  assert.deepEqual(reviewDeckMenuStatusFromStates(new Set(["card-1"]), [due], now, "en-US"), {
-    kind: "has_cards_to_review",
-    dueCardCount: 1,
-    text: "There are 1 cards to review."
+  const classification = classifyReviewDeckMenuStatus({
+    deckId: "example.package#review",
+    cardIdentities: [{ packageId: due.packageId, packageVersion: due.packageVersion, itemId: due.itemId }],
+    savedProgress: [due],
+    now
   });
-  assert.deepEqual(reviewDeckMenuStatusFromStates(new Set(["card-1"]), [due], now, "zh-Hant-TW"), {
-    kind: "has_cards_to_review",
-    dueCardCount: 1,
-    text: "目前有 1 張牌卡需要複習。"
-  });
-  assert.equal(reviewDeckMenuStatusFromStates(new Set(), [], now, "zh-Hant-TW").text, "尚未開始。");
+  assert.deepEqual(classification, { status: "has_cards_to_review", dueCardCount: 1 });
+  assert.equal(translate("en-US", "review.cardsDue", { count: classification.dueCardCount }), "There are 1 cards to review.");
+  assert.equal(translate("zh-Hant-TW", "review.cardsDue", { count: classification.dueCardCount }), "目前有 1 張牌卡需要複習。");
+  assert.equal(translate("zh-Hant-TW", "review.notStarted"), "尚未開始。");
 });

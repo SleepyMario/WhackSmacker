@@ -13,6 +13,8 @@ import {
   listReadingReviewSources,
   loadReviewProgressStore,
   orderReviewItemsForSession,
+  pedagogicalContentForMemorizationItem,
+  pedagogicalFingerprint,
   recordReadingReviewAnswer,
   renderReadingReviewItem,
   syncReadingReviewItems
@@ -126,8 +128,9 @@ test("renderer output works for integrated items and preserves identity", async 
     assert.equal(result.rendered.itemIdentity.packageId, "com.sleepymario.language.memory");
     assert.equal(result.rendered.itemIdentity.packageVersion, "0.1.0");
     assert.equal(result.rendered.itemIdentity.itemId, "hangul/vowels/a");
-    assert.match(result.text, /Prompt/);
-    assert.match(result.text, /Answer/);
+    assert.match(result.text, /Phrase:/);
+    assert.match(result.text, /Answer:/);
+    assert.doesNotMatch(result.text, /Review Prompt|Review Answer|Notes|Metadata/u);
   } finally {
     await fixture.cleanup();
   }
@@ -166,6 +169,50 @@ test("missing source file does not corrupt progress", async () => {
 
     assert.ok(result.created.some((item) => item.itemId === "hangul/vowels/missing-source"));
     assert.equal((await loadReviewProgressStore(fixture.progressDir)).items.length, 4);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("v2 sync preserves unchanged state, resets changed cards, retires removals, and never transfers state", async () => {
+  const fixture = await createReadingReviewFixture();
+  try {
+    const first = v2MemoryItem("review/card-a", "Original prompt", "Answer A");
+    const second = v2MemoryItem("review/card-b", "Second prompt", "Answer B");
+    await writeV2Items(fixture, [first, second]);
+    const initial = await syncReadingReviewItems({ dataDir: fixture.dataDir, now });
+    assert.equal(initial.created.length, 2);
+
+    await recordReadingReviewAnswer({ dataDir: fixture.dataDir, packageId: "com.sleepymario.language.memory", itemId: first.id, rating: "easy", reviewedAt: now });
+    const reviewed = (await loadReviewProgressStore(fixture.progressDir)).items.find((state) => state.itemId === first.id);
+    assert.equal(reviewed.reviewCount, 1);
+    assert.equal(reviewed.status, "review");
+
+    await writeV2Items(fixture, [{ ...first, tags: ["metadata-only"], provenance: { ...first.provenance, locator: "Corrected locator" } }, second]);
+    const metadata = await syncReadingReviewItems({ dataDir: fixture.dataDir, now: "2026-07-07T00:00:00Z" });
+    assert.equal(metadata.unchanged.length, 2);
+    assert.equal((await loadReviewProgressStore(fixture.progressDir)).items.find((state) => state.itemId === first.id).reviewCount, 1);
+
+    const revisedDraft = { ...first, prompt: { ...first.prompt, text: "Materially changed prompt", plainText: "Materially changed prompt" } };
+    const revised = { ...revisedDraft, pedagogicalFingerprint: pedagogicalFingerprint(pedagogicalContentForMemorizationItem(revisedDraft)) };
+    const replacement = v2MemoryItem("review/card-c", "Replacement prompt", "Answer C");
+    await writeV2Items(fixture, [revised, replacement]);
+    const changed = await syncReadingReviewItems({ dataDir: fixture.dataDir, now: "2026-07-08T00:00:00Z" });
+    assert.deepEqual(changed.materiallyChanged.map((state) => state.itemId), [first.id]);
+    assert.deepEqual(changed.created.map((state) => state.itemId), [replacement.id]);
+    assert.deepEqual(changed.retired.map((state) => state.itemId), [second.id]);
+
+    const states = (await loadReviewProgressStore(fixture.progressDir)).items;
+    const reset = states.find((state) => state.itemId === first.id);
+    const retired = states.find((state) => state.itemId === second.id);
+    const fresh = states.find((state) => state.itemId === replacement.id);
+    assert.equal(reset.reviewCount, 0);
+    assert.equal(reset.status, "new");
+    assert.equal(retired.status, "suspended");
+    assert.equal(retired.retiredAt, "2026-07-08T00:00:00Z");
+    assert.equal(fresh.reviewCount, 0);
+    assert.equal(fresh.status, "new");
+    assert.equal((await listIntegratedDueReviewItems({ dataDir: fixture.dataDir, now: "2026-07-08T00:00:00Z" })).some((state) => state.itemId === second.id), false);
   } finally {
     await fixture.cleanup();
   }
@@ -343,14 +390,14 @@ test("review run shows the front side before reveal prompt and q stops there", a
       "q\n"
     );
 
-    assert.match(result.stdout, /Prompt\n\s+one/);
-    assert.match(result.stdout, /Review Prompt/);
+    assert.match(result.stdout, /Phrase:\n\s+one/);
+    assert.match(result.stdout, /Phrase:/);
     assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
     assert.match(result.stdout, /Review stopped\./);
     assert.doesNotMatch(result.stdout, /com\.sleepymario\.language\.sequence/);
     assert.doesNotMatch(result.stdout, /review-decks\/chapter-001-005\/cards\.tsv/);
     assert.doesNotMatch(result.stdout, /Item:/);
-    assert.doesNotMatch(result.stdout, /Answer\n\s+1/);
+    assert.doesNotMatch(result.stdout, /Answer:\n\s+1/);
     assert.doesNotMatch(result.stdout, /Choose a rating/);
     assert.doesNotMatch(result.stdout, /q\.Press Enter/);
   } finally {
@@ -377,11 +424,11 @@ test("review run shows answer before rating prompt and q stops at rating", async
       "\nq\n"
     );
 
-    const answerIndex = result.stdout.indexOf("Answer\n  1");
+    const answerIndex = result.stdout.indexOf("Answer:\n  1");
     const ratingIndex = result.stdout.indexOf("Choose a rating");
-    assert.match(result.stdout, /Prompt\n\s+one/);
-    assert.match(result.stdout, /Review Prompt/);
-    assert.match(result.stdout, /Review Answer/);
+    assert.match(result.stdout, /Phrase:\n\s+one/);
+    assert.match(result.stdout, /Phrase:/);
+    assert.match(result.stdout, /Answer:/);
     assert.match(result.stdout, /Press Enter to show answer, or q to stop:/);
     assert.notEqual(answerIndex, -1);
     assert.notEqual(ratingIndex, -1);
@@ -391,6 +438,7 @@ test("review run shows answer before rating prompt and q stops at rating", async
     assert.doesNotMatch(result.stdout, /review-decks\/chapter-001-005\/cards\.tsv/);
     assert.doesNotMatch(result.stdout, /Item:/);
     assert.doesNotMatch(result.stdout, /Metadata/);
+    assert.doesNotMatch(result.stdout, /Notes|Internal authoring note/u);
     assert.doesNotMatch(result.stdout, /Completed review deck: Chapter 1-5/);
     assert.doesNotMatch(result.stdout, /q\.Press Enter/);
   } finally {
@@ -417,7 +465,7 @@ test("review run accepts numeric ratings without breaking continuation", async (
       "\n3\nn\n"
     );
 
-    assert.match(result.stdout, /Answer\n\s+1/);
+    assert.match(result.stdout, /Answer:\n\s+1/);
     assert.match(result.stdout, /Choose a rating \(1 again \/ 2 hard \/ 3 good \/ 4 easy, or q to stop\):/);
     assert.match(result.stdout, /Completed review deck: Chapter 1-5/);
     assert.match(result.stdout, /Review stopped\./);
@@ -657,6 +705,32 @@ async function createReadingReviewFixture() {
   };
 }
 
+async function writeV2Items(fixture, items) {
+  const itemPath = "content/memorization/items.json";
+  const buffer = Buffer.from(`${JSON.stringify({ schemaVersion: 2, items }, null, 2)}\n`, "utf8");
+  const manifestPath = join(fixture.packageRoot, "manifest.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  manifest.contentSchemaVersion = "2.0.0";
+  manifest.files = manifest.files.map((file) => file.path === itemPath ? { ...file, size: buffer.length, sha256: sha256(buffer) } : file);
+  await writeFileEnsured(join(fixture.packageRoot, itemPath), buffer);
+  await writeJson(manifestPath, manifest);
+}
+
+function v2MemoryItem(id, prompt, answer) {
+  const draft = {
+    ...memoryItem(id, prompt, answer, "README.md", "Chapter 1-5"),
+    schemaVersion: 2,
+    cardId: id,
+    pedagogicalFingerprint: "0".repeat(64),
+    deck: { id: "test-review-001-005", title: "Chapter 1-5", chapterStart: 1, chapterEnd: 5 },
+    sourceChapters: [1], reviewDirection: "en-to-en", acceptedAnswers: [answer], distractors: ["Wrong"],
+    explanation: "Expected interpretation.", testedMeaning: answer,
+    testedLexicalIds: [], testedGrammarIds: [], testedGeographicIds: [], testedCastIds: [], testedSkillIds: [],
+    provenance: { path: "README.md", locator: "Reading", evidence: "아 and 어." }
+  };
+  return { ...draft, pedagogicalFingerprint: pedagogicalFingerprint(pedagogicalContentForMemorizationItem(draft)) };
+}
+
 async function createContinuationReviewFixture() {
   const root = await mkdtemp(join(tmpdir(), "wsm-review-continuation-"));
   const dataDir = join(root, "content");
@@ -677,7 +751,7 @@ async function createContinuationReviewFixture() {
   const items = {
     schemaVersion: 1,
     items: [
-      memoryItem("deck-001/card-001", "one", "1", sourcePaths[0], "Chapter 1-5"),
+      { ...memoryItem("deck-001/card-001", "one", "1", sourcePaths[0], "Chapter 1-5"), notes: "Internal authoring note." },
       memoryItem("deck-006/card-001", "six", "6", sourcePaths[1], "Chapter 6-10"),
       memoryItem("deck-011/card-001", "eleven", "11", sourcePaths[2], "Chapter 11-15")
     ]
@@ -865,7 +939,7 @@ function sha256(data) {
 }
 
 function firstPromptValue(stdout) {
-  return stdout.match(/Prompt\n\s+(.+)/)?.[1]?.trim();
+  return stdout.match(/Phrase:\n\s+(.+)/)?.[1]?.trim();
 }
 
 function sequenceRandom(values) {

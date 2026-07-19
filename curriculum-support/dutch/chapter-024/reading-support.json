@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:subject + verb + graag + object]]. Put [[grammar:graag]] after the action word to say that someone likes doing that action.",
+      "expert": "This chapter teaches how [[grammar:graag]] extends from the inherited polite-request frame into an action-preference construction following the finite lexical verb."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### action + graag + thing\n\nUse [[grammar:Eva maakt graag soep.]] or [[grammar:Oma Anja drinkt graag koffie.]]",
+      "expert": "#### subject + verb + graag + object\n\nAdverb [[grammar:graag]] follows the finite verb and scopes over the activity, yielding a habitual or dispositional preference reading."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "Compare [[grammar:Ik wil graag koffie.]] with [[grammar:Oma Anja drinkt graag koffie.]] The first is a polite request; the second says she likes the action.",
+      "expert": "The position of [[grammar:graag]] is similar, but the governing finite predicate distinguishes request-oriented volition from action preference."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Vanavond kookt Eva thuis.]] says when and where Eva cooks.\n- [[grammar:Eva maakt graag soep.]] says that Eva likes making soup.\n- [[grammar:De soep is klaar.]] says that the soup is ready.\n- [[grammar:Sophie bakt graag een taart.]] says that Sophie likes baking a cake.\n- [[grammar:Noor maakt koffie voor Oma Anja.]] says who the coffee is for.\n- [[grammar:Oma Anja drinkt graag koffie.]] says that Oma Anja likes drinking coffee.\n- [[grammar:Daan helpt Sophie in de keuken.]] places the help in the kitchen.\n- [[grammar:Zij eten samen.]] says that they eat together.\n- [[grammar:Daarna vertrekken zij naar de film.]] says what they do next.",
+    "expert": "- [[grammar:maakt graag]], [[grammar:bakt graag]], and [[grammar:drinkt graag]] instantiate action preference with three lexical verbs.\n- [[grammar:Vanavond kookt Eva thuis.]] and [[grammar:Daarna vertrekken zij ...]] reuse non-subject-first V2.\n- [[grammar:voor Oma Anja]] is a beneficiary phrase, while [[grammar:in de keuken]] is locative.\n- The three semantic source paragraphs group preparation, serving, and departure."
+  }
+}

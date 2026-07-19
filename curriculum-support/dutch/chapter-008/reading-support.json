@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:Ik wil ...]], a simple way to say what you want.",
+      "expert": "This chapter introduces finite modal [[grammar:wil]] in [[grammar:Ik wil N]], with nominal and infinitival complements. The chapter keeps desire expressions bounded and does not introduce the wider modal paradigm."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### Ik wil N\n\nUse [[grammar:Ik wil N]] to say what you want. You can also put a known action after [[grammar:wil]], as in [[grammar:Ik wil eten.]]",
+      "expert": "#### Ik wil N\n\nCurrent chapter scope: [[grammar:wil]] is an irregular present form of modal [[grammar:willen]]. It selects nominal complements in [[grammar:Ik wil de rijst.]] and bare infinitival complements in [[grammar:Ik wil eten.]] The reading maintains one first-person perspective and does not introduce a wider agreement paradigm."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "[[grammar:Ik wil ...]] is direct. Use it here to understand simple statements about wants.",
+      "expert": "Bare [[grammar:willen]] expresses volition directly. Pragmatic mitigation and polite request constructions are outside current Normal scope."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These examples use clear everyday Dutch.",
+      "expert": "The forms are standard; request politeness depends on discourse context and is analysed in later expert material."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Ik wil eten.]] says that Marieke wants to eat.\n- [[grammar:Ik wil drinken.]] says that she wants to drink.\n- [[grammar:Ik wil de rijst.]] says that she wants the rice.\n- [[grammar:Ik wil de soep.]] says that she wants the soup.\n- [[grammar:Ik wil kaas.]] uses the same pattern with cheese.\n- [[grammar:Ik wil fruit.]] uses the same pattern with fruit.\n- [[grammar:Er is een winkel.]] says that a shop is present.\n- [[grammar:Ik wil koffie.]] says that she wants coffee.",
+    "expert": "- [[grammar:Ik wil eten.]] and [[grammar:Ik wil drinken.]] pair finite modal [[grammar:wil]] with bare infinitival complements.\n- [[grammar:Ik wil de rijst.]] and [[grammar:Ik wil de soep.]] use definite nominal complements.\n- [[grammar:Ik wil kaas.]] and [[grammar:Ik wil fruit.]] use articleless mass-noun complements.\n- [[grammar:Er is een winkel.]] reuses the Chapter 5 singular existential frame.\n- [[grammar:Ik wil koffie.]] supplies another first-person modal clause with an articleless mass noun."
+  }
+}

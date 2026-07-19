@@ -21,7 +21,7 @@ import {
   validateReviewProgressStore
 } from "../dist/packages/core/index.js";
 
-const schemaUrl = new URL("../schemas/review-progress-v1.schema.json", import.meta.url);
+const schemaUrl = new URL("../schemas/review-progress-v2.schema.json", import.meta.url);
 const now = "2026-07-06T00:00:00Z";
 
 test("review progress JSON Schema parses as Draft 2020-12", async () => {
@@ -103,7 +103,7 @@ test("stored review outcome preserves package id version and item id", async () 
   try {
     await saveReviewProgressStore(
       {
-        reviewProgressFormatVersion: 1,
+        reviewProgressFormatVersion,
         updatedAt: now,
         items: [createInitialReviewState(identity(), now)],
         events: []
@@ -136,7 +136,7 @@ test("package review progress removal deletes only matching package state and ev
   const keptEvent = recordReviewOutcome(kept, "good", now).event;
   try {
     await saveReviewProgressStore({
-      reviewProgressFormatVersion: 1,
+      reviewProgressFormatVersion,
       updatedAt: now,
       items: [removed, kept],
       events: [removedEvent, keptEvent]
@@ -165,7 +165,7 @@ test("missing installed packages do not corrupt existing progress", async () => 
   const contentDataDir = join(root, "content");
   const progressDir = join(root, "progress");
   const original = {
-    reviewProgressFormatVersion: 1,
+    reviewProgressFormatVersion,
     updatedAt: now,
     items: [createInitialReviewState(identity(), now)],
     events: []
@@ -191,7 +191,7 @@ test("unsafe item ids are rejected before progress storage", () => {
 
 test("review progress store validation rejects malformed data", () => {
   const result = validateReviewProgressStore({
-    reviewProgressFormatVersion: 1,
+    reviewProgressFormatVersion,
     updatedAt: now,
     items: [createInitialReviewState(identity(), now), createInitialReviewState(identity(), now)],
     events: []
@@ -214,7 +214,7 @@ test("stored due listing reads the progress store", async () => {
   try {
     await saveReviewProgressStore(
       {
-        reviewProgressFormatVersion: 1,
+        reviewProgressFormatVersion,
         updatedAt: now,
         items: [
           createInitialReviewState(identity("hangul/vowels/a"), now),

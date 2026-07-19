@@ -3,6 +3,7 @@ export const whackSmackerPackageExtension = ".wspkg";
 
 export const knownContentPackageTypes = [
   "language-curriculum",
+  "core-review",
   "curriculum-source-language-pack",
   "linguistic-terminology",
   "mathematics-curriculum",
@@ -20,6 +21,8 @@ export interface ContentPackageManifest {
   readonly displayName: LocalizedContentValue;
   readonly description: LocalizedContentValue;
   readonly contentType: string;
+  readonly capabilities?: readonly ContentPackageCapability[];
+  readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
   readonly languages?: readonly string[];
@@ -36,6 +39,8 @@ export interface ContentPackageManifest {
   readonly keywords?: readonly string[];
   readonly localization?: ContentPackageLocalizationMetadata;
 }
+
+export type ContentPackageCapability = "reading-curriculum" | "core-review" | "technical";
 
 export type ContentPackageLocalizationMetadata =
   | { readonly role: "base-curriculum"; readonly schemaVersion: string; readonly targetLanguage: string; readonly defaultSourceLocale: string; readonly defaultSourcePackageId: string }
@@ -91,6 +96,7 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   if (!isRecord(manifest)) {
     return { valid: false, errors: ["Manifest must be a JSON object."] };
   }
+  validateNoReviewMenuStatusColorMetadata(manifest, "manifest", errors);
 
   for (const field of requiredManifestFields) {
     if (!(field in manifest)) {
@@ -107,6 +113,8 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   validateLocalizedContentValue(manifest.displayName, "displayName", errors);
   validateLocalizedContentValue(manifest.description, "description", errors);
   validateContentType(readString(manifest.contentType), errors);
+  validateCapabilities(manifest.capabilities, errors);
+  validateRelatedPackageIds(manifest.relatedPackageIds, readString(manifest.packageId), errors);
   validateSemver(readString(manifest.contentSchemaVersion), "contentSchemaVersion", errors);
   validateSemver(readString(manifest.minimumWhackSmackerVersion), "minimumWhackSmackerVersion", errors);
   validateSource(manifest.source, errors);
@@ -120,6 +128,52 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   validateLocalization(manifest.localization, errors);
 
   return { valid: errors.length === 0, errors };
+}
+
+function validateNoReviewMenuStatusColorMetadata(value: unknown, path: string, errors: string[]): void {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => validateNoReviewMenuStatusColorMetadata(item, `${path}[${index}]`, errors));
+    return;
+  }
+  if (!isRecord(value)) return;
+  for (const [key, child] of Object.entries(value)) {
+    if (isReviewMenuStatusColorMetadataKey(key)) {
+      errors.push(`${path}.${key} is forbidden: review-menu status colours are application-owned.`);
+    } else {
+      validateNoReviewMenuStatusColorMetadata(child, `${path}.${key}`, errors);
+    }
+  }
+}
+
+function isReviewMenuStatusColorMetadataKey(key: string): boolean {
+  return key === "menuStatusPresentation"
+    || /^(?:review(?:Deck)?Menu)?Status(?:Color|Colour|Style)$/iu.test(key)
+    || /^(?:notStarted|noCardsToReview|hasCardsToReview|finished)(?:Color|Colour|Style)$/iu.test(key);
+}
+
+function validateCapabilities(value: unknown, errors: string[]): void {
+  if (value === undefined) return;
+  if (!Array.isArray(value) || value.length === 0) { errors.push("capabilities must be a non-empty array when present."); return; }
+  const allowed = new Set(["reading-curriculum", "core-review", "technical"]);
+  const seen = new Set<string>();
+  for (const [index, capability] of value.entries()) {
+    if (typeof capability !== "string" || !allowed.has(capability)) errors.push(`capabilities[${index}] is unsupported.`);
+    else if (seen.has(capability)) errors.push(`Duplicate capability: ${capability}`);
+    else seen.add(capability);
+  }
+}
+
+function validateRelatedPackageIds(value: unknown, ownId: string, errors: string[]): void {
+  if (value === undefined) return;
+  if (!Array.isArray(value)) { errors.push("relatedPackageIds must be an array when present."); return; }
+  const seen = new Set<string>();
+  for (const [index, id] of value.entries()) {
+    const packageId = typeof id === "string" ? id : "";
+    validatePackageId(packageId, `relatedPackageIds[${index}]`, errors);
+    if (packageId === ownId) errors.push("relatedPackageIds must not contain packageId.");
+    if (seen.has(packageId)) errors.push(`Duplicate relatedPackageId: ${packageId}`);
+    seen.add(packageId);
+  }
 }
 
 function validateLocalization(value: unknown, errors: string[]): void {

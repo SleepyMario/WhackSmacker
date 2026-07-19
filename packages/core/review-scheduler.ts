@@ -1,6 +1,6 @@
 import { isContentPackageId, isSafeContentPackagePath, isSemver } from "./content-package-spec";
 
-export const reviewProgressFormatVersion = 1;
+export const reviewProgressFormatVersion = 2;
 export const reviewRatings = ["again", "hard", "good", "easy"] as const;
 export const reviewStatuses = ["new", "learning", "review", "suspended"] as const;
 
@@ -12,6 +12,7 @@ export interface ReviewItemIdentity {
   readonly packageVersion: string;
   readonly sourcePath?: string;
   readonly itemId: string;
+  readonly pedagogicalFingerprint?: string;
 }
 
 export interface ReviewItemState extends ReviewItemIdentity {
@@ -23,6 +24,7 @@ export interface ReviewItemState extends ReviewItemIdentity {
   readonly intervalDays: number;
   readonly easeFactor: number;
   readonly status: ReviewStatus;
+  readonly retiredAt?: string;
 }
 
 export interface ReviewStateSummary {
@@ -42,7 +44,7 @@ export interface ReviewEvent extends ReviewItemIdentity {
 }
 
 export interface ReviewProgressStore {
-  readonly reviewProgressFormatVersion: 1;
+  readonly reviewProgressFormatVersion: 2;
   readonly updatedAt: string;
   readonly items: readonly ReviewItemState[];
   readonly events: readonly ReviewEvent[];
@@ -75,7 +77,7 @@ export function createInitialReviewState(identity: ReviewItemIdentity, now: stri
 
 export function isReviewDue(state: ReviewItemState, now: string): boolean {
   assertValidTimestamp(now, "now");
-  return state.status !== "suspended" && Date.parse(state.nextReviewAt) <= Date.parse(now);
+  return state.retiredAt === undefined && state.status !== "suspended" && Date.parse(state.nextReviewAt) <= Date.parse(now);
 }
 
 export function listDueReviewStates(
@@ -108,6 +110,7 @@ export function recordReviewOutcome(state: ReviewItemState, rating: ReviewRating
       packageVersion: state.packageVersion,
       ...(state.sourcePath === undefined ? {} : { sourcePath: state.sourcePath }),
       itemId: state.itemId,
+      ...(state.pedagogicalFingerprint === undefined ? {} : { pedagogicalFingerprint: state.pedagogicalFingerprint }),
       reviewedAt,
       rating,
       previousState: summarizeState(state),
@@ -121,13 +124,33 @@ export function validateReviewProgressStore(store: unknown): ReviewProgressValid
   if (!isRecord(store)) {
     return { valid: false, errors: ["Review progress store must be a JSON object."] };
   }
-  if (store.reviewProgressFormatVersion !== reviewProgressFormatVersion) {
+  validateNoPersistedReviewMenuStatusColor(store, "progress", errors);
+  if (store.reviewProgressFormatVersion !== 1 && store.reviewProgressFormatVersion !== reviewProgressFormatVersion) {
     errors.push(`Unsupported reviewProgressFormatVersion: ${String(store.reviewProgressFormatVersion)}`);
   }
   validateTimestamp(store.updatedAt, "updatedAt", errors);
   validateStates(store.items, errors);
   validateEvents(store.events, errors);
   return { valid: errors.length === 0, errors };
+}
+
+function validateNoPersistedReviewMenuStatusColor(value: unknown, path: string, errors: string[]): void {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => validateNoPersistedReviewMenuStatusColor(item, `${path}[${index}]`, errors));
+    return;
+  }
+  if (!isRecord(value)) return;
+  for (const [key, child] of Object.entries(value)) {
+    if (
+      key === "menuStatusPresentation"
+      || /^(?:review(?:Deck)?Menu)?Status(?:Color|Colour|Style)$/iu.test(key)
+      || /^(?:notStarted|noCardsToReview|hasCardsToReview|finished)(?:Color|Colour|Style)$/iu.test(key)
+    ) {
+      errors.push(`${path}.${key} is forbidden: review-menu status colours are derived at render time.`);
+    } else {
+      validateNoPersistedReviewMenuStatusColor(child, `${path}.${key}`, errors);
+    }
+  }
 }
 
 export function assertValidReviewProgressStore(store: unknown): asserts store is ReviewProgressStore {
@@ -164,6 +187,7 @@ export function upsertReviewItemState(
 }
 
 export function reviewIdentityKey(identity: ReviewItemIdentity): string {
+  if (identity.pedagogicalFingerprint !== undefined) return `${identity.packageId}#${identity.itemId}`;
   return `${identity.packageId}@${identity.packageVersion}#${identity.sourcePath ?? ""}#${identity.itemId}`;
 }
 
@@ -243,7 +267,8 @@ function validateStates(value: unknown, errors: string[]): void {
         packageId: readString(state.packageId),
         packageVersion: readString(state.packageVersion),
         sourcePath: state.sourcePath === undefined ? undefined : readString(state.sourcePath),
-        itemId: readString(state.itemId)
+        itemId: readString(state.itemId),
+        pedagogicalFingerprint: state.pedagogicalFingerprint === undefined ? undefined : readString(state.pedagogicalFingerprint)
       });
       if (keys.has(key)) {
         errors.push(`Duplicate review item state: ${key}`);
@@ -297,6 +322,7 @@ function validateReviewItemState(value: unknown, field: string, errors: string[]
   if (value.lastReviewedAt !== undefined) {
     validateTimestamp(value.lastReviewedAt, `${field}.lastReviewedAt`, errors);
   }
+  if (value.retiredAt !== undefined) validateTimestamp(value.retiredAt, `${field}.retiredAt`, errors);
   validateTimestamp(value.nextReviewAt, `${field}.nextReviewAt`, errors);
   validateNonNegativeInteger(value.reviewCount, `${field}.reviewCount`, errors);
   validateNonNegativeInteger(value.lapseCount, `${field}.lapseCount`, errors);
@@ -348,6 +374,9 @@ function validateIdentity(value: Record<string, unknown> | ReviewItemIdentity, f
   }
   if (!isSafeReviewItemId(readString(value.itemId))) {
     errors.push(`${field}.itemId must be stable, package-relative, and safe.`);
+  }
+  if (value.pedagogicalFingerprint !== undefined && !/^[a-f0-9]{64}$/u.test(readString(value.pedagogicalFingerprint))) {
+    errors.push(`${field}.pedagogicalFingerprint must be a lowercase SHA-256 hex digest.`);
   }
 }
 

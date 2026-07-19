@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches [[grammar:clause + en + clause]]. Use [[grammar:en]] to join two complete ideas.",
+      "expert": "This chapter introduces coordinating [[grammar:en]] in [[grammar:clause + en + clause]], linking two finite main clauses while retaining overt subjects in both conjuncts."
+    },
+    {
+      "sourceHeading": "New Grammar / Pattern",
+      "normal": "#### idea + en + idea\n\nUse [[grammar:en]] to join two complete ideas, as in [[grammar:Mark werkt en Mark drinkt koffie.]]",
+      "expert": "#### clause + en + clause\n\nThe pattern [[grammar:clause + en + clause]] uses [[grammar:en]] to coordinate two independent clauses, as in [[grammar:Mark werkt en Mark drinkt koffie.]] Each conjunct retains an overt subject and finite predicate; ellipsis and other coordinators are outside this chapter."
+    },
+    {
+      "sourceHeading": "Dutch Usage Notes",
+      "normal": "The words [[grammar:eerst]], [[grammar:ochtend]], [[grammar:middag]], and [[grammar:avond]] help you follow the day's order.",
+      "expert": "Temporal framing and sequence adverb [[grammar:eerst]] organize the discourse, while repeated subject [[grammar:Mark]] keeps conjunct structure transparent."
+    },
+    {
+      "sourceHeading": "Register / Regional Notes",
+      "normal": "These are neutral everyday sentences.",
+      "expert": "The coordination and routine predicates are standard across major Dutch varieties."
+    }
+  ],
+  "breakdown": {
+    "normal": "- [[grammar:Het is ochtend.]] starts the day.\n- [[grammar:Mark gaat eerst naar het kantoor.]] names his first destination.\n- [[grammar:Mark werkt en Mark drinkt koffie.]] joins two actions with [[grammar:en]].\n- [[grammar:Mark leest de krant in de pauze.]] says what he does during the break.\n- [[grammar:Het is middag.]] moves the story to the afternoon.\n- [[grammar:Mark gaat naar de markt en Mark koopt brood.]] joins going and buying.\n- [[grammar:Mark koopt fruit en Mark gaat naar het kantoor.]] joins another two actions.\n- [[grammar:Het is avond.]] ends the day.",
+    "expert": "- [[grammar:Het is ochtend.]], [[grammar:Het is middag.]], and [[grammar:Het is avond.]] are parallel temporal setting frames.\n- [[grammar:Mark gaat eerst naar het kantoor.]] combines a finite motion predicate, sequence adverb, and destination phrase.\n- [[grammar:Mark werkt en Mark drinkt koffie.]] coordinates two overt-subject finite clauses.\n- [[grammar:Mark leest de krant in de pauze.]] places a temporal prepositional phrase after the object.\n- [[grammar:Mark gaat naar de markt en Mark koopt brood.]] coordinates motion and transitive acquisition predicates.\n- [[grammar:Mark koopt fruit en Mark gaat naar het kantoor.]] reverses that discourse order while preserving full clauses."
+  }
+}

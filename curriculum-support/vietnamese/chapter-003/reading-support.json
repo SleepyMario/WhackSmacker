@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [],
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sách | 冊 | book | `Đây là sách.` |\n| bút | 筆 | pen | `Đây là bút.` |\n| bàn | 盤 | desk; table | `Đây là bàn.` |\n\nThese familiar school words have long-standing character links. Keep using their Vietnamese spellings in ordinary reading and writing.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sách | 冊 | book | `Đây là sách.` |\n| bút | 筆 | pen | `Đây là bút.` |\n| bàn | 盤 | desk; table | `Đây là bàn.` |\n\nExpert context: **sách**, **bút**, and **bàn** preserve established Sino-Vietnamese readings associated with 冊, 筆, and 盤. The furniture sense of **bàn** reflects semantic development from the earlier board or tray sense of 盤; all three rows record lexical history rather than current Vietnamese writing practice.",
+    "entries": [
+      {
+        "word": "sách",
+        "characters": "冊",
+        "meaning": "book",
+        "lexicalEntryId": "vi.noun.sach",
+        "senseId": "vi.noun.sach.book",
+        "firstIntroductionChapter": 3,
+        "usage": "Đây là sách.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "Minh Anh: Đây là sách."
+        }
+      },
+      {
+        "word": "bút",
+        "characters": "筆",
+        "meaning": "pen",
+        "lexicalEntryId": "vi.noun.but",
+        "senseId": "vi.noun.but.pen",
+        "firstIntroductionChapter": 3,
+        "usage": "Đây là bút.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "Maria: Đây là bút."
+        }
+      },
+      {
+        "word": "bàn",
+        "characters": "盤",
+        "meaning": "desk; table",
+        "lexicalEntryId": "vi.noun.ban",
+        "senseId": "vi.noun.ban.desk",
+        "firstIntroductionChapter": 3,
+        "usage": "Đây là bàn.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "Minh Anh: Đây là bàn."
+        }
+      }
+    ]
+  }
+}
