@@ -6,9 +6,42 @@ export interface CurriculumProjectionOptions {
   readonly translationsEnabled?: boolean;
 }
 
+export interface ReadingAudienceSection {
+  readonly sourceHeading: string;
+  readonly normalHeading?: string | null;
+  readonly expertHeading?: string;
+  readonly normal: string;
+  readonly expert: string;
+}
+
 export const defaultCurriculumDisplayMode: CurriculumDisplayMode = "normal";
 export const developerOnlyStartMarker = "<!-- whacksmacker:developer-only:start -->";
 export const developerOnlyEndMarker = "<!-- whacksmacker:developer-only:end -->";
+
+/**
+ * Projects one audience-specific support section into rendered chapter Markdown.
+ * This helper deliberately knows nothing about readable-content discovery or
+ * navigation nodes: audience headings are right-pane content only.
+ */
+export function projectReadingAudienceSection(
+  section: ReadingAudienceSection,
+  mode: CurriculumDisplayMode = defaultCurriculumDisplayMode
+): string {
+  const grammarSection = section.sourceHeading === "New Grammar" || section.sourceHeading === "New Grammar / Pattern";
+  if (mode === "developer") {
+    return grammarSection
+      ? `### Grammar\n\n#### Normal\n\n${section.normal}\n\n#### Expert\n\n${section.expert}`
+      : `### ${section.sourceHeading}: Normal\n\n${section.normal}\n\n### ${section.sourceHeading}: Expert\n\n${section.expert}`;
+  }
+  const content = mode === "expert" ? section.expert : section.normal;
+  const audienceHeading = mode === "expert"
+    ? section.expertHeading ?? section.sourceHeading
+    : section.normalHeading === undefined
+      ? section.sourceHeading
+      : section.normalHeading;
+  if (audienceHeading === null) return content;
+  return `### ${grammarSection ? "Grammar" : audienceHeading}\n\n${content}`;
+}
 
 export interface NormalViewVoiceViolation {
   readonly line: number;

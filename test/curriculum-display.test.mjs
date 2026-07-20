@@ -8,6 +8,7 @@ import {
   developerOnlyStartMarker,
   normalViewVoiceViolations,
   projectCurriculumMarkdown,
+  projectReadingAudienceSection,
   projectReviewTextForMode
 } from "../dist/packages/core/index.js";
 
@@ -32,6 +33,49 @@ test("Normal is the default curriculum projection", () => {
   assert.equal(projectCurriculumMarkdown(source), projectCurriculumMarkdown(source, "normal"));
   assert.doesNotMatch(projectCurriculumMarkdown(source), /grammar_id|developer instruction/u);
   assert.match(projectCurriculumMarkdown(source), /Learner guidance stays|infinitive row gives/u);
+});
+
+test("audience headings project only into rendered section Markdown", () => {
+  const section = {
+    sourceHeading: "Vietnamese Orthography and Word Boundaries",
+    normalHeading: "Language Notes",
+    expertHeading: "Vietnamese Orthography and Word Boundaries",
+    normal: "Vietnamese can use spaces inside one idea.",
+    expert: "Technical discussion of orthographic word boundaries."
+  };
+
+  assert.equal(
+    projectReadingAudienceSection(section, "normal"),
+    "### Language Notes\n\nVietnamese can use spaces inside one idea."
+  );
+  assert.equal(
+    projectReadingAudienceSection(section, "expert"),
+    "### Vietnamese Orthography and Word Boundaries\n\nTechnical discussion of orthographic word boundaries."
+  );
+  assert.equal(
+    projectReadingAudienceSection(section, "developer"),
+    [
+      "### Vietnamese Orthography and Word Boundaries: Normal",
+      "",
+      "Vietnamese can use spaces inside one idea.",
+      "",
+      "### Vietnamese Orthography and Word Boundaries: Expert",
+      "",
+      "Technical discussion of orthographic word boundaries."
+    ].join("\n")
+  );
+});
+
+test("a null Normal audience heading suppresses only the rendered heading", () => {
+  const section = {
+    sourceHeading: "Vietnamese Usage Notes",
+    normalHeading: null,
+    normal: "Use the short form here.",
+    expert: "The source heading remains available to technical views."
+  };
+  assert.equal(projectReadingAudienceSection(section, "normal"), "Use the short form here.");
+  assert.match(projectReadingAudienceSection(section, "expert"), /^### Vietnamese Usage Notes$/mu);
+  assert.match(projectReadingAudienceSection(section, "developer"), /^### Vietnamese Usage Notes: Normal$/mu);
 });
 
 test("Developer projection preserves source wording while hiding grammar identity from Read Content", () => {

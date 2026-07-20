@@ -473,6 +473,7 @@ test("language tree lists installed packages and package sections", async () => 
   );
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
+    const treesByMode = new Map([["normal", tree]]);
 
     assert.equal(tree.label, "Languages");
     assert.deepEqual(tree.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "English", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
@@ -487,9 +488,23 @@ test("language tree lists installed packages and package sections", async () => 
     assert.equal(englishReadContent.children.some((node) => node.label === "Grammar - Hard"), false);
     assert.deepEqual(englishReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
 
-    for (const mode of ["normal", "expert", "developer"]) {
-      const modeTree = mode === "normal" ? tree : await buildLanguageTree(fixture.dataDir, mode);
+    for (const mode of ["expert", "developer"]) treesByMode.set(mode, await buildLanguageTree(fixture.dataDir, mode));
+    for (const [mode, modeTree] of treesByMode) {
+      assert.deepEqual(
+        navigationTreeShape(modeTree),
+        navigationTreeShape(tree),
+        `${mode} preserves every navigation label, kind, and child position`
+      );
+      const navigationLabels = allTreeNodes(modeTree).map((node) => node.label);
+      assert.equal(navigationLabels.includes("Language Notes"), false, `${mode} has no Language Notes navigation node`);
+      assert.equal(navigationLabels.some((label) => /^(?:Characters|Sino-Vietnamese Vocabulary|Sino-Korean Vocabulary)$/u.test(label)), false);
       for (const languagePackage of modeTree.children) {
+        assert.deepEqual(languagePackage.children.map((node) => [node.label, node.kind]), [
+          ["Read content", "read-section"],
+          ["Review decks", "review-section"],
+          ["Package info", "package-info"],
+          ["Uninstall", "uninstall"]
+        ]);
         const readContent = languagePackage.children.find((node) => node.label === "Read content");
         const grammarNode = readContent.children.find((node) => node.label === "Grammar");
         assert.ok(grammarNode, `${languagePackage.label} exposes Grammar in ${mode}`);
@@ -3904,6 +3919,18 @@ function firstLearnerNarrativeLine(markdown) {
   const body = blocks.length > 1 ? blocks[1] : blocks[0];
   const line = body?.[0];
   return line === undefined ? undefined : { markdown, prefix: [...line].slice(0, 8).join("") };
+}
+
+function navigationTreeShape(node) {
+  return {
+    label: node.label,
+    kind: node.kind,
+    children: (node.children ?? []).map(navigationTreeShape)
+  };
+}
+
+function allTreeNodes(root) {
+  return [root, ...(root.children ?? []).flatMap(allTreeNodes)];
 }
 
 function isWideCharacterForTest(character) {

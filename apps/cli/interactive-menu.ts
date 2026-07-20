@@ -22,6 +22,7 @@ import {
   grammarHardMenuLabel,
   orderReviewItemsForSession,
   projectCurriculumMarkdown,
+  projectReadingAudienceSection,
   projectReviewTextForMode,
   readInstalledContentEntry,
   recordReadingReviewAnswer,
@@ -38,6 +39,7 @@ import {
   type ReadableContentEntry,
   type RenderedExercise,
   type ReadingReviewItem,
+  type ReadingAudienceSection,
   type ReviewDeckMenuStatus as CoreReviewDeckMenuStatus,
   type ReviewDeckMenuStatusClassification,
   type ReviewItemIdentity,
@@ -204,13 +206,7 @@ interface ReadingSupport {
   readonly schemaVersion: 1;
   readonly semanticRoleSyntaxVersion?: 1;
   readonly sourcePath: "chapter.md";
-  readonly audienceSections: readonly {
-    readonly sourceHeading: string;
-    readonly normalHeading?: string | null;
-    readonly expertHeading?: string;
-    readonly normal: string;
-    readonly expert: string;
-  }[];
+  readonly audienceSections: readonly ReadingAudienceSection[];
   readonly breakdown?: { readonly normal: string; readonly expert: string };
   readonly characters?: { readonly heading: string; readonly normal: string; readonly expert: string };
 }
@@ -2236,21 +2232,7 @@ function applyReadingSupport(markdown: string, support: ReadingSupport, options:
   const mode = options.displayMode ?? defaultCurriculumDisplayMode;
   let output = markdown;
   for (const section of support.audienceSections) {
-    const grammarSection = section.sourceHeading === "New Grammar" || section.sourceHeading === "New Grammar / Pattern";
-    const content = mode === "expert" ? section.expert : section.normal;
-    const projectedHeading = mode === "expert"
-      ? section.expertHeading ?? section.sourceHeading
-      : section.normalHeading === undefined
-        ? section.sourceHeading
-        : section.normalHeading;
-    const body = mode === "developer"
-      ? grammarSection
-        ? `### Grammar\n\n#### Normal\n\n${section.normal}\n\n#### Expert\n\n${section.expert}`
-        : `### ${section.sourceHeading}: Normal\n\n${section.normal}\n\n### ${section.sourceHeading}: Expert\n\n${section.expert}`
-      : projectedHeading === null
-        ? content
-        : `### ${grammarSection ? "Grammar" : projectedHeading}\n\n${content}`;
-    output = replaceNamedSection(output, section.sourceHeading, body);
+    output = replaceNamedSection(output, section.sourceHeading, projectReadingAudienceSection(section, mode));
   }
   const embeddedBreakdown = markdownSectionBody(output, "Line-by-Line Breakdown")
     ?? markdownSectionBody(output, "Line-by-line Breakdown");
