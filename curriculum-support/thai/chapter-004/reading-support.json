@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Thai.",
+      "expert": "Support stays aligned to literal Chapter 4 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:subject + object + verb]].",
+      "expert": "The canonical pattern [[grammar:subject + object + verb]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "sourceText": "ตอนเช้ามาลีดื่มกาแฟ.",
+      "wordBoundaryGuide": "ตอน เช้า มาลี ดื่ม กาแฟ."
+    },
+    {
+      "sourceText": "มาลีกินข้าวที่บ้าน.",
+      "wordBoundaryGuide": "มาลี กิน ข้าว ที่ บ้าน."
+    },
+    {
+      "sourceText": "จากนั้นอ่านหนังสือ.",
+      "wordBoundaryGuide": "จากนั้น อ่าน หนังสือ."
+    },
+    {
+      "sourceText": "นนท์ดื่มน้ำ.",
+      "wordBoundaryGuide": "นนท์ ดื่ม น้ำ."
+    },
+    {
+      "sourceText": "นนท์ถือกระเป๋า.",
+      "wordBoundaryGuide": "นนท์ ถือ กระเป๋า."
+    },
+    {
+      "sourceText": "ทั้งสองคนออกจากบ้าน.",
+      "wordBoundaryGuide": "ทั้ง สอง คน ออก จาก บ้าน."
+    }
+  ]
+}

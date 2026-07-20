@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Thai.",
+      "expert": "Support stays aligned to literal Chapter 1 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:ชื่อ + name + ครับ/ค่ะ]].",
+      "expert": "The canonical pattern [[grammar:ชื่อ + name + ครับ/ค่ะ]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "sourceText": "สวัสดีค่ะ.",
+      "wordBoundaryGuide": "สวัสดี ค่ะ."
+    },
+    {
+      "sourceText": "สวัสดีครับ.",
+      "wordBoundaryGuide": "สวัสดี ครับ."
+    },
+    {
+      "sourceText": "ชื่อมาลีค่ะ.",
+      "wordBoundaryGuide": "ชื่อ มาลี ค่ะ."
+    },
+    {
+      "sourceText": "ชื่อนนท์ครับ.",
+      "wordBoundaryGuide": "ชื่อ นนท์ ครับ."
+    },
+    {
+      "sourceText": "เป็นนักเรียนค่ะ.",
+      "wordBoundaryGuide": "เป็น นักเรียน ค่ะ."
+    },
+    {
+      "sourceText": "เป็นครูครับ.",
+      "wordBoundaryGuide": "เป็น ครู ครับ."
+    }
+  ]
+}

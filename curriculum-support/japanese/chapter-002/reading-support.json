@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Japanese.",
+      "expert": "Support stays aligned to literal Chapter 2 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:place + に + N + があります]].",
+      "expert": "The canonical pattern [[grammar:place + に + N + があります]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "surface": "部屋",
+      "reading": "へや",
+      "evidence": "部屋に机があります。",
+      "lexicalEntryId": "ja.noun.heya",
+      "senseId": "ja.noun.heya.room"
+    },
+    {
+      "surface": "机",
+      "reading": "つくえ",
+      "evidence": "部屋に机があります。",
+      "lexicalEntryId": "ja.noun.tsukue",
+      "senseId": "ja.noun.tsukue.desk"
+    },
+    {
+      "surface": "本",
+      "reading": "ほん",
+      "evidence": "机の上に本があります。",
+      "lexicalEntryId": "ja.noun.hon",
+      "senseId": "ja.noun.hon.book"
+    },
+    {
+      "surface": "いす",
+      "reading": "いす",
+      "evidence": "机の横にいすがあります。",
+      "lexicalEntryId": "ja.noun.isu",
+      "senseId": "ja.noun.isu.chair"
+    },
+    {
+      "surface": "かばん",
+      "reading": "かばん",
+      "evidence": "いすの上にかばんがあります。",
+      "lexicalEntryId": "ja.noun.kaban",
+      "senseId": "ja.noun.kaban.bag"
+    },
+    {
+      "surface": "窓",
+      "reading": "まど",
+      "evidence": "部屋に窓があります。",
+      "lexicalEntryId": "ja.noun.mado",
+      "senseId": "ja.noun.mado.window"
+    }
+  ]
+}

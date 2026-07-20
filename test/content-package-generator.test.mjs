@@ -22,7 +22,17 @@ test("content package generator exposes the supported local package targets", ()
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
       ["vietnamese-core-reviews", "com.sleepymario.language.vietnamese.reviews"],
-      ["dutch-core-reviews", "com.sleepymario.language.dutch.reviews"]
+      ["dutch-core-reviews", "com.sleepymario.language.dutch.reviews"],
+      ["arabic-core-reviews", "com.sleepymario.language.arabic.reviews"],
+      ["french-core-reviews", "com.sleepymario.language.french.reviews"],
+      ["german-core-reviews", "com.sleepymario.language.german.reviews"],
+      ["hindi-core-reviews", "com.sleepymario.language.hindi.reviews"],
+      ["japanese-core-reviews", "com.sleepymario.language.japanese.reviews"],
+      ["korean-core-reviews", "com.sleepymario.language.korean.reviews"],
+      ["russian-core-reviews", "com.sleepymario.language.russian.reviews"],
+      ["spanish-core-reviews", "com.sleepymario.language.spanish.reviews"],
+      ["thai-core-reviews", "com.sleepymario.language.thai.reviews"],
+      ["zulu-core-reviews", "com.sleepymario.language.zulu.reviews"]
     ]
   );
 });

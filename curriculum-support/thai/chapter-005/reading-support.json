@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Thai.",
+      "expert": "Support stays aligned to literal Chapter 5 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:ไป + place + กันไหม]].",
+      "expert": "The canonical pattern [[grammar:ไป + place + กันไหม]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "sourceText": "วันนี้ไปตลาดกันไหมครับ.",
+      "wordBoundaryGuide": "วันนี้ ไป ตลาด กัน ไหม ครับ."
+    },
+    {
+      "sourceText": "ไปค่ะ ไปด้วยกัน.",
+      "wordBoundaryGuide": "ไป ค่ะ ไป ด้วยกัน."
+    },
+    {
+      "sourceText": "ที่ตลาดซื้อผลไม้ครับ.",
+      "wordBoundaryGuide": "ที่ ตลาด ซื้อ ผลไม้ ครับ."
+    },
+    {
+      "sourceText": "ซื้อกาแฟด้วยค่ะ.",
+      "wordBoundaryGuide": "ซื้อ กาแฟ ด้วย ค่ะ."
+    },
+    {
+      "sourceText": "แล้วไปสวนกันครับ.",
+      "wordBoundaryGuide": "แล้ว ไป สวน กัน ครับ."
+    },
+    {
+      "sourceText": "ดีค่ะ ไปตอนบ่าย.",
+      "wordBoundaryGuide": "ดี ค่ะ ไป ตอน บ่าย."
+    }
+  ]
+}

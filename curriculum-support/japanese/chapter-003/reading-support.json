@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Japanese.",
+      "expert": "Support stays aligned to literal Chapter 3 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:これは何ですか]].",
+      "expert": "The canonical pattern [[grammar:これは何ですか]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "surface": "これ",
+      "reading": "これ",
+      "evidence": "これは何ですか。",
+      "lexicalEntryId": "ja.demonstrative.kore",
+      "senseId": "ja.demonstrative.kore.this"
+    },
+    {
+      "surface": "何",
+      "reading": "なに",
+      "evidence": "これは何ですか。",
+      "lexicalEntryId": "ja.pronoun.nani",
+      "senseId": "ja.pronoun.nani.what"
+    },
+    {
+      "surface": "ペン",
+      "reading": "ぺん",
+      "evidence": "ペンです。",
+      "lexicalEntryId": "ja.noun.pen",
+      "senseId": "ja.noun.pen.pen"
+    },
+    {
+      "surface": "ノート",
+      "reading": "のーと",
+      "evidence": "これはノートですか。",
+      "lexicalEntryId": "ja.noun.noto",
+      "senseId": "ja.noun.noto.notebook"
+    },
+    {
+      "surface": "鍵",
+      "reading": "かぎ",
+      "evidence": "鍵はどこですか。",
+      "lexicalEntryId": "ja.noun.kagi",
+      "senseId": "ja.noun.kagi.key"
+    },
+    {
+      "surface": "携帯電話",
+      "reading": "けいたいでんわ",
+      "evidence": "鍵は携帯電話の横です。",
+      "lexicalEntryId": "ja.noun.keitai-denwa",
+      "senseId": "ja.noun.keitai-denwa.mobile-phone"
+    }
+  ]
+}

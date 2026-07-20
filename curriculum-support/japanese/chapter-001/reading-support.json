@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Japanese.",
+      "expert": "Support stays aligned to literal Chapter 1 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:N + です]].",
+      "expert": "The canonical pattern [[grammar:N + です]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "surface": "はじめまして",
+      "reading": "はじめまして",
+      "evidence": "はじめまして。",
+      "lexicalEntryId": "ja.greeting.hajimemashite",
+      "senseId": "ja.greeting.hajimemashite.nice-to-meet-you"
+    },
+    {
+      "surface": "こんにちは",
+      "reading": "こんにちは",
+      "evidence": "こんにちは。",
+      "lexicalEntryId": "ja.greeting.konnichiwa",
+      "senseId": "ja.greeting.konnichiwa.hello"
+    },
+    {
+      "surface": "です",
+      "reading": "です",
+      "evidence": "あきです。学生です。",
+      "lexicalEntryId": "ja.copula.desu",
+      "senseId": "ja.copula.desu.is-am-are-polite"
+    },
+    {
+      "surface": "学生",
+      "reading": "がくせい",
+      "evidence": "あきです。学生です。",
+      "lexicalEntryId": "ja.noun.gakusei",
+      "senseId": "ja.noun.gakusei.student"
+    },
+    {
+      "surface": "先生",
+      "reading": "せんせい",
+      "evidence": "ゆきです。先生です。",
+      "lexicalEntryId": "ja.noun.sensei",
+      "senseId": "ja.noun.sensei.teacher"
+    },
+    {
+      "surface": "よろしくお願いします",
+      "reading": "よろしくおねがいします",
+      "evidence": "よろしくお願いします。",
+      "lexicalEntryId": "ja.expression.yoroshiku-onegaishimasu",
+      "senseId": "ja.expression.yoroshiku-onegaishimasu.please-treat-me-favorably"
+    }
+  ]
+}

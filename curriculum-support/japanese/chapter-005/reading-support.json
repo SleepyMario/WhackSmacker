@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Japanese.",
+      "expert": "Support stays aligned to literal Chapter 5 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:place + へ + 行きませんか]].",
+      "expert": "The canonical pattern [[grammar:place + へ + 行きませんか]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "surface": "明日",
+      "reading": "あした",
+      "evidence": "明日、公園へ行きませんか。",
+      "lexicalEntryId": "ja.noun.ashita",
+      "senseId": "ja.noun.ashita.tomorrow"
+    },
+    {
+      "surface": "公園",
+      "reading": "こうえん",
+      "evidence": "明日、公園へ行きませんか。",
+      "lexicalEntryId": "ja.noun.koen",
+      "senseId": "ja.noun.koen.park"
+    },
+    {
+      "surface": "行きます",
+      "reading": "いきます",
+      "evidence": "はい、一緒に行きます。",
+      "lexicalEntryId": "ja.verb.ikimasu",
+      "senseId": "ja.verb.ikimasu.go-will-go-polite"
+    },
+    {
+      "surface": "一緒に",
+      "reading": "いっしょに",
+      "evidence": "はい、一緒に行きます。",
+      "lexicalEntryId": "ja.adverb.issho-ni",
+      "senseId": "ja.adverb.issho-ni.together"
+    },
+    {
+      "surface": "いいですね",
+      "reading": "いいですね",
+      "evidence": "いいですね。",
+      "lexicalEntryId": "ja.expression.ii-desu-ne",
+      "senseId": "ja.expression.ii-desu-ne.that-sounds-good"
+    },
+    {
+      "surface": "楽しみ",
+      "reading": "たのしみ",
+      "evidence": "はい、楽しみです。",
+      "lexicalEntryId": "ja.noun.tanoshimi",
+      "senseId": "ja.noun.tanoshimi.looking-forward-to-it"
+    }
+  ]
+}

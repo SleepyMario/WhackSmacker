@@ -252,19 +252,39 @@ const readingTargets = legacyGeneratorTargets.map((target): ContentPackageGenera
   };
 });
 
-const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
-  ["vietnamese", "Vietnamese", "com.sleepymario.language.vietnamese", ["vi", "en"]],
-  ["dutch", "Dutch", "com.sleepymario.language.dutch", ["nl", "en"]]
-].map(([slug, name, readingId, languages]) => ({
+const coreReviewTargets: readonly {
+  readonly slug: string;
+  readonly name: string;
+  readonly readingId?: string;
+  readonly languages: readonly string[];
+  readonly packageVersion: string;
+}[] = [
+  { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.2.0" },
+  { slug: "dutch", name: "Dutch", readingId: "com.sleepymario.language.dutch", languages: ["nl", "en"], packageVersion: "0.1.0" },
+  { slug: "arabic", name: "Arabic", languages: ["ar", "en"], packageVersion: "0.1.0" },
+  { slug: "french", name: "French", languages: ["fr", "en"], packageVersion: "0.1.0" },
+  { slug: "german", name: "German", languages: ["de", "en"], packageVersion: "0.1.0" },
+  { slug: "hindi", name: "Hindi", languages: ["hi", "en"], packageVersion: "0.1.0" },
+  { slug: "japanese", name: "Japanese", languages: ["ja", "en"], packageVersion: "0.1.0" },
+  { slug: "korean", name: "Korean", languages: ["ko", "en"], packageVersion: "0.1.0" },
+  { slug: "russian", name: "Russian", languages: ["ru", "en"], packageVersion: "0.1.0" },
+  { slug: "spanish", name: "Spanish", languages: ["es", "en"], packageVersion: "0.1.0" },
+  { slug: "thai", name: "Thai", languages: ["th", "en"], packageVersion: "0.1.0" },
+  { slug: "zulu", name: "Zulu", languages: ["zu", "en"], packageVersion: "0.1.0" }
+];
+
+const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = coreReviewTargets.map(({ slug, name, readingId, languages, packageVersion }) => ({
   id: `${slug}-core-reviews`,
-  packageId: `${readingId}.reviews`,
+  packageId: readingId === undefined ? `com.sleepymario.language.${slug}.reviews` : `${readingId}.reviews`,
   displayName: `${name} Core Reviews`,
-  description: `GPL core review decks for ${name}, usable without a reading curriculum package.`,
+  description: readingId === undefined
+    ? `GPL core review decks for ${name}; this metadata does not declare a full reading curriculum package.`
+    : `GPL core review decks for ${name}, usable without a reading curriculum package.`,
   contentType: "core-review",
   capabilities: ["core-review"],
-  relatedPackageIds: [readingId],
+  ...(readingId === undefined ? {} : { relatedPackageIds: [readingId] }),
   contentSchemaVersion: slug === "vietnamese" || slug === "dutch" ? "2.0.0" : "1.0.0",
-  packageVersion: slug === "vietnamese" ? "0.2.0" : "0.1.0",
+  packageVersion,
   sourcePath: `review-content/${slug}`,
   sourceRepository: "https://github.com/SleepyMario/whacksmacker",
   languages,
@@ -276,7 +296,7 @@ const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
   include: ["README.md", "LICENSE-SOFTWARE", "review-decks"]
 } as ContentPackageGeneratorTarget));
 
-export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...coreReviewTargets];
+export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...generatedCoreReviewTargets];
 
 export async function generateContentPackage(options: GenerateContentPackageOptions): Promise<GeneratedContentPackageResult> {
   const target = getContentPackageGeneratorTarget(options.targetId);
@@ -894,7 +914,8 @@ function reviewDeckV2RowToItem(
     if (kind !== "vocabulary") throw new Error(`Normal core review row ${rowNumber + 1} must be a vocabulary card in ${sourcePath}`);
     const targetToSource = promptLanguage === targetLanguage && answerLanguage === sourceLanguage;
     const sourceToTarget = promptLanguage === sourceLanguage && answerLanguage === targetLanguage;
-    if (!targetToSource && !sourceToTarget) {
+    const japaneseReadingToTarget = targetLanguage === "ja" && promptLanguage === "ja-Kana" && answerLanguage === "ja";
+    if (!targetToSource && !sourceToTarget && !japaneseReadingToTarget) {
       throw new Error(`Normal core review row ${rowNumber + 1} has an unsupported review direction in ${sourcePath}`);
     }
     if (distractors.length > 0) throw new Error(`Normal core review row ${rowNumber + 1} must not contain distractors in ${sourcePath}`);
@@ -1461,6 +1482,12 @@ function stableDirectionSlug(
 }
 
 function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
+  const targetLanguage = target.targetLanguage ?? target.languages?.find((language) => language !== "en");
+  const scriptByLanguage: Readonly<Record<string, string>> = {
+    ar: "Arabic", de: "Latin", es: "Latin", fr: "Latin", hi: "Devanagari", ja: "Japanese",
+    ko: "Hangul", nl: "Latin", ru: "Cyrillic", th: "Thai", vi: "Latin", zu: "Latin"
+  };
+  if (targetLanguage !== undefined && scriptByLanguage[targetLanguage] !== undefined) return scriptByLanguage[targetLanguage];
   switch (curriculumIdentityTargetId(target)) {
     case "vietnamese-curriculum":
       return "Vietnamese";

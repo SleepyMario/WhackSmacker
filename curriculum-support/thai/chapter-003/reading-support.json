@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Thai.",
+      "expert": "Support stays aligned to literal Chapter 3 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:นี่คืออะไร]].",
+      "expert": "The canonical pattern [[grammar:นี่คืออะไร]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "sourceText": "นี่คืออะไรคะ.",
+      "wordBoundaryGuide": "นี่ คือ อะไร คะ."
+    },
+    {
+      "sourceText": "นี่คือปากกาครับ.",
+      "wordBoundaryGuide": "นี่ คือ ปากกา ครับ."
+    },
+    {
+      "sourceText": "นี่คือโทรศัพท์ใช่ไหมคะ.",
+      "wordBoundaryGuide": "นี่ คือ โทรศัพท์ ใช่ ไหม คะ."
+    },
+    {
+      "sourceText": "ใช่ครับ.",
+      "wordBoundaryGuide": "ใช่ ครับ."
+    },
+    {
+      "sourceText": "กุญแจอยู่ที่ไหนคะ.",
+      "wordBoundaryGuide": "กุญแจ อยู่ ที่ไหน คะ."
+    },
+    {
+      "sourceText": "กุญแจอยู่ในกระเป๋าครับ.",
+      "wordBoundaryGuide": "กุญแจ อยู่ ใน กระเป๋า ครับ."
+    }
+  ]
+}

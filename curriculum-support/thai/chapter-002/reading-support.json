@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Thai.",
+      "expert": "Support stays aligned to literal Chapter 2 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:N + numeral + classifier]].",
+      "expert": "The canonical pattern [[grammar:N + numeral + classifier]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "sourceText": "บ้านของมาลีมีห้องหนึ่งห้อง.",
+      "wordBoundaryGuide": "บ้าน ของ มาลี มี ห้อง หนึ่ง ห้อง."
+    },
+    {
+      "sourceText": "ในห้องมีโต๊ะหนึ่งตัว.",
+      "wordBoundaryGuide": "ใน ห้อง มี โต๊ะ หนึ่ง ตัว."
+    },
+    {
+      "sourceText": "บนโต๊ะมีหนังสือหนึ่งเล่ม.",
+      "wordBoundaryGuide": "บน โต๊ะ มี หนังสือ หนึ่ง เล่ม."
+    },
+    {
+      "sourceText": "ข้างโต๊ะมีเก้าอี้หนึ่งตัว.",
+      "wordBoundaryGuide": "ข้าง โต๊ะ มี เก้าอี้ หนึ่ง ตัว."
+    },
+    {
+      "sourceText": "มีแก้วน้ำหนึ่งใบ.",
+      "wordBoundaryGuide": "มี แก้ว น้ำ หนึ่ง ใบ."
+    },
+    {
+      "sourceText": "ห้องนี้เงียบ.",
+      "wordBoundaryGuide": "ห้อง นี้ เงียบ."
+    }
+  ]
+}

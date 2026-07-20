@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter uses the reading support established for Japanese.",
+      "expert": "Support stays aligned to literal Chapter 4 target text and does not change canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "The chapter pattern is [[grammar:N + を + verb]].",
+      "expert": "The canonical pattern [[grammar:N + を + verb]] retains its language-specific analysis."
+    }
+  ],
+  "readingItems": [
+    {
+      "surface": "喫茶店",
+      "reading": "きっさてん",
+      "evidence": "ゆきは喫茶店にいます。",
+      "lexicalEntryId": "ja.noun.kissaten",
+      "senseId": "ja.noun.kissaten.cafe"
+    },
+    {
+      "surface": "コーヒー",
+      "reading": "こーひー",
+      "evidence": "コーヒーを飲みます。",
+      "lexicalEntryId": "ja.noun.kohii",
+      "senseId": "ja.noun.kohii.coffee"
+    },
+    {
+      "surface": "飲みます",
+      "reading": "のみます",
+      "evidence": "コーヒーを飲みます。",
+      "lexicalEntryId": "ja.verb.nomimasu",
+      "senseId": "ja.verb.nomimasu.drink-drinks-polite"
+    },
+    {
+      "surface": "お茶",
+      "reading": "おちゃ",
+      "evidence": "あきはお茶を飲みます。",
+      "lexicalEntryId": "ja.noun.ocha",
+      "senseId": "ja.noun.ocha.tea"
+    },
+    {
+      "surface": "ケーキ",
+      "reading": "けーき",
+      "evidence": "二人はケーキを食べます。",
+      "lexicalEntryId": "ja.noun.keki",
+      "senseId": "ja.noun.keki.cake"
+    },
+    {
+      "surface": "食べます",
+      "reading": "たべます",
+      "evidence": "二人はケーキを食べます。",
+      "lexicalEntryId": "ja.verb.tabemasu",
+      "senseId": "ja.verb.tabemasu.eat-eats-polite"
+    }
+  ]
+}
