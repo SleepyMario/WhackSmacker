@@ -1,7 +1,24 @@
 {
   "schemaVersion": 1,
   "sourcePath": "chapter.md",
-  "audienceSections": [],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches `có + N` to say that something is present or available. It also reuses the yes/no question from Chapter 4.",
+      "expert": "This chapter introduces `có + N`, a short way to say that a known thing or\nsubstance is present."
+    },
+    {
+      "sourceHeading": "New Grammar",
+      "normal": "#### có + N\n\nUse `có + N` to say that something is present or available. For example, `Có trà.` means “There is tea” or “Tea is available.”",
+      "expert": "#### có + N\n\nUse `có + N` to say that a known thing or substance is present. This chapter\nteaches only the existential-presentational use of invariant `có`; it does not\nyet make possession, negative existence, or existence questions productive."
+    },
+    {
+      "sourceHeading": "Vietnamese Orthography and Word Boundaries",
+      "normalHeading": "Language Notes",
+      "normal": "Keep every tone and vowel mark in `có`, `nước`, `cà phê`, `trà`, and `điện thoại`. Learn `phòng học`, `cà phê`, `ba lô`, and `điện thoại` as complete terms.",
+      "expert": "Keep every tone and vowel mark in `có`, `nước`, `cà phê`, `trà`, and `điện\nthoại`. Learn `phòng học`, `cà phê`, `ba lô`, and `điện thoại` as the complete\nentries shown."
+    }
+  ],
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
     "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| phòng học | 房學 | classroom; study room | `Đây có phải là phòng học không?` |\n| điện thoại | 電話 | telephone; phone | `Có điện thoại.` |\n| trà | 茶 | tea | `Có trà.` |\n\nThe characters show the historical word parts. Modern Vietnamese normally uses the Vietnamese spellings shown in the Word column.",

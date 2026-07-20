@@ -5,22 +5,72 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter continues Vietnamese Core Chapter 9 with current-scope reading and grammar.",
+      "normal": "This chapter teaches `S + đi + place` to say where someone is going.",
       "expert": "Vietnamese Core Chapter 9 is retained as the canonical early-stage source; no future material is introduced by this support record."
     },
     {
-      "sourceHeading": "New Grammar / Pattern",
-      "normal": "Use the chapter’s authored Grammar section.",
-      "expert": "The chapter’s canonical grammar identity remains stored in the source and hidden from ordinary reader output."
+      "sourceHeading": "New Grammar",
+      "normal": "#### S + đi + place\n\nPut the person before `đi` and the destination after it. In this scene, `Tôi đi chợ.` means “I’m going to the market.”",
+      "expert": "#### S + đi + place\n\nPut a taught subject before `đi`, then add one of the compatible destinations\nshown here. The subject can be a taught person-reference form or active cast\nname. Context matters: these speakers are leaving and naming their next trips,\nso English naturally uses “I’m going to …”. The Vietnamese sentence itself\ndoes not mark progressive “already en route,” arrival, or a habit. This chapter\ndoes not make `đến + place` or `đi đến + place` a production alternative."
     },
     {
-      "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Follow the chapter’s authored Vietnamese usage notes.",
-      "expert": "No additional grammatical generalization is introduced here."
+      "sourceHeading": "Vietnamese Orthography and Word Boundaries",
+      "normalHeading": "Language Notes",
+      "normal": "Keep the marks in `đi`, `chợ`, and `thư viện`. Learn `thư viện` and `công viên` as complete terms.",
+      "expert": "Keep the marks in `đi`, `chợ`, and `thư viện`. Learn `thư viện` and\n`công viên` as complete entries."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Tôi đi thư viện.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi đi chợ.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Tôi đi công viên.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Đây là trường.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Đây là thư viện.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Đây là chợ.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Đây là công viên.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Đây là ga.]] — Current-scope Vietnamese reading evidence.",
     "expert": "- [[grammar:Tôi đi thư viện.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi đi chợ.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi đi công viên.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Đây là trường.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Đây là thư viện.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Đây là chợ.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Đây là công viên.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Đây là ga.]] — Literal reading evidence at Dialogue > line 8."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| công viên | 公園 | park | `Tôi đi công viên.` |\n| thư viện | 書院 | library | `Tôi đi thư viện.` |\n| trường | 場 | school | `Đây là trường.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| công viên | 公園 | park | `Tôi đi công viên.` |\n| thư viện | 書院 | library | `Tôi đi thư viện.` |\n| trường | 場 | school | `Đây là trường.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "công viên",
+        "characters": "公園",
+        "meaning": "park",
+        "lexicalEntryId": "vi.noun.cong-vien",
+        "senseId": "vi.noun.cong-vien.park",
+        "firstIntroductionChapter": 9,
+        "usage": "Tôi đi công viên.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-009-basic-sentences-9/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "line containing: Tôi đi công viên."
+        }
+      },
+      {
+        "word": "thư viện",
+        "characters": "書院",
+        "meaning": "library",
+        "lexicalEntryId": "vi.noun.thu-vien",
+        "senseId": "vi.noun.thu-vien.library",
+        "firstIntroductionChapter": 9,
+        "usage": "Tôi đi thư viện.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-009-basic-sentences-9/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "line containing: Tôi đi thư viện."
+        }
+      },
+      {
+        "word": "trường",
+        "characters": "場",
+        "meaning": "school",
+        "lexicalEntryId": "vi.noun.truong",
+        "senseId": "vi.noun.truong.school",
+        "firstIntroductionChapter": 9,
+        "usage": "Đây là trường.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-009-basic-sentences-9/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "line containing: Đây là trường."
+        }
+      }
+    ]
   }
 }

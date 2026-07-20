@@ -1,11 +1,22 @@
 {
   "schemaVersion": 1,
   "sourcePath": "chapter.md",
-  "audienceSections": [],
-  "characters": {
-    "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "No new Chapter 4 word has a clear, useful Sino-Vietnamese character relationship.",
-    "expert": "No Chapter 4 lexical item meets the supported character-mapping threshold. In particular, this section does not equate the taught polarity uses of **không** with a character merely because 空 has the Sino-Vietnamese reading *không*.",
-    "entries": []
-  }
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches one way to ask whether a nearby thing has the right name. It also teaches short yes and no answers. Use the complete question and answer patterns shown here.",
+      "expert": "This chapter introduces `đây + có phải + là + N + không?`, “Is this N?” It\nalso teaches the two complete responses needed by the reading."
+    },
+    {
+      "sourceHeading": "New Grammar",
+      "normal": "#### đây + có phải + là + N + không?\n\nUse this full pattern to ask “Is this N?” Put `không?` at the end. Answer with `Vâng, đây là N.` for yes or `Không, đây không phải là N.` for no.",
+      "expert": "#### đây + có phải + là + N + không?\n\nUse this frame to check the identity of something nearby. Keep both `có phải`\nand final `không`. This lesson does not generalize `không` to every type of\nVietnamese question or negation."
+    },
+    {
+      "sourceHeading": "Register and Word Boundaries",
+      "normalHeading": "Language Notes",
+      "normal": "Use `vâng` as a polite “yes” with the teacher in this chapter. Other replies can depend on the people and the region. Keep the spaces and marks in `có phải`, `không phải là`, and `cửa sổ`.",
+      "expert": "`vâng` is a safe polite yes in this teacher-led context. Other response words\ndepend on relationship and region and remain outside the lesson. Learn `có\nphải`, `không phải là`, and `cửa sổ` with the shown spaces and diacritics."
+    }
+  ]
 }

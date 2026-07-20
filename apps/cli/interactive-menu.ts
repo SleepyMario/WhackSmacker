@@ -204,7 +204,13 @@ interface ReadingSupport {
   readonly schemaVersion: 1;
   readonly semanticRoleSyntaxVersion?: 1;
   readonly sourcePath: "chapter.md";
-  readonly audienceSections: readonly { readonly sourceHeading: string; readonly normal: string; readonly expert: string }[];
+  readonly audienceSections: readonly {
+    readonly sourceHeading: string;
+    readonly normalHeading?: string | null;
+    readonly expertHeading?: string;
+    readonly normal: string;
+    readonly expert: string;
+  }[];
   readonly breakdown?: { readonly normal: string; readonly expert: string };
   readonly characters?: { readonly heading: string; readonly normal: string; readonly expert: string };
 }
@@ -2215,7 +2221,11 @@ function parseReadingSupport(text: string): ReadingSupport | undefined {
     const value = JSON.parse(text) as ReadingSupport;
     if (value.schemaVersion !== 1 || value.sourcePath !== "chapter.md" || !Array.isArray(value.audienceSections)) return undefined;
     if (value.semanticRoleSyntaxVersion !== undefined && value.semanticRoleSyntaxVersion !== 1) return undefined;
-    if (!value.audienceSections.every((section) => typeof section.sourceHeading === "string" && typeof section.normal === "string" && typeof section.expert === "string")) return undefined;
+    if (!value.audienceSections.every((section) => typeof section.sourceHeading === "string"
+      && (section.normalHeading === undefined || section.normalHeading === null || typeof section.normalHeading === "string")
+      && (section.expertHeading === undefined || typeof section.expertHeading === "string")
+      && typeof section.normal === "string"
+      && typeof section.expert === "string")) return undefined;
     return value;
   } catch {
     return undefined;
@@ -2227,11 +2237,19 @@ function applyReadingSupport(markdown: string, support: ReadingSupport, options:
   let output = markdown;
   for (const section of support.audienceSections) {
     const grammarSection = section.sourceHeading === "New Grammar" || section.sourceHeading === "New Grammar / Pattern";
+    const content = mode === "expert" ? section.expert : section.normal;
+    const projectedHeading = mode === "expert"
+      ? section.expertHeading ?? section.sourceHeading
+      : section.normalHeading === undefined
+        ? section.sourceHeading
+        : section.normalHeading;
     const body = mode === "developer"
       ? grammarSection
         ? `### Grammar\n\n#### Normal\n\n${section.normal}\n\n#### Expert\n\n${section.expert}`
         : `### ${section.sourceHeading}: Normal\n\n${section.normal}\n\n### ${section.sourceHeading}: Expert\n\n${section.expert}`
-      : `### ${grammarSection ? "Grammar" : section.sourceHeading}\n\n${mode === "expert" ? section.expert : section.normal}`;
+      : projectedHeading === null
+        ? content
+        : `### ${grammarSection ? "Grammar" : projectedHeading}\n\n${content}`;
     output = replaceNamedSection(output, section.sourceHeading, body);
   }
   const embeddedBreakdown = markdownSectionBody(output, "Line-by-Line Breakdown")
@@ -2299,7 +2317,9 @@ function renameNamedSectionHeading(markdown: string, from: string, to: string): 
 function insertAfterNamedSection(markdown: string, title: string, addition: string): string {
   const range = markdownSectionRange(markdown, title);
   if (range === undefined) return markdown;
-  return [...range.lines.slice(0, range.end), "", ...addition.split("\n"), ...range.lines.slice(range.end)].join("\n");
+  const developerOnlyStart = range.lines.findIndex((line, index) => index > range.start && index < range.end && line.trim() === "<!-- whacksmacker:developer-only:start -->");
+  const insertionIndex = developerOnlyStart < 0 ? range.end : developerOnlyStart;
+  return [...range.lines.slice(0, insertionIndex), "", ...addition.split("\n"), ...range.lines.slice(insertionIndex)].join("\n");
 }
 
 function insertBeforeExercises(markdown: string, addition: string): string {
@@ -4634,6 +4654,7 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
 
 function stripInlineMarkdown(text: string, colorsEnabled: boolean): string {
   let result = text.replace(/\[\[grammar:([^\]\n]+)\]\]/gu, colorsEnabled ? `${ansi.blue}$1${ansi.reset}` : "$1");
+  result = result.replace(/\[\[grammar:\s*\]\]/gu, "");
   result = result.replace(/\[\[emphasis:([^\]\n]+)\]\]/gu, colorsEnabled ? `${ansi.bold}$1${ansi.reset}` : "$1");
   result = result.replace(/\*\*([^*]+)\*\*/gu, colorsEnabled ? `${ansi.bold}$1${ansi.reset}` : "$1");
   result = result.replace(/`([^`]+)`/gu, colorsEnabled ? `${ansi.blue}$1${ansi.reset}` : "$1");

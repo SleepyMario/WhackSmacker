@@ -312,10 +312,11 @@ function removeTopLevelGrammarHeading(text: string): string {
 
 export function projectReviewTextForMode(text: string, mode: CurriculumDisplayMode): string {
   if (mode !== "normal") return text;
-  return text.replace(
+  const projected = text.replace(
     /\s*(?:[;,—–-]\s*)?\bin the (?:taught frame|attested frame|licensed construction)\b[.!?;,]*\s*$/iu,
     ""
   ).trimEnd();
+  return projected === text.trimEnd() ? projected : projected.replace(/\s*\/\s*/gu, "; ");
 }
 
 function projectVocabularyNotes(text: string, mode: Exclude<CurriculumDisplayMode, "developer">): string {

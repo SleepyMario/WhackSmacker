@@ -11,6 +11,18 @@
       "sourceHeading": "New Grammar",
       "normal": "#### tôi + là + N\n\nUse `tôi + là + N` to say your name or role. `tôi` means “I.” `là` links “I” to the name or role. `là` does not change in these sentences.",
       "expert": "#### tôi + là + N\n\nCurrent chapter scope: `tôi` is the first-person subject, `là` is an invariant identity copula, and `N` is a proper-name or nominal predicate. Expert context: the construction is analytic and lacks subject agreement; later work distinguishes identity predication from other predicate types and broadens the pragmatics of person reference."
+    },
+    {
+      "sourceHeading": "Vietnamese Orthography and Word Boundaries",
+      "normalHeading": "Language Notes",
+      "normal": "Keep every accent and tone mark. For example, write `tôi`, `là`, `sinh viên`, `học sinh`, and `giáo viên` exactly as shown. Some Vietnamese vocabulary has spaces inside one complete term. Learn each full term together.",
+      "expert": "Keep every diacritic: `tôi`, `là`, `sinh viên`, `học sinh`, and `giáo viên`\nare different from spellings with missing or changed marks.\n\nSome complete Vietnamese vocabulary entries contain spaces between syllables.\nLearn `sinh viên`, `học sinh`, and `giáo viên` as the complete entries shown\nhere."
+    },
+    {
+      "sourceHeading": "Register Note",
+      "normalHeading": null,
+      "normal": "`tôi` is a neutral way to say “I,” and `xin chào` is a safe greeting for this practice. In real conversations, Vietnamese speakers may choose different words based on age, relationship, region, and situation. You will learn those choices later.",
+      "expert": "`tôi` is a useful neutral first-person form, and `xin chào` is a safe greeting\nfor this planned introduction practice. Everyday Vietnamese often chooses\npronouns and greetings according to relationship, relative age, role, region,\nand situation. Those choices remain outside Chapter 1."
     }
   ],
   "breakdown": {

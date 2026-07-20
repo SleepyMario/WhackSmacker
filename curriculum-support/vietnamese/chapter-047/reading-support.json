@@ -15,12 +15,76 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Nếu ... thì presents an explicit condition-result relation. Bao nhiêu comes before the classifier when asking how many countable items there are.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `nếu ... thì` for an “if ... then” sentence. When asking how many countable items there are, put `bao nhiêu` before the counting word: `bao nhiêu tờ giấy?`",
       "expert": "Nếu ... thì presents an explicit condition-result relation. Bao nhiêu comes before the classifier when asking how many countable items there are. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Cần bao nhiêu tờ giấy?]] — How many sheets of paper are needed?\n- [[grammar:Cần mười tờ giấy.]] — Ten sheets of paper are needed.\n- [[grammar:Cần bao nhiêu bản tài liệu?]] — How many copies of the document are needed?\n- [[grammar:Cần sáu bản tài liệu.]] — Six copies of the document are needed.\n- [[grammar:Nếu có mười người, thì cần mười phiếu dự phòng.]] — If there are ten people, then ten spare forms are needed.\n- [[grammar:Tôi in các phiếu.]] — I print the forms.\n- [[grammar:Tờ này cần thiết.]] — This sheet is necessary.\n- [[grammar:Bản kia là dự phòng.]] — That copy is a backup.\n- [[grammar:Nếu tài liệu chưa sẵn sàng, thì tôi in.]] — If the materials are not ready, then I print them.\n- [[grammar:Các bản đã sẵn sàng.]] — The copies are ready.\n- [[grammar:Phiếu ở bàn thông tin.]] — The forms are at the information desk.\n- [[grammar:Vâng.]] — Yes.",
     "expert": "- [[grammar:Cần bao nhiêu tờ giấy?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Cần mười tờ giấy.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Cần bao nhiêu bản tài liệu?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Cần sáu bản tài liệu.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Nếu có mười người, thì cần mười phiếu dự phòng.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi in các phiếu.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tờ này cần thiết.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Bản kia là dự phòng.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Nếu tài liệu chưa sẵn sàng, thì tôi in.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Các bản đã sẵn sàng.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Phiếu ở bàn thông tin.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| dự phòng | 預防 | spare; backup | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| bản | 本 | classifier for copies or versions | `Cần bao nhiêu bản tài liệu?` |\n| phiếu | 票 | form; slip | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| in | 印 | print | `Tôi in các phiếu.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| dự phòng | 預防 | spare; backup | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| bản | 本 | classifier for copies or versions | `Cần bao nhiêu bản tài liệu?` |\n| phiếu | 票 | form; slip | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| in | 印 | print | `Tôi in các phiếu.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "dự phòng",
+        "characters": "預防",
+        "meaning": "spare; backup",
+        "lexicalEntryId": "vi.adjective.du-phong",
+        "senseId": "vi.adjective.du-phong.spare-backup",
+        "firstIntroductionChapter": 47,
+        "usage": "Nếu có mười người, thì cần mười phiếu dự phòng.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-047-basic-sentences-47/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Nếu có mười người, thì cần mười phiếu dự phòng."
+        }
+      },
+      {
+        "word": "bản",
+        "characters": "本",
+        "meaning": "classifier for copies or versions",
+        "lexicalEntryId": "vi.classifier.ban",
+        "senseId": "vi.classifier.ban.classifier-for-copies-or-versions",
+        "firstIntroductionChapter": 47,
+        "usage": "Cần bao nhiêu bản tài liệu?",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-047-basic-sentences-47/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Cần bao nhiêu bản tài liệu?"
+        }
+      },
+      {
+        "word": "phiếu",
+        "characters": "票",
+        "meaning": "form; slip",
+        "lexicalEntryId": "vi.noun.phieu",
+        "senseId": "vi.noun.phieu.form-slip",
+        "firstIntroductionChapter": 47,
+        "usage": "Nếu có mười người, thì cần mười phiếu dự phòng.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-047-basic-sentences-47/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Nếu có mười người, thì cần mười phiếu dự phòng."
+        }
+      },
+      {
+        "word": "in",
+        "characters": "印",
+        "meaning": "print",
+        "lexicalEntryId": "vi.verb.in",
+        "senseId": "vi.verb.in.print",
+        "firstIntroductionChapter": 47,
+        "usage": "Tôi in các phiếu.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-047-basic-sentences-47/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Tôi in các phiếu."
+        }
+      }
+    ]
   }
 }

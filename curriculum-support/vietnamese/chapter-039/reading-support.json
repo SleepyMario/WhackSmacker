@@ -15,12 +15,76 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Thế nên states a consequence. Được phép explicitly encodes permission and should be kept separate from other uses of được.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `thế nên` to give a result or consequence. `Được phép` means “be allowed to.” Keep it separate from the other uses of `được`.",
       "expert": "Thế nên states a consequence. Được phép explicitly encodes permission and should be kept separate from other uses of được. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Khu vực này có quy định.]] — This area has rules.\n- [[grammar:Tôi được phép đăng ký không?]] — Am I allowed to register?\n- [[grammar:Vâng, Lê Hoàng Nam được phép đăng ký.]] — Yes, Lê Hoàng Nam is allowed to register.\n- [[grammar:Tôi ký tên ở đây không?]] — Do I sign my name here?\n- [[grammar:Vâng, ký tên ở đây.]] — Yes, sign here.\n- [[grammar:Tôi cần giữ im lặng không?]] — Do I need to keep quiet?\n- [[grammar:Vâng. Đây là khu vực yên tĩnh.]] — Yes. This is a quiet area.\n- [[grammar:Tôi đăng ký, thế nên tôi được phép đọc.]] — I register, so I am allowed to read.\n- [[grammar:Nhân viên kiểm tra phiếu.]] — A staff member checks the form.\n- [[grammar:Thế nên tôi giữ im lặng.]] — Therefore I keep quiet.\n- [[grammar:Quy định rất rõ.]] — The rule is very clear.\n- [[grammar:Vâng.]] — Yes.",
     "expert": "- [[grammar:Khu vực này có quy định.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi được phép đăng ký không?]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Vâng, Lê Hoàng Nam được phép đăng ký.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi ký tên ở đây không?]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Vâng, ký tên ở đây.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi cần giữ im lặng không?]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Vâng. Đây là khu vực yên tĩnh.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi đăng ký, thế nên tôi được phép đọc.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Nhân viên kiểm tra phiếu.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Thế nên tôi giữ im lặng.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Quy định rất rõ.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| khu vực | 區域 | area; zone | `Khu vực này có quy định.` |\n| nhân viên | 人員 | staff member; employee | `Nhân viên kiểm tra phiếu.` |\n| quy định | 規定 | rule; regulation | `Khu vực này có quy định.` |\n| đăng ký | 登記 | register; sign up | `Tôi được phép đăng ký không?` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| khu vực | 區域 | area; zone | `Khu vực này có quy định.` |\n| nhân viên | 人員 | staff member; employee | `Nhân viên kiểm tra phiếu.` |\n| quy định | 規定 | rule; regulation | `Khu vực này có quy định.` |\n| đăng ký | 登記 | register; sign up | `Tôi được phép đăng ký không?` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "khu vực",
+        "characters": "區域",
+        "meaning": "area; zone",
+        "lexicalEntryId": "vi.noun.khu-vuc",
+        "senseId": "vi.noun.khu-vuc.area-zone",
+        "firstIntroductionChapter": 39,
+        "usage": "Khu vực này có quy định.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-039-basic-sentences-39/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Khu vực này có quy định."
+        }
+      },
+      {
+        "word": "nhân viên",
+        "characters": "人員",
+        "meaning": "staff member; employee",
+        "lexicalEntryId": "vi.noun.nhan-vien",
+        "senseId": "vi.noun.nhan-vien.staff-member-employee",
+        "firstIntroductionChapter": 39,
+        "usage": "Nhân viên kiểm tra phiếu.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-039-basic-sentences-39/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Nhân viên kiểm tra phiếu."
+        }
+      },
+      {
+        "word": "quy định",
+        "characters": "規定",
+        "meaning": "rule; regulation",
+        "lexicalEntryId": "vi.noun.quy-dinh",
+        "senseId": "vi.noun.quy-dinh.rule-regulation",
+        "firstIntroductionChapter": 39,
+        "usage": "Khu vực này có quy định.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-039-basic-sentences-39/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Khu vực này có quy định."
+        }
+      },
+      {
+        "word": "đăng ký",
+        "characters": "登記",
+        "meaning": "register; sign up",
+        "lexicalEntryId": "vi.verb.dang-ky",
+        "senseId": "vi.verb.dang-ky.register-sign-up",
+        "firstIntroductionChapter": 39,
+        "usage": "Tôi được phép đăng ký không?",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-039-basic-sentences-39/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Tôi được phép đăng ký không?"
+        }
+      }
+    ]
   }
 }

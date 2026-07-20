@@ -15,7 +15,8 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Bao nhiêu asks for an unknown amount; price questions and later classifier questions use different surrounding frames. Cho tôi is a direct but ordinary service request here.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `bao nhiêu` to ask for an unknown amount. The words around it change when you ask about a price or count items. `Cho tôi ...` is a normal direct request in the service situation here.",
       "expert": "Bao nhiêu asks for an unknown amount; price questions and later classifier questions use different surrounding frames. Cho tôi is a direct but ordinary service request here. The grammar IDs remain distinct and cumulative."
     }
   ],

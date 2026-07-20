@@ -15,12 +15,62 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Cuối cùng closes a sequence. Tất cả states exhaustivity, while khoảng deliberately leaves the quantity approximate.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `cuối cùng` for the last step in a sequence. `Tất cả` means “all.” `Khoảng` means “about,” so the number is not exact.",
       "expert": "Cuối cùng closes a sequence. Tất cả states exhaustivity, while khoảng deliberately leaves the quantity approximate. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.]] — Finally, Phạm Ngọc Linh opens the summary table.\n- [[grammar:Tất cả năm mươi phiếu đã kiểm tra xong.]] — All fifty forms have been checked.\n- [[grammar:Lê Bình An xác nhận khoảng bốn mươi bản tài liệu.]] — Lê Bình An confirms about forty copies of the document.\n- [[grammar:Lê Thảo Vy xác nhận số còn lại.]] — Lê Thảo Vy confirms the remaining number.\n- [[grammar:Số phiếu của đội này gấp đôi số phiếu của đội kia.]] — The number of forms for this team is double that of the other team.\n- [[grammar:Trung bình mỗi người có hai tờ giấy.]] — On average, each person has two sheets of paper.\n- [[grammar:Nguyễn Quốc Huy kiểm tra tất cả các phần.]] — Nguyễn Quốc Huy checks all the shares.\n- [[grammar:Khoảng mười phần còn lại.]] — About ten shares remain.\n- [[grammar:Bảng tổng kết rất rõ.]] — The summary table is very clear.\n- [[grammar:Cuối cùng, báo cáo đã hoàn thành.]] — Finally, the report is complete.",
     "expert": "- [[grammar:Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Tất cả năm mươi phiếu đã kiểm tra xong.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Lê Bình An xác nhận khoảng bốn mươi bản tài liệu.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Lê Thảo Vy xác nhận số còn lại.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Số phiếu của đội này gấp đôi số phiếu của đội kia.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Trung bình mỗi người có hai tờ giấy.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Nguyễn Quốc Huy kiểm tra tất cả các phần.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Khoảng mười phần còn lại.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Bảng tổng kết rất rõ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Cuối cùng, báo cáo đã hoàn thành.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| trung bình | 中平 | on average; average | `Trung bình mỗi người có hai tờ giấy.` |\n| bảng tổng kết | 榜總結 | summary table | `Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.` |\n| xác nhận | 確認 | confirm | `Lê Bình An xác nhận khoảng bốn mươi bản tài liệu.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| trung bình | 中平 | on average; average | `Trung bình mỗi người có hai tờ giấy.` |\n| bảng tổng kết | 榜總結 | summary table | `Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.` |\n| xác nhận | 確認 | confirm | `Lê Bình An xác nhận khoảng bốn mươi bản tài liệu.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "trung bình",
+        "characters": "中平",
+        "meaning": "on average; average",
+        "lexicalEntryId": "vi.adverb.trung-binh",
+        "senseId": "vi.adverb.trung-binh.on-average-average",
+        "firstIntroductionChapter": 50,
+        "usage": "Trung bình mỗi người có hai tờ giấy.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-050-basic-sentences-50/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Trung bình mỗi người có hai tờ giấy."
+        }
+      },
+      {
+        "word": "bảng tổng kết",
+        "characters": "榜總結",
+        "meaning": "summary table",
+        "lexicalEntryId": "vi.noun.bang-tong-ket",
+        "senseId": "vi.noun.bang-tong-ket.summary-table",
+        "firstIntroductionChapter": 50,
+        "usage": "Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-050-basic-sentences-50/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết."
+        }
+      },
+      {
+        "word": "xác nhận",
+        "characters": "確認",
+        "meaning": "confirm",
+        "lexicalEntryId": "vi.verb.xac-nhan",
+        "senseId": "vi.verb.xac-nhan.confirm",
+        "firstIntroductionChapter": 50,
+        "usage": "Lê Bình An xác nhận khoảng bốn mươi bản tài liệu.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-050-basic-sentences-50/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Lê Bình An xác nhận khoảng bốn mươi bản tài liệu."
+        }
+      }
+    ]
   }
 }

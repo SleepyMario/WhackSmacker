@@ -15,12 +15,48 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Mở can apply to a physical opening or activating a device. The context determines the English translation.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `mở` for opening a door and for turning on a device. The rest of the sentence tells you which meaning fits.",
       "expert": "Mở can apply to a physical opening or activating a device. The context determines the English translation. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Buổi họp bắt đầu đúng giờ.]] — The meeting begins on time.\n- [[grammar:Tôi mở phòng họp.]] — I open the meeting room.\n- [[grammar:Tôi mở tài liệu.]] — I open the document.\n- [[grammar:Tôi mở máy chiếu.]] — I turn on the projector.\n- [[grammar:Lịch ở phòng họp.]] — The schedule is in the meeting room.\n- [[grammar:Buổi họp bắt đầu.]] — The meeting begins.\n- [[grammar:Tài liệu ở đây.]] — The document is here.\n- [[grammar:Tôi mở máy chiếu.]] — I turn on the projector.\n- [[grammar:Vâng.]] — Yes.\n- [[grammar:Đúng giờ.]] — On time.",
     "expert": "- [[grammar:Buổi họp bắt đầu đúng giờ.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi mở phòng họp.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi mở tài liệu.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi mở máy chiếu.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Lịch ở phòng họp.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Buổi họp bắt đầu.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tài liệu ở đây.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi mở máy chiếu.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Đúng giờ.]] — Literal reading evidence at Dialogue > line 10."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| lịch | 曆 | schedule; calendar | `Lịch ở phòng họp.` |\n| tài liệu | 資料 | document; material | `Tôi mở tài liệu.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| lịch | 曆 | schedule; calendar | `Lịch ở phòng họp.` |\n| tài liệu | 資料 | document; material | `Tôi mở tài liệu.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "lịch",
+        "characters": "曆",
+        "meaning": "schedule; calendar",
+        "lexicalEntryId": "vi.noun.lich",
+        "senseId": "vi.noun.lich.schedule-calendar",
+        "firstIntroductionChapter": 23,
+        "usage": "Lịch ở phòng họp.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-023-basic-sentences-23/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Lịch ở phòng họp."
+        }
+      },
+      {
+        "word": "tài liệu",
+        "characters": "資料",
+        "meaning": "document; material",
+        "lexicalEntryId": "vi.noun.tai-lieu",
+        "senseId": "vi.noun.tai-lieu.document-material",
+        "firstIntroductionChapter": 23,
+        "usage": "Tôi mở tài liệu.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-023-basic-sentences-23/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Tôi mở tài liệu."
+        }
+      }
+    ]
   }
 }

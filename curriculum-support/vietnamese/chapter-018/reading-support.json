@@ -15,12 +15,76 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Xem covers watching moving images and looking at pictures in this block. It is not analyzed as two unrelated senses here.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `xem` for watching a movie or show and for looking at a picture. The situation tells you whether English uses “watch” or “look at.”",
       "expert": "Xem covers watching moving images and looking at pictures in this block. It is not analyzed as two unrelated senses here. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Nguyễn Minh Anh và Nguyễn Gia Bảo ở nhà.]] — Nguyễn Minh Anh and Nguyễn Gia Bảo are at home.\n- [[grammar:Tối nay, Nguyễn Minh Anh xem phim.]] — Tonight, Nguyễn Minh Anh watches a film.\n- [[grammar:Nguyễn Gia Bảo xem truyền hình.]] — Nguyễn Gia Bảo watches television.\n- [[grammar:Nguyễn Minh Anh xem ảnh.]] — Nguyễn Minh Anh looks at photos.\n- [[grammar:Nguyễn Gia Bảo xem chương trình.]] — Nguyễn Gia Bảo watches a program.\n- [[grammar:Phim rất thú vị.]] — The film is very interesting.\n- [[grammar:Màn hình ở phòng.]] — The screen is in the room.\n- [[grammar:Nguyễn Minh Anh muốn xem phim.]] — Nguyễn Minh Anh wants to watch the film.\n- [[grammar:Nguyễn Gia Bảo cũng xem phim.]] — Nguyễn Gia Bảo watches the film too.",
     "expert": "- [[grammar:Nguyễn Minh Anh và Nguyễn Gia Bảo ở nhà.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Tối nay, Nguyễn Minh Anh xem phim.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Nguyễn Gia Bảo xem truyền hình.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Nguyễn Minh Anh xem ảnh.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Nguyễn Gia Bảo xem chương trình.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Phim rất thú vị.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Màn hình ở phòng.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Nguyễn Minh Anh muốn xem phim.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Nguyễn Gia Bảo cũng xem phim.]] — Literal reading evidence at Narrative > line 9."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thú vị | 趣味 | interesting | `Phim rất thú vị.` |\n| ảnh | 影 | photo; picture | `Nguyễn Minh Anh xem ảnh.` |\n| chương trình | 章程 | program; show | `Nguyễn Gia Bảo xem chương trình.` |\n| truyền hình | 傳形 | television | `Nguyễn Gia Bảo xem truyền hình.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thú vị | 趣味 | interesting | `Phim rất thú vị.` |\n| ảnh | 影 | photo; picture | `Nguyễn Minh Anh xem ảnh.` |\n| chương trình | 章程 | program; show | `Nguyễn Gia Bảo xem chương trình.` |\n| truyền hình | 傳形 | television | `Nguyễn Gia Bảo xem truyền hình.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "thú vị",
+        "characters": "趣味",
+        "meaning": "interesting",
+        "lexicalEntryId": "vi.adjective.thu-vi",
+        "senseId": "vi.adjective.thu-vi.interesting",
+        "firstIntroductionChapter": 18,
+        "usage": "Phim rất thú vị.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-018-basic-sentences-18/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Phim rất thú vị."
+        }
+      },
+      {
+        "word": "ảnh",
+        "characters": "影",
+        "meaning": "photo; picture",
+        "lexicalEntryId": "vi.noun.anh",
+        "senseId": "vi.noun.anh.photo-picture",
+        "firstIntroductionChapter": 18,
+        "usage": "Nguyễn Minh Anh xem ảnh.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-018-basic-sentences-18/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nguyễn Minh Anh xem ảnh."
+        }
+      },
+      {
+        "word": "chương trình",
+        "characters": "章程",
+        "meaning": "program; show",
+        "lexicalEntryId": "vi.noun.chuong-trinh",
+        "senseId": "vi.noun.chuong-trinh.program-show",
+        "firstIntroductionChapter": 18,
+        "usage": "Nguyễn Gia Bảo xem chương trình.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-018-basic-sentences-18/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nguyễn Gia Bảo xem chương trình."
+        }
+      },
+      {
+        "word": "truyền hình",
+        "characters": "傳形",
+        "meaning": "television",
+        "lexicalEntryId": "vi.noun.truyen-hinh",
+        "senseId": "vi.noun.truyen-hinh.television",
+        "firstIntroductionChapter": 18,
+        "usage": "Nguyễn Gia Bảo xem truyền hình.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-018-basic-sentences-18/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nguyễn Gia Bảo xem truyền hình."
+        }
+      }
+    ]
   }
 }

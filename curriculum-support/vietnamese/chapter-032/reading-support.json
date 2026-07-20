@@ -15,12 +15,76 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Vì supplies a reason. Các and những both express plurality, but they are not freely interchangeable; this block introduces only a practical contrast.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `vì` to give a reason. Both `các` and `những` can point to more than one thing, but they are not always interchangeable. Learn the contrast shown in this chapter first.",
       "expert": "Vì supplies a reason. Các and những both express plurality, but they are not freely interchangeable; this block introduces only a practical contrast. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.]] — Nguyễn Thị Lan and Maria Garcia are at the rescue center.\n- [[grammar:Các động vật cần chăm sóc.]] — The animals need care.\n- [[grammar:Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.]] — Nguyễn Thị Lan volunteers because the rescue center needs people.\n- [[grammar:Maria Garcia rửa chuồng vì chuồng chưa sạch sẽ.]] — Maria Garcia washes the enclosure because it is not clean yet.\n- [[grammar:Các động vật có đồ ăn.]] — The animals have food.\n- [[grammar:Nguyễn Thị Lan chăm sóc động vật.]] — Nguyễn Thị Lan cares for the animals.\n- [[grammar:Maria Garcia làm chuồng sạch sẽ.]] — Maria Garcia makes the enclosure clean.\n- [[grammar:Trạm cứu hộ có các động vật.]] — The rescue center has the animals.\n- [[grammar:Nguyễn Thị Lan kiểm tra chuồng vì một động vật đang nghỉ.]] — Nguyễn Thị Lan checks the enclosure because one animal is resting.\n- [[grammar:Maria Garcia tình nguyện mỗi ngày.]] — Maria Garcia volunteers every day.",
     "expert": "- [[grammar:Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Các động vật cần chăm sóc.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Maria Garcia rửa chuồng vì chuồng chưa sạch sẽ.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Các động vật có đồ ăn.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Nguyễn Thị Lan chăm sóc động vật.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Maria Garcia làm chuồng sạch sẽ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Trạm cứu hộ có các động vật.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Nguyễn Thị Lan kiểm tra chuồng vì một động vật đang nghỉ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Maria Garcia tình nguyện mỗi ngày.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| động vật | 動物 | animal | `Các động vật cần chăm sóc.` |\n| trạm cứu hộ | 站救護 | rescue center | `Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.` |\n| các | 各 | plural marker for an identified set | `Các động vật cần chăm sóc.` |\n| tình nguyện | 情願 | volunteer | `Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| động vật | 動物 | animal | `Các động vật cần chăm sóc.` |\n| trạm cứu hộ | 站救護 | rescue center | `Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.` |\n| các | 各 | plural marker for an identified set | `Các động vật cần chăm sóc.` |\n| tình nguyện | 情願 | volunteer | `Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "động vật",
+        "characters": "動物",
+        "meaning": "animal",
+        "lexicalEntryId": "vi.noun.dong-vat",
+        "senseId": "vi.noun.dong-vat.animal",
+        "firstIntroductionChapter": 32,
+        "usage": "Các động vật cần chăm sóc.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-032-basic-sentences-32/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Các động vật cần chăm sóc."
+        }
+      },
+      {
+        "word": "trạm cứu hộ",
+        "characters": "站救護",
+        "meaning": "rescue center",
+        "lexicalEntryId": "vi.noun.tram-cuu-ho",
+        "senseId": "vi.noun.tram-cuu-ho.rescue-center",
+        "firstIntroductionChapter": 32,
+        "usage": "Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-032-basic-sentences-32/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ."
+        }
+      },
+      {
+        "word": "các",
+        "characters": "各",
+        "meaning": "plural marker for an identified set",
+        "lexicalEntryId": "vi.particle.cac",
+        "senseId": "vi.particle.cac.plural-marker-for-an-identified-set",
+        "firstIntroductionChapter": 32,
+        "usage": "Các động vật cần chăm sóc.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-032-basic-sentences-32/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Các động vật cần chăm sóc."
+        }
+      },
+      {
+        "word": "tình nguyện",
+        "characters": "情願",
+        "meaning": "volunteer",
+        "lexicalEntryId": "vi.verb.tinh-nguyen",
+        "senseId": "vi.verb.tinh-nguyen.volunteer",
+        "firstIntroductionChapter": 32,
+        "usage": "Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-032-basic-sentences-32/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người."
+        }
+      }
+    ]
   }
 }

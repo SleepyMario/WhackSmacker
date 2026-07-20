@@ -341,7 +341,11 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "geography-ledger.json",
       "number-progression.json",
       "lexical-topics.json",
+      "lexical-topic-audit.json",
       "lexical-topic-audit.md",
+      "sino-vietnamese-lexicon.json",
+      "sino-vietnamese-audit.json",
+      "sino-vietnamese-audit.md",
       "name-pools",
       "review-decks",
       "research",
@@ -358,7 +362,11 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "geography-ledger.json",
       "number-progression.json",
       "lexical-topics.json",
+      "lexical-topic-audit.json",
       "lexical-topic-audit.md",
+      "sino-vietnamese-lexicon.json",
+      "sino-vietnamese-audit.json",
+      "sino-vietnamese-audit.md",
       "name-pools",
       "units/README.md",
       "units/vietnamese-foundation",
@@ -387,6 +395,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "backlog.md",
       "decisions.md",
       "lexical-topics.json",
+      "lexical-topic-audit.json",
       "lexical-topic-audit.md",
       "name-pools",
       "review-decks",
@@ -753,13 +762,30 @@ async function packagedReadingSupportFiles(target: ContentPackageGeneratorTarget
     const buffer = await readFile(resolve(repositoryRoot, source));
     const text = buffer.toString("utf8");
     const support = JSON.parse(text) as unknown;
-    await assertValidReadingSupportCharacters(support, source, sourceRoot, destination);
+    await assertValidReadingSupport(support, source, sourceRoot, destination);
     return { path: destination, mediaType: "application/json", size: buffer.length, sha256: sha256Hex(buffer), text, buffer };
   }));
 }
 
-async function assertValidReadingSupportCharacters(value: unknown, source: string, sourceRoot: string, destination: string): Promise<void> {
+async function assertValidReadingSupport(value: unknown, source: string, sourceRoot: string, destination: string): Promise<void> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error(`${source}: reading support must be an object`);
+  const audienceSections = (value as Record<string, unknown>).audienceSections;
+  if (!Array.isArray(audienceSections)) throw new Error(`${source}: audienceSections must be an array`);
+  for (const [index, candidate] of audienceSections.entries()) {
+    if (typeof candidate !== "object" || candidate === null || Array.isArray(candidate)) throw new Error(`${source}: audienceSections[${index}] must be an object`);
+    const section = candidate as Record<string, unknown>;
+    for (const key of ["sourceHeading", "normal", "expert"] as const) {
+      if (typeof section[key] !== "string" || (section[key] as string).trim().length === 0) throw new Error(`${source}: audienceSections[${index}].${key} must be a nonempty string`);
+    }
+    if (section.normalHeading !== undefined && section.normalHeading !== null
+      && (typeof section.normalHeading !== "string" || section.normalHeading.trim().length === 0)) {
+      throw new Error(`${source}: audienceSections[${index}].normalHeading must be a nonempty string or null`);
+    }
+    if (section.expertHeading !== undefined
+      && (typeof section.expertHeading !== "string" || section.expertHeading.trim().length === 0)) {
+      throw new Error(`${source}: audienceSections[${index}].expertHeading must be a nonempty string`);
+    }
+  }
   const characters = (value as Record<string, unknown>).characters;
   if (characters === undefined) return;
   if (typeof characters !== "object" || characters === null || Array.isArray(characters)) throw new Error(`${source}: characters must be an object`);
@@ -786,7 +812,7 @@ async function assertValidReadingSupportCharacters(value: unknown, source: strin
     if ((provenance as Record<string, unknown>).path !== destination.replace(/reading-support\.json$/u, "chapter.md")) {
       throw new Error(`${source}: characters.entries[${index}].provenance.path must identify the packaged canonical chapter`);
     }
-    if (!/^Learner-facing (?:Dialogue|Narrative|Controlled Reading|Read Content)$/u.test((provenance as Record<string, unknown>).section as string)) {
+    if (!/^(?:Learner-facing )?(?:Dialogue|Narrative|Controlled Reading|Read Content)$/u.test((provenance as Record<string, unknown>).section as string)) {
       throw new Error(`${source}: characters.entries[${index}].provenance.section must identify primary reading content`);
     }
     if (!chapter.includes(entry.usage as string)) throw new Error(`${source}: characters.entries[${index}].usage is not literal primary reading evidence`);
@@ -808,11 +834,14 @@ const canonicalCastPath = "name-pools/canonical-cast.json";
 const geographyLedgerPath = "geography-ledger.json";
 const numberProgressionPath = "number-progression.json";
 const lexicalTopicsPath = "lexical-topics.json";
-const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath]);
+const lexicalTopicAuditPath = "lexical-topic-audit.json";
+const sinoVietnameseLexiconPath = "sino-vietnamese-lexicon.json";
+const sinoVietnameseAuditPath = "sino-vietnamese-audit.json";
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
-    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath || include === lexicalTopicsPath || include === "lexical-topic-audit.md"))]
+    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath || include === lexicalTopicsPath || include === lexicalTopicAuditPath || include === "lexical-topic-audit.md" || include === sinoVietnameseLexiconPath || include === sinoVietnameseAuditPath || include === "sino-vietnamese-audit.md"))]
     : [...target.include];
   if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path)) separatedIncludes.push(target.license.path);
   if (target.capabilities?.includes("reading-curriculum")) {

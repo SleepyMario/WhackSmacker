@@ -15,12 +15,48 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Nghe is neutral for listening and hearing in these controlled contexts. Thích nhất marks the strongest preference among understood options.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `nghe` for listening or hearing in these examples. Use `thích ... nhất` to say that you like one choice best.",
       "expert": "Nghe is neutral for listening and hearing in these controlled contexts. Thích nhất marks the strongest preference among understood options. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Tôi nghe nhạc.]] — I listen to music.\n- [[grammar:Tôi nghe radio.]] — I listen to the radio.\n- [[grammar:Đây là bài hát.]] — This is a song.\n- [[grammar:Tôi nghe bài hát.]] — I listen to the song.\n- [[grammar:Tôi có tai nghe.]] — I have headphones.\n- [[grammar:Âm thanh rõ.]] — The sound is clear.\n- [[grammar:Bài hát rất rõ.]] — The song is very clear.\n- [[grammar:Tôi thích bài hát nhất.]] — I like the song best.\n- [[grammar:Tôi cũng nghe nhạc.]] — I listen to music too.\n- [[grammar:Vâng.]] — Yes.",
     "expert": "- [[grammar:Tôi nghe nhạc.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi nghe radio.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Đây là bài hát.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi nghe bài hát.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Tôi có tai nghe.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Âm thanh rõ.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Bài hát rất rõ.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi thích bài hát nhất.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi cũng nghe nhạc.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| âm thanh | 音聲 | sound; audio | `Âm thanh rõ.` |\n| nhạc | 樂 | music | `Tôi nghe nhạc.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| âm thanh | 音聲 | sound; audio | `Âm thanh rõ.` |\n| nhạc | 樂 | music | `Tôi nghe nhạc.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "âm thanh",
+        "characters": "音聲",
+        "meaning": "sound; audio",
+        "lexicalEntryId": "vi.noun.am-thanh",
+        "senseId": "vi.noun.am-thanh.sound-audio",
+        "firstIntroductionChapter": 19,
+        "usage": "Âm thanh rõ.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-019-basic-sentences-19/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Âm thanh rõ."
+        }
+      },
+      {
+        "word": "nhạc",
+        "characters": "樂",
+        "meaning": "music",
+        "lexicalEntryId": "vi.noun.nhac",
+        "senseId": "vi.noun.nhac.music",
+        "firstIntroductionChapter": 19,
+        "usage": "Tôi nghe nhạc.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-019-basic-sentences-19/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Tôi nghe nhạc."
+        }
+      }
+    ]
   }
 }

@@ -127,6 +127,11 @@ apply. Regional variants share an identity only when they are variants of the
 same lexical sense; culturally or semantically distinct words retain distinct
 identities.
 
+A canonical sense may be assigned to more than one genuinely applicable topic
+without creating a second lexical sense or a second review card. Topic
+membership is classification metadata and never changes lexical identity or
+review eligibility.
+
 Canonical vocabulary distinguishes surface form, lemma/citation form, part of
 speech, stable lexical-entry ID, stable sense ID, meaning, introduction status,
 first-introduction chapter, encountered forms, related senses, and later
@@ -197,6 +202,20 @@ This check applies to instructional prose, not genuine people in dialogue,
 narrative, or quoted examples. Developer view may retain complete original
 authoring, validator, and technical wording inside structurally classified
 developer-only blocks.
+
+### Audience-specific language notes
+
+Vietnamese ordinary reading support projects usage, spelling, word-boundary,
+register, address-form, classifier, particle, and natural-phrasing sections
+under the exact Normal heading `Language Notes`. The authoritative support
+record uses `audienceSections[].normalHeading`; Expert retains the source
+heading and technical explanation, while Developer exposes the separate Normal
+and Expert support blocks. A `null` Normal heading may continue a preceding
+`Language Notes` section without merging the source records internally.
+
+Normal language-note prose uses short direct sentences, defines unavoidable
+terms immediately, and favors concrete Vietnamese examples. A chapter without
+an applicable source note does not receive an empty section.
 
 ## Canonical verb regularity
 
@@ -473,11 +492,12 @@ Numbered Foundation menu entries use exact derived labels of the form
 `Foundation Chapter -- N`. Only `Foundation` receives the chapter-token color;
 the remainder uses ordinary menu-label styling and no extra `Chapter` prefix.
 
-Normal review display removes terminal technical suffixes such as `in the
-taught frame`, `in the attested frame`, or `in the licensed construction`
-while retaining the ordinary meaning before the suffix. Expert and Developer
-may retain precise or raw wording. Stored card identity, answers, examples,
-provenance, scheduling, and progress remain unchanged.
+Normal review answers should store the concise learner meaning without terminal
+technical suffixes such as `in the taught frame`, `in the attested frame`, or
+`in the licensed construction`. Normal projection removes those suffixes from
+legacy content as a compatibility guard. Expert and Developer may retain
+precise wording where it remains useful. Card identity, examples, provenance,
+scheduling, and progress remain unchanged when answer wording is clarified.
 
 Grammar Easy addresses the learner directly using language understandable to
 someone roughly at US grade levels 4-8. It uses short, concrete explanations

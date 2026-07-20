@@ -982,6 +982,102 @@ test("Chapter 1 audience support, Breakdown, and Vietnamese Characters change vi
   }
 });
 
+test("Vietnamese Chapters 1–50 project beginner Language Notes without flattening Expert or Developer notes", async () => {
+  const fixture = await createInstalledLanguageFixture(["vietnamese-curriculum"], ["com.sleepymario.language.vietnamese"]);
+  const sourceHeadings = new Map([
+    [1, ["Vietnamese Orthography and Word Boundaries", "Register Note"]],
+    [2, ["Vietnamese Word Boundaries and Register"]],
+    [3, ["Vietnamese Orthography and Usage"]],
+    [4, ["Register and Word Boundaries"]],
+    [5, ["Vietnamese Orthography and Word Boundaries"]],
+    [6, ["Vietnamese Orthography and Word Boundaries"]],
+    [8, ["Vietnamese Orthography and Word Boundaries"]],
+    [9, ["Vietnamese Orthography and Word Boundaries"]],
+    ...Array.from({ length: 40 }, (_, index) => [index + 11, ["Vietnamese Usage Notes"]])
+  ]);
+  const prohibitedNormalPhrases = [
+    "Vietnamese Usage Notes",
+    "Vietnamese Orthography and Word Boundaries",
+    "Vietnamese Word Boundaries and Register",
+    "Vietnamese Orthography and Usage",
+    "Register Note",
+    "Register and Word Boundaries",
+    "taught frame",
+    "orthographic word boundaries",
+    "discourse-level contrast",
+    "pragmatic interpretation",
+    "deictic reference",
+    "interlocutor hierarchy",
+    "morphosyntactic distribution"
+  ];
+  const assertHeadingSpacing = (markdown, chapter, mode) => {
+    const lines = markdown.split("\n");
+    for (const [index, line] of lines.entries()) {
+      if (!/^#{1,6}\s+\S/u.test(line)) continue;
+      assert.equal(lines[index - 1], "", `Chapter ${chapter} ${mode} heading has one blank line above`);
+      assert.equal(lines[index + 1], "", `Chapter ${chapter} ${mode} heading has one blank line below`);
+      assert.notEqual(lines[index - 2], "", `Chapter ${chapter} ${mode} heading has no doubled blank above`);
+      assert.notEqual(lines[index + 2], "", `Chapter ${chapter} ${mode} heading has no doubled blank below`);
+    }
+  };
+
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir, "developer");
+    const vietnamese = tree.children.find((node) => node.label === "Vietnamese");
+    const readContent = vietnamese.children.find((node) => node.label === "Read content");
+    const chapters = readContent.children.filter((node) => /\/chapter-\d{3}-basic-sentences-\d+\/chapter\.md$/u.test(node.filePath ?? ""));
+    assert.equal(chapters.length, 50);
+    assert.ok(chapters.some((node) => node.filePath.includes("chapter-050-basic-sentences-50")));
+    assert.equal(chapters.some((node) => node.filePath.includes("chapter-051-")), false);
+
+    for (let chapterNumber = 1; chapterNumber <= 50; chapterNumber += 1) {
+      const padded = String(chapterNumber).padStart(3, "0");
+      const chapter = chapters.find((node) => node.filePath.includes(`/chapter-${padded}-`));
+      assert.ok(chapter, `Chapter ${chapterNumber} is projected`);
+      const normal = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "normal" });
+      const expert = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "expert" });
+      const developer = await renderLanguageTreeRightPane(chapter, { dataDir: fixture.dataDir, displayMode: "developer" });
+      const support = JSON.parse((await readInstalledContentEntry({
+        dataDir: fixture.dataDir,
+        packageId: chapter.packageId,
+        packageVersion: chapter.packageVersion,
+        path: chapter.readingSupportPath,
+        locale: "en-US"
+      })).text);
+      const withCharacters = await renderLanguageTreeRightPane(chapter, {
+        dataDir: fixture.dataDir,
+        displayMode: "normal",
+        charactersEnabled: support.characters !== undefined
+      });
+
+      for (const phrase of prohibitedNormalPhrases) assert.doesNotMatch(normal, new RegExp(escapeRegExp(phrase), "iu"), `Chapter ${chapterNumber} Normal hides ${phrase}`);
+      const expectedHeadings = sourceHeadings.get(chapterNumber) ?? [];
+      assert.equal((normal.match(/^### Language Notes$/gmu) ?? []).length, expectedHeadings.length === 0 ? 0 : 1);
+      for (const heading of expectedHeadings) {
+        assert.match(expert, new RegExp(`^### ${escapeRegExp(heading)}$`, "mu"));
+        assert.match(developer, new RegExp(`^### ${escapeRegExp(heading)}: Normal$`, "mu"));
+        assert.match(developer, new RegExp(`^### ${escapeRegExp(heading)}: Expert$`, "mu"));
+      }
+      assert.match(normal, /^### (?:Dialogue|Narrative)$/mu);
+      assert.match(normal, /^### New Vocabulary$/mu);
+      assert.match(normal, /^### (?:New )?Grammar(?: \/ Pattern)?$/mu);
+      assert.equal(/^### Sino-Vietnamese Vocabulary$/mu.test(withCharacters), support.characters !== undefined);
+      assertHeadingSpacing(normal, chapterNumber, "Normal");
+      assertHeadingSpacing(expert, chapterNumber, "Expert");
+      assertHeadingSpacing(developer, chapterNumber, "Developer");
+    }
+
+    const chapter1 = chapters.find((node) => node.filePath.includes("chapter-001-"));
+    const chapter26 = chapters.find((node) => node.filePath.includes("chapter-026-"));
+    const chapter40 = chapters.find((node) => node.filePath.includes("chapter-040-"));
+    assert.match(await renderLanguageTreeRightPane(chapter1, { dataDir: fixture.dataDir, displayMode: "expert" }), /diacritic|relative age/u);
+    assert.match(await renderLanguageTreeRightPane(chapter26, { dataDir: fixture.dataDir, displayMode: "expert" }), /time reference also depends on context/u);
+    assert.match(await renderLanguageTreeRightPane(chapter40, { dataDir: fixture.dataDir, displayMode: "expert" }), /beneficially affected subject|grammar IDs remain distinct/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("Vietnamese and Korean Characters views use reader-safe tables while retaining packaged identity", async () => {
   const fixture = await createInstalledLanguageFixture(
     ["vietnamese-curriculum", "korean-curriculum"],
@@ -994,24 +1090,15 @@ test("Vietnamese and Korean Characters views use reader-safe tables while retain
     const expected = new Map([
       [2, ["nhân viên văn phòng", "人員文房"]],
       [3, ["sách", "冊", "bút", "筆", "bàn", "盤"]],
-      [4, ["Chapter 4"]],
-      [5, ["phòng học", "房學", "điện thoại", "電話", "trà", "茶"]]
+      [5, ["phòng học", "房學", "điện thoại", "電話", "trà", "茶"]],
+      [8, ["cam", "柑"]],
+      [40, ["miễn phí", "免費", "hướng dẫn", "向引"]],
+      [41, ["không", "空", "số lượng", "數量"]],
+      [50, ["xác nhận", "確認", "bảng tổng kết", "榜總結"]]
     ]);
     for (const [chapter, values] of expected) {
       const node = vietnamese.children.find((candidate) => candidate.filePath?.includes(`units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-`));
       assert.ok(node?.readingSupportPath, `Chapter ${chapter} support is installed`);
-      const off = await renderLanguageTreeRightPane(node, { dataDir: fixture.dataDir, displayMode: "normal", charactersEnabled: false });
-      assert.doesNotMatch(off, /Sino-Vietnamese Vocabulary/u);
-      for (const mode of ["normal", "expert", "developer"]) {
-        const output = await renderLanguageTreeRightPane(node, { dataDir: fixture.dataDir, displayMode: mode, charactersEnabled: true });
-        assert.match(output, /### Sino-Vietnamese Vocabulary/u);
-        assert.doesNotMatch(output, /Canonical Identity|Canonical ID|Lexical identity|Sense identity|canonicalIdentity|lexicalEntryId|senseId/u);
-        for (const value of values) assert.match(output, new RegExp(value, "u"));
-        if (chapter !== 4 && mode !== "developer") {
-          assert.match(output, /\| Word \| Characters \| Meaning \| Usage \|/u);
-          assert.doesNotMatch(output, /\bEvidence\b/u);
-        }
-      }
       const support = JSON.parse((await readInstalledContentEntry({
         dataDir: fixture.dataDir,
         packageId: node.packageId,
@@ -1019,10 +1106,31 @@ test("Vietnamese and Korean Characters views use reader-safe tables while retain
         path: node.readingSupportPath,
         locale: "en-US"
       })).text);
+      assert.ok(support.characters, `Chapter ${chapter} character support is installed`);
+      const off = await renderLanguageTreeRightPane(node, { dataDir: fixture.dataDir, displayMode: "normal", charactersEnabled: false });
+      assert.doesNotMatch(off, /Sino-Vietnamese Vocabulary/u);
+      for (const mode of ["normal", "expert", "developer"]) {
+        const output = await renderLanguageTreeRightPane(node, { dataDir: fixture.dataDir, displayMode: mode, charactersEnabled: true });
+        assert.match(output, /### Sino-Vietnamese Vocabulary/u);
+        assert.doesNotMatch(output, /Canonical Identity|Canonical ID|Lexical identity|Sense identity|canonicalIdentity|lexicalEntryId|senseId/u);
+        for (const value of values) assert.match(output, new RegExp(value, "u"));
+        if (mode !== "developer") {
+          assert.match(output, /\| Word \| Characters \| Meaning \| Usage \|/u);
+          assert.doesNotMatch(output, /\bEvidence\b/u);
+        }
+      }
       for (const entry of support.characters.entries) {
         assert.match(entry.lexicalEntryId, /^vi\./u);
         assert.match(entry.senseId, /^vi\./u);
         assert.equal(typeof entry.provenance.locator, "string");
+      }
+    }
+    for (const chapter of [4, 14, 15, 27, 45]) {
+      const node = vietnamese.children.find((candidate) => candidate.filePath?.includes(`units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-`));
+      assert.ok(node?.readingSupportPath, `Chapter ${chapter} support is installed`);
+      for (const mode of ["normal", "expert", "developer"]) {
+        const output = await renderLanguageTreeRightPane(node, { dataDir: fixture.dataDir, displayMode: mode, charactersEnabled: true });
+        assert.doesNotMatch(output, /Sino-Vietnamese Vocabulary/u);
       }
     }
 

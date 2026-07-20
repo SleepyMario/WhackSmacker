@@ -15,7 +15,8 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Ăn is used directly before food nouns. Cơm continues its earlier cooked-rice/meal context without becoming a new lexical sense here.",
+      "normalHeading": "Language Notes",
+      "normal": "Put food directly after `ăn`: `ăn bún`, `ăn rau`, or `ăn cá`. Here `cơm` keeps its familiar cooked-rice or meal meaning.",
       "expert": "Ăn is used directly before food nouns. Cơm continues its earlier cooked-rice/meal context without becoming a new lexical sense here. The grammar IDs remain distinct and cumulative."
     }
   ],

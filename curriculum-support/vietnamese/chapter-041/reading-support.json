@@ -15,12 +15,62 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Vietnamese counting generally places numeral before classifier before noun. Cái is broad but not universally interchangeable with every classifier.",
+      "normalHeading": "Language Notes",
+      "normal": "When counting many objects, Vietnamese often uses `number + classifier + noun`. A classifier is a counting word. `cái` works for many objects, but not for every noun.",
       "expert": "Vietnamese counting generally places numeral before classifier before noun. Cái is broad but not universally interchangeable with every classifier. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Trước hết, tôi kiểm kê.]] — First, I take inventory.\n- [[grammar:Số lượng ở đây.]] — The quantities are here.\n- [[grammar:Có một cái hộp.]] — There is one box.\n- [[grammar:Có hai cái túi.]] — There are two bags.\n- [[grammar:Có ba cái bàn.]] — There are three tables.\n- [[grammar:Có bốn cái ghế.]] — There are four chairs.\n- [[grammar:Có năm cái đèn.]] — There are five lights.\n- [[grammar:Đây là số không.]] — This is the number zero.\n- [[grammar:Tiếp theo, tôi viết số lượng.]] — Next, I write the quantities.\n- [[grammar:Kiểm kê đã xong.]] — The inventory check is complete.\n- [[grammar:Số lượng là năm.]] — The quantity is five.\n- [[grammar:Vâng.]] — Yes.",
     "expert": "- [[grammar:Trước hết, tôi kiểm kê.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Số lượng ở đây.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Có một cái hộp.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Có hai cái túi.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Có ba cái bàn.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Có bốn cái ghế.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Có năm cái đèn.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Đây là số không.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tiếp theo, tôi viết số lượng.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Kiểm kê đã xong.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Số lượng là năm.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| số lượng | 數量 | quantity; count | `Số lượng ở đây.` |\n| không | 空 | 0; zero | `Đây là số không.` |\n| kiểm kê | 檢稽 | take inventory; inventory check | `Trước hết, tôi kiểm kê.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| số lượng | 數量 | quantity; count | `Số lượng ở đây.` |\n| không | 空 | 0; zero | `Đây là số không.` |\n| kiểm kê | 檢稽 | take inventory; inventory check | `Trước hết, tôi kiểm kê.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "số lượng",
+        "characters": "數量",
+        "meaning": "quantity; count",
+        "lexicalEntryId": "vi.noun.so-luong",
+        "senseId": "vi.noun.so-luong.quantity-count",
+        "firstIntroductionChapter": 41,
+        "usage": "Số lượng ở đây.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-041-basic-sentences-41/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Số lượng ở đây."
+        }
+      },
+      {
+        "word": "không",
+        "characters": "空",
+        "meaning": "0; zero",
+        "lexicalEntryId": "vi.numeral.khong",
+        "senseId": "vi.numeral.khong.zero",
+        "firstIntroductionChapter": 41,
+        "usage": "Đây là số không.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-041-basic-sentences-41/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Đây là số không."
+        }
+      },
+      {
+        "word": "kiểm kê",
+        "characters": "檢稽",
+        "meaning": "take inventory; inventory check",
+        "lexicalEntryId": "vi.verb.kiem-ke",
+        "senseId": "vi.verb.kiem-ke.take-inventory-inventory-check",
+        "firstIntroductionChapter": 41,
+        "usage": "Trước hết, tôi kiểm kê.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-041-basic-sentences-41/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Trước hết, tôi kiểm kê."
+        }
+      }
+    ]
   }
 }

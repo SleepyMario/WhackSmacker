@@ -15,7 +15,8 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Vietnamese compounds use mốt after tens for 21 and lăm after tens for 35. Con is a useful animal classifier, but real usage has lexical exceptions.",
+      "normalHeading": "Language Notes",
+      "normal": "After a multiple of ten, Vietnamese uses `mốt` in 21 and `lăm` in 35. `Con` is a common counting word for animals, though some animal nouns use other choices.",
       "expert": "Vietnamese compounds use mốt after tens for 21 and lăm after tens for 35. Con is a useful animal classifier, but real usage has lexical exceptions. The grammar IDs remain distinct and cumulative."
     }
   ],

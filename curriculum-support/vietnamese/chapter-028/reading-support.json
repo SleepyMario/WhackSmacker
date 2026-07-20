@@ -15,12 +15,34 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Đã often presents a situation as prior or completed, but Vietnamese does not require it for every past event. Chưa in the question leaves completion open.",
+      "normalHeading": "Language Notes",
+      "normal": "`đã` often shows that something happened earlier or is finished. Vietnamese does not need `đã` for every past event. In a question, `chưa` asks whether it has happened yet.",
       "expert": "Đã often presents a situation as prior or completed, but Vietnamese does not require it for every past event. Chưa in the question leaves completion open. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Lê Hoàng Nam đã chuẩn bị bữa tối.]] — Lê Hoàng Nam has prepared dinner.\n- [[grammar:Nguyễn Gia Bảo đã rửa rau.]] — Nguyễn Gia Bảo has washed the vegetables.\n- [[grammar:Lê Hoàng Nam đã cắt thịt.]] — Lê Hoàng Nam has cut the meat.\n- [[grammar:Nguyễn Gia Bảo đã nấu súp.]] — Nguyễn Gia Bảo has cooked soup.\n- [[grammar:Bếp có nguyên liệu.]] — The kitchen has ingredients.\n- [[grammar:Nguyên liệu đã sẵn sàng.]] — The ingredients are ready.\n- [[grammar:Lê Hoàng Nam đã nấu chưa?]] — Has Lê Hoàng Nam cooked yet?\n- [[grammar:Vâng, Lê Hoàng Nam đã nấu.]] — Yes, Lê Hoàng Nam has cooked.\n- [[grammar:Nguyễn Gia Bảo kiểm tra bếp.]] — Nguyễn Gia Bảo checks the kitchen.\n- [[grammar:Bữa tối đã sẵn sàng.]] — Dinner is ready.",
     "expert": "- [[grammar:Lê Hoàng Nam đã chuẩn bị bữa tối.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nguyễn Gia Bảo đã rửa rau.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Lê Hoàng Nam đã cắt thịt.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Nguyễn Gia Bảo đã nấu súp.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Bếp có nguyên liệu.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Nguyên liệu đã sẵn sàng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Lê Hoàng Nam đã nấu chưa?]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Vâng, Lê Hoàng Nam đã nấu.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Nguyễn Gia Bảo kiểm tra bếp.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Bữa tối đã sẵn sàng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| nguyên liệu | 原料 | ingredient | `Bếp có nguyên liệu.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| nguyên liệu | 原料 | ingredient | `Bếp có nguyên liệu.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "nguyên liệu",
+        "characters": "原料",
+        "meaning": "ingredient",
+        "lexicalEntryId": "vi.noun.nguyen-lieu",
+        "senseId": "vi.noun.nguyen-lieu.ingredient",
+        "firstIntroductionChapter": 28,
+        "usage": "Bếp có nguyên liệu.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-028-basic-sentences-28/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Bếp có nguyên liệu."
+        }
+      }
+    ]
   }
 }

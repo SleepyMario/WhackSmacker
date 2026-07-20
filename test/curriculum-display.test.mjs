@@ -234,7 +234,7 @@ test("Normal and Expert vocabulary notes use audience-appropriate supported clas
 });
 
 test("Normal review removes only terminal technical qualifications", () => {
-  assert.equal(projectReviewTextForMode("this/here in the taught frame", "normal"), "this/here");
+  assert.equal(projectReviewTextForMode("this/here in the taught frame", "normal"), "this; here");
   assert.equal(projectReviewTextForMode("there; in the attested frame.", "normal"), "there");
   assert.equal(projectReviewTextForMode("meaning in the licensed construction", "normal"), "meaning");
   assert.equal(projectReviewTextForMode("this/here in the taught frame", "expert"), "this/here in the taught frame");

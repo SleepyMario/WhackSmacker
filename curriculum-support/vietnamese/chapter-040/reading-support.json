@@ -15,12 +15,118 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Đồng thời links simultaneous information. Được presents a beneficially affected subject here; adverse bị and permission được phép remain separate constructions.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `đồng thời` for things that happen at the same time. Here `được` shows that the person receives a helpful result. `Bị` for an unwanted result and `được phép` for permission are different patterns.",
       "expert": "Đồng thời links simultaneous information. Được presents a beneficially affected subject here; adverse bị and permission được phép remain separate constructions. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Thư viện có dịch vụ trực tuyến.]] — The library has an online service.\n- [[grammar:Nguyễn Mai Chi được hướng dẫn trực tuyến.]] — Nguyễn Mai Chi receives online guidance.\n- [[grammar:Nguyễn Thị Lan được hỗ trợ miễn phí.]] — Nguyễn Thị Lan receives free support.\n- [[grammar:Nhân viên giải thích tài liệu cho Lê Hoàng Nam.]] — A staff member explains the document to Lê Hoàng Nam.\n- [[grammar:Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.]] — The staff member supports Nguyễn Mai Chi and Nguyễn Thị Lan at the same time.\n- [[grammar:Dịch vụ trực tuyến rất rõ.]] — The online service is very clear.\n- [[grammar:Hướng dẫn miễn phí.]] — The guidance is free.\n- [[grammar:Trần Thu Hà được hỗ trợ.]] — Trần Thu Hà receives support.\n- [[grammar:Đồng thời, Trần Thu Hà đọc tài liệu.]] — At the same time, Trần Thu Hà reads the document.\n- [[grammar:Nhân viên giải thích rõ.]] — The staff member explains clearly.",
     "expert": "- [[grammar:Thư viện có dịch vụ trực tuyến.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nguyễn Mai Chi được hướng dẫn trực tuyến.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Thị Lan được hỗ trợ miễn phí.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Nhân viên giải thích tài liệu cho Lê Hoàng Nam.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Dịch vụ trực tuyến rất rõ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Hướng dẫn miễn phí.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Trần Thu Hà được hỗ trợ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Đồng thời, Trần Thu Hà đọc tài liệu.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Nhân viên giải thích rõ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| miễn phí | 免費 | free of charge | `Nguyễn Thị Lan được hỗ trợ miễn phí.` |\n| trực tuyến | 直線 | online | `Thư viện có dịch vụ trực tuyến.` |\n| đồng thời | 同時 | at the same time; simultaneously | `Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.` |\n| dịch vụ | 役務 | service | `Thư viện có dịch vụ trực tuyến.` |\n| giải thích | 解釋 | explain | `Nhân viên giải thích tài liệu cho Lê Hoàng Nam.` |\n| hỗ trợ | 互助 | support; assist | `Nguyễn Thị Lan được hỗ trợ miễn phí.` |\n| hướng dẫn | 向引 | guide; instruct | `Nguyễn Mai Chi được hướng dẫn trực tuyến.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| miễn phí | 免費 | free of charge | `Nguyễn Thị Lan được hỗ trợ miễn phí.` |\n| trực tuyến | 直線 | online | `Thư viện có dịch vụ trực tuyến.` |\n| đồng thời | 同時 | at the same time; simultaneously | `Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.` |\n| dịch vụ | 役務 | service | `Thư viện có dịch vụ trực tuyến.` |\n| giải thích | 解釋 | explain | `Nhân viên giải thích tài liệu cho Lê Hoàng Nam.` |\n| hỗ trợ | 互助 | support; assist | `Nguyễn Thị Lan được hỗ trợ miễn phí.` |\n| hướng dẫn | 向引 | guide; instruct | `Nguyễn Mai Chi được hướng dẫn trực tuyến.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "miễn phí",
+        "characters": "免費",
+        "meaning": "free of charge",
+        "lexicalEntryId": "vi.adjective.mien-phi",
+        "senseId": "vi.adjective.mien-phi.free-of-charge",
+        "firstIntroductionChapter": 40,
+        "usage": "Nguyễn Thị Lan được hỗ trợ miễn phí.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nguyễn Thị Lan được hỗ trợ miễn phí."
+        }
+      },
+      {
+        "word": "trực tuyến",
+        "characters": "直線",
+        "meaning": "online",
+        "lexicalEntryId": "vi.adjective.truc-tuyen",
+        "senseId": "vi.adjective.truc-tuyen.online",
+        "firstIntroductionChapter": 40,
+        "usage": "Thư viện có dịch vụ trực tuyến.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Thư viện có dịch vụ trực tuyến."
+        }
+      },
+      {
+        "word": "đồng thời",
+        "characters": "同時",
+        "meaning": "at the same time; simultaneously",
+        "lexicalEntryId": "vi.conjunction.dong-thoi",
+        "senseId": "vi.conjunction.dong-thoi.at-the-same-time-simultaneously",
+        "firstIntroductionChapter": 40,
+        "usage": "Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nhân viên đồng thời hỗ trợ Nguyễn Mai Chi và Nguyễn Thị Lan."
+        }
+      },
+      {
+        "word": "dịch vụ",
+        "characters": "役務",
+        "meaning": "service",
+        "lexicalEntryId": "vi.noun.dich-vu",
+        "senseId": "vi.noun.dich-vu.service",
+        "firstIntroductionChapter": 40,
+        "usage": "Thư viện có dịch vụ trực tuyến.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Thư viện có dịch vụ trực tuyến."
+        }
+      },
+      {
+        "word": "giải thích",
+        "characters": "解釋",
+        "meaning": "explain",
+        "lexicalEntryId": "vi.verb.giai-thich",
+        "senseId": "vi.verb.giai-thich.explain",
+        "firstIntroductionChapter": 40,
+        "usage": "Nhân viên giải thích tài liệu cho Lê Hoàng Nam.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nhân viên giải thích tài liệu cho Lê Hoàng Nam."
+        }
+      },
+      {
+        "word": "hỗ trợ",
+        "characters": "互助",
+        "meaning": "support; assist",
+        "lexicalEntryId": "vi.verb.ho-tro",
+        "senseId": "vi.verb.ho-tro.support-assist",
+        "firstIntroductionChapter": 40,
+        "usage": "Nguyễn Thị Lan được hỗ trợ miễn phí.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nguyễn Thị Lan được hỗ trợ miễn phí."
+        }
+      },
+      {
+        "word": "hướng dẫn",
+        "characters": "向引",
+        "meaning": "guide; instruct",
+        "lexicalEntryId": "vi.verb.huong-dan",
+        "senseId": "vi.verb.huong-dan.guide-instruct",
+        "firstIntroductionChapter": 40,
+        "usage": "Nguyễn Mai Chi được hướng dẫn trực tuyến.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-040-basic-sentences-40/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Nguyễn Mai Chi được hướng dẫn trực tuyến."
+        }
+      }
+    ]
   }
 }

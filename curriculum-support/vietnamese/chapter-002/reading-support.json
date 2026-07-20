@@ -1,7 +1,24 @@
 {
   "schemaVersion": 1,
   "sourcePath": "chapter.md",
-  "audienceSections": [],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches `Tên tôi là N`, meaning “My name is N.” The five short profiles also reuse Chapter 1 sentences about identity.",
+      "expert": "This chapter adds `tên + tôi + là + N`, the fixed beginner frame “My name is\nN.” It reuses Chapter 1 identity statements in five short written profiles."
+    },
+    {
+      "sourceHeading": "New Grammar",
+      "normal": "#### tên + tôi + là + N\n\nUse this full pattern to say your name: `Tên tôi là Maria Garcia.` The words follow the order “name + I + is + name.” Learn the whole pattern together for now.",
+      "expert": "#### tên + tôi + là + N\n\nUse this fixed frame to state your name. Vietnamese places `tôi` after `tên`\nwithout a word equivalent to English “of.” This chapter makes only the full\nframe productive; it does not introduce a general possession system."
+    },
+    {
+      "sourceHeading": "Vietnamese Word Boundaries and Register",
+      "normalHeading": "Language Notes",
+      "normal": "Keep the spaces and marks in `người nước ngoài`, `người Việt Nam`, and `nhân viên văn phòng`. In this Northern Vietnamese family, `bố` means “father.” Other regions may use a different family word.",
+      "expert": "Keep the spaces and diacritics in the complete entries `người nước ngoài`,\n`người Việt Nam`, and `nhân viên văn phòng`. `bố` is natural in the Northern\nfamily context established for the Nguyễn family. Other regional family terms\nremain outside this lesson."
+    }
+  ],
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
     "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| nhân viên văn phòng | 人員文房 | office worker | `Tôi là nhân viên văn phòng.` |\n\nThe characters show the word parts in this job phrase. Modern Vietnamese normally writes the phrase with the Vietnamese alphabet.",

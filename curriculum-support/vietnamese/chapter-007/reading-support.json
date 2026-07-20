@@ -5,22 +5,38 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter continues Vietnamese Core Chapter 7 with current-scope reading and grammar.",
+      "normal": "This chapter teaches how siblings can ask whether each other has something.",
       "expert": "Vietnamese Core Chapter 7 is retained as the canonical early-stage source; no future material is introduced by this support record."
     },
     {
-      "sourceHeading": "New Grammar / Pattern",
-      "normal": "Use the chapter’s authored Grammar section.",
-      "expert": "The chapter’s canonical grammar identity remains stored in the source and hidden from ordinary reader output."
-    },
-    {
-      "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Follow the chapter’s authored Vietnamese usage notes.",
-      "expert": "No additional grammatical generalization is introduced here."
+      "sourceHeading": "New Grammar",
+      "normal": "#### reference + có + N + không?\n\nUse this pattern to ask whether someone has something. Put `không?` at the end. In this sibling conversation, `chị` refers to the older sister and `em` to the younger sibling.",
+      "expert": "#### reference + có + N + không?\n\nPut the person-reference form first, then `có`, the known thing, and final\n`không?`. This chapter licenses only the sibling choices shown here. `Chị` and\n`em` are not universal replacements for English “I” and “you.”"
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Em có điện thoại không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có điện thoại.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có máy tính không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có máy tính.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có máy ảnh không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có máy ảnh.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có bản đồ không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có bản đồ.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có ô không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Em có ô.]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có mũ không?]] — Current-scope Vietnamese reading evidence.\n- [[grammar:Chị có mũ.]] — Current-scope Vietnamese reading evidence.",
     "expert": "- [[grammar:Em có điện thoại không?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Em có điện thoại.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Chị có máy tính không?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Chị có máy tính.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Em có máy ảnh không?]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Em có máy ảnh.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Chị có bản đồ không?]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Chị có bản đồ.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Em có ô không?]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Em có ô.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Chị có mũ không?]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Chị có mũ.]] — Literal reading evidence at Dialogue > line 12."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bản đồ | 版圖 | map | `Chị có bản đồ.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bản đồ | 版圖 | map | `Chị có bản đồ.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "bản đồ",
+        "characters": "版圖",
+        "meaning": "map",
+        "lexicalEntryId": "vi.noun.ban-do",
+        "senseId": "vi.noun.ban-do.map",
+        "firstIntroductionChapter": 7,
+        "usage": "Chị có bản đồ.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-007-basic-sentences-7/chapter.md",
+          "section": "Learner-facing Dialogue",
+          "locator": "line containing: Chị có bản đồ."
+        }
+      }
+    ]
   }
 }

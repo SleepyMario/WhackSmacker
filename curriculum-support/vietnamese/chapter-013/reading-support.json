@@ -15,12 +15,62 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Làm has a broad range, but this chapter limits it to doing an assignment and making a report.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `làm bài tập` for “do homework” and `làm báo cáo` for “make a report.” `làm` can have other meanings, but these are the uses in this chapter.",
       "expert": "Làm has a broad range, but this chapter limits it to doing an assignment and making a report. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Tôi làm bài tập.]] — I do the assignment.\n- [[grammar:Tôi làm báo cáo.]] — I make the report.\n- [[grammar:Đây là câu hỏi.]] — This is a question.\n- [[grammar:Tôi trả lời câu hỏi.]] — I answer the question.\n- [[grammar:Nhóm làm bài tập.]] — The group does the assignment.\n- [[grammar:Nhóm làm báo cáo.]] — The group makes the report.\n- [[grammar:Tôi và Nguyễn Quốc Huy cùng nhau làm bài tập.]] — Nguyễn Quốc Huy and I do the assignment together.\n- [[grammar:Báo cáo hoàn thành.]] — The report is complete.\n- [[grammar:Bài tập hoàn thành.]] — The assignment is complete.\n- [[grammar:Vâng.]] — Yes.",
     "expert": "- [[grammar:Tôi làm bài tập.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi làm báo cáo.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Đây là câu hỏi.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi trả lời câu hỏi.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Nhóm làm bài tập.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Nhóm làm báo cáo.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi và Nguyễn Quốc Huy cùng nhau làm bài tập.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Báo cáo hoàn thành.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Bài tập hoàn thành.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| hoàn thành | 完成 | complete; finished | `Báo cáo hoàn thành.` |\n| bài tập | 排習 | exercise; homework | `Tôi làm bài tập.` |\n| báo cáo | 報告 | report | `Tôi làm báo cáo.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| hoàn thành | 完成 | complete; finished | `Báo cáo hoàn thành.` |\n| bài tập | 排習 | exercise; homework | `Tôi làm bài tập.` |\n| báo cáo | 報告 | report | `Tôi làm báo cáo.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "hoàn thành",
+        "characters": "完成",
+        "meaning": "complete; finished",
+        "lexicalEntryId": "vi.adjective.hoan-thanh",
+        "senseId": "vi.adjective.hoan-thanh.complete-finished",
+        "firstIntroductionChapter": 13,
+        "usage": "Báo cáo hoàn thành.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-013-basic-sentences-13/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Báo cáo hoàn thành."
+        }
+      },
+      {
+        "word": "bài tập",
+        "characters": "排習",
+        "meaning": "exercise; homework",
+        "lexicalEntryId": "vi.noun.bai-tap",
+        "senseId": "vi.noun.bai-tap.exercise-homework",
+        "firstIntroductionChapter": 13,
+        "usage": "Tôi làm bài tập.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-013-basic-sentences-13/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Tôi làm bài tập."
+        }
+      },
+      {
+        "word": "báo cáo",
+        "characters": "報告",
+        "meaning": "report",
+        "lexicalEntryId": "vi.noun.bao-cao",
+        "senseId": "vi.noun.bao-cao.report",
+        "firstIntroductionChapter": 13,
+        "usage": "Tôi làm báo cáo.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-013-basic-sentences-13/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Tôi làm báo cáo."
+        }
+      }
+    ]
   }
 }

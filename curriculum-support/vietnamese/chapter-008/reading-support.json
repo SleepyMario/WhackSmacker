@@ -5,22 +5,44 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter continues Vietnamese Core Chapter 8 with current-scope reading and grammar.",
+      "normal": "This chapter teaches `S + muốn + N` to say what a person wants.",
       "expert": "Vietnamese Core Chapter 8 is retained as the canonical early-stage source; no future material is introduced by this support record."
     },
     {
-      "sourceHeading": "New Grammar / Pattern",
-      "normal": "Use the chapter’s authored Grammar section.",
-      "expert": "The chapter’s canonical grammar identity remains stored in the source and hidden from ordinary reader output."
+      "sourceHeading": "New Grammar",
+      "normal": "#### S + muốn + N\n\nPut the person before `muốn` and the wanted thing after it. For example, `Tôi muốn cơm.` means “I want rice.” This chapter uses `muốn` with things, not actions.",
+      "expert": "#### S + muốn + N\n\nPut a taught subject before `muốn`, then add a known thing. `S` may be `tôi`,\n`chị`, `em`, or an active cast name in the licensed contexts. This chapter\ndoes not teach verb complements, politeness softeners, classifiers, or ordering\nlanguage."
     },
     {
-      "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Follow the chapter’s authored Vietnamese usage notes.",
-      "expert": "No additional grammatical generalization is introduced here."
+      "sourceHeading": "Vietnamese Orthography and Word Boundaries",
+      "normalHeading": "Language Notes",
+      "normal": "Keep the marks in `muốn`, `cơm`, `súp`, `sữa`, and `bữa trưa`. Learn `đồ ăn` and `bữa trưa` as complete terms. Also keep the tones in `chuối`, `xoài`, and `dưa hấu`.",
+      "expert": "Keep the marks in `muốn`, `cơm`, `súp`, `sữa`, and `bữa trưa`. Learn `đồ ăn`\nand `bữa trưa` as complete entries. Keep the tones in `chuối`, `xoài`, and\n`dưa hấu`."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Bữa trưa có đồ ăn.]] — There is food for lunch.\n- [[grammar:Bữa trưa có cơm.]] — There is cooked rice for lunch.\n- [[grammar:Bữa trưa có súp.]] — There is soup for lunch.\n- [[grammar:Bữa trưa có sữa.]] — There is milk for lunch.\n- [[grammar:Bữa trưa có chuối.]] — There are bananas for lunch.\n- [[grammar:Bữa trưa có xoài.]] — There are mangoes for lunch.\n- [[grammar:Gia Bảo muốn cơm.]] — Gia Bảo wants rice.\n- [[grammar:Thu Hà muốn súp.]] — Thu Hà wants soup.\n- [[grammar:Gia Bảo muốn sữa.]] — Gia Bảo wants milk.\n- [[grammar:Thu Hà muốn trà.]] — Thu Hà wants tea.\n- [[grammar:Gia Bảo muốn nước.]] — Gia Bảo wants water.\n- [[grammar:Gia Bảo muốn cam.]] — Gia Bảo wants an orange.\n- [[grammar:Thu Hà muốn dưa hấu.]] — Thu Hà wants watermelon.",
     "expert": "- [[grammar:Bữa trưa có đồ ăn.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Bữa trưa có cơm.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Bữa trưa có súp.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Bữa trưa có sữa.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Bữa trưa có chuối.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Bữa trưa có xoài.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Gia Bảo muốn cơm.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Thu Hà muốn súp.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Gia Bảo muốn sữa.]] — Literal reading evidence at Narrative > line 9.\n- [[grammar:Thu Hà muốn trà.]] — Literal reading evidence at Narrative > line 10.\n- [[grammar:Gia Bảo muốn nước.]] — Literal reading evidence at Narrative > line 11.\n- [[grammar:Gia Bảo muốn cam.]] — Literal reading evidence at Narrative > line 12.\n- [[grammar:Thu Hà muốn dưa hấu.]] — Literal reading evidence at Narrative > line 13."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| cam | 柑 | orange | `Gia Bảo muốn cam.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| cam | 柑 | orange | `Gia Bảo muốn cam.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "cam",
+        "characters": "柑",
+        "meaning": "orange",
+        "lexicalEntryId": "vi.noun.cam",
+        "senseId": "vi.noun.cam.orange-fruit",
+        "firstIntroductionChapter": 8,
+        "usage": "Gia Bảo muốn cam.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-008-basic-sentences-8/chapter.md",
+          "section": "Learner-facing Narrative",
+          "locator": "line containing: Gia Bảo muốn cam."
+        }
+      }
+    ]
   }
 }

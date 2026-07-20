@@ -1,7 +1,24 @@
 {
   "schemaVersion": 1,
   "sourcePath": "chapter.md",
-  "audienceSections": [],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter teaches `Đây là N`, meaning “This is N.” Use it to identify a nearby person, place, or thing.",
+      "expert": "This chapter introduces `đây + là + N`: “This is N.” It identifies something\nnear the speaker without introducing a question form yet."
+    },
+    {
+      "sourceHeading": "New Grammar",
+      "normal": "#### đây + là + N\n\nUse `đây + là + N` to point out a nearby person, place, or thing. For example, `Đây là bàn.` means “This is a desk.”",
+      "expert": "#### đây + là + N\n\nUse `đây + là + N` to identify a nearby person, place, or thing. `là` remains\ninvariant. Here `N` is a known noun or active cast name; no article or\nclassifier is required in these controlled identity sentences."
+    },
+    {
+      "sourceHeading": "Vietnamese Orthography and Usage",
+      "normalHeading": "Language Notes",
+      "normal": "Keep the tone and vowel marks in `đây`, `lớp học`, `bàn`, `ghế`, `sách`, `vở`, and `bút`. Learn `lớp học` as one complete term meaning “classroom.”",
+      "expert": "Keep `đây`, `lớp học`, `bàn`, `ghế`, `sách`, `vở`, and `bút` distinct. The\ntones and vowel marks are part of each spelling. `lớp học` is learned as the\ncomplete classroom expression."
+    }
+  ],
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
     "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sách | 冊 | book | `Đây là sách.` |\n| bút | 筆 | pen | `Đây là bút.` |\n| bàn | 盤 | desk; table | `Đây là bàn.` |\n\nThese familiar school words have long-standing character links. Keep using their Vietnamese spellings in ordinary reading and writing.",

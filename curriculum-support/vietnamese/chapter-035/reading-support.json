@@ -15,12 +15,34 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Trong khi establishes simultaneous context. Hơn follows the property being compared; do not copy English word order mechanically.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `trong khi` for things happening at the same time. Put `hơn` after the quality you compare: `nhanh hơn`, not English word order.",
       "expert": "Trong khi establishes simultaneous context. Hơn follows the property being compared; do not copy English word order mechanically. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]] — This route is shorter than that route.\n- [[grammar:Tuyến đường kia dài hơn tuyến đường này.]] — That route is longer than this route.\n- [[grammar:Tôi đi nhanh.]] — I go quickly.\n- [[grammar:Tôi đi chậm.]] — I go slowly.\n- [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]] — While I look at the guide, Nguyễn Mai Chi looks at the map.\n- [[grammar:Đi tuyến đường này nhanh hơn.]] — Taking this route is faster.\n- [[grammar:Tuyến đường kia chậm hơn.]] — The other route is slower.\n- [[grammar:Bản hướng dẫn rất rõ.]] — The guide is very clear.\n- [[grammar:Tôi chọn tuyến đường ngắn.]] — I choose the short route.\n- [[grammar:Trong khi đi, tôi nghe radio.]] — While traveling, I listen to the radio.\n- [[grammar:Tuyến đường dài không nhanh hơn.]] — The long route is not faster.\n- [[grammar:Vâng.]] — Yes.",
     "expert": "- [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tuyến đường kia dài hơn tuyến đường này.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi đi nhanh.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi đi chậm.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Đi tuyến đường này nhanh hơn.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tuyến đường kia chậm hơn.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Bản hướng dẫn rất rõ.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi chọn tuyến đường ngắn.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Trong khi đi, tôi nghe radio.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tuyến đường dài không nhanh hơn.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bản hướng dẫn | 本向引 | guide; instruction sheet | `Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bản hướng dẫn | 本向引 | guide; instruction sheet | `Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "bản hướng dẫn",
+        "characters": "本向引",
+        "meaning": "guide; instruction sheet",
+        "lexicalEntryId": "vi.noun.ban-huong-dan",
+        "senseId": "vi.noun.ban-huong-dan.guide-instruction-sheet",
+        "firstIntroductionChapter": 35,
+        "usage": "Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-035-basic-sentences-35/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ."
+        }
+      }
+    ]
   }
 }

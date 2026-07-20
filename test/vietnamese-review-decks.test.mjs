@@ -3,6 +3,8 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
 
+import { projectReviewTextForMode } from "../dist/packages/core/index.js";
+
 const curriculumRoot = join(process.cwd(), "..", "vietnamese-curriculum");
 const ledgerPath = join(curriculumRoot, "units/vietnamese-core/cumulative-ledger.md");
 const deckPaths = [
@@ -81,8 +83,9 @@ async function auditVietnameseReviewDecks(inventory, decks) {
       const directionKey = senseId + ":" + row.promptLanguage + "-to-" + row.answerLanguage;
       actualSenseCounts.set(directionKey, (actualSenseCounts.get(directionKey) ?? 0) + 1);
       assert.equal(entryId, canonical.entryId);
-      assert.equal(row.prompt, targetToSource ? canonical.form : canonical.meaning);
-      assert.deepEqual(row.acceptedAnswers, [targetToSource ? canonical.meaning : canonical.form]);
+      const learnerMeaning = projectReviewTextForMode(canonical.meaning, "normal");
+      assert.equal(row.prompt, targetToSource ? canonical.form : learnerMeaning);
+      assert.deepEqual(row.acceptedAnswers, [targetToSource ? learnerMeaning : canonical.form]);
       assert.equal(row.sourceChapter, canonical.firstIntroductionChapter, row.cardId + " has an inaccurate first-introduction chapter");
       assert.equal(row.provenancePath, canonicalPath(row.sourceChapter));
       assert.equal(allSenseIds.has(directionKey), false, directionKey + " appears more than once");
@@ -135,8 +138,22 @@ function parseCanonicalInventory(markdown) {
       firstIntroductionChapter: Number(cells[4]),
       attestation: unquote(cells[5])
     };
-  });
+});
 }
+
+test("Vietnamese đây review uses a concise learner answer in both directions", async () => {
+  const paths = await Promise.all(deckPaths.map(async (path) => ({ path, text: await readFile(path, "utf8") })));
+  const firstDeck = parseDeck(paths[0].text, paths[0].path);
+  const rows = firstDeck.rows.filter((row) => row.lexicalIds[1] === "vi.demonstrative.day.proximal-presentational");
+
+  assert.equal(rows.length, 2);
+  assert.deepEqual(rows.map((row) => [row.promptLanguage, row.answerLanguage]), [["vi", "en"], ["en", "vi"]]);
+  assert.equal(rows.find((row) => row.promptLanguage === "vi").prompt, "đây");
+  assert.deepEqual(rows.find((row) => row.promptLanguage === "vi").acceptedAnswers, ["this; here"]);
+  assert.equal(rows.find((row) => row.promptLanguage === "en").prompt, "this; here");
+  assert.deepEqual(rows.find((row) => row.promptLanguage === "en").acceptedAnswers, ["đây"]);
+  assert.equal(paths.every(({ text }) => !/taught frame|attested frame|licensed construction/iu.test(text)), true);
+});
 
 function parseDeck(text, path) {
   const lines = text.trimEnd().split("\n");

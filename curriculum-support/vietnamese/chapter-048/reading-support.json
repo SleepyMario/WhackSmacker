@@ -15,12 +15,34 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Standard measurement units normally follow the numeral directly. Kilôgam and gam measure mass; lít volume; mét and xăng-ti-mét length.",
+      "normalHeading": "Language Notes",
+      "normal": "Put these measurement units after the number: `hai kilôgam`, `ba lít`, or `bốn mét`. Kilograms and grams measure mass, liters measure volume, and meters and centimeters measure length.",
       "expert": "Standard measurement units normally follow the numeral directly. Kilôgam and gam measure mass; lít volume; mét and xăng-ti-mét length. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Khi Lê Bình An cân túi, túi nặng hai kilôgam.]] — When Lê Bình An weighs the bag, it weighs two kilograms.\n- [[grammar:Nguyễn Minh Anh cân hộp; hộp nặng một trăm gam.]] — Nguyễn Minh Anh weighs the box; it weighs one hundred grams.\n- [[grammar:Lê Hoàng Nam đo bàn.]] — Lê Hoàng Nam measures the table.\n- [[grammar:Chiều dài là hai mét.]] — The length is two meters.\n- [[grammar:Chiều rộng là tám mươi xăng-ti-mét.]] — The width is eighty centimeters.\n- [[grammar:Lê Thảo Vy có một lít nước.]] — Lê Thảo Vy has one liter of water.\n- [[grammar:Khi cân xong, Lê Bình An viết số lượng.]] — When the weighing is finished, Lê Bình An writes the quantity.\n- [[grammar:Nguyễn Minh Anh kiểm tra chiều dài.]] — Nguyễn Minh Anh checks the length.\n- [[grammar:Lê Hoàng Nam kiểm tra chiều rộng.]] — Lê Hoàng Nam checks the width.\n- [[grammar:Các số đã rõ.]] — The numbers are clear.",
     "expert": "- [[grammar:Khi Lê Bình An cân túi, túi nặng hai kilôgam.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nguyễn Minh Anh cân hộp; hộp nặng một trăm gam.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Lê Hoàng Nam đo bàn.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Chiều dài là hai mét.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Chiều rộng là tám mươi xăng-ti-mét.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Lê Thảo Vy có một lít nước.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Khi cân xong, Lê Bình An viết số lượng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Nguyễn Minh Anh kiểm tra chiều dài.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Lê Hoàng Nam kiểm tra chiều rộng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Các số đã rõ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| cân | 斤 | weigh | `Khi Lê Bình An cân túi, túi nặng hai kilôgam.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| cân | 斤 | weigh | `Khi Lê Bình An cân túi, túi nặng hai kilôgam.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "cân",
+        "characters": "斤",
+        "meaning": "weigh",
+        "lexicalEntryId": "vi.verb.can",
+        "senseId": "vi.verb.can.weigh",
+        "firstIntroductionChapter": 48,
+        "usage": "Khi Lê Bình An cân túi, túi nặng hai kilôgam.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-048-basic-sentences-48/chapter.md",
+          "section": "Narrative",
+          "locator": "line containing: Khi Lê Bình An cân túi, túi nặng hai kilôgam."
+        }
+      }
+    ]
   }
 }

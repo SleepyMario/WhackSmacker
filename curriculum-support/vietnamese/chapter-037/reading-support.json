@@ -15,12 +15,90 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Ngoài ra adds a separate point. Làm ơn makes a request polite, but actual register also depends on voice, relationship, and the rest of the sentence.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `ngoài ra` to add another point. `Làm ơn` makes a request polite. Your voice, relationship, and the rest of the sentence also affect how polite it sounds.",
       "expert": "Ngoài ra adds a separate point. Làm ơn makes a request polite, but actual register also depends on voice, relationship, and the rest of the sentence. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Tôi tìm tiểu thuyết.]] — I am looking for a novel.\n- [[grammar:Làm ơn tra cứu danh mục.]] — Please consult the catalogue.\n- [[grammar:Danh mục có tác giả không?]] — Does the catalogue list the author?\n- [[grammar:Có. Mục lục ở đây.]] — Yes. The table of contents is here.\n- [[grammar:Bàn thông tin ở đây.]] — The information desk is here.\n- [[grammar:Ngoài ra, thư viện có tạp chí.]] — In addition, the library has magazines.\n- [[grammar:Tôi đọc mục lục.]] — I read the table of contents.\n- [[grammar:Làm ơn chọn tiểu thuyết.]] — Please choose a novel.\n- [[grammar:Tôi chọn tác giả này.]] — I choose this author.\n- [[grammar:Ngoài ra, tác giả có báo cáo.]] — In addition, the author has a report.\n- [[grammar:Tôi tra cứu tài liệu.]] — I look up the document.\n- [[grammar:Vâng.]] — Yes.",
     "expert": "- [[grammar:Tôi tìm tiểu thuyết.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Làm ơn tra cứu danh mục.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Danh mục có tác giả không?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Có. Mục lục ở đây.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Bàn thông tin ở đây.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Ngoài ra, thư viện có tạp chí.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi đọc mục lục.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Làm ơn chọn tiểu thuyết.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi chọn tác giả này.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Ngoài ra, tác giả có báo cáo.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tôi tra cứu tài liệu.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| danh mục | 名目 | catalogue; index | `Làm ơn tra cứu danh mục.` |\n| mục lục | 目錄 | table of contents | `Có. Mục lục ở đây.` |\n| tác giả | 作者 | author | `Danh mục có tác giả không?` |\n| tiểu thuyết | 小說 | novel | `Tôi tìm tiểu thuyết.` |\n| tra cứu | 查究 | look up; consult | `Làm ơn tra cứu danh mục.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| danh mục | 名目 | catalogue; index | `Làm ơn tra cứu danh mục.` |\n| mục lục | 目錄 | table of contents | `Có. Mục lục ở đây.` |\n| tác giả | 作者 | author | `Danh mục có tác giả không?` |\n| tiểu thuyết | 小說 | novel | `Tôi tìm tiểu thuyết.` |\n| tra cứu | 查究 | look up; consult | `Làm ơn tra cứu danh mục.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "danh mục",
+        "characters": "名目",
+        "meaning": "catalogue; index",
+        "lexicalEntryId": "vi.noun.danh-muc",
+        "senseId": "vi.noun.danh-muc.catalogue-index",
+        "firstIntroductionChapter": 37,
+        "usage": "Làm ơn tra cứu danh mục.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-037-basic-sentences-37/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Làm ơn tra cứu danh mục."
+        }
+      },
+      {
+        "word": "mục lục",
+        "characters": "目錄",
+        "meaning": "table of contents",
+        "lexicalEntryId": "vi.noun.muc-luc",
+        "senseId": "vi.noun.muc-luc.table-of-contents",
+        "firstIntroductionChapter": 37,
+        "usage": "Có. Mục lục ở đây.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-037-basic-sentences-37/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Có. Mục lục ở đây."
+        }
+      },
+      {
+        "word": "tác giả",
+        "characters": "作者",
+        "meaning": "author",
+        "lexicalEntryId": "vi.noun.tac-gia",
+        "senseId": "vi.noun.tac-gia.author",
+        "firstIntroductionChapter": 37,
+        "usage": "Danh mục có tác giả không?",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-037-basic-sentences-37/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Danh mục có tác giả không?"
+        }
+      },
+      {
+        "word": "tiểu thuyết",
+        "characters": "小說",
+        "meaning": "novel",
+        "lexicalEntryId": "vi.noun.tieu-thuyet",
+        "senseId": "vi.noun.tieu-thuyet.novel",
+        "firstIntroductionChapter": 37,
+        "usage": "Tôi tìm tiểu thuyết.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-037-basic-sentences-37/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Tôi tìm tiểu thuyết."
+        }
+      },
+      {
+        "word": "tra cứu",
+        "characters": "查究",
+        "meaning": "look up; consult",
+        "lexicalEntryId": "vi.verb.tra-cuu",
+        "senseId": "vi.verb.tra-cuu.look-up-consult",
+        "firstIntroductionChapter": 37,
+        "usage": "Làm ơn tra cứu danh mục.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-037-basic-sentences-37/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Làm ơn tra cứu danh mục."
+        }
+      }
+    ]
   }
 }

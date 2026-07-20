@@ -15,12 +15,48 @@
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
-      "normal": "Rồi orders actions in discourse. Người counts people and also exists as an ordinary noun in other constructions; the classifier use is tracked separately.",
+      "normalHeading": "Language Notes",
+      "normal": "Use `rồi` to put actions in order. `Người` is the counting word for people: `mười một người`. The same word can also mean “person” in other sentences.",
       "expert": "Rồi orders actions in discourse. Người counts people and also exists as an ordinary noun in other constructions; the classifier use is tracked separately. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {
     "normal": "- [[grammar:Đội có mười một người.]] — The team has eleven people.\n- [[grammar:Mười hai người tham gia không?]] — Are twelve people participating?\n- [[grammar:Vâng, mười hai người tham gia.]] — Yes, twelve people are participating.\n- [[grammar:Nhóm kia có mười ba người.]] — That group has thirteen people.\n- [[grammar:Tôi ghi mười bốn người.]] — I record fourteen people.\n- [[grammar:Đội này có mười lăm người.]] — This team has fifteen people.\n- [[grammar:Trước hết, tôi đăng ký.]] — First, I register.\n- [[grammar:Rồi tôi ký tên.]] — Then I sign my name.\n- [[grammar:Người tham gia ở khu vực này.]] — The participants are in this area.\n- [[grammar:Đội đã sẵn sàng.]] — The team is ready.\n- [[grammar:Danh sách có mười lăm người.]] — The list has fifteen people.\n- [[grammar:Vâng.]] — Yes.",
     "expert": "- [[grammar:Đội có mười một người.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Mười hai người tham gia không?]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Vâng, mười hai người tham gia.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Nhóm kia có mười ba người.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Tôi ghi mười bốn người.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Đội này có mười lăm người.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Trước hết, tôi đăng ký.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Rồi tôi ký tên.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Người tham gia ở khu vực này.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Đội đã sẵn sàng.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Danh sách có mười lăm người.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+  },
+  "characters": {
+    "heading": "Sino-Vietnamese Vocabulary",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| đội | 隊 | team | `Đội có mười một người.` |\n| tham gia | 參加 | participate | `Mười hai người tham gia không?` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| đội | 隊 | team | `Đội có mười một người.` |\n| tham gia | 參加 | participate | `Mười hai người tham gia không?` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "entries": [
+      {
+        "word": "đội",
+        "characters": "隊",
+        "meaning": "team",
+        "lexicalEntryId": "vi.noun.doi",
+        "senseId": "vi.noun.doi.team",
+        "firstIntroductionChapter": 43,
+        "usage": "Đội có mười một người.",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-043-basic-sentences-43/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Đội có mười một người."
+        }
+      },
+      {
+        "word": "tham gia",
+        "characters": "參加",
+        "meaning": "participate",
+        "lexicalEntryId": "vi.verb.tham-gia",
+        "senseId": "vi.verb.tham-gia.participate",
+        "firstIntroductionChapter": 43,
+        "usage": "Mười hai người tham gia không?",
+        "provenance": {
+          "path": "units/vietnamese-core/chapter-043-basic-sentences-43/chapter.md",
+          "section": "Dialogue",
+          "locator": "line containing: Mười hai người tham gia không?"
+        }
+      }
+    ]
   }
 }
