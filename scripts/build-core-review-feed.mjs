@@ -5,7 +5,7 @@ const output = process.argv[2] ?? "/core-feed";
 const generatedAt = process.env.SOURCE_DATE_EPOCH
   ? new Date(Number(process.env.SOURCE_DATE_EPOCH) * 1000).toISOString().replace(/\.\d{3}Z$/u, "Z")
   : "2026-07-13T00:00:00Z";
-const targets = ["korean", "chinese-traditional", "chinese-simplified", "english", "japanese", "vietnamese", "dutch", "german", "french", "spanish"].map(value => `${value}-core-reviews`);
+const targets = ["vietnamese", "dutch"].map(value => `${value}-core-reviews`);
 
 await rm(output, { recursive: true, force: true });
 await mkdir(`${output}/packages`, { recursive: true });

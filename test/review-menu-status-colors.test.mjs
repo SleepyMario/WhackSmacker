@@ -176,7 +176,7 @@ test("architecture has one classifier, one style mapping, and no package-defined
 });
 
 test("package and progress validators reject persisted review-menu colour hints", async () => {
-  const manifestUrl = new URL("../docs/content-packages/examples/korean-manifest.example.json", import.meta.url);
+  const manifestUrl = new URL("../docs/content-packages/examples/linguistic-terminology-manifest.example.json", import.meta.url);
   const manifest = JSON.parse(await readFile(manifestUrl, "utf8"));
   manifest.menuStatusPresentation = { hasCardsToReviewColor: "yellow" };
   const manifestResult = validateContentPackageManifest(manifest);

@@ -94,15 +94,12 @@ The public alpha provides a dashboard, PostgreSQL-backed user accounts and isola
 
 Known alpha limitation: the source-language selector works on the public/unauthenticated pages, but the logged-in private-app toggle still requires follow-up. Until it is repaired, users may need to refresh the private app or use the currently supported Settings path after changing the source language. The persisted per-user locale and source-package isolation remain enforced through the API.
 
-Installed Korean curriculum content and language terminology are available through domain-prefixed commands:
+Installed language terminology is available through domain-prefixed commands:
 
 ```sh
-whacksmacker language korean [--file <path>] [--version <version>] [--data-dir <dir>]
 whacksmacker language terms [<group>] [--file <path>] [--version <version>] [--data-dir <dir>]
 whacksmacker language terminology [--search <text>] [--category <name>] [--id <stable-id>]
 ```
-
-The Korean command discovers the installed `com.sleepymario.language.korean` content package and lists Introduction to Hangul readable entries. If the package is not installed, it prints a native package-install message instead of using any Anki-backed state.
 
 The `language terms` command discovers the installed `com.sleepymario.language.linguistic-terminology` content package and lists readable glossary source files. This installed package path is the documented primary runtime path for terminology content.
 
@@ -114,11 +111,11 @@ Native review uses installed content packages:
 
 ```sh
 whacksmacker review sources --data-dir ~/.local/share/whacksmacker/content
-whacksmacker review items --package com.sleepymario.language.korean
-whacksmacker review due --package com.sleepymario.language.korean
-whacksmacker review show com.sleepymario.language.korean <item-id> --answer
-whacksmacker review answer com.sleepymario.language.korean <item-id> --rating good
-whacksmacker review run --package com.sleepymario.language.korean --source review-decks/chapter-001-005/cards.tsv
+whacksmacker review items --package com.sleepymario.language.dutch
+whacksmacker review due --package com.sleepymario.language.dutch
+whacksmacker review show com.sleepymario.language.dutch <item-id> --answer
+whacksmacker review answer com.sleepymario.language.dutch <item-id> --rating good
+whacksmacker review run --package com.sleepymario.language.dutch --source review-decks/chapter-001-005/cards.tsv
 ```
 
 The old Anki-backed `whacksmacker review <deck-name>` shape has been removed. Reviewable content now comes from installed packages, and review progress is stored separately from package content. Small package review sources stay stable; after `review run` completes one source, WhackSmacker can offer to continue with the next source for the same package.
@@ -217,9 +214,8 @@ Generate development `.wspkg` archives for the currently supported content-packa
 ```sh
 npm run generate-content-package -- \
   --target linguistic-terminology \
-  --target korean-curriculum \
-  --target chinese-curriculum \
   --target vietnamese-curriculum \
+  --target dutch-curriculum \
   --output-dir /tmp/whacksmacker-packages \
   --generated-at 2026-07-06T00:00:00Z
 ```
@@ -240,13 +236,12 @@ Manage content packages from a catalogue:
 
 ```sh
 whacksmacker content available --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.korean --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.chinese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
+whacksmacker content install com.sleepymario.language.dutch --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.vietnamese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content installed
 whacksmacker content updates --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content remove com.sleepymario.language.korean --version 0.1.0
+whacksmacker content remove com.sleepymario.language.dutch --version 0.1.0
 ```
 
 Installed package content remains separate from user progress and settings.
@@ -255,18 +250,11 @@ Read installed package content:
 
 ```sh
 whacksmacker content read
-whacksmacker content files com.sleepymario.language.korean
-whacksmacker content read com.sleepymario.language.korean --file units/introduction-to-hangul/README.md
-whacksmacker content read com.sleepymario.language.korean --file units/korean-core/chapter-015-basic-life-sentences-15/chapter.md
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-001-005/cards.tsv
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-006-010/cards.tsv
-whacksmacker content read com.sleepymario.language.korean --file review-decks/chapter-011-015/cards.tsv
-whacksmacker content read com.sleepymario.language.chinese --file review-decks/pinyin-zhuyin/cards.tsv
-whacksmacker content read com.sleepymario.language.chinese --file review-decks/pinyin-zhuyin-with-tones/cards.tsv
+whacksmacker content files com.sleepymario.language.dutch
+whacksmacker content read com.sleepymario.language.dutch --file units/dutch-core/chapter-001-basic-sentences-1/chapter.md
+whacksmacker content read com.sleepymario.language.dutch --file review-decks/chapter-001-005/cards.tsv
 whacksmacker content read com.sleepymario.language.vietnamese --file units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md
 whacksmacker content read com.sleepymario.language.vietnamese --file review-decks/chapter-001-005/cards.tsv
-whacksmacker language korean
-whacksmacker language korean --file units/introduction-to-hangul/README.md
 whacksmacker language terms
 whacksmacker language terms general
 whacksmacker language terms korean
@@ -281,20 +269,16 @@ Connect installed reading content to native review items:
 
 ```sh
 whacksmacker review sources --data-dir ~/.local/share/whacksmacker/content
-whacksmacker review items --package com.sleepymario.language.korean
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-001-005/cards.tsv
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-006-010/cards.tsv
-whacksmacker review items --package com.sleepymario.language.korean --source review-decks/chapter-011-015/cards.tsv
-whacksmacker review items --package com.sleepymario.language.chinese --source review-decks/pinyin-zhuyin/cards.tsv
-whacksmacker review items --package com.sleepymario.language.chinese --source review-decks/pinyin-zhuyin-with-tones/cards.tsv
+whacksmacker review items --package com.sleepymario.language.dutch
+whacksmacker review items --package com.sleepymario.language.dutch --source review-decks/chapter-001-005/cards.tsv
 whacksmacker review items --package com.sleepymario.language.vietnamese --source review-decks/chapter-001-005/cards.tsv
-whacksmacker review due --package com.sleepymario.language.korean
-whacksmacker review show com.sleepymario.language.korean <item-id> --answer
-whacksmacker review answer com.sleepymario.language.korean <item-id> --rating good
-whacksmacker review run --package com.sleepymario.language.korean --source review-decks/chapter-001-005/cards.tsv
+whacksmacker review due --package com.sleepymario.language.dutch
+whacksmacker review show com.sleepymario.language.dutch <item-id> --answer
+whacksmacker review answer com.sleepymario.language.dutch <item-id> --rating good
+whacksmacker review run --package com.sleepymario.language.dutch --source review-decks/chapter-001-005/cards.tsv
 ```
 
-For the current language packages, `review sources` lists Korean `Chapter 1-5`, `Chapter 6-10`, and `Chapter 11-15`; Chinese - Mandarin `Pinyin-Zhuyin` and `Pinyin-Zhuyin with Tones`; and Vietnamese `Chapter 1-5`. Korean and Vietnamese full grammar-pattern cards are not generated into vocabulary/function-word decks. After finishing a deck, `review run` prompts `Do you want to continue with the next deck? (y/n)` when another source exists for the same package. Continuing starts the next source in the ordered package source list without merging decks or changing card IDs.
+For the current language packages, `review sources` lists the available Dutch and Vietnamese five-chapter review blocks. Full grammar-pattern cards are not generated into vocabulary/function-word decks. After finishing a deck, `review run` prompts `Do you want to continue with the next deck? (y/n)` when another source exists for the same package. Continuing starts the next source in the ordered package source list without merging decks or changing card IDs.
 
 Back up user-owned state without copying installed package content:
 

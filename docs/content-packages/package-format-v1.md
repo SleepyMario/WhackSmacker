@@ -19,12 +19,12 @@ Package IDs contain dots, and filenames may preserve those dots.
 Example:
 
 ```text
-com.sleepymario.language.korean-0.1.0.wspkg
+com.sleepymario.language.dutch-0.1.0.wspkg
 ```
 
 The archive is a data-only container. It must not contain executable scripts, native libraries, installers, hooks, or code that WhackSmacker executes.
 
-Archive creation is implemented by Roadmap Point 2 for the initial Linguistic Terminology and Korean Curriculum targets.
+Archive creation is implemented by Roadmap Point 2 for the configured package targets.
 
 Archive extraction, installation, catalogue management, and content rendering are not implemented in Roadmap Point 2.
 
@@ -58,7 +58,7 @@ Package IDs use globally namespaced reverse-domain syntax:
 Examples:
 
 ```text
-com.sleepymario.language.korean
+com.sleepymario.language.dutch
 com.sleepymario.language.linguistic-terminology
 com.sleepymario.mathematics.curriculum
 com.sleepymario.geography.world

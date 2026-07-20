@@ -50,15 +50,8 @@ Roadmap Point 2 supports these deterministic generator targets:
 | Target | Package ID | Source repository |
 |---|---|---|
 | `linguistic-terminology` | `com.sleepymario.language.linguistic-terminology` | `linguistic-terminology/` |
-| `korean-curriculum` | `com.sleepymario.language.korean` | `korean-curriculum/` |
-| `chinese-mandarin-traditional-curriculum` | `com.sleepymario.language.chinese.mandarin.traditional` | `chinese-curriculum/` |
-| `chinese-mandarin-simplified-curriculum` | `com.sleepymario.language.chinese.mandarin.simplified` | `chinese-curriculum/` |
-| `japanese-curriculum` | `com.sleepymario.language.japanese` | `japanese-curriculum/` |
 | `vietnamese-curriculum` | `com.sleepymario.language.vietnamese` | `vietnamese-curriculum/` |
 | `dutch-curriculum` | `com.sleepymario.language.dutch` | `dutch-curriculum/` |
-| `german-curriculum` | `com.sleepymario.language.german` | `german-curriculum/` |
-| `french-curriculum` | `com.sleepymario.language.french` | `french-curriculum/` |
-| `spanish-curriculum` | `com.sleepymario.language.spanish` | `spanish-curriculum/` |
 
 Configured absolute source paths are used unchanged. Relative source paths resolve beneath an explicit generator `sourceRoot` option when used programmatically, then beneath `WHACKSMACKER_PACKAGE_SOURCE_ROOT` when set. Without either override, the generator preserves its legacy behavior and resolves paths relative to the process working directory captured at startup.
 
@@ -73,15 +66,8 @@ For local development, generate packages into a temporary output directory:
 ```sh
 npm run generate-content-package -- \
   --target linguistic-terminology \
-  --target korean-curriculum \
-  --target chinese-mandarin-traditional-curriculum \
-  --target chinese-mandarin-simplified-curriculum \
-  --target japanese-curriculum \
   --target vietnamese-curriculum \
   --target dutch-curriculum \
-  --target german-curriculum \
-  --target french-curriculum \
-  --target spanish-curriculum \
   --output-dir /tmp/whacksmacker-packages \
   --generated-at 2026-07-06T00:00:00Z
 ```
@@ -102,23 +88,12 @@ Then install and read content through the WhackSmacker CLI:
 
 ```sh
 whacksmacker content available --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.korean --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.chinese.mandarin.traditional --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.chinese.mandarin.simplified --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.japanese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.vietnamese --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.dutch --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.german --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.french --catalogue /tmp/whacksmacker-catalogue/catalogue.json
-whacksmacker content install com.sleepymario.language.spanish --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content install com.sleepymario.language.linguistic-terminology --catalogue /tmp/whacksmacker-catalogue/catalogue.json
 whacksmacker content installed
-whacksmacker language korean
-whacksmacker language korean --file units/introduction-to-hangul/README.md
-whacksmacker content read com.sleepymario.language.chinese.mandarin.traditional --file units/mandarin-traditional/introduction-to-hanyu-pinyin/chapter.md
-whacksmacker content read com.sleepymario.language.chinese.mandarin.traditional --file units/mandarin-traditional/chapter-001-basic-sentences-1/chapter.md
-whacksmacker content read com.sleepymario.language.chinese.mandarin.simplified --file units/mandarin-simplified/introduction-to-hanyu-pinyin/chapter.md
-whacksmacker content read com.sleepymario.language.chinese.mandarin.simplified --file units/mandarin-simplified/chapter-001-basic-sentences-1/chapter.md
+whacksmacker content read com.sleepymario.language.vietnamese
+whacksmacker content read com.sleepymario.language.dutch
 whacksmacker language terms
 whacksmacker language terms --file terms/phonetics-and-phonology.md
 ```
@@ -187,6 +162,5 @@ Point 12 removes the old Anki-backed review path. `whacksmacker review` now refe
 - [User Data Backup Schema](../../schemas/user-data-backup-v1.schema.json)
 - [Manifest Schema](../../schemas/content-package-manifest-v1.schema.json)
 - [Catalogue Schema](../../schemas/content-package-catalogue-v1.schema.json)
-- [Korean example manifest](examples/korean-manifest.example.json)
 - [Linguistic Terminology example manifest](examples/linguistic-terminology-manifest.example.json)
 - [Local catalogue example](examples/local-catalogue.example.json)

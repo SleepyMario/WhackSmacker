@@ -144,180 +144,6 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     include: ["README.md", "STYLE_GUIDE.md", "INDEX.md", "decisions.md", "backlog.md", "terms"]
   },
   {
-    id: "korean-curriculum",
-    packageId: "com.sleepymario.language.korean",
-    displayName: "Korean Curriculum",
-    description: "Korean language curriculum content generated from the canonical Korean curriculum repository.",
-    contentType: "language-curriculum",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../korean-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/korean-curriculum",
-    languages: ["ko", "en"],
-    subjects: ["language", "korean"],
-    dependencies: [{ packageId: "com.sleepymario.language.linguistic-terminology", version: ">=0.1.0 <1.0.0", optional: true }],
-    license: { spdx: null, name: null, path: null },
-    include: [
-      "README.md",
-      "philosophy.md",
-      "scope.md",
-      "curriculum-map.md",
-      "progress.md",
-      "backlog.md",
-      "decisions.md",
-      "review-decks",
-      "research",
-      "units"
-    ]
-  },
-  {
-    id: "chinese-mandarin-traditional-curriculum",
-    packageId: "com.sleepymario.language.chinese.mandarin.traditional",
-    displayName: "Chinese - Mandarin (Traditional)",
-    description: "Chinese - Mandarin Traditional language curriculum content generated from the canonical Chinese curriculum repository.",
-    contentType: "language-curriculum",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../chinese-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/chinese-curriculum",
-    languages: ["zh-Hant", "en"],
-    subjects: ["language", "chinese", "mandarin", "traditional"],
-    license: { spdx: null, name: null, path: null },
-    include: [
-      "README.md",
-      "philosophy.md",
-      "scope.md",
-      "curriculum-map.md",
-      "progress.md",
-      "backlog.md",
-      "decisions.md",
-      "name-pools",
-      "review-decks/README.md",
-      "review-decks/pinyin-zhuyin",
-      "review-decks/pinyin-zhuyin-with-tones",
-      "review-decks/mandarin-traditional-chapter-001-005",
-      "review-decks/mandarin-traditional-chapter-006-010",
-      "research",
-      "units/README.md",
-      "units/mandarin-traditional"
-    ]
-  },
-  {
-    id: "chinese-mandarin-simplified-curriculum",
-    packageId: "com.sleepymario.language.chinese.mandarin.simplified",
-    displayName: "Chinese - Mandarin (Simplified)",
-    description: "Chinese - Mandarin Simplified language curriculum content generated from the canonical Chinese curriculum repository.",
-    contentType: "language-curriculum",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../chinese-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/chinese-curriculum",
-    languages: ["zh-Hans", "en"],
-    subjects: ["language", "chinese", "mandarin", "simplified"],
-    license: { spdx: null, name: null, path: null },
-    include: [
-      "README.md",
-      "philosophy.md",
-      "scope.md",
-      "curriculum-map.md",
-      "progress.md",
-      "backlog.md",
-      "decisions.md",
-      "name-pools",
-      "review-decks/README.md",
-      "review-decks/mandarin-simplified-chapter-001-005",
-      "review-decks/mandarin-simplified-chapter-006-010",
-      "research",
-      "units/README.md",
-      "units/mandarin-simplified"
-    ]
-  },
-  {
-    id: "english-curriculum",
-    packageId: "com.sleepymario.language.english",
-    displayName: { "zh-TW": "英文", en: "English" },
-    description: { "zh-TW": "以中文（臺灣）學習英文的在地化課程。", en: "A localized curriculum for learning English." },
-    contentType: "language-curriculum",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../english-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/english-curriculum",
-    languages: ["zh-TW", "en"],
-    targetLanguage: "en",
-    localization: { role: "base-curriculum", schemaVersion: "1.0.0", targetLanguage: "en", defaultSourceLocale: "zh-TW", defaultSourcePackageId: "com.sleepymario.language.english.source.zh-tw" },
-    dependencies: [{ packageId: "com.sleepymario.language.english.source.zh-tw", version: ">=0.1.0 <1.0.0" }],
-    subjects: ["language", "english"],
-    license: { spdx: null, name: null, path: null },
-    include: [
-      "README.md",
-      "philosophy.md",
-      "scope.md",
-      "curriculum-map.md",
-      "progress.md",
-      "backlog.md",
-      "decisions.md",
-      "name-pools",
-      "review-decks",
-      "research",
-      "units"
-    ]
-  },
-  {
-    id: "english-curriculum-source-zh-tw",
-    packageId: "com.sleepymario.language.english.source.zh-tw",
-    displayName: "英文課程中文（臺灣）來源包",
-    description: "英文課程的中文（臺灣）教學在地化內容。",
-    contentType: "curriculum-source-language-pack",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../english-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/english-curriculum",
-    languages: ["zh-TW"], targetLanguage: "en",
-    localization: { role: "source-language-pack", schemaVersion: "1.0.0", basePackageId: "com.sleepymario.language.english", sourceLocale: "zh-TW", targetLanguage: "en", compatibleBaseVersion: ">=0.1.0 <1.0.0", isDefault: true },
-    subjects: ["language", "english", "localization"], license: { spdx: null, name: null, path: null }, include: ["review-decks/chapter-001-005/cards.tsv", "units/english-core"]
-  },
-  {
-    id: "english-curriculum-source-en",
-    packageId: "com.sleepymario.language.english.source.en",
-    displayName: "English Curriculum Source Pack",
-    description: "English instructional localization for the English curriculum.",
-    contentType: "curriculum-source-language-pack",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../english-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/english-curriculum",
-    languages: ["en"], targetLanguage: "en",
-    localization: { role: "source-language-pack", schemaVersion: "1.0.0", basePackageId: "com.sleepymario.language.english", sourceLocale: "en", targetLanguage: "en", compatibleBaseVersion: ">=0.1.0 <1.0.0" },
-    subjects: ["language", "english", "localization"], license: { spdx: null, name: null, path: null }, include: ["review-decks/chapter-001-005/cards.tsv", "units/english-core"]
-  },
-  {
-    id: "japanese-curriculum",
-    packageId: "com.sleepymario.language.japanese",
-    displayName: "Japanese",
-    description: "Japanese language curriculum content generated from the canonical Japanese curriculum repository.",
-    contentType: "language-curriculum",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../japanese-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/japanese-curriculum",
-    languages: ["ja", "en"],
-    subjects: ["language", "japanese"],
-    license: { spdx: null, name: null, path: null },
-    include: [
-      "README.md",
-      "philosophy.md",
-      "scope.md",
-      "curriculum-map.md",
-      "progress.md",
-      "backlog.md",
-      "decisions.md",
-      "name-pools",
-      "review-decks",
-      "research",
-      "units"
-    ]
-  },
-  {
     id: "vietnamese-curriculum",
     packageId: "com.sleepymario.language.vietnamese",
     displayName: "Vietnamese Curriculum",
@@ -402,101 +228,12 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "research",
       "units"
     ]
-  },
-  {
-    id: "german-curriculum",
-    packageId: "com.sleepymario.language.german",
-    displayName: "German",
-    description: "German language curriculum content generated from the canonical German curriculum repository.",
-    contentType: "language-curriculum",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../german-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/german-curriculum",
-    languages: ["de", "en"],
-    subjects: ["language", "german"],
-    license: { spdx: null, name: null, path: null },
-    include: [
-      "README.md",
-      "philosophy.md",
-      "scope.md",
-      "curriculum-map.md",
-      "progress.md",
-      "backlog.md",
-      "decisions.md",
-      "name-pools",
-      "review-decks",
-      "research",
-      "units"
-    ]
-  },
-  {
-    id: "french-curriculum",
-    packageId: "com.sleepymario.language.french",
-    displayName: "French",
-    description: "French language curriculum content generated from the canonical French curriculum repository.",
-    contentType: "language-curriculum",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../french-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/french-curriculum",
-    languages: ["fr", "en"],
-    subjects: ["language", "french"],
-    license: { spdx: null, name: null, path: null },
-    include: [
-      "README.md",
-      "philosophy.md",
-      "scope.md",
-      "curriculum-map.md",
-      "progress.md",
-      "backlog.md",
-      "decisions.md",
-      "name-pools",
-      "review-decks",
-      "research",
-      "units"
-    ]
-  },
-  {
-    id: "spanish-curriculum",
-    packageId: "com.sleepymario.language.spanish",
-    displayName: "Spanish",
-    description: "Spanish language curriculum content generated from the canonical Spanish curriculum repository.",
-    contentType: "language-curriculum",
-    contentSchemaVersion: "1.0.0",
-    packageVersion: "0.1.0",
-    sourcePath: "../spanish-curriculum",
-    sourceRepository: "https://github.com/SleepyMario/spanish-curriculum",
-    languages: ["es", "en"],
-    subjects: ["language", "spanish"],
-    license: { spdx: null, name: null, path: null },
-    include: [
-      "README.md",
-      "philosophy.md",
-      "scope.md",
-      "curriculum-map.md",
-      "progress.md",
-      "backlog.md",
-      "decisions.md",
-      "name-pools",
-      "review-decks",
-      "research",
-      "units"
-    ]
   }
 ];
 
 const reviewPackageByReadingPackage = new Map<string, string>([
-  ["com.sleepymario.language.korean", "com.sleepymario.language.korean.reviews"],
-  ["com.sleepymario.language.chinese.mandarin.traditional", "com.sleepymario.language.chinese.mandarin.traditional.reviews"],
-  ["com.sleepymario.language.chinese.mandarin.simplified", "com.sleepymario.language.chinese.mandarin.simplified.reviews"],
-  ["com.sleepymario.language.english", "com.sleepymario.language.english.reviews"],
-  ["com.sleepymario.language.japanese", "com.sleepymario.language.japanese.reviews"],
   ["com.sleepymario.language.vietnamese", "com.sleepymario.language.vietnamese.reviews"],
-  ["com.sleepymario.language.dutch", "com.sleepymario.language.dutch.reviews"],
-  ["com.sleepymario.language.german", "com.sleepymario.language.german.reviews"],
-  ["com.sleepymario.language.french", "com.sleepymario.language.french.reviews"],
-  ["com.sleepymario.language.spanish", "com.sleepymario.language.spanish.reviews"]
+  ["com.sleepymario.language.dutch", "com.sleepymario.language.dutch.reviews"]
 ]);
 
 const readingTargets = legacyGeneratorTargets.map((target): ContentPackageGeneratorTarget => {
@@ -516,16 +253,8 @@ const readingTargets = legacyGeneratorTargets.map((target): ContentPackageGenera
 });
 
 const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
-  ["korean", "Korean", "com.sleepymario.language.korean", ["ko", "en"]],
-  ["chinese-traditional", "Chinese - Mandarin (Traditional)", "com.sleepymario.language.chinese.mandarin.traditional", ["zh-Hant", "en"]],
-  ["chinese-simplified", "Chinese - Mandarin (Simplified)", "com.sleepymario.language.chinese.mandarin.simplified", ["zh-Hans", "en"]],
-  ["english", "English", "com.sleepymario.language.english", ["zh-TW", "en"]],
-  ["japanese", "Japanese", "com.sleepymario.language.japanese", ["ja", "en"]],
   ["vietnamese", "Vietnamese", "com.sleepymario.language.vietnamese", ["vi", "en"]],
-  ["dutch", "Dutch", "com.sleepymario.language.dutch", ["nl", "en"]],
-  ["german", "German", "com.sleepymario.language.german", ["de", "en"]],
-  ["french", "French", "com.sleepymario.language.french", ["fr", "en"]],
-  ["spanish", "Spanish", "com.sleepymario.language.spanish", ["es", "en"]]
+  ["dutch", "Dutch", "com.sleepymario.language.dutch", ["nl", "en"]]
 ].map(([slug, name, readingId, languages]) => ({
   id: `${slug}-core-reviews`,
   packageId: `${readingId}.reviews`,
@@ -536,13 +265,9 @@ const coreReviewTargets: readonly ContentPackageGeneratorTarget[] = [
   relatedPackageIds: [readingId],
   contentSchemaVersion: slug === "vietnamese" || slug === "dutch" ? "2.0.0" : "1.0.0",
   packageVersion: slug === "vietnamese" ? "0.2.0" : "0.1.0",
-  sourcePath: `review-content/${String(slug).replace(/^chinese-/u, "chinese-mandarin-")}`,
+  sourcePath: `review-content/${slug}`,
   sourceRepository: "https://github.com/SleepyMario/whacksmacker",
   languages,
-  ...(readingId === "com.sleepymario.language.english" ? {
-    targetLanguage: "en",
-    localization: { role: "base-curriculum", schemaVersion: "1.0.0", targetLanguage: "en", defaultSourceLocale: "zh-TW", defaultSourcePackageId: "com.sleepymario.language.english.source.zh-tw" }
-  } : {}),
   subjects: ["language", "review"],
   dependencies: slug === "vietnamese"
     ? [{ packageId: readingId, version: ">=0.2.0 <0.3.0", optional: true }]
@@ -1727,44 +1452,20 @@ function languageCodeForReviewLabel(label: string): string | undefined {
 }
 
 function stableDirectionSlug(
-  target: ContentPackageGeneratorTarget,
+  _target: ContentPackageGeneratorTarget,
   direction: string,
-  promptLabel: string,
-  answerLabel: string
+  _promptLabel: string,
+  _answerLabel: string
 ): string {
-  if (curriculumIdentityTargetId(target) === "english-curriculum") {
-    if (promptLabel === "English Target" && answerLabel === "Chinese (Taiwan)") {
-      return slugForPath("English Target -> English");
-    }
-    if (promptLabel === "Chinese (Taiwan)" && answerLabel === "English Target") {
-      return slugForPath("English -> English Target");
-    }
-  }
   return slugForPath(direction);
 }
 
 function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
   switch (curriculumIdentityTargetId(target)) {
-    case "korean-curriculum":
-      return "Hangul";
-    case "chinese-mandarin-traditional-curriculum":
-      return "Pinyin/Zhuyin";
-    case "chinese-mandarin-simplified-curriculum":
-      return "Pinyin";
-    case "english-curriculum":
-      return "English";
-    case "japanese-curriculum":
-      return "Japanese";
     case "vietnamese-curriculum":
       return "Vietnamese";
     case "dutch-curriculum":
       return "Dutch";
-    case "german-curriculum":
-      return "German";
-    case "french-curriculum":
-      return "French";
-    case "spanish-curriculum":
-      return "Spanish";
     default:
       return "text";
   }

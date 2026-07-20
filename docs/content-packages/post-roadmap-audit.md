@@ -22,7 +22,7 @@ Do not assume old source paths under:
 /home/ashwin/Projects/languages
 ```
 
-The current content-package generator targets use sibling repositories of the WhackSmacker repository under the module workspace, such as `../linguistic-terminology` and `../korean-curriculum` when run from `/home/ashwin/Projects/whacksmacker-modules/whacksmacker`.
+The current content-package generator targets use sibling repositories of the WhackSmacker repository under the module workspace, such as `../linguistic-terminology` and `../dutch-curriculum` when run from `/home/ashwin/Projects/whacksmacker-modules/whacksmacker`.
 
 ## Roadmap Commits
 
@@ -56,10 +56,8 @@ The package system separates the application, installed content, and user progre
 The generator can build deterministic `.wspkg` archives for the local package targets:
 
 - `linguistic-terminology` -> `com.sleepymario.language.linguistic-terminology`
-- `korean-curriculum` -> `com.sleepymario.language.korean`
-- `chinese-mandarin-traditional-curriculum` -> `com.sleepymario.language.chinese.mandarin.traditional`
-- `chinese-mandarin-simplified-curriculum` -> `com.sleepymario.language.chinese.mandarin.simplified`
 - `vietnamese-curriculum` -> `com.sleepymario.language.vietnamese`
+- `dutch-curriculum` -> `com.sleepymario.language.dutch`
 
 Generation snapshots selected Markdown and repository files into `content/content.json` using the `whacksmacker-source-markdown-snapshot-v1` shape, records source commit and dirty-state metadata, records the WhackSmacker generator commit, validates the generated manifest, and writes a deterministic archive.
 
@@ -105,7 +103,7 @@ This remains terminal-safe rendering. There is no web exercise UI, fuzzy answer 
 
 Reading-to-review integration can discover memorization item files in installed packages, group items by source reading path, list review sources, list items by source, sync discovered items into native scheduler progress, list due items, render prompts and answers, and record review ratings through terminal commands.
 
-Current generated Korean and Linguistic Terminology packages are source Markdown snapshots. They are readable after installation, but they do not automatically provide review progress unless package-authored memorization item files are present.
+Current generated language and Linguistic Terminology packages are source Markdown snapshots. They are readable after installation, but they do not automatically provide review progress unless package-authored memorization item files are present.
 
 ### 10. Backup and Migration
 
@@ -127,9 +125,9 @@ The old deck-review command shape no longer resolves. `whacksmacker review` now 
 
 ## Current Rough Edges
 
-- The package generator currently covers the initial Linguistic Terminology and Korean Curriculum source snapshots only.
+- The package generator currently covers Linguistic Terminology, Vietnamese Curriculum, and Dutch Curriculum source snapshots.
 - Generated source snapshot packages are readable but do not automatically produce memorization item files.
-- Installed Korean and installed Linguistic Terminology browsing paths have been manually validated in the local end-to-end package flow, but they remain terminal-oriented and should still be covered by future release checklist runs.
+- Installed language and Linguistic Terminology browsing paths remain terminal-oriented and should be covered by release checklist runs.
 - The native review flow is terminal-oriented and command-oriented.
 - Answer grading is not implemented beyond explicit review ratings.
 - Dependency metadata exists, but full dependency resolution is not implemented.
@@ -140,7 +138,7 @@ The old deck-review command shape no longer resolves. `whacksmacker review` now 
 
 ## Next Cleanup Phase
 
-- Repeat the installed Korean package flow during release checks.
+- Repeat the installed Dutch and Vietnamese package flows during release checks.
 - Repeat the installed Linguistic Terminology package flow during release checks.
 - Improve missing-package guidance with catalogue location and install workflow details.
 - Remove or deprecate stale bundled snapshots only when installed-package replacements are safe for normal use.

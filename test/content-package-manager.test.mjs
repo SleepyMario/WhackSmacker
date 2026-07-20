@@ -29,7 +29,7 @@ test("available packages can be listed from a valid catalogue", async () => {
 
     assert.deepEqual(
       available.map((entry) => entry.packageId),
-      ["com.sleepymario.language.korean", "com.sleepymario.language.linguistic-terminology"]
+      ["com.sleepymario.language.dutch", "com.sleepymario.language.linguistic-terminology"]
     );
   } finally {
     await fixture.cleanup();
@@ -65,7 +65,7 @@ test("installing from a file package succeeds and updates the registry", async (
     const result = await installContentPackage({
       cataloguePath: fixture.cataloguePath,
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean",
+      packageId: "com.sleepymario.language.dutch",
       installedAt: "2026-07-06T00:00:00Z"
     });
     const registry = await loadInstalledPackageRegistry(fixture.dataDir);
@@ -75,8 +75,8 @@ test("installing from a file package succeeds and updates the registry", async (
 
     assert.equal(result.installed, true);
     assert.equal(registry.packages.length, 1);
-    assert.equal(registry.packages[0].packageId, "com.sleepymario.language.korean");
-    assert.equal(registry.packages[0].installPath, "packages/com.sleepymario.language.korean/0.1.0");
+    assert.equal(registry.packages[0].packageId, "com.sleepymario.language.dutch");
+    assert.equal(registry.packages[0].installPath, "packages/com.sleepymario.language.dutch/0.1.0");
     assert.equal((await stat(manifestPath)).size > 0, true);
     assert.equal((await stat(contentPath)).size > 0, true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
@@ -122,7 +122,7 @@ test("install rejects package ID mismatch between catalogue and manifest", async
   const fixture = await createPackageFixture();
   try {
     const catalogue = await readJson(fixture.cataloguePath);
-    catalogue.packages[0].packageId = "com.sleepymario.language.korean-renamed";
+    catalogue.packages[0].packageId = "com.sleepymario.language.dutch-renamed";
     const path = await writeCatalogue(fixture, catalogue);
 
     await assert.rejects(
@@ -353,12 +353,12 @@ test("installing the same package twice is clearly idempotent", async () => {
     const first = await installContentPackage({
       cataloguePath: fixture.cataloguePath,
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean"
+      packageId: "com.sleepymario.language.dutch"
     });
     const second = await installContentPackage({
       cataloguePath: fixture.cataloguePath,
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean"
+      packageId: "com.sleepymario.language.dutch"
     });
 
     assert.equal(first.installed, true);
@@ -375,7 +375,7 @@ test("reinstalling the same package does not delete review progress", async () =
     await installContentPackage({
       cataloguePath: fixture.cataloguePath,
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean"
+      packageId: "com.sleepymario.language.dutch"
     });
     const progressPath = join(fixture.dataDir, "..", "progress", "review-progress.json");
     const progress = {
@@ -383,7 +383,7 @@ test("reinstalling the same package does not delete review progress", async () =
       updatedAt: "2026-07-06T00:00:00Z",
       items: [
         {
-          packageId: "com.sleepymario.language.korean",
+          packageId: "com.sleepymario.language.dutch",
           packageVersion: "0.1.0",
           sourcePath: "review-decks/chapter-001-005/cards.tsv",
           itemId: "chapter-001/card-001",
@@ -404,7 +404,7 @@ test("reinstalling the same package does not delete review progress", async () =
     const second = await installContentPackage({
       cataloguePath: fixture.cataloguePath,
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean"
+      packageId: "com.sleepymario.language.dutch"
     });
 
     assert.equal(second.installed, false);
@@ -448,11 +448,11 @@ test("force reinstall replaces an older snapshot of the same package version", a
 test("installed packages can be listed", async () => {
   const fixture = await createPackageFixture();
   try {
-    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.korean" });
+    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.dutch" });
 
     const installed = await listInstalledContentPackages(fixture.dataDir);
 
-    assert.deepEqual(installed.map((record) => record.packageId), ["com.sleepymario.language.korean"]);
+    assert.deepEqual(installed.map((record) => record.packageId), ["com.sleepymario.language.dutch"]);
   } finally {
     await fixture.cleanup();
   }
@@ -461,7 +461,7 @@ test("installed packages can be listed", async () => {
 test("update detection reports no update when versions match", async () => {
   const fixture = await createPackageFixture();
   try {
-    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.korean" });
+    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.dutch" });
 
     assert.deepEqual(await detectContentPackageUpdates(fixture.cataloguePath, fixture.dataDir), []);
   } finally {
@@ -472,22 +472,22 @@ test("update detection reports no update when versions match", async () => {
 test("update detection reports and installs a newer SemVer version", async () => {
   const fixture = await createPackageFixture();
   try {
-    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.korean" });
+    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.dutch" });
     const newerArchive = await createCustomPackage(fixture, {
-      packageId: "com.sleepymario.language.korean",
+      packageId: "com.sleepymario.language.dutch",
       packageVersion: "0.2.0",
       entryPointPath: "content/content.json",
       filePath: "content/content.json"
     });
     const catalogue = await readJson(fixture.cataloguePath);
-    catalogue.packages.push(await packageEntryFromArchive(newerArchive, "com.sleepymario.language.korean", "0.2.0"));
+    catalogue.packages.push(await packageEntryFromArchive(newerArchive, "com.sleepymario.language.dutch", "0.2.0"));
     const newerCatalogue = await writeCatalogue(fixture, catalogue);
 
     const updates = await detectContentPackageUpdates(newerCatalogue, fixture.dataDir);
     const updateResult = await updateContentPackage({
       cataloguePath: newerCatalogue,
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean"
+      packageId: "com.sleepymario.language.dutch"
     });
 
     assert.equal(updates[0].availableVersion, "0.2.0");
@@ -504,8 +504,8 @@ test("update detection reports and installs a newer SemVer version", async () =>
 test("removing an installed package removes package files and registry entry", async () => {
   const fixture = await createPackageFixture();
   try {
-    const installed = await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.korean" });
-    await removeContentPackage({ dataDir: fixture.dataDir, packageId: "com.sleepymario.language.korean", packageVersion: "0.1.0" });
+    const installed = await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.dutch" });
+    await removeContentPackage({ dataDir: fixture.dataDir, packageId: "com.sleepymario.language.dutch", packageVersion: "0.1.0" });
 
     await assert.rejects(() => stat(installed.installPath), /ENOENT/);
     assert.deepEqual(await listInstalledContentPackages(fixture.dataDir), []);
@@ -517,26 +517,26 @@ test("removing an installed package removes package files and registry entry", a
 test("removing one version leaves another version and does not touch progress", async () => {
   const fixture = await createPackageFixture();
   try {
-    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.korean" });
+    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.dutch" });
     const newerArchive = await createCustomPackage(fixture, {
-      packageId: "com.sleepymario.language.korean",
+      packageId: "com.sleepymario.language.dutch",
       packageVersion: "0.2.0",
       entryPointPath: "content/content.json",
       filePath: "content/content.json"
     });
     const catalogue = await readJson(fixture.cataloguePath);
-    catalogue.packages.push(await packageEntryFromArchive(newerArchive, "com.sleepymario.language.korean", "0.2.0"));
+    catalogue.packages.push(await packageEntryFromArchive(newerArchive, "com.sleepymario.language.dutch", "0.2.0"));
     const newerCatalogue = await writeCatalogue(fixture, catalogue);
     await installContentPackage({
       cataloguePath: newerCatalogue,
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean",
+      packageId: "com.sleepymario.language.dutch",
       packageVersion: "0.2.0"
     });
     const progressPath = join(fixture.dataDir, "..", "progress", "progress.json");
     await writeJson(progressPath, { untouched: true });
 
-    await removeContentPackage({ dataDir: fixture.dataDir, packageId: "com.sleepymario.language.korean", packageVersion: "0.1.0" });
+    await removeContentPackage({ dataDir: fixture.dataDir, packageId: "com.sleepymario.language.dutch", packageVersion: "0.1.0" });
 
     assert.deepEqual((await listInstalledContentPackages(fixture.dataDir)).map((record) => record.packageVersion), ["0.2.0"]);
     assert.deepEqual(await readJson(progressPath), { untouched: true });
@@ -551,7 +551,7 @@ test("package files are not modified after install", async () => {
     const result = await installContentPackage({
       cataloguePath: fixture.cataloguePath,
       dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean"
+      packageId: "com.sleepymario.language.dutch"
     });
     const before = await fileSha256(join(result.installPath, "content", "content.json"));
     const after = await fileSha256(join(result.installPath, "content", "content.json"));
@@ -569,7 +569,7 @@ test("content package CLI supports available install installed updates and remov
     const install = await runCli([
       "content",
       "install",
-      "com.sleepymario.language.korean",
+      "com.sleepymario.language.dutch",
       "--catalogue",
       fixture.cataloguePath,
       "--data-dir",
@@ -580,7 +580,7 @@ test("content package CLI supports available install installed updates and remov
     const remove = await runCli([
       "content",
       "remove",
-      "com.sleepymario.language.korean",
+      "com.sleepymario.language.dutch",
       "--version",
       "0.1.0",
       "--data-dir",
@@ -608,7 +608,7 @@ async function createPackageFixture() {
     generatedAt: "2026-07-06T00:00:00Z"
   });
   await generateContentPackage({
-    targetId: "korean-curriculum",
+    targetId: "dutch-curriculum",
     outputDirectory: packageDirectory,
     generatedAt: "2026-07-06T00:00:00Z"
   });

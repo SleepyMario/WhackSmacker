@@ -110,7 +110,6 @@ function createStubRegistry(calls, options = {}) {
   const registry = new InMemoryCliCommandRegistry();
 
   for (const path of [
-    ["language", "korean"],
     ["language", "terms"],
     ["language", "terminology"],
     ["review", "run"],
@@ -164,7 +163,7 @@ test("arguments continue to select normal CLI routing", () => {
 
   assert.equal(resolveCliCommand(registry, ["status"]), null);
   assert.equal(resolveCliCommand(registry, ["language", "status"]), null);
-  assert.equal(resolveCliCommand(registry, ["language", "korean"])?.path.join(" "), "language korean");
+  assert.equal(resolveCliCommand(registry, ["language", "korean"]), null);
   assert.equal(resolveCliCommand(registry, ["language", "terms"])?.path.join(" "), "language terms");
   assert.equal(resolveCliCommand(registry, ["language", "terminology"])?.path.join(" "), "language terminology");
 });
@@ -176,39 +175,27 @@ test("main menu exposes all registered domain modules", () => {
   );
 });
 
-test("language menu exposes Korean, Linguistic Terms, and back", () => {
+test("language menu exposes Linguistic Terms and back", () => {
   assert.deepEqual(
     getLanguageMenuItems().map((item) => item.label),
-    ["Korean", "Linguistic Terms", "Back"]
+    ["Linguistic Terms", "Back"]
   );
 });
 
 test("installed language package discovery is generic and normalizes curriculum labels", () => {
   const items = installedLanguagePackagesToMenuItems([
-    packageRecord("com.sleepymario.language.korean", "Korean Curriculum"),
-    packageRecord("com.sleepymario.language.chinese.mandarin.traditional", "Chinese - Mandarin (Traditional)"),
-    packageRecord("com.sleepymario.language.chinese.mandarin.simplified", "Chinese - Mandarin (Simplified)"),
-    packageRecord("com.sleepymario.language.japanese", "Japanese"),
+    packageRecord("com.sleepymario.language.example", "Example Curriculum"),
     packageRecord("com.sleepymario.language.vietnamese", "Vietnamese Curriculum"),
     packageRecord("com.sleepymario.language.dutch", "Dutch"),
-    packageRecord("com.sleepymario.language.german", "German"),
-    packageRecord("com.sleepymario.language.french", "French"),
-    packageRecord("com.sleepymario.language.spanish", "Spanish"),
     packageRecord("com.sleepymario.language.linguistic-terminology", "Linguistic Terminology"),
     packageRecord("com.sleepymario.mathematics.curriculum", "Mathematics")
   ]);
 
-  assert.deepEqual(items.map((item) => item.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "French", "German", "Japanese", "Korean", "Linguistic Terminology", "Spanish", "Vietnamese"]);
+  assert.deepEqual(items.map((item) => item.label), ["Dutch", "Example", "Linguistic Terminology", "Vietnamese"]);
   assert.deepEqual(items.map((item) => item.packageId), [
-    "com.sleepymario.language.chinese.mandarin.simplified",
-    "com.sleepymario.language.chinese.mandarin.traditional",
     "com.sleepymario.language.dutch",
-    "com.sleepymario.language.french",
-    "com.sleepymario.language.german",
-    "com.sleepymario.language.japanese",
-    "com.sleepymario.language.korean",
+    "com.sleepymario.language.example",
     "com.sleepymario.language.linguistic-terminology",
-    "com.sleepymario.language.spanish",
     "com.sleepymario.language.vietnamese"
   ]);
 });
@@ -258,7 +245,7 @@ test("new language package IDs appear without hard-coded menu entries", () => {
   ]);
 
   assert.deepEqual(items.map((item) => item.label), ["Example Language"]);
-  assert.deepEqual(buildLanguageMenuItems(items).map((item) => item.label), ["Example Language", "Korean", "Linguistic Terms", "Back"]);
+  assert.deepEqual(buildLanguageMenuItems(items).map((item) => item.label), ["Example Language", "Linguistic Terms", "Back"]);
 });
 
 test("language menu heading explains missing installed packages", () => {
@@ -347,18 +334,10 @@ test("interactive menu opens the module three-pane tree", async () => {
 
 test("module tree lists top-level categories and installed language packages", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["vietnamese-curriculum", "dutch-curriculum"],
     [
-      "com.sleepymario.language.korean",
-      "com.sleepymario.language.chinese.mandarin.simplified",
-      "com.sleepymario.language.chinese.mandarin.traditional",
-      "com.sleepymario.language.japanese",
       "com.sleepymario.language.vietnamese",
-      "com.sleepymario.language.dutch",
-      "com.sleepymario.language.english",
-      "com.sleepymario.language.german",
-      "com.sleepymario.language.french",
-      "com.sleepymario.language.spanish"
+      "com.sleepymario.language.dutch"
     ]
   );
   try {
@@ -369,17 +348,9 @@ test("module tree lists top-level categories and installed language packages", a
     assert.equal(tree.label, "WhackSmacker");
     assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
     assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
-    assert.deepEqual(languages.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "English", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
+    assert.deepEqual(languages.children.map((node) => node.label), ["Dutch", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
-      "com.sleepymario.language.chinese.mandarin.simplified",
-      "com.sleepymario.language.chinese.mandarin.traditional",
       "com.sleepymario.language.dutch",
-      "com.sleepymario.language.english",
-      "com.sleepymario.language.french",
-      "com.sleepymario.language.german",
-      "com.sleepymario.language.japanese",
-      "com.sleepymario.language.korean",
-      "com.sleepymario.language.spanish",
       "com.sleepymario.language.vietnamese"
     ]);
   } finally {
@@ -449,7 +420,7 @@ test("language menu discovers installed packages from the selected data dir", as
   try {
     const items = await getDynamicLanguageMenuItems(fixture.dataDir);
 
-    assert.deepEqual(items.map((item) => item.label), ["Dutch", "Korean", "Linguistic Terms", "Back"]);
+    assert.deepEqual(items.map((item) => item.label), ["Dutch", "Linguistic Terms", "Back"]);
   } finally {
     await fixture.cleanup();
   }
@@ -457,18 +428,10 @@ test("language menu discovers installed packages from the selected data dir", as
 
 test("language tree lists installed packages and package sections", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["vietnamese-curriculum", "dutch-curriculum"],
     [
-      "com.sleepymario.language.korean",
-      "com.sleepymario.language.chinese.mandarin.simplified",
-      "com.sleepymario.language.chinese.mandarin.traditional",
-      "com.sleepymario.language.japanese",
       "com.sleepymario.language.vietnamese",
-      "com.sleepymario.language.dutch",
-      "com.sleepymario.language.english",
-      "com.sleepymario.language.german",
-      "com.sleepymario.language.french",
-      "com.sleepymario.language.spanish"
+      "com.sleepymario.language.dutch"
     ]
   );
   try {
@@ -476,18 +439,10 @@ test("language tree lists installed packages and package sections", async () => 
     const treesByMode = new Map([["normal", tree]]);
 
     assert.equal(tree.label, "Languages");
-    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese - Mandarin (Simplified)", "Chinese - Mandarin (Traditional)", "Dutch", "English", "French", "German", "Japanese", "Korean", "Spanish", "Vietnamese"]);
+    assert.deepEqual(tree.children.map((node) => node.label), ["Dutch", "Vietnamese"]);
     for (const languagePackage of tree.children) {
       assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Review decks", "Package info", "Uninstall"]);
     }
-    const english = tree.children.find((node) => node.label === "English");
-    const englishReadContent = english.children.find((node) => node.label === "Read content");
-    const englishReviewDecks = english.children.find((node) => node.label === "Review decks");
-    assert.ok(englishReadContent.children.some((node) => node.label === "Chapter 1 -- First Introductions"));
-    assert.ok(englishReadContent.children.some((node) => node.label === "Grammar"));
-    assert.equal(englishReadContent.children.some((node) => node.label === "Grammar - Hard"), false);
-    assert.deepEqual(englishReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
-
     for (const mode of ["expert", "developer"]) treesByMode.set(mode, await buildLanguageTree(fixture.dataDir, mode));
     for (const [mode, modeTree] of treesByMode) {
       assert.deepEqual(
@@ -520,18 +475,14 @@ test("language tree lists installed packages and package sections", async () => 
 
 test("installed curricula share the global purple-dialogue and pink-reading semantics", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
+    ["vietnamese-curriculum", "dutch-curriculum"],
     [
-      "com.sleepymario.language.korean", "com.sleepymario.language.chinese.mandarin.traditional",
-      "com.sleepymario.language.japanese", "com.sleepymario.language.vietnamese",
-      "com.sleepymario.language.dutch", "com.sleepymario.language.english",
-      "com.sleepymario.language.german", "com.sleepymario.language.french",
-      "com.sleepymario.language.spanish"
+      "com.sleepymario.language.vietnamese", "com.sleepymario.language.dutch"
     ]
   );
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
-    const expectedLanguages = ["Korean", "Chinese - Mandarin (Traditional)", "Japanese", "Vietnamese", "Dutch", "English", "German", "French", "Spanish"];
+    const expectedLanguages = ["Vietnamese", "Dutch"];
     const purple = "\x1b[38;5;141m";
     const pink = "\x1b[38;5;213m";
     const reset = "\x1b[0m";
@@ -1093,10 +1044,10 @@ test("Vietnamese Chapters 1–50 project beginner Language Notes without flatten
   }
 });
 
-test("Vietnamese and Korean Characters views use reader-safe tables while retaining packaged identity", async () => {
+test("Vietnamese Characters views use reader-safe tables while retaining packaged identity", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["vietnamese-curriculum", "korean-curriculum"],
-    ["com.sleepymario.language.vietnamese", "com.sleepymario.language.korean"]
+    ["vietnamese-curriculum"],
+    ["com.sleepymario.language.vietnamese"]
   );
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
@@ -1149,25 +1100,6 @@ test("Vietnamese and Korean Characters views use reader-safe tables while retain
       }
     }
 
-    const korean = language("Korean");
-    const koreanChapter = korean.children.find((node) => node.filePath?.endsWith("chapter-001-basic-life-sentences-1/chapter.md"));
-    assert.ok(koreanChapter);
-    const rawKorean = await readInstalledContentEntry({
-      dataDir: fixture.dataDir,
-      packageId: koreanChapter.packageId,
-      packageVersion: koreanChapter.packageVersion,
-      path: koreanChapter.filePath,
-      locale: "en-US"
-    });
-    assert.match(rawKorean.text, /\| Korean Word \| Hanja Form \| Meaning in This Usage\s+\| Status\s+\| Note/u);
-    const koreanOff = await renderLanguageTreeRightPane(koreanChapter, { dataDir: fixture.dataDir, displayMode: "normal", charactersEnabled: false });
-    assert.doesNotMatch(koreanOff, /Sino-Korean Vocabulary|### Hanja/u);
-    for (const mode of ["normal", "expert", "developer"]) {
-      const output = await renderLanguageTreeRightPane(koreanChapter, { dataDir: fixture.dataDir, displayMode: mode, charactersEnabled: true });
-      assert.match(output, /### Sino-Korean Vocabulary/u);
-      assert.doesNotMatch(output, /Canonical Identity|Canonical ID|Lexical identity|Sense identity|canonicalIdentity/u);
-      if (mode !== "developer") assert.match(output, /\| Word \| Characters \| Meaning \| Usage \|/u);
-    }
   } finally {
     await fixture.cleanup();
   }
@@ -1338,90 +1270,6 @@ test("Normal deck preview is unchanged while Developer adds package metadata", a
   }
 });
 
-test("language tree exposes German content and review deck labels", async () => {
-  const fixture = await createInstalledLanguageFixture(["german-curriculum"], ["com.sleepymario.language.german"]);
-  try {
-    const tree = await buildLanguageTree(fixture.dataDir);
-    const german = tree.children.find((node) => node.label === "German");
-    const readContent = german.children.find((node) => node.label === "Read content");
-    const reviewDecks = german.children.find((node) => node.label === "Review decks");
-
-    assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
-    assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
-test("language tree exposes French and Spanish content and review deck labels", async () => {
-  const fixture = await createInstalledLanguageFixture(
-    ["french-curriculum", "spanish-curriculum"],
-    ["com.sleepymario.language.french", "com.sleepymario.language.spanish"]
-  );
-  try {
-    const tree = await buildLanguageTree(fixture.dataDir);
-    const french = tree.children.find((node) => node.label === "French");
-    const spanish = tree.children.find((node) => node.label === "Spanish");
-    const frenchReadContent = french.children.find((node) => node.label === "Read content");
-    const frenchReviewDecks = french.children.find((node) => node.label === "Review decks");
-    const spanishReadContent = spanish.children.find((node) => node.label === "Read content");
-    const spanishReviewDecks = spanish.children.find((node) => node.label === "Review decks");
-
-    assert.ok(frenchReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
-    assert.ok(frenchReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(frenchReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
-    assert.ok(spanishReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
-    assert.ok(spanishReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.deepEqual(spanishReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
-test("language tree exposes Japanese writing placeholders and core review deck", async () => {
-  const fixture = await createInstalledLanguageFixture(["japanese-curriculum"], ["com.sleepymario.language.japanese"]);
-  try {
-    const tree = await buildLanguageTree(fixture.dataDir);
-    const japanese = tree.children.find((node) => node.label === "Japanese");
-    const readContent = japanese.children.find((node) => node.label === "Read content");
-    const reviewDecks = japanese.children.find((node) => node.label === "Review decks");
-
-    assert.ok(readContent.children.some((node) => node.label === "Hiragana"));
-    assert.ok(readContent.children.some((node) => node.label === "Katakana"));
-    assert.ok(readContent.children.some((node) => node.label === "An Introduction to Kanji"));
-    assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
-    assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.ok(readContent.children.some((node) => node.label === "Chapter 20 -- A Day Trip to Kyoto"));
-    assert.ok(readContent.children.filter((node) => node.label === "Grammar").length >= 4);
-    assert.equal(readContent.children.some((node) => node.label === "Grammar - Hard"), false);
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20"]);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
-test("language tree exposes Korean and Chinese review deck labels cleanly", async () => {
-  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum"], [
-    "com.sleepymario.language.korean",
-    "com.sleepymario.language.chinese.mandarin.traditional"
-  ]);
-  try {
-    const tree = await buildLanguageTree(fixture.dataDir);
-    const korean = tree.children.find((node) => node.label === "Korean");
-    const chinese = tree.children.find((node) => node.label === "Chinese - Mandarin (Traditional)");
-    const koreanReview = korean.children.find((node) => node.label === "Review decks");
-    const chineseReview = chinese.children.find((node) => node.label === "Review decks");
-
-    assert.deepEqual(koreanReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50"]);
-    assert.deepEqual(chineseReview.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
-    assert.equal(koreanReview.children.some((node) => node.label.includes("com.sleepymario")), false);
-    assert.equal(chineseReview.children.some((node) => node.label.includes("cards.tsv")), false);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
 test("Vietnamese read content starts with five canonical Foundation labels before canonical Chapter 1", async () => {
   const fixture = await createInstalledLanguageFixture(["vietnamese-curriculum"], ["com.sleepymario.language.vietnamese"]);
   try {
@@ -1557,95 +1405,6 @@ test("Vietnamese read content interleaves reviews after Core Chapters 5 and 10",
   }
 });
 
-test("Korean read content tree starts with fixed Hangul chapter entries and keeps review deck read entries", async () => {
-  const fixture = await createInstalledLanguageFixture(["korean-curriculum"], ["com.sleepymario.language.korean"]);
-  try {
-    const tree = await buildLanguageTree(fixture.dataDir);
-    const korean = tree.children.find((node) => node.label === "Korean");
-    const readContent = korean.children.find((node) => node.label === "Read content");
-
-    assert.deepEqual(readContent.children.slice(0, 7).map((node) => node.filePath), [
-      "units/introduction-to-hangul/chapter-01-vowels/README.md",
-      "units/introduction-to-hangul/chapter-02-basic-consonants/README.md",
-      "units/introduction-to-hangul/chapter-03-aspirated-and-tense/README.md",
-      "units/introduction-to-hangul/chapter-04-basic-batchim/README.md",
-      "units/introduction-to-hangul/chapter-05-carry-over/README.md",
-      "units/introduction-to-hangul/chapter-06-sound-changes/README.md",
-      "units/introduction-to-hangul/chapter-07-compound-batchim/README.md"
-    ]);
-    assert.equal(readContent.children[7]?.filePath, "units/korean-core/chapter-001-basic-life-sentences-1/chapter.md");
-    const expanded = new Set(["languages", "com.sleepymario.language.korean", "com.sleepymario.language.korean:read"]);
-    const visible = flattenVisibleLanguageTree(tree, expanded);
-    const output = renderTwoPaneLanguageTree(tree, expanded, visible.findIndex((entry) => entry.node.id === readContent.children[0]?.id), "Preview", false);
-
-    assert.match(output, /Han Gul 1 -- Vowels/u);
-    assert.match(output, /Han Gul 2 -- Basic/u);
-    assert.match(output, /Han Gul 7 -- Compound[\s\S]+받침/u);
-    assert.match(output, /Ch 1 -- Names and/u);
-    assert.doesNotMatch(output, /Ch 1 -- Vowels/u);
-    assert.equal(readContent.children.some((node) => node.filePath?.startsWith("review-decks/")), false);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
-test("Developer language tree exposes both grammar variants inside one Grammar section per block", async () => {
-  const fixture = await createInstalledLanguageFixture(["korean-curriculum"], ["com.sleepymario.language.korean"]);
-  try {
-    const tree = await buildLanguageTree(fixture.dataDir, "developer");
-    const korean = tree.children.find((node) => node.label === "Korean");
-    const readContent = korean.children.find((node) => node.label === "Read content");
-    const labels = readContent.children.map((node) => node.label);
-    const expanded = new Set(["languages", "com.sleepymario.language.korean", "com.sleepymario.language.korean:read"]);
-    const visible = flattenVisibleLanguageTree(tree, expanded);
-
-    for (const blockEnd of [5, 10, 15, 20, 25, 30, 35, 40]) {
-      const chapterIndex = labels.findIndex((label) => label.startsWith(`Chapter ${blockEnd} -- `));
-      const paddedStart = String(blockEnd - 4).padStart(3, "0");
-      const paddedEnd = String(blockEnd).padStart(3, "0");
-      const coreChapterIndex = readContent.children.findIndex((node) =>
-        node.filePath === `units/korean-core/chapter-${paddedEnd}-basic-life-sentences-${blockEnd}/chapter.md` ||
-        node.filePath === `units/korean-core/chapter-${paddedEnd}-basic-sentences-${blockEnd}/chapter.md`
-      );
-      const grammarIndex = readContent.children.findIndex((node, index) => index > coreChapterIndex && node.label === "Grammar");
-      const grammarNode = readContent.children[grammarIndex];
-
-      assert.notEqual(chapterIndex, -1);
-      assert.notEqual(coreChapterIndex, -1);
-      assert.equal(grammarIndex, coreChapterIndex + 1);
-      assert.equal(grammarNode.kind, "content");
-      assert.equal(grammarNode.filePath, `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-easy/chapter.md`);
-      assert.deepEqual(grammarNode.grammarVariantPaths, [
-        `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-easy/chapter.md`,
-        `units/korean-core/chapter-${paddedStart}-${paddedEnd}-grammar-hard/chapter.md`
-      ]);
-      const grammarMarkdown = await renderLanguageTreeRightPane(grammarNode, { dataDir: fixture.dataDir, displayMode: "developer" });
-      const grammarOutput = renderTwoPaneLanguageTree(
-        tree,
-        expanded,
-        visible.findIndex((entry) => entry.node.id === grammarNode.id),
-        grammarMarkdown,
-        false
-      );
-
-      assert.equal((grammarMarkdown.match(/^# Grammar$/gmu) ?? []).length, 1);
-      assert.match(grammarMarkdown, /^## Normal$/mu);
-      assert.match(grammarMarkdown, /^## Expert$/mu);
-      assert.match(grammarMarkdown, /Plain Summary[\s\S]*Technical Summary/u);
-      assert.doesNotMatch(grammarMarkdown, /Grammar Easy|Grammar Hard|Grammar: Normal|Grammar: Expert/u);
-      assert.doesNotMatch(grammarMarkdown, /^#{1,6} Grammar Points?$/mu);
-      assert.match(grammarOutput, /\|\s*>\s+Grammar\s+\|/u);
-      assert.doesNotMatch(grammarOutput, /\|\s*>\s+(?:\.\.\.|…)\s+\|/u);
-    }
-
-    assert.equal(labels.includes("Grammar Summary"), false);
-    assert.equal(labels.includes("Grammar Summarize"), false);
-    assert.equal(labels.includes("Chapter: 1-5 grammar"), false);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
 test("Dutch read tree includes the complete zero-padded Chapters 11-75 blocks", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
@@ -1687,44 +1446,10 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-75 blocks", 
   }
 });
 
-test("language tree exposes Mandarin variant readable content with script-specific Core review decks", async () => {
-  const fixture = await createInstalledLanguageFixture(
-    ["chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum"],
-    [
-      "com.sleepymario.language.chinese.mandarin.traditional",
-      "com.sleepymario.language.chinese.mandarin.simplified"
-    ]
-  );
-  try {
-    const tree = await buildLanguageTree(fixture.dataDir);
-    const traditional = tree.children.find((node) => node.label === "Chinese - Mandarin (Traditional)");
-    const simplified = tree.children.find((node) => node.label === "Chinese - Mandarin (Simplified)");
-    const traditionalReadContent = traditional.children.find((node) => node.label === "Read content");
-    const traditionalReviewDecks = traditional.children.find((node) => node.label === "Review decks");
-    const simplifiedReadContent = simplified.children.find((node) => node.label === "Read content");
-    const simplifiedReviewDecks = simplified.children.find((node) => node.label === "Review decks");
-
-    assert.ok(traditionalReadContent.children.some((node) => node.label === "Introduction to Hanyu Pinyin"));
-    assert.ok(traditionalReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
-    assert.ok(traditionalReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.ok(traditionalReadContent.children.some((node) => node.label === "Grammar"));
-    assert.equal(traditionalReadContent.children.some((node) => node.label === "Grammar - Hard"), false);
-    assert.deepEqual(traditionalReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
-    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Introduction to Hanyu Pinyin"));
-    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
-    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Chapter 5 -- First Wellbeing Questions"));
-    assert.ok(simplifiedReadContent.children.some((node) => node.label === "Grammar"));
-    assert.equal(simplifiedReadContent.children.some((node) => node.label === "Grammar - Hard"), false);
-    assert.deepEqual(simplifiedReviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10"]);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
 test("module tree includes available modules from a catalogue with install status", async () => {
   const fixture = await createInstalledLanguageFixture(
-    ["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"],
-    ["com.sleepymario.language.korean"]
+    ["vietnamese-curriculum", "dutch-curriculum"],
+    ["com.sleepymario.language.dutch"]
   );
   try {
     const descriptors = await listAvailableModuleDescriptors(fixture.cataloguePath, fixture.dataDir);
@@ -1733,27 +1458,11 @@ test("module tree includes available modules from a catalogue with install statu
     const availableLanguages = available.children.find((node) => node.label === "Languages");
 
     assert.deepEqual(descriptors.filter((descriptor) => descriptor.category === "Languages").map((descriptor) => `${descriptor.displayName}:${descriptor.availableStatus}`), [
-      "Chinese - Mandarin (Simplified):available",
-      "Chinese - Mandarin (Traditional):available",
-      "Dutch:available",
-      "English:available",
-      "French:available",
-      "German:available",
-      "Japanese:available",
-      "Korean:installed",
-      "Spanish:available",
+      "Dutch:installed",
       "Vietnamese:available"
     ]);
     assert.deepEqual(availableLanguages.children.map((node) => node.label), [
-      "Chinese - Mandarin (Simplified) [Available]",
-      "Chinese - Mandarin (Traditional) [Available]",
-      "Dutch [Available]",
-      "English [Available]",
-      "French [Available]",
-      "German [Available]",
-      "Japanese [Available]",
-      "Korean [Installed]",
-      "Spanish [Available]",
+      "Dutch [Installed]",
       "Vietnamese [Available]"
     ]);
   } finally {
@@ -2401,35 +2110,6 @@ test("review deck tree status handles missing progress files and exposes output-
   }
 });
 
-test("Korean read content menu pins seven Hangul chapter entries before numbered core chapters", () => {
-  const items = readableContentEntriesToMenuItems([
-    readableEntry("units/korean-core/chapter-001-basic-life-sentences-1/chapter.md"),
-    readableEntry("review-decks/chapter-001-005/README.md"),
-    readableEntry("units/introduction-to-hangul/chapter-07-compound-batchim/README.md"),
-    readableEntry("units/introduction-to-hangul/chapter-01-vowels/README.md"),
-    readableEntry("units/introduction-to-hangul/chapter-03-aspirated-and-tense/README.md"),
-    readableEntry("units/korean-core/chapter-002-basic-life-sentences-2/chapter.md"),
-    readableEntry("units/introduction-to-hangul/chapter-02-basic-consonants/README.md"),
-    readableEntry("review-decks/chapter-006-010/README.md"),
-    readableEntry("units/introduction-to-hangul/chapter-06-sound-changes/README.md"),
-    readableEntry("units/introduction-to-hangul/chapter-04-basic-batchim/README.md"),
-    readableEntry("units/introduction-to-hangul/chapter-05-carry-over/README.md")
-  ]);
-
-  assert.deepEqual(items.slice(0, 7).map((item) => item.filePath), [
-    "units/introduction-to-hangul/chapter-01-vowels/README.md",
-    "units/introduction-to-hangul/chapter-02-basic-consonants/README.md",
-    "units/introduction-to-hangul/chapter-03-aspirated-and-tense/README.md",
-    "units/introduction-to-hangul/chapter-04-basic-batchim/README.md",
-    "units/introduction-to-hangul/chapter-05-carry-over/README.md",
-    "units/introduction-to-hangul/chapter-06-sound-changes/README.md",
-    "units/introduction-to-hangul/chapter-07-compound-batchim/README.md"
-  ]);
-  assert.equal(items[7]?.filePath, "units/korean-core/chapter-001-basic-life-sentences-1/chapter.md");
-  assert.equal(items.some((item) => item.filePath === "review-decks/chapter-001-005/README.md"), true);
-  assert.equal(items.some((item) => item.filePath === "review-decks/chapter-006-010/README.md"), true);
-});
-
 test("learner-facing dialogue uses purple labels and pink utterances without affecting alignment", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
@@ -2611,28 +2291,6 @@ test("Dutch review sources submenu uses clean selectable deck labels", async () 
   }
 });
 
-test("Korean and Chinese review source menus use clean deck names", async () => {
-  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum"], [
-    "com.sleepymario.language.korean",
-    "com.sleepymario.language.chinese.mandarin.traditional"
-  ]);
-  try {
-    const korean = reviewSourcesToMenuItems(await listReadingReviewSources({
-      dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.korean"
-    }));
-    const chinese = reviewSourcesToMenuItems(await listReadingReviewSources({
-      dataDir: fixture.dataDir,
-      packageId: "com.sleepymario.language.chinese.mandarin.traditional"
-    }));
-
-    assert.deepEqual(korean.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50"]);
-    assert.deepEqual(chinese.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Pinyin-Zhuyin", "Pinyin-Zhuyin with Tones"]);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
 test("selecting an installed review source runs review inside the right pane", async () => {
   const fixture = await createInstalledDutchFixture();
   const calls = [];
@@ -2789,21 +2447,6 @@ test("embedded review hides internal notes and renders compact learner notes and
   assert.match(output, /Notes\n  - noun\n  - kinship noun\n\nExamples:\n  - Ik ben student\.\n  - De student is hier\.\n  - Sophie is student\./);
   assert.doesNotMatch(output, /Extra example should be capped/);
   assert.doesNotMatch(output, /\x1b\[[0-9;]*m/);
-});
-
-test("Korean embedded review reveal shows strict read-content examples", () => {
-  const exercise = reviewExercise({
-    promptLanguage: "ko",
-    answerLanguage: "en",
-    promptLines: ["학생"],
-    answerLines: ["student"],
-    noteLines: ["Deck: Chapter 1-5. Noun."],
-    exampleLines: ["저는 학생입니다.", "마리아: 학생입니까?", "김민준: 네, 학생입니다."]
-  });
-  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.korean");
-
-  assert.match(output, /Examples:\n  - 저는 학생입니다\.\n  - 마리아: 학생입니까\?\n  - 김민준: 네, 학생입니다\./u);
-  assert.doesNotMatch(output, /missing-source-example/);
 });
 
 test("normal five-chapter review reveal hides raw Notes but retains literal examples", () => {
@@ -3090,7 +2733,7 @@ test("review section can be expanded without starting review", async () => {
 });
 
 test("Enter on an available module does not install but Space installs and refreshes installed modules", async () => {
-  const fixture = await createInstalledLanguageFixture(["korean-curriculum", "chinese-mandarin-traditional-curriculum", "chinese-mandarin-simplified-curriculum", "english-curriculum", "japanese-curriculum", "vietnamese-curriculum", "dutch-curriculum", "german-curriculum", "french-curriculum", "spanish-curriculum"], []);
+  const fixture = await createInstalledLanguageFixture(["vietnamese-curriculum", "dutch-curriculum"], []);
   try {
     const enterOnly = new FakeTerminal([
       key("down"),
@@ -3109,7 +2752,7 @@ test("Enter on an available module does not install but Space installs and refre
     let tree = await buildModuleTree({ dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
     let installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "Languages");
 
-    assert.equal(installedLanguages.children.some((node) => node.label === "Chinese - Mandarin (Traditional)"), false);
+    assert.equal(installedLanguages.children.some((node) => node.label === "Vietnamese"), false);
     assert.match(enterOnly.output, /Modules available/u);
 
     const install = new FakeTerminal([
@@ -3130,8 +2773,8 @@ test("Enter on an available module does not install but Space installs and refre
     installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "Languages");
     const availableLanguages = tree.children.find((node) => node.label === "Modules available").children.find((node) => node.label === "Languages");
 
-    assert.ok(installedLanguages.children.some((node) => node.label === "Chinese - Mandarin (Traditional)"));
-    assert.ok(availableLanguages.children.some((node) => node.label === "Chinese - Mandarin (Traditional) [Installed]"));
+    assert.ok(installedLanguages.children.some((node) => node.label === "Vietnamese"));
+    assert.ok(availableLanguages.children.some((node) => node.label === "Vietnamese [Installed]"));
     assert.match(install.output, /Module installed\./);
 
     const alreadyInstalled = new FakeTerminal([
@@ -3961,11 +3604,8 @@ async function createInstalledLanguageFixture(targetIds, packageIds) {
   const cataloguePath = join(root, "catalogue", "catalogue.json");
   const dataDir = join(root, "data", "content");
   const reviewTargetByReadingTarget = new Map([
-    ["korean-curriculum", "korean-core-reviews"], ["chinese-mandarin-traditional-curriculum", "chinese-traditional-core-reviews"],
-    ["chinese-mandarin-simplified-curriculum", "chinese-simplified-core-reviews"], ["english-curriculum", "english-core-reviews"],
-    ["japanese-curriculum", "japanese-core-reviews"], ["vietnamese-curriculum", "vietnamese-core-reviews"],
-    ["dutch-curriculum", "dutch-core-reviews"], ["german-curriculum", "german-core-reviews"],
-    ["french-curriculum", "french-core-reviews"], ["spanish-curriculum", "spanish-core-reviews"]
+    ["vietnamese-curriculum", "vietnamese-core-reviews"],
+    ["dutch-curriculum", "dutch-core-reviews"]
   ]);
   const allTargets = [...targetIds, ...targetIds.map(target => reviewTargetByReadingTarget.get(target)).filter(Boolean)];
   for (const targetId of allTargets) {

@@ -96,7 +96,7 @@ test("duplicate package ID and version fails", () => {
   catalogue.packages[1].packageId = catalogue.packages[0].packageId;
   catalogue.packages[1].packageVersion = catalogue.packages[0].packageVersion;
 
-  assertInvalid(catalogue, /Duplicate package entry: com\.sleepymario\.language\.korean@0\.1\.0/);
+  assertInvalid(catalogue, /Duplicate package entry: com\.sleepymario\.language\.synthetic@0\.1\.0/);
 });
 
 test("duplicate package URL fails", () => {
@@ -141,31 +141,6 @@ test("generated catalogue from validation packages contains expected local packa
       generatedAt: "2026-07-06T00:00:00Z"
     });
     await generateContentPackage({
-      targetId: "korean-curriculum",
-      outputDirectory: packageDirectory,
-      generatedAt: "2026-07-06T00:00:00Z"
-    });
-    await generateContentPackage({
-      targetId: "chinese-mandarin-traditional-curriculum",
-      outputDirectory: packageDirectory,
-      generatedAt: "2026-07-06T00:00:00Z"
-    });
-    await generateContentPackage({
-      targetId: "chinese-mandarin-simplified-curriculum",
-      outputDirectory: packageDirectory,
-      generatedAt: "2026-07-06T00:00:00Z"
-    });
-    await generateContentPackage({
-      targetId: "english-curriculum",
-      outputDirectory: packageDirectory,
-      generatedAt: "2026-07-06T00:00:00Z"
-    });
-    await generateContentPackage({
-      targetId: "japanese-curriculum",
-      outputDirectory: packageDirectory,
-      generatedAt: "2026-07-06T00:00:00Z"
-    });
-    await generateContentPackage({
       targetId: "vietnamese-curriculum",
       outputDirectory: packageDirectory,
       generatedAt: "2026-07-06T00:00:00Z"
@@ -175,22 +150,6 @@ test("generated catalogue from validation packages contains expected local packa
       outputDirectory: packageDirectory,
       generatedAt: "2026-07-06T00:00:00Z"
     });
-    await generateContentPackage({
-      targetId: "german-curriculum",
-      outputDirectory: packageDirectory,
-      generatedAt: "2026-07-06T00:00:00Z"
-    });
-    await generateContentPackage({
-      targetId: "french-curriculum",
-      outputDirectory: packageDirectory,
-      generatedAt: "2026-07-06T00:00:00Z"
-    });
-    await generateContentPackage({
-      targetId: "spanish-curriculum",
-      outputDirectory: packageDirectory,
-      generatedAt: "2026-07-06T00:00:00Z"
-    });
-
     const outputPath = join(catalogueDirectory, "catalogue.json");
     const first = await generateLocalContentPackageCatalogue({
       packagesDirectory: packageDirectory,
@@ -203,23 +162,15 @@ test("generated catalogue from validation packages contains expected local packa
       generatedAt: "2026-07-06T00:00:00Z"
     });
 
-    assert.equal(first.packageCount, 11);
+    assert.equal(first.packageCount, 3);
     assert.equal(first.changed, true);
     assert.equal(second.changed, false);
     assertValid(first.catalogue);
     assert.deepEqual(
       first.catalogue.packages.map((entry) => entry.packageId),
       [
-        "com.sleepymario.language.chinese.mandarin.simplified",
-        "com.sleepymario.language.chinese.mandarin.traditional",
         "com.sleepymario.language.dutch",
-        "com.sleepymario.language.english",
-        "com.sleepymario.language.french",
-        "com.sleepymario.language.german",
-        "com.sleepymario.language.japanese",
-        "com.sleepymario.language.korean",
         "com.sleepymario.language.linguistic-terminology",
-        "com.sleepymario.language.spanish",
         "com.sleepymario.language.vietnamese"
       ]
     );
@@ -262,7 +213,7 @@ function validCatalogue() {
     description: "Local catalogue.",
     generatedAt: "2026-07-06T00:00:00Z",
     packages: [
-      validPackage("com.sleepymario.language.korean", "file:///tmp/korean.wspkg"),
+      validPackage("com.sleepymario.language.synthetic", "file:///tmp/synthetic.wspkg"),
       validPackage("com.sleepymario.language.linguistic-terminology", "https://example.invalid/terminology.wspkg")
     ]
   };

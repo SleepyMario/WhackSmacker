@@ -12,8 +12,8 @@ import {
 
 test("content package source resolution honors explicit roots without checkout assumptions",()=>{
   const repositoryRoot=join(tmpdir(),"worktrees","whacksmacker-feature"),sourceRoot=join(tmpdir(),"grouped sources","課程");
-  const resolution=resolveContentPackageSourcePath("../korean-curriculum",{repositoryRoot,sourceRoot:`${sourceRoot}/`,env:{[contentPackageSourceRootEnvironmentVariable]:join(tmpdir(),"ignored environment root")}});
-  assert.equal(resolution.resolvedPath,join(sourceRoot,"korean-curriculum"));
+  const resolution=resolveContentPackageSourcePath("../example-curriculum",{repositoryRoot,sourceRoot:`${sourceRoot}/`,env:{[contentPackageSourceRootEnvironmentVariable]:join(tmpdir(),"ignored environment root")}});
+  assert.equal(resolution.resolvedPath,join(sourceRoot,"example-curriculum"));
   assert.match(resolution.sourceRootSelection,/explicit sourceRoot option/);
 });
 
@@ -40,8 +40,8 @@ test("environment source roots are isolated to the supplied environment",()=>{
 });
 
 test("an empty explicit or environment source root fails clearly",()=>{
-  assert.throws(()=>resolveContentPackageSourcePath("../korean-curriculum",{sourceRoot:"  ",env:{}}),/explicit sourceRoot option.*must not be empty.*korean-curriculum/iu);
-  assert.throws(()=>resolveContentPackageSourcePath("../korean-curriculum",{env:{[contentPackageSourceRootEnvironmentVariable]:""}}),/environment variable.*must not be empty.*korean-curriculum/iu);
+  assert.throws(()=>resolveContentPackageSourcePath("../example-curriculum",{sourceRoot:"  ",env:{}}),/explicit sourceRoot option.*must not be empty.*example-curriculum/iu);
+  assert.throws(()=>resolveContentPackageSourcePath("../example-curriculum",{env:{[contentPackageSourceRootEnvironmentVariable]:""}}),/environment variable.*must not be empty.*example-curriculum/iu);
 });
 
 test("missing repositories report configured resolved and selected-root details",async()=>{

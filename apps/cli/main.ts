@@ -57,10 +57,6 @@ Interactive mode:
       When --catalogue is supplied, Modules available lists first-party installable packages and Space installs the selected package.
 
 Language commands:
-  whacksmacker language korean [--file <path>] [--version <version>] [--data-dir <dir>]
-  wsm language korean [--file <path>] [--version <version>] [--data-dir <dir>]
-      Browse installed Korean curriculum content, including Hangul Foundation entries.
-
   whacksmacker language terms [<group>] [--file <path>] [--version <version>] [--data-dir <dir>]
   wsm language terms [<group>] [--file <path>] [--version <version>] [--data-dir <dir>]
       Browse installed Linguistic Terminology package content.
@@ -310,7 +306,6 @@ function commandAcceptsDataDir(path: readonly string[]): boolean {
     || path[0] === "review"
     || path[0] === "module"
     || path[0] === "backup"
-    || sameCliPath(path, ["language", "korean"])
     || sameCliPath(path, ["language", "terms"]);
 }
 

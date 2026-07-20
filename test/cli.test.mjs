@@ -107,7 +107,6 @@ test("help prints native WhackSmacker usage", async () => {
   assert.equal(result.exitCode, 0);
   assert.match(result.stdout, /^WhackSmacker/);
   assert.match(result.stdout, /A modular terminal application/);
-  assert.match(result.stdout, /whacksmacker language korean \[--file <path>\]/);
   assert.match(result.stdout, /whacksmacker language terms \[<group>\] \[--file <path>\]/);
   assert.match(result.stdout, /whacksmacker language terminology \[--search <text>\]/);
   assert.match(result.stdout, /whacksmacker --data-dir <dir> --catalogue <catalogue\.json>/);
@@ -249,67 +248,6 @@ test("unknown commands and removed Anki review shape fail clearly", async () => 
   assert.match(legacyDecks.stderr, /Unknown command: decks/);
 });
 
-test("leading wrapper globals are forwarded to command mode", async () => {
-  const fixture = await createInstalledKoreanFixture();
-  try {
-    const grammarReads = await Promise.all([
-      "units/korean-core/chapter-001-005-grammar-easy/chapter.md",
-      "units/korean-core/chapter-001-005-grammar-hard/chapter.md",
-      "units/korean-core/chapter-006-010-grammar-easy/chapter.md",
-      "units/korean-core/chapter-006-010-grammar-hard/chapter.md",
-      "units/korean-core/chapter-011-015-grammar-easy/chapter.md",
-      "units/korean-core/chapter-011-015-grammar-hard/chapter.md"
-    ].map((filePath) => runCli([
-      "--data-dir",
-      fixture.dataDir,
-      "--catalogue",
-      fixture.cataloguePath,
-      "content",
-      "read",
-      "com.sleepymario.language.korean",
-      "--file",
-      filePath
-    ])));
-    const reviewShow = await runCli([
-      "--data-dir",
-      fixture.dataDir,
-      "--catalogue",
-      fixture.cataloguePath,
-      "review",
-      "show",
-      "com.sleepymario.language.korean",
-      "review-decks/chapter-001-005/0005-korean---english-vocabulary",
-      "--answer"
-    ]);
-
-    for (const result of grammarReads) {
-      assert.equal(result.exitCode, 0);
-      assert.equal(result.stderr, "");
-    }
-    assert.match(grammarReads[0].stdout, /^# Grammar$/mu);
-    assert.match(grammarReads[0].stdout, /## Plain Summary/);
-    assert.match(grammarReads[1].stdout, /^# Grammar$/mu);
-    assert.match(grammarReads[1].stdout, /## Technical Summary/);
-    for (const result of grammarReads) {
-      assert.doesNotMatch(result.stdout, /^#{1,6} Grammar(?: Easy| Hard|: Normal|: Expert| Points?| Section)$/mu);
-    }
-    assert.match(grammarReads[2].stdout, /N이\/가 있습니다/u);
-    assert.doesNotMatch(grammarReads[2].stdout, /KOR-GRAMMAR-/u);
-    assert.match(grammarReads[3].stdout, /identity ladder/u);
-    assert.match(grammarReads[4].stdout, /N이\/가 없어/u);
-    assert.doesNotMatch(grammarReads[4].stdout, /KOR-GRAMMAR-/u);
-    assert.match(grammarReads[5].stdout, /existential and negative-existential/u);
-    assert.equal(reviewShow.exitCode, 0);
-    assert.match(reviewShow.stdout, /Phrase:\n  학생/u);
-    assert.match(reviewShow.stdout, /Answer:\n  student/u);
-    assert.match(reviewShow.stdout, /Examples:\n  - 저는 학생입니다\./u);
-    assert.doesNotMatch(reviewShow.stdout, /Review Prompt|Review Answer|Notes|Metadata/u);
-    assert.equal(reviewShow.stderr, "");
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
 test("geography continents runs without external services", async () => {
   const result = await runCli(["geography", "continents"], { input: "q\n" });
 
@@ -319,47 +257,6 @@ test("geography continents runs without external services", async () => {
   assert.match(result.stdout, /Cards reviewed: 0/);
   assert.equal(result.stderr, "");
 });
-
-async function createInstalledKoreanFixture() {
-  const root = await mkdtemp(join(tmpdir(), "wsm-cli-korean-"));
-  const packageDirectory = join(root, "packages");
-  const cataloguePath = join(root, "catalogue", "catalogue.json");
-  const dataDir = join(root, "data", "content");
-  await generateContentPackage({
-    targetId: "korean-curriculum",
-    outputDirectory: packageDirectory,
-    generatedAt: "2026-07-09T00:00:00Z"
-  });
-  await generateContentPackage({
-    targetId: "korean-core-reviews",
-    outputDirectory: packageDirectory,
-    generatedAt: "2026-07-09T00:00:00Z"
-  });
-  await generateLocalContentPackageCatalogue({
-    packagesDirectory: packageDirectory,
-    outputPath: cataloguePath,
-    generatedAt: "2026-07-09T00:00:00Z"
-  });
-  await installContentPackage({
-    cataloguePath,
-    dataDir,
-    packageId: "com.sleepymario.language.korean",
-    installedAt: "2026-07-09T00:00:00Z"
-  });
-  await installContentPackage({
-    cataloguePath,
-    dataDir,
-    packageId: "com.sleepymario.language.korean.reviews",
-    installedAt: "2026-07-09T00:00:00Z"
-  });
-
-  return {
-    root,
-    cataloguePath,
-    dataDir,
-    cleanup: () => rm(root, { recursive: true, force: true })
-  };
-}
 
 test("module commands expose first-class built-in module metadata", async () => {
   const list = await runCli(["module", "list"]);

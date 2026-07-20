@@ -277,7 +277,6 @@ const mainMenuItems: readonly MenuItem[] = [
 ];
 
 const languageMenuItems: readonly MenuItem[] = [
-  { label: "Korean", kind: "language-fallback", moduleId: "language", packageId: "com.sleepymario.language.korean" },
   { label: "Linguistic Terms", kind: "language-fallback", moduleId: "language", packageId: "com.sleepymario.language.linguistic-terminology" },
   { label: "Back", kind: "back" }
 ];
@@ -1302,7 +1301,7 @@ function nextCurriculumDisplayMode(mode: CurriculumDisplayMode): CurriculumDispl
 }
 
 function charactersToggleAppliesToNode(node: LanguageTreeNode): boolean {
-  return node.packageId === "com.sleepymario.language.vietnamese" || node.packageId === "com.sleepymario.language.korean";
+  return node.packageId === "com.sleepymario.language.vietnamese";
 }
 
 async function persistInteractiveSourceLocale(options: InteractiveMenuOptions, locale: SourceLocale): Promise<InteractiveMenuOptions> {
@@ -2061,8 +2060,6 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
       markdown = removeNamedSectionFromMarkdown(markdown, "Sino-Vietnamese Vocabulary");
       markdown = removeNamedSectionFromMarkdown(markdown, "Sino-Korean Vocabulary");
       markdown = removeNamedSectionFromMarkdown(markdown, "Hanja");
-    } else if (node.packageId === "com.sleepymario.language.korean") {
-      markdown = renameNamedSectionHeading(markdown, "Hanja", "Sino-Korean Vocabulary");
     }
     if (node.readingSupportPath !== undefined) {
       try {
@@ -2289,11 +2286,6 @@ function removeNamedSectionFromMarkdown(markdown: string, title: string): string
   const range = markdownSectionRange(markdown, title);
   if (range === undefined) return markdown;
   return [...range.lines.slice(0, range.start), ...range.lines.slice(range.end)].join("\n");
-}
-
-function renameNamedSectionHeading(markdown: string, from: string, to: string): string {
-  const escaped = from.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
-  return markdown.replace(new RegExp(`^(#{1,6})\\s+${escaped}\\s*$`, "gimu"), `$1 ${to}`);
 }
 
 function insertAfterNamedSection(markdown: string, title: string, addition: string): string {
@@ -3689,18 +3681,6 @@ async function runLinguisticTermsMenu(registry: InMemoryCliCommandRegistry, term
       return true;
     }
   }
-}
-
-async function runLanguageAction(registry: InMemoryCliCommandRegistry, terminal: Terminal, label: string): Promise<boolean> {
-  const commandPath = ["language", "korean"];
-  const command = registry.find(commandPath);
-
-  if (command === null) {
-    return showMessage(terminal, `Command is not registered: ${commandPath.join(" ")}`);
-  }
-
-  const output = await runCapturedLanguageCommand(terminal, command, []);
-  return showPagedMessage(terminal, renderLanguageActionResult(label, output));
 }
 
 async function runLinguisticTermsAction(registry: InMemoryCliCommandRegistry, terminal: Terminal, label: string): Promise<boolean> {

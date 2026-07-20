@@ -75,12 +75,12 @@ test("installed Dutch Chapters 2–15 render every authored grammar role blue in
 });
 
 test("representative installed language grammars share the central blue role", async () => {
-  const targets = ["vietnamese-curriculum", "korean-curriculum", "dutch-curriculum", "chinese-mandarin-traditional-curriculum", "japanese-curriculum"];
-  const packageIds = ["com.sleepymario.language.vietnamese", "com.sleepymario.language.korean", "com.sleepymario.language.dutch", "com.sleepymario.language.chinese.mandarin.traditional", "com.sleepymario.language.japanese"];
+  const targets = ["vietnamese-curriculum", "dutch-curriculum"];
+  const packageIds = ["com.sleepymario.language.vietnamese", "com.sleepymario.language.dutch"];
   const fixture = await installedLanguages(targets, packageIds);
   try {
     const tree = await buildLanguageTree(fixture.dataDir, "normal");
-    for (const label of ["Vietnamese", "Korean", "Dutch", "Chinese - Mandarin (Traditional)", "Japanese"]) {
+    for (const label of ["Vietnamese", "Dutch"]) {
       const language = tree.children.find((node) => node.label === label);
       const readContent = language.children.find((node) => node.label === "Read content");
       const grammar = readContent.children.find((node) => node.label === "Grammar");

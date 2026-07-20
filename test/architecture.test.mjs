@@ -40,7 +40,6 @@ test("application CLI registry exposes language commands and the geography proto
     "content update",
     "content updates",
     "geography continents",
-    "language korean",
     "language terminology",
     "language terms",
     "mathematics beginner-volume-one",
@@ -80,8 +79,6 @@ test("domain-prefixed language commands resolve directly", () => {
   assert.equal(resolveCliCommand(registry, ["language", "status"]), null);
   assert.equal(resolveCliCommand(registry, ["language", "decks"]), null);
   assert.equal(resolveCliCommand(registry, ["language", "review", "Default"]), null);
-  assert.equal(resolveCliCommand(registry, ["language", "korean"])?.path.join(" "), "language korean");
-  assert.deepEqual(resolveCliCommand(registry, ["language", "korean", "--data-dir", "/tmp/wsm"])?.args, ["--data-dir", "/tmp/wsm"]);
   assert.equal(resolveCliCommand(registry, ["language", "terms"])?.path.join(" "), "language terms");
   assert.deepEqual(resolveCliCommand(registry, ["language", "terms", "--file", "INDEX.md"])?.args, ["--file", "INDEX.md"]);
   assert.equal(resolveCliCommand(registry, ["language", "terminology"])?.path.join(" "), "language terminology");
