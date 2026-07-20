@@ -56,6 +56,20 @@
       "evidence": "はい、楽しみです。",
       "lexicalEntryId": "ja.noun.tanoshimi",
       "senseId": "ja.noun.tanoshimi.looking-forward-to-it"
+    },
+    {
+      "surface": "駅",
+      "reading": "えき",
+      "evidence": "公園は駅の近くです。",
+      "lexicalEntryId": "ja.noun.eki",
+      "senseId": "ja.noun.eki.station"
+    },
+    {
+      "surface": "そのあと",
+      "reading": "そのあと",
+      "evidence": "そのあと、喫茶店へ行きます。",
+      "lexicalEntryId": "ja.expression.sono-ato",
+      "senseId": "ja.expression.sono-ato.after-that"
     }
   ]
 }

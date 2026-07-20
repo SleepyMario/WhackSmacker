@@ -32,8 +32,8 @@
       "wordBoundaryGuide": "ข้าง โต๊ะ มี เก้าอี้ หนึ่ง ตัว."
     },
     {
-      "sourceText": "มีแก้วน้ำหนึ่งใบ.",
-      "wordBoundaryGuide": "มี แก้ว น้ำ หนึ่ง ใบ."
+      "sourceText": "มีน้ำหนึ่งแก้ว.",
+      "wordBoundaryGuide": "มี น้ำ หนึ่ง แก้ว."
     },
     {
       "sourceText": "ห้องนี้เงียบ.",

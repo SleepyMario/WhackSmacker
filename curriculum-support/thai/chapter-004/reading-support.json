@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:subject + object + verb]].",
-      "expert": "The canonical pattern [[grammar:subject + object + verb]] retains its language-specific analysis."
+      "normal": "The chapter pattern is [[grammar:subject + verb + object]].",
+      "expert": "The canonical pattern [[grammar:subject + verb + object]] retains its language-specific analysis."
     }
   ],
   "readingItems": [

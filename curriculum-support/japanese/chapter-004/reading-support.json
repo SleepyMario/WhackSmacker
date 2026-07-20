@@ -56,6 +56,34 @@
       "evidence": "二人はケーキを食べます。",
       "lexicalEntryId": "ja.verb.tabemasu",
       "senseId": "ja.verb.tabemasu.eat-eats-polite"
+    },
+    {
+      "surface": "います",
+      "reading": "います",
+      "evidence": "ゆきは喫茶店にいます。",
+      "lexicalEntryId": "ja.verb.imasu",
+      "senseId": "ja.verb.imasu.be-at-animate"
+    },
+    {
+      "surface": "二人",
+      "reading": "ふたり",
+      "evidence": "二人はケーキを食べます。",
+      "lexicalEntryId": "ja.noun.futari",
+      "senseId": "ja.noun.futari.two-people"
+    },
+    {
+      "surface": "静か",
+      "reading": "しずか",
+      "evidence": "喫茶店は静かです。",
+      "lexicalEntryId": "ja.adjective.shizuka",
+      "senseId": "ja.adjective.shizuka.quiet"
+    },
+    {
+      "surface": "読みます",
+      "reading": "よみます",
+      "evidence": "窓の近くで本を読みます。",
+      "lexicalEntryId": "ja.verb.yomimasu",
+      "senseId": "ja.verb.yomimasu.read"
     }
   ]
 }

@@ -1,5 +1,5 @@
-# Chapter 1-5 Review Deck
+# Thai Review — Chapters 1–5
 
-This authoritative schema-v2 deck contains 62 cards for all and only the 31 canonical lexical senses first introduced in Thai Chapters 1–5. Each sense appears in both Thai-to-English and English-to-Thai directions.
+This authoritative schema-v2 deck contains 122 cards for all and only the 61 canonical lexical senses first introduced in Thai Chapters 1–5. Each sense appears in both Thai-to-English and English-to-Thai directions.
 
-Grammar identities, reinforcement-only forms, and proper-name placeholders are excluded.
+Every card has stable canonical identity, its true first-introduction chapter, exact primary-reading provenance, and literal evidence.

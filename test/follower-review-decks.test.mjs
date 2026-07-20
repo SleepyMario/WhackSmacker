@@ -11,17 +11,18 @@ const root = join(process.cwd(), "..");
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 const licenseSha256 = "c2db9f2b69f04481c3647953636e96f0752c17705b1250edcc2d3c20b9e060c5";
 const noticeSha256 = "6cc450547e608fb817b725bdfa5af11c7394f37dee1ace0bad7da42a1f355c34";
+const reconstructed = JSON.parse(await readFile(join(process.cwd(), "test", "fixtures", "follower-reconstructed-inventories.json"), "utf8"));
 const configs = [
-  ["arabic", "Arabic", "ar", "ARA", 30, 60],
-  ["french", "French", "fr", "FRA", 30, 60],
-  ["german", "German", "de", "GER", 30, 60],
-  ["hindi", "Hindi", "hi", "HIN", 30, 60],
-  ["japanese", "Japanese", "ja", "JPN", 30, 90],
-  ["korean", "Korean", "ko", "KOR", 30, 60],
-  ["russian", "Russian", "ru", "RUS", 30, 60],
-  ["spanish", "Spanish", "es", "SPA", 30, 60],
-  ["thai", "Thai", "th", "THA", 31, 62],
-  ["zulu", "Zulu", "zu", "ZUL", 30, 60]
+  ["arabic", "Arabic", "ar", "ARA", 42, 84],
+  ["french", "French", "fr", "FRA", 60, 120],
+  ["german", "German", "de", "GER", 55, 110],
+  ["hindi", "Hindi", "hi", "HIN", 51, 102],
+  ["japanese", "Japanese", "ja", "JPN", 44, 132],
+  ["korean", "Korean", "ko", "KOR", 47, 94],
+  ["russian", "Russian", "ru", "RUS", 52, 104],
+  ["spanish", "Spanish", "es", "SPA", 56, 112],
+  ["thai", "Thai", "th", "THA", 61, 122],
+  ["zulu", "Zulu", "zu", "ZUL", 43, 86]
 ].map(([slug, name, code, prefix, senses, cards]) => ({ slug, name, code, prefix, senses, cards, core: `${slug}-core` }));
 
 for (const config of configs) {
@@ -45,7 +46,7 @@ for (const config of configs) {
       assert.match(markdown, new RegExp(`${config.prefix}-GRAMMAR-${String(chapter).padStart(3, "0")}`, "u"));
       assert.match(markdown, /^### Grammar$/mu);
       assert.doesNotMatch(markdown, /\*\*[^*]+\*\*/u, "grammar roles use established semantic/code markup, not raw bold");
-      assert.match(ledger, /New canonical lexical senses: ([6-9]|10)$/mu);
+      assert.match(ledger, /New canonical lexical senses: [1-9]\d*$/mu);
       assert.equal(translation.readingType, chapter % 2 === 1 ? "dialogue" : "narrative");
       const aligned = translation.readingType === "dialogue" ? translation.turns : translation.sentences;
       assert.equal(aligned.length, 6);
@@ -112,6 +113,76 @@ for (const config of configs) {
   });
 }
 
+test("independently reconstructed chapter inventories match both ledgers and Review", async () => {
+  for (const config of configs) {
+    const expected = Object.entries(reconstructed.languages[config.slug].chapters).flatMap(([chapter, record]) =>
+      record.senses.map((sense) => ({ ...sense, chapter: Number(chapter), directory: record.directory }))
+    );
+    const repo = join(root, `${config.slug}-curriculum`);
+    for (const sense of expected) {
+      const source = await readFile(join(repo, "units", config.core, sense.directory, "chapter.md"), "utf8");
+      assert.equal(primaryReading(source)[sense.line - 1], sense.evidence, `${sense.senseId}: reconstructed first occurrence changed`);
+    }
+    const ledgerRows = parseLedger(await readFile(join(repo, "units", config.core, "cumulative-ledger.md"), "utf8"), "## Vocabulary Inventory");
+    const deckRows = parseDeck(await readFile(join(process.cwd(), "review-content", config.slug, "review-decks", "chapter-001-005", "cards.tsv"), "utf8"));
+    reconcileReconstructedInventory(expected, ledgerRows.map((row) => row[1]), deckRows.map((row) => row.lexicalIds[1]));
+    for (const row of ledgerRows) {
+      const expectedSense = expected.find((sense) => sense.senseId === row[1]);
+      assert.ok(expectedSense, row[1]);
+      assert.equal(Number(row[5]), expectedSense.chapter, `${row[1]} first chapter`);
+      assert.equal(Number(row[8]), expectedSense.line, `${row[1]} first line`);
+      assert.equal(row[2], expectedSense.form, `${row[1]} form`);
+      assert.equal(row[3], expectedSense.meaning, `${row[1]} meaning`);
+    }
+  }
+});
+
+test("ledger and Review agreement cannot conceal an omitted taught sense", () => {
+  const expected = Object.values(reconstructed.languages.french.chapters).flatMap((chapter) => chapter.senses);
+  const incompleteLedger = expected.slice(1).map((sense) => sense.senseId);
+  const incompleteReview = expected.slice(1).flatMap((sense) => [sense.senseId, sense.senseId]);
+  assert.throws(
+    () => reconcileReconstructedInventory(expected, incompleteLedger, incompleteReview),
+    /reconstructed chapter inventory mismatch/u
+  );
+});
+
+test("repaired French, German, Russian, Spanish, Thai, and Zulu grammar examples enforce the taught rules", async () => {
+  const summaries = async (slug) => {
+    const rootPath = join(root, `${slug}-curriculum`, "units", `${slug}-core`);
+    return {
+      easy: await readFile(join(rootPath, "chapter-001-005-grammar-easy", "chapter.md"), "utf8"),
+      hard: await readFile(join(rootPath, "chapter-001-005-grammar-hard", "chapter.md"), "utf8")
+    };
+  };
+  const french = await summaries("french");
+  assert.match(french.easy, /Example: `On va acheter des tomates\.`/u);
+  assert.match(french.hard, /Profession predicates.*omit the article/su);
+  assert.doesNotMatch(french.hard, /Example: `On va au marché demain \?`/u);
+  const german = await summaries("german");
+  assert.match(german.easy, /Example: `Wo ist das Handy\?`/u);
+  assert.match(german.hard, /polar question.*verb-first order/su);
+  assert.doesNotMatch(german.easy, /Heute \+ Verb \+ subject/u);
+  const russian = await summaries("russian");
+  assert.match(russian.easy, /Example: `Где телефон\?`/u);
+  assert.match(russian.easy, /Example: `Иван ест хлеб\.`/u);
+  assert.doesNotMatch(russian.easy, /Example: `На столе вода\.`/u);
+  const spanish = await summaries("spanish");
+  assert.match(spanish.easy, /Example: `Vamos a comprar fruta\.`/u);
+  assert.match(spanish.hard, /el agua.*remains feminine/su);
+  const thai = await summaries("thai");
+  assert.match(thai.easy, /subject \+ verb \+ object/u);
+  assert.match(thai.hard, /`แก้ว` for glasses of a drink/u);
+  assert.doesNotMatch(thai.easy, /subject \+ object \+ verb/u);
+  const zulu = await summaries("zulu");
+  for (const text of [zulu.easy, zulu.hard]) {
+    assert.match(text, /Example: `Likuphi ipeni\?`/u);
+    assert.match(text, /Example: `UThandi uphatha isikhwama\.`/u);
+    assert.match(text, /Example: `Asihambe manje\.`/u);
+    assert.doesNotMatch(text, /Example: `Yini le\?`/u);
+  }
+});
+
 test("target scripts and language-specific conventions are preserved", async () => {
   const sample = async (slug, core, chapter) => primaryReading(await readFile(join(root, `${slug}-curriculum`, "units", core, chapter, "chapter.md"), "utf8").catch(async () => {
     const dirs = await readdir(join(root, `${slug}-curriculum`, "units", core));
@@ -139,6 +210,7 @@ test("target scripts and language-specific conventions are preserved", async () 
 test("Japanese and Thai core sidecars provide exact noninvented reading support", async () => {
   let japaneseItems = 0;
   let thaiItems = 0;
+  const japaneseSenseIds = new Set();
   for (let chapter = 1; chapter <= 5; chapter += 1) {
     const padded = String(chapter).padStart(3, "0");
     const japanese = JSON.parse(await readFile(join(process.cwd(), "curriculum-support", "japanese", `chapter-${padded}`, "reading-support.json"), "utf8"));
@@ -148,13 +220,15 @@ test("Japanese and Thai core sidecars provide exact noninvented reading support"
     for (const item of japanese.readingItems) {
       assert.match(item.reading, /^[\p{Script=Hiragana}\p{Script=Katakana}ー]+$/u);
       assert.equal(item.evidence.includes(item.surface), true);
+      japaneseSenseIds.add(item.senseId);
     }
     for (const item of thai.readingItems) {
       assert.doesNotMatch(item.wordBoundaryGuide, /[A-Za-z0-9]/u);
       assert.equal(item.wordBoundaryGuide.replaceAll(" ", ""), item.sourceText.replaceAll(" ", ""));
     }
   }
-  assert.equal(japaneseItems, 30);
+  assert.equal(japaneseItems, 44);
+  assert.deepEqual(japaneseSenseIds, new Set(Object.values(reconstructed.languages.japanese.chapters).flatMap((chapter) => chapter.senses.map((sense) => sense.senseId))));
   assert.equal(thaiItems, 30);
 });
 
@@ -215,4 +289,14 @@ function primaryReading(markdown) {
 
 async function sha256(path) {
   return createHash("sha256").update(await readFile(path)).digest("hex");
+}
+
+function reconcileReconstructedInventory(expected, ledgerSenseIds, reviewSenseIds) {
+  const expectedIds = new Set(expected.map((sense) => sense.senseId));
+  const ledgerIds = new Set(ledgerSenseIds);
+  const reviewIds = new Set(reviewSenseIds);
+  const equal = (left, right) => left.size === right.size && [...left].every((value) => right.has(value));
+  if (!equal(expectedIds, ledgerIds) || !equal(expectedIds, reviewIds)) {
+    throw new Error("reconstructed chapter inventory mismatch: ledger and Review may agree with each other while both omit a taught sense");
+  }
 }

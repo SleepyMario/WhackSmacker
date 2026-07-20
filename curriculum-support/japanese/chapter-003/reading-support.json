@@ -56,6 +56,20 @@
       "evidence": "鍵は携帯電話の横です。",
       "lexicalEntryId": "ja.noun.keitai-denwa",
       "senseId": "ja.noun.keitai-denwa.mobile-phone"
+    },
+    {
+      "surface": "はい",
+      "reading": "はい",
+      "evidence": "はい、ノートです。",
+      "lexicalEntryId": "ja.response.hai",
+      "senseId": "ja.response.hai.yes"
+    },
+    {
+      "surface": "どこ",
+      "reading": "どこ",
+      "evidence": "鍵はどこですか。",
+      "lexicalEntryId": "ja.pronoun.doko",
+      "senseId": "ja.pronoun.doko.where"
     }
   ]
 }

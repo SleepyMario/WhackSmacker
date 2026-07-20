@@ -56,6 +56,41 @@
       "evidence": "部屋に窓があります。",
       "lexicalEntryId": "ja.noun.mado",
       "senseId": "ja.noun.mado.window"
+    },
+    {
+      "surface": "あります",
+      "reading": "あります",
+      "evidence": "部屋に机があります。",
+      "lexicalEntryId": "ja.verb.arimasu",
+      "senseId": "ja.verb.arimasu.there-is-inanimate"
+    },
+    {
+      "surface": "上",
+      "reading": "うえ",
+      "evidence": "机の上に本があります。",
+      "lexicalEntryId": "ja.noun.ue",
+      "senseId": "ja.noun.ue.on-top-of"
+    },
+    {
+      "surface": "横",
+      "reading": "よこ",
+      "evidence": "机の横にいすがあります。",
+      "lexicalEntryId": "ja.noun.yoko",
+      "senseId": "ja.noun.yoko.beside"
+    },
+    {
+      "surface": "近く",
+      "reading": "ちかく",
+      "evidence": "窓の近くに小さい机があります。",
+      "lexicalEntryId": "ja.noun.chikaku",
+      "senseId": "ja.noun.chikaku.near"
+    },
+    {
+      "surface": "小さい",
+      "reading": "ちいさい",
+      "evidence": "窓の近くに小さい机があります。",
+      "lexicalEntryId": "ja.adjective.chiisai",
+      "senseId": "ja.adjective.chiisai.small"
     }
   ]
 }

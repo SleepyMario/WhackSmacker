@@ -1,0 +1,4925 @@
+{
+  "schema_version": 1,
+  "methodology": "Independent human reconstruction from every primary Dialogue and Narrative line in Chapters 1–5; proper names and purely inflectional or bound grammar variants are excluded, while taught lexical function words, classifiers, and distinct fixed expressions are included.",
+  "languages": {
+    "arabic": {
+      "name": "Arabic",
+      "code": "ar",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-greetings-and-identity",
+          "senses": [
+            {
+              "entryId": "ar.greeting.marhaban",
+              "senseId": "ar.greeting.marhaban.hello",
+              "form": "مَرْحَبًا",
+              "meaning": "hello",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "مَرْحَبًا."
+            },
+            {
+              "entryId": "ar.greeting.ahlan",
+              "senseId": "ar.greeting.ahlan.hello-welcome",
+              "form": "أَهْلًا",
+              "meaning": "hello; welcome",
+              "pos": "greeting",
+              "line": 2,
+              "evidence": "أَهْلًا."
+            },
+            {
+              "entryId": "ar.pronoun.ana",
+              "senseId": "ar.pronoun.ana.i",
+              "form": "أَنَا",
+              "meaning": "I",
+              "pos": "pronoun",
+              "line": 3,
+              "evidence": "أَنَا لَيْلَى."
+            },
+            {
+              "entryId": "ar.noun.taliba",
+              "senseId": "ar.noun.taliba.female-student",
+              "form": "طَالِبَة",
+              "meaning": "female student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "أَنَا طَالِبَةٌ."
+            },
+            {
+              "entryId": "ar.response.naam",
+              "senseId": "ar.response.naam.yes",
+              "form": "نَعَمْ",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 6,
+              "evidence": "نَعَمْ، أَنَا طَالِبٌ."
+            },
+            {
+              "entryId": "ar.noun.talib",
+              "senseId": "ar.noun.talib.male-student",
+              "form": "طَالِب",
+              "meaning": "male student",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "نَعَمْ، أَنَا طَالِبٌ."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-layla-s-room",
+          "senses": [
+            {
+              "entryId": "ar.noun.ghurfa",
+              "senseId": "ar.noun.ghurfa.room",
+              "form": "غُرْفَة",
+              "meaning": "room",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "هَذِهِ غُرْفَةُ لَيْلَى."
+            },
+            {
+              "entryId": "ar.demonstrative.hadhihi",
+              "senseId": "ar.demonstrative.hadhihi.this-feminine",
+              "form": "هَذِهِ",
+              "meaning": "this (feminine)",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "هَذِهِ غُرْفَةُ لَيْلَى."
+            },
+            {
+              "entryId": "ar.noun.bayt",
+              "senseId": "ar.noun.bayt.house-home",
+              "form": "بَيْت",
+              "meaning": "house; home",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "الْغُرْفَةُ فِي الْبَيْتِ."
+            },
+            {
+              "entryId": "ar.preposition.fi",
+              "senseId": "ar.preposition.fi.in",
+              "form": "فِي",
+              "meaning": "in",
+              "pos": "preposition",
+              "line": 2,
+              "evidence": "الْغُرْفَةُ فِي الْبَيْتِ."
+            },
+            {
+              "entryId": "ar.noun.maktab",
+              "senseId": "ar.noun.maktab.desk",
+              "form": "مَكْتَب",
+              "meaning": "desk",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "فِي الْغُرْفَةِ مَكْتَبٌ."
+            },
+            {
+              "entryId": "ar.noun.kitab",
+              "senseId": "ar.noun.kitab.book",
+              "form": "كِتَاب",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "عَلَى الْمَكْتَبِ كِتَابٌ."
+            },
+            {
+              "entryId": "ar.preposition.ala",
+              "senseId": "ar.preposition.ala.on",
+              "form": "عَلَى",
+              "meaning": "on",
+              "pos": "preposition",
+              "line": 4,
+              "evidence": "عَلَى الْمَكْتَبِ كِتَابٌ."
+            },
+            {
+              "entryId": "ar.noun.kursiyy",
+              "senseId": "ar.noun.kursiyy.chair",
+              "form": "كُرْسِيّ",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "قُرْبَ الْمَكْتَبِ كُرْسِيٌّ."
+            },
+            {
+              "entryId": "ar.preposition.qurba",
+              "senseId": "ar.preposition.qurba.near",
+              "form": "قُرْبَ",
+              "meaning": "near",
+              "pos": "preposition",
+              "line": 5,
+              "evidence": "قُرْبَ الْمَكْتَبِ كُرْسِيٌّ."
+            },
+            {
+              "entryId": "ar.noun.qalam",
+              "senseId": "ar.noun.qalam.pen",
+              "form": "قَلَم",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "فِي الْغُرْفَةِ قَلَمٌ."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-what-is-this",
+          "senses": [
+            {
+              "entryId": "ar.pronoun.ma",
+              "senseId": "ar.pronoun.ma.what",
+              "form": "مَا",
+              "meaning": "what",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "مَا هَذَا؟"
+            },
+            {
+              "entryId": "ar.demonstrative.hadha",
+              "senseId": "ar.demonstrative.hadha.this-masculine",
+              "form": "هَذَا",
+              "meaning": "this (masculine)",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "مَا هَذَا؟"
+            },
+            {
+              "entryId": "ar.noun.hatif",
+              "senseId": "ar.noun.hatif.phone",
+              "form": "هَاتِف",
+              "meaning": "phone",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "هَذَا هَاتِفٌ."
+            },
+            {
+              "entryId": "ar.noun.haqiba",
+              "senseId": "ar.noun.haqiba.bag",
+              "form": "حَقِيبَة",
+              "meaning": "bag",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "هَذِهِ حَقِيبَةٌ."
+            },
+            {
+              "entryId": "ar.noun.miftah",
+              "senseId": "ar.noun.miftah.key",
+              "form": "مِفْتَاح",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "هَلْ هَذَا مِفْتَاحٌ؟"
+            },
+            {
+              "entryId": "ar.particle.hal",
+              "senseId": "ar.particle.hal.yes-no-question",
+              "form": "هَلْ",
+              "meaning": "yes-no question marker",
+              "pos": "particle",
+              "line": 5,
+              "evidence": "هَلْ هَذَا مِفْتَاحٌ؟"
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-sami-s-morning",
+          "senses": [
+            {
+              "entryId": "ar.verb.yastayqizu",
+              "senseId": "ar.verb.yastayqizu.wakes-up",
+              "form": "يَسْتَيْقِظُ",
+              "meaning": "wakes up",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "يَسْتَيْقِظُ سَامِي صَبَاحًا."
+            },
+            {
+              "entryId": "ar.adverb.sabahan",
+              "senseId": "ar.adverb.sabahan.in-the-morning",
+              "form": "صَبَاحًا",
+              "meaning": "in the morning",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "يَسْتَيْقِظُ سَامِي صَبَاحًا."
+            },
+            {
+              "entryId": "ar.verb.yashrabu",
+              "senseId": "ar.verb.yashrabu.drinks",
+              "form": "يَشْرَبُ",
+              "meaning": "drinks",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "يَشْرَبُ سَامِي مَاءً."
+            },
+            {
+              "entryId": "ar.noun.maa",
+              "senseId": "ar.noun.maa.water",
+              "form": "مَاء",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "يَشْرَبُ سَامِي مَاءً."
+            },
+            {
+              "entryId": "ar.verb.yakulu",
+              "senseId": "ar.verb.yakulu.eats",
+              "form": "يَأْكُلُ",
+              "meaning": "eats",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "يَأْكُلُ سَامِي خُبْزًا."
+            },
+            {
+              "entryId": "ar.noun.khubz",
+              "senseId": "ar.noun.khubz.bread",
+              "form": "خُبْز",
+              "meaning": "bread",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "يَأْكُلُ سَامِي خُبْزًا."
+            },
+            {
+              "entryId": "ar.verb.yaqrau",
+              "senseId": "ar.verb.yaqrau.reads",
+              "form": "يَقْرَأُ",
+              "meaning": "reads",
+              "pos": "verb",
+              "line": 4,
+              "evidence": "يَقْرَأُ سَامِي كِتَابًا."
+            },
+            {
+              "entryId": "ar.conjunction.thumma",
+              "senseId": "ar.conjunction.thumma.then",
+              "form": "ثُمَّ",
+              "meaning": "then",
+              "pos": "conjunction",
+              "line": 5,
+              "evidence": "ثُمَّ يَأْخُذُ الْقَلَمَ."
+            },
+            {
+              "entryId": "ar.verb.yakhudhu",
+              "senseId": "ar.verb.yakhudhu.takes",
+              "form": "يَأْخُذُ",
+              "meaning": "takes",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "ثُمَّ يَأْخُذُ الْقَلَمَ."
+            },
+            {
+              "entryId": "ar.conjunction.wa",
+              "senseId": "ar.conjunction.wa.and",
+              "form": "وَ",
+              "meaning": "and",
+              "pos": "conjunction",
+              "line": 6,
+              "evidence": "وَيَذْهَبُ إِلَى الْمَكْتَبِ."
+            },
+            {
+              "entryId": "ar.verb.yadhhabu",
+              "senseId": "ar.verb.yadhhabu.goes",
+              "form": "يَذْهَبُ",
+              "meaning": "goes",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "وَيَذْهَبُ إِلَى الْمَكْتَبِ."
+            },
+            {
+              "entryId": "ar.preposition.ila",
+              "senseId": "ar.preposition.ila.to",
+              "form": "إِلَى",
+              "meaning": "to",
+              "pos": "preposition",
+              "line": 6,
+              "evidence": "وَيَذْهَبُ إِلَى الْمَكْتَبِ."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-a-cafe-plan",
+          "senses": [
+            {
+              "entryId": "ar.verb.uridu",
+              "senseId": "ar.verb.uridu.i-want",
+              "form": "أُرِيدُ",
+              "meaning": "I want",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "أُرِيدُ قَهْوَةً."
+            },
+            {
+              "entryId": "ar.noun.qahwa",
+              "senseId": "ar.noun.qahwa.coffee",
+              "form": "قَهْوَة",
+              "meaning": "coffee",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "أُرِيدُ قَهْوَةً."
+            },
+            {
+              "entryId": "ar.noun.shay",
+              "senseId": "ar.noun.shay.tea",
+              "form": "شَاي",
+              "meaning": "tea",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "وَأَنَا أُرِيدُ شَايًا."
+            },
+            {
+              "entryId": "ar.verb.nadhhabu",
+              "senseId": "ar.verb.nadhhabu.we-go",
+              "form": "نَذْهَبُ",
+              "meaning": "we go",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "هَلْ نَذْهَبُ إِلَى الْمَقْهَى؟"
+            },
+            {
+              "entryId": "ar.noun.maqha",
+              "senseId": "ar.noun.maqha.cafe",
+              "form": "مَقْهَى",
+              "meaning": "café",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "هَلْ نَذْهَبُ إِلَى الْمَقْهَى؟"
+            },
+            {
+              "entryId": "ar.adverb.alyawma",
+              "senseId": "ar.adverb.alyawma.today",
+              "form": "الْيَوْمَ",
+              "meaning": "today",
+              "pos": "adverb",
+              "line": 4,
+              "evidence": "نَعَمْ، نَذْهَبُ الْيَوْمَ."
+            },
+            {
+              "entryId": "ar.adjective.jayyid",
+              "senseId": "ar.adjective.jayyid.good",
+              "form": "جَيِّدٌ",
+              "meaning": "good",
+              "pos": "adjective",
+              "line": 6,
+              "evidence": "جَيِّدٌ، هَيَّا بِنَا."
+            },
+            {
+              "entryId": "ar.expression.hayya-bina",
+              "senseId": "ar.expression.hayya-bina.lets-go",
+              "form": "هَيَّا بِنَا",
+              "meaning": "let's go",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "جَيِّدٌ، هَيَّا بِنَا."
+            }
+          ]
+        }
+      }
+    },
+    "french": {
+      "name": "French",
+      "code": "fr",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-meeting-a-neighbor",
+          "senses": [
+            {
+              "entryId": "fr.greeting.bonjour",
+              "senseId": "fr.greeting.bonjour.hello",
+              "form": "bonjour",
+              "meaning": "hello",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "Bonjour !"
+            },
+            {
+              "entryId": "fr.greeting.salut",
+              "senseId": "fr.greeting.salut.hi",
+              "form": "salut",
+              "meaning": "hi",
+              "pos": "greeting",
+              "line": 2,
+              "evidence": "Salut !"
+            },
+            {
+              "entryId": "fr.pronoun.je",
+              "senseId": "fr.pronoun.je.i",
+              "form": "je",
+              "meaning": "I",
+              "pos": "pronoun",
+              "line": 3,
+              "evidence": "Je suis Lina."
+            },
+            {
+              "entryId": "fr.verb.etre-suis",
+              "senseId": "fr.verb.etre-suis.am",
+              "form": "suis",
+              "meaning": "am",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Je suis Lina."
+            },
+            {
+              "entryId": "fr.noun.voisin",
+              "senseId": "fr.noun.voisin.male-neighbor",
+              "form": "le voisin",
+              "meaning": "male neighbor",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Je suis Marc, ton voisin."
+            },
+            {
+              "entryId": "fr.determiner.ton",
+              "senseId": "fr.determiner.ton.your-informal-singular",
+              "form": "ton",
+              "meaning": "your (informal singular)",
+              "pos": "determiner",
+              "line": 4,
+              "evidence": "Je suis Marc, ton voisin."
+            },
+            {
+              "entryId": "fr.noun.etudiante",
+              "senseId": "fr.noun.etudiante.female-student",
+              "form": "l'étudiante (F)",
+              "meaning": "female student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Je suis étudiante."
+            },
+            {
+              "entryId": "fr.expression.enchante",
+              "senseId": "fr.expression.enchante.nice-to-meet-you",
+              "form": "enchanté",
+              "meaning": "nice to meet you",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "Enchanté, je suis cuisinier."
+            },
+            {
+              "entryId": "fr.noun.cuisinier",
+              "senseId": "fr.noun.cuisinier.male-cook",
+              "form": "le cuisinier",
+              "meaning": "male cook",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Enchanté, je suis cuisinier."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-breakfast-in-the-apartment",
+          "senses": [
+            {
+              "entryId": "fr.noun.appartement",
+              "senseId": "fr.noun.appartement.apartment",
+              "form": "l'appartement (M)",
+              "meaning": "apartment",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "L'appartement est calme le matin."
+            },
+            {
+              "entryId": "fr.noun.matin",
+              "senseId": "fr.noun.matin.morning",
+              "form": "le matin",
+              "meaning": "morning",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "L'appartement est calme le matin."
+            },
+            {
+              "entryId": "fr.adjective.calme",
+              "senseId": "fr.adjective.calme.quiet",
+              "form": "calme",
+              "meaning": "quiet",
+              "pos": "adjective",
+              "line": 1,
+              "evidence": "L'appartement est calme le matin."
+            },
+            {
+              "entryId": "fr.noun.cuisine",
+              "senseId": "fr.noun.cuisine.kitchen",
+              "form": "la cuisine",
+              "meaning": "kitchen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Il y a une petite cuisine."
+            },
+            {
+              "entryId": "fr.adjective.petit",
+              "senseId": "fr.adjective.petit.small",
+              "form": "petit",
+              "meaning": "small",
+              "pos": "adjective",
+              "line": 2,
+              "evidence": "Il y a une petite cuisine."
+            },
+            {
+              "entryId": "fr.expression.il-y-a",
+              "senseId": "fr.expression.il-y-a.there-is",
+              "form": "il y a",
+              "meaning": "there is; there are",
+              "pos": "expression",
+              "line": 2,
+              "evidence": "Il y a une petite cuisine."
+            },
+            {
+              "entryId": "fr.noun.table",
+              "senseId": "fr.noun.table.table",
+              "form": "la table",
+              "meaning": "table",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Dans la cuisine, il y a une table."
+            },
+            {
+              "entryId": "fr.preposition.dans",
+              "senseId": "fr.preposition.dans.in",
+              "form": "dans",
+              "meaning": "in",
+              "pos": "preposition",
+              "line": 3,
+              "evidence": "Dans la cuisine, il y a une table."
+            },
+            {
+              "entryId": "fr.noun.cafe",
+              "senseId": "fr.noun.cafe.coffee",
+              "form": "le café",
+              "meaning": "coffee",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Sur la table, il y a du café."
+            },
+            {
+              "entryId": "fr.preposition.sur",
+              "senseId": "fr.preposition.sur.on",
+              "form": "sur",
+              "meaning": "on",
+              "pos": "preposition",
+              "line": 4,
+              "evidence": "Sur la table, il y a du café."
+            },
+            {
+              "entryId": "fr.noun.pain",
+              "senseId": "fr.noun.pain.bread",
+              "form": "le pain",
+              "meaning": "bread",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Il y a aussi du pain."
+            },
+            {
+              "entryId": "fr.adverb.aussi",
+              "senseId": "fr.adverb.aussi.also",
+              "form": "aussi",
+              "meaning": "also",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "Il y a aussi du pain."
+            },
+            {
+              "entryId": "fr.verb.boire-boit",
+              "senseId": "fr.verb.boire-boit.drinks",
+              "form": "boit",
+              "meaning": "drinks",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "Lina boit un verre d'eau."
+            },
+            {
+              "entryId": "fr.noun.verre",
+              "senseId": "fr.noun.verre.glass",
+              "form": "le verre",
+              "meaning": "glass",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Lina boit un verre d'eau."
+            },
+            {
+              "entryId": "fr.noun.eau",
+              "senseId": "fr.noun.eau.water",
+              "form": "l'eau (F)",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Lina boit un verre d'eau."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-do-you-like-tea",
+          "senses": [
+            {
+              "entryId": "fr.pronoun.tu",
+              "senseId": "fr.pronoun.tu.you-informal-singular",
+              "form": "tu",
+              "meaning": "you (informal singular)",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "Tu aimes le thé ?"
+            },
+            {
+              "entryId": "fr.verb.aimer-aimes",
+              "senseId": "fr.verb.aimer-aimes.like",
+              "form": "aimes",
+              "meaning": "like",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "Tu aimes le thé ?"
+            },
+            {
+              "entryId": "fr.noun.the",
+              "senseId": "fr.noun.the.tea",
+              "form": "le thé",
+              "meaning": "tea",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Tu aimes le thé ?"
+            },
+            {
+              "entryId": "fr.response.oui",
+              "senseId": "fr.response.oui.yes",
+              "form": "oui",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 2,
+              "evidence": "Oui, j'aime le thé."
+            },
+            {
+              "entryId": "fr.noun.fromage",
+              "senseId": "fr.noun.fromage.cheese",
+              "form": "le fromage",
+              "meaning": "cheese",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Tu aimes le fromage ?"
+            },
+            {
+              "entryId": "fr.response.non",
+              "senseId": "fr.response.non.no",
+              "form": "non",
+              "meaning": "no",
+              "pos": "response",
+              "line": 4,
+              "evidence": "Non, mais j'aime la pomme."
+            },
+            {
+              "entryId": "fr.noun.pomme",
+              "senseId": "fr.noun.pomme.apple",
+              "form": "la pomme",
+              "meaning": "apple",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Non, mais j'aime la pomme."
+            },
+            {
+              "entryId": "fr.conjunction.mais",
+              "senseId": "fr.conjunction.mais.but",
+              "form": "mais",
+              "meaning": "but",
+              "pos": "conjunction",
+              "line": 4,
+              "evidence": "Non, mais j'aime la pomme."
+            },
+            {
+              "entryId": "fr.determiner.ce",
+              "senseId": "fr.determiner.ce.this",
+              "form": "ce",
+              "meaning": "this",
+              "pos": "determiner",
+              "line": 5,
+              "evidence": "Et ce gâteau ?"
+            },
+            {
+              "entryId": "fr.noun.gateau",
+              "senseId": "fr.noun.gateau.cake",
+              "form": "le gâteau",
+              "meaning": "cake",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Et ce gâteau ?"
+            },
+            {
+              "entryId": "fr.conjunction.et",
+              "senseId": "fr.conjunction.et.and",
+              "form": "et",
+              "meaning": "and",
+              "pos": "conjunction",
+              "line": 5,
+              "evidence": "Et ce gâteau ?"
+            },
+            {
+              "entryId": "fr.pronoun.il",
+              "senseId": "fr.pronoun.il.he-it",
+              "form": "il",
+              "meaning": "he; it",
+              "pos": "pronoun",
+              "line": 6,
+              "evidence": "Oui, il est bon."
+            },
+            {
+              "entryId": "fr.adjective.bon",
+              "senseId": "fr.adjective.bon.good",
+              "form": "bon",
+              "meaning": "good",
+              "pos": "adjective",
+              "line": 6,
+              "evidence": "Oui, il est bon."
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-a-walk-nearby",
+          "senses": [
+            {
+              "entryId": "fr.noun.maison",
+              "senseId": "fr.noun.maison.house-home",
+              "form": "la maison",
+              "meaning": "house; home",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "La maison de Marc est dans une rue calme."
+            },
+            {
+              "entryId": "fr.noun.rue",
+              "senseId": "fr.noun.rue.street",
+              "form": "la rue",
+              "meaning": "street",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "La maison de Marc est dans une rue calme."
+            },
+            {
+              "entryId": "fr.noun.parc",
+              "senseId": "fr.noun.parc.park",
+              "form": "le parc",
+              "meaning": "park",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Un petit parc est près de la maison."
+            },
+            {
+              "entryId": "fr.preposition.pres-de",
+              "senseId": "fr.preposition.pres-de.near",
+              "form": "près de",
+              "meaning": "near",
+              "pos": "preposition",
+              "line": 2,
+              "evidence": "Un petit parc est près de la maison."
+            },
+            {
+              "entryId": "fr.noun.boulangerie",
+              "senseId": "fr.noun.boulangerie.bakery",
+              "form": "la boulangerie",
+              "meaning": "bakery",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "La boulangerie est près du parc."
+            },
+            {
+              "entryId": "fr.verb.marcher-marche",
+              "senseId": "fr.verb.marcher-marche.walks",
+              "form": "marche",
+              "meaning": "walks",
+              "pos": "verb",
+              "line": 4,
+              "evidence": "Lina marche dans la rue."
+            },
+            {
+              "entryId": "fr.pronoun.elle",
+              "senseId": "fr.pronoun.elle.she",
+              "form": "elle",
+              "meaning": "she",
+              "pos": "pronoun",
+              "line": 5,
+              "evidence": "Elle regarde le petit parc."
+            },
+            {
+              "entryId": "fr.verb.regarder-regarde",
+              "senseId": "fr.verb.regarder-regarde.looks-at",
+              "form": "regarde",
+              "meaning": "looks at",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "Elle regarde le petit parc."
+            },
+            {
+              "entryId": "fr.adverb.puis",
+              "senseId": "fr.adverb.puis.then",
+              "form": "puis",
+              "meaning": "then",
+              "pos": "adverb",
+              "line": 6,
+              "evidence": "Puis elle rentre à la maison."
+            },
+            {
+              "entryId": "fr.verb.rentrer-rentre",
+              "senseId": "fr.verb.rentrer-rentre.goes-home",
+              "form": "rentre",
+              "meaning": "goes home",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "Puis elle rentre à la maison."
+            },
+            {
+              "entryId": "fr.preposition.a",
+              "senseId": "fr.preposition.a.to-at",
+              "form": "à",
+              "meaning": "to; at",
+              "pos": "preposition",
+              "line": 6,
+              "evidence": "Puis elle rentre à la maison."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-going-to-the-market",
+          "senses": [
+            {
+              "entryId": "fr.pronoun.on",
+              "senseId": "fr.pronoun.on.we-conversational",
+              "form": "on",
+              "meaning": "we (conversational)",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "On va au marché demain ?"
+            },
+            {
+              "entryId": "fr.verb.aller-va",
+              "senseId": "fr.verb.aller-va.go",
+              "form": "va",
+              "meaning": "go",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "On va au marché demain ?"
+            },
+            {
+              "entryId": "fr.noun.marche",
+              "senseId": "fr.noun.marche.market",
+              "form": "le marché",
+              "meaning": "market",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "On va au marché demain ?"
+            },
+            {
+              "entryId": "fr.adverb.demain",
+              "senseId": "fr.adverb.demain.tomorrow",
+              "form": "demain",
+              "meaning": "tomorrow",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "On va au marché demain ?"
+            },
+            {
+              "entryId": "fr.verb.acheter",
+              "senseId": "fr.verb.acheter.to-buy",
+              "form": "acheter",
+              "meaning": "to buy",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "Oui, on va acheter des tomates."
+            },
+            {
+              "entryId": "fr.noun.tomates",
+              "senseId": "fr.noun.tomates.tomatoes",
+              "form": "les tomates",
+              "meaning": "tomatoes",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Oui, on va acheter des tomates."
+            },
+            {
+              "entryId": "fr.noun.fruit",
+              "senseId": "fr.noun.fruit.fruit",
+              "form": "les fruits",
+              "meaning": "fruit",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Je veux aussi des fruits."
+            },
+            {
+              "entryId": "fr.verb.vouloir-veux",
+              "senseId": "fr.verb.vouloir-veux.want",
+              "form": "veux",
+              "meaning": "want",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Je veux aussi des fruits."
+            },
+            {
+              "entryId": "fr.expression.daccord",
+              "senseId": "fr.expression.daccord.okay",
+              "form": "d'accord",
+              "meaning": "okay",
+              "pos": "expression",
+              "line": 4,
+              "evidence": "D'accord, le marché est près du parc."
+            },
+            {
+              "entryId": "fr.verb.partir-part",
+              "senseId": "fr.verb.partir-part.leave",
+              "form": "part",
+              "meaning": "leave",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "On part le matin ?"
+            },
+            {
+              "entryId": "fr.numeral.neuf",
+              "senseId": "fr.numeral.neuf.nine",
+              "form": "neuf",
+              "meaning": "nine",
+              "pos": "numeral",
+              "line": 6,
+              "evidence": "Oui, à neuf heures."
+            },
+            {
+              "entryId": "fr.noun.heure",
+              "senseId": "fr.noun.heure.hour-oclock",
+              "form": "l'heure (F)",
+              "meaning": "hour; o'clock",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Oui, à neuf heures."
+            }
+          ]
+        }
+      }
+    },
+    "german": {
+      "name": "German",
+      "code": "de",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-new-neighbors",
+          "senses": [
+            {
+              "entryId": "de.greeting.hallo",
+              "senseId": "de.greeting.hallo.hello",
+              "form": "Hallo",
+              "meaning": "hello",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "Hallo!"
+            },
+            {
+              "entryId": "de.greeting.guten-tag",
+              "senseId": "de.greeting.guten-tag.good-day",
+              "form": "Guten Tag",
+              "meaning": "good day",
+              "pos": "greeting",
+              "line": 2,
+              "evidence": "Guten Tag!"
+            },
+            {
+              "entryId": "de.pronoun.ich",
+              "senseId": "de.pronoun.ich.i",
+              "form": "ich",
+              "meaning": "I",
+              "pos": "pronoun",
+              "line": 3,
+              "evidence": "Ich bin Mia."
+            },
+            {
+              "entryId": "de.verb.sein-bin",
+              "senseId": "de.verb.sein-bin.am",
+              "form": "bin",
+              "meaning": "am",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Ich bin Mia."
+            },
+            {
+              "entryId": "de.noun.nachbar",
+              "senseId": "de.noun.nachbar.male-neighbor",
+              "form": "der Nachbar",
+              "meaning": "male neighbor",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Ich bin Jonas, dein Nachbar."
+            },
+            {
+              "entryId": "de.determiner.dein",
+              "senseId": "de.determiner.dein.your-informal-singular",
+              "form": "dein",
+              "meaning": "your (informal singular)",
+              "pos": "determiner",
+              "line": 4,
+              "evidence": "Ich bin Jonas, dein Nachbar."
+            },
+            {
+              "entryId": "de.noun.studentin",
+              "senseId": "de.noun.studentin.female-student",
+              "form": "die Studentin",
+              "meaning": "female student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Ich bin Studentin."
+            },
+            {
+              "entryId": "de.adjective.schoen",
+              "senseId": "de.adjective.schoen.nice",
+              "form": "schön",
+              "meaning": "nice",
+              "pos": "adjective",
+              "line": 6,
+              "evidence": "Schön, ich bin Bäcker."
+            },
+            {
+              "entryId": "de.noun.baecker",
+              "senseId": "de.noun.baecker.male-baker",
+              "form": "der Bäcker",
+              "meaning": "male baker",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Schön, ich bin Bäcker."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-in-the-kitchen",
+          "senses": [
+            {
+              "entryId": "de.noun.wohnung",
+              "senseId": "de.noun.wohnung.apartment",
+              "form": "die Wohnung",
+              "meaning": "apartment",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Die Wohnung ist am Morgen ruhig."
+            },
+            {
+              "entryId": "de.noun.morgen",
+              "senseId": "de.noun.morgen.morning",
+              "form": "der Morgen",
+              "meaning": "morning",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Die Wohnung ist am Morgen ruhig."
+            },
+            {
+              "entryId": "de.adjective.ruhig",
+              "senseId": "de.adjective.ruhig.quiet",
+              "form": "ruhig",
+              "meaning": "quiet",
+              "pos": "adjective",
+              "line": 1,
+              "evidence": "Die Wohnung ist am Morgen ruhig."
+            },
+            {
+              "entryId": "de.noun.kueche",
+              "senseId": "de.noun.kueche.kitchen",
+              "form": "die Küche",
+              "meaning": "kitchen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "In der Wohnung ist eine Küche."
+            },
+            {
+              "entryId": "de.preposition.in",
+              "senseId": "de.preposition.in.in",
+              "form": "in",
+              "meaning": "in",
+              "pos": "preposition",
+              "line": 2,
+              "evidence": "In der Wohnung ist eine Küche."
+            },
+            {
+              "entryId": "de.noun.tisch",
+              "senseId": "de.noun.tisch.table",
+              "form": "der Tisch",
+              "meaning": "table",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "In der Küche steht ein Tisch."
+            },
+            {
+              "entryId": "de.verb.stehen",
+              "senseId": "de.verb.stehen.stand",
+              "form": "stehen",
+              "meaning": "stand; be standing",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "In der Küche steht ein Tisch."
+            },
+            {
+              "entryId": "de.noun.buch",
+              "senseId": "de.noun.buch.book",
+              "form": "das Buch",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Auf dem Tisch liegt ein Buch."
+            },
+            {
+              "entryId": "de.preposition.auf",
+              "senseId": "de.preposition.auf.on",
+              "form": "auf",
+              "meaning": "on",
+              "pos": "preposition",
+              "line": 4,
+              "evidence": "Auf dem Tisch liegt ein Buch."
+            },
+            {
+              "entryId": "de.verb.liegen",
+              "senseId": "de.verb.liegen.lie",
+              "form": "liegen",
+              "meaning": "lie; be lying",
+              "pos": "verb",
+              "line": 4,
+              "evidence": "Auf dem Tisch liegt ein Buch."
+            },
+            {
+              "entryId": "de.noun.stuhl",
+              "senseId": "de.noun.stuhl.chair",
+              "form": "der Stuhl",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Neben dem Tisch steht ein Stuhl."
+            },
+            {
+              "entryId": "de.preposition.neben",
+              "senseId": "de.preposition.neben.beside",
+              "form": "neben",
+              "meaning": "beside",
+              "pos": "preposition",
+              "line": 5,
+              "evidence": "Neben dem Tisch steht ein Stuhl."
+            },
+            {
+              "entryId": "de.noun.wasser",
+              "senseId": "de.noun.wasser.water",
+              "form": "das Wasser",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Auf dem Tisch steht Wasser."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-where-is-the-key",
+          "senses": [
+            {
+              "entryId": "de.pronoun.was",
+              "senseId": "de.pronoun.was.what",
+              "form": "was",
+              "meaning": "what",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "Was ist das?"
+            },
+            {
+              "entryId": "de.demonstrative.das",
+              "senseId": "de.demonstrative.das.that-this",
+              "form": "das",
+              "meaning": "that; this",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "Was ist das?"
+            },
+            {
+              "entryId": "de.noun.stift",
+              "senseId": "de.noun.stift.pen",
+              "form": "der Stift",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Das ist ein Stift."
+            },
+            {
+              "entryId": "de.noun.handy",
+              "senseId": "de.noun.handy.mobile-phone",
+              "form": "das Handy",
+              "meaning": "mobile phone",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Wo ist das Handy?"
+            },
+            {
+              "entryId": "de.adverb.wo",
+              "senseId": "de.adverb.wo.where",
+              "form": "wo",
+              "meaning": "where",
+              "pos": "adverb",
+              "line": 3,
+              "evidence": "Wo ist das Handy?"
+            },
+            {
+              "entryId": "de.noun.tasche",
+              "senseId": "de.noun.tasche.bag",
+              "form": "die Tasche",
+              "meaning": "bag",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Das Handy ist in der Tasche."
+            },
+            {
+              "entryId": "de.noun.schluessel",
+              "senseId": "de.noun.schluessel.key",
+              "form": "der Schlüssel",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Und wo ist der Schlüssel?"
+            },
+            {
+              "entryId": "de.conjunction.und",
+              "senseId": "de.conjunction.und.and",
+              "form": "und",
+              "meaning": "and",
+              "pos": "conjunction",
+              "line": 5,
+              "evidence": "Und wo ist der Schlüssel?"
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-jonas-in-the-morning",
+          "senses": [
+            {
+              "entryId": "de.adverb.morgens",
+              "senseId": "de.adverb.morgens.in-the-morning",
+              "form": "morgens",
+              "meaning": "in the morning",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "Morgens ist Jonas in der Küche."
+            },
+            {
+              "entryId": "de.verb.trinken-trinkt",
+              "senseId": "de.verb.trinken-trinkt.drinks",
+              "form": "trinkt",
+              "meaning": "drinks",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "Er trinkt Kaffee."
+            },
+            {
+              "entryId": "de.noun.kaffee",
+              "senseId": "de.noun.kaffee.coffee",
+              "form": "der Kaffee",
+              "meaning": "coffee",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Er trinkt Kaffee."
+            },
+            {
+              "entryId": "de.pronoun.er",
+              "senseId": "de.pronoun.er.he",
+              "form": "er",
+              "meaning": "he",
+              "pos": "pronoun",
+              "line": 2,
+              "evidence": "Er trinkt Kaffee."
+            },
+            {
+              "entryId": "de.verb.essen-isst",
+              "senseId": "de.verb.essen-isst.eats",
+              "form": "isst",
+              "meaning": "eats",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Er isst Brot."
+            },
+            {
+              "entryId": "de.noun.brot",
+              "senseId": "de.noun.brot.bread",
+              "form": "das Brot",
+              "meaning": "bread",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Er isst Brot."
+            },
+            {
+              "entryId": "de.verb.lesen-liest",
+              "senseId": "de.verb.lesen-liest.reads",
+              "form": "liest",
+              "meaning": "reads",
+              "pos": "verb",
+              "line": 4,
+              "evidence": "Dann liest er ein Buch."
+            },
+            {
+              "entryId": "de.adverb.dann",
+              "senseId": "de.adverb.dann.then",
+              "form": "dann",
+              "meaning": "then",
+              "pos": "adverb",
+              "line": 4,
+              "evidence": "Dann liest er ein Buch."
+            },
+            {
+              "entryId": "de.verb.gehen",
+              "senseId": "de.verb.gehen.go",
+              "form": "gehen",
+              "meaning": "go",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "Danach gehen beide zur Arbeit."
+            },
+            {
+              "entryId": "de.adverb.danach",
+              "senseId": "de.adverb.danach.after-that",
+              "form": "danach",
+              "meaning": "after that",
+              "pos": "adverb",
+              "line": 6,
+              "evidence": "Danach gehen beide zur Arbeit."
+            },
+            {
+              "entryId": "de.pronoun.beide",
+              "senseId": "de.pronoun.beide.both",
+              "form": "beide",
+              "meaning": "both",
+              "pos": "pronoun",
+              "line": 6,
+              "evidence": "Danach gehen beide zur Arbeit."
+            },
+            {
+              "entryId": "de.noun.arbeit",
+              "senseId": "de.noun.arbeit.work",
+              "form": "die Arbeit",
+              "meaning": "work",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Danach gehen beide zur Arbeit."
+            },
+            {
+              "entryId": "de.preposition.zu",
+              "senseId": "de.preposition.zu.to",
+              "form": "zu",
+              "meaning": "to",
+              "pos": "preposition",
+              "line": 6,
+              "evidence": "Danach gehen beide zur Arbeit."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-a-plan-for-today",
+          "senses": [
+            {
+              "entryId": "de.pronoun.wir",
+              "senseId": "de.pronoun.wir.we",
+              "form": "wir",
+              "meaning": "we",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "Gehen wir heute in den Park?"
+            },
+            {
+              "entryId": "de.adverb.heute",
+              "senseId": "de.adverb.heute.today",
+              "form": "heute",
+              "meaning": "today",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "Gehen wir heute in den Park?"
+            },
+            {
+              "entryId": "de.noun.park",
+              "senseId": "de.noun.park.park",
+              "form": "der Park",
+              "meaning": "park",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Gehen wir heute in den Park?"
+            },
+            {
+              "entryId": "de.adverb.zusammen",
+              "senseId": "de.adverb.zusammen.together",
+              "form": "zusammen",
+              "meaning": "together",
+              "pos": "adverb",
+              "line": 2,
+              "evidence": "Ja, wir gehen zusammen."
+            },
+            {
+              "entryId": "de.response.ja",
+              "senseId": "de.response.ja.yes",
+              "form": "ja",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 2,
+              "evidence": "Ja, wir gehen zusammen."
+            },
+            {
+              "entryId": "de.adverb.nicht",
+              "senseId": "de.adverb.nicht.not",
+              "form": "nicht",
+              "meaning": "not",
+              "pos": "adverb",
+              "line": 3,
+              "evidence": "Der Park ist nicht weit."
+            },
+            {
+              "entryId": "de.adjective.weit",
+              "senseId": "de.adjective.weit.far",
+              "form": "weit",
+              "meaning": "far",
+              "pos": "adjective",
+              "line": 3,
+              "evidence": "Der Park ist nicht weit."
+            },
+            {
+              "entryId": "de.noun.cafe",
+              "senseId": "de.noun.cafe.cafe",
+              "form": "das Café",
+              "meaning": "café",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Danach gehen wir ins Café."
+            },
+            {
+              "entryId": "de.verb.machen",
+              "senseId": "de.verb.machen.do",
+              "form": "machen",
+              "meaning": "do",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "Gut, das machen wir."
+            },
+            {
+              "entryId": "de.adjective.gut",
+              "senseId": "de.adjective.gut.good",
+              "form": "gut",
+              "meaning": "good",
+              "pos": "adjective",
+              "line": 5,
+              "evidence": "Gut, das machen wir."
+            },
+            {
+              "entryId": "de.preposition.um",
+              "senseId": "de.preposition.um.at-time",
+              "form": "um",
+              "meaning": "at (a time)",
+              "pos": "preposition",
+              "line": 6,
+              "evidence": "Dann gehen wir um drei."
+            },
+            {
+              "entryId": "de.numeral.drei",
+              "senseId": "de.numeral.drei.three",
+              "form": "drei",
+              "meaning": "three",
+              "pos": "numeral",
+              "line": 6,
+              "evidence": "Dann gehen wir um drei."
+            }
+          ]
+        }
+      }
+    },
+    "hindi": {
+      "name": "Hindi",
+      "code": "hi",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-polite-introductions",
+          "senses": [
+            {
+              "entryId": "hi.greeting.namaste",
+              "senseId": "hi.greeting.namaste.hello",
+              "form": "नमस्ते",
+              "meaning": "hello",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "नमस्ते."
+            },
+            {
+              "entryId": "hi.particle.ji",
+              "senseId": "hi.particle.ji.polite-honorific",
+              "form": "जी",
+              "meaning": "polite honorific",
+              "pos": "particle",
+              "line": 2,
+              "evidence": "नमस्ते जी."
+            },
+            {
+              "entryId": "hi.pronoun.main",
+              "senseId": "hi.pronoun.main.i",
+              "form": "मैं",
+              "meaning": "I",
+              "pos": "pronoun",
+              "line": 3,
+              "evidence": "मैं रीना हूँ."
+            },
+            {
+              "entryId": "hi.verb.hona-hun",
+              "senseId": "hi.verb.hona-hun.am",
+              "form": "हूँ",
+              "meaning": "am",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "मैं रीना हूँ."
+            },
+            {
+              "entryId": "hi.noun.chatra-f",
+              "senseId": "hi.noun.chatra-f.female-student",
+              "form": "छात्रा",
+              "meaning": "female student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "मैं छात्रा हूँ."
+            },
+            {
+              "entryId": "hi.noun.chatra-m",
+              "senseId": "hi.noun.chatra-m.male-student",
+              "form": "छात्र",
+              "meaning": "male student",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "मैं छात्र हूँ."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-a-room-at-home",
+          "senses": [
+            {
+              "entryId": "hi.noun.ghar",
+              "senseId": "hi.noun.ghar.house-home",
+              "form": "घर",
+              "meaning": "house; home",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "रीना का घर छोटा है."
+            },
+            {
+              "entryId": "hi.postposition.ka",
+              "senseId": "hi.postposition.ka.of-possessive",
+              "form": "का",
+              "meaning": "of; possessive marker",
+              "pos": "postposition",
+              "line": 1,
+              "evidence": "रीना का घर छोटा है."
+            },
+            {
+              "entryId": "hi.adjective.chhota",
+              "senseId": "hi.adjective.chhota.small",
+              "form": "छोटा",
+              "meaning": "small",
+              "pos": "adjective",
+              "line": 1,
+              "evidence": "रीना का घर छोटा है."
+            },
+            {
+              "entryId": "hi.noun.kamra",
+              "senseId": "hi.noun.kamra.room",
+              "form": "कमरा",
+              "meaning": "room",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "घर में एक कमरा है."
+            },
+            {
+              "entryId": "hi.postposition.mem",
+              "senseId": "hi.postposition.mem.in",
+              "form": "में",
+              "meaning": "in",
+              "pos": "postposition",
+              "line": 2,
+              "evidence": "घर में एक कमरा है."
+            },
+            {
+              "entryId": "hi.numeral.ek",
+              "senseId": "hi.numeral.ek.one",
+              "form": "एक",
+              "meaning": "one",
+              "pos": "numeral",
+              "line": 2,
+              "evidence": "घर में एक कमरा है."
+            },
+            {
+              "entryId": "hi.noun.mez",
+              "senseId": "hi.noun.mez.table",
+              "form": "मेज़",
+              "meaning": "table",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "कमरे में एक मेज़ है."
+            },
+            {
+              "entryId": "hi.noun.kitab",
+              "senseId": "hi.noun.kitab.book",
+              "form": "किताब",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "मेज़ पर एक किताब है."
+            },
+            {
+              "entryId": "hi.postposition.par",
+              "senseId": "hi.postposition.par.on",
+              "form": "पर",
+              "meaning": "on",
+              "pos": "postposition",
+              "line": 4,
+              "evidence": "मेज़ पर एक किताब है."
+            },
+            {
+              "entryId": "hi.noun.kursi",
+              "senseId": "hi.noun.kursi.chair",
+              "form": "कुर्सी",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "पास में एक कुर्सी है."
+            },
+            {
+              "entryId": "hi.adverb.pas",
+              "senseId": "hi.adverb.pas.nearby",
+              "form": "पास",
+              "meaning": "nearby",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "पास में एक कुर्सी है."
+            },
+            {
+              "entryId": "hi.noun.pani",
+              "senseId": "hi.noun.pani.water",
+              "form": "पानी",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "कमरे में पानी है."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-what-is-this",
+          "senses": [
+            {
+              "entryId": "hi.demonstrative.yah",
+              "senseId": "hi.demonstrative.yah.this",
+              "form": "यह",
+              "meaning": "this",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "यह क्या है?"
+            },
+            {
+              "entryId": "hi.pronoun.kya",
+              "senseId": "hi.pronoun.kya.what",
+              "form": "क्या",
+              "meaning": "what",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "यह क्या है?"
+            },
+            {
+              "entryId": "hi.noun.kalam",
+              "senseId": "hi.noun.kalam.pen",
+              "form": "कलम",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "यह कलम है."
+            },
+            {
+              "entryId": "hi.noun.phone",
+              "senseId": "hi.noun.phone.phone",
+              "form": "फ़ोन",
+              "meaning": "phone",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "यह फ़ोन है?"
+            },
+            {
+              "entryId": "hi.particle.kya",
+              "senseId": "hi.particle.kya.yes-no-question",
+              "form": "क्या",
+              "meaning": "yes-no question marker",
+              "pos": "particle",
+              "line": 3,
+              "evidence": "यह फ़ोन है?"
+            },
+            {
+              "entryId": "hi.response.han",
+              "senseId": "hi.response.han.yes",
+              "form": "हाँ",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 4,
+              "evidence": "हाँ, यह फ़ोन है."
+            },
+            {
+              "entryId": "hi.noun.chabi",
+              "senseId": "hi.noun.chabi.key",
+              "form": "चाबी",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "चाबी कहाँ है?"
+            },
+            {
+              "entryId": "hi.adverb.kahan",
+              "senseId": "hi.adverb.kahan.where",
+              "form": "कहाँ",
+              "meaning": "where",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "चाबी कहाँ है?"
+            },
+            {
+              "entryId": "hi.noun.bag",
+              "senseId": "hi.noun.bag.bag",
+              "form": "बैग",
+              "meaning": "bag",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "चाबी बैग में है."
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-rina-s-morning",
+          "senses": [
+            {
+              "entryId": "hi.noun.subah",
+              "senseId": "hi.noun.subah.morning",
+              "form": "सुबह",
+              "meaning": "morning",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "रीना सुबह जल्दी उठती है."
+            },
+            {
+              "entryId": "hi.verb.uthati-hai",
+              "senseId": "hi.verb.uthati-hai.gets-up-feminine",
+              "form": "उठती है",
+              "meaning": "gets up (feminine)",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "रीना सुबह जल्दी उठती है."
+            },
+            {
+              "entryId": "hi.adverb.jaldi",
+              "senseId": "hi.adverb.jaldi.early",
+              "form": "जल्दी",
+              "meaning": "early",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "रीना सुबह जल्दी उठती है."
+            },
+            {
+              "entryId": "hi.noun.chai",
+              "senseId": "hi.noun.chai.tea",
+              "form": "चाय",
+              "meaning": "tea",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "वह चाय पीती है."
+            },
+            {
+              "entryId": "hi.verb.piti-hai",
+              "senseId": "hi.verb.piti-hai.drinks-feminine",
+              "form": "पीती है",
+              "meaning": "drinks (feminine)",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "वह चाय पीती है."
+            },
+            {
+              "entryId": "hi.pronoun.vah",
+              "senseId": "hi.pronoun.vah.she-he",
+              "form": "वह",
+              "meaning": "she; he",
+              "pos": "pronoun",
+              "line": 2,
+              "evidence": "वह चाय पीती है."
+            },
+            {
+              "entryId": "hi.noun.roti",
+              "senseId": "hi.noun.roti.flatbread",
+              "form": "रोटी",
+              "meaning": "flatbread",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "वह रोटी खाती है."
+            },
+            {
+              "entryId": "hi.verb.khati-hai",
+              "senseId": "hi.verb.khati-hai.eats",
+              "form": "खाती है",
+              "meaning": "eats",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "वह रोटी खाती है."
+            },
+            {
+              "entryId": "hi.verb.parhti-hai",
+              "senseId": "hi.verb.parhti-hai.reads-feminine",
+              "form": "पढ़ती है",
+              "meaning": "reads (feminine)",
+              "pos": "verb",
+              "line": 4,
+              "evidence": "फिर वह किताब पढ़ती है."
+            },
+            {
+              "entryId": "hi.adverb.phir",
+              "senseId": "hi.adverb.phir.then",
+              "form": "फिर",
+              "meaning": "then",
+              "pos": "adverb",
+              "line": 4,
+              "evidence": "फिर वह किताब पढ़ती है."
+            },
+            {
+              "entryId": "hi.pronoun.donom",
+              "senseId": "hi.pronoun.donom.both",
+              "form": "दोनों",
+              "meaning": "both",
+              "pos": "pronoun",
+              "line": 6,
+              "evidence": "दोनों घर से निकलते हैं."
+            },
+            {
+              "entryId": "hi.postposition.se",
+              "senseId": "hi.postposition.se.from",
+              "form": "से",
+              "meaning": "from",
+              "pos": "postposition",
+              "line": 6,
+              "evidence": "दोनों घर से निकलते हैं."
+            },
+            {
+              "entryId": "hi.verb.nikalte-haim",
+              "senseId": "hi.verb.nikalte-haim.leave",
+              "form": "निकलते हैं",
+              "meaning": "leave; go out",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "दोनों घर से निकलते हैं."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-a-market-plan",
+          "senses": [
+            {
+              "entryId": "hi.pronoun.aap",
+              "senseId": "hi.pronoun.aap.you-polite",
+              "form": "आप",
+              "meaning": "you (polite)",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "क्या आप आज बाज़ार चलेंगे?"
+            },
+            {
+              "entryId": "hi.adverb.aaj",
+              "senseId": "hi.adverb.aaj.today",
+              "form": "आज",
+              "meaning": "today",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "क्या आप आज बाज़ार चलेंगे?"
+            },
+            {
+              "entryId": "hi.noun.bazar",
+              "senseId": "hi.noun.bazar.market",
+              "form": "बाज़ार",
+              "meaning": "market",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "क्या आप आज बाज़ार चलेंगे?"
+            },
+            {
+              "entryId": "hi.verb.chalna",
+              "senseId": "hi.verb.chalna.go",
+              "form": "चलना",
+              "meaning": "go",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "क्या आप आज बाज़ार चलेंगे?"
+            },
+            {
+              "entryId": "hi.adverb.sath",
+              "senseId": "hi.adverb.sath.together-with",
+              "form": "साथ",
+              "meaning": "together; with",
+              "pos": "adverb",
+              "line": 2,
+              "evidence": "हाँ, मैं आपके साथ चलूँगा."
+            },
+            {
+              "entryId": "hi.noun.phal",
+              "senseId": "hi.noun.phal.fruit",
+              "form": "फल",
+              "meaning": "fruit",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "हमें फल खरीदना है."
+            },
+            {
+              "entryId": "hi.verb.kharidna",
+              "senseId": "hi.verb.kharidna.to-buy",
+              "form": "खरीदना",
+              "meaning": "to buy",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "हमें फल खरीदना है."
+            },
+            {
+              "entryId": "hi.pronoun.ham",
+              "senseId": "hi.pronoun.ham.we-us",
+              "form": "हम",
+              "meaning": "we; us",
+              "pos": "pronoun",
+              "line": 3,
+              "evidence": "हमें फल खरीदना है."
+            },
+            {
+              "entryId": "hi.numeral.tin",
+              "senseId": "hi.numeral.tin.three",
+              "form": "तीन",
+              "meaning": "three",
+              "pos": "numeral",
+              "line": 5,
+              "evidence": "हम तीन बजे चलेंगे."
+            },
+            {
+              "entryId": "hi.noun.baje",
+              "senseId": "hi.noun.baje.oclock",
+              "form": "बजे",
+              "meaning": "o'clock",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "हम तीन बजे चलेंगे."
+            },
+            {
+              "entryId": "hi.expression.thik-hai",
+              "senseId": "hi.expression.thik-hai.okay",
+              "form": "ठीक है",
+              "meaning": "okay",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "ठीक है, आज साथ चलते हैं."
+            }
+          ]
+        }
+      }
+    },
+    "japanese": {
+      "name": "Japanese",
+      "code": "ja",
+      "expected_review_directions": 3,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-a-first-meeting",
+          "senses": [
+            {
+              "entryId": "ja.greeting.hajimemashite",
+              "senseId": "ja.greeting.hajimemashite.nice-to-meet-you",
+              "form": "はじめまして",
+              "meaning": "nice to meet you",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "はじめまして。"
+            },
+            {
+              "entryId": "ja.greeting.konnichiwa",
+              "senseId": "ja.greeting.konnichiwa.hello",
+              "form": "こんにちは",
+              "meaning": "hello",
+              "pos": "greeting",
+              "line": 2,
+              "evidence": "こんにちは。"
+            },
+            {
+              "entryId": "ja.copula.desu",
+              "senseId": "ja.copula.desu.is-am-are-polite",
+              "form": "です",
+              "meaning": "is; am; are (polite)",
+              "pos": "copula",
+              "line": 3,
+              "evidence": "あきです。学生です。"
+            },
+            {
+              "entryId": "ja.noun.gakusei",
+              "senseId": "ja.noun.gakusei.student",
+              "form": "学生",
+              "meaning": "student",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "あきです。学生です。"
+            },
+            {
+              "entryId": "ja.noun.sensei",
+              "senseId": "ja.noun.sensei.teacher",
+              "form": "先生",
+              "meaning": "teacher",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "ゆきです。先生です。"
+            },
+            {
+              "entryId": "ja.expression.yoroshiku-onegaishimasu",
+              "senseId": "ja.expression.yoroshiku-onegaishimasu.please-treat-me-favorably",
+              "form": "よろしくお願いします",
+              "meaning": "please treat me favorably",
+              "pos": "expression",
+              "line": 5,
+              "evidence": "よろしくお願いします。"
+            },
+            {
+              "entryId": "ja.expression.kochirakoso",
+              "senseId": "ja.expression.kochirakoso.likewise",
+              "form": "こちらこそ",
+              "meaning": "likewise",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "こちらこそ、よろしくお願いします。"
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-a-quiet-room",
+          "senses": [
+            {
+              "entryId": "ja.noun.heya",
+              "senseId": "ja.noun.heya.room",
+              "form": "部屋",
+              "meaning": "room",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "部屋に机があります。"
+            },
+            {
+              "entryId": "ja.noun.tsukue",
+              "senseId": "ja.noun.tsukue.desk",
+              "form": "机",
+              "meaning": "desk",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "部屋に机があります。"
+            },
+            {
+              "entryId": "ja.verb.arimasu",
+              "senseId": "ja.verb.arimasu.there-is-inanimate",
+              "form": "あります",
+              "meaning": "there is; exists (inanimate)",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "部屋に机があります。"
+            },
+            {
+              "entryId": "ja.noun.hon",
+              "senseId": "ja.noun.hon.book",
+              "form": "本",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "机の上に本があります。"
+            },
+            {
+              "entryId": "ja.noun.ue",
+              "senseId": "ja.noun.ue.on-top-of",
+              "form": "上",
+              "meaning": "on; top of",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "机の上に本があります。"
+            },
+            {
+              "entryId": "ja.noun.isu",
+              "senseId": "ja.noun.isu.chair",
+              "form": "いす",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "机の横にいすがあります。"
+            },
+            {
+              "entryId": "ja.noun.yoko",
+              "senseId": "ja.noun.yoko.beside",
+              "form": "横",
+              "meaning": "beside",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "机の横にいすがあります。"
+            },
+            {
+              "entryId": "ja.noun.kaban",
+              "senseId": "ja.noun.kaban.bag",
+              "form": "かばん",
+              "meaning": "bag",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "いすの上にかばんがあります。"
+            },
+            {
+              "entryId": "ja.noun.mado",
+              "senseId": "ja.noun.mado.window",
+              "form": "窓",
+              "meaning": "window",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "部屋に窓があります。"
+            },
+            {
+              "entryId": "ja.noun.chikaku",
+              "senseId": "ja.noun.chikaku.near",
+              "form": "近く",
+              "meaning": "near",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "窓の近くに小さい机があります。"
+            },
+            {
+              "entryId": "ja.adjective.chiisai",
+              "senseId": "ja.adjective.chiisai.small",
+              "form": "小さい",
+              "meaning": "small",
+              "pos": "adjective",
+              "line": 6,
+              "evidence": "窓の近くに小さい机があります。"
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-what-is-this",
+          "senses": [
+            {
+              "entryId": "ja.demonstrative.kore",
+              "senseId": "ja.demonstrative.kore.this",
+              "form": "これ",
+              "meaning": "this",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "これは何ですか。"
+            },
+            {
+              "entryId": "ja.pronoun.nani",
+              "senseId": "ja.pronoun.nani.what",
+              "form": "何",
+              "meaning": "what",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "これは何ですか。"
+            },
+            {
+              "entryId": "ja.noun.pen",
+              "senseId": "ja.noun.pen.pen",
+              "form": "ペン",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "ペンです。"
+            },
+            {
+              "entryId": "ja.noun.noto",
+              "senseId": "ja.noun.noto.notebook",
+              "form": "ノート",
+              "meaning": "notebook",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "これはノートですか。"
+            },
+            {
+              "entryId": "ja.response.hai",
+              "senseId": "ja.response.hai.yes",
+              "form": "はい",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 4,
+              "evidence": "はい、ノートです。"
+            },
+            {
+              "entryId": "ja.noun.kagi",
+              "senseId": "ja.noun.kagi.key",
+              "form": "鍵",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "鍵はどこですか。"
+            },
+            {
+              "entryId": "ja.pronoun.doko",
+              "senseId": "ja.pronoun.doko.where",
+              "form": "どこ",
+              "meaning": "where",
+              "pos": "pronoun",
+              "line": 5,
+              "evidence": "鍵はどこですか。"
+            },
+            {
+              "entryId": "ja.noun.keitai-denwa",
+              "senseId": "ja.noun.keitai-denwa.mobile-phone",
+              "form": "携帯電話",
+              "meaning": "mobile phone",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "鍵は携帯電話の横です。"
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-at-the-cafe",
+          "senses": [
+            {
+              "entryId": "ja.noun.kissaten",
+              "senseId": "ja.noun.kissaten.cafe",
+              "form": "喫茶店",
+              "meaning": "café",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "ゆきは喫茶店にいます。"
+            },
+            {
+              "entryId": "ja.verb.imasu",
+              "senseId": "ja.verb.imasu.be-at-animate",
+              "form": "います",
+              "meaning": "be at; exist (animate)",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "ゆきは喫茶店にいます。"
+            },
+            {
+              "entryId": "ja.noun.kohii",
+              "senseId": "ja.noun.kohii.coffee",
+              "form": "コーヒー",
+              "meaning": "coffee",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "コーヒーを飲みます。"
+            },
+            {
+              "entryId": "ja.verb.nomimasu",
+              "senseId": "ja.verb.nomimasu.drink-drinks-polite",
+              "form": "飲みます",
+              "meaning": "drink; drinks (polite)",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "コーヒーを飲みます。"
+            },
+            {
+              "entryId": "ja.noun.ocha",
+              "senseId": "ja.noun.ocha.tea",
+              "form": "お茶",
+              "meaning": "tea",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "あきはお茶を飲みます。"
+            },
+            {
+              "entryId": "ja.noun.keki",
+              "senseId": "ja.noun.keki.cake",
+              "form": "ケーキ",
+              "meaning": "cake",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "二人はケーキを食べます。"
+            },
+            {
+              "entryId": "ja.verb.tabemasu",
+              "senseId": "ja.verb.tabemasu.eat-eats-polite",
+              "form": "食べます",
+              "meaning": "eat; eats (polite)",
+              "pos": "verb",
+              "line": 4,
+              "evidence": "二人はケーキを食べます。"
+            },
+            {
+              "entryId": "ja.noun.futari",
+              "senseId": "ja.noun.futari.two-people",
+              "form": "二人",
+              "meaning": "two people",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "二人はケーキを食べます。"
+            },
+            {
+              "entryId": "ja.adjective.shizuka",
+              "senseId": "ja.adjective.shizuka.quiet",
+              "form": "静か",
+              "meaning": "quiet",
+              "pos": "adjective",
+              "line": 5,
+              "evidence": "喫茶店は静かです。"
+            },
+            {
+              "entryId": "ja.verb.yomimasu",
+              "senseId": "ja.verb.yomimasu.read",
+              "form": "読みます",
+              "meaning": "read; reads (polite)",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "窓の近くで本を読みます。"
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-an-invitation",
+          "senses": [
+            {
+              "entryId": "ja.noun.ashita",
+              "senseId": "ja.noun.ashita.tomorrow",
+              "form": "明日",
+              "meaning": "tomorrow",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "明日、公園へ行きませんか。"
+            },
+            {
+              "entryId": "ja.noun.koen",
+              "senseId": "ja.noun.koen.park",
+              "form": "公園",
+              "meaning": "park",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "明日、公園へ行きませんか。"
+            },
+            {
+              "entryId": "ja.verb.ikimasu",
+              "senseId": "ja.verb.ikimasu.go-will-go-polite",
+              "form": "行きます",
+              "meaning": "go; will go (polite)",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "明日、公園へ行きませんか。"
+            },
+            {
+              "entryId": "ja.adverb.issho-ni",
+              "senseId": "ja.adverb.issho-ni.together",
+              "form": "一緒に",
+              "meaning": "together",
+              "pos": "adverb",
+              "line": 2,
+              "evidence": "はい、一緒に行きます。"
+            },
+            {
+              "entryId": "ja.noun.eki",
+              "senseId": "ja.noun.eki.station",
+              "form": "駅",
+              "meaning": "station",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "公園は駅の近くです。"
+            },
+            {
+              "entryId": "ja.expression.ii-desu-ne",
+              "senseId": "ja.expression.ii-desu-ne.that-sounds-good",
+              "form": "いいですね",
+              "meaning": "that sounds good",
+              "pos": "expression",
+              "line": 4,
+              "evidence": "いいですね。"
+            },
+            {
+              "entryId": "ja.expression.sono-ato",
+              "senseId": "ja.expression.sono-ato.after-that",
+              "form": "そのあと",
+              "meaning": "after that",
+              "pos": "expression",
+              "line": 5,
+              "evidence": "そのあと、喫茶店へ行きます。"
+            },
+            {
+              "entryId": "ja.noun.tanoshimi",
+              "senseId": "ja.noun.tanoshimi.looking-forward-to-it",
+              "form": "楽しみ",
+              "meaning": "looking forward to it",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "はい、楽しみです。"
+            }
+          ]
+        }
+      }
+    },
+    "korean": {
+      "name": "Korean",
+      "code": "ko",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-a-polite-first-meeting",
+          "senses": [
+            {
+              "entryId": "ko.greeting.annyeonghaseyo",
+              "senseId": "ko.greeting.annyeonghaseyo.hello-polite",
+              "form": "안녕하세요",
+              "meaning": "hello (polite)",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "안녕하세요."
+            },
+            {
+              "entryId": "ko.pronoun.jeoneun",
+              "senseId": "ko.pronoun.jeoneun.as-for-me",
+              "form": "저는",
+              "meaning": "as for me",
+              "pos": "pronoun",
+              "line": 3,
+              "evidence": "저는 민지예요."
+            },
+            {
+              "entryId": "ko.copula.yeyo",
+              "senseId": "ko.copula.yeyo.is-am-after-a-vowel",
+              "form": "예요",
+              "meaning": "is; am after a vowel",
+              "pos": "copula",
+              "line": 3,
+              "evidence": "저는 민지예요."
+            },
+            {
+              "entryId": "ko.noun.haksaeng",
+              "senseId": "ko.noun.haksaeng.student",
+              "form": "학생",
+              "meaning": "student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "학생이에요."
+            },
+            {
+              "entryId": "ko.response.ne",
+              "senseId": "ko.response.ne.yes",
+              "form": "네",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 6,
+              "evidence": "네, 저는 선생님이에요."
+            },
+            {
+              "entryId": "ko.noun.seonsaengnim",
+              "senseId": "ko.noun.seonsaengnim.teacher",
+              "form": "선생님",
+              "meaning": "teacher",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "네, 저는 선생님이에요."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-a-room-at-home",
+          "senses": [
+            {
+              "entryId": "ko.noun.bang",
+              "senseId": "ko.noun.bang.room",
+              "form": "방",
+              "meaning": "room",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "방에 책상이 있어요."
+            },
+            {
+              "entryId": "ko.noun.chaeksang",
+              "senseId": "ko.noun.chaeksang.desk",
+              "form": "책상",
+              "meaning": "desk",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "방에 책상이 있어요."
+            },
+            {
+              "entryId": "ko.verb.isseoyo",
+              "senseId": "ko.verb.isseoyo.there-is-have",
+              "form": "있어요",
+              "meaning": "there is; have",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "방에 책상이 있어요."
+            },
+            {
+              "entryId": "ko.noun.chaek",
+              "senseId": "ko.noun.chaek.book",
+              "form": "책",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "책상 위에 책이 있어요."
+            },
+            {
+              "entryId": "ko.noun.wi",
+              "senseId": "ko.noun.wi.on-top-of",
+              "form": "위",
+              "meaning": "on; top of",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "책상 위에 책이 있어요."
+            },
+            {
+              "entryId": "ko.noun.uija",
+              "senseId": "ko.noun.uija.chair",
+              "form": "의자",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "책상 옆에 의자가 있어요."
+            },
+            {
+              "entryId": "ko.noun.yeop",
+              "senseId": "ko.noun.yeop.beside",
+              "form": "옆",
+              "meaning": "beside",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "책상 옆에 의자가 있어요."
+            },
+            {
+              "entryId": "ko.noun.gabang",
+              "senseId": "ko.noun.gabang.bag",
+              "form": "가방",
+              "meaning": "bag",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "의자 위에 가방이 있어요."
+            },
+            {
+              "entryId": "ko.noun.changmun",
+              "senseId": "ko.noun.changmun.window",
+              "form": "창문",
+              "meaning": "window",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "방에 창문이 있어요."
+            },
+            {
+              "entryId": "ko.adjective.jageun",
+              "senseId": "ko.adjective.jageun.small",
+              "form": "작은",
+              "meaning": "small",
+              "pos": "adjective",
+              "line": 6,
+              "evidence": "창문 옆에 작은 책상이 있어요."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-what-is-this",
+          "senses": [
+            {
+              "entryId": "ko.demonstrative.ige",
+              "senseId": "ko.demonstrative.ige.this-subject-form",
+              "form": "이게",
+              "meaning": "this (subject form)",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "이게 뭐예요?"
+            },
+            {
+              "entryId": "ko.pronoun.mwo",
+              "senseId": "ko.pronoun.mwo.what",
+              "form": "뭐",
+              "meaning": "what",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "이게 뭐예요?"
+            },
+            {
+              "entryId": "ko.noun.pen",
+              "senseId": "ko.noun.pen.pen",
+              "form": "펜",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "펜이에요."
+            },
+            {
+              "entryId": "ko.noun.gongchaek",
+              "senseId": "ko.noun.gongchaek.notebook",
+              "form": "공책",
+              "meaning": "notebook",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "이게 공책이에요?"
+            },
+            {
+              "entryId": "ko.noun.yeolsoe",
+              "senseId": "ko.noun.yeolsoe.key",
+              "form": "열쇠",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "열쇠가 어디에 있어요?"
+            },
+            {
+              "entryId": "ko.pronoun.eodi",
+              "senseId": "ko.pronoun.eodi.where",
+              "form": "어디",
+              "meaning": "where",
+              "pos": "pronoun",
+              "line": 5,
+              "evidence": "열쇠가 어디에 있어요?"
+            },
+            {
+              "entryId": "ko.noun.hyudaepon",
+              "senseId": "ko.noun.hyudaepon.mobile-phone",
+              "form": "휴대폰",
+              "meaning": "mobile phone",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "휴대폰 옆에 있어요."
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-minji-s-morning",
+          "senses": [
+            {
+              "entryId": "ko.noun.achim",
+              "senseId": "ko.noun.achim.morning",
+              "form": "아침",
+              "meaning": "morning",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "아침에 민지는 물을 마셔요."
+            },
+            {
+              "entryId": "ko.noun.mul",
+              "senseId": "ko.noun.mul.water",
+              "form": "물",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "아침에 민지는 물을 마셔요."
+            },
+            {
+              "entryId": "ko.verb.masyeoyo",
+              "senseId": "ko.verb.masyeoyo.drink-drinks",
+              "form": "마셔요",
+              "meaning": "drink; drinks",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "아침에 민지는 물을 마셔요."
+            },
+            {
+              "entryId": "ko.noun.bap",
+              "senseId": "ko.noun.bap.cooked-rice-meal",
+              "form": "밥",
+              "meaning": "cooked rice; meal",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "그리고 밥을 먹어요."
+            },
+            {
+              "entryId": "ko.verb.meogeoyo",
+              "senseId": "ko.verb.meogeoyo.eat-eats",
+              "form": "먹어요",
+              "meaning": "eat; eats",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "그리고 밥을 먹어요."
+            },
+            {
+              "entryId": "ko.conjunction.geurigo",
+              "senseId": "ko.conjunction.geurigo.and-then",
+              "form": "그리고",
+              "meaning": "and; then",
+              "pos": "conjunction",
+              "line": 2,
+              "evidence": "그리고 밥을 먹어요."
+            },
+            {
+              "entryId": "ko.verb.ilgeoyo",
+              "senseId": "ko.verb.ilgeoyo.read-reads",
+              "form": "읽어요",
+              "meaning": "read; reads",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "책을 읽어요."
+            },
+            {
+              "entryId": "ko.noun.keopi",
+              "senseId": "ko.noun.keopi.coffee",
+              "form": "커피",
+              "meaning": "coffee",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "준호는 커피를 마셔요."
+            },
+            {
+              "entryId": "ko.numeral.du",
+              "senseId": "ko.numeral.du.two",
+              "form": "두",
+              "meaning": "two",
+              "pos": "numeral",
+              "line": 5,
+              "evidence": "두 사람은 가방을 준비해요."
+            },
+            {
+              "entryId": "ko.noun.saram",
+              "senseId": "ko.noun.saram.person",
+              "form": "사람",
+              "meaning": "person",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "두 사람은 가방을 준비해요."
+            },
+            {
+              "entryId": "ko.verb.junbihaeyo",
+              "senseId": "ko.verb.junbihaeyo.prepare",
+              "form": "준비해요",
+              "meaning": "prepare",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "두 사람은 가방을 준비해요."
+            },
+            {
+              "entryId": "ko.noun.jip",
+              "senseId": "ko.noun.jip.home",
+              "form": "집",
+              "meaning": "home",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "그리고 집에서 나가요."
+            },
+            {
+              "entryId": "ko.verb.nagayo",
+              "senseId": "ko.verb.nagayo.leave",
+              "form": "나가요",
+              "meaning": "leave; go out",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "그리고 집에서 나가요."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-going-out-together",
+          "senses": [
+            {
+              "entryId": "ko.noun.oneul",
+              "senseId": "ko.noun.oneul.today",
+              "form": "오늘",
+              "meaning": "today",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "오늘 공원에 같이 가요."
+            },
+            {
+              "entryId": "ko.noun.gongwon",
+              "senseId": "ko.noun.gongwon.park",
+              "form": "공원",
+              "meaning": "park",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "오늘 공원에 같이 가요."
+            },
+            {
+              "entryId": "ko.adverb.gachi",
+              "senseId": "ko.adverb.gachi.together",
+              "form": "같이",
+              "meaning": "together",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "오늘 공원에 같이 가요."
+            },
+            {
+              "entryId": "ko.verb.gayo",
+              "senseId": "ko.verb.gayo.go-let-s-go",
+              "form": "가요",
+              "meaning": "go; let's go",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "오늘 공원에 같이 가요."
+            },
+            {
+              "entryId": "ko.expression.joayo",
+              "senseId": "ko.expression.joayo.sounds-good-is-good",
+              "form": "좋아요",
+              "meaning": "sounds good; is good",
+              "pos": "expression",
+              "line": 2,
+              "evidence": "좋아요."
+            },
+            {
+              "entryId": "ko.noun.geuncheo",
+              "senseId": "ko.noun.geuncheo.near",
+              "form": "근처",
+              "meaning": "near",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "공원은 집 근처예요."
+            },
+            {
+              "entryId": "ko.noun.kape",
+              "senseId": "ko.noun.kape.cafe",
+              "form": "카페",
+              "meaning": "café",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "그다음에 카페에 가요."
+            },
+            {
+              "entryId": "ko.adverb.geudaeume",
+              "senseId": "ko.adverb.geudaeume.after-that",
+              "form": "그다음에",
+              "meaning": "after that",
+              "pos": "adverb",
+              "line": 4,
+              "evidence": "그다음에 카페에 가요."
+            },
+            {
+              "entryId": "ko.numeral.se",
+              "senseId": "ko.numeral.se.three",
+              "form": "세",
+              "meaning": "three",
+              "pos": "numeral",
+              "line": 6,
+              "evidence": "세 시에 만나요."
+            },
+            {
+              "entryId": "ko.noun.si",
+              "senseId": "ko.noun.si.oclock",
+              "form": "시",
+              "meaning": "o'clock",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "세 시에 만나요."
+            },
+            {
+              "entryId": "ko.verb.mannayo",
+              "senseId": "ko.verb.mannayo.meet",
+              "form": "만나요",
+              "meaning": "meet",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "세 시에 만나요."
+            }
+          ]
+        }
+      }
+    },
+    "russian": {
+      "name": "Russian",
+      "code": "ru",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-meeting-at-home",
+          "senses": [
+            {
+              "entryId": "ru.greeting.zdravstvuyte",
+              "senseId": "ru.greeting.zdravstvuyte.hello-polite",
+              "form": "здравствуйте",
+              "meaning": "hello (polite)",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "Здравствуйте!"
+            },
+            {
+              "entryId": "ru.greeting.privet",
+              "senseId": "ru.greeting.privet.hi",
+              "form": "привет",
+              "meaning": "hi",
+              "pos": "greeting",
+              "line": 2,
+              "evidence": "Привет!"
+            },
+            {
+              "entryId": "ru.pronoun.ya",
+              "senseId": "ru.pronoun.ya.i",
+              "form": "я",
+              "meaning": "I",
+              "pos": "pronoun",
+              "line": 3,
+              "evidence": "Я Анна."
+            },
+            {
+              "entryId": "ru.noun.studentka",
+              "senseId": "ru.noun.studentka.female-student",
+              "form": "студентка",
+              "meaning": "female student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Я студентка."
+            },
+            {
+              "entryId": "ru.noun.prepodavatel",
+              "senseId": "ru.noun.prepodavatel.teacher",
+              "form": "преподаватель",
+              "meaning": "teacher",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "А я преподаватель."
+            },
+            {
+              "entryId": "ru.conjunction.a",
+              "senseId": "ru.conjunction.a.and-while",
+              "form": "а",
+              "meaning": "and; whereas",
+              "pos": "conjunction",
+              "line": 6,
+              "evidence": "А я преподаватель."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-anna-s-room",
+          "senses": [
+            {
+              "entryId": "ru.noun.komnata",
+              "senseId": "ru.noun.komnata.room",
+              "form": "комната",
+              "meaning": "room",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Это комната Анны."
+            },
+            {
+              "entryId": "ru.demonstrative.eto",
+              "senseId": "ru.demonstrative.eto.this-it-is",
+              "form": "это",
+              "meaning": "this; it is",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "Это комната Анны."
+            },
+            {
+              "entryId": "ru.noun.dom",
+              "senseId": "ru.noun.dom.house-home",
+              "form": "дом",
+              "meaning": "house; home",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Комната находится в доме."
+            },
+            {
+              "entryId": "ru.verb.nakhoditsya",
+              "senseId": "ru.verb.nakhoditsya.is-located",
+              "form": "находится",
+              "meaning": "is located",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "Комната находится в доме."
+            },
+            {
+              "entryId": "ru.preposition.v",
+              "senseId": "ru.preposition.v.in",
+              "form": "в",
+              "meaning": "in",
+              "pos": "preposition",
+              "line": 2,
+              "evidence": "Комната находится в доме."
+            },
+            {
+              "entryId": "ru.noun.stol",
+              "senseId": "ru.noun.stol.table",
+              "form": "стол",
+              "meaning": "table",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "В комнате есть стол."
+            },
+            {
+              "entryId": "ru.verb.est-exist",
+              "senseId": "ru.verb.est-exist.there-is",
+              "form": "есть",
+              "meaning": "there is; there are",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "В комнате есть стол."
+            },
+            {
+              "entryId": "ru.noun.kniga",
+              "senseId": "ru.noun.kniga.book",
+              "form": "книга",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "На столе лежит книга."
+            },
+            {
+              "entryId": "ru.preposition.na",
+              "senseId": "ru.preposition.na.on",
+              "form": "на",
+              "meaning": "on",
+              "pos": "preposition",
+              "line": 4,
+              "evidence": "На столе лежит книга."
+            },
+            {
+              "entryId": "ru.verb.lezhat-lezhit",
+              "senseId": "ru.verb.lezhat-lezhit.lies",
+              "form": "лежит",
+              "meaning": "lies; is lying",
+              "pos": "verb",
+              "line": 4,
+              "evidence": "На столе лежит книга."
+            },
+            {
+              "entryId": "ru.noun.stul",
+              "senseId": "ru.noun.stul.chair",
+              "form": "стул",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Рядом стоит стул."
+            },
+            {
+              "entryId": "ru.adverb.ryadom",
+              "senseId": "ru.adverb.ryadom.nearby",
+              "form": "рядом",
+              "meaning": "nearby",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "Рядом стоит стул."
+            },
+            {
+              "entryId": "ru.verb.stoyat-stoit",
+              "senseId": "ru.verb.stoyat-stoit.stands",
+              "form": "стоит",
+              "meaning": "stands; is standing",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "Рядом стоит стул."
+            },
+            {
+              "entryId": "ru.noun.okno",
+              "senseId": "ru.noun.okno.window",
+              "form": "окно",
+              "meaning": "window",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "В комнате есть окно."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-where-is-the-key",
+          "senses": [
+            {
+              "entryId": "ru.pronoun.chto",
+              "senseId": "ru.pronoun.chto.what",
+              "form": "что",
+              "meaning": "what",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "Что это?"
+            },
+            {
+              "entryId": "ru.noun.ruchka",
+              "senseId": "ru.noun.ruchka.pen",
+              "form": "ручка",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Это ручка."
+            },
+            {
+              "entryId": "ru.adverb.gde",
+              "senseId": "ru.adverb.gde.where",
+              "form": "где",
+              "meaning": "where",
+              "pos": "adverb",
+              "line": 3,
+              "evidence": "Где телефон?"
+            },
+            {
+              "entryId": "ru.noun.telefon",
+              "senseId": "ru.noun.telefon.phone",
+              "form": "телефон",
+              "meaning": "phone",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Где телефон?"
+            },
+            {
+              "entryId": "ru.noun.klyuch",
+              "senseId": "ru.noun.klyuch.key",
+              "form": "ключ",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "А где ключ?"
+            },
+            {
+              "entryId": "ru.noun.sumka",
+              "senseId": "ru.noun.sumka.bag",
+              "form": "сумка",
+              "meaning": "bag",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Ключ в сумке."
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-ivan-s-morning",
+          "senses": [
+            {
+              "entryId": "ru.adverb.utrom",
+              "senseId": "ru.adverb.utrom.in-the-morning",
+              "form": "утром",
+              "meaning": "in the morning",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "Утром кухня тихая."
+            },
+            {
+              "entryId": "ru.noun.kukhnya",
+              "senseId": "ru.noun.kukhnya.kitchen",
+              "form": "кухня",
+              "meaning": "kitchen",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Утром кухня тихая."
+            },
+            {
+              "entryId": "ru.adjective.tikhiy",
+              "senseId": "ru.adjective.tikhiy.quiet",
+              "form": "тихий",
+              "meaning": "quiet",
+              "pos": "adjective",
+              "line": 1,
+              "evidence": "Утром кухня тихая."
+            },
+            {
+              "entryId": "ru.noun.voda",
+              "senseId": "ru.noun.voda.water",
+              "form": "вода",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "На столе вода."
+            },
+            {
+              "entryId": "ru.verb.est",
+              "senseId": "ru.verb.est.eats",
+              "form": "ест",
+              "meaning": "eats",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Иван ест хлеб."
+            },
+            {
+              "entryId": "ru.noun.khleb",
+              "senseId": "ru.noun.khleb.bread",
+              "form": "хлеб",
+              "meaning": "bread",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Иван ест хлеб."
+            },
+            {
+              "entryId": "ru.verb.pit-pyot",
+              "senseId": "ru.verb.pit-pyot.drinks",
+              "form": "пьёт",
+              "meaning": "drinks",
+              "pos": "verb",
+              "line": 4,
+              "evidence": "Анна пьёт чай."
+            },
+            {
+              "entryId": "ru.noun.chay",
+              "senseId": "ru.noun.chay.tea",
+              "form": "чай",
+              "meaning": "tea",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Анна пьёт чай."
+            },
+            {
+              "entryId": "ru.pronoun.ona",
+              "senseId": "ru.pronoun.ona.she",
+              "form": "она",
+              "meaning": "she",
+              "pos": "pronoun",
+              "line": 5,
+              "evidence": "Она читает книгу."
+            },
+            {
+              "entryId": "ru.verb.chitat-chitaet",
+              "senseId": "ru.verb.chitat-chitaet.reads",
+              "form": "читает",
+              "meaning": "reads",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "Она читает книгу."
+            },
+            {
+              "entryId": "ru.adverb.potom",
+              "senseId": "ru.adverb.potom.then",
+              "form": "потом",
+              "meaning": "then",
+              "pos": "adverb",
+              "line": 6,
+              "evidence": "Потом они выходят из дома."
+            },
+            {
+              "entryId": "ru.pronoun.oni",
+              "senseId": "ru.pronoun.oni.they",
+              "form": "они",
+              "meaning": "they",
+              "pos": "pronoun",
+              "line": 6,
+              "evidence": "Потом они выходят из дома."
+            },
+            {
+              "entryId": "ru.verb.vykhodit-vykhodyat",
+              "senseId": "ru.verb.vykhodit-vykhodyat.leave",
+              "form": "выходят",
+              "meaning": "leave; go out",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "Потом они выходят из дома."
+            },
+            {
+              "entryId": "ru.preposition.iz",
+              "senseId": "ru.preposition.iz.from-out-of",
+              "form": "из",
+              "meaning": "from; out of",
+              "pos": "preposition",
+              "line": 6,
+              "evidence": "Потом они выходят из дома."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-a-walk-today",
+          "senses": [
+            {
+              "entryId": "ru.pronoun.my",
+              "senseId": "ru.pronoun.my.we",
+              "form": "мы",
+              "meaning": "we",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "Мы идём в парк сегодня?"
+            },
+            {
+              "entryId": "ru.verb.idti-idyom",
+              "senseId": "ru.verb.idti-idyom.are-going-on-foot",
+              "form": "идём",
+              "meaning": "are going (on foot)",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "Мы идём в парк сегодня?"
+            },
+            {
+              "entryId": "ru.noun.park",
+              "senseId": "ru.noun.park.park",
+              "form": "парк",
+              "meaning": "park",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Мы идём в парк сегодня?"
+            },
+            {
+              "entryId": "ru.adverb.segodnya",
+              "senseId": "ru.adverb.segodnya.today",
+              "form": "сегодня",
+              "meaning": "today",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "Мы идём в парк сегодня?"
+            },
+            {
+              "entryId": "ru.adverb.vmeste",
+              "senseId": "ru.adverb.vmeste.together",
+              "form": "вместе",
+              "meaning": "together",
+              "pos": "adverb",
+              "line": 2,
+              "evidence": "Да, идём вместе."
+            },
+            {
+              "entryId": "ru.response.da",
+              "senseId": "ru.response.da.yes",
+              "form": "да",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 2,
+              "evidence": "Да, идём вместе."
+            },
+            {
+              "entryId": "ru.preposition.ryadom-s",
+              "senseId": "ru.preposition.ryadom-s.near",
+              "form": "рядом с",
+              "meaning": "near",
+              "pos": "preposition",
+              "line": 3,
+              "evidence": "Парк рядом с домом."
+            },
+            {
+              "entryId": "ru.noun.kafe",
+              "senseId": "ru.noun.kafe.cafe",
+              "form": "кафе",
+              "meaning": "café",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Потом мы идём в кафе."
+            },
+            {
+              "entryId": "ru.expression.khorosho",
+              "senseId": "ru.expression.khorosho.good-okay",
+              "form": "хорошо",
+              "meaning": "good; okay",
+              "pos": "expression",
+              "line": 5,
+              "evidence": "Хорошо, встретимся в три."
+            },
+            {
+              "entryId": "ru.verb.vstretitsya-vstretimsya",
+              "senseId": "ru.verb.vstretitsya-vstretimsya.meet",
+              "form": "встретимся",
+              "meaning": "meet",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "Хорошо, встретимся в три."
+            },
+            {
+              "entryId": "ru.numeral.tri",
+              "senseId": "ru.numeral.tri.three",
+              "form": "три",
+              "meaning": "three",
+              "pos": "numeral",
+              "line": 5,
+              "evidence": "Хорошо, встретимся в три."
+            },
+            {
+              "entryId": "ru.expression.do-vstrechi",
+              "senseId": "ru.expression.do-vstrechi.see-you",
+              "form": "до встречи",
+              "meaning": "see you",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "Да, до встречи!"
+            }
+          ]
+        }
+      }
+    },
+    "spanish": {
+      "name": "Spanish",
+      "code": "es",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-meeting-a-neighbor",
+          "senses": [
+            {
+              "entryId": "es.greeting.hola",
+              "senseId": "es.greeting.hola.hello",
+              "form": "hola",
+              "meaning": "hello",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "¡Hola!"
+            },
+            {
+              "entryId": "es.greeting.buenos-dias",
+              "senseId": "es.greeting.buenos-dias.good-morning",
+              "form": "buenos días",
+              "meaning": "good morning",
+              "pos": "greeting",
+              "line": 2,
+              "evidence": "Buenos días."
+            },
+            {
+              "entryId": "es.verb.ser-soy",
+              "senseId": "es.verb.ser-soy.i-am",
+              "form": "soy",
+              "meaning": "I am",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Soy Ana."
+            },
+            {
+              "entryId": "es.noun.vecino",
+              "senseId": "es.noun.vecino.male-neighbor",
+              "form": "el vecino",
+              "meaning": "male neighbor",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Soy Luis, tu vecino."
+            },
+            {
+              "entryId": "es.determiner.tu",
+              "senseId": "es.determiner.tu.your-informal-singular",
+              "form": "tu",
+              "meaning": "your (informal singular)",
+              "pos": "determiner",
+              "line": 4,
+              "evidence": "Soy Luis, tu vecino."
+            },
+            {
+              "entryId": "es.noun.estudiante",
+              "senseId": "es.noun.estudiante.female-student",
+              "form": "la estudiante",
+              "meaning": "female student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Soy estudiante."
+            },
+            {
+              "entryId": "es.noun.cocinero",
+              "senseId": "es.noun.cocinero.male-cook",
+              "form": "el cocinero",
+              "meaning": "male cook",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Mucho gusto, soy cocinero."
+            },
+            {
+              "entryId": "es.expression.mucho-gusto",
+              "senseId": "es.expression.mucho-gusto.nice-to-meet-you",
+              "form": "mucho gusto",
+              "meaning": "nice to meet you",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "Mucho gusto, soy cocinero."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-breakfast-at-home",
+          "senses": [
+            {
+              "entryId": "es.noun.casa",
+              "senseId": "es.noun.casa.house-home",
+              "form": "la casa",
+              "meaning": "house; home",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "La casa está tranquila por la mañana."
+            },
+            {
+              "entryId": "es.noun.manana",
+              "senseId": "es.noun.manana.morning",
+              "form": "la mañana",
+              "meaning": "morning",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "La casa está tranquila por la mañana."
+            },
+            {
+              "entryId": "es.verb.estar-esta",
+              "senseId": "es.verb.estar-esta.is-state-location",
+              "form": "está",
+              "meaning": "is (state or location)",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "La casa está tranquila por la mañana."
+            },
+            {
+              "entryId": "es.adjective.tranquilo",
+              "senseId": "es.adjective.tranquilo.quiet",
+              "form": "tranquilo",
+              "meaning": "quiet",
+              "pos": "adjective",
+              "line": 1,
+              "evidence": "La casa está tranquila por la mañana."
+            },
+            {
+              "entryId": "es.preposition.por",
+              "senseId": "es.preposition.por.during",
+              "form": "por",
+              "meaning": "during; in",
+              "pos": "preposition",
+              "line": 1,
+              "evidence": "La casa está tranquila por la mañana."
+            },
+            {
+              "entryId": "es.noun.cocina",
+              "senseId": "es.noun.cocina.kitchen",
+              "form": "la cocina",
+              "meaning": "kitchen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Hay una cocina pequeña."
+            },
+            {
+              "entryId": "es.verb.hay",
+              "senseId": "es.verb.hay.there-is",
+              "form": "hay",
+              "meaning": "there is; there are",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "Hay una cocina pequeña."
+            },
+            {
+              "entryId": "es.adjective.pequeno",
+              "senseId": "es.adjective.pequeno.small",
+              "form": "pequeño",
+              "meaning": "small",
+              "pos": "adjective",
+              "line": 2,
+              "evidence": "Hay una cocina pequeña."
+            },
+            {
+              "entryId": "es.noun.mesa",
+              "senseId": "es.noun.mesa.table",
+              "form": "la mesa",
+              "meaning": "table",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "En la cocina hay una mesa."
+            },
+            {
+              "entryId": "es.preposition.en",
+              "senseId": "es.preposition.en.in",
+              "form": "en",
+              "meaning": "in",
+              "pos": "preposition",
+              "line": 3,
+              "evidence": "En la cocina hay una mesa."
+            },
+            {
+              "entryId": "es.noun.libro",
+              "senseId": "es.noun.libro.book",
+              "form": "el libro",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Sobre la mesa hay un libro."
+            },
+            {
+              "entryId": "es.preposition.sobre",
+              "senseId": "es.preposition.sobre.on",
+              "form": "sobre",
+              "meaning": "on",
+              "pos": "preposition",
+              "line": 4,
+              "evidence": "Sobre la mesa hay un libro."
+            },
+            {
+              "entryId": "es.noun.silla",
+              "senseId": "es.noun.silla.chair",
+              "form": "la silla",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "También hay una silla."
+            },
+            {
+              "entryId": "es.adverb.tambien",
+              "senseId": "es.adverb.tambien.also",
+              "form": "también",
+              "meaning": "also",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "También hay una silla."
+            },
+            {
+              "entryId": "es.verb.beber-bebe",
+              "senseId": "es.verb.beber-bebe.drinks",
+              "form": "bebe",
+              "meaning": "drinks",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "Ana bebe un vaso de agua."
+            },
+            {
+              "entryId": "es.noun.vaso",
+              "senseId": "es.noun.vaso.glass",
+              "form": "el vaso",
+              "meaning": "glass",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Ana bebe un vaso de agua."
+            },
+            {
+              "entryId": "es.noun.agua",
+              "senseId": "es.noun.agua.water",
+              "form": "el agua (F)",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Ana bebe un vaso de agua."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-what-is-this",
+          "senses": [
+            {
+              "entryId": "es.pronoun.que",
+              "senseId": "es.pronoun.que.what",
+              "form": "qué",
+              "meaning": "what",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "¿Qué es esto?"
+            },
+            {
+              "entryId": "es.demonstrative.esto",
+              "senseId": "es.demonstrative.esto.this",
+              "form": "esto",
+              "meaning": "this",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "¿Qué es esto?"
+            },
+            {
+              "entryId": "es.noun.boligrafo",
+              "senseId": "es.noun.boligrafo.pen",
+              "form": "el bolígrafo",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Es un bolígrafo."
+            },
+            {
+              "entryId": "es.noun.telefono",
+              "senseId": "es.noun.telefono.phone",
+              "form": "el teléfono",
+              "meaning": "phone",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "¿Esto es un teléfono?"
+            },
+            {
+              "entryId": "es.response.si",
+              "senseId": "es.response.si.yes",
+              "form": "sí",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 4,
+              "evidence": "Sí, es un teléfono."
+            },
+            {
+              "entryId": "es.noun.llave",
+              "senseId": "es.noun.llave.key",
+              "form": "la llave",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "¿Dónde está la llave?"
+            },
+            {
+              "entryId": "es.adverb.donde",
+              "senseId": "es.adverb.donde.where",
+              "form": "dónde",
+              "meaning": "where",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "¿Dónde está la llave?"
+            },
+            {
+              "entryId": "es.noun.mochila",
+              "senseId": "es.noun.mochila.backpack",
+              "form": "la mochila",
+              "meaning": "backpack",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "La llave está en la mochila."
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-luis-in-the-morning",
+          "senses": [
+            {
+              "entryId": "es.verb.tomar-toma",
+              "senseId": "es.verb.tomar-toma.drinks-has",
+              "form": "toma",
+              "meaning": "drinks; has",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "Luis toma café por la mañana."
+            },
+            {
+              "entryId": "es.noun.cafe",
+              "senseId": "es.noun.cafe.coffee",
+              "form": "el café",
+              "meaning": "coffee",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Luis toma café por la mañana."
+            },
+            {
+              "entryId": "es.verb.comer-come",
+              "senseId": "es.verb.comer-come.eats",
+              "form": "come",
+              "meaning": "eats",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "También come pan."
+            },
+            {
+              "entryId": "es.noun.pan",
+              "senseId": "es.noun.pan.bread",
+              "form": "el pan",
+              "meaning": "bread",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "También come pan."
+            },
+            {
+              "entryId": "es.adverb.despues",
+              "senseId": "es.adverb.despues.afterward",
+              "form": "después",
+              "meaning": "afterward",
+              "pos": "adverb",
+              "line": 3,
+              "evidence": "Después lee el libro."
+            },
+            {
+              "entryId": "es.verb.leer-lee",
+              "senseId": "es.verb.leer-lee.reads",
+              "form": "lee",
+              "meaning": "reads",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Después lee el libro."
+            },
+            {
+              "entryId": "es.adverb.luego",
+              "senseId": "es.adverb.luego.then",
+              "form": "luego",
+              "meaning": "then",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "Luego prepara la mochila."
+            },
+            {
+              "entryId": "es.verb.preparar-prepara",
+              "senseId": "es.verb.preparar-prepara.prepares",
+              "form": "prepara",
+              "meaning": "prepares",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "Luego prepara la mochila."
+            },
+            {
+              "entryId": "es.expression.los-dos",
+              "senseId": "es.expression.los-dos.both",
+              "form": "los dos",
+              "meaning": "both",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "Los dos salen de la casa."
+            },
+            {
+              "entryId": "es.verb.salir-salen",
+              "senseId": "es.verb.salir-salen.leave",
+              "form": "salen",
+              "meaning": "leave; go out",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "Los dos salen de la casa."
+            },
+            {
+              "entryId": "es.preposition.de",
+              "senseId": "es.preposition.de.from",
+              "form": "de",
+              "meaning": "from",
+              "pos": "preposition",
+              "line": 6,
+              "evidence": "Los dos salen de la casa."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-a-market-plan",
+          "senses": [
+            {
+              "entryId": "es.verb.ir-vamos",
+              "senseId": "es.verb.ir-vamos.we-go-let-s-go",
+              "form": "vamos",
+              "meaning": "we go; let's go",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "¿Vamos al mercado hoy?"
+            },
+            {
+              "entryId": "es.noun.mercado",
+              "senseId": "es.noun.mercado.market",
+              "form": "el mercado",
+              "meaning": "market",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "¿Vamos al mercado hoy?"
+            },
+            {
+              "entryId": "es.adverb.hoy",
+              "senseId": "es.adverb.hoy.today",
+              "form": "hoy",
+              "meaning": "today",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "¿Vamos al mercado hoy?"
+            },
+            {
+              "entryId": "es.verb.comprar",
+              "senseId": "es.verb.comprar.to-buy",
+              "form": "comprar",
+              "meaning": "to buy",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "Sí, vamos a comprar fruta."
+            },
+            {
+              "entryId": "es.noun.fruta",
+              "senseId": "es.noun.fruta.fruit",
+              "form": "la fruta",
+              "meaning": "fruit",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Sí, vamos a comprar fruta."
+            },
+            {
+              "entryId": "es.verb.querer-quiero",
+              "senseId": "es.verb.querer-quiero.want",
+              "form": "quiero",
+              "meaning": "want",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "También quiero tomates."
+            },
+            {
+              "entryId": "es.noun.tomate",
+              "senseId": "es.noun.tomate.tomato",
+              "form": "el tomate",
+              "meaning": "tomato",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "También quiero tomates."
+            },
+            {
+              "entryId": "es.preposition.cerca-de",
+              "senseId": "es.preposition.cerca-de.near",
+              "form": "cerca de",
+              "meaning": "near",
+              "pos": "preposition",
+              "line": 4,
+              "evidence": "El mercado está cerca de la casa."
+            },
+            {
+              "entryId": "es.adverb.juntos",
+              "senseId": "es.adverb.juntos.together",
+              "form": "juntos",
+              "meaning": "together",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "¿Vamos juntos a las tres?"
+            },
+            {
+              "entryId": "es.numeral.tres",
+              "senseId": "es.numeral.tres.three",
+              "form": "tres",
+              "meaning": "three",
+              "pos": "numeral",
+              "line": 5,
+              "evidence": "¿Vamos juntos a las tres?"
+            },
+            {
+              "entryId": "es.verb.verse-nos-vemos",
+              "senseId": "es.verb.verse-nos-vemos.see-each-other",
+              "form": "nos vemos",
+              "meaning": "see each other; see you",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "Sí, nos vemos allí."
+            },
+            {
+              "entryId": "es.adverb.alli",
+              "senseId": "es.adverb.alli.there",
+              "form": "allí",
+              "meaning": "there",
+              "pos": "adverb",
+              "line": 6,
+              "evidence": "Sí, nos vemos allí."
+            }
+          ]
+        }
+      }
+    },
+    "thai": {
+      "name": "Thai",
+      "code": "th",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-a-polite-meeting",
+          "senses": [
+            {
+              "entryId": "th.greeting.sawatdi",
+              "senseId": "th.greeting.sawatdi.hello",
+              "form": "สวัสดี",
+              "meaning": "hello",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "สวัสดีค่ะ."
+            },
+            {
+              "entryId": "th.particle.kha-f",
+              "senseId": "th.particle.kha-f.polite-particle-female-statement",
+              "form": "ค่ะ",
+              "meaning": "polite particle (female statement)",
+              "pos": "particle",
+              "line": 1,
+              "evidence": "สวัสดีค่ะ."
+            },
+            {
+              "entryId": "th.particle.khrap",
+              "senseId": "th.particle.khrap.polite-particle-male",
+              "form": "ครับ",
+              "meaning": "polite particle (male)",
+              "pos": "particle",
+              "line": 2,
+              "evidence": "สวัสดีครับ."
+            },
+            {
+              "entryId": "th.noun.chue",
+              "senseId": "th.noun.chue.name-be-named",
+              "form": "ชื่อ",
+              "meaning": "name; be named",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "ชื่อมาลีค่ะ."
+            },
+            {
+              "entryId": "th.verb.pen",
+              "senseId": "th.verb.pen.be-be-a",
+              "form": "เป็น",
+              "meaning": "be; be a",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "เป็นนักเรียนค่ะ."
+            },
+            {
+              "entryId": "th.noun.nakrian",
+              "senseId": "th.noun.nakrian.student",
+              "form": "นักเรียน",
+              "meaning": "student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "เป็นนักเรียนค่ะ."
+            },
+            {
+              "entryId": "th.noun.khru",
+              "senseId": "th.noun.khru.teacher",
+              "form": "ครู",
+              "meaning": "teacher",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "เป็นครูครับ."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-one-quiet-room",
+          "senses": [
+            {
+              "entryId": "th.noun.ban",
+              "senseId": "th.noun.ban.house-home",
+              "form": "บ้าน",
+              "meaning": "house; home",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "บ้านของมาลีมีห้องหนึ่งห้อง."
+            },
+            {
+              "entryId": "th.noun.hong",
+              "senseId": "th.noun.hong.room",
+              "form": "ห้อง",
+              "meaning": "room",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "บ้านของมาลีมีห้องหนึ่งห้อง."
+            },
+            {
+              "entryId": "th.preposition.khong",
+              "senseId": "th.preposition.khong.of-possessive",
+              "form": "ของ",
+              "meaning": "of; possessive marker",
+              "pos": "preposition",
+              "line": 1,
+              "evidence": "บ้านของมาลีมีห้องหนึ่งห้อง."
+            },
+            {
+              "entryId": "th.verb.mi",
+              "senseId": "th.verb.mi.have-there-is",
+              "form": "มี",
+              "meaning": "have; there is",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "บ้านของมาลีมีห้องหนึ่งห้อง."
+            },
+            {
+              "entryId": "th.numeral.nueng",
+              "senseId": "th.numeral.nueng.one",
+              "form": "หนึ่ง",
+              "meaning": "one",
+              "pos": "numeral",
+              "line": 1,
+              "evidence": "บ้านของมาลีมีห้องหนึ่งห้อง."
+            },
+            {
+              "entryId": "th.classifier.hong",
+              "senseId": "th.classifier.hong.rooms",
+              "form": "ห้อง",
+              "meaning": "classifier for rooms",
+              "pos": "classifier",
+              "line": 1,
+              "evidence": "บ้านของมาลีมีห้องหนึ่งห้อง."
+            },
+            {
+              "entryId": "th.noun.to",
+              "senseId": "th.noun.to.table",
+              "form": "โต๊ะ",
+              "meaning": "table",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "ในห้องมีโต๊ะหนึ่งตัว."
+            },
+            {
+              "entryId": "th.preposition.nai",
+              "senseId": "th.preposition.nai.in",
+              "form": "ใน",
+              "meaning": "in",
+              "pos": "preposition",
+              "line": 2,
+              "evidence": "ในห้องมีโต๊ะหนึ่งตัว."
+            },
+            {
+              "entryId": "th.classifier.tua",
+              "senseId": "th.classifier.tua.furniture",
+              "form": "ตัว",
+              "meaning": "classifier for furniture",
+              "pos": "classifier",
+              "line": 2,
+              "evidence": "ในห้องมีโต๊ะหนึ่งตัว."
+            },
+            {
+              "entryId": "th.noun.nangsue",
+              "senseId": "th.noun.nangsue.book",
+              "form": "หนังสือ",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "บนโต๊ะมีหนังสือหนึ่งเล่ม."
+            },
+            {
+              "entryId": "th.preposition.bon",
+              "senseId": "th.preposition.bon.on",
+              "form": "บน",
+              "meaning": "on",
+              "pos": "preposition",
+              "line": 3,
+              "evidence": "บนโต๊ะมีหนังสือหนึ่งเล่ม."
+            },
+            {
+              "entryId": "th.classifier.lem",
+              "senseId": "th.classifier.lem.books",
+              "form": "เล่ม",
+              "meaning": "classifier for books",
+              "pos": "classifier",
+              "line": 3,
+              "evidence": "บนโต๊ะมีหนังสือหนึ่งเล่ม."
+            },
+            {
+              "entryId": "th.noun.kao-i",
+              "senseId": "th.noun.kao-i.chair",
+              "form": "เก้าอี้",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "ข้างโต๊ะมีเก้าอี้หนึ่งตัว."
+            },
+            {
+              "entryId": "th.preposition.khang",
+              "senseId": "th.preposition.khang.beside",
+              "form": "ข้าง",
+              "meaning": "beside",
+              "pos": "preposition",
+              "line": 4,
+              "evidence": "ข้างโต๊ะมีเก้าอี้หนึ่งตัว."
+            },
+            {
+              "entryId": "th.noun.nam",
+              "senseId": "th.noun.nam.water",
+              "form": "น้ำ",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "มีน้ำหนึ่งแก้ว."
+            },
+            {
+              "entryId": "th.classifier.kaeo",
+              "senseId": "th.classifier.kaeo.glasses-of-drink",
+              "form": "แก้ว",
+              "meaning": "classifier for glasses of drinks",
+              "pos": "classifier",
+              "line": 5,
+              "evidence": "มีน้ำหนึ่งแก้ว."
+            },
+            {
+              "entryId": "th.demonstrative.ni-modifier",
+              "senseId": "th.demonstrative.ni-modifier.this",
+              "form": "นี้",
+              "meaning": "this",
+              "pos": "demonstrative",
+              "line": 6,
+              "evidence": "ห้องนี้เงียบ."
+            },
+            {
+              "entryId": "th.adjective.ngiap",
+              "senseId": "th.adjective.ngiap.quiet",
+              "form": "เงียบ",
+              "meaning": "quiet",
+              "pos": "adjective",
+              "line": 6,
+              "evidence": "ห้องนี้เงียบ."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-what-is-this",
+          "senses": [
+            {
+              "entryId": "th.demonstrative.ni",
+              "senseId": "th.demonstrative.ni.this-here",
+              "form": "นี่",
+              "meaning": "this; here",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "นี่คืออะไรคะ."
+            },
+            {
+              "entryId": "th.pronoun.arai",
+              "senseId": "th.pronoun.arai.what",
+              "form": "อะไร",
+              "meaning": "what",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "นี่คืออะไรคะ."
+            },
+            {
+              "entryId": "th.verb.khue",
+              "senseId": "th.verb.khue.identify-as",
+              "form": "คือ",
+              "meaning": "be; identify as",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "นี่คืออะไรคะ."
+            },
+            {
+              "entryId": "th.particle.kha-question",
+              "senseId": "th.particle.kha-question.female-question",
+              "form": "คะ",
+              "meaning": "polite particle (female question)",
+              "pos": "particle",
+              "line": 1,
+              "evidence": "นี่คืออะไรคะ."
+            },
+            {
+              "entryId": "th.noun.pakka",
+              "senseId": "th.noun.pakka.pen",
+              "form": "ปากกา",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "นี่คือปากกาครับ."
+            },
+            {
+              "entryId": "th.noun.thorasap",
+              "senseId": "th.noun.thorasap.phone",
+              "form": "โทรศัพท์",
+              "meaning": "phone",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "นี่คือโทรศัพท์ใช่ไหมคะ."
+            },
+            {
+              "entryId": "th.response.chai",
+              "senseId": "th.response.chai.yes-correct",
+              "form": "ใช่",
+              "meaning": "yes; correct",
+              "pos": "response",
+              "line": 3,
+              "evidence": "นี่คือโทรศัพท์ใช่ไหมคะ."
+            },
+            {
+              "entryId": "th.particle.mai",
+              "senseId": "th.particle.mai.yes-no-question",
+              "form": "ไหม",
+              "meaning": "yes-no question particle",
+              "pos": "particle",
+              "line": 3,
+              "evidence": "นี่คือโทรศัพท์ใช่ไหมคะ."
+            },
+            {
+              "entryId": "th.noun.kunchae",
+              "senseId": "th.noun.kunchae.key",
+              "form": "กุญแจ",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "กุญแจอยู่ที่ไหนคะ."
+            },
+            {
+              "entryId": "th.verb.yu",
+              "senseId": "th.verb.yu.be-located",
+              "form": "อยู่",
+              "meaning": "be located; be at",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "กุญแจอยู่ที่ไหนคะ."
+            },
+            {
+              "entryId": "th.pronoun.thinai",
+              "senseId": "th.pronoun.thinai.where",
+              "form": "ที่ไหน",
+              "meaning": "where",
+              "pos": "pronoun",
+              "line": 5,
+              "evidence": "กุญแจอยู่ที่ไหนคะ."
+            },
+            {
+              "entryId": "th.noun.krapao",
+              "senseId": "th.noun.krapao.bag",
+              "form": "กระเป๋า",
+              "meaning": "bag",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "กุญแจอยู่ในกระเป๋าครับ."
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-mali-s-morning",
+          "senses": [
+            {
+              "entryId": "th.noun.ton-chao",
+              "senseId": "th.noun.ton-chao.in-the-morning",
+              "form": "ตอนเช้า",
+              "meaning": "in the morning",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "ตอนเช้ามาลีดื่มกาแฟ."
+            },
+            {
+              "entryId": "th.verb.duem",
+              "senseId": "th.verb.duem.drink",
+              "form": "ดื่ม",
+              "meaning": "drink",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "ตอนเช้ามาลีดื่มกาแฟ."
+            },
+            {
+              "entryId": "th.noun.kafae",
+              "senseId": "th.noun.kafae.coffee",
+              "form": "กาแฟ",
+              "meaning": "coffee",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "ตอนเช้ามาลีดื่มกาแฟ."
+            },
+            {
+              "entryId": "th.verb.kin",
+              "senseId": "th.verb.kin.eat",
+              "form": "กิน",
+              "meaning": "eat",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "มาลีกินข้าวที่บ้าน."
+            },
+            {
+              "entryId": "th.noun.khao",
+              "senseId": "th.noun.khao.rice-meal",
+              "form": "ข้าว",
+              "meaning": "rice; meal",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "มาลีกินข้าวที่บ้าน."
+            },
+            {
+              "entryId": "th.preposition.thi",
+              "senseId": "th.preposition.thi.at",
+              "form": "ที่",
+              "meaning": "at",
+              "pos": "preposition",
+              "line": 2,
+              "evidence": "มาลีกินข้าวที่บ้าน."
+            },
+            {
+              "entryId": "th.verb.an",
+              "senseId": "th.verb.an.read",
+              "form": "อ่าน",
+              "meaning": "read",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "จากนั้นอ่านหนังสือ."
+            },
+            {
+              "entryId": "th.adverb.chaknan",
+              "senseId": "th.adverb.chaknan.then",
+              "form": "จากนั้น",
+              "meaning": "then",
+              "pos": "adverb",
+              "line": 3,
+              "evidence": "จากนั้นอ่านหนังสือ."
+            },
+            {
+              "entryId": "th.verb.thue",
+              "senseId": "th.verb.thue.carry-hold",
+              "form": "ถือ",
+              "meaning": "carry; hold",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "นนท์ถือกระเป๋า."
+            },
+            {
+              "entryId": "th.expression.thang-song-khon",
+              "senseId": "th.expression.thang-song-khon.both-people",
+              "form": "ทั้งสองคน",
+              "meaning": "both people",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "ทั้งสองคนออกจากบ้าน."
+            },
+            {
+              "entryId": "th.verb.ok",
+              "senseId": "th.verb.ok.leave-go-out",
+              "form": "ออก",
+              "meaning": "leave; go out",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "ทั้งสองคนออกจากบ้าน."
+            },
+            {
+              "entryId": "th.preposition.chak",
+              "senseId": "th.preposition.chak.from",
+              "form": "จาก",
+              "meaning": "from",
+              "pos": "preposition",
+              "line": 6,
+              "evidence": "ทั้งสองคนออกจากบ้าน."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-a-market-plan",
+          "senses": [
+            {
+              "entryId": "th.noun.wan-ni",
+              "senseId": "th.noun.wan-ni.today",
+              "form": "วันนี้",
+              "meaning": "today",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "วันนี้ไปตลาดกันไหมครับ."
+            },
+            {
+              "entryId": "th.verb.pai",
+              "senseId": "th.verb.pai.go",
+              "form": "ไป",
+              "meaning": "go",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "วันนี้ไปตลาดกันไหมครับ."
+            },
+            {
+              "entryId": "th.noun.talat",
+              "senseId": "th.noun.talat.market",
+              "form": "ตลาด",
+              "meaning": "market",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "วันนี้ไปตลาดกันไหมครับ."
+            },
+            {
+              "entryId": "th.particle.kan",
+              "senseId": "th.particle.kan.together-invitation",
+              "form": "กัน",
+              "meaning": "together; invitation particle",
+              "pos": "particle",
+              "line": 1,
+              "evidence": "วันนี้ไปตลาดกันไหมครับ."
+            },
+            {
+              "entryId": "th.adverb.duai-kan",
+              "senseId": "th.adverb.duai-kan.together",
+              "form": "ด้วยกัน",
+              "meaning": "together",
+              "pos": "adverb",
+              "line": 2,
+              "evidence": "ไปค่ะ ไปด้วยกัน."
+            },
+            {
+              "entryId": "th.verb.sue",
+              "senseId": "th.verb.sue.buy",
+              "form": "ซื้อ",
+              "meaning": "buy",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "ที่ตลาดซื้อผลไม้ครับ."
+            },
+            {
+              "entryId": "th.noun.phonlamai",
+              "senseId": "th.noun.phonlamai.fruit",
+              "form": "ผลไม้",
+              "meaning": "fruit",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "ที่ตลาดซื้อผลไม้ครับ."
+            },
+            {
+              "entryId": "th.particle.duai",
+              "senseId": "th.particle.duai.also-too",
+              "form": "ด้วย",
+              "meaning": "also; too",
+              "pos": "particle",
+              "line": 4,
+              "evidence": "ซื้อกาแฟด้วยค่ะ."
+            },
+            {
+              "entryId": "th.adverb.laeo",
+              "senseId": "th.adverb.laeo.then",
+              "form": "แล้ว",
+              "meaning": "then",
+              "pos": "adverb",
+              "line": 5,
+              "evidence": "แล้วไปสวนกันครับ."
+            },
+            {
+              "entryId": "th.noun.suan",
+              "senseId": "th.noun.suan.park",
+              "form": "สวน",
+              "meaning": "park",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "แล้วไปสวนกันครับ."
+            },
+            {
+              "entryId": "th.adjective.di",
+              "senseId": "th.adjective.di.good",
+              "form": "ดี",
+              "meaning": "good",
+              "pos": "adjective",
+              "line": 6,
+              "evidence": "ดีค่ะ ไปตอนบ่าย."
+            },
+            {
+              "entryId": "th.noun.ton-bai",
+              "senseId": "th.noun.ton-bai.afternoon",
+              "form": "ตอนบ่าย",
+              "meaning": "in the afternoon",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "ดีค่ะ ไปตอนบ่าย."
+            }
+          ]
+        }
+      }
+    },
+    "zulu": {
+      "name": "Zulu",
+      "code": "zu",
+      "expected_review_directions": 2,
+      "chapters": {
+        "1": {
+          "directory": "chapter-001-meeting-thandi",
+          "senses": [
+            {
+              "entryId": "zu.greeting.sawubona",
+              "senseId": "zu.greeting.sawubona.hello-to-one-person",
+              "form": "sawubona",
+              "meaning": "hello (to one person)",
+              "pos": "greeting",
+              "line": 1,
+              "evidence": "Sawubona."
+            },
+            {
+              "entryId": "zu.response.yebo",
+              "senseId": "zu.response.yebo.yes",
+              "form": "yebo",
+              "meaning": "yes",
+              "pos": "response",
+              "line": 2,
+              "evidence": "Yebo, sawubona."
+            },
+            {
+              "entryId": "zu.noun.umfundi",
+              "senseId": "zu.noun.umfundi.student",
+              "form": "umfundi",
+              "meaning": "student",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Ngingumfundi, unjani?"
+            },
+            {
+              "entryId": "zu.expression.unjani",
+              "senseId": "zu.expression.unjani.how-are-you",
+              "form": "unjani",
+              "meaning": "how are you?",
+              "pos": "expression",
+              "line": 5,
+              "evidence": "Ngingumfundi, unjani?"
+            },
+            {
+              "entryId": "zu.noun.uthisha",
+              "senseId": "zu.noun.uthisha.teacher",
+              "form": "uthisha",
+              "meaning": "teacher",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Nginguthisha, ngiyaphila."
+            },
+            {
+              "entryId": "zu.expression.ngiyaphila",
+              "senseId": "zu.expression.ngiyaphila.i-am-well",
+              "form": "ngiyaphila",
+              "meaning": "I am well",
+              "pos": "expression",
+              "line": 6,
+              "evidence": "Nginguthisha, ngiyaphila."
+            }
+          ]
+        },
+        "2": {
+          "directory": "chapter-002-thandi-s-home",
+          "senses": [
+            {
+              "entryId": "zu.noun.ikhaya",
+              "senseId": "zu.noun.ikhaya.home",
+              "form": "ikhaya",
+              "meaning": "home",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Ikhaya likaThandi lincane."
+            },
+            {
+              "entryId": "zu.adjective.ncane",
+              "senseId": "zu.adjective.ncane.small",
+              "form": "lincane",
+              "meaning": "is small",
+              "pos": "adjective",
+              "line": 1,
+              "evidence": "Ikhaya likaThandi lincane."
+            },
+            {
+              "entryId": "zu.noun.igumbi",
+              "senseId": "zu.noun.igumbi.room",
+              "form": "igumbi",
+              "meaning": "room",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Igumbi linetafula."
+            },
+            {
+              "entryId": "zu.noun.itafula",
+              "senseId": "zu.noun.itafula.table",
+              "form": "itafula",
+              "meaning": "table",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Kukhona itafula egumbini."
+            },
+            {
+              "entryId": "zu.expression.kukhona",
+              "senseId": "zu.expression.kukhona.there-is",
+              "form": "kukhona",
+              "meaning": "there is",
+              "pos": "expression",
+              "line": 3,
+              "evidence": "Kukhona itafula egumbini."
+            },
+            {
+              "entryId": "zu.noun.incwadi",
+              "senseId": "zu.noun.incwadi.book",
+              "form": "incwadi",
+              "meaning": "book",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Incwadi iphezu kwetafula."
+            },
+            {
+              "entryId": "zu.locative.phezu",
+              "senseId": "zu.locative.phezu.on-top-of",
+              "form": "iphezu",
+              "meaning": "is on top of",
+              "pos": "locative",
+              "line": 4,
+              "evidence": "Incwadi iphezu kwetafula."
+            },
+            {
+              "entryId": "zu.noun.isihlalo",
+              "senseId": "zu.noun.isihlalo.chair",
+              "form": "isihlalo",
+              "meaning": "chair",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Isihlalo siseduze kwetafula."
+            },
+            {
+              "entryId": "zu.locative.duze",
+              "senseId": "zu.locative.duze.near",
+              "form": "siseduze",
+              "meaning": "is near",
+              "pos": "locative",
+              "line": 5,
+              "evidence": "Isihlalo siseduze kwetafula."
+            },
+            {
+              "entryId": "zu.noun.amanzi",
+              "senseId": "zu.noun.amanzi.water",
+              "form": "amanzi",
+              "meaning": "water",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Amanzi asekhishini."
+            },
+            {
+              "entryId": "zu.noun.ikhishi",
+              "senseId": "zu.noun.ikhishi.kitchen",
+              "form": "ikhishi",
+              "meaning": "kitchen",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Amanzi asekhishini."
+            }
+          ]
+        },
+        "3": {
+          "directory": "chapter-003-where-is-the-key",
+          "senses": [
+            {
+              "entryId": "zu.pronoun.yini",
+              "senseId": "zu.pronoun.yini.what-is-it",
+              "form": "yini",
+              "meaning": "what is it?",
+              "pos": "pronoun",
+              "line": 1,
+              "evidence": "Yini le?"
+            },
+            {
+              "entryId": "zu.demonstrative.le",
+              "senseId": "zu.demonstrative.le.this",
+              "form": "le",
+              "meaning": "this",
+              "pos": "demonstrative",
+              "line": 1,
+              "evidence": "Yini le?"
+            },
+            {
+              "entryId": "zu.noun.ipeni",
+              "senseId": "zu.noun.ipeni.pen",
+              "form": "ipeni",
+              "meaning": "pen",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Likuphi ipeni?"
+            },
+            {
+              "entryId": "zu.adverb.kuphi",
+              "senseId": "zu.adverb.kuphi.where",
+              "form": "kuphi",
+              "meaning": "where",
+              "pos": "adverb",
+              "line": 3,
+              "evidence": "Likuphi ipeni?"
+            },
+            {
+              "entryId": "zu.noun.ukhiye",
+              "senseId": "zu.noun.ukhiye.key",
+              "form": "ukhiye",
+              "meaning": "key",
+              "pos": "noun",
+              "line": 5,
+              "evidence": "Ukuphi ukhiye?"
+            },
+            {
+              "entryId": "zu.noun.isikhwama",
+              "senseId": "zu.noun.isikhwama.bag",
+              "form": "isikhwama",
+              "meaning": "bag",
+              "pos": "noun",
+              "line": 6,
+              "evidence": "Isikhwama siseduze nokhiye."
+            }
+          ]
+        },
+        "4": {
+          "directory": "chapter-004-thandi-s-morning",
+          "senses": [
+            {
+              "entryId": "zu.adverb.ekuseni",
+              "senseId": "zu.adverb.ekuseni.in-the-morning",
+              "form": "ekuseni",
+              "meaning": "in the morning",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "Ekuseni uThandi uphuza itiye."
+            },
+            {
+              "entryId": "zu.verb.uphuza",
+              "senseId": "zu.verb.uphuza.he-she-drinks",
+              "form": "uphuza",
+              "meaning": "he; she drinks",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "Ekuseni uThandi uphuza itiye."
+            },
+            {
+              "entryId": "zu.noun.itiye",
+              "senseId": "zu.noun.itiye.tea",
+              "form": "itiye",
+              "meaning": "tea",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Ekuseni uThandi uphuza itiye."
+            },
+            {
+              "entryId": "zu.verb.adle",
+              "senseId": "zu.verb.adle.he-she-eats",
+              "form": "adle",
+              "meaning": "he; she eats",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "Uphinde adle isinkwa."
+            },
+            {
+              "entryId": "zu.noun.isinkwa",
+              "senseId": "zu.noun.isinkwa.bread",
+              "form": "isinkwa",
+              "meaning": "bread",
+              "pos": "noun",
+              "line": 2,
+              "evidence": "Uphinde adle isinkwa."
+            },
+            {
+              "entryId": "zu.verb.uphinde",
+              "senseId": "zu.verb.uphinde.also-again",
+              "form": "uphinde",
+              "meaning": "also; again",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "Uphinde adle isinkwa."
+            },
+            {
+              "entryId": "zu.verb.ufunda",
+              "senseId": "zu.verb.ufunda.he-she-reads",
+              "form": "ufunda",
+              "meaning": "he; she reads",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Bese ufunda incwadi."
+            },
+            {
+              "entryId": "zu.adverb.bese",
+              "senseId": "zu.adverb.bese.then",
+              "form": "bese",
+              "meaning": "then",
+              "pos": "adverb",
+              "line": 3,
+              "evidence": "Bese ufunda incwadi."
+            },
+            {
+              "entryId": "zu.verb.uphatha",
+              "senseId": "zu.verb.uphatha.carries",
+              "form": "uphatha",
+              "meaning": "carries",
+              "pos": "verb",
+              "line": 5,
+              "evidence": "UThandi uphatha isikhwama."
+            },
+            {
+              "entryId": "zu.adverb.ndawonye",
+              "senseId": "zu.adverb.ndawonye.together",
+              "form": "ndawonye",
+              "meaning": "together",
+              "pos": "adverb",
+              "line": 6,
+              "evidence": "Baphuma ekhaya ndawonye."
+            },
+            {
+              "entryId": "zu.verb.baphuma",
+              "senseId": "zu.verb.baphuma.they-leave",
+              "form": "baphuma",
+              "meaning": "they leave; go out",
+              "pos": "verb",
+              "line": 6,
+              "evidence": "Baphuma ekhaya ndawonye."
+            }
+          ]
+        },
+        "5": {
+          "directory": "chapter-005-a-shared-plan",
+          "senses": [
+            {
+              "entryId": "zu.noun.emakethe",
+              "senseId": "zu.noun.emakethe.at-to-the-market",
+              "form": "emakethe",
+              "meaning": "at; to the market",
+              "pos": "noun",
+              "line": 1,
+              "evidence": "Siya emakethe namuhla?"
+            },
+            {
+              "entryId": "zu.adverb.namuhla",
+              "senseId": "zu.adverb.namuhla.today",
+              "form": "namuhla",
+              "meaning": "today",
+              "pos": "adverb",
+              "line": 1,
+              "evidence": "Siya emakethe namuhla?"
+            },
+            {
+              "entryId": "zu.verb.siya",
+              "senseId": "zu.verb.siya.we-go",
+              "form": "siya",
+              "meaning": "we go",
+              "pos": "verb",
+              "line": 1,
+              "evidence": "Siya emakethe namuhla?"
+            },
+            {
+              "entryId": "zu.verb.asihambe",
+              "senseId": "zu.verb.asihambe.walk-go",
+              "form": "sihamba / asihambe",
+              "meaning": "walk; go",
+              "pos": "verb",
+              "line": 2,
+              "evidence": "Yebo, sihamba ndawonye."
+            },
+            {
+              "entryId": "zu.noun.izithelo",
+              "senseId": "zu.noun.izithelo.fruit",
+              "form": "izithelo",
+              "meaning": "fruit",
+              "pos": "noun",
+              "line": 3,
+              "evidence": "Sithenga izithelo."
+            },
+            {
+              "entryId": "zu.verb.sithenga",
+              "senseId": "zu.verb.sithenga.we-buy",
+              "form": "sithenga",
+              "meaning": "we buy",
+              "pos": "verb",
+              "line": 3,
+              "evidence": "Sithenga izithelo."
+            },
+            {
+              "entryId": "zu.noun.epaki",
+              "senseId": "zu.noun.epaki.at-to-the-park",
+              "form": "epaki",
+              "meaning": "at; to the park",
+              "pos": "noun",
+              "line": 4,
+              "evidence": "Bese siya epaki."
+            },
+            {
+              "entryId": "zu.expression.kulungile",
+              "senseId": "zu.expression.kulungile.okay",
+              "form": "kulungile",
+              "meaning": "okay",
+              "pos": "expression",
+              "line": 5,
+              "evidence": "Kulungile."
+            },
+            {
+              "entryId": "zu.adverb.manje",
+              "senseId": "zu.adverb.manje.now",
+              "form": "manje",
+              "meaning": "now",
+              "pos": "adverb",
+              "line": 6,
+              "evidence": "Asihambe manje."
+            }
+          ]
+        }
+      }
+    }
+  }
+}

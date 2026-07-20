@@ -1,5 +1,5 @@
-# Chapter 1-5 Review Deck
+# Russian Review — Chapters 1–5
 
-This authoritative schema-v2 deck contains 60 cards for all and only the 30 canonical lexical senses first introduced in Russian Chapters 1–5. Each sense appears in both Russian-to-English and English-to-Russian directions.
+This authoritative schema-v2 deck contains 104 cards for all and only the 52 canonical lexical senses first introduced in Russian Chapters 1–5. Each sense appears in both Russian-to-English and English-to-Russian directions.
 
-Grammar identities, reinforcement-only forms, and proper-name placeholders are excluded.
+Every card has stable canonical identity, its true first-introduction chapter, exact primary-reading provenance, and literal evidence.

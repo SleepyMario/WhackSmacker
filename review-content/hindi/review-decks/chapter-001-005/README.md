@@ -1,5 +1,5 @@
-# Chapter 1-5 Review Deck
+# Hindi Review — Chapters 1–5
 
-This authoritative schema-v2 deck contains 60 cards for all and only the 30 canonical lexical senses first introduced in Hindi Chapters 1–5. Each sense appears in both Hindi-to-English and English-to-Hindi directions.
+This authoritative schema-v2 deck contains 102 cards for all and only the 51 canonical lexical senses first introduced in Hindi Chapters 1–5. Each sense appears in both Hindi-to-English and English-to-Hindi directions.
 
-Grammar identities, reinforcement-only forms, and proper-name placeholders are excluded.
+Every card has stable canonical identity, its true first-introduction chapter, exact primary-reading provenance, and literal evidence.
