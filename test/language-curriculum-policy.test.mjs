@@ -80,8 +80,16 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       newVocabularyItems: { min: 10, max: 30 }
     },
     {
-      label: "Chapters 71-140",
+      label: "Chapters 71-75",
       chapterStart: 71,
+      chapterEnd: 75,
+      grammarPoints: { min: 2, max: 2 },
+      readContentLines: { min: 16, max: 40 },
+      newVocabularyItems: { min: 10, max: 30 }
+    },
+    {
+      label: "Chapters 76-140",
+      chapterStart: 76,
       chapterEnd: 140,
       grammarPoints: { min: 1, max: 1 },
       readContentLines: { min: 20, max: 40 },
@@ -209,10 +217,12 @@ test("language curriculum pacing validates early and advanced chapters", () => {
   assert.equal(pacingRuleForChapter(51).label, "Chapters 51-70");
   assert.equal(pacingRuleForChapter(60).label, "Chapters 51-70");
   assert.equal(pacingRuleForChapter(70).label, "Chapters 51-70");
-  assert.equal(pacingRuleForChapter(71).label, "Chapters 71-140");
-  assert.equal(pacingRuleForChapter(130).label, "Chapters 71-140");
-  assert.equal(pacingRuleForChapter(131).label, "Chapters 71-140");
-  assert.equal(pacingRuleForChapter(140).label, "Chapters 71-140");
+  assert.equal(pacingRuleForChapter(71).label, "Chapters 71-75");
+  assert.equal(pacingRuleForChapter(75).label, "Chapters 71-75");
+  assert.equal(pacingRuleForChapter(76).label, "Chapters 76-140");
+  assert.equal(pacingRuleForChapter(130).label, "Chapters 76-140");
+  assert.equal(pacingRuleForChapter(131).label, "Chapters 76-140");
+  assert.equal(pacingRuleForChapter(140).label, "Chapters 76-140");
 
   assert.doesNotThrow(() => assertLanguageCurriculumPacing({
     chapter: 1,
@@ -265,6 +275,12 @@ test("language curriculum policy records continuity and strict example rules", (
     },
     {
       chapterStart: 71,
+      chapterEnd: 75,
+      newVocabularyItems: { min: 10, max: 30 },
+      learnerFacingReadContentLines: { min: 16, max: 40 }
+    },
+    {
+      chapterStart: 76,
       chapterEnd: 140,
       newVocabularyItems: { min: 10, max: 30 },
       learnerFacingReadContentLines: { min: 20, max: 40 }
@@ -573,17 +589,19 @@ test("Chapters 71-140 include Chapters 131-140 under unchanged per-chapter limit
   for (const chapter of [71, 130, 131, 139, 140]) assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter })));
 });
 
-test("Chapters 71-140 require exactly one genuinely new principal grammar point", () => {
+test("Chapters 71-75 require two new principal grammar points and Chapters 76-140 require one", () => {
   assert.throws(() => validate71140(chapter71140Markdown({ chapter: 71, grammar: [] })), /got 0/u);
-  assert.throws(() => validate71140(chapter71140Markdown({ chapter: 71, grammar: ["Principal: G-71", "Principal: G-72"] })), /got 2/u);
-  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 71, grammar: ["Principal: G-71", "Supporting: G-71-A", "Reused: OLD"] })));
+  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 71, grammar: ["Principal: G-71A", "Principal: G-71B", "Supporting: G-71-A", "Reused: OLD"] })));
+  assert.throws(() => validate71140(chapter71140Markdown({ chapter: 75, grammar: ["Principal: G-75"] })), /got 1/u);
+  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 76, grammar: ["Principal: G-76", "Supporting: G-76-A", "Reused: OLD"] })));
+  assert.throws(() => validate71140(chapter71140Markdown({ chapter: 76, grammar: ["Principal: G-76A", "Principal: G-76B"] })), /got 2/u);
 });
 
 test("reused and legacy grammar IDs cannot be relabelled as new", () => {
   assert.throws(() => assertLanguageCurriculumChapter71140Requirements([
     { chapter: 70, markdown: "### New Grammar / Pattern\n\n`LEGACY-GRAMMAR -- earlier construction`" },
-    chapter71140Markdown({ chapter: 71, grammar: ["Principal: LEGACY-GRAMMAR | relabelled"] })
-  ]), /got 0/u);
+    chapter71140Markdown({ chapter: 71, grammar: ["Principal: LEGACY-GRAMMAR | relabelled", "Principal: G-71B"] })
+  ]), /got 1/u);
 });
 
 test("Chapters 71-140 enforce vocabulary boundaries and cumulative uniqueness", () => {
@@ -610,7 +628,8 @@ test("non-learner-facing vocabulary and structural lines do not inflate counts",
 test("Chapters 71-140 enforce learner-facing line boundaries", () => {
   assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 20 })));
   assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 140, lineCount: 40 })));
-  assert.throws(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 19 })), /got 19/u);
+  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 16 })));
+  assert.throws(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 15 })), /got 15/u);
   assert.throws(() => validate71140(chapter71140Markdown({ chapter: 140, lineCount: 41 })), /got 41/u);
 });
 
@@ -716,7 +735,9 @@ function chapter71140Markdown({
   vocabulary = vocabularyItems(10, `chapter-${chapter}-term`),
   lineCount = chapter >= 71 ? 20 : 1,
   format = chapter % 2 === 1 ? "dialogue" : "narrative",
-  grammar = [`Principal: G-${chapter} | language-adaptive construction`],
+  grammar = chapter <= 75
+    ? [`Principal: G-${chapter}A | first language-adaptive construction`, `Principal: G-${chapter}B | second language-adaptive construction`]
+    : [`Principal: G-${chapter} | language-adaptive construction`],
   speakers = ["Mina", "Jo"],
   situation = "planning a public-service appointment",
   narrativeScope = "concrete-real-life",

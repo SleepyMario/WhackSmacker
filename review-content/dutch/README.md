@@ -20,5 +20,6 @@ The complete consecutive five-chapter inventory is:
 - Chapters 56-60: 50 new senses / 100 review cards;
 - Chapters 61-65: 50 new senses / 100 review cards;
 - Chapters 66-70: 55 new senses / 110 review cards.
+- Chapters 71-75: 80 new senses / 160 review cards.
 
 Every deck uses review schema v2, contains vocabulary/function-word cards only, and requires one to three literal examples from primary Dialogue or Narrative content.

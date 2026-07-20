@@ -494,7 +494,7 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.match(dutchChapter15.text, /Chapter 15 -- Asking Where Someone Lives/);
     assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md"), true);
     assert.equal(dutchEntries.some((entry) => entry.path === "units/dutch-core/chapter-015-asking-where-someone-lives/chapter.md"), true);
-    assert.equal(dutchEntries.filter((entry) => entry.path.endsWith("/reading-translation.en.json")).length, 70);
+    assert.equal(dutchEntries.filter((entry) => entry.path.endsWith("/reading-translation.en.json")).length, 75);
     assert.equal(dutchChapter1Translation.entry.mediaType, "application/json");
     const installedTranslation = JSON.parse(dutchChapter1Translation.text);
     assert.equal(installedTranslation.id, "dutch-core.chapter-001.learner-facing-dialogue.en");
@@ -510,7 +510,9 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
     assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-021-/u.test(entry.path)), true);
     assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-025-/u.test(entry.path)), true);
     assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-070-/u.test(entry.path)), true);
-    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-071-/u.test(entry.path)), false);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-071-/u.test(entry.path)), true);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-075-/u.test(entry.path)), true);
+    assert.equal(dutchEntries.some((entry) => /^units\/dutch-core\/chapter-076-/u.test(entry.path)), false);
     assert.match(chineseTraditionalPinyinIntro.text, /Hanyu Pinyin is the standard romanization system/);
     assert.match(chineseTraditionalChapter1.text, /我是馬莉亞/);
     assert.match(chineseTraditionalChapter1.text, /我是林雅婷/);
@@ -622,7 +624,8 @@ test("installed Korean Chinese Japanese Vietnamese Dutch German French and Spani
       ["Chapter 51-55", "review-decks/chapter-051-055/cards.tsv"],
       ["Chapter 56-60", "review-decks/chapter-056-060/cards.tsv"],
       ["Chapter 61-65", "review-decks/chapter-061-065/cards.tsv"],
-      ["Chapter 66-70", "review-decks/chapter-066-070/cards.tsv"]
+      ["Chapter 66-70", "review-decks/chapter-066-070/cards.tsv"],
+      ["Chapter 71-75", "review-decks/chapter-071-075/cards.tsv"]
     ]);
     const dutchItems = await listReadingReviewItems({
       dataDir: fixture.dataDir,

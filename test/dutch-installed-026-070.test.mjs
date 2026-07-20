@@ -16,7 +16,7 @@ import {
   readInstalledContentEntry
 } from "../dist/packages/core/index.js";
 
-const expectedReviewLabels = Array.from({ length: 14 }, (_, index) => {
+const expectedReviewLabels = Array.from({ length: 15 }, (_, index) => {
   const start = index * 5 + 1;
   return `Chapter ${start}-${start + 4}`;
 });
@@ -70,7 +70,7 @@ async function createInstalledDutchFixture() {
   return { dataDir, cleanup: () => rm(root, { recursive: true, force: true }) };
 }
 
-test("installed Dutch Chapters 26-70 expose all views and independent translation and breakdown toggles", async () => {
+test("installed Dutch Chapters 26-75 expose all views and independent translation and breakdown toggles", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir, "developer");
@@ -84,11 +84,11 @@ test("installed Dutch Chapters 26-70 expose all views and independent translatio
     const chapters = readContent.children
       .filter((node) => {
         const chapter = chapterNumber(node);
-        return chapter >= 26 && chapter <= 70 && (node.filePath ?? "").endsWith("/chapter.md") && !/grammar/u.test(node.filePath ?? "");
+        return chapter >= 26 && chapter <= 75 && (node.filePath ?? "").endsWith("/chapter.md") && !/grammar/u.test(node.filePath ?? "");
       })
       .sort((a, b) => chapterNumber(a) - chapterNumber(b));
-    assert.deepEqual(chapters.map(chapterNumber), Array.from({ length: 45 }, (_, index) => index + 26));
-    assert.equal(readContent.children.some((node) => chapterNumber(node) === 71), false);
+    assert.deepEqual(chapters.map(chapterNumber), Array.from({ length: 50 }, (_, index) => index + 26));
+    assert.equal(readContent.children.some((node) => chapterNumber(node) === 76), false);
     assert.deepEqual(reviewDecks.children.map((node) => node.label), expectedReviewLabels);
 
     const sources = await listReadingReviewSources({

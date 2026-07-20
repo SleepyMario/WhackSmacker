@@ -442,8 +442,16 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       newVocabularyItems: { min: 10, max: 30 }
     },
     {
-      label: "Chapters 71-140",
+      label: "Chapters 71-75",
       chapterStart: 71,
+      chapterEnd: 75,
+      grammarPoints: { min: 2, max: 2 },
+      readContentLines: { min: 16, max: 40 },
+      newVocabularyItems: { min: 10, max: 30 }
+    },
+    {
+      label: "Chapters 76-140",
+      chapterStart: 76,
       chapterEnd: 140,
       grammarPoints: { min: 1, max: 1 },
       readContentLines: { min: 20, max: 40 },
@@ -484,6 +492,12 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     },
     {
       chapterStart: 71,
+      chapterEnd: 75,
+      newVocabularyItems: { min: 10, max: 30 },
+      learnerFacingReadContentLines: { min: 16, max: 40 }
+    },
+    {
+      chapterStart: 76,
       chapterEnd: 140,
       newVocabularyItems: { min: 10, max: 30 },
       learnerFacingReadContentLines: { min: 20, max: 40 }
@@ -503,11 +517,11 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Supporting morphology, agreement, pronunciation, spelling, and required inflectional variants do not count separately.",
     "Previously introduced or reused grammar satisfies neither required new point.",
     "Do not force English-style tense categories onto languages organized differently or pair two extreme distinctions from one narrow subsystem unless the language requires it.",
-    "Chapters 31-70 form the steepest grammar-acquisition section; Chapter 71 transitions to exactly one new principal point with deeper integration."
+    "Chapters 31-75 form the intensive grammar-acquisition section; Chapter 76 transitions to exactly one new principal point with deeper integration."
   ],
   expandedGrammarAndDiscourseRules: [
     "Chapters 71-140 form one seventy-chapter Expanded Grammar and Broader Discourse stage.",
-    "Each chapter introduces exactly one genuinely new principal grammar point; supporting forms and previously introduced grammar do not increase that count.",
+    "Chapters 71-75 introduce exactly two genuinely new principal grammar points per chapter; Chapters 76-140 introduce exactly one, and supporting forms or previously introduced grammar do not increase either count.",
     "The stage continues tense, aspect, mood, modality, time reference, and event structure; emphasizes clause structure and combining; and expands interrogatives and negation scope.",
     "Coverage includes completion, duration, frequency, habituality, iteration, progressive, perfective/imperfective, perfect/resultative, inception, continuation, termination, modal meanings, hypothetical meanings, and counterfactual meanings where relevant.",
     "Clause coverage includes coordination, subordination, complement, relative, adverbial, temporal, purpose, reason, result, concessive, conditional, and embedded clauses, clause chaining, participial, converbal, serial-verb, and language-specific linking mechanisms.",
@@ -698,11 +712,12 @@ export function assertLanguageCurriculumChapter71140Requirements(
       .filter((key) => key !== "" && !previouslyIntroducedGrammar.has(key)));
 
     if (source.chapter >= 71 && source.chapter <= 140) {
-      const rule = languageCurriculumPolicy.chapterSizeRules.find((candidate) => candidate.chapterStart === 71 && candidate.chapterEnd === 140);
+      const rule = languageCurriculumPolicy.chapterSizeRules.find((candidate) => source.chapter >= candidate.chapterStart && source.chapter <= candidate.chapterEnd);
       if (rule === undefined) throw new Error("Missing Chapters 71-140 chapter-size policy.");
       const readContent = learnerFacingReadContent(source.markdown);
       const expectedFormat = source.chapter % 2 === 1 ? "dialogue" : "narrative";
-      assertInRange(newPrincipalGrammar.size, { min: 1, max: 1 }, `Chapter ${source.chapter} new principal grammar point count`);
+      const grammarRange = source.chapter <= 75 ? { min: 2, max: 2 } : { min: 1, max: 1 };
+      assertInRange(newPrincipalGrammar.size, grammarRange, `Chapter ${source.chapter} new principal grammar point count`);
       assertInRange(newVocabulary.size, rule.newVocabularyItems, `Chapter ${source.chapter} new learner-facing vocabulary item count`);
       assertInRange(readContent.lines.length, rule.learnerFacingReadContentLines, `Chapter ${source.chapter} learner-facing dialogue or narrative line count`);
       if (readContent.format !== expectedFormat) throw new Error(`Chapter ${source.chapter} must use learner-facing ${expectedFormat} content; detected ${readContent.format}.`);

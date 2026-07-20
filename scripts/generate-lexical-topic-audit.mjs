@@ -7,14 +7,15 @@ const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_lan
 
 const configs = [
   {
-    language: "Dutch", code: "nl", slug: "dutch", repository: "dutch-curriculum", maxChapter: 70,
-    newlyRegisteredTopics: ["administration.documents", "communication.greetings", "communication.media", "daily.routines", "education.learning", "emotions.general", "furniture.general", "gardening.plants", "geography.places", "leisure.culture", "numbers.cardinal", "work.projects"],
+    language: "Dutch", code: "nl", slug: "dutch", repository: "dutch-curriculum", maxChapter: 75,
+    newlyRegisteredTopics: ["administration.documents", "communication.greetings", "communication.media", "daily.routines", "education.learning", "emotions.general", "food.cooking", "furniture.general", "gardening.plants", "geography.places", "leisure.crafts", "leisure.culture", "numbers.cardinal", "technology.networking", "travel.hiking", "work.projects"],
     corrections: [
       "Separated furniture.general from household.objects and moved the household anchor to the earliest remaining household sense, nl.noun.raam.window (Chapter 4).",
       "Retained the deliberate Chapter 8 fruit field as initial-expansion, while correcting Chapter 13 fruit and historically later transport, shopping, container, unit, and time senses to later-expansion.",
       "Expanded existing topic membership to include all clearly applicable canonical senses found in Chapters 1-70.",
       "Moved measurement.dimensions first attestation to Chapter 30 because nl.adjective.ruim.spacious predates the Chapter 48 measurement reading.",
-      "Replaced the former administrative Chapter 66, 67, and 70 topic memberships with literal bicycle-repair, gardening, and film evidence while preserving the 607-sense total."
+      "Replaced the former administrative Chapter 66, 67, and 70 topic memberships with literal bicycle-repair, gardening, and film evidence.",
+      "Extended the inventory through Chapter 75 with hiking, pet-care, cooking, craft, and home-networking evidence, preserving all 607 earlier senses and adding exactly 80 collision-free senses."
     ],
     variants: [
       { kind: "polysemy", finding: "Dutch lexical identity remains sense- and part-of-speech-based; identical spellings are not merged across unrelated senses." },
@@ -24,7 +25,8 @@ const configs = [
       { chapter_range: "1-15", topics: ["digital.phones-and-devices", "food.local-dishes"], note: "Future natural device or meal contexts could add individual high-frequency senses; no retrofit is required." },
       { chapter_range: "16-30", topics: ["descriptive.colours", "clothing.general", "household.objects", "furniture.general"], note: "Gift, home, and renovation contexts are possible future expansion points." },
       { chapter_range: "31-50", topics: ["animals.pets", "food.vegetables", "measurement.dimensions"], note: "Animal-care, market, and measurement readings can support gradual additions." },
-      { chapter_range: "51-70", topics: ["weather.general", "health.general", "occupations.professions"], note: "Existing weather, clinic, gardening, repair, and film settings offer future reinforcement or one-at-a-time expansion." }
+      { chapter_range: "51-70", topics: ["weather.general", "health.general", "occupations.professions"], note: "Existing weather, clinic, gardening, repair, and film settings offer future reinforcement or one-at-a-time expansion." },
+      { chapter_range: "71-75", topics: ["travel.hiking", "animals.pets", "food.cooking", "leisure.crafts", "technology.networking"], note: "The completed block establishes five deliberately distinct practical fields; future chapters should reuse them selectively without clustering adjacent topics." }
     ],
     deferred: [
       { topic_id: "body.parts", reason: "No standalone canonical body-part sense occurs; tanden appears only inside the canonical routine phrase poetst zijn tanden." },

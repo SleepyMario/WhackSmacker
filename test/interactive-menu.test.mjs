@@ -589,7 +589,7 @@ test("language tree exposes Dutch content and review deck labels", async () => {
     assert.equal(inlineReview?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
     assert.equal(chapter5Index < chapter6Index && chapter5Index + 1 < chapter6Index, true);
     assert.equal(readContent.children.some((node) => /^Ch (?:1|5) -- Review/u.test(node.label)), false);
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70"]);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70", "Chapter 71-75"]);
   } finally {
     await fixture.cleanup();
   }
@@ -1646,7 +1646,7 @@ test("Developer language tree exposes both grammar variants inside one Grammar s
   }
 });
 
-test("Dutch read tree includes the complete zero-padded Chapters 11-70 blocks", async () => {
+test("Dutch read tree includes the complete zero-padded Chapters 11-75 blocks", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
@@ -1658,6 +1658,7 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-70 blocks", 
     const chapter20 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-020-an-appointment-in-town/chapter.md");
     const chapter25 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-025-going-to-the-museum/chapter.md");
     const chapter70 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-070-reporting-the-meeting/chapter.md");
+    const chapter75 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-075-fixing-the-wifi-before-a-family-call/chapter.md");
 
     assert.equal(chapter11?.label, "Chapter 11 -- Asking How Someone Is");
     assert.equal(chapter15?.label, "Chapter 15 -- Asking Where Someone Lives");
@@ -1665,13 +1666,22 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-70 blocks", 
     assert.equal(chapter20?.label, "Chapter 20 -- An Appointment in Town");
     assert.equal(chapter25?.label, "Chapter 25 -- Going to the Museum");
     assert.equal(chapter70?.label, "Chapter 70 -- Sharing a Short Film");
-    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-071-/u.test(node.filePath ?? "")), false);
+    assert.equal(chapter75?.label, "Chapter 75 -- Fixing the Wi-Fi Before a Family Call");
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-071-/u.test(node.filePath ?? "")), true);
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-075-/u.test(node.filePath ?? "")), true);
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-076-/u.test(node.filePath ?? "")), false);
     assert.equal(readContent.children.some((node) => /chapter-011-015-grammar-(?:easy|hard)/u.test(node.filePath ?? "")), true);
     const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 11-15"), true);
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 16-20"), true);
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 21-25"), true);
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 66-70"), true);
+    assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 71-75"), true);
+    const chapter75Index = readContent.children.indexOf(chapter75);
+    const inlineReviewIndex = readContent.children.findIndex((node) => node.label === "Review -- Chapters 71–75");
+    const grammarIndex = readContent.children.findIndex((node) => /chapter-071-075-grammar-easy/u.test(node.filePath ?? ""));
+    assert.ok(chapter75Index >= 0 && chapter75Index < inlineReviewIndex, "Review 71-75 follows Chapter 75");
+    assert.ok(inlineReviewIndex < grammarIndex, "Review 71-75 precedes Grammar 71-75");
   } finally {
     await fixture.cleanup();
   }
@@ -2593,7 +2603,7 @@ test("Dutch review sources submenu uses clean selectable deck labels", async () 
     });
     const items = reviewSourcesToMenuItems(sources);
 
-    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70"]);
+    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70", "Chapter 71-75"]);
     assert.equal(items.some((item) => item.label.includes("com.sleepymario.language.dutch")), false);
     assert.equal(items.some((item) => item.label.includes("cards.tsv")), false);
   } finally {

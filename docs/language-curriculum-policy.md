@@ -278,7 +278,7 @@ Chapters 51-70:
 - 10-30 genuinely new learner-facing vocabulary items;
 - odd dialogue / even narrative and topic-centred content.
 
-Chapters 31-70 are intentionally the steepest grammar-acquisition section.
+Chapters 31-75 are intentionally the intensive grammar-acquisition section.
 Chapters 51-70 concentrate on language-appropriate tense, time reference,
 aspect, event structure, mood, and modality. Both points must be new,
 compatible, and subordinate to a coherent chapter topic. Supporting
@@ -338,21 +338,25 @@ never inflate or satisfy the count.
 
 ## Expanded Grammar and Broader Discourse: Chapters 71-140
 
-Chapters 71-140 form one seventy-chapter stage. Each chapter introduces exactly
-one genuinely new principal grammar point, 10-30 genuinely new learner-facing
-vocabulary items, and 20-40 learner-facing dialogue or narrative lines.
+Chapters 71-140 form one seventy-chapter stage. Chapters 71-75 introduce exactly
+two genuinely new principal grammar points, 10-30 genuinely new learner-facing
+vocabulary items, and 16-40 learner-facing dialogue or narrative structural units
+per chapter; their authored readings may contain multiple aligned sentences per
+line or paragraph. Chapters 76-140 introduce exactly one new principal grammar
+point, 10-30 vocabulary items, and 20-40 learner-facing lines per chapter.
 
 This is a transition to slower new-grammar intake, not easier content. Increase
 text length, discourse complexity, clause depth, topic breadth, cumulative
 reuse, negation and question complexity, integrated tense/time/aspect/mood/
 modality, and diminutive systems where applicable. The overall progression is
-Chapters 1-30 foundation and transition, Chapters 31-70 the steep grammar hill,
-and Chapters 71-140 deeper integration with more advanced reading.
+Chapters 1-30 foundation and transition, Chapters 31-75 the intensive grammar
+hill, and Chapters 76-140 deeper integration with more advanced reading.
 
 In `New Grammar`, declare each bullet as `Principal: ID | description`,
 `Supporting: ID | description`, or `Reused: ID | description`. The stable ID,
 not the amount of explanatory prose or the number of forms shown, determines
-identity. Exactly one `Principal` ID must be new to the cumulative curriculum.
+identity. Exactly two `Principal` IDs must be new in Chapters 71-75, and exactly
+one must be new in Chapters 76-140.
 Supporting morphology, agreement, spelling, pronunciation, and required
 inflectional variants of that construction do not count separately. An ID
 introduced in an earlier chapter is reused even if it is mistakenly labelled

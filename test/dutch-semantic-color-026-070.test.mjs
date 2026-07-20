@@ -17,6 +17,7 @@ import {
 
 const curriculumSupportRoot = join(process.cwd(), "curriculum-support", "dutch");
 const representativeTargets = new Map([
+  [1, "Ik ben N"],
   [26, "hij/zij + heeft + noun"],
   [30, "zijn/haar + noun"],
   [35, "clause + terwijl + clause"],
@@ -30,8 +31,8 @@ const representativeTargets = new Map([
 ]);
 const blue = (text) => `\x1b[34m${text}\x1b[0m`;
 
-test("Dutch Chapters 1-70 retain the canonical semantic grammar-role contract", async () => {
-  for (let chapter = 1; chapter <= 70; chapter += 1) {
+test("Dutch Chapters 1-75 retain the canonical semantic grammar-role contract", async () => {
+  for (let chapter = 1; chapter <= 75; chapter += 1) {
     const number = String(chapter).padStart(3, "0");
     const support = JSON.parse(await readFile(join(curriculumSupportRoot, `chapter-${number}`, "reading-support.json"), "utf8"));
     assert.equal(support.semanticRoleSyntaxVersion, 1, `Chapter ${chapter} uses semantic role syntax version 1`);
@@ -52,7 +53,7 @@ test("Dutch Chapters 1-70 retain the canonical semantic grammar-role contract", 
   }
 });
 
-test("representative Dutch Chapters 26-70 render grammar roles blue without coloring prose", async () => {
+test("representative Dutch Chapters 1-70 render grammar roles blue without coloring prose", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir, "developer");
@@ -99,7 +100,7 @@ test("representative Dutch Chapters 26-70 render grammar roles blue without colo
   }
 });
 
-test("Dutch Grammar Easy and Hard summaries use the same blue grammar emphasis", async () => {
+test("representative Dutch Grammar Easy and Hard summaries through 66-70 use the same blue grammar emphasis", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir, "developer");
@@ -108,14 +109,16 @@ test("Dutch Grammar Easy and Hard summaries use the same blue grammar emphasis",
       ?.children.find((node) => node.label === "Read content");
     assert.ok(readContent);
 
-    const summary = readContent.children.find((node) => node.filePath?.includes("chapter-026-030-grammar-easy/chapter.md"));
-    assert.ok(summary, "Grammar summary node exists");
-    for (const mode of ["normal", "expert", "developer"]) {
-      const markdown = await renderLanguageTreeRightPane(summary, { dataDir: fixture.dataDir, displayMode: mode });
-      const rendered = renderTwoPaneLanguageTree(tree, new Set(), 0, markdown, true, 0, 240, "en-US", "navigation", 280, 0, mode);
-      assert.ok(rendered.includes(blue("hij/zij + heeft + noun")), `Grammar ${mode} pattern is blue`);
-      assert.ok(rendered.includes(blue("heeft")), `Grammar ${mode} discussed form is blue`);
-      assert.doesNotMatch(rendered, /\x1b\[34mUse \x1b/u, `Grammar ${mode} prose is neutral`);
+    for (const [block, pattern] of [["026-030", "hij/zij + heeft + noun"], ["066-070", "zeggen dat + subordinate declarative clause"]]) {
+      const summary = readContent.children.find((node) => node.filePath?.includes(`chapter-${block}-grammar-easy/chapter.md`));
+      assert.ok(summary, `Grammar ${block} summary node exists`);
+      for (const mode of ["normal", "expert", "developer"]) {
+        const markdown = await renderLanguageTreeRightPane(summary, { dataDir: fixture.dataDir, displayMode: mode });
+        const rendered = renderTwoPaneLanguageTree(tree, new Set(), 0, markdown, true, 0, 240, "en-US", "navigation", 280, 0, mode);
+        assert.ok(rendered.includes(blue(pattern)), `Grammar ${block} ${mode} pattern is blue`);
+        assert.doesNotMatch(rendered, /\x1b\[34mUse \x1b/u, `Grammar ${block} ${mode} prose is neutral`);
+        if (block === "026-030") assert.ok(rendered.includes(blue("heeft")), `Grammar ${block} ${mode} discussed form is blue`);
+      }
     }
   } finally {
     await fixture.cleanup();
