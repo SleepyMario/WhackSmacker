@@ -20,3 +20,20 @@ for(let start=26;start<=70;start+=5){
    }
  });
 }
+
+test("Dutch Chapter 69B direct request and Chapter 70B reported question retain non-overlapping matrix identities", async () => {
+  const chapter69 = await readFile(join(root, "chapter-069-a-formal-information-request", "chapter.md"), "utf8");
+  const chapter70 = await readFile(join(root, "chapter-070-reporting-the-meeting", "chapter.md"), "utf8");
+  assert.match(chapter69, /DUT-GRAMMAR-069B \| Direct information request: V1 matrix question addressed to u plus an embedded polar of-clause\./u);
+  assert.match(chapter70, /DUT-GRAMMAR-070B \| Reported questions: declarative matrix clause with an overt reporter plus an embedded polar of-clause; not a direct request to the addressee\./u);
+  assert.match(chapter69, /Kunt u mij zeggen of de aanvraag geldig is\?/u);
+  assert.match(chapter70, /Opa Henk vraagt of het geluid de dag ervoor is gecontroleerd\./u);
+
+  for (const level of ["easy", "hard"]) {
+    const summary = await readFile(join(root, `chapter-066-070-grammar-${level}`, "chapter.md"), "utf8");
+    assert.match(summary, /direct formal Kunt u mij zeggen of \+ embedded polar clause\?/u);
+    assert.match(summary, /reporter \+ vraagt of \+ embedded polar clause/u);
+    assert.match(summary, /direct (?:question|formal information request)|directly requests information/u);
+    assert.match(summary, /report|reports another person's question/u);
+  }
+});

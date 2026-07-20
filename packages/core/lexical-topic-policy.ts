@@ -27,6 +27,8 @@ export interface LexicalTopicRecord {
   readonly later_expansion_senses: readonly LexicalTopicSense[];
   readonly reinforcement_senses?: readonly LexicalTopicSense[];
   readonly status: LexicalTopicStatus;
+  readonly language_specific_notes?: string;
+  readonly distinguishes_from?: readonly string[];
   readonly chapter_attestations: readonly number[];
 }
 
@@ -64,7 +66,6 @@ export function assertLexicalTopicInventory(
   assertChapter(inventory.max_ordinary_chapter);
 
   const topicIds = new Set<string>();
-  const ownedExpansionSenses = new Map<string, string>();
   let introducedExpansionSenseCount = 0;
   let reinforcementSenseCount = 0;
 
@@ -73,6 +74,12 @@ export function assertLexicalTopicInventory(
     if (topicIds.has(topic.topic_id)) throw new Error(`Duplicate lexical topic ID: ${topic.topic_id}`);
     topicIds.add(topic.topic_id);
     if (topic.display_name.trim() === "") throw new Error(`${topic.topic_id}: display_name is required.`);
+    if (topic.language_specific_notes !== undefined && topic.language_specific_notes.trim() === "") throw new Error(`${topic.topic_id}: language_specific_notes must be nonempty when present.`);
+    const distinctions = new Set<string>();
+    for (const neighboringTopicId of topic.distinguishes_from ?? []) {
+      if (!/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)*$/u.test(neighboringTopicId) || neighboringTopicId === topic.topic_id || distinctions.has(neighboringTopicId)) throw new Error(`${topic.topic_id}: distinguishes_from values must be unique stable topic IDs other than itself.`);
+      distinctions.add(neighboringTopicId);
+    }
     if (!lexicalTopicStatuses.includes(topic.status)) throw new Error(`${topic.topic_id}: unsupported descriptive status ${topic.status}.`);
     assertChapter(topic.first_attested_chapter);
     if (topic.first_attested_chapter > inventory.max_ordinary_chapter) throw new Error(`${topic.topic_id}: first attested chapter exceeds the curriculum boundary.`);
@@ -96,6 +103,9 @@ export function assertLexicalTopicInventory(
         if (sense.lexical_topic !== undefined && sense.lexical_topic !== topic.topic_id) throw new Error(`${sense.sense_id}: lexical_topic must be ${topic.topic_id}.`);
         if (sense.topic_first_chapter !== topic.first_attested_chapter) throw new Error(`${sense.sense_id}: topic-first-chapter must be ${topic.first_attested_chapter}.`);
         if (!Number.isInteger(sense.topic_expansion_stage) || sense.topic_expansion_stage < 0) throw new Error(`${sense.sense_id}: invalid topic_expansion_stage.`);
+        if (expectedRole === "anchor" && sense.topic_expansion_stage !== 0) throw new Error(`${sense.sense_id}: anchor topic_expansion_stage must be 0.`);
+        if (expectedRole === "initial-expansion" && sense.topic_expansion_stage < 1) throw new Error(`${sense.sense_id}: initial expansion stage must be at least 1.`);
+        if (expectedRole === "later-expansion" && (sense.topic_expansion_stage < 2 || sense.first_introduction_chapter <= topic.first_attested_chapter)) throw new Error(`${sense.sense_id}: later expansion must be chronologically later and use stage 2 or above.`);
         if (sense.lexical_id.trim() === "" || sense.sense_id.trim() === "" || sense.citation_form.trim() === "" || sense.meaning.trim() === "") throw new Error(`${topic.topic_id}: lexical-topic senses require canonical identity, citation form, and meaning.`);
         const variants = new Set<string>();
         for (const variant of sense.regional_variants ?? []) {
@@ -115,11 +125,9 @@ export function assertLexicalTopicInventory(
         }
         if (expectedRole === "anchor" && sense.first_introduction_chapter !== topic.first_attested_chapter) throw new Error(`${sense.sense_id}: anchor first introduction must equal the topic first attested chapter.`);
         if (expectedRole === "reinforcement") {
+          if (sense.chapter_attestations.some((chapter) => chapter <= sense.first_introduction_chapter)) throw new Error(`${sense.sense_id}: reinforcement attestations must be later than first introduction.`);
           reinforcementSenseCount += 1;
         } else if (expectedRole !== "anchor") {
-          const owner = ownedExpansionSenses.get(sense.sense_id);
-          if (owner !== undefined && owner !== topic.topic_id) throw new Error(`${sense.sense_id}: expansion sense is owned by both ${owner} and ${topic.topic_id}.`);
-          ownedExpansionSenses.set(sense.sense_id, topic.topic_id);
           introducedExpansionSenseCount += 1;
         }
         if (evidence !== undefined) assertSenseEvidence(sense, expectedRole, evidence);

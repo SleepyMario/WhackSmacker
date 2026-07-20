@@ -1664,7 +1664,7 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-70 blocks", 
     assert.equal(chapter16?.label, "Chapter 16 -- Working at the Library");
     assert.equal(chapter20?.label, "Chapter 20 -- An Appointment in Town");
     assert.equal(chapter25?.label, "Chapter 25 -- Going to the Museum");
-    assert.equal(chapter70?.label, "Chapter 70 -- Reporting the Meeting");
+    assert.equal(chapter70?.label, "Chapter 70 -- Sharing a Short Film");
     assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-071-/u.test(node.filePath ?? "")), false);
     assert.equal(readContent.children.some((node) => /chapter-011-015-grammar-(?:easy|hard)/u.test(node.filePath ?? "")), true);
     const reviewDecks = dutch.children.find((node) => node.label === "Review decks");

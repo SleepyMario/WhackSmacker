@@ -19,6 +19,7 @@ export * from "./reading-review-integration";
 export * from "./review-progress-store";
 export * from "./review-deck-menu-status";
 export * from "./review-scheduler";
+export * from "./sino-vietnamese-policy";
 export * from "./user-data-backup";
 export * from "./user-data-migration";
 export * from "./ui";

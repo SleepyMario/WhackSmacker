@@ -5,18 +5,18 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:Zou u + infinitive + kunnen?]] and [[grammar:Kunt u mij zeggen of + subordinate clause?]]. Use [[grammar:Zou u ... kunnen?]] for a polite formal request. Use this frame to ask politely whether something is true.",
-      "expert": "This chapter introduces [[grammar:Zou u + infinitive + kunnen?]]: The conditional modal [[grammar:zou]] mitigates the request; [[grammar:u]] marks formal address and [[grammar:kunnen]] remains infinitival.; [[grammar:Kunt u mij zeggen of + subordinate clause?]]: The matrix clause has V1 question order; the embedded polar interrogative is introduced by [[grammar:of]] with verb-final order."
+      "normal": "This chapter teaches [[grammar:Zou u + infinitive + kunnen?]] and [[grammar:direct formal Kunt u mij zeggen of + embedded polar clause?]]. Use [[grammar:Zou u ... kunnen?]] for a polite formal request. Use the second frame to ask the listener directly whether something is true; here of means whether, not or.",
+      "expert": "This chapter introduces [[grammar:Zou u + infinitive + kunnen?]]: The conditional modal [[grammar:zou]] mitigates the request; [[grammar:u]] marks formal address and [[grammar:kunnen]] remains infinitival.; [[grammar:direct formal Kunt u mij zeggen of + embedded polar clause?]]: The utterance directly requests information from the addressee. The matrix clause has V1 question order; the embedded polar interrogative is introduced by complementizer [[grammar:of]] with verb-final order."
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### Zou u + infinitive + kunnen?\n\nUse [[grammar:Zou u ... kunnen?]] for a polite formal request. Example: [[grammar:Zou u dit document kunnen controleren?]]\n\n#### Kunt u mij zeggen of + subordinate clause?\n\nUse this frame to ask politely whether something is true. Example: [[grammar:Kunt u mij zeggen of de aanvraag geldig is?]]",
-      "expert": "#### Zou u + infinitive + kunnen?\n\nThe conditional modal [[grammar:zou]] mitigates the request; [[grammar:u]] marks formal address and [[grammar:kunnen]] remains infinitival. Literal example: [[grammar:Zou u dit document kunnen controleren?]]\n\n#### Kunt u mij zeggen of + subordinate clause?\n\nThe matrix clause has V1 question order; the embedded polar interrogative is introduced by [[grammar:of]] with verb-final order. Literal example: [[grammar:Kunt u mij zeggen of de aanvraag geldig is?]]"
+      "normal": "#### Zou u + infinitive + kunnen?\n\nUse [[grammar:Zou u ... kunnen?]] for a polite formal request. Example: [[grammar:Zou u dit document kunnen controleren?]]\n\n#### direct formal Kunt u mij zeggen of + embedded polar clause?\n\nUse this direct question to ask the listener politely whether something is true. Here [[grammar:of]] means whether. Example: [[grammar:Kunt u mij zeggen of de aanvraag geldig is?]]",
+      "expert": "#### Zou u + infinitive + kunnen?\n\nThe conditional modal [[grammar:zou]] mitigates the request; [[grammar:u]] marks formal address and [[grammar:kunnen]] remains infinitival. Literal example: [[grammar:Zou u dit document kunnen controleren?]]\n\n#### direct formal Kunt u mij zeggen of + embedded polar clause?\n\nThe utterance directly requests information from the addressee. The matrix clause has V1 question order; complementizer [[grammar:of]] introduces an embedded polar interrogative with verb-final order. Literal example: [[grammar:Kunt u mij zeggen of de aanvraag geldig is?]]"
     },
     {
       "sourceHeading": "Dutch Usage Notes",
-      "normal": "[[grammar:Zou u ... kunnen?]] is a formal mitigated request. [[grammar:Kunt u mij zeggen of ...?]] embeds a yes/no question with verb-final order.",
-      "expert": "[[grammar:Zou u ... kunnen?]] is a formal mitigated request. [[grammar:Kunt u mij zeggen of ...?]] embeds a yes/no question with verb-final order. The grammar IDs remain distinct and cumulative."
+      "normal": "[[grammar:Zou u ... kunnen?]] is a formal mitigated request. [[grammar:Kunt u mij zeggen of ...?]] directly asks an addressee for information and embeds a yes/no question with verb-final order. Its [[grammar:of]] means whether, not or.",
+      "expert": "[[grammar:Zou u ... kunnen?]] is a formal mitigated request. [[grammar:Kunt u mij zeggen of ...?]] has a V1 matrix question addressed to u and an embedded polar of-clause. This direct speech act remains distinct from Chapter 70's declarative report of another person's question. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {

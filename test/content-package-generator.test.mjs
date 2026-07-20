@@ -53,12 +53,15 @@ test("Vietnamese package targets retain the current versions and include the com
   assert.equal(reading?.contentSchemaVersion, "1.0.0");
   assert.deepEqual(reading?.readingContentInclude, [
     "README.md", "philosophy.md", "scope.md", "curriculum-map.md", "progress.md", "backlog.md", "decisions.md",
-    "geography-ledger.json", "number-progression.json", "lexical-topics.json", "lexical-topic-audit.md", "name-pools", "units/README.md", "units/vietnamese-foundation", "units/vietnamese-core"
+    "geography-ledger.json", "number-progression.json", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "sino-vietnamese-lexicon.json", "sino-vietnamese-audit.json", "sino-vietnamese-audit.md", "name-pools", "units/README.md", "units/vietnamese-foundation", "units/vietnamese-core"
   ]);
   assert.equal(reviews?.packageVersion, "0.2.0");
   assert.deepEqual(reviews?.include, ["README.md", "LICENSE-SOFTWARE", "review-decks"]);
   assert.equal(isContentPackageSourceFileAllowed("number-progression.json"), true);
   assert.equal(isContentPackageSourceFileAllowed("lexical-topics.json"), true);
+  assert.equal(isContentPackageSourceFileAllowed("lexical-topic-audit.json"), true);
+  assert.equal(isContentPackageSourceFileAllowed("sino-vietnamese-lexicon.json"), true);
+  assert.equal(isContentPackageSourceFileAllowed("sino-vietnamese-audit.json"), true);
 });
 
 test("content package generator creates a valid Linguistic Terminology package", async () => {
@@ -554,7 +557,11 @@ test("content package generator creates complete Vietnamese reading and review p
     }
     assert.ok(readingContent.files.some((file) => file.path === "number-progression.json"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
+    assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.md"));
+    assert.ok(readingContent.files.some((file) => file.path === "sino-vietnamese-lexicon.json"));
+    assert.ok(readingContent.files.some((file) => file.path === "sino-vietnamese-audit.json"));
+    assert.ok(readingContent.files.some((file) => file.path === "sino-vietnamese-audit.md"));
     const sourcePaths = reviewContent.files.filter((file) => /review-decks\/chapter-\d{3}-\d{3}\/cards\.tsv$/u.test(file.path)).map((file) => file.path).sort();
     assert.deepEqual(sourcePaths, Array.from({ length: 10 }, (_, i) => { const start = i * 5 + 1; return `review-decks/chapter-${String(start).padStart(3,"0")}-${String(start + 4).padStart(3,"0")}/cards.tsv`; }));
     const itemPaths = [...reviewArchive.keys()].filter((path) => path.startsWith("content/memorization/review-decks/")).sort();
@@ -592,14 +599,14 @@ test("content package generator creates a valid Dutch package", async () => {
     const reviewItems2125 = JSON.parse(archive.get(itemPath2125).toString("utf8"));
     const additionalReviewBlocks = [
       { start: 26, end: 30, cards: 84 },
-      { start: 31, end: 35, cards: 78 },
-      { start: 36, end: 40, cards: 78 },
+      { start: 31, end: 35, cards: 80 },
+      { start: 36, end: 40, cards: 80 },
       { start: 41, end: 45, cards: 86 },
       { start: 46, end: 50, cards: 80 },
       { start: 51, end: 55, cards: 102 },
       { start: 56, end: 60, cards: 100 },
       { start: 61, end: 65, cards: 100 },
-      { start: 66, end: 70, cards: 100 }
+      { start: 66, end: 70, cards: 110 }
     ];
     const additionalReviewItems = additionalReviewBlocks.map(({ start, end, cards }) => {
       const slug = `${String(start).padStart(3, "0")}-${String(end).padStart(3, "0")}`;
@@ -732,6 +739,7 @@ test("content package generator creates a valid Dutch package", async () => {
     }
     assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-071-/u.test(file.path)), false);
     assert.equal(content.files.some((file) => file.path === "lexical-topics.json"), true);
+    assert.equal(content.files.some((file) => file.path === "lexical-topic-audit.json"), true);
     assert.equal(content.files.some((file) => file.path === "lexical-topic-audit.md"), true);
     assert.equal(content.files.some((file) => /chapter-011-015-grammar-(?:easy|hard)/u.test(file.path)), true);
     assert.equal(content.files.some((file) => file.path === "review-decks/chapter-011-015/cards.tsv"), true);

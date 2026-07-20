@@ -37,3 +37,29 @@ test("Dutch Chapters 26-70 form one complete alternating sequence with valid sid
   const r5170 = assertLanguageCurriculumChapter5170Requirements(all);
   assert.deepEqual(r5170.map((r) => r.chapter), Array.from({length:20},(_,i)=>i+51));
 });
+
+test("Dutch Chapters 65-70 keep the advanced sequence diverse and context-driven", async () => {
+  const sequence = (await sources()).filter(({ chapter }) => chapter >= 65 && chapter <= 70);
+  const expectedTitles = new Map([
+    [65, "Preparing a Health Information Day"],
+    [66, "Restoring an Old Bicycle"],
+    [67, "Joining the Neighborhood Garden"],
+    [68, "A Café That Keeps Changing"],
+    [69, "A Formal Information Request"],
+    [70, "Sharing a Short Film"]
+  ]);
+  for (const { chapter, markdown } of sequence) {
+    assert.match(markdown, new RegExp(`^# Chapter ${chapter} -- ${expectedTitles.get(chapter)}$`, "mu"));
+  }
+
+  const byChapter = new Map(sequence.map(({ chapter, markdown }) => [chapter, markdown]));
+  assert.match(byChapter.get(66), /oude fiets[\s\S]+ketting[\s\S]+rem[\s\S]+rijdt Yasmin lachend naar huis/u);
+  assert.match(byChapter.get(67), /volkstuin[\s\S]+kas[\s\S]+composthoop[\s\S]+planten we zaterdag samen jouw kruiden/u);
+  assert.match(byChapter.get(70), /première[\s\S]+korte film[\s\S]+uploadt Pieter[\s\S]+tweede film/u);
+
+  for (const chapter of [66, 67, 70]) {
+    assert.doesNotMatch(byChapter.get(chapter), /\b(?:begroting|commissie|gemeentehuis|notulen|subsidie|vergadering|voorzitter)\b/iu);
+  }
+  assert.match(byChapter.get(69), /\bKunt u mij zeggen\b/u);
+  assert.match(byChapter.get(70), /another person's question instead of directly asking the listener/u);
+});

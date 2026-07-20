@@ -26,7 +26,7 @@ const representativeTargets = new Map([
   [55, "Zullen we + infinitive?"],
   [60, "net + perfect"],
   [65, "laten + object + infinitive"],
-  [70, "zeggen dat + subordinate clause"]
+  [70, "zeggen dat + subordinate declarative clause"]
 ]);
 const blue = (text) => `\x1b[34m${text}\x1b[0m`;
 

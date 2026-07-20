@@ -2,7 +2,7 @@
 
 Deck name: `Chapter 66-70`
 
-This is the authoritative schema-v2 vocabulary/function-word review for Dutch Core Chapters 66-70. It contains all 50 review-eligible canonical senses in both directions, for 100 stable cards. Every card has one to three literal examples from the primary Dialogue or Narrative body. Grammar patterns remain in the paired Grammar Easy/Hard summaries.
+This is the authoritative schema-v2 vocabulary/function-word review for Dutch Core Chapters 66-70. It contains all 55 review-eligible canonical senses in both directions, for 110 stable cards. Every card has one to three literal examples from the primary Dialogue or Narrative body. Grammar patterns remain in the paired Grammar Easy/Hard summaries.
 
 Scope safeguards:
 

@@ -1,23 +1,28 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
+import { promisify } from "node:util";
 import { assertLexicalTopicInventory, reviewBlockForChapter } from "../dist/packages/core/index.js";
 
 const appRoot = process.cwd();
+const execFileAsync = promisify(execFile);
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 
 for (const config of [
-  { language: "Dutch", code: "dutch", repository: "dutch-curriculum", maxChapter: 70, forbidden: /^chapter-071-/u },
-  { language: "Vietnamese", code: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 50, forbidden: /^chapter-051-/u }
+  { language: "Dutch", code: "dutch", repository: "dutch-curriculum", maxChapter: 70, canonicalSenses: 607, topics: 34, forbidden: /^chapter-071-/u },
+  { language: "Vietnamese", code: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 50, canonicalSenses: 417, topics: 34, forbidden: /^chapter-051-/u }
 ]) {
   test(`${config.language} lexical-topic inventory resolves to reading and bidirectional review evidence`, async () => {
     const curriculumRoot = join(appRoot, "..", config.repository);
     const inventory = JSON.parse(await readFile(join(curriculumRoot, "lexical-topics.json"), "utf8"));
+    const audit = JSON.parse(await readFile(join(curriculumRoot, "lexical-topic-audit.json"), "utf8"));
     assert.equal(inventory.max_ordinary_chapter, config.maxChapter);
     const evidence = await collectEvidence(config.code, curriculumRoot);
     const result = assertLexicalTopicInventory(inventory, evidence);
     assert.equal(result.topicCount, inventory.topics.length);
+    assert.equal(result.topicCount, config.topics);
     assert.equal(result.introducedExpansionSenseCount > 0, true);
     assert.equal(result.reinforcementSenseCount, 0);
 
@@ -25,7 +30,16 @@ for (const config of [
       const firstAnchor = Math.min(...topic.anchor_senses.map((sense) => sense.first_introduction_chapter));
       assert.equal(topic.first_attested_chapter, firstAnchor, `${topic.topic_id}: first attested chapter`);
       assert.equal(topic.first_attested_sense, topic.anchor_senses[0].sense_id, `${topic.topic_id}: first attested sense`);
+      for (const sense of topic.initial_expansion_senses) assert.equal(sense.first_introduction_chapter >= topic.first_attested_chapter, true, `${sense.sense_id}: initial chronology`);
+      for (const sense of topic.later_expansion_senses) assert.equal(sense.first_introduction_chapter > topic.first_attested_chapter, true, `${sense.sense_id}: later chronology`);
     }
+
+    assert.equal(audit.summary.total_canonical_senses_audited, config.canonicalSenses);
+    assert.equal(audit.summary.total_topics, config.topics);
+    assert.equal(audit.canonical_senses.length, config.canonicalSenses);
+    assert.deepEqual(audit.missing_topics, []);
+    assert.deepEqual(audit.invalid_topic_records, []);
+    assert.equal(audit.review_findings.every((finding) => finding.mismatch_count === 0 && finding.card_count === finding.canonical_sense_count * 2), true);
 
     const unitEntries = await readdir(join(curriculumRoot, "units", `${config.code}-core`));
     assert.equal(unitEntries.some((entry) => config.forbidden.test(entry)), false);
@@ -53,6 +67,10 @@ test("lexical-topic validation keeps reinforcement out of new review accounting"
   assert.equal(result.reinforcementSenseCount, 1);
 });
 
+test("generated lexical-topic audit reports are current", async () => {
+  await execFileAsync(process.execPath, ["scripts/generate-lexical-topic-audit.mjs", "--check"], { cwd: appRoot });
+});
+
 test("lexical-topic validation rejects duplicate IDs, wrong first chapters, and chapter overflow", () => {
   const anchor = { lexical_id: "vi.noun.a", sense_id: "vi.noun.a.a", citation_form: "a", meaning: "a", topic_role: "anchor", topic_first_chapter: 2, topic_expansion_stage: 0, first_introduction_chapter: 2, chapter_attestations: [2] };
   const topic = { topic_id: "sample", display_name: "Sample", first_attested_chapter: 2, first_attested_sense: anchor.sense_id, status: "observed", chapter_attestations: [2], anchor_senses: [anchor], initial_expansion_senses: [], later_expansion_senses: [] };
@@ -77,6 +95,14 @@ test("lexical-topic identity distinguishes homonymous senses while allowing vari
   const result = assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 50, topics: [record("food.fruit", "Fruit", fruit), record("descriptive.colours", "Colours", colour)] });
   assert.equal(result.topicCount, 2);
   assert.equal(result.introducedExpansionSenseCount, 0);
+});
+
+test("one canonical sense may belong to multiple topics without duplicating lexical identity", () => {
+  const shared = { lexical_id: "vi.noun.nha-hang", sense_id: "vi.noun.nha-hang.restaurant", citation_form: "nhà hàng", meaning: "restaurant", topic_role: "anchor", topic_first_chapter: 14, topic_expansion_stage: 0, first_introduction_chapter: 14, chapter_attestations: [14] };
+  const record = (topic_id, display_name) => ({ topic_id, display_name, first_attested_chapter: 14, first_attested_sense: shared.sense_id, status: "observed", chapter_attestations: [14], anchor_senses: [{ ...shared, lexical_topic: topic_id }], initial_expansion_senses: [], later_expansion_senses: [] });
+  const evidence = { canonicalSenseIds: new Set([shared.sense_id]), learnerFacingAttestations: new Map([[shared.sense_id, new Set([14])]]), reviewSenseIdsByBlock: new Map([["011-015", new Set([shared.sense_id])]]) };
+  const result = assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 50, topics: [record("food.meals", "Food and meals"), record("public.places", "Public places")] }, evidence);
+  assert.equal(result.topicCount, 2);
 });
 
 async function collectEvidence(code, curriculumRoot) {

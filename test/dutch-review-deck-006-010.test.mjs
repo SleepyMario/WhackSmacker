@@ -7,6 +7,27 @@ const deckPath = "review-content/dutch/review-decks/chapter-006-010/cards.tsv";
 const curriculumRoot = join(process.cwd(), "..", "dutch-curriculum");
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 
+test("Dutch Chapter 8 identifies eten and drinken only as the attested verb senses", async () => {
+  const chapter = await readFile(join(curriculumRoot, "units/dutch-core/chapter-008-basic-sentences-8/chapter.md"), "utf8");
+  assert.match(chapter, /^\| eten \| to eat \| Verb \|$/mu);
+  assert.match(chapter, /^\| drinken \| to drink \| Verb \|$/mu);
+  assert.doesNotMatch(chapter, /^\| eten \| food;/mu);
+  assert.doesNotMatch(chapter, /^\| drinken \| drink;/mu);
+
+  const rows = parseDeck(await readFile(deckPath, "utf8"));
+  const chapterEightActionRows = rows.filter((row) => row.sourceChapter === 8 && ["eten", "drinken", "to eat", "to drink"].includes(row.prompt));
+  assert.deepEqual(
+    chapterEightActionRows.map((row) => row.lexicalIds),
+    [
+      ["nl.verb.eten", "nl.verb.eten.consume-food"],
+      ["nl.verb.eten", "nl.verb.eten.consume-food"],
+      ["nl.verb.drinken", "nl.verb.drinken.consume-liquid"],
+      ["nl.verb.drinken", "nl.verb.drinken.consume-liquid"]
+    ]
+  );
+  assert.equal(rows.some((row) => row.lexicalIds.some((id) => /^nl\.noun\.(?:eten|drinken)(?:\.|$)/u.test(id))), false);
+});
+
 test("Dutch Chapters 6–10 review exactly covers 42 canonical senses in both directions", async () => {
   const original = await readFile(deckPath, "utf8");
   const rows = parseDeck(original);

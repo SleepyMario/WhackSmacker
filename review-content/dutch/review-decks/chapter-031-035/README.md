@@ -2,7 +2,7 @@
 
 Deck name: `Chapter 31-35`
 
-This is the authoritative schema-v2 vocabulary/function-word review for Dutch Core Chapters 31-35. It contains all 39 review-eligible canonical senses in both directions, for 78 stable cards. Every card has one to three literal examples from the primary Dialogue or Narrative body. Grammar patterns remain in the paired Grammar Easy/Hard summaries.
+This is the authoritative schema-v2 vocabulary/function-word review for Dutch Core Chapters 31-35. It contains all 40 review-eligible canonical senses in both directions, for 80 stable cards. Every card has one to three literal examples from the primary Dialogue or Narrative body. Grammar patterns remain in the paired Grammar Easy/Hard summaries.
 
 Scope safeguards:
 
