@@ -106,9 +106,9 @@ test("all Read Content modes project grammar IDs to human-readable grammar title
   assert.match(developer, /Use `tôi \+ là \+ N`[\s\S]*invariant copular identity clause/u);
   assert.match(easy, /VIE-GRAMMAR-001/u);
 
-  const legacyOtherLanguage = projectCurriculumMarkdown("# Grammar\n\n- `KOR-GRAMMAR-031A` -- `V-아서/어서`", "developer");
+  const legacyOtherLanguage = projectCurriculumMarkdown("# Grammar\n\n- `KOR-GRAMMAR-001` -- `N + 이에요/예요`", "developer");
   assert.doesNotMatch(legacyOtherLanguage, /KOR-GRAMMAR-/u);
-  assert.match(legacyOtherLanguage, /`V-아서\/어서`/u);
+  assert.match(legacyOtherLanguage, /`N \+ 이에요\/예요`/u);
 });
 
 test("Normal Expert and Developer map grammar variants to the canonical visible headings", () => {

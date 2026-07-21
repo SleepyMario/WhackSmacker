@@ -130,7 +130,7 @@ test("rendered reading content hides useless Status table columns", () => {
       source: { type: "file", path: "/tmp/korean.wspkg" }
     },
     entry: {
-      path: "units/korean-core/chapter-001-basic-life-sentences-1/chapter.md",
+      path: "units/korean-core/chapter-001-a-polite-first-meeting/chapter.md",
       mediaType: "text/markdown",
       title: "Chapter 1",
       source: "snapshot"
@@ -160,7 +160,7 @@ test("rendered reading content normalizes noun-only vocabulary notes", () => {
       source: { type: "file", path: "/tmp/korean.wspkg" }
     },
     entry: {
-      path: "units/korean-core/chapter-001-basic-life-sentences-1/chapter.md",
+      path: "units/korean-core/chapter-001-a-polite-first-meeting/chapter.md",
       mediaType: "text/markdown",
       title: "Chapter 1",
       source: "snapshot"

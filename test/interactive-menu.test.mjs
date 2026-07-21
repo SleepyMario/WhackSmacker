@@ -1664,7 +1664,7 @@ test("two-pane renderer preserves read content chapter titles without ellipsis-o
       kind: "read-section",
       children: [{
         id: "chapter-1",
-        label: "Chapter 1 -- Names and First Greetings",
+        label: "Chapter 1 -- A Polite First Meeting",
         kind: "content"
       }, {
         id: "chapter-15",
@@ -1684,9 +1684,8 @@ test("two-pane renderer preserves read content chapter titles without ellipsis-o
   const expanded = new Set(["whacksmacker", "read-content"]);
   const output = renderTwoPaneLanguageTree(tree, expanded, 2, "Preview", false);
 
-  assert.match(output, /Ch 1 -- Names/u);
-  assert.match(output, /and First/u);
-  assert.match(output, /Greetings/u);
+  assert.match(output, /Ch 1 -- A Polite/u);
+  assert.match(output, /First Meeting/u);
   assert.match(output, /Ch 15 -- Casual Absence/u);
   assert.match(output, /Ch 15 -- Casual Absence I/u);
   assert.equal((output.match(/Grammar/gu) ?? []).length >= 2, true);
@@ -1717,7 +1716,7 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
         filePath: "units/introduction-to-hangul/chapter-01-vowels/README.md"
       }, {
         id: "chapter-1",
-        label: "Chapter 1 -- Names and First Greetings",
+        label: "Chapter 1 -- A Polite First Meeting",
         kind: "content"
       }, {
         id: "grammar-easy",
@@ -1759,9 +1758,9 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
   assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Foundation${escapeRegExp(reset)} Chapter -- 1`, "u"));
   assert.doesNotMatch(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Foundation Chapter`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Han Gul 1${escapeRegExp(reset)} -- Vowels`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Ch 1${escapeRegExp(reset)} -- Names`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Ch 1${escapeRegExp(reset)} -- A Polite`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Grammar${escapeRegExp(reset)}`, "u"));
-  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Names`, "u"));
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(chapterTokenColor)}A Polite`, "u"));
   assert.doesNotMatch(output, new RegExp(`${escapeRegExp(chapterTokenColor)}Easy`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(chapterTokenColor)}Foundation${escapeRegExp(reset)}${escapeRegExp(selectedStyle)} Chapter -- 1`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(chapterTokenColor)}Han Gul 1`, "u"));
@@ -1769,7 +1768,7 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
   assert.match(output, new RegExp(`${escapeRegExp(selectedStyle)}[^\\x1b]*${escapeRegExp(chapterTokenColor)}Grammar`, "u"));
   assert.match(stripped, /Foundation Chapter -- 1/u);
   assert.match(stripped, /Han Gul 1 -- Vowels/u);
-  assert.match(stripped, /Ch 1 -- Names and First/u);
+  assert.match(stripped, /Ch 1 -- A Polite First/u);
   assert.match(stripped, /Grammar/u);
   assert.doesNotMatch(stripped, /Grammar -- Easy/u);
   assert.doesNotMatch(stripped, /Ch 1\s*--\s*\.\.\./u);
@@ -1778,7 +1777,7 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
 
 test("Vietnamese numbered chapter labels use exact dynamic Ch N -- topic formatting", () => {
   const chapters = [
-    { number: 1, label: "Chapter 1 — Names and First Greetings" },
+    { number: 1, label: "Chapter 1 — A Polite First Meeting" },
     { number: 10, label: "Chapter 10: Places" },
     { number: 123, label: "Chapter 123 - Future Topic" }
   ];
@@ -1794,14 +1793,14 @@ test("Vietnamese numbered chapter labels use exact dynamic Ch N -- topic formatt
   };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker", "read-content"]), 2, "Preview", true, 0, 15, "en-US", "navigation", 160);
   const plain = stripAnsi(output);
-  assert.match(plain, /Ch 1 -- Names and First Greetings/u);
+  assert.match(plain, /Ch 1 -- A Polite First Meeting/u);
   assert.match(plain, /Ch 10 -- Places/u);
   assert.match(plain, /Ch 123 -- Future Topic/u);
   assert.doesNotMatch(plain, /Ch \d+(?:—|:|-\s(?!-))/u);
   for (const { number } of chapters) {
     assert.match(output, new RegExp(`${escapeRegExp("\x1b[33m")}Ch ${number}${escapeRegExp("\x1b[0m")}(?:\\x1b\\[[0-9;]*m)* --`, "u"));
   }
-  assert.doesNotMatch(output, new RegExp(`${escapeRegExp("\x1b[33m")}[^\x1b]*(?:Names|Places|Future Topic)`, "u"));
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp("\x1b[33m")}[^\x1b]*(?:A Polite|Places|Future Topic)`, "u"));
 });
 
 test("review deck menu status distinguishes not started finished waiting and due decks", () => {
@@ -2205,23 +2204,23 @@ test("NO_COLOR and non-TTY rendering preserve semantic reading text without ANSI
 test("two-pane renderer starts chapter content near the content pane border", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
-    "# Chapter 1 -- Names and First Greetings",
+    "# Chapter 1 -- A Polite First Meeting",
     "",
-    "This chapter teaches a first formal Korean self-introduction.",
+    "A polite first meeting advances the initial beginner sequence.",
     "",
     "```text",
-    "마리아: 안녕하세요. 저는 마리아 가르시아입니다.",
-    "김민준: 안녕하세요. 저는 김민준입니다.",
+    "민지: 안녕하세요.",
+    "준호: 안녕하세요.",
     "```"
   ].join("\n"), false);
   const frameLines = output.split("\n").filter((line) => line.startsWith("| "));
   const contentBorderColumns = frameLines.map((line) => displayColumnOf(line, "|", 2));
-  const headingLine = frameLines.find((line) => line.includes("Ch 1 -- Names and First Greetings")) ?? "";
-  const bodyLine = frameLines.find((line) => line.includes("This chapter teaches")) ?? "";
-  const dialogueLine = frameLines.find((line) => line.includes("마리아:")) ?? "";
+  const headingLine = frameLines.find((line) => line.includes("Ch 1 -- A Polite")) ?? "";
+  const bodyLine = frameLines.find((line) => line.includes("A polite first meeting")) ?? "";
+  const dialogueLine = frameLines.find((line) => line.includes("민지:")) ?? "";
   const headingStart = displayColumnOf(headingLine, "C");
-  const bodyStart = displayColumnOf(bodyLine, "T");
-  const dialogueStart = displayColumnOf(dialogueLine, "마");
+  const bodyStart = displayColumnOf(bodyLine, "A");
+  const dialogueStart = displayColumnOf(dialogueLine, "민");
 
   assert.deepEqual(new Set(contentBorderColumns).size, 1);
   assert.equal(headingStart, (contentBorderColumns[0] ?? 0) + 2);
@@ -2229,7 +2228,7 @@ test("two-pane renderer starts chapter content near the content pane border", ()
   assert.equal(dialogueStart, (contentBorderColumns[0] ?? 0) + 2);
   assert.ok((contentBorderColumns[0] ?? 0) >= 33);
   assert.ok((contentBorderColumns[0] ?? 0) <= 75);
-  assert.doesNotMatch(output, /Chapter 1 -- Names and First Greetings/u);
+  assert.doesNotMatch(output, /Chapter 1 -- A Polite First Meeting/u);
   assert.doesNotMatch(output, /^.*\|\s+code\s+\|.*$/mu);
 });
 
