@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
+const curriculumRoot = join(process.cwd(), "..", "dutch-curriculum");
 const header="card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 for(let start=26;start<=70;start+=5){
  test(`Dutch review ${start}-${start+4} is bidirectional and literal`,async()=>{
@@ -91,4 +92,21 @@ test("Dutch shared spellings keep interrogative, demonstrative, relative, and co
     assert.equal(pair.length, 2, senseId);
     assert.deepEqual(pair.map((row) => `${row[4]}->${row[5]}`).sort(), ["en->nl", "nl->en"]);
   }
+});
+
+test("every Dutch verb Review headword is its canonical infinitive", async () => {
+  const rows = [];
+  for (let start = 1; start <= 75; start += 5) {
+    const path = join("review-content", "dutch", "review-decks", `chapter-${String(start).padStart(3,"0")}-${String(start + 4).padStart(3,"0")}`, "cards.tsv");
+    rows.push(...(await readFile(path, "utf8")).trimEnd().split("\n").slice(1).map((line) => line.split("\t")));
+  }
+  const verbs = rows.filter((row) => row[4] === "nl" && JSON.parse(row[10])[0].startsWith("nl.verb."));
+  for (const row of verbs) {
+    const entryId = JSON.parse(row[10])[0];
+    assert.equal(row[6], entryId.slice("nl.verb.".length).replaceAll("-", " "), `${row[0]} uses the infinitive`);
+  }
+  assert.equal(verbs.filter((row) => JSON.parse(row[10])[0] === "nl.verb.zijn").length, 1);
+  const chapter66 = await readFile(join(curriculumRoot, "units/dutch-core/chapter-066-how-the-community-center-is-run/chapter.md"), "utf8");
+  assert.match(chapter66, /opgepompt ← oppompen/u);
+  assert.match(chapter66, /gesmeerd ← smeren/u);
 });

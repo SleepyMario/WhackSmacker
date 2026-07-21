@@ -26,8 +26,8 @@
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| động vật | 動物 | animal | `Các động vật cần chăm sóc.` |\n| trạm cứu hộ | 站救護 | rescue center | `Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.` |\n| các | 各 | plural marker for an identified set | `Các động vật cần chăm sóc.` |\n| tình nguyện | 情願 | volunteer | `Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| động vật | 動物 | animal | `Các động vật cần chăm sóc.` |\n| trạm cứu hộ | 站救護 | rescue center | `Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.` |\n| các | 各 | plural marker for an identified set | `Các động vật cần chăm sóc.` |\n| tình nguyện | 情願 | volunteer | `Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| động vật | 動物 | animal | `Các động vật cần chăm sóc.` |\n| trạm cứu hộ | 站救護 | rescue center | `Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.` |\n| tình nguyện | 情願 | volunteer | `Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| động vật | 動物 | animal | `Các động vật cần chăm sóc.` |\n| trạm cứu hộ | 站救護 | rescue center | `Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ.` |\n| tình nguyện | 情願 | volunteer | `Nguyễn Thị Lan làm tình nguyện vì trạm cứu hộ cần người.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "động vật",
@@ -55,20 +55,6 @@
           "path": "units/vietnamese-core/chapter-032-basic-sentences-32/chapter.md",
           "section": "Narrative",
           "locator": "line containing: Nguyễn Thị Lan và Maria Garcia ở trạm cứu hộ."
-        }
-      },
-      {
-        "word": "các",
-        "characters": "各",
-        "meaning": "plural marker for an identified set",
-        "lexicalEntryId": "vi.particle.cac",
-        "senseId": "vi.particle.cac.plural-marker-for-an-identified-set",
-        "firstIntroductionChapter": 32,
-        "usage": "Các động vật cần chăm sóc.",
-        "provenance": {
-          "path": "units/vietnamese-core/chapter-032-basic-sentences-32/chapter.md",
-          "section": "Narrative",
-          "locator": "line containing: Các động vật cần chăm sóc."
         }
       },
       {

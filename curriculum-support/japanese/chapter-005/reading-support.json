@@ -33,8 +33,8 @@
       "surface": "行きます",
       "reading": "いきます",
       "evidence": "はい、一緒に行きます。",
-      "lexicalEntryId": "ja.verb.ikimasu",
-      "senseId": "ja.verb.ikimasu.go-will-go-polite"
+      "lexicalEntryId": "ja.verb.iku",
+      "senseId": "ja.verb.iku.go"
     },
     {
       "surface": "一緒に",

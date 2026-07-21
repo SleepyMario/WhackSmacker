@@ -125,7 +125,7 @@ async function canonicalLedgerInventory(startChapter, endChapter) {
     const cells = line.slice(1, -1).split("|").map((cell) => cell.trim());
     const first = Number.parseInt(cells[2] ?? "", 10);
     if (first >= startChapter && first <= endChapter && cells[5] === "yes") {
-      inventory.push({ form: cells[1], first, ledgerOrder });
+      inventory.push({ form: /nl\.verb\.|verbClass/u.test(cells[6]) ? cells[0] : cells[1], first, ledgerOrder });
     }
     ledgerOrder += 1;
   }

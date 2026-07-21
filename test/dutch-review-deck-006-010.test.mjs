@@ -100,7 +100,7 @@ test("Dutch Chapters 6–10 review exactly covers 42 canonical senses in both di
   assert.equal(targetRows.some((row) => row.sourceChapter <= 5 || row.sourceChapter >= 11), false);
   assert.deepEqual(
     targetRows.filter((row) => row.examples.length === 3).map((row) => row.prompt),
-    ["heb", "je", "wil", "ga", "naar"]
+    ["hebben", "je", "willen", "gaan", "naar"]
   );
 });
 
@@ -115,7 +115,7 @@ async function canonicalLedgerInventory() {
     if (!line.startsWith("|") || /^\|(?:---| Lemma)/u.test(line)) continue;
     const cells = line.slice(1, -1).split("|").map((cell) => cell.trim());
     const first = Number.parseInt(cells[2] ?? "", 10);
-    if (first >= 6 && first <= 10 && cells[5] === "yes") inventory.push({ form: cells[1], first, ledgerOrder });
+    if (first >= 6 && first <= 10 && cells[5] === "yes") inventory.push({ form: /nl\.verb\.|verbClass/u.test(cells[6]) ? cells[0] : cells[1], first, ledgerOrder });
     ledgerOrder += 1;
   }
   return inventory.sort((left, right) => left.first - right.first || left.ledgerOrder - right.ledgerOrder)

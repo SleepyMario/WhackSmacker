@@ -1359,7 +1359,7 @@ test("Vietnamese read content interleaves reviews after Core Chapters 5 and 10",
     const [secondReview] = secondReviews;
     assert.equal(firstReview?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
     assert.equal(secondReview?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
-    assert.equal(firstReview?.itemCount, 64);
+    assert.equal(firstReview?.itemCount, 60);
     assert.equal(secondReview?.itemCount, 72);
     assert.match(firstReview?.id ?? "", /:inline:1-5$/u);
     assert.match(secondReview?.id ?? "", /:inline:6-10$/u);
@@ -1398,7 +1398,7 @@ test("Vietnamese read content interleaves reviews after Core Chapters 5 and 10",
     const second = reviewDecks.children.find((node) => node.label === "Chapter 6-10");
     assert.equal(first?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
     assert.equal(second?.sourcePath, "review-decks/chapter-006-010/cards.tsv");
-    assert.equal(first?.itemCount, 64);
+    assert.equal(first?.itemCount, 60);
     assert.equal(second?.itemCount, 72);
   } finally {
     await fixture.cleanup();
@@ -2370,12 +2370,12 @@ test("changing Source reprojects the active Dutch review card without resetting 
     const traditionalChinese = screens.find((screen) => screen.includes("Source: 中文（臺灣）") && screen.includes("Review: Dutch / Chapter 1-5") && screen.includes("Examples:"));
     assert.ok(english, "answer side is visible before Source changes");
     assert.ok(traditionalChinese, "the same answer-side session remains visible after Source changes");
-    assert.match(english, /Card: 1\/70/u);
-    assert.match(traditionalChinese, /Card: 1\/70/u);
+    assert.match(english, /Card: 1\/66/u);
+    assert.match(traditionalChinese, /Card: 1\/66/u);
     assert.match(traditionalChinese, /Phrase:/u);
     assert.match(traditionalChinese, /Answer:/u);
     assert.match(traditionalChinese, /Examples:/u);
-    assert.doesNotMatch(traditionalChinese, /目前有 70 張牌卡需要複習|Press Enter or Space to start review/u);
+    assert.doesNotMatch(traditionalChinese, /目前有 66 張牌卡需要複習|Press Enter or Space to start review/u);
   } finally {
     await fixture.cleanup();
   }

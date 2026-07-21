@@ -13,15 +13,15 @@ const licenseSha256 = "c2db9f2b69f04481c3647953636e96f0752c17705b1250edcc2d3c20b
 const noticeSha256 = "6cc450547e608fb817b725bdfa5af11c7394f37dee1ace0bad7da42a1f355c34";
 const reconstructed = JSON.parse(await readFile(join(process.cwd(), "test", "fixtures", "follower-reconstructed-inventories.json"), "utf8"));
 const configs = [
-  ["arabic", "Arabic", "ar", "ARA", 42, 84],
+  ["arabic", "Arabic", "ar", "ARA", 40, 80],
   ["french", "French", "fr", "FRA", 60, 120],
   ["german", "German", "de", "GER", 55, 110],
-  ["hindi", "Hindi", "hi", "HIN", 51, 102],
+  ["hindi", "Hindi", "hi", "HIN", 50, 100],
   ["japanese", "Japanese", "ja", "JPN", 44, 132],
   ["korean", "Korean", "ko", "KOR", 47, 94],
   ["russian", "Russian", "ru", "RUS", 52, 104],
   ["spanish", "Spanish", "es", "SPA", 56, 112],
-  ["thai", "Thai", "th", "THA", 61, 122],
+  ["thai", "Thai", "th", "THA", 52, 104],
   ["zulu", "Zulu", "zu", "ZUL", 43, 86]
 ].map(([slug, name, code, prefix, senses, cards]) => ({ slug, name, code, prefix, senses, cards, core: `${slug}-core` }));
 
@@ -103,6 +103,10 @@ for (const config of configs) {
       directions.add(`${row.promptLanguage}-to-${row.answerLanguage}`);
       senses.set(row.lexicalIds[1], directions);
       for (const value of [row.cardId, row.prompt, ...row.acceptedAnswers, ...row.examples]) assert.equal(value, value.normalize("NFC"));
+      if (row.promptLanguage === config.code) {
+        const ledger = lexicalRows.find((candidate) => candidate[1] === row.lexicalIds[1]);
+        assert.equal(row.prompt, ledger[2], `${row.cardId} must prompt with the canonical lexical headword`);
+      }
     }
     assert.deepEqual(new Set(senses.keys()), new Set(lexicalRows.map(row => row[1])));
     const expectedDirections = config.code === "ja" ? ["en-to-ja", "ja-Kana-to-ja", "ja-to-en"] : [`${config.code}-to-en`, `en-to-${config.code}`].sort();
@@ -145,6 +149,29 @@ test("ledger and Review agreement cannot conceal an omitted taught sense", () =>
     () => reconcileReconstructedInventory(expected, incompleteLedger, incompleteReview),
     /reconstructed chapter inventory mismatch/u
   );
+});
+
+test("grammar-only particles and classifiers cannot enter follower lexical Review", async () => {
+  const forbiddenByLanguage = {
+    arabic: ["ar.particle.hal.yes-no-question", "ar.verb.nadhhabu.we-go"],
+    hindi: ["hi.particle.kya.yes-no-question"],
+    thai: [
+      "th.particle.kha-f.polite-particle-female-statement",
+      "th.particle.khrap.polite-particle-male",
+      "th.classifier.hong.rooms",
+      "th.classifier.tua.furniture",
+      "th.classifier.lem.books",
+      "th.classifier.kaeo.glasses-of-drink",
+      "th.particle.kha-question.female-question",
+      "th.particle.mai.yes-no-question",
+      "th.particle.kan.together-invitation"
+    ]
+  };
+  for (const [slug, forbidden] of Object.entries(forbiddenByLanguage)) {
+    const deck = parseDeck(await readFile(join(process.cwd(), "review-content", slug, "review-decks", "chapter-001-005", "cards.tsv"), "utf8"));
+    const reviewed = new Set(deck.flatMap((row) => row.lexicalIds));
+    for (const id of forbidden) assert.equal(reviewed.has(id), false, `${id} must stay out of lexical Review`);
+  }
 });
 
 test("repaired French, German, Russian, Spanish, Thai, and Zulu grammar examples enforce the taught rules", async () => {

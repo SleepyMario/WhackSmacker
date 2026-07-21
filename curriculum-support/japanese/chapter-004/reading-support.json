@@ -33,8 +33,8 @@
       "surface": "飲みます",
       "reading": "のみます",
       "evidence": "コーヒーを飲みます。",
-      "lexicalEntryId": "ja.verb.nomimasu",
-      "senseId": "ja.verb.nomimasu.drink-drinks-polite"
+      "lexicalEntryId": "ja.verb.nomu",
+      "senseId": "ja.verb.nomu.drink"
     },
     {
       "surface": "お茶",
@@ -54,15 +54,15 @@
       "surface": "食べます",
       "reading": "たべます",
       "evidence": "二人はケーキを食べます。",
-      "lexicalEntryId": "ja.verb.tabemasu",
-      "senseId": "ja.verb.tabemasu.eat-eats-polite"
+      "lexicalEntryId": "ja.verb.taberu",
+      "senseId": "ja.verb.taberu.eat"
     },
     {
       "surface": "います",
       "reading": "います",
       "evidence": "ゆきは喫茶店にいます。",
-      "lexicalEntryId": "ja.verb.imasu",
-      "senseId": "ja.verb.imasu.be-at-animate"
+      "lexicalEntryId": "ja.verb.iru",
+      "senseId": "ja.verb.iru.exist-animate"
     },
     {
       "surface": "二人",
@@ -82,8 +82,8 @@
       "surface": "読みます",
       "reading": "よみます",
       "evidence": "窓の近くで本を読みます。",
-      "lexicalEntryId": "ja.verb.yomimasu",
-      "senseId": "ja.verb.yomimasu.read"
+      "lexicalEntryId": "ja.verb.yomu",
+      "senseId": "ja.verb.yomu.read"
     }
   ]
 }

@@ -26,8 +26,8 @@
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bác sĩ | 博士 | doctor | `Bác sĩ ở phòng.` |\n| bị | 被 | be affected by; suffer from | `Lê Hoàng Nam bị đau đầu.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bác sĩ | 博士 | doctor | `Bác sĩ ở phòng.` |\n| bị | 被 | be affected by; suffer from | `Lê Hoàng Nam bị đau đầu.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bác sĩ | 博士 | doctor | `Bác sĩ ở phòng.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bác sĩ | 博士 | doctor | `Bác sĩ ở phòng.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "bác sĩ",
@@ -41,20 +41,6 @@
           "path": "units/vietnamese-core/chapter-030-basic-sentences-30/chapter.md",
           "section": "Narrative",
           "locator": "line containing: Bác sĩ ở phòng."
-        }
-      },
-      {
-        "word": "bị",
-        "characters": "被",
-        "meaning": "be affected by; suffer from",
-        "lexicalEntryId": "vi.particle.bi",
-        "senseId": "vi.particle.bi.be-affected-by-suffer-from",
-        "firstIntroductionChapter": 30,
-        "usage": "Lê Hoàng Nam bị đau đầu.",
-        "provenance": {
-          "path": "units/vietnamese-core/chapter-030-basic-sentences-30/chapter.md",
-          "section": "Narrative",
-          "locator": "line containing: Lê Hoàng Nam bị đau đầu."
         }
       }
     ]

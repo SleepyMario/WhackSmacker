@@ -66,13 +66,11 @@ const definitions = [
   ["vi.noun.nguyen-lieu.ingredient", "原料", [["nguyên", "原"], ["liệu", "料"]]],
   ["vi.noun.ke-hoach.plan", "計劃", [["kế", "計"], ["hoạch", "劃"]]],
   ["vi.noun.bac-si.doctor", "博士", [["bác", "博"], ["sĩ", "士"]], "Modern Vietnamese bác sĩ means physician; 博士 historically means a learned scholar and now often a doctorate holder in other Sinitic contexts."],
-  ["vi.particle.bi.be-affected-by-suffer-from", "被", [["bị", "被"]], "The modern Vietnamese affected or adverse marker continues the passive or affected field of 被."],
   ["vi.noun.du-an.project", "預案", [["dự", "預"], ["án", "案"]]],
   ["vi.noun.nhiem-vu.task", "任務", [["nhiệm", "任"], ["vụ", "務"]]],
   ["vi.verb.thu-thap.collect", "收拾", [["thu", "收"], ["thập", "拾"]]],
   ["vi.noun.dong-vat.animal", "動物", [["động", "動"], ["vật", "物"]]],
   ["vi.noun.tram-cuu-ho.rescue-center", "站救護", [["trạm", "站"], ["cứu", "救"], ["hộ", "護"]], "The sequence records Vietnamese compound order; modern Vietnamese denotes a rescue centre."],
-  ["vi.particle.cac.plural-marker-for-an-identified-set", "各", [["các", "各"]], "The curriculum teaches the modern Vietnamese plural marker; 各 historically means each or every."],
   ["vi.verb.tinh-nguyen.volunteer", "情願", [["tình", "情"], ["nguyện", "願"]], "The modern volunteer sense develops from willingness or voluntary intent."],
   ["vi.conjunction.hoac.or", "或", [["hoặc", "或"]]],
   ["vi.noun.nong-san.produce-farm-product", "農產", [["nông", "農"], ["sản", "產"]]],
@@ -101,13 +99,11 @@ const definitions = [
   ["vi.noun.so-luong.quantity-count", "數量", [["số", "數"], ["lượng", "量"]]],
   ["vi.numeral.khong.zero", "空", [["không", "空"]], "This is the numeral-zero sense. It is distinct from the Chapter 4 polarity particle, which is not canonicalized here."],
   ["vi.verb.kiem-ke.take-inventory-inventory-check", "檢稽", [["kiểm", "檢"], ["kê", "稽"]]],
-  ["vi.classifier.quyen.classifier-for-books", "卷", [["quyển", "卷"]], "The modern Vietnamese classifier specializes the scroll or volume sense of 卷."],
   ["vi.noun.doi.team", "隊", [["đội", "隊"]]],
   ["vi.verb.tham-gia.participate", "參加", [["tham", "參"], ["gia", "加"]]],
   ["vi.conjunction.tuy-nhien.however", "雖然", [["tuy", "雖"], ["nhiên", "然"]]],
   ["vi.noun.kho.storeroom-stockroom", "庫", [["kho", "庫"]]],
   ["vi.adjective.du-phong.spare-backup", "預防", [["dự", "預"], ["phòng", "防"]], "Modern dự phòng means spare or backup here; 預防 more literally concerns advance guarding or prevention."],
-  ["vi.classifier.ban.classifier-for-copies-or-versions", "本", [["bản", "本"]]],
   ["vi.noun.phieu.form-slip", "票", [["phiếu", "票"]]],
   ["vi.verb.in.print", "印", [["in", "印"]]],
   ["vi.verb.can.weigh", "斤", [["cân", "斤"]], "The verb to weigh develops from 斤 as a weight unit and the associated weighing sense."],
@@ -119,7 +115,7 @@ const definitions = [
 ];
 
 const uncertain = new Map([
-  ["vi.particle.khong.polarity", "The taught polarity senses are not equated with 空 merely because the surface reading matches."],
+  ["vi.response.khong.no", "The standalone response ‘no’ is not equated with 空 merely because the surface reading matches."],
   ["vi.noun.bo.father-northern", "The Northern father term is not identified with unrelated Hán characters sharing the reading bố."],
   ["vi.noun.o.umbrella", "The umbrella sense is not an established Hán-Việt reading of 傘; same-sounding character readings are irrelevant."],
   ["vi.noun.tang.floor-storey", "tầng is a non-Sino-Vietnamese reading of 層 (Sino-Vietnamese tằng), so it is excluded."],
@@ -129,8 +125,6 @@ const uncertain = new Map([
   ["vi.noun.pho.pho-noodle-soup", "Competing historical proposals make a character analysis unsuitable for this curriculum stage."],
   ["vi.noun.bun.rice-noodles", "The everyday form is not the canonical Hán-Việt reading of 粉; a theoretical historical link is insufficient."],
   ["vi.measure-word.lon.can-can-measure", "The container word is a modern Western loan, not a Hán-Việt lexical sense."],
-  ["vi.particle.duoc.beneficial-affected", "được is not the canonical Hán-Việt reading đắc of 得; the taught particle is excluded."],
-  ["vi.classifier.chiec.classifier-for-vehicles-and-selected-objects", "chiếc is not the canonical Hán-Việt reading chích of 隻; the classifier is excluded."],
   ["vi.noun.nuoc-khoang.mineral-water", "Only khoáng is Hán-Việt; a whole-word character sequence would mix native and Hán-Việt material without following the template."],
   ["vi.adjective.can-thiet.necessary", "The everyday cần constituent is not securely the required Hán-Việt morpheme; the compound is left uncertain."],
   ["vi.particle.tat-ca.all", "The mixed expression contains native cả; a whole-word Hán-Việt analysis would be misleading."]
@@ -252,7 +246,7 @@ const sinoAudit = {
   rejected_and_uncertain_candidates: candidateAudit.filter((record) => record.disposition !== "eligible-established"),
   identity_findings: [
     "cam fruit (柑) is canonical and distinct from any orange-colour sense; no orange-colour canonical sense occurs in Chapters 1-50.",
-    "Chapter 4 polarity không remains excluded, while the distinct Chapter 41 numeral-zero sense is recorded as 空.",
+    "Chapter 4 response không remains excluded, while the distinct Chapter 41 numeral-zero sense is recorded as 空.",
     "tầng is excluded as a non-Sino-Vietnamese reading of 層; cân ‘weigh’ is included as a sense derived from 斤.",
     "Whole-word lexical records and reusable constituent morphemes have separate stable identities.",
     "No proper name is canonicalized solely from a theoretical character spelling."

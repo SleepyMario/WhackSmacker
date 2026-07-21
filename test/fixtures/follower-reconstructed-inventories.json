@@ -208,15 +208,6 @@
               "pos": "noun",
               "line": 5,
               "evidence": "هَلْ هَذَا مِفْتَاحٌ؟"
-            },
-            {
-              "entryId": "ar.particle.hal",
-              "senseId": "ar.particle.hal.yes-no-question",
-              "form": "هَلْ",
-              "meaning": "yes-no question marker",
-              "pos": "particle",
-              "line": 5,
-              "evidence": "هَلْ هَذَا مِفْتَاحٌ؟"
             }
           ]
         },
@@ -224,10 +215,10 @@
           "directory": "chapter-004-sami-s-morning",
           "senses": [
             {
-              "entryId": "ar.verb.yastayqizu",
-              "senseId": "ar.verb.yastayqizu.wakes-up",
-              "form": "يَسْتَيْقِظُ",
-              "meaning": "wakes up",
+              "entryId": "ar.verb.istayqaza",
+              "senseId": "ar.verb.istayqaza.wake-up",
+              "form": "اِسْتَيْقَظَ",
+              "meaning": "to wake up",
               "pos": "verb",
               "line": 1,
               "evidence": "يَسْتَيْقِظُ سَامِي صَبَاحًا."
@@ -242,10 +233,10 @@
               "evidence": "يَسْتَيْقِظُ سَامِي صَبَاحًا."
             },
             {
-              "entryId": "ar.verb.yashrabu",
-              "senseId": "ar.verb.yashrabu.drinks",
-              "form": "يَشْرَبُ",
-              "meaning": "drinks",
+              "entryId": "ar.verb.shariba",
+              "senseId": "ar.verb.shariba.drink",
+              "form": "شَرِبَ",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 2,
               "evidence": "يَشْرَبُ سَامِي مَاءً."
@@ -260,10 +251,10 @@
               "evidence": "يَشْرَبُ سَامِي مَاءً."
             },
             {
-              "entryId": "ar.verb.yakulu",
-              "senseId": "ar.verb.yakulu.eats",
-              "form": "يَأْكُلُ",
-              "meaning": "eats",
+              "entryId": "ar.verb.akala",
+              "senseId": "ar.verb.akala.eat",
+              "form": "أَكَلَ",
+              "meaning": "to eat",
               "pos": "verb",
               "line": 3,
               "evidence": "يَأْكُلُ سَامِي خُبْزًا."
@@ -278,10 +269,10 @@
               "evidence": "يَأْكُلُ سَامِي خُبْزًا."
             },
             {
-              "entryId": "ar.verb.yaqrau",
-              "senseId": "ar.verb.yaqrau.reads",
-              "form": "يَقْرَأُ",
-              "meaning": "reads",
+              "entryId": "ar.verb.qaraa",
+              "senseId": "ar.verb.qaraa.read",
+              "form": "قَرَأَ",
+              "meaning": "to read",
               "pos": "verb",
               "line": 4,
               "evidence": "يَقْرَأُ سَامِي كِتَابًا."
@@ -296,10 +287,10 @@
               "evidence": "ثُمَّ يَأْخُذُ الْقَلَمَ."
             },
             {
-              "entryId": "ar.verb.yakhudhu",
-              "senseId": "ar.verb.yakhudhu.takes",
-              "form": "يَأْخُذُ",
-              "meaning": "takes",
+              "entryId": "ar.verb.akhadha",
+              "senseId": "ar.verb.akhadha.take",
+              "form": "أَخَذَ",
+              "meaning": "to take",
               "pos": "verb",
               "line": 5,
               "evidence": "ثُمَّ يَأْخُذُ الْقَلَمَ."
@@ -314,10 +305,10 @@
               "evidence": "وَيَذْهَبُ إِلَى الْمَكْتَبِ."
             },
             {
-              "entryId": "ar.verb.yadhhabu",
-              "senseId": "ar.verb.yadhhabu.goes",
-              "form": "يَذْهَبُ",
-              "meaning": "goes",
+              "entryId": "ar.verb.dhahaba",
+              "senseId": "ar.verb.dhahaba.go",
+              "form": "ذَهَبَ",
+              "meaning": "to go",
               "pos": "verb",
               "line": 6,
               "evidence": "وَيَذْهَبُ إِلَى الْمَكْتَبِ."
@@ -337,10 +328,10 @@
           "directory": "chapter-005-a-cafe-plan",
           "senses": [
             {
-              "entryId": "ar.verb.uridu",
-              "senseId": "ar.verb.uridu.i-want",
-              "form": "أُرِيدُ",
-              "meaning": "I want",
+              "entryId": "ar.verb.arada",
+              "senseId": "ar.verb.arada.want",
+              "form": "أَرَادَ",
+              "meaning": "to want",
               "pos": "verb",
               "line": 1,
               "evidence": "أُرِيدُ قَهْوَةً."
@@ -362,15 +353,6 @@
               "pos": "noun",
               "line": 2,
               "evidence": "وَأَنَا أُرِيدُ شَايًا."
-            },
-            {
-              "entryId": "ar.verb.nadhhabu",
-              "senseId": "ar.verb.nadhhabu.we-go",
-              "form": "نَذْهَبُ",
-              "meaning": "we go",
-              "pos": "verb",
-              "line": 3,
-              "evidence": "هَلْ نَذْهَبُ إِلَى الْمَقْهَى؟"
             },
             {
               "entryId": "ar.noun.maqha",
@@ -448,10 +430,10 @@
               "evidence": "Je suis Lina."
             },
             {
-              "entryId": "fr.verb.etre-suis",
-              "senseId": "fr.verb.etre-suis.am",
-              "form": "suis",
-              "meaning": "am",
+              "entryId": "fr.verb.etre",
+              "senseId": "fr.verb.etre.be",
+              "form": "être",
+              "meaning": "to be",
               "pos": "verb",
               "line": 3,
               "evidence": "Je suis Lina."
@@ -615,10 +597,10 @@
               "evidence": "Il y a aussi du pain."
             },
             {
-              "entryId": "fr.verb.boire-boit",
-              "senseId": "fr.verb.boire-boit.drinks",
-              "form": "boit",
-              "meaning": "drinks",
+              "entryId": "fr.verb.boire",
+              "senseId": "fr.verb.boire.drink",
+              "form": "boire",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 6,
               "evidence": "Lina boit un verre d'eau."
@@ -656,10 +638,10 @@
               "evidence": "Tu aimes le thé ?"
             },
             {
-              "entryId": "fr.verb.aimer-aimes",
-              "senseId": "fr.verb.aimer-aimes.like",
-              "form": "aimes",
-              "meaning": "like",
+              "entryId": "fr.verb.aimer",
+              "senseId": "fr.verb.aimer.like",
+              "form": "aimer",
+              "meaning": "to like",
               "pos": "verb",
               "line": 1,
               "evidence": "Tu aimes le thé ?"
@@ -814,10 +796,10 @@
               "evidence": "La boulangerie est près du parc."
             },
             {
-              "entryId": "fr.verb.marcher-marche",
-              "senseId": "fr.verb.marcher-marche.walks",
-              "form": "marche",
-              "meaning": "walks",
+              "entryId": "fr.verb.marcher",
+              "senseId": "fr.verb.marcher.walk",
+              "form": "marcher",
+              "meaning": "to walk",
               "pos": "verb",
               "line": 4,
               "evidence": "Lina marche dans la rue."
@@ -832,10 +814,10 @@
               "evidence": "Elle regarde le petit parc."
             },
             {
-              "entryId": "fr.verb.regarder-regarde",
-              "senseId": "fr.verb.regarder-regarde.looks-at",
-              "form": "regarde",
-              "meaning": "looks at",
+              "entryId": "fr.verb.regarder",
+              "senseId": "fr.verb.regarder.look-at",
+              "form": "regarder",
+              "meaning": "to look at",
               "pos": "verb",
               "line": 5,
               "evidence": "Elle regarde le petit parc."
@@ -850,10 +832,10 @@
               "evidence": "Puis elle rentre à la maison."
             },
             {
-              "entryId": "fr.verb.rentrer-rentre",
-              "senseId": "fr.verb.rentrer-rentre.goes-home",
-              "form": "rentre",
-              "meaning": "goes home",
+              "entryId": "fr.verb.rentrer",
+              "senseId": "fr.verb.rentrer.go-home",
+              "form": "rentrer",
+              "meaning": "to go home",
               "pos": "verb",
               "line": 6,
               "evidence": "Puis elle rentre à la maison."
@@ -882,10 +864,10 @@
               "evidence": "On va au marché demain ?"
             },
             {
-              "entryId": "fr.verb.aller-va",
-              "senseId": "fr.verb.aller-va.go",
-              "form": "va",
-              "meaning": "go",
+              "entryId": "fr.verb.aller",
+              "senseId": "fr.verb.aller.go",
+              "form": "aller",
+              "meaning": "to go",
               "pos": "verb",
               "line": 1,
               "evidence": "On va au marché demain ?"
@@ -936,10 +918,10 @@
               "evidence": "Je veux aussi des fruits."
             },
             {
-              "entryId": "fr.verb.vouloir-veux",
-              "senseId": "fr.verb.vouloir-veux.want",
-              "form": "veux",
-              "meaning": "want",
+              "entryId": "fr.verb.vouloir",
+              "senseId": "fr.verb.vouloir.want",
+              "form": "vouloir",
+              "meaning": "to want",
               "pos": "verb",
               "line": 3,
               "evidence": "Je veux aussi des fruits."
@@ -954,10 +936,10 @@
               "evidence": "D'accord, le marché est près du parc."
             },
             {
-              "entryId": "fr.verb.partir-part",
-              "senseId": "fr.verb.partir-part.leave",
-              "form": "part",
-              "meaning": "leave",
+              "entryId": "fr.verb.partir",
+              "senseId": "fr.verb.partir.leave",
+              "form": "partir",
+              "meaning": "to leave",
               "pos": "verb",
               "line": 5,
               "evidence": "On part le matin ?"
@@ -1020,10 +1002,10 @@
               "evidence": "Ich bin Mia."
             },
             {
-              "entryId": "de.verb.sein-bin",
-              "senseId": "de.verb.sein-bin.am",
-              "form": "bin",
-              "meaning": "am",
+              "entryId": "de.verb.sein",
+              "senseId": "de.verb.sein.be",
+              "form": "sein",
+              "meaning": "to be",
               "pos": "verb",
               "line": 3,
               "evidence": "Ich bin Mia."
@@ -1287,10 +1269,10 @@
               "evidence": "Morgens ist Jonas in der Küche."
             },
             {
-              "entryId": "de.verb.trinken-trinkt",
-              "senseId": "de.verb.trinken-trinkt.drinks",
-              "form": "trinkt",
-              "meaning": "drinks",
+              "entryId": "de.verb.trinken",
+              "senseId": "de.verb.trinken.drink",
+              "form": "trinken",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 2,
               "evidence": "Er trinkt Kaffee."
@@ -1314,10 +1296,10 @@
               "evidence": "Er trinkt Kaffee."
             },
             {
-              "entryId": "de.verb.essen-isst",
-              "senseId": "de.verb.essen-isst.eats",
-              "form": "isst",
-              "meaning": "eats",
+              "entryId": "de.verb.essen",
+              "senseId": "de.verb.essen.eat",
+              "form": "essen",
+              "meaning": "to eat",
               "pos": "verb",
               "line": 3,
               "evidence": "Er isst Brot."
@@ -1332,10 +1314,10 @@
               "evidence": "Er isst Brot."
             },
             {
-              "entryId": "de.verb.lesen-liest",
-              "senseId": "de.verb.lesen-liest.reads",
-              "form": "liest",
-              "meaning": "reads",
+              "entryId": "de.verb.lesen",
+              "senseId": "de.verb.lesen.read",
+              "form": "lesen",
+              "meaning": "to read",
               "pos": "verb",
               "line": 4,
               "evidence": "Dann liest er ein Buch."
@@ -1547,10 +1529,10 @@
               "evidence": "मैं रीना हूँ."
             },
             {
-              "entryId": "hi.verb.hona-hun",
-              "senseId": "hi.verb.hona-hun.am",
-              "form": "हूँ",
-              "meaning": "am",
+              "entryId": "hi.verb.hona",
+              "senseId": "hi.verb.hona.be",
+              "form": "होना",
+              "meaning": "to be",
               "pos": "verb",
               "line": 3,
               "evidence": "मैं रीना हूँ."
@@ -1728,15 +1710,6 @@
               "evidence": "यह फ़ोन है?"
             },
             {
-              "entryId": "hi.particle.kya",
-              "senseId": "hi.particle.kya.yes-no-question",
-              "form": "क्या",
-              "meaning": "yes-no question marker",
-              "pos": "particle",
-              "line": 3,
-              "evidence": "यह फ़ोन है?"
-            },
-            {
               "entryId": "hi.response.han",
               "senseId": "hi.response.han.yes",
               "form": "हाँ",
@@ -1787,10 +1760,10 @@
               "evidence": "रीना सुबह जल्दी उठती है."
             },
             {
-              "entryId": "hi.verb.uthati-hai",
-              "senseId": "hi.verb.uthati-hai.gets-up-feminine",
-              "form": "उठती है",
-              "meaning": "gets up (feminine)",
+              "entryId": "hi.verb.uthna",
+              "senseId": "hi.verb.uthna.get-up",
+              "form": "उठना",
+              "meaning": "to get up",
               "pos": "verb",
               "line": 1,
               "evidence": "रीना सुबह जल्दी उठती है."
@@ -1814,10 +1787,10 @@
               "evidence": "वह चाय पीती है."
             },
             {
-              "entryId": "hi.verb.piti-hai",
-              "senseId": "hi.verb.piti-hai.drinks-feminine",
-              "form": "पीती है",
-              "meaning": "drinks (feminine)",
+              "entryId": "hi.verb.pina",
+              "senseId": "hi.verb.pina.drink",
+              "form": "पीना",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 2,
               "evidence": "वह चाय पीती है."
@@ -1841,19 +1814,19 @@
               "evidence": "वह रोटी खाती है."
             },
             {
-              "entryId": "hi.verb.khati-hai",
-              "senseId": "hi.verb.khati-hai.eats",
-              "form": "खाती है",
-              "meaning": "eats",
+              "entryId": "hi.verb.khana",
+              "senseId": "hi.verb.khana.eat",
+              "form": "खाना",
+              "meaning": "to eat",
               "pos": "verb",
               "line": 3,
               "evidence": "वह रोटी खाती है."
             },
             {
-              "entryId": "hi.verb.parhti-hai",
-              "senseId": "hi.verb.parhti-hai.reads-feminine",
-              "form": "पढ़ती है",
-              "meaning": "reads (feminine)",
+              "entryId": "hi.verb.parhna",
+              "senseId": "hi.verb.parhna.read",
+              "form": "पढ़ना",
+              "meaning": "to read",
               "pos": "verb",
               "line": 4,
               "evidence": "फिर वह किताब पढ़ती है."
@@ -1886,10 +1859,10 @@
               "evidence": "दोनों घर से निकलते हैं."
             },
             {
-              "entryId": "hi.verb.nikalte-haim",
-              "senseId": "hi.verb.nikalte-haim.leave",
-              "form": "निकलते हैं",
-              "meaning": "leave; go out",
+              "entryId": "hi.verb.nikalna",
+              "senseId": "hi.verb.nikalna.leave",
+              "form": "निकलना",
+              "meaning": "to leave; go out",
               "pos": "verb",
               "line": 6,
               "evidence": "दोनों घर से निकलते हैं."
@@ -2029,10 +2002,10 @@
               "evidence": "こんにちは。"
             },
             {
-              "entryId": "ja.copula.desu",
-              "senseId": "ja.copula.desu.is-am-are-polite",
-              "form": "です",
-              "meaning": "is; am; are (polite)",
+              "entryId": "ja.copula.da",
+              "senseId": "ja.copula.da.be",
+              "form": "だ",
+              "meaning": "to be (copula)",
               "pos": "copula",
               "line": 3,
               "evidence": "あきです。学生です。"
@@ -2097,10 +2070,10 @@
               "evidence": "部屋に机があります。"
             },
             {
-              "entryId": "ja.verb.arimasu",
-              "senseId": "ja.verb.arimasu.there-is-inanimate",
-              "form": "あります",
-              "meaning": "there is; exists (inanimate)",
+              "entryId": "ja.verb.aru",
+              "senseId": "ja.verb.aru.exist-inanimate",
+              "form": "ある",
+              "meaning": "to exist (inanimate)",
               "pos": "verb",
               "line": 1,
               "evidence": "部屋に机があります。"
@@ -2269,10 +2242,10 @@
               "evidence": "ゆきは喫茶店にいます。"
             },
             {
-              "entryId": "ja.verb.imasu",
-              "senseId": "ja.verb.imasu.be-at-animate",
-              "form": "います",
-              "meaning": "be at; exist (animate)",
+              "entryId": "ja.verb.iru",
+              "senseId": "ja.verb.iru.exist-animate",
+              "form": "いる",
+              "meaning": "to exist; be at (animate)",
               "pos": "verb",
               "line": 1,
               "evidence": "ゆきは喫茶店にいます。"
@@ -2287,10 +2260,10 @@
               "evidence": "コーヒーを飲みます。"
             },
             {
-              "entryId": "ja.verb.nomimasu",
-              "senseId": "ja.verb.nomimasu.drink-drinks-polite",
-              "form": "飲みます",
-              "meaning": "drink; drinks (polite)",
+              "entryId": "ja.verb.nomu",
+              "senseId": "ja.verb.nomu.drink",
+              "form": "飲む",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 2,
               "evidence": "コーヒーを飲みます。"
@@ -2314,10 +2287,10 @@
               "evidence": "二人はケーキを食べます。"
             },
             {
-              "entryId": "ja.verb.tabemasu",
-              "senseId": "ja.verb.tabemasu.eat-eats-polite",
-              "form": "食べます",
-              "meaning": "eat; eats (polite)",
+              "entryId": "ja.verb.taberu",
+              "senseId": "ja.verb.taberu.eat",
+              "form": "食べる",
+              "meaning": "to eat",
               "pos": "verb",
               "line": 4,
               "evidence": "二人はケーキを食べます。"
@@ -2341,10 +2314,10 @@
               "evidence": "喫茶店は静かです。"
             },
             {
-              "entryId": "ja.verb.yomimasu",
-              "senseId": "ja.verb.yomimasu.read",
-              "form": "読みます",
-              "meaning": "read; reads (polite)",
+              "entryId": "ja.verb.yomu",
+              "senseId": "ja.verb.yomu.read",
+              "form": "読む",
+              "meaning": "to read",
               "pos": "verb",
               "line": 6,
               "evidence": "窓の近くで本を読みます。"
@@ -2373,10 +2346,10 @@
               "evidence": "明日、公園へ行きませんか。"
             },
             {
-              "entryId": "ja.verb.ikimasu",
-              "senseId": "ja.verb.ikimasu.go-will-go-polite",
-              "form": "行きます",
-              "meaning": "go; will go (polite)",
+              "entryId": "ja.verb.iku",
+              "senseId": "ja.verb.iku.go",
+              "form": "行く",
+              "meaning": "to go",
               "pos": "verb",
               "line": 1,
               "evidence": "明日、公園へ行きませんか。"
@@ -2448,19 +2421,19 @@
               "evidence": "안녕하세요."
             },
             {
-              "entryId": "ko.pronoun.jeoneun",
-              "senseId": "ko.pronoun.jeoneun.as-for-me",
-              "form": "저는",
-              "meaning": "as for me",
+              "entryId": "ko.pronoun.jeo",
+              "senseId": "ko.pronoun.jeo.i-me-polite-humble",
+              "form": "저",
+              "meaning": "I; me, polite/humble",
               "pos": "pronoun",
               "line": 3,
               "evidence": "저는 민지예요."
             },
             {
-              "entryId": "ko.copula.yeyo",
-              "senseId": "ko.copula.yeyo.is-am-after-a-vowel",
-              "form": "예요",
-              "meaning": "is; am after a vowel",
+              "entryId": "ko.copula.ida",
+              "senseId": "ko.copula.ida.be",
+              "form": "이다",
+              "meaning": "to be (copula)",
               "pos": "copula",
               "line": 3,
               "evidence": "저는 민지예요."
@@ -2516,10 +2489,10 @@
               "evidence": "방에 책상이 있어요."
             },
             {
-              "entryId": "ko.verb.isseoyo",
-              "senseId": "ko.verb.isseoyo.there-is-have",
-              "form": "있어요",
-              "meaning": "there is; have",
+              "entryId": "ko.verb.itda",
+              "senseId": "ko.verb.itda.exist-be-present",
+              "form": "있다",
+              "meaning": "to exist; be present",
               "pos": "verb",
               "line": 1,
               "evidence": "방에 책상이 있어요."
@@ -2579,10 +2552,10 @@
               "evidence": "방에 창문이 있어요."
             },
             {
-              "entryId": "ko.adjective.jageun",
-              "senseId": "ko.adjective.jageun.small",
-              "form": "작은",
-              "meaning": "small",
+              "entryId": "ko.descriptive-verb.jakda",
+              "senseId": "ko.descriptive-verb.jakda.be-small",
+              "form": "작다",
+              "meaning": "to be small",
               "pos": "adjective",
               "line": 6,
               "evidence": "창문 옆에 작은 책상이 있어요."
@@ -2679,10 +2652,10 @@
               "evidence": "아침에 민지는 물을 마셔요."
             },
             {
-              "entryId": "ko.verb.masyeoyo",
-              "senseId": "ko.verb.masyeoyo.drink-drinks",
-              "form": "마셔요",
-              "meaning": "drink; drinks",
+              "entryId": "ko.verb.masida",
+              "senseId": "ko.verb.masida.drink",
+              "form": "마시다",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 1,
               "evidence": "아침에 민지는 물을 마셔요."
@@ -2697,10 +2670,10 @@
               "evidence": "그리고 밥을 먹어요."
             },
             {
-              "entryId": "ko.verb.meogeoyo",
-              "senseId": "ko.verb.meogeoyo.eat-eats",
-              "form": "먹어요",
-              "meaning": "eat; eats",
+              "entryId": "ko.verb.meokda",
+              "senseId": "ko.verb.meokda.eat",
+              "form": "먹다",
+              "meaning": "to eat",
               "pos": "verb",
               "line": 2,
               "evidence": "그리고 밥을 먹어요."
@@ -2715,10 +2688,10 @@
               "evidence": "그리고 밥을 먹어요."
             },
             {
-              "entryId": "ko.verb.ilgeoyo",
-              "senseId": "ko.verb.ilgeoyo.read-reads",
-              "form": "읽어요",
-              "meaning": "read; reads",
+              "entryId": "ko.verb.ikda",
+              "senseId": "ko.verb.ikda.read",
+              "form": "읽다",
+              "meaning": "to read",
               "pos": "verb",
               "line": 3,
               "evidence": "책을 읽어요."
@@ -2751,10 +2724,10 @@
               "evidence": "두 사람은 가방을 준비해요."
             },
             {
-              "entryId": "ko.verb.junbihaeyo",
-              "senseId": "ko.verb.junbihaeyo.prepare",
-              "form": "준비해요",
-              "meaning": "prepare",
+              "entryId": "ko.verb.junbihada",
+              "senseId": "ko.verb.junbihada.prepare",
+              "form": "준비하다",
+              "meaning": "to prepare",
               "pos": "verb",
               "line": 5,
               "evidence": "두 사람은 가방을 준비해요."
@@ -2769,10 +2742,10 @@
               "evidence": "그리고 집에서 나가요."
             },
             {
-              "entryId": "ko.verb.nagayo",
-              "senseId": "ko.verb.nagayo.leave",
-              "form": "나가요",
-              "meaning": "leave; go out",
+              "entryId": "ko.verb.nagada",
+              "senseId": "ko.verb.nagada.leave",
+              "form": "나가다",
+              "meaning": "to leave; go out",
               "pos": "verb",
               "line": 6,
               "evidence": "그리고 집에서 나가요."
@@ -2810,19 +2783,19 @@
               "evidence": "오늘 공원에 같이 가요."
             },
             {
-              "entryId": "ko.verb.gayo",
-              "senseId": "ko.verb.gayo.go-let-s-go",
-              "form": "가요",
-              "meaning": "go; let's go",
+              "entryId": "ko.verb.gada",
+              "senseId": "ko.verb.gada.go",
+              "form": "가다",
+              "meaning": "to go",
               "pos": "verb",
               "line": 1,
               "evidence": "오늘 공원에 같이 가요."
             },
             {
-              "entryId": "ko.expression.joayo",
-              "senseId": "ko.expression.joayo.sounds-good-is-good",
-              "form": "좋아요",
-              "meaning": "sounds good; is good",
+              "entryId": "ko.descriptive-verb.jota",
+              "senseId": "ko.descriptive-verb.jota.be-good-sound-good",
+              "form": "좋다",
+              "meaning": "to be good; sound good",
               "pos": "expression",
               "line": 2,
               "evidence": "좋아요."
@@ -2873,10 +2846,10 @@
               "evidence": "세 시에 만나요."
             },
             {
-              "entryId": "ko.verb.mannayo",
-              "senseId": "ko.verb.mannayo.meet",
-              "form": "만나요",
-              "meaning": "meet",
+              "entryId": "ko.verb.mannada",
+              "senseId": "ko.verb.mannada.meet",
+              "form": "만나다",
+              "meaning": "to meet",
               "pos": "verb",
               "line": 6,
               "evidence": "세 시에 만나요."
@@ -2981,9 +2954,9 @@
             },
             {
               "entryId": "ru.verb.nakhoditsya",
-              "senseId": "ru.verb.nakhoditsya.is-located",
-              "form": "находится",
-              "meaning": "is located",
+              "senseId": "ru.verb.nakhoditsya.be-located",
+              "form": "находиться",
+              "meaning": "to be located",
               "pos": "verb",
               "line": 2,
               "evidence": "Комната находится в доме."
@@ -3007,10 +2980,10 @@
               "evidence": "В комнате есть стол."
             },
             {
-              "entryId": "ru.verb.est-exist",
-              "senseId": "ru.verb.est-exist.there-is",
-              "form": "есть",
-              "meaning": "there is; there are",
+              "entryId": "ru.verb.byt",
+              "senseId": "ru.verb.byt.exist",
+              "form": "быть",
+              "meaning": "to be; exist",
               "pos": "verb",
               "line": 3,
               "evidence": "В комнате есть стол."
@@ -3034,10 +3007,10 @@
               "evidence": "На столе лежит книга."
             },
             {
-              "entryId": "ru.verb.lezhat-lezhit",
-              "senseId": "ru.verb.lezhat-lezhit.lies",
-              "form": "лежит",
-              "meaning": "lies; is lying",
+              "entryId": "ru.verb.lezhat",
+              "senseId": "ru.verb.lezhat.lie",
+              "form": "лежать",
+              "meaning": "to lie; be lying",
               "pos": "verb",
               "line": 4,
               "evidence": "На столе лежит книга."
@@ -3061,10 +3034,10 @@
               "evidence": "Рядом стоит стул."
             },
             {
-              "entryId": "ru.verb.stoyat-stoit",
-              "senseId": "ru.verb.stoyat-stoit.stands",
-              "form": "стоит",
-              "meaning": "stands; is standing",
+              "entryId": "ru.verb.stoyat",
+              "senseId": "ru.verb.stoyat.stand",
+              "form": "стоять",
+              "meaning": "to stand; be standing",
               "pos": "verb",
               "line": 5,
               "evidence": "Рядом стоит стул."
@@ -3180,9 +3153,9 @@
             },
             {
               "entryId": "ru.verb.est",
-              "senseId": "ru.verb.est.eats",
-              "form": "ест",
-              "meaning": "eats",
+              "senseId": "ru.verb.est.eat",
+              "form": "есть",
+              "meaning": "to eat",
               "pos": "verb",
               "line": 3,
               "evidence": "Иван ест хлеб."
@@ -3197,10 +3170,10 @@
               "evidence": "Иван ест хлеб."
             },
             {
-              "entryId": "ru.verb.pit-pyot",
-              "senseId": "ru.verb.pit-pyot.drinks",
-              "form": "пьёт",
-              "meaning": "drinks",
+              "entryId": "ru.verb.pit",
+              "senseId": "ru.verb.pit.drink",
+              "form": "пить",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 4,
               "evidence": "Анна пьёт чай."
@@ -3224,10 +3197,10 @@
               "evidence": "Она читает книгу."
             },
             {
-              "entryId": "ru.verb.chitat-chitaet",
-              "senseId": "ru.verb.chitat-chitaet.reads",
-              "form": "читает",
-              "meaning": "reads",
+              "entryId": "ru.verb.chitat",
+              "senseId": "ru.verb.chitat.read",
+              "form": "читать",
+              "meaning": "to read",
               "pos": "verb",
               "line": 5,
               "evidence": "Она читает книгу."
@@ -3251,10 +3224,10 @@
               "evidence": "Потом они выходят из дома."
             },
             {
-              "entryId": "ru.verb.vykhodit-vykhodyat",
-              "senseId": "ru.verb.vykhodit-vykhodyat.leave",
-              "form": "выходят",
-              "meaning": "leave; go out",
+              "entryId": "ru.verb.vykhodit",
+              "senseId": "ru.verb.vykhodit.leave",
+              "form": "выходить",
+              "meaning": "to leave; go out",
               "pos": "verb",
               "line": 6,
               "evidence": "Потом они выходят из дома."
@@ -3283,10 +3256,10 @@
               "evidence": "Мы идём в парк сегодня?"
             },
             {
-              "entryId": "ru.verb.idti-idyom",
-              "senseId": "ru.verb.idti-idyom.are-going-on-foot",
-              "form": "идём",
-              "meaning": "are going (on foot)",
+              "entryId": "ru.verb.idti",
+              "senseId": "ru.verb.idti.go-on-foot",
+              "form": "идти",
+              "meaning": "to go (on foot)",
               "pos": "verb",
               "line": 1,
               "evidence": "Мы идём в парк сегодня?"
@@ -3355,10 +3328,10 @@
               "evidence": "Хорошо, встретимся в три."
             },
             {
-              "entryId": "ru.verb.vstretitsya-vstretimsya",
-              "senseId": "ru.verb.vstretitsya-vstretimsya.meet",
-              "form": "встретимся",
-              "meaning": "meet",
+              "entryId": "ru.verb.vstretitsya",
+              "senseId": "ru.verb.vstretitsya.meet",
+              "form": "встретиться",
+              "meaning": "to meet",
               "pos": "verb",
               "line": 5,
               "evidence": "Хорошо, встретимся в три."
@@ -3412,10 +3385,10 @@
               "evidence": "Buenos días."
             },
             {
-              "entryId": "es.verb.ser-soy",
-              "senseId": "es.verb.ser-soy.i-am",
-              "form": "soy",
-              "meaning": "I am",
+              "entryId": "es.verb.ser",
+              "senseId": "es.verb.ser.be",
+              "form": "ser",
+              "meaning": "to be",
               "pos": "verb",
               "line": 3,
               "evidence": "Soy Ana."
@@ -3489,10 +3462,10 @@
               "evidence": "La casa está tranquila por la mañana."
             },
             {
-              "entryId": "es.verb.estar-esta",
-              "senseId": "es.verb.estar-esta.is-state-location",
-              "form": "está",
-              "meaning": "is (state or location)",
+              "entryId": "es.verb.estar",
+              "senseId": "es.verb.estar.be-state-location",
+              "form": "estar",
+              "meaning": "to be (state or location)",
               "pos": "verb",
               "line": 1,
               "evidence": "La casa está tranquila por la mañana."
@@ -3525,9 +3498,9 @@
               "evidence": "Hay una cocina pequeña."
             },
             {
-              "entryId": "es.verb.hay",
-              "senseId": "es.verb.hay.there-is",
-              "form": "hay",
+              "entryId": "es.verb.haber",
+              "senseId": "es.verb.haber.existential",
+              "form": "haber",
               "meaning": "there is; there are",
               "pos": "verb",
               "line": 2,
@@ -3597,10 +3570,10 @@
               "evidence": "También hay una silla."
             },
             {
-              "entryId": "es.verb.beber-bebe",
-              "senseId": "es.verb.beber-bebe.drinks",
-              "form": "bebe",
-              "meaning": "drinks",
+              "entryId": "es.verb.beber",
+              "senseId": "es.verb.beber.drink",
+              "form": "beber",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 6,
               "evidence": "Ana bebe un vaso de agua."
@@ -3706,10 +3679,10 @@
           "directory": "chapter-004-luis-in-the-morning",
           "senses": [
             {
-              "entryId": "es.verb.tomar-toma",
-              "senseId": "es.verb.tomar-toma.drinks-has",
-              "form": "toma",
-              "meaning": "drinks; has",
+              "entryId": "es.verb.tomar",
+              "senseId": "es.verb.tomar.drink-have",
+              "form": "tomar",
+              "meaning": "to drink; have",
               "pos": "verb",
               "line": 1,
               "evidence": "Luis toma café por la mañana."
@@ -3724,10 +3697,10 @@
               "evidence": "Luis toma café por la mañana."
             },
             {
-              "entryId": "es.verb.comer-come",
-              "senseId": "es.verb.comer-come.eats",
-              "form": "come",
-              "meaning": "eats",
+              "entryId": "es.verb.comer",
+              "senseId": "es.verb.comer.eat",
+              "form": "comer",
+              "meaning": "to eat",
               "pos": "verb",
               "line": 2,
               "evidence": "También come pan."
@@ -3751,10 +3724,10 @@
               "evidence": "Después lee el libro."
             },
             {
-              "entryId": "es.verb.leer-lee",
-              "senseId": "es.verb.leer-lee.reads",
-              "form": "lee",
-              "meaning": "reads",
+              "entryId": "es.verb.leer",
+              "senseId": "es.verb.leer.read",
+              "form": "leer",
+              "meaning": "to read",
               "pos": "verb",
               "line": 3,
               "evidence": "Después lee el libro."
@@ -3769,10 +3742,10 @@
               "evidence": "Luego prepara la mochila."
             },
             {
-              "entryId": "es.verb.preparar-prepara",
-              "senseId": "es.verb.preparar-prepara.prepares",
-              "form": "prepara",
-              "meaning": "prepares",
+              "entryId": "es.verb.preparar",
+              "senseId": "es.verb.preparar.prepare",
+              "form": "preparar",
+              "meaning": "to prepare",
               "pos": "verb",
               "line": 5,
               "evidence": "Luego prepara la mochila."
@@ -3787,10 +3760,10 @@
               "evidence": "Los dos salen de la casa."
             },
             {
-              "entryId": "es.verb.salir-salen",
-              "senseId": "es.verb.salir-salen.leave",
-              "form": "salen",
-              "meaning": "leave; go out",
+              "entryId": "es.verb.salir",
+              "senseId": "es.verb.salir.leave",
+              "form": "salir",
+              "meaning": "to leave; go out",
               "pos": "verb",
               "line": 6,
               "evidence": "Los dos salen de la casa."
@@ -3810,10 +3783,10 @@
           "directory": "chapter-005-a-market-plan",
           "senses": [
             {
-              "entryId": "es.verb.ir-vamos",
-              "senseId": "es.verb.ir-vamos.we-go-let-s-go",
-              "form": "vamos",
-              "meaning": "we go; let's go",
+              "entryId": "es.verb.ir",
+              "senseId": "es.verb.ir.go",
+              "form": "ir",
+              "meaning": "to go",
               "pos": "verb",
               "line": 1,
               "evidence": "¿Vamos al mercado hoy?"
@@ -3855,10 +3828,10 @@
               "evidence": "Sí, vamos a comprar fruta."
             },
             {
-              "entryId": "es.verb.querer-quiero",
-              "senseId": "es.verb.querer-quiero.want",
-              "form": "quiero",
-              "meaning": "want",
+              "entryId": "es.verb.querer",
+              "senseId": "es.verb.querer.want",
+              "form": "querer",
+              "meaning": "to want",
               "pos": "verb",
               "line": 3,
               "evidence": "También quiero tomates."
@@ -3900,10 +3873,10 @@
               "evidence": "¿Vamos juntos a las tres?"
             },
             {
-              "entryId": "es.verb.verse-nos-vemos",
-              "senseId": "es.verb.verse-nos-vemos.see-each-other",
-              "form": "nos vemos",
-              "meaning": "see each other; see you",
+              "entryId": "es.verb.verse",
+              "senseId": "es.verb.verse.see-each-other",
+              "form": "verse",
+              "meaning": "to see each other; see you",
               "pos": "verb",
               "line": 6,
               "evidence": "Sí, nos vemos allí."
@@ -3937,24 +3910,6 @@
               "pos": "greeting",
               "line": 1,
               "evidence": "สวัสดีค่ะ."
-            },
-            {
-              "entryId": "th.particle.kha-f",
-              "senseId": "th.particle.kha-f.polite-particle-female-statement",
-              "form": "ค่ะ",
-              "meaning": "polite particle (female statement)",
-              "pos": "particle",
-              "line": 1,
-              "evidence": "สวัสดีค่ะ."
-            },
-            {
-              "entryId": "th.particle.khrap",
-              "senseId": "th.particle.khrap.polite-particle-male",
-              "form": "ครับ",
-              "meaning": "polite particle (male)",
-              "pos": "particle",
-              "line": 2,
-              "evidence": "สวัสดีครับ."
             },
             {
               "entryId": "th.noun.chue",
@@ -4043,15 +3998,6 @@
               "evidence": "บ้านของมาลีมีห้องหนึ่งห้อง."
             },
             {
-              "entryId": "th.classifier.hong",
-              "senseId": "th.classifier.hong.rooms",
-              "form": "ห้อง",
-              "meaning": "classifier for rooms",
-              "pos": "classifier",
-              "line": 1,
-              "evidence": "บ้านของมาลีมีห้องหนึ่งห้อง."
-            },
-            {
               "entryId": "th.noun.to",
               "senseId": "th.noun.to.table",
               "form": "โต๊ะ",
@@ -4070,15 +4016,6 @@
               "evidence": "ในห้องมีโต๊ะหนึ่งตัว."
             },
             {
-              "entryId": "th.classifier.tua",
-              "senseId": "th.classifier.tua.furniture",
-              "form": "ตัว",
-              "meaning": "classifier for furniture",
-              "pos": "classifier",
-              "line": 2,
-              "evidence": "ในห้องมีโต๊ะหนึ่งตัว."
-            },
-            {
               "entryId": "th.noun.nangsue",
               "senseId": "th.noun.nangsue.book",
               "form": "หนังสือ",
@@ -4093,15 +4030,6 @@
               "form": "บน",
               "meaning": "on",
               "pos": "preposition",
-              "line": 3,
-              "evidence": "บนโต๊ะมีหนังสือหนึ่งเล่ม."
-            },
-            {
-              "entryId": "th.classifier.lem",
-              "senseId": "th.classifier.lem.books",
-              "form": "เล่ม",
-              "meaning": "classifier for books",
-              "pos": "classifier",
               "line": 3,
               "evidence": "บนโต๊ะมีหนังสือหนึ่งเล่ม."
             },
@@ -4129,15 +4057,6 @@
               "form": "น้ำ",
               "meaning": "water",
               "pos": "noun",
-              "line": 5,
-              "evidence": "มีน้ำหนึ่งแก้ว."
-            },
-            {
-              "entryId": "th.classifier.kaeo",
-              "senseId": "th.classifier.kaeo.glasses-of-drink",
-              "form": "แก้ว",
-              "meaning": "classifier for glasses of drinks",
-              "pos": "classifier",
               "line": 5,
               "evidence": "มีน้ำหนึ่งแก้ว."
             },
@@ -4192,15 +4111,6 @@
               "evidence": "นี่คืออะไรคะ."
             },
             {
-              "entryId": "th.particle.kha-question",
-              "senseId": "th.particle.kha-question.female-question",
-              "form": "คะ",
-              "meaning": "polite particle (female question)",
-              "pos": "particle",
-              "line": 1,
-              "evidence": "นี่คืออะไรคะ."
-            },
-            {
               "entryId": "th.noun.pakka",
               "senseId": "th.noun.pakka.pen",
               "form": "ปากกา",
@@ -4224,15 +4134,6 @@
               "form": "ใช่",
               "meaning": "yes; correct",
               "pos": "response",
-              "line": 3,
-              "evidence": "นี่คือโทรศัพท์ใช่ไหมคะ."
-            },
-            {
-              "entryId": "th.particle.mai",
-              "senseId": "th.particle.mai.yes-no-question",
-              "form": "ไหม",
-              "meaning": "yes-no question particle",
-              "pos": "particle",
               "line": 3,
               "evidence": "นี่คือโทรศัพท์ใช่ไหมคะ."
             },
@@ -4414,15 +4315,6 @@
               "form": "ตลาด",
               "meaning": "market",
               "pos": "noun",
-              "line": 1,
-              "evidence": "วันนี้ไปตลาดกันไหมครับ."
-            },
-            {
-              "entryId": "th.particle.kan",
-              "senseId": "th.particle.kan.together-invitation",
-              "form": "กัน",
-              "meaning": "together; invitation particle",
-              "pos": "particle",
               "line": 1,
               "evidence": "วันนี้ไปตลาดกันไหมครับ."
             },
@@ -4742,10 +4634,10 @@
               "evidence": "Ekuseni uThandi uphuza itiye."
             },
             {
-              "entryId": "zu.verb.uphuza",
-              "senseId": "zu.verb.uphuza.he-she-drinks",
-              "form": "uphuza",
-              "meaning": "he; she drinks",
+              "entryId": "zu.verb.ukuphuza",
+              "senseId": "zu.verb.ukuphuza.drink",
+              "form": "ukuphuza",
+              "meaning": "to drink",
               "pos": "verb",
               "line": 1,
               "evidence": "Ekuseni uThandi uphuza itiye."
@@ -4760,10 +4652,10 @@
               "evidence": "Ekuseni uThandi uphuza itiye."
             },
             {
-              "entryId": "zu.verb.adle",
-              "senseId": "zu.verb.adle.he-she-eats",
-              "form": "adle",
-              "meaning": "he; she eats",
+              "entryId": "zu.verb.ukudla",
+              "senseId": "zu.verb.ukudla.eat",
+              "form": "ukudla",
+              "meaning": "to eat",
               "pos": "verb",
               "line": 2,
               "evidence": "Uphinde adle isinkwa."
@@ -4778,19 +4670,19 @@
               "evidence": "Uphinde adle isinkwa."
             },
             {
-              "entryId": "zu.verb.uphinde",
-              "senseId": "zu.verb.uphinde.also-again",
-              "form": "uphinde",
-              "meaning": "also; again",
+              "entryId": "zu.verb.ukuphinda",
+              "senseId": "zu.verb.ukuphinda.do-again",
+              "form": "ukuphinda",
+              "meaning": "to do again; also",
               "pos": "verb",
               "line": 2,
               "evidence": "Uphinde adle isinkwa."
             },
             {
-              "entryId": "zu.verb.ufunda",
-              "senseId": "zu.verb.ufunda.he-she-reads",
-              "form": "ufunda",
-              "meaning": "he; she reads",
+              "entryId": "zu.verb.ukufunda",
+              "senseId": "zu.verb.ukufunda.read",
+              "form": "ukufunda",
+              "meaning": "to read",
               "pos": "verb",
               "line": 3,
               "evidence": "Bese ufunda incwadi."
@@ -4805,10 +4697,10 @@
               "evidence": "Bese ufunda incwadi."
             },
             {
-              "entryId": "zu.verb.uphatha",
-              "senseId": "zu.verb.uphatha.carries",
-              "form": "uphatha",
-              "meaning": "carries",
+              "entryId": "zu.verb.ukuphatha",
+              "senseId": "zu.verb.ukuphatha.carry",
+              "form": "ukuphatha",
+              "meaning": "to carry",
               "pos": "verb",
               "line": 5,
               "evidence": "UThandi uphatha isikhwama."
@@ -4823,10 +4715,10 @@
               "evidence": "Baphuma ekhaya ndawonye."
             },
             {
-              "entryId": "zu.verb.baphuma",
-              "senseId": "zu.verb.baphuma.they-leave",
-              "form": "baphuma",
-              "meaning": "they leave; go out",
+              "entryId": "zu.verb.ukuphuma",
+              "senseId": "zu.verb.ukuphuma.leave",
+              "form": "ukuphuma",
+              "meaning": "to leave; go out",
               "pos": "verb",
               "line": 6,
               "evidence": "Baphuma ekhaya ndawonye."
@@ -4855,19 +4747,19 @@
               "evidence": "Siya emakethe namuhla?"
             },
             {
-              "entryId": "zu.verb.siya",
-              "senseId": "zu.verb.siya.we-go",
-              "form": "siya",
-              "meaning": "we go",
+              "entryId": "zu.verb.ukuya",
+              "senseId": "zu.verb.ukuya.go",
+              "form": "ukuya",
+              "meaning": "to go",
               "pos": "verb",
               "line": 1,
               "evidence": "Siya emakethe namuhla?"
             },
             {
-              "entryId": "zu.verb.asihambe",
-              "senseId": "zu.verb.asihambe.walk-go",
-              "form": "sihamba / asihambe",
-              "meaning": "walk; go",
+              "entryId": "zu.verb.ukuhamba",
+              "senseId": "zu.verb.ukuhamba.walk-go",
+              "form": "ukuhamba",
+              "meaning": "to walk; go",
               "pos": "verb",
               "line": 2,
               "evidence": "Yebo, sihamba ndawonye."
@@ -4882,10 +4774,10 @@
               "evidence": "Sithenga izithelo."
             },
             {
-              "entryId": "zu.verb.sithenga",
-              "senseId": "zu.verb.sithenga.we-buy",
-              "form": "sithenga",
-              "meaning": "we buy",
+              "entryId": "zu.verb.ukuthenga",
+              "senseId": "zu.verb.ukuthenga.buy",
+              "form": "ukuthenga",
+              "meaning": "to buy",
               "pos": "verb",
               "line": 3,
               "evidence": "Sithenga izithelo."

@@ -324,7 +324,7 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(archive.has(itemPath1115), true);
     assert.equal(archive.has(itemPath1620), true);
     assert.equal(archive.has(itemPath2125), true);
-    assert.equal(reviewItems0105.items.length, 70);
+    assert.equal(reviewItems0105.items.length, 66);
     assert.equal(reviewItems0610.items.length, 84);
     assert.equal(reviewItems0610.items.every((item) => item.schemaVersion === 2), true);
     assert.equal(reviewItems1115.items.length, 74);
@@ -343,17 +343,17 @@ test("content package generator creates a valid Dutch package", async () => {
     }
     assert.ok(reviewItems0105.items.some((item) => item.prompt.text === "hallo" && item.answer.text === "hello"));
     assert.ok(reviewItems0105.items.some((item) => item.prompt.text === "hello" && item.answer.text === "hallo"));
-    assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "heb" && item.answer.text === "have"));
-    assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "have" && item.answer.text === "heb"));
-    assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "woon" && item.answer.text === "live"));
-    assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "live" && item.answer.text === "woon"));
+    assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "hebben" && item.answer.text === "have"));
+    assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "have" && item.answer.text === "hebben"));
+    assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "wonen" && item.answer.text === "live"));
+    assert.ok(reviewItems0610.items.some((item) => item.prompt.text === "live" && item.answer.text === "wonen"));
     const halloItem = reviewItems0105.items.find((item) => item.prompt.text === "hallo" && item.answer.text === "hello");
     assert.deepEqual(halloItem.examples, ["Hallo."]);
     const bookItem = reviewItems0105.items.find((item) => item.prompt.text === "het boek" && item.answer.text === "book");
     assert.deepEqual(bookItem.examples, ["Dit is een boek."]);
-    const hebItem = reviewItems0610.items.find((item) => item.prompt.text === "heb" && item.answer.text === "have");
+    const hebItem = reviewItems0610.items.find((item) => item.prompt.text === "hebben" && item.answer.text === "have");
     assert.deepEqual(hebItem.examples, ["Ik heb de tas.", "Ik heb de telefoon.", "Ik heb een sleutel."]);
-    const woonItem = reviewItems0610.items.find((item) => item.prompt.text === "woon" && item.answer.text === "live");
+    const woonItem = reviewItems0610.items.find((item) => item.prompt.text === "wonen" && item.answer.text === "live");
     assert.equal(woonItem.examples?.length >= 1 && woonItem.examples.length <= 3, true);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik heb N" || item.answer.text === "Ik heb N"), false);
@@ -364,14 +364,14 @@ test("content package generator creates a valid Dutch package", async () => {
 });
 
 const followerReadingPackageConfigs = [
-  ["arabic", "Arabic", "ar", 42, 84, 0],
+  ["arabic", "Arabic", "ar", 40, 80, 0],
   ["french", "French", "fr", 60, 120, 0],
   ["german", "German", "de", 55, 110, 0],
-  ["hindi", "Hindi", "hi", 51, 102, 0],
+  ["hindi", "Hindi", "hi", 50, 100, 0],
   ["japanese", "Japanese", "ja", 44, 132, 5],
   ["russian", "Russian", "ru", 52, 104, 0],
   ["spanish", "Spanish", "es", 56, 112, 0],
-  ["thai", "Thai", "th", 61, 122, 5],
+  ["thai", "Thai", "th", 52, 104, 5],
   ["zulu", "Zulu", "zu", 43, 86, 0]
 ].map(([slug, name, language, senses, cards, readingSupport]) => ({ slug, name, language, senses, cards, readingSupport }));
 

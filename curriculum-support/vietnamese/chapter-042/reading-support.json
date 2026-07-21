@@ -23,26 +23,5 @@
   "breakdown": {
     "normal": "- [[grammar:Lê Bình An có sáu quyển sách.]] — Lê Bình An has six books.\n- [[grammar:Trần Thu Hà có bảy quyển sách.]] — Trần Thu Hà has seven books.\n- [[grammar:Nguyễn Thị Lan xếp tám quyển sách.]] — Nguyễn Thị Lan stacks eight books.\n- [[grammar:Lê Thảo Vy đọc chín quyển sách trong danh sách đọc.]] — Lê Thảo Vy reads nine books on the reading list.\n- [[grammar:Hơn nữa, thư viện có mười quyển sách mới.]] — Furthermore, the library has ten new books.\n- [[grammar:Lê Bình An xếp danh sách đọc.]] — Lê Bình An organizes the reading list.\n- [[grammar:Những quyển sách ở kệ sách.]] — The books are on the bookshelf.\n- [[grammar:Sáu quyển là truyện.]] — Six volumes are stories.\n- [[grammar:Bảy quyển là sách tham khảo.]] — Seven volumes are reference books.\n- [[grammar:Danh sách đọc đã hoàn thành.]] — The reading list is complete.",
     "expert": "- [[grammar:Lê Bình An có sáu quyển sách.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Trần Thu Hà có bảy quyển sách.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Thị Lan xếp tám quyển sách.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Lê Thảo Vy đọc chín quyển sách trong danh sách đọc.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Hơn nữa, thư viện có mười quyển sách mới.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Lê Bình An xếp danh sách đọc.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Những quyển sách ở kệ sách.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Sáu quyển là truyện.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Bảy quyển là sách tham khảo.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Danh sách đọc đã hoàn thành.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
-  },
-  "characters": {
-    "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| quyển | 卷 | classifier for books | `Lê Bình An có sáu quyển sách.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| quyển | 卷 | classifier for books | `Lê Bình An có sáu quyển sách.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
-    "entries": [
-      {
-        "word": "quyển",
-        "characters": "卷",
-        "meaning": "classifier for books",
-        "lexicalEntryId": "vi.classifier.quyen",
-        "senseId": "vi.classifier.quyen.classifier-for-books",
-        "firstIntroductionChapter": 42,
-        "usage": "Lê Bình An có sáu quyển sách.",
-        "provenance": {
-          "path": "units/vietnamese-core/chapter-042-basic-sentences-42/chapter.md",
-          "section": "Narrative",
-          "locator": "line containing: Lê Bình An có sáu quyển sách."
-        }
-      }
-    ]
   }
 }

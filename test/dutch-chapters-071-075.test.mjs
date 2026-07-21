@@ -268,7 +268,7 @@ test("all sense and Review card IDs remain unique and proposed lexical IDs do no
       }
     }
   }
-  assert.equal(senses.size, 687);
+  assert.equal(senses.size, 685);
   assert.equal(proposedLexical.size, 80);
   assert.equal([...senses].filter((senseId) => /(?:wandelroute|pleeggezin|verjaardagsdiner|pottenbakkerij|wifi-signaal)/u.test(senseId)).length, 5);
 });

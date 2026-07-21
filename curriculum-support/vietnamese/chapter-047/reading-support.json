@@ -26,8 +26,8 @@
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| dự phòng | 預防 | spare; backup | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| bản | 本 | classifier for copies or versions | `Cần bao nhiêu bản tài liệu?` |\n| phiếu | 票 | form; slip | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| in | 印 | print | `Tôi in các phiếu.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| dự phòng | 預防 | spare; backup | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| bản | 本 | classifier for copies or versions | `Cần bao nhiêu bản tài liệu?` |\n| phiếu | 票 | form; slip | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| in | 印 | print | `Tôi in các phiếu.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| dự phòng | 預防 | spare; backup | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| phiếu | 票 | form; slip | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| in | 印 | print | `Tôi in các phiếu.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| dự phòng | 預防 | spare; backup | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| phiếu | 票 | form; slip | `Nếu có mười người, thì cần mười phiếu dự phòng.` |\n| in | 印 | print | `Tôi in các phiếu.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "dự phòng",
@@ -41,20 +41,6 @@
           "path": "units/vietnamese-core/chapter-047-basic-sentences-47/chapter.md",
           "section": "Dialogue",
           "locator": "line containing: Nếu có mười người, thì cần mười phiếu dự phòng."
-        }
-      },
-      {
-        "word": "bản",
-        "characters": "本",
-        "meaning": "classifier for copies or versions",
-        "lexicalEntryId": "vi.classifier.ban",
-        "senseId": "vi.classifier.ban.classifier-for-copies-or-versions",
-        "firstIntroductionChapter": 47,
-        "usage": "Cần bao nhiêu bản tài liệu?",
-        "provenance": {
-          "path": "units/vietnamese-core/chapter-047-basic-sentences-47/chapter.md",
-          "section": "Dialogue",
-          "locator": "line containing: Cần bao nhiêu bản tài liệu?"
         }
       },
       {

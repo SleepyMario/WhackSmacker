@@ -9,7 +9,15 @@ const curriculumRoot = join(process.cwd(), "..", "vietnamese-curriculum");
 const ledgerPath = join(curriculumRoot, "units/vietnamese-core/cumulative-ledger.md");
 const deckPaths = [
   "review-content/vietnamese/review-decks/chapter-001-005/cards.tsv",
-  "review-content/vietnamese/review-decks/chapter-006-010/cards.tsv"
+  "review-content/vietnamese/review-decks/chapter-006-010/cards.tsv",
+  "review-content/vietnamese/review-decks/chapter-011-015/cards.tsv",
+  "review-content/vietnamese/review-decks/chapter-016-020/cards.tsv",
+  "review-content/vietnamese/review-decks/chapter-021-025/cards.tsv",
+  "review-content/vietnamese/review-decks/chapter-026-030/cards.tsv",
+  "review-content/vietnamese/review-decks/chapter-031-035/cards.tsv",
+  "review-content/vietnamese/review-decks/chapter-036-040/cards.tsv",
+  "review-content/vietnamese/review-decks/chapter-041-045/cards.tsv",
+  "review-content/vietnamese/review-decks/chapter-046-050/cards.tsv"
 ];
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 
@@ -19,8 +27,16 @@ test("Vietnamese review decks exactly cover the canonical newly introduced lexic
   const report = await auditVietnameseReviewDecks(inventory, decks);
 
   assert.deepEqual(report, {
-    "chapter-001-005": { inventoryCount: 32, cardCount: 64 },
-    "chapter-006-010": { inventoryCount: 36, cardCount: 72 }
+    "chapter-001-005": { inventoryCount: 30, cardCount: 60 },
+    "chapter-006-010": { inventoryCount: 36, cardCount: 72 },
+    "chapter-011-015": { inventoryCount: 46, cardCount: 92 },
+    "chapter-016-020": { inventoryCount: 40, cardCount: 80 },
+    "chapter-021-025": { inventoryCount: 40, cardCount: 80 },
+    "chapter-026-030": { inventoryCount: 35, cardCount: 70 },
+    "chapter-031-035": { inventoryCount: 37, cardCount: 74 },
+    "chapter-036-040": { inventoryCount: 42, cardCount: 84 },
+    "chapter-041-045": { inventoryCount: 51, cardCount: 102 },
+    "chapter-046-050": { inventoryCount: 39, cardCount: 78 }
   });
 });
 
@@ -84,8 +100,31 @@ async function auditVietnameseReviewDecks(inventory, decks) {
       actualSenseCounts.set(directionKey, (actualSenseCounts.get(directionKey) ?? 0) + 1);
       assert.equal(entryId, canonical.entryId);
       const learnerMeaning = projectReviewTextForMode(canonical.meaning, "normal");
-      assert.equal(row.prompt, targetToSource ? canonical.form : learnerMeaning);
-      assert.deepEqual(row.acceptedAnswers, [targetToSource ? learnerMeaning : canonical.form]);
+      const numeral = row.tags.includes("number");
+      if (numeral) {
+        if (targetToSource) {
+          assert.equal(row.prompt, canonical.form);
+          assert.match(row.acceptedAnswers[0], /^\d+$/u);
+          assert.equal(row.acceptedAnswers.includes(learnerMeaning), true);
+        } else {
+          assert.match(row.prompt, /^\d+$/u);
+          assert.deepEqual(row.acceptedAnswers, [canonical.form]);
+        }
+      } else if (targetToSource) {
+        assert.equal(row.prompt, canonical.form);
+        const permittedEnglishAnswers = new Set([learnerMeaning, ...learnerMeaning.split(";").map((value) => value.trim())]);
+        assert.equal(row.acceptedAnswers[0], learnerMeaning);
+        assert.equal(row.acceptedAnswers.every((value) => permittedEnglishAnswers.has(value)), true, `${row.cardId}: unexpected accepted answer`);
+        assert.equal(new Set(row.acceptedAnswers).size, row.acceptedAnswers.length);
+      } else {
+        assert.equal(row.prompt, learnerMeaning);
+        const regionalOrContextualVariants = new Map([
+          ["vi.noun.goi-cuon.fresh-spring-roll", ["nem cuốn"]],
+          ["vi.noun.bun-bo.spicy-beef-rice-noodle-soup", ["bún bò Huế"]]
+        ]);
+        const permittedTargetAnswers = [canonical.form, ...(regionalOrContextualVariants.get(canonical.senseId) ?? [])];
+        assert.deepEqual(row.acceptedAnswers, permittedTargetAnswers);
+      }
       assert.equal(row.sourceChapter, canonical.firstIntroductionChapter, row.cardId + " has an inaccurate first-introduction chapter");
       assert.equal(row.provenancePath, canonicalPath(row.sourceChapter));
       assert.equal(allSenseIds.has(directionKey), false, directionKey + " appears more than once");
@@ -118,7 +157,7 @@ async function auditVietnameseReviewDecks(inventory, decks) {
     report[key] = { inventoryCount: expected.length, cardCount: deck.rows.length };
   }
 
-  assert.equal(allSenseIds.size, inventory.filter((item) => item.firstIntroductionChapter <= 10).length * 2);
+  assert.equal(allSenseIds.size, inventory.filter((item) => item.firstIntroductionChapter <= 50).length * 2);
   return report;
 }
 
@@ -155,6 +194,42 @@ test("Vietnamese đây review uses a concise learner answer in both directions",
   assert.equal(paths.every(({ text }) => !/taught frame|attested frame|licensed construction/iu.test(text)), true);
 });
 
+test("Vietnamese grammar frames cannot enter lexical Review", async () => {
+  const decks = await Promise.all(deckPaths.map(async (path) => parseDeck(await readFile(path, "utf8"), path)));
+  const senseIds = new Set(decks.flatMap((deck) => deck.rows.flatMap((row) => row.lexicalIds)));
+  const forbiddenGrammarSenses = [
+    "vi.phrase.co-phai.polar-identity-frame",
+    "vi.phrase.khong-phai-la.negative-identity",
+    "vi.particle.khong.polarity",
+    "vi.particle.dang.currently-be-in-the-process-of",
+    "vi.particle.da.already-completed",
+    "vi.particle.chua.not-yet-yet-in-a-question",
+    "vi.particle.se.will-future",
+    "vi.particle.bi.be-affected-by-suffer-from",
+    "vi.particle.nen.should-ought-to",
+    "vi.particle.nhung.plural-marker-for-a-group",
+    "vi.particle.cac.plural-marker-for-an-identified-set",
+    "vi.particle.hon.more-comparative-marker",
+    "vi.particle.xong.finished-completion-marker",
+    "vi.particle.duoc.beneficial-affected",
+    "vi.classifier.cai.general-classifier-for-suitable-inanimate-objects",
+    "vi.classifier.quyen.classifier-for-books",
+    "vi.classifier.nguoi.human-classifier",
+    "vi.classifier.chiec.classifier-for-vehicles-and-selected-objects",
+    "vi.classifier.con.animal-classifier",
+    "vi.particle.thi.then-in-a-conditional-result",
+    "vi.classifier.to.classifier-for-sheets-of-paper",
+    "vi.classifier.ban.classifier-for-copies-or-versions"
+  ];
+  for (const senseId of forbiddenGrammarSenses) assert.equal(senseIds.has(senseId), false, senseId);
+  assert.equal(decks.every((deck) => deck.rows.every((row) => row.grammarIds.length === 0)), true);
+  const firstDeck = decks[0];
+  const noRows = firstDeck.rows.filter((row) => row.lexicalIds.includes("vi.response.khong.no"));
+  assert.equal(noRows.length, 2);
+  assert.deepEqual(noRows.map((row) => row.prompt), ["không", "no"]);
+  assert.equal(noRows.every((row) => row.examples.length === 1 && row.examples[0].startsWith("Không,")), true);
+});
+
 function parseDeck(text, path) {
   const lines = text.trimEnd().split("\n");
   assert.equal(lines[0], header);
@@ -182,7 +257,8 @@ function parseDeck(text, path) {
         provenancePath: fields[13],
         provenanceLocator: fields[14],
         provenanceEvidence: fields[15],
-        examples: JSON.parse(fields[16])
+        examples: JSON.parse(fields[16]),
+        tags: JSON.parse(fields[17])
       };
     })
   };
@@ -190,18 +266,39 @@ function parseDeck(text, path) {
 
 function extractLearnerFacingLines(markdown) {
   const match = markdown.match(/### Learner-facing (?:Dialogue|Narrative)[\s\S]*?```text\n([\s\S]*?)\n```/u);
-  assert.ok(match, "chapter must have a learner-facing dialogue or narrative text block");
-  return match[1].split("\n").filter((line) => line.trim().length > 0).map((line) => {
+  if (match !== null) return match[1].split("\n").filter((line) => line.trim().length > 0).map((line) => {
     const dialogue = line.match(/^.*?\s*:\s*(.+)$/u);
     return (dialogue?.[1] ?? line).trim();
+  });
+
+  const lines = markdown.split(/\r?\n/u);
+  const start = lines.findIndex((line) => /^### (?:Dialogue|Narrative)$/u.test(line));
+  const end = lines.findIndex((line, index) => index > start && /^###\s/u.test(line));
+  assert.notEqual(start, -1, "chapter must have a dialogue or narrative block");
+  const dialogue = lines[start] === "### Dialogue";
+  const blocks = lines.slice(start + 1, end).join("\n").trim().split(/\n\s*\n/u).filter(Boolean);
+  return blocks.slice(1).flatMap((block) => block.split(/\r?\n/u)).filter((line) => line.trim().length > 0).flatMap((line) => {
+    if (!dialogue) return line.trim().split(/(?<=[.!?])\s+/u);
+    const spoken = line.match(/^.*?\s*:\s*(.+)$/u);
+    return spoken === null ? [] : [spoken[1].trim()];
   });
 }
 
 function locateLearnerFacingLine(markdown, locator) {
-  const match = locator.match(/^Content > Learner-facing (Dialogue|Narrative) > line (\d+)$/u);
-  assert.ok(match, "unsupported provenance locator: " + locator);
-  assert.match(markdown, new RegExp("### Learner-facing " + match[1], "u"));
-  return extractLearnerFacingLines(markdown)[Number(match[2]) - 1];
+  const lineMatch = locator.match(/^(?:Content > Learner-facing )?(Dialogue|Narrative) > line (\d+)$/u);
+  if (lineMatch !== null) {
+    assert.match(markdown, new RegExp("### (?:Learner-facing )?" + lineMatch[1], "u"));
+    return extractLearnerFacingLines(markdown)[Number(lineMatch[2]) - 1];
+  }
+  const sentenceMatch = locator.match(/^Narrative > paragraph (\d+) > sentence (\d+)$/u);
+  assert.ok(sentenceMatch, "unsupported provenance locator: " + locator);
+  const lines = markdown.split(/\r?\n/u);
+  const start = lines.indexOf("### Narrative");
+  const end = lines.findIndex((line, index) => index > start && /^###\s/u.test(line));
+  const paragraphs = lines.slice(start + 1, end).join("\n").trim().split(/\n\s*\n/u).filter(Boolean).slice(1);
+  const paragraph = paragraphs[Number(sentenceMatch[1]) - 1];
+  assert.ok(paragraph, `missing narrative paragraph in ${locator}`);
+  return paragraph.trim().split(/(?<=[.!?])\s+/u)[Number(sentenceMatch[2]) - 1];
 }
 
 function canonicalPath(chapter) {

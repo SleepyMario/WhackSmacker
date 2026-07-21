@@ -61,8 +61,8 @@
       "surface": "あります",
       "reading": "あります",
       "evidence": "部屋に机があります。",
-      "lexicalEntryId": "ja.verb.arimasu",
-      "senseId": "ja.verb.arimasu.there-is-inanimate"
+      "lexicalEntryId": "ja.verb.aru",
+      "senseId": "ja.verb.aru.exist-inanimate"
     },
     {
       "surface": "上",
