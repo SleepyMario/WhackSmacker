@@ -232,17 +232,16 @@ test("Japanese and Thai core sidecars provide exact noninvented reading support"
   assert.equal(thaiItems, 30);
 });
 
-test("follower metadata recognizes all ten decks and only the integrated Korean curriculum target", async () => {
+test("follower metadata relates every Review deck to its integrated curriculum target", async () => {
   const targets = new Map(contentPackageGeneratorTargets.map(target => [target.id, target]));
   for (const config of configs) {
-    const integratedReadingPackage = config.slug === "korean";
-    assert.equal(targets.has(`${config.slug}-curriculum`), integratedReadingPackage, `${config.name} curriculum integration scope changed`);
+    assert.equal(targets.has(`${config.slug}-curriculum`), true, `${config.name} curriculum integration is missing`);
     const target = targets.get(`${config.slug}-core-reviews`);
     assert.ok(target);
     assert.equal(target.packageId, `com.sleepymario.language.${config.slug}.reviews`);
     assert.equal(target.contentType, "core-review");
     assert.deepEqual(target.capabilities, ["core-review"]);
-    assert.deepEqual(target.relatedPackageIds, integratedReadingPackage ? ["com.sleepymario.language.korean"] : undefined);
+    assert.deepEqual(target.relatedPackageIds, [`com.sleepymario.language.${config.slug}`]);
   }
   const directory = await mkdtemp(join(tmpdir(), "wsm-follower-reviews-"));
   try {
@@ -250,7 +249,7 @@ test("follower metadata recognizes all ten decks and only the integrated Korean 
       const result = await generateContentPackage({ targetId: `${config.slug}-core-reviews`, outputDirectory: directory, generatedAt: "2026-07-20T00:00:00Z" });
       assert.deepEqual(validateContentPackageManifest(result.manifest).errors, []);
       assert.equal(result.manifest.packageId, `com.sleepymario.language.${config.slug}.reviews`);
-      assert.deepEqual(result.manifest.relatedPackageIds, config.slug === "korean" ? ["com.sleepymario.language.korean"] : undefined);
+      assert.deepEqual(result.manifest.relatedPackageIds, [`com.sleepymario.language.${config.slug}`]);
     }
   } finally {
     await rm(directory, { recursive: true, force: true });

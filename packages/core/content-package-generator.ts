@@ -230,6 +230,81 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     ]
   },
   {
+    id: "arabic-curriculum",
+    packageId: "com.sleepymario.language.arabic",
+    displayName: "Arabic",
+    description: "Arabic language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../arabic-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/arabic-curriculum",
+    languages: ["ar", "en"],
+    subjects: ["language", "arabic"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+  },
+  {
+    id: "french-curriculum",
+    packageId: "com.sleepymario.language.french",
+    displayName: "French",
+    description: "French language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../french-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/french-curriculum",
+    languages: ["fr", "en"],
+    subjects: ["language", "french"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+  },
+  {
+    id: "german-curriculum",
+    packageId: "com.sleepymario.language.german",
+    displayName: "German",
+    description: "German language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../german-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/german-curriculum",
+    languages: ["de", "en"],
+    subjects: ["language", "german"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+  },
+  {
+    id: "hindi-curriculum",
+    packageId: "com.sleepymario.language.hindi",
+    displayName: "Hindi",
+    description: "Hindi language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../hindi-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/hindi-curriculum",
+    languages: ["hi", "en"],
+    subjects: ["language", "hindi"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+  },
+  {
+    id: "japanese-curriculum",
+    packageId: "com.sleepymario.language.japanese",
+    displayName: "Japanese",
+    description: "Japanese language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../japanese-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/japanese-curriculum",
+    languages: ["ja", "en"],
+    subjects: ["language", "japanese"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+  },
+  {
     id: "korean-curriculum",
     packageId: "com.sleepymario.language.korean",
     displayName: "Korean",
@@ -249,13 +324,82 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "lexical-topic-audit.md",
       "units"
     ]
+  },
+  {
+    id: "russian-curriculum",
+    packageId: "com.sleepymario.language.russian",
+    displayName: "Russian",
+    description: "Russian language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../russian-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/russian-curriculum",
+    languages: ["ru", "en"],
+    subjects: ["language", "russian"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+  },
+  {
+    id: "spanish-curriculum",
+    packageId: "com.sleepymario.language.spanish",
+    displayName: "Spanish",
+    description: "Spanish language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../spanish-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/spanish-curriculum",
+    languages: ["es", "en"],
+    subjects: ["language", "spanish"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+  },
+  {
+    id: "thai-curriculum",
+    packageId: "com.sleepymario.language.thai",
+    displayName: "Thai",
+    description: "Thai language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../thai-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/thai-curriculum",
+    languages: ["th", "en"],
+    subjects: ["language", "thai"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+  },
+  {
+    id: "zulu-curriculum",
+    packageId: "com.sleepymario.language.zulu",
+    displayName: "Zulu",
+    description: "Zulu language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../zulu-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/zulu-curriculum",
+    languages: ["zu", "en"],
+    subjects: ["language", "zulu"],
+    license: { spdx: null, name: null, path: null },
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
   }
 ];
 
 const reviewPackageByReadingPackage = new Map<string, string>([
   ["com.sleepymario.language.vietnamese", "com.sleepymario.language.vietnamese.reviews"],
   ["com.sleepymario.language.dutch", "com.sleepymario.language.dutch.reviews"],
-  ["com.sleepymario.language.korean", "com.sleepymario.language.korean.reviews"]
+  ["com.sleepymario.language.arabic", "com.sleepymario.language.arabic.reviews"],
+  ["com.sleepymario.language.french", "com.sleepymario.language.french.reviews"],
+  ["com.sleepymario.language.german", "com.sleepymario.language.german.reviews"],
+  ["com.sleepymario.language.hindi", "com.sleepymario.language.hindi.reviews"],
+  ["com.sleepymario.language.japanese", "com.sleepymario.language.japanese.reviews"],
+  ["com.sleepymario.language.korean", "com.sleepymario.language.korean.reviews"],
+  ["com.sleepymario.language.russian", "com.sleepymario.language.russian.reviews"],
+  ["com.sleepymario.language.spanish", "com.sleepymario.language.spanish.reviews"],
+  ["com.sleepymario.language.thai", "com.sleepymario.language.thai.reviews"],
+  ["com.sleepymario.language.zulu", "com.sleepymario.language.zulu.reviews"]
 ]);
 
 const readingTargets = legacyGeneratorTargets.map((target): ContentPackageGeneratorTarget => {
@@ -283,16 +427,16 @@ const coreReviewTargets: readonly {
 }[] = [
   { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.2.0" },
   { slug: "dutch", name: "Dutch", readingId: "com.sleepymario.language.dutch", languages: ["nl", "en"], packageVersion: "0.1.0" },
-  { slug: "arabic", name: "Arabic", languages: ["ar", "en"], packageVersion: "0.1.0" },
-  { slug: "french", name: "French", languages: ["fr", "en"], packageVersion: "0.1.0" },
-  { slug: "german", name: "German", languages: ["de", "en"], packageVersion: "0.1.0" },
-  { slug: "hindi", name: "Hindi", languages: ["hi", "en"], packageVersion: "0.1.0" },
-  { slug: "japanese", name: "Japanese", languages: ["ja", "en"], packageVersion: "0.1.0" },
+  { slug: "arabic", name: "Arabic", readingId: "com.sleepymario.language.arabic", languages: ["ar", "en"], packageVersion: "0.1.0" },
+  { slug: "french", name: "French", readingId: "com.sleepymario.language.french", languages: ["fr", "en"], packageVersion: "0.1.0" },
+  { slug: "german", name: "German", readingId: "com.sleepymario.language.german", languages: ["de", "en"], packageVersion: "0.1.0" },
+  { slug: "hindi", name: "Hindi", readingId: "com.sleepymario.language.hindi", languages: ["hi", "en"], packageVersion: "0.1.0" },
+  { slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0" },
   { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0" },
-  { slug: "russian", name: "Russian", languages: ["ru", "en"], packageVersion: "0.1.0" },
-  { slug: "spanish", name: "Spanish", languages: ["es", "en"], packageVersion: "0.1.0" },
-  { slug: "thai", name: "Thai", languages: ["th", "en"], packageVersion: "0.1.0" },
-  { slug: "zulu", name: "Zulu", languages: ["zu", "en"], packageVersion: "0.1.0" }
+  { slug: "russian", name: "Russian", readingId: "com.sleepymario.language.russian", languages: ["ru", "en"], packageVersion: "0.1.0" },
+  { slug: "spanish", name: "Spanish", readingId: "com.sleepymario.language.spanish", languages: ["es", "en"], packageVersion: "0.1.0" },
+  { slug: "thai", name: "Thai", readingId: "com.sleepymario.language.thai", languages: ["th", "en"], packageVersion: "0.1.0" },
+  { slug: "zulu", name: "Zulu", readingId: "com.sleepymario.language.zulu", languages: ["zu", "en"], packageVersion: "0.1.0" }
 ];
 
 const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = coreReviewTargets.map(({ slug, name, readingId, languages, packageVersion }) => ({
@@ -446,6 +590,26 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
   "vietnamese-curriculum": Array.from({ length: 50 }, (_, index) => index + 1).map((chapter) => ({
     source: `curriculum-support/vietnamese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/reading-support.json`
+  })),
+  "japanese-curriculum": [
+    [1, "chapter-001-a-first-meeting"],
+    [2, "chapter-002-a-quiet-room"],
+    [3, "chapter-003-what-is-this"],
+    [4, "chapter-004-at-the-cafe"],
+    [5, "chapter-005-an-invitation"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/japanese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/japanese-core/${directory}/reading-support.json`
+  })),
+  "thai-curriculum": [
+    [1, "chapter-001-a-polite-meeting"],
+    [2, "chapter-002-one-quiet-room"],
+    [3, "chapter-003-what-is-this"],
+    [4, "chapter-004-mali-s-morning"],
+    [5, "chapter-005-a-market-plan"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/thai/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/thai-core/${directory}/reading-support.json`
   })),
   "dutch-curriculum": [
     [1, "chapter-001-basic-sentences-1"],

@@ -21,7 +21,16 @@ test("content package generator exposes the supported local package targets", ()
       ["linguistic-terminology", "com.sleepymario.language.linguistic-terminology"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
+      ["arabic-curriculum", "com.sleepymario.language.arabic"],
+      ["french-curriculum", "com.sleepymario.language.french"],
+      ["german-curriculum", "com.sleepymario.language.german"],
+      ["hindi-curriculum", "com.sleepymario.language.hindi"],
+      ["japanese-curriculum", "com.sleepymario.language.japanese"],
       ["korean-curriculum", "com.sleepymario.language.korean"],
+      ["russian-curriculum", "com.sleepymario.language.russian"],
+      ["spanish-curriculum", "com.sleepymario.language.spanish"],
+      ["thai-curriculum", "com.sleepymario.language.thai"],
+      ["zulu-curriculum", "com.sleepymario.language.zulu"],
       ["vietnamese-core-reviews", "com.sleepymario.language.vietnamese.reviews"],
       ["dutch-core-reviews", "com.sleepymario.language.dutch.reviews"],
       ["arabic-core-reviews", "com.sleepymario.language.arabic.reviews"],
@@ -353,6 +362,79 @@ test("content package generator creates a valid Dutch package", async () => {
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+const followerReadingPackageConfigs = [
+  ["arabic", "Arabic", "ar", 42, 84, 0],
+  ["french", "French", "fr", 60, 120, 0],
+  ["german", "German", "de", 55, 110, 0],
+  ["hindi", "Hindi", "hi", 51, 102, 0],
+  ["japanese", "Japanese", "ja", 44, 132, 5],
+  ["russian", "Russian", "ru", 52, 104, 0],
+  ["spanish", "Spanish", "es", 56, 112, 0],
+  ["thai", "Thai", "th", 61, 122, 5],
+  ["zulu", "Zulu", "zu", 43, 86, 0]
+].map(([slug, name, language, senses, cards, readingSupport]) => ({ slug, name, language, senses, cards, readingSupport }));
+
+for (const config of followerReadingPackageConfigs) {
+  test(`content package generator creates only rebuilt ${config.name} Chapters 1 through 5 and its authoritative Review`, async () => {
+    const directory = await mkdtemp(join(tmpdir(), `wsm-${config.slug}-package-`));
+
+    try {
+      const result = await generateContentPackage({
+        targetId: `${config.slug}-curriculum`,
+        outputDirectory: directory,
+        generatedAt: "2026-07-21T00:00:00Z"
+      });
+      const readingArchive = await readZip(result.filePath);
+      const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+      const readingContent = JSON.parse(readingArchive.get("content/content.json").toString("utf8"));
+      const { reviewArchive, reviewManifest } = await mergedSplitArchive(readingArchive, directory, `${config.slug}-core-reviews`);
+      const reviewItems = JSON.parse(reviewArchive.get("content/memorization/review-decks/chapter-001-005.json").toString("utf8")).items;
+      const unitPrefix = `units/${config.slug}-core/`;
+      const chapterFiles = readingContent.files.filter((file) => file.path.startsWith(unitPrefix)
+        && /^chapter-00[1-5]-/u.test(file.path.slice(unitPrefix.length))
+        && !file.path.includes("-grammar-")
+        && file.path.endsWith("/chapter.md"));
+
+      assert.equal(result.packageId, `com.sleepymario.language.${config.slug}`);
+      assert.equal(result.packageVersion, "0.1.0");
+      assert.equal(manifest.packageId, `com.sleepymario.language.${config.slug}`);
+      assert.equal(manifest.displayName, config.name);
+      assert.equal(manifest.contentType, "language-curriculum");
+      assert.deepEqual(manifest.capabilities, ["reading-curriculum"]);
+      assert.deepEqual(manifest.relatedPackageIds, [`com.sleepymario.language.${config.slug}.reviews`]);
+      assert.deepEqual(manifest.languages, ["en", config.language].sort());
+      assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+      assert.equal(chapterFiles.length, 5);
+      assert.deepEqual(chapterFiles.map((file) => Number.parseInt(file.text.match(/^chapter:\s*(\d+)$/mu)?.[1] ?? "0", 10)).sort((a, b) => a - b), [1, 2, 3, 4, 5]);
+      assert.equal(readingContent.files.some((file) => new RegExp(`^${unitPrefix}chapter-(?:00[6-9]|0[1-9]\\d|[1-9]\\d{2})-`, "u").test(file.path)), false);
+      assert.equal(readingContent.files.some((file) => /(?:foundation|basic-life-sentences|review-decks)/u.test(file.path)), false);
+      for (const level of ["easy", "hard"]) {
+        assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}chapter-001-005-grammar-${level}/chapter.md`));
+      }
+      assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 5);
+      assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, config.readingSupport);
+      assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}cumulative-ledger.md`));
+      assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
+      assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
+      assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.md"));
+      assert.equal(readingArchive.has("LICENSE-CONTENT"), true);
+      assert.equal(readingArchive.has("NOTICE"), true);
+      assert.equal(reviewManifest.packageId, `com.sleepymario.language.${config.slug}.reviews`);
+      assert.deepEqual(reviewManifest.relatedPackageIds, [`com.sleepymario.language.${config.slug}`]);
+      assert.equal(reviewItems.length, config.cards);
+      assert.equal(new Set(reviewItems.map((item) => item.testedLexicalIds.at(-1))).size, config.senses);
+      const expectedDirections = config.language === "ja"
+        ? new Set(["ja-to-en", "en-to-ja", "ja-Kana-to-ja"])
+        : new Set([`${config.language}-to-en`, `en-to-${config.language}`]);
+      assert.deepEqual(new Set(reviewItems.map((item) => item.reviewDirection)), expectedDirections);
+      assertCoreReviewItemsHaveExamples(reviewItems, config.name);
+      if (config.language !== "ja") assertOrdinaryBidirectionalItems(reviewItems, config.name);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+}
 
 test("content package generator creates only the rebuilt Korean Chapters 1 through 5 and its authoritative Review", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-korean-package-"));
