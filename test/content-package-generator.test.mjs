@@ -171,7 +171,7 @@ test("content package generator creates a valid Dutch package", async () => {
       { start: 56, end: 60, cards: 100 },
       { start: 61, end: 65, cards: 100 },
       { start: 66, end: 70, cards: 110 },
-      { start: 71, end: 75, cards: 160 }
+      { start: 71, end: 75, cards: 162 }
     ];
     const additionalReviewItems = additionalReviewBlocks.map(({ start, end, cards }) => {
       const slug = `${String(start).padStart(3, "0")}-${String(end).padStart(3, "0")}`;
@@ -369,15 +369,15 @@ test("content package generator creates a valid Dutch package", async () => {
 });
 
 const followerReadingPackageConfigs = [
-  ["arabic", "Arabic", "ar", 40, 80, 0],
-  ["french", "French", "fr", 60, 120, 0],
-  ["german", "German", "de", 55, 110, 0],
-  ["hindi", "Hindi", "hi", 50, 100, 0],
+  ["arabic", "Arabic", "ar", 40, 80, 5],
+  ["french", "French", "fr", 60, 120, 5],
+  ["german", "German", "de", 55, 110, 5],
+  ["hindi", "Hindi", "hi", 50, 100, 5],
   ["japanese", "Japanese", "ja", 44, 132, 5],
-  ["russian", "Russian", "ru", 52, 104, 0],
-  ["spanish", "Spanish", "es", 56, 112, 0],
+  ["russian", "Russian", "ru", 52, 104, 5],
+  ["spanish", "Spanish", "es", 56, 112, 5],
   ["thai", "Thai", "th", 52, 104, 5],
-  ["zulu", "Zulu", "zu", 43, 86, 0]
+  ["zulu", "Zulu", "zu", 42, 84, 5]
 ].map(([slug, name, language, senses, cards, readingSupport]) => ({ slug, name, language, senses, cards, readingSupport }));
 
 for (const config of followerReadingPackageConfigs) {
@@ -476,6 +476,7 @@ test("content package generator creates only the rebuilt Korean Chapters 1 throu
       assert.ok(readingContent.files.some((file) => file.path === `units/korean-core/chapter-001-005-grammar-${level}/chapter.md`));
     }
     assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 5);
+    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, 5);
     assert.ok(readingContent.files.some((file) => file.path === "units/korean-core/cumulative-ledger.md"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));

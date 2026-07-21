@@ -11,7 +11,7 @@ const execFileAsync = promisify(execFile);
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 
 for (const config of [
-  { language: "Dutch", code: "dutch", repository: "dutch-curriculum", maxChapter: 75, canonicalSenses: 685, topics: 38, forbidden: /^chapter-076-/u },
+  { language: "Dutch", code: "dutch", repository: "dutch-curriculum", maxChapter: 75, canonicalSenses: 686, topics: 38, forbidden: /^chapter-076-/u },
   { language: "Vietnamese", code: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 50, canonicalSenses: 396, topics: 33, forbidden: /^chapter-051-/u }
 ]) {
   test(`${config.language} lexical-topic inventory resolves to reading and bidirectional review evidence`, async () => {

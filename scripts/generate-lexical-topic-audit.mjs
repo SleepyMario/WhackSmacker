@@ -3,6 +3,7 @@ import { basename, join } from "node:path";
 
 const root = process.cwd();
 const checkOnly = process.argv.includes("--check");
+const requestedLanguage = process.argv.find((argument) => argument.startsWith("--language="))?.split("=")[1] ?? null;
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 
 const configs = [
@@ -66,6 +67,7 @@ const configs = [
 ];
 
 for (const config of configs) {
+  if (requestedLanguage && config.slug !== requestedLanguage) continue;
   const result = await audit(config);
   const curriculumRoot = join(root, "..", config.repository);
   await emit(join(curriculumRoot, "lexical-topic-audit.json"), `${JSON.stringify(result, null, 2)}\n`);

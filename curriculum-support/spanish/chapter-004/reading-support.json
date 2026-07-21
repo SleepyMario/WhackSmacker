@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "SPA-GRAMMAR-004"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Luis and Ana’s morning routine, you will use [[grammar:subject + verb + object]]. A simple statement can put a subject, verb, and object in that order. After Luis is clear, También come pan leaves the subject out. Do not repeat the subject pronoun in every Spanish sentence.",
+      "expert": "This chapter presents [[grammar:subject + verb + object]] in Luis and Ana’s morning routine. Present verbs encode person and number. An overt lexical subject establishes discourse reference, allowing subsequent null subjects while direct objects follow the finite verb."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "A simple statement can put a subject, verb, and object in that order. After Luis is clear, También come pan leaves the subject out. Do not repeat the subject pronoun in every Spanish sentence.",
+      "expert": "Present verbs encode person and number. An overt lexical subject establishes discourse reference, allowing subsequent null subjects while direct objects follow the finite verb."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Spanish punctuation with the sentence: ¿ starts a question and ¡ starts an exclamation. Learn nouns with el or la when an article is shown.",
+      "expert": "The reading uses broadly intelligible contemporary Spanish with tú as neutral informal singular address. Null subjects and article-bearing citation forms are analyzed only where attested."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact spanish line, then check its natural English meaning. Watch for [[grammar:subject + verb + object]] where it appears.\n\n- Luis toma café por la mañana. — Luis drinks coffee in the morning.\n- También come pan. — He also eats bread.\n- Después lee el libro. — Afterward he reads the book.\n- Ana bebe agua. — Ana drinks water.\n- Luego prepara la mochila. — Then she prepares the backpack.\n- Los dos salen de la casa. — The two leave the house.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:subject + verb + object]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Luis toma café por la mañana. — Luis drinks coffee in the morning.\n- También come pan. — He also eats bread.\n- Después lee el libro. — Afterward he reads the book.\n- Ana bebe agua. — Ana drinks water.\n- Luego prepara la mochila. — Then she prepares the backpack.\n- Los dos salen de la casa. — The two leave the house."
+  }
+}

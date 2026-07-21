@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ZUL-GRAMMAR-003"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a direct search for a pen and key, you will use [[grammar:class concord + kuphi]]?. Join the right noun-class concord to [[grammar:kuphi]] to ask where something is. Likuphi ipeni? asks about class 5 ipeni, while Ukuphi ukhiye? asks about class 3 ukhiye. The answer must locate the item asked about.",
+      "expert": "This chapter presents [[grammar:class concord + kuphi]]? in a direct search for a pen and key. Locative interrogative stem -phi combines with class agreement: li- in likuphi and u- in ukuphi. Ukhiye useduze nesikhwama preserves class 3 subject concord u- and directly locates ukhiye."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Join the right noun-class concord to [[grammar:kuphi]] to ask where something is. Likuphi ipeni? asks about class 5 ipeni, while Ukuphi ukhiye? asks about class 3 ukhiye. The answer must locate the item asked about.",
+      "expert": "Locative interrogative stem -phi combines with class agreement: li- in likuphi and u- in ukuphi. Ukhiye useduze nesikhwama preserves class 3 subject concord u- and directly locates ukhiye."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the joined isiZulu word as a whole, then use the explanation to notice its noun-class or subject-concord parts. Do not remove a concord from a sentence just because the English translation has no matching word.",
+      "expert": "The analysis treats concord-bearing surface words as morphosyntactic occurrences. Noun citation forms retain their noun-class prefix, and verbs retain the infinitive uku- citation form in lexical records."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact zulu line, then check its natural English meaning. Watch for [[grammar:class concord + kuphi]]? where it appears.\n\n- Yini le? — What is this?\n- Yincwadi. — It is a book.\n- Likuphi ipeni? — Where is the pen?\n- Ipeni liphezu kwetafula. — The pen is on the table.\n- Ukuphi ukhiye? — Where is the key?\n- Ukhiye useduze nesikhwama. — The key is near the bag.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:class concord + kuphi]]?. The grammar section above analyzes the relevant morphology and syntax.\n\n- Yini le? — What is this?\n- Yincwadi. — It is a book.\n- Likuphi ipeni? — Where is the pen?\n- Ipeni liphezu kwetafula. — The pen is on the table.\n- Ukuphi ukhiye? — Where is the key?\n- Ukhiye useduze nesikhwama. — The key is near the bag."
+  }
+}

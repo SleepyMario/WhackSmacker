@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "SPA-GRAMMAR-002"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In breakfast in Ana’s kitchen, you will use [[grammar:Hay + N]]. Use [[grammar:Hay]] to say something exists or is present. En la cocina hay una mesa means there is a table in the kitchen. Hay does not change for one or many things, so do not make it plural.",
+      "expert": "This chapter presents [[grammar:Hay + N]] in breakfast in Ana’s kitchen. Invariant existential hay introduces an indefinite noun phrase. A fronted locative phrase sets the spatial frame without changing the existential predicate."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Hay]] to say something exists or is present. En la cocina hay una mesa means there is a table in the kitchen. Hay does not change for one or many things, so do not make it plural.",
+      "expert": "Invariant existential hay introduces an indefinite noun phrase. A fronted locative phrase sets the spatial frame without changing the existential predicate."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Spanish punctuation with the sentence: ¿ starts a question and ¡ starts an exclamation. Learn nouns with el or la when an article is shown.",
+      "expert": "The reading uses broadly intelligible contemporary Spanish with tú as neutral informal singular address. Null subjects and article-bearing citation forms are analyzed only where attested."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact spanish line, then check its natural English meaning. Watch for [[grammar:Hay + N]] where it appears.\n\n- La casa está tranquila por la mañana. — The house is quiet in the morning.\n- Hay una cocina pequeña. — There is a small kitchen.\n- En la cocina hay una mesa. — There is a table in the kitchen.\n- Sobre la mesa hay un libro. — There is a book on the table.\n- También hay una silla. — There is also a chair.\n- Ana bebe un vaso de agua. — Ana drinks a glass of water.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Hay + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- La casa está tranquila por la mañana. — The house is quiet in the morning.\n- Hay una cocina pequeña. — There is a small kitchen.\n- En la cocina hay una mesa. — There is a table in the kitchen.\n- Sobre la mesa hay un libro. — There is a book on the table.\n- También hay una silla. — There is also a chair.\n- Ana bebe un vaso de agua. — Ana drinks a glass of water."
+  }
+}

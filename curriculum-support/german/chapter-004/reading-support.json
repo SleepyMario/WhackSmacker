@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "GER-GRAMMAR-004"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Jonas’s morning routine, you will use [[grammar:main-clause verb-second]]. In a German statement, one complete part comes first and the [[grammar:finite verb]] comes second. In Morgens ist Jonas in der Küche, Morgens is first and ist is second. The first part may be the subject or an adverb, so do not always put the verb after the subject.",
+      "expert": "This chapter presents [[grammar:main-clause verb-second]] in Jonas’s morning routine. Main-clause V2 places exactly one constituent in the Vorfeld and the finite verb in the left bracket; Morgens ist, Dann liest, and Danach gehen demonstrate adverbial-first V2, while Er trinkt shows subject-first V2."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "In a German statement, one complete part comes first and the [[grammar:finite verb]] comes second. In Morgens ist Jonas in der Küche, Morgens is first and ist is second. The first part may be the subject or an adverb, so do not always put the verb after the subject.",
+      "expert": "Main-clause V2 places exactly one constituent in the Vorfeld and the finite verb in the left bracket; Morgens ist, Dann liest, and Danach gehen demonstrate adverbial-first V2, while Er trinkt shows subject-first V2."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "German nouns begin with capital letters. Learn each noun with der, die, or das, and watch where the finite verb goes in each sentence.",
+      "expert": "The reading uses contemporary standard German. Noun citation forms retain nominative gender articles, while running text shows the case forms required by syntax."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact german line, then check its natural English meaning. Watch for [[grammar:main-clause verb-second]] where it appears.\n\n- Morgens ist Jonas in der Küche. — In the morning Jonas is in the kitchen.\n- Er trinkt Kaffee. — He drinks coffee.\n- Er isst Brot. — He eats bread.\n- Dann liest er ein Buch. — Then he reads a book.\n- Mia trinkt Wasser. — Mia drinks water.\n- Danach gehen beide zur Arbeit. — After that both go to work.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:main-clause verb-second]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Morgens ist Jonas in der Küche. — In the morning Jonas is in the kitchen.\n- Er trinkt Kaffee. — He drinks coffee.\n- Er isst Brot. — He eats bread.\n- Dann liest er ein Buch. — Then he reads a book.\n- Mia trinkt Wasser. — Mia drinks water.\n- Danach gehen beide zur Arbeit. — After that both go to work."
+  }
+}

@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "JPN-GRAMMAR-001"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Japanese.",
-      "expert": "Support stays aligned to literal Chapter 1 target text and does not change canonical identity."
+      "normal": "In Aki and Yuki meeting for the first time, you will use [[grammar:N + です]]. Put [[grammar:です]] after a name or role for a polite identity statement. ゆきです。教師です。 means ‘I’m Yuki. I’m a teacher.’ Japanese can leave out ‘I’ when it is clear, so do not add 私 to every line.",
+      "expert": "This chapter presents [[grammar:N + です]] in Aki and Yuki meeting for the first time. The polite copular predicate consists of a nominal plus です, with the discourse subject omitted. 教師 is appropriate self-occupation vocabulary; 先生 remains appropriate for address or reference to another teacher. よろしくお願いします carries a relationship-opening pragmatic meaning rather than a literal request alone."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:N + です]].",
-      "expert": "The canonical pattern [[grammar:N + です]] retains its language-specific analysis."
+      "normal": "Put [[grammar:です]] after a name or role for a polite identity statement. ゆきです。教師です。 means ‘I’m Yuki. I’m a teacher.’ Japanese can leave out ‘I’ when it is clear, so do not add 私 to every line.",
+      "expert": "The polite copular predicate consists of a nominal plus です, with the discourse subject omitted. 教師 is appropriate self-occupation vocabulary; 先生 remains appropriate for address or reference to another teacher. よろしくお願いします carries a relationship-opening pragmatic meaning rather than a literal request alone."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Use the readings in the line-by-line help for unfamiliar kanji. Read the Japanese sentence first, then check the natural English meaning.",
+      "expert": "The reading uses standard polite です／ます style with discourse-supported argument omission. Kana readings identify the attested lexical forms without replacing the Japanese script."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact japanese line, then check its natural English meaning. Watch for [[grammar:N + です]] where it appears.\n\n- はじめまして。 — Nice to meet you.\n- こんにちは。 — Hello.\n- あきです。学生です。 — I am Aki. I am a student.\n- ゆきです。教師です。 — I am Yuki. I am a teacher.\n- よろしくお願いします。 — Nice to meet you; I look forward to getting along with you.\n- こちらこそ、よろしくお願いします。 — Likewise; I look forward to getting along with you.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:N + です]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- はじめまして。 — Nice to meet you.\n- こんにちは。 — Hello.\n- あきです。学生です。 — I am Aki. I am a student.\n- ゆきです。教師です。 — I am Yuki. I am a teacher.\n- よろしくお願いします。 — Nice to meet you; I look forward to getting along with you.\n- こちらこそ、よろしくお願いします。 — Likewise; I look forward to getting along with you."
+  },
   "readingItems": [
     {
       "surface": "はじめまして",
@@ -44,18 +57,18 @@
       "senseId": "ja.noun.gakusei.student"
     },
     {
-      "surface": "先生",
-      "reading": "せんせい",
-      "evidence": "ゆきです。先生です。",
-      "lexicalEntryId": "ja.noun.sensei",
-      "senseId": "ja.noun.sensei.teacher"
+      "surface": "教師",
+      "reading": "きょうし",
+      "evidence": "ゆきです。教師です。",
+      "lexicalEntryId": "ja.noun.kyoushi",
+      "senseId": "ja.noun.kyoushi.teacher-occupation"
     },
     {
       "surface": "よろしくお願いします",
       "reading": "よろしくおねがいします",
       "evidence": "よろしくお願いします。",
       "lexicalEntryId": "ja.expression.yoroshiku-onegaishimasu",
-      "senseId": "ja.expression.yoroshiku-onegaishimasu.please-treat-me-favorably"
+      "senseId": "ja.expression.yoroshiku-onegaishimasu.relationship-opening-greeting"
     },
     {
       "surface": "こちらこそ",

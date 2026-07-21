@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ARA-GRAMMAR-003"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In questions about nearby objects, you will use [[grammar:مَا هَذَا؟ / مَا هَذِهِ]]؟. Use [[grammar:مَا هَذَا]]؟ for a masculine item and [[grammar:مَا هَذِهِ]]؟ for a feminine item. Match هَذَا or هَذِهِ to the noun in the answer. Do not use the same demonstrative for every noun.",
+      "expert": "This chapter presents [[grammar:مَا هَذَا؟ / مَا هَذِهِ]]؟ in questions about nearby objects. Interrogative مَا combines with a gender-agreeing proximal demonstrative in a verbless identification question. هَلْ in the yes–no example is separate supporting question grammar, not another lexical sense."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:مَا هَذَا]]؟ for a masculine item and [[grammar:مَا هَذِهِ]]؟ for a feminine item. Match هَذَا or هَذِهِ to the noun in the answer. Do not use the same demonstrative for every noun.",
+      "expert": "Interrogative مَا combines with a gender-agreeing proximal demonstrative in a verbless identification question. هَلْ in the yes–no example is separate supporting question grammar, not another lexical sense."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The Arabic lines are in Modern Standard Arabic. The vowel marks show short vowels and case endings, so read every marked vowel instead of guessing from the bare consonants.",
+      "expert": "The reading uses fully vocalized Modern Standard Arabic. Lexical citation forms follow the established perfect-stem convention for verbs, while the learner text preserves the attested inflected form and case vocalization."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact arabic line, then check its natural English meaning. Watch for [[grammar:مَا هَذَا؟ / مَا هَذِهِ]]؟ where it appears.\n\n- مَا هَذَا؟ — What is this?\n- هَذَا هَاتِفٌ. — This is a phone.\n- مَا هَذِهِ؟ — What is this?\n- هَذِهِ حَقِيبَةٌ. — This is a bag.\n- هَلْ هَذَا مِفْتَاحٌ؟ — Is this a key?\n- نَعَمْ، هَذَا مِفْتَاحٌ. — Yes, this is a key.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:مَا هَذَا؟ / مَا هَذِهِ]]؟. The grammar section above analyzes the relevant morphology and syntax.\n\n- مَا هَذَا؟ — What is this?\n- هَذَا هَاتِفٌ. — This is a phone.\n- مَا هَذِهِ؟ — What is this?\n- هَذِهِ حَقِيبَةٌ. — This is a bag.\n- هَلْ هَذَا مِفْتَاحٌ؟ — Is this a key?\n- نَعَمْ، هَذَا مِفْتَاحٌ. — Yes, this is a key."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-004"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Minji and Junho’s morning routine, you will use [[grammar:N + 을/를 + verb]]. Put [[grammar:을]] after a consonant-ending object and [[grammar:를]] after a vowel-ending object, then put the verb at the end. 밥을 먹어요 means ‘eat a meal.’ Do not put the object particle on the person doing the action.",
+      "expert": "This chapter presents [[grammar:N + 을/를 + verb]] in Minji and Junho’s morning routine. Object-particle allomorphy is coda-conditioned: 을 follows consonant-final 밥 and 책, while 를 follows vowel-final 커피 and 가방. Informal-polite predicates remain clause-final."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Put [[grammar:을]] after a consonant-ending object and [[grammar:를]] after a vowel-ending object, then put the verb at the end. 밥을 먹어요 means ‘eat a meal.’ Do not put the object particle on the person doing the action.",
+      "expert": "Object-particle allomorphy is coda-conditioned: 을 follows consonant-final 밥 and 책, while 를 follows vowel-final 커피 and 가방. Informal-polite predicates remain clause-final."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
+      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact korean line, then check its natural English meaning. Watch for [[grammar:N + 을/를 + verb]] where it appears.\n\n- 아침에 민지는 물을 마셔요. — In the morning Minji drinks water.\n- 그리고 밥을 먹어요. — Then she eats a meal.\n- 책을 읽어요. — She reads a book.\n- 준호는 커피를 마셔요. — Junho drinks coffee.\n- 두 사람은 가방을 준비해요. — The two prepare their bags.\n- 그리고 집에서 나가요. — Then they leave home.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:N + 을/를 + verb]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- 아침에 민지는 물을 마셔요. — In the morning Minji drinks water.\n- 그리고 밥을 먹어요. — Then she eats a meal.\n- 책을 읽어요. — She reads a book.\n- 준호는 커피를 마셔요. — Junho drinks coffee.\n- 두 사람은 가방을 준비해요. — The two prepare their bags.\n- 그리고 집에서 나가요. — Then they leave home."
+  }
+}

@@ -680,7 +680,7 @@
               "meaning": "no",
               "pos": "response",
               "line": 4,
-              "evidence": "Non, mais j'aime la pomme."
+              "evidence": "Non, mais j'aime les pommes."
             },
             {
               "entryId": "fr.noun.pomme",
@@ -689,7 +689,7 @@
               "meaning": "apple",
               "pos": "noun",
               "line": 4,
-              "evidence": "Non, mais j'aime la pomme."
+              "evidence": "Non, mais j'aime les pommes."
             },
             {
               "entryId": "fr.conjunction.mais",
@@ -698,7 +698,7 @@
               "meaning": "but",
               "pos": "conjunction",
               "line": 4,
-              "evidence": "Non, mais j'aime la pomme."
+              "evidence": "Non, mais j'aime les pommes."
             },
             {
               "entryId": "fr.determiner.ce",
@@ -1924,7 +1924,7 @@
               "meaning": "fruit",
               "pos": "noun",
               "line": 3,
-              "evidence": "हमें फल खरीदना है."
+              "evidence": "हम फल खरीदेंगे."
             },
             {
               "entryId": "hi.verb.kharidna",
@@ -1933,7 +1933,7 @@
               "meaning": "to buy",
               "pos": "verb",
               "line": 3,
-              "evidence": "हमें फल खरीदना है."
+              "evidence": "हम फल खरीदेंगे."
             },
             {
               "entryId": "hi.pronoun.ham",
@@ -1942,7 +1942,7 @@
               "meaning": "we; us",
               "pos": "pronoun",
               "line": 3,
-              "evidence": "हमें फल खरीदना है."
+              "evidence": "हम फल खरीदेंगे."
             },
             {
               "entryId": "hi.numeral.tin",
@@ -2020,19 +2020,19 @@
               "evidence": "あきです。学生です。"
             },
             {
-              "entryId": "ja.noun.sensei",
-              "senseId": "ja.noun.sensei.teacher",
-              "form": "先生",
-              "meaning": "teacher",
+              "entryId": "ja.noun.kyoushi",
+              "senseId": "ja.noun.kyoushi.teacher-occupation",
+              "form": "教師",
+              "meaning": "teacher (occupation)",
               "pos": "noun",
               "line": 4,
-              "evidence": "ゆきです。先生です。"
+              "evidence": "ゆきです。教師です。"
             },
             {
               "entryId": "ja.expression.yoroshiku-onegaishimasu",
-              "senseId": "ja.expression.yoroshiku-onegaishimasu.please-treat-me-favorably",
+              "senseId": "ja.expression.yoroshiku-onegaishimasu.relationship-opening-greeting",
               "form": "よろしくお願いします",
-              "meaning": "please treat me favorably",
+              "meaning": "nice to meet you; I look forward to getting along with you",
               "pos": "expression",
               "line": 5,
               "evidence": "よろしくお願いします。"
@@ -2320,7 +2320,7 @@
               "meaning": "to read",
               "pos": "verb",
               "line": 6,
-              "evidence": "窓の近くで本を読みます。"
+              "evidence": "本を読みます。"
             }
           ]
         },
@@ -2566,10 +2566,10 @@
           "directory": "chapter-003-what-is-this",
           "senses": [
             {
-              "entryId": "ko.demonstrative.ige",
-              "senseId": "ko.demonstrative.ige.this-subject-form",
-              "form": "이게",
-              "meaning": "this (subject form)",
+              "entryId": "ko.demonstrative.igeot",
+              "senseId": "ko.demonstrative.igeot.this-thing",
+              "form": "이것",
+              "meaning": "this; this thing",
               "pos": "demonstrative",
               "line": 1,
               "evidence": "이게 뭐예요?"
@@ -3253,7 +3253,7 @@
               "meaning": "we",
               "pos": "pronoun",
               "line": 1,
-              "evidence": "Мы идём в парк сегодня?"
+              "evidence": "Мы сегодня идём в парк?"
             },
             {
               "entryId": "ru.verb.idti",
@@ -3262,7 +3262,7 @@
               "meaning": "to go (on foot)",
               "pos": "verb",
               "line": 1,
-              "evidence": "Мы идём в парк сегодня?"
+              "evidence": "Мы сегодня идём в парк?"
             },
             {
               "entryId": "ru.noun.park",
@@ -3271,7 +3271,7 @@
               "meaning": "park",
               "pos": "noun",
               "line": 1,
-              "evidence": "Мы идём в парк сегодня?"
+              "evidence": "Мы сегодня идём в парк?"
             },
             {
               "entryId": "ru.adverb.segodnya",
@@ -3280,7 +3280,7 @@
               "meaning": "today",
               "pos": "adverb",
               "line": 1,
-              "evidence": "Мы идём в парк сегодня?"
+              "evidence": "Мы сегодня идём в парк?"
             },
             {
               "entryId": "ru.adverb.vmeste",
@@ -4334,7 +4334,7 @@
               "meaning": "buy",
               "pos": "verb",
               "line": 3,
-              "evidence": "ที่ตลาดซื้อผลไม้ครับ."
+              "evidence": "ซื้อผลไม้ที่ตลาดครับ."
             },
             {
               "entryId": "th.noun.phonlamai",
@@ -4343,7 +4343,7 @@
               "meaning": "fruit",
               "pos": "noun",
               "line": 3,
-              "evidence": "ที่ตลาดซื้อผลไม้ครับ."
+              "evidence": "ซื้อผลไม้ที่ตลาดครับ."
             },
             {
               "entryId": "th.particle.duai",
@@ -4617,7 +4617,7 @@
               "meaning": "bag",
               "pos": "noun",
               "line": 6,
-              "evidence": "Isikhwama siseduze nokhiye."
+              "evidence": "Ukhiye useduze nesikhwama."
             }
           ]
         },
@@ -4658,7 +4658,7 @@
               "meaning": "to eat",
               "pos": "verb",
               "line": 2,
-              "evidence": "Uphinde adle isinkwa."
+              "evidence": "UThandi udla isinkwa."
             },
             {
               "entryId": "zu.noun.isinkwa",
@@ -4667,16 +4667,7 @@
               "meaning": "bread",
               "pos": "noun",
               "line": 2,
-              "evidence": "Uphinde adle isinkwa."
-            },
-            {
-              "entryId": "zu.verb.ukuphinda",
-              "senseId": "zu.verb.ukuphinda.do-again",
-              "form": "ukuphinda",
-              "meaning": "to do again; also",
-              "pos": "verb",
-              "line": 2,
-              "evidence": "Uphinde adle isinkwa."
+              "evidence": "UThandi udla isinkwa."
             },
             {
               "entryId": "zu.verb.ukufunda",
@@ -4729,10 +4720,10 @@
           "directory": "chapter-005-a-shared-plan",
           "senses": [
             {
-              "entryId": "zu.noun.emakethe",
-              "senseId": "zu.noun.emakethe.at-to-the-market",
-              "form": "emakethe",
-              "meaning": "at; to the market",
+              "entryId": "zu.noun.imakethe",
+              "senseId": "zu.noun.imakethe.market",
+              "form": "imakethe",
+              "meaning": "market",
               "pos": "noun",
               "line": 1,
               "evidence": "Siya emakethe namuhla?"
@@ -4783,10 +4774,10 @@
               "evidence": "Sithenga izithelo."
             },
             {
-              "entryId": "zu.noun.epaki",
-              "senseId": "zu.noun.epaki.at-to-the-park",
-              "form": "epaki",
-              "meaning": "at; to the park",
+              "entryId": "zu.noun.ipaki",
+              "senseId": "zu.noun.ipaki.park",
+              "form": "ipaki",
+              "meaning": "park",
               "pos": "noun",
               "line": 4,
               "evidence": "Bese siya epaki."

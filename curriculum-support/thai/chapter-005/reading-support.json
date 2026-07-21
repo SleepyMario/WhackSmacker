@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "THA-GRAMMAR-005"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Thai.",
-      "expert": "Support stays aligned to literal Chapter 5 target text and does not change canonical identity."
+      "normal": "In Mali and Non planning a market trip, you will use [[grammar:ไป + place + กันไหม]]. Use [[grammar:ไป ... กันไหม]] to suggest going somewhere together. วันนี้ไปตลาดกันไหมครับ asks about going to the market today. In the answer ซื้อผลไม้ที่ตลาดครับ, the object follows ซื้อ and the place follows it; do not front ที่ตลาด in this subjectless reply.",
+      "expert": "This chapter presents [[grammar:ไป + place + กันไหม]] in Mali and Non planning a market trip. Motion ไป plus destination, inclusive กัน, and polar particle ไหม forms the proposal. The reply uses an omitted discourse subject with ซื้อ + direct object ผลไม้ + locative adjunct ที่ตลาด, followed by polite ครับ."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:ไป + place + กันไหม]].",
-      "expert": "The canonical pattern [[grammar:ไป + place + กันไหม]] retains its language-specific analysis."
+      "normal": "Use [[grammar:ไป ... กันไหม]] to suggest going somewhere together. วันนี้ไปตลาดกันไหมครับ asks about going to the market today. In the answer ซื้อผลไม้ที่ตลาดครับ, the object follows ซื้อ and the place follows it; do not front ที่ตลาด in this subjectless reply.",
+      "expert": "Motion ไป plus destination, inclusive กัน, and polar particle ไหม forms the proposal. The reply uses an omitted discourse subject with ซื้อ + direct object ผลไม้ + locative adjunct ที่ตลาด, followed by polite ครับ."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Thai normally has no spaces between every word. Use the Thai-script word groups in the breakdown to find the parts, but keep the original sentence as your main reading.",
+      "expert": "The support segments the attested Thai script for reading assistance without romanization or invented tone notation. Polite particles and classifier syntax remain part of the grammatical analysis."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact thai line, then check its natural English meaning. Watch for [[grammar:ไป + place + กันไหม]] where it appears.\n\n- วันนี้ไปตลาดกันไหมครับ. — Shall we go to the market today?\n- ไปค่ะ ไปด้วยกัน. — Yes, let's go together.\n- ซื้อผลไม้ที่ตลาดครับ. — At the market we will buy fruit.\n- ซื้อกาแฟด้วยค่ะ. — Let's buy coffee too.\n- แล้วไปสวนกันครับ. — Then let's go to the park.\n- ดีค่ะ ไปตอนบ่าย. — Good; let's go in the afternoon.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:ไป + place + กันไหม]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- วันนี้ไปตลาดกันไหมครับ. — Shall we go to the market today?\n- ไปค่ะ ไปด้วยกัน. — Yes, let's go together.\n- ซื้อผลไม้ที่ตลาดครับ. — At the market we will buy fruit.\n- ซื้อกาแฟด้วยค่ะ. — Let's buy coffee too.\n- แล้วไปสวนกันครับ. — Then let's go to the park.\n- ดีค่ะ ไปตอนบ่าย. — Good; let's go in the afternoon."
+  },
   "readingItems": [
     {
       "sourceText": "วันนี้ไปตลาดกันไหมครับ.",
@@ -24,8 +37,8 @@
       "wordBoundaryGuide": "ไป ค่ะ ไป ด้วยกัน."
     },
     {
-      "sourceText": "ที่ตลาดซื้อผลไม้ครับ.",
-      "wordBoundaryGuide": "ที่ ตลาด ซื้อ ผลไม้ ครับ."
+      "sourceText": "ซื้อผลไม้ที่ตลาดครับ.",
+      "wordBoundaryGuide": "ซื้อ ผลไม้ ที่ ตลาด ครับ."
     },
     {
       "sourceText": "ซื้อกาแฟด้วยค่ะ.",

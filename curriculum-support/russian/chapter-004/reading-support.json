@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "RUS-GRAMMAR-004"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Ivan and Anna’s morning, you will use [[grammar:subject + verb + object]]. A basic statement can put the person first, the action second, and the object third. Иван ест хлеб follows this order. Russian word order can change with context, so use this as a clear starting pattern, not an unbreakable rule.",
+      "expert": "This chapter presents [[grammar:subject + verb + object]] in Ivan and Anna’s morning. The reading supplies neutral SVO clauses with present-tense agreement and accusative direct objects. Inanimate masculine хлеб is syncretic between nominative and accusative."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "A basic statement can put the person first, the action second, and the object third. Иван ест хлеб follows this order. Russian word order can change with context, so use this as a clear starting pattern, not an unbreakable rule.",
+      "expert": "The reading supplies neutral SVO clauses with present-tense agreement and accusative direct objects. Inanimate masculine хлеб is syncretic between nominative and accusative."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Keep Cyrillic as the main text. In the reading help, an acute accent marks the stressed vowel; the accent is a study mark and is not normally written in everyday Russian.",
+      "expert": "The support uses Cyrillic with a single acute accent on the stressed vowel of polysyllabic content words. It introduces no romanization and leaves monosyllables unmarked unless contrast requires it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact russian line, then check its natural English meaning. Watch for [[grammar:subject + verb + object]] where it appears.\n\n- Утром кухня тихая. — In the morning the kitchen is quiet.\n- На столе вода. — There is water on the table.\n- Иван ест хлеб. — Ivan eats bread.\n- Анна пьёт чай. — Anna drinks tea.\n- Она читает книгу. — She reads a book.\n- Потом они выходят из дома. — Then they leave the house.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:subject + verb + object]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Утром кухня тихая. — In the morning the kitchen is quiet.\n- На столе вода. — There is water on the table.\n- Иван ест хлеб. — Ivan eats bread.\n- Анна пьёт чай. — Anna drinks tea.\n- Она читает книгу. — She reads a book.\n- Потом они выходят из дома. — Then they leave the house."
+  },
+  "readingItems": [
+    {
+      "sourceText": "Утром кухня тихая.",
+      "stressedText": "У́тром ку́хня ти́хая"
+    },
+    {
+      "sourceText": "На столе вода.",
+      "stressedText": "На столе́ вода́"
+    },
+    {
+      "sourceText": "Иван ест хлеб.",
+      "stressedText": "Ива́н ест хлеб"
+    },
+    {
+      "sourceText": "Анна пьёт чай.",
+      "stressedText": "А́нна пьёт чай"
+    },
+    {
+      "sourceText": "Она читает книгу.",
+      "stressedText": "Она́ чита́ет кни́гу"
+    },
+    {
+      "sourceText": "Потом они выходят из дома.",
+      "stressedText": "Пото́м они́ выхо́дят из до́ма"
+    }
+  ]
+}

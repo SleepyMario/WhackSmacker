@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "JPN-GRAMMAR-004"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Japanese.",
-      "expert": "Support stays aligned to literal Chapter 4 target text and does not change canonical identity."
+      "normal": "In Aki and Yuki eating and reading at a café, you will use [[grammar:N + を + verb]]. Put [[grammar:を]] after the thing directly affected by the action, then put the verb at the end. 本を読みます means ‘read a book.’ A common mistake is to put を after the person doing the action.",
+      "expert": "This chapter presents [[grammar:N + を + verb]] in Aki and Yuki eating and reading at a café. Object particle を marks the direct object of polite nonpast predicates such as 飲みます, 食べます, and 読みます. 本を読みます has a discourse-supported omitted subject and no overt location adjunct."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:N + を + verb]].",
-      "expert": "The canonical pattern [[grammar:N + を + verb]] retains its language-specific analysis."
+      "normal": "Put [[grammar:を]] after the thing directly affected by the action, then put the verb at the end. 本を読みます means ‘read a book.’ A common mistake is to put を after the person doing the action.",
+      "expert": "Object particle を marks the direct object of polite nonpast predicates such as 飲みます, 食べます, and 読みます. 本を読みます has a discourse-supported omitted subject and no overt location adjunct."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Use the readings in the line-by-line help for unfamiliar kanji. Read the Japanese sentence first, then check the natural English meaning.",
+      "expert": "The reading uses standard polite です／ます style with discourse-supported argument omission. Kana readings identify the attested lexical forms without replacing the Japanese script."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact japanese line, then check its natural English meaning. Watch for [[grammar:N + を + verb]] where it appears.\n\n- ゆきは喫茶店にいます。 — Yuki is at a café.\n- コーヒーを飲みます。 — She drinks coffee.\n- あきはお茶を飲みます。 — Aki drinks tea.\n- 二人はケーキを食べます。 — The two eat cake.\n- 喫茶店は静かです。 — The café is quiet.\n- 本を読みます。 — They read a book.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:N + を + verb]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- ゆきは喫茶店にいます。 — Yuki is at a café.\n- コーヒーを飲みます。 — She drinks coffee.\n- あきはお茶を飲みます。 — Aki drinks tea.\n- 二人はケーキを食べます。 — The two eat cake.\n- 喫茶店は静かです。 — The café is quiet.\n- 本を読みます。 — They read a book."
+  },
   "readingItems": [
     {
       "surface": "喫茶店",
@@ -81,7 +94,7 @@
     {
       "surface": "読みます",
       "reading": "よみます",
-      "evidence": "窓の近くで本を読みます。",
+      "evidence": "本を読みます。",
       "lexicalEntryId": "ja.verb.yomu",
       "senseId": "ja.verb.yomu.read"
     }

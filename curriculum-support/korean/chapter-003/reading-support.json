@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-003"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In questions about nearby belongings, you will use [[grammar:이게 뭐예요]]?. Use [[grammar:이게 뭐예요]]? to politely ask what a nearby thing is. 이게 is the spoken contraction of 이것이: [[grammar:이것이 → 이게]]. Keep the dictionary headword 이것; do not learn the subject particle as part of the noun.",
+      "expert": "This chapter presents [[grammar:이게 뭐예요]]? in questions about nearby belongings. The surface subject 이게 contracts from 이것이, combining demonstrative 이것 with nominative 이. Interrogative 뭐 precedes polite copula 예요; contraction belongs to the grammatical occurrence, not the lexical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:이게 뭐예요]]? to politely ask what a nearby thing is. 이게 is the spoken contraction of 이것이: [[grammar:이것이 → 이게]]. Keep the dictionary headword 이것; do not learn the subject particle as part of the noun.",
+      "expert": "The surface subject 이게 contracts from 이것이, combining demonstrative 이것 with nominative 이. Interrogative 뭐 precedes polite copula 예요; contraction belongs to the grammatical occurrence, not the lexical identity."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
+      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact korean line, then check its natural English meaning. Watch for [[grammar:이게 뭐예요]]? where it appears.\n\n- 이게 뭐예요? — What is this?\n- 펜이에요. — It is a pen.\n- 이게 공책이에요? — Is this a notebook?\n- 네, 공책이에요. — Yes, it is a notebook.\n- 열쇠가 어디에 있어요? — Where is the key?\n- 휴대폰 옆에 있어요. — It is beside the mobile phone.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:이게 뭐예요]]?. The grammar section above analyzes the relevant morphology and syntax.\n\n- 이게 뭐예요? — What is this?\n- 펜이에요. — It is a pen.\n- 이게 공책이에요? — Is this a notebook?\n- 네, 공책이에요. — Yes, it is a notebook.\n- 열쇠가 어디에 있어요? — Where is the key?\n- 휴대폰 옆에 있어요. — It is beside the mobile phone."
+  }
+}

@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "THA-GRAMMAR-001"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Thai.",
-      "expert": "Support stays aligned to literal Chapter 1 target text and does not change canonical identity."
+      "normal": "In Mali and Non meeting politely, you will use [[grammar:ชื่อ + name + ครับ/ค่ะ]]. Use [[grammar:ชื่อ + name]] to give your name. End the statement with [[grammar:ครับ]] for Non or [[grammar:ค่ะ]] for Mali in this dialogue. Do not swap ครับ and ค่ะ between these speakers.",
+      "expert": "This chapter presents [[grammar:ชื่อ + name + ครับ/ค่ะ]] in Mali and Non meeting politely. Thai omits the recoverable first-person subject. ชื่อ functions predicatively with the name, while sex-indexed polite final particles ครับ and ค่ะ mark stance and speaker presentation."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:ชื่อ + name + ครับ/ค่ะ]].",
-      "expert": "The canonical pattern [[grammar:ชื่อ + name + ครับ/ค่ะ]] retains its language-specific analysis."
+      "normal": "Use [[grammar:ชื่อ + name]] to give your name. End the statement with [[grammar:ครับ]] for Non or [[grammar:ค่ะ]] for Mali in this dialogue. Do not swap ครับ and ค่ะ between these speakers.",
+      "expert": "Thai omits the recoverable first-person subject. ชื่อ functions predicatively with the name, while sex-indexed polite final particles ครับ and ค่ะ mark stance and speaker presentation."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Thai normally has no spaces between every word. Use the Thai-script word groups in the breakdown to find the parts, but keep the original sentence as your main reading.",
+      "expert": "The support segments the attested Thai script for reading assistance without romanization or invented tone notation. Polite particles and classifier syntax remain part of the grammatical analysis."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact thai line, then check its natural English meaning. Watch for [[grammar:ชื่อ + name + ครับ/ค่ะ]] where it appears.\n\n- สวัสดีค่ะ. — Hello.\n- สวัสดีครับ. — Hello.\n- ชื่อมาลีค่ะ. — My name is Mali.\n- ชื่อนนท์ครับ. — My name is Non.\n- เป็นนักเรียนค่ะ. — I am a student.\n- เป็นครูครับ. — I am a teacher.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:ชื่อ + name + ครับ/ค่ะ]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- สวัสดีค่ะ. — Hello.\n- สวัสดีครับ. — Hello.\n- ชื่อมาลีค่ะ. — My name is Mali.\n- ชื่อนนท์ครับ. — My name is Non.\n- เป็นนักเรียนค่ะ. — I am a student.\n- เป็นครูครับ. — I am a teacher."
+  },
   "readingItems": [
     {
       "sourceText": "สวัสดีค่ะ.",

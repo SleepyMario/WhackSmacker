@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "RUS-GRAMMAR-003"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Anna asking where belongings are, you will use [[grammar:Где + N]]?. Use [[grammar:Где]] before a thing to ask where it is. Где телефон? asks for a location. Что это? asks what something is, so do not swap где and что.",
+      "expert": "This chapter presents [[grammar:Где + N]]? in Anna asking where belongings are. Locative interrogative adverb где forms a verbless present location question. The replies use prepositional location phrases на столе and в сумке."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Где]] before a thing to ask where it is. Где телефон? asks for a location. Что это? asks what something is, so do not swap где and что.",
+      "expert": "Locative interrogative adverb где forms a verbless present location question. The replies use prepositional location phrases на столе and в сумке."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Keep Cyrillic as the main text. In the reading help, an acute accent marks the stressed vowel; the accent is a study mark and is not normally written in everyday Russian.",
+      "expert": "The support uses Cyrillic with a single acute accent on the stressed vowel of polysyllabic content words. It introduces no romanization and leaves monosyllables unmarked unless contrast requires it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact russian line, then check its natural English meaning. Watch for [[grammar:Где + N]]? where it appears.\n\n- Что это? — What is this?\n- Это ручка. — This is a pen.\n- Где телефон? — Where is the phone?\n- Телефон на столе. — The phone is on the table.\n- А где ключ? — And where is the key?\n- Ключ в сумке. — The key is in the bag.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Где + N]]?. The grammar section above analyzes the relevant morphology and syntax.\n\n- Что это? — What is this?\n- Это ручка. — This is a pen.\n- Где телефон? — Where is the phone?\n- Телефон на столе. — The phone is on the table.\n- А где ключ? — And where is the key?\n- Ключ в сумке. — The key is in the bag."
+  },
+  "readingItems": [
+    {
+      "sourceText": "Что это?",
+      "stressedText": "Что э́то"
+    },
+    {
+      "sourceText": "Это ручка.",
+      "stressedText": "Э́то ру́чка"
+    },
+    {
+      "sourceText": "Где телефон?",
+      "stressedText": "Где телефо́н"
+    },
+    {
+      "sourceText": "Телефон на столе.",
+      "stressedText": "Телефо́н на столе́"
+    },
+    {
+      "sourceText": "А где ключ?",
+      "stressedText": "А где ключ"
+    },
+    {
+      "sourceText": "Ключ в сумке.",
+      "stressedText": "Ключ в су́мке"
+    }
+  ]
+}

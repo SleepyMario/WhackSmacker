@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ZUL-GRAMMAR-004"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Thandi and Sipho’s morning routine, you will use [[grammar:u- + verb stem]]. Use subject marker [[grammar:u-]] on a present verb with one class 1 person such as uThandi. UThandi uphuza itiye means Thandi drinks tea. A common mistake is to separate u- from the verb in writing.",
+      "expert": "This chapter presents [[grammar:u- + verb stem]] in Thandi and Sipho’s morning routine. Class 1 subject concord u- appears on present indicative predicates uphuza, udla, ufunda, and uphatha with class 1 human subjects."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use subject marker [[grammar:u-]] on a present verb with one class 1 person such as uThandi. UThandi uphuza itiye means Thandi drinks tea. A common mistake is to separate u- from the verb in writing.",
+      "expert": "Class 1 subject concord u- appears on present indicative predicates uphuza, udla, ufunda, and uphatha with class 1 human subjects."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the joined isiZulu word as a whole, then use the explanation to notice its noun-class or subject-concord parts. Do not remove a concord from a sentence just because the English translation has no matching word.",
+      "expert": "The analysis treats concord-bearing surface words as morphosyntactic occurrences. Noun citation forms retain their noun-class prefix, and verbs retain the infinitive uku- citation form in lexical records."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact zulu line, then check its natural English meaning. Watch for [[grammar:u- + verb stem]] where it appears.\n\n- Ekuseni uThandi uphuza itiye. — In the morning Thandi drinks tea.\n- UThandi udla isinkwa. — Thandi eats bread.\n- Bese ufunda incwadi. — Then she reads a book.\n- USipho uphuza amanzi. — Sipho drinks water.\n- UThandi uphatha isikhwama. — Thandi carries a bag.\n- Baphuma ekhaya ndawonye. — They leave home together.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:u- + verb stem]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Ekuseni uThandi uphuza itiye. — In the morning Thandi drinks tea.\n- UThandi udla isinkwa. — Thandi eats bread.\n- Bese ufunda incwadi. — Then she reads a book.\n- USipho uphuza amanzi. — Sipho drinks water.\n- UThandi uphatha isikhwama. — Thandi carries a bag.\n- Baphuma ekhaya ndawonye. — They leave home together."
+  }
+}

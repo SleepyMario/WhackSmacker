@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-005"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Minji and Junho planning an outing, you will use [[grammar:같이 + place + 에 가요]]. Use [[grammar:같이]] with a destination marked by [[grammar:에 가요]] to suggest going together. 오늘 공원에 같이 가요 means ‘Let’s go to the park together today.’ Do not use 에 for the person accompanying you.",
+      "expert": "This chapter presents [[grammar:같이 + place + 에 가요]] in Minji and Junho planning an outing. Adverb 같이 modifies the motion event, destination 에 marks 공원 or 카페, and informal-polite 가요 closes the clause. The proposal reading arises pragmatically without a separate imperative form."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:같이]] with a destination marked by [[grammar:에 가요]] to suggest going together. 오늘 공원에 같이 가요 means ‘Let’s go to the park together today.’ Do not use 에 for the person accompanying you.",
+      "expert": "Adverb 같이 modifies the motion event, destination 에 marks 공원 or 카페, and informal-polite 가요 closes the clause. The proposal reading arises pragmatically without a separate imperative form."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
+      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact korean line, then check its natural English meaning. Watch for [[grammar:같이 + place + 에 가요]] where it appears.\n\n- 오늘 공원에 같이 가요. — Let's go to the park together today.\n- 좋아요. — Sounds good.\n- 공원은 집 근처예요. — The park is near home.\n- 그다음에 카페에 가요. — After that, let's go to a café.\n- 네, 같이 가요. — Yes, let's go together.\n- 세 시에 만나요. — Let's meet at three.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:같이 + place + 에 가요]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- 오늘 공원에 같이 가요. — Let's go to the park together today.\n- 좋아요. — Sounds good.\n- 공원은 집 근처예요. — The park is near home.\n- 그다음에 카페에 가요. — After that, let's go to a café.\n- 네, 같이 가요. — Yes, let's go together.\n- 세 시에 만나요. — Let's meet at three."
+  }
+}

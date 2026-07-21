@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "FRA-GRAMMAR-004"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Lina walking through Marc’s neighborhood, you will use [[grammar:près de + N]]. Use [[grammar:près de]] before the second place to say the first place is near it. La boulangerie est près du parc means the bakery is near the park. Remember that de + le becomes du.",
+      "expert": "This chapter presents [[grammar:près de + N]] in Lina walking through Marc’s neighborhood. The complex preposition près de selects a noun-phrase complement. Masculine singular de + le contracts obligatorily to du, while près de la maison shows the uncontracted feminine article."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:près de]] before the second place to say the first place is near it. La boulangerie est près du parc means the bakery is near the park. Remember that de + le becomes du.",
+      "expert": "The complex preposition près de selects a noun-phrase complement. Masculine singular de + le contracts obligatorily to du, while près de la maison shows the uncontracted feminine article."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the French aloud in short groups. Learn each noun with its article because the article helps you remember gender.",
+      "expert": "The examples use contemporary standard French with informal singular tu. Article-bearing citation forms preserve lexical gender, including explicit gender marking where elision hides it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact french line, then check its natural English meaning. Watch for [[grammar:près de + N]] where it appears.\n\n- La maison de Marc est dans une rue calme. — Marc's house is on a quiet street.\n- Un petit parc est près de la maison. — A small park is near the house.\n- La boulangerie est près du parc. — The bakery is near the park.\n- Lina marche dans la rue. — Lina walks along the street.\n- Elle regarde le petit parc. — She looks at the small park.\n- Puis elle rentre à la maison. — Then she goes home.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:près de + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- La maison de Marc est dans une rue calme. — Marc's house is on a quiet street.\n- Un petit parc est près de la maison. — A small park is near the house.\n- La boulangerie est près du parc. — The bakery is near the park.\n- Lina marche dans la rue. — Lina walks along the street.\n- Elle regarde le petit parc. — She looks at the small park.\n- Puis elle rentre à la maison. — Then she goes home."
+  }
+}

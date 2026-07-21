@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "JPN-GRAMMAR-003"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Japanese.",
-      "expert": "Support stays aligned to literal Chapter 3 target text and does not change canonical identity."
+      "normal": "In questions about nearby belongings, you will use [[grammar:これは何ですか]]. Use [[grammar:これは何ですか]] to politely ask what a nearby thing is. は marks これ as the topic and か marks the question. Do not omit か in this full polite pattern.",
+      "expert": "This chapter presents [[grammar:これは何ですか]] in questions about nearby belongings. The topic phrase これ + は precedes interrogative nominal 何 and polite copula です; final か marks interrogative force. 鍵はどこですか is a parallel topic question with a locative interrogative."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:これは何ですか]].",
-      "expert": "The canonical pattern [[grammar:これは何ですか]] retains its language-specific analysis."
+      "normal": "Use [[grammar:これは何ですか]] to politely ask what a nearby thing is. は marks これ as the topic and か marks the question. Do not omit か in this full polite pattern.",
+      "expert": "The topic phrase これ + は precedes interrogative nominal 何 and polite copula です; final か marks interrogative force. 鍵はどこですか is a parallel topic question with a locative interrogative."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Use the readings in the line-by-line help for unfamiliar kanji. Read the Japanese sentence first, then check the natural English meaning.",
+      "expert": "The reading uses standard polite です／ます style with discourse-supported argument omission. Kana readings identify the attested lexical forms without replacing the Japanese script."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact japanese line, then check its natural English meaning. Watch for [[grammar:これは何ですか]] where it appears.\n\n- これは何ですか。 — What is this?\n- ペンです。 — It is a pen.\n- これはノートですか。 — Is this a notebook?\n- はい、ノートです。 — Yes, it is a notebook.\n- 鍵はどこですか。 — Where is the key?\n- 鍵は携帯電話の横です。 — The key is beside the mobile phone.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:これは何ですか]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- これは何ですか。 — What is this?\n- ペンです。 — It is a pen.\n- これはノートですか。 — Is this a notebook?\n- はい、ノートです。 — Yes, it is a notebook.\n- 鍵はどこですか。 — Where is the key?\n- 鍵は携帯電話の横です。 — The key is beside the mobile phone."
+  },
   "readingItems": [
     {
       "surface": "これ",

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-001"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Minji and Junho meeting politely, you will use [[grammar:N은/는 — topic marking]]. Put [[grammar:은]] after a consonant sound and [[grammar:는]] after a vowel sound to mark the topic. 저는 is 저 + 는. Structural gloss: ‘as for me.’ Natural English: ‘I.’ Do not translate 은/는 as a separate English word every time.",
+      "expert": "This chapter presents [[grammar:N은/는 — topic marking]] in Minji and Junho meeting politely. 은/는 marks a discourse topic in topic–comment structure, with phonologically conditioned allomorphy. 저는 decomposes as 저 + 는; the copula separately alternates between 이에요 and 예요."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Put [[grammar:은]] after a consonant sound and [[grammar:는]] after a vowel sound to mark the topic. 저는 is 저 + 는. Structural gloss: ‘as for me.’ Natural English: ‘I.’ Do not translate 은/는 as a separate English word every time.",
+      "expert": "은/는 marks a discourse topic in topic–comment structure, with phonologically conditioned allomorphy. 저는 decomposes as 저 + 는; the copula separately alternates between 이에요 and 예요."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
+      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact korean line, then check its natural English meaning. Watch for [[grammar:N은/는 — topic marking]] where it appears.\n\n- 안녕하세요. — Hello.\n- 안녕하세요. — Hello.\n- 저는 민지예요. — I am Minji.\n- 저는 준호예요. — I am Junho.\n- 학생이에요. — I am a student.\n- 네, 저는 선생님이에요. — Yes, I am a teacher.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:N은/는 — topic marking]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- 안녕하세요. — Hello.\n- 안녕하세요. — Hello.\n- 저는 민지예요. — I am Minji.\n- 저는 준호예요. — I am Junho.\n- 학생이에요. — I am a student.\n- 네, 저는 선생님이에요. — Yes, I am a teacher."
+  }
+}

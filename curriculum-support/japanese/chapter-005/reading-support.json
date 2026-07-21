@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "JPN-GRAMMAR-005"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Japanese.",
-      "expert": "Support stays aligned to literal Chapter 5 target text and does not change canonical identity."
+      "normal": "In an invitation to the park, you will use [[grammar:place + へ + 行きませんか]]. Use [[grammar:へ行きませんか]] after a place to invite someone to go there. 明日、公園へ行きませんか is a gentle invitation. Read へ as え here, and do not translate the negative form as a simple refusal.",
+      "expert": "This chapter presents [[grammar:place + へ + 行きませんか]] in an invitation to the park. Destination particle へ precedes polite negative interrogative 行きませんか, conventionally interpreted as an invitation. The affirmative 行きます in the response and later plan retains the same motion predicate."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:place + へ + 行きませんか]].",
-      "expert": "The canonical pattern [[grammar:place + へ + 行きませんか]] retains its language-specific analysis."
+      "normal": "Use [[grammar:へ行きませんか]] after a place to invite someone to go there. 明日、公園へ行きませんか is a gentle invitation. Read へ as え here, and do not translate the negative form as a simple refusal.",
+      "expert": "Destination particle へ precedes polite negative interrogative 行きませんか, conventionally interpreted as an invitation. The affirmative 行きます in the response and later plan retains the same motion predicate."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Use the readings in the line-by-line help for unfamiliar kanji. Read the Japanese sentence first, then check the natural English meaning.",
+      "expert": "The reading uses standard polite です／ます style with discourse-supported argument omission. Kana readings identify the attested lexical forms without replacing the Japanese script."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact japanese line, then check its natural English meaning. Watch for [[grammar:place + へ + 行きませんか]] where it appears.\n\n- 明日、公園へ行きませんか。 — Would you like to go to the park tomorrow?\n- はい、一緒に行きます。 — Yes, I will go with you.\n- 公園は駅の近くです。 — The park is near the station.\n- いいですね。 — That sounds good.\n- そのあと、喫茶店へ行きます。 — After that, we will go to the café.\n- はい、楽しみです。 — Yes, I am looking forward to it.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:place + へ + 行きませんか]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- 明日、公園へ行きませんか。 — Would you like to go to the park tomorrow?\n- はい、一緒に行きます。 — Yes, I will go with you.\n- 公園は駅の近くです。 — The park is near the station.\n- いいですね。 — That sounds good.\n- そのあと、喫茶店へ行きます。 — After that, we will go to the café.\n- はい、楽しみです。 — Yes, I am looking forward to it."
+  },
   "readingItems": [
     {
       "surface": "明日",

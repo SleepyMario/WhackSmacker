@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ARA-GRAMMAR-004"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Sami’s morning routine, you will use [[grammar:يَفْعَلُ + subject]]. A present verb can come before the person doing the action. In يَشْرَبُ سَامِي مَاءً, [[grammar:يَشْرَبُ سَامِي]] means ‘Sami drinks.’ Keep the verb matched to the subject; do not treat سَامِي as the object.",
+      "expert": "This chapter presents [[grammar:يَفْعَلُ + subject]] in Sami’s morning routine. The chapter supplies elementary VSO clauses with third-person masculine singular imperfect verbs. In يَشْرَبُ سَامِي مَاءً, سَامِي is the nominative postverbal subject and مَاءً the accusative object."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "A present verb can come before the person doing the action. In يَشْرَبُ سَامِي مَاءً, [[grammar:يَشْرَبُ سَامِي]] means ‘Sami drinks.’ Keep the verb matched to the subject; do not treat سَامِي as the object.",
+      "expert": "The chapter supplies elementary VSO clauses with third-person masculine singular imperfect verbs. In يَشْرَبُ سَامِي مَاءً, سَامِي is the nominative postverbal subject and مَاءً the accusative object."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The Arabic lines are in Modern Standard Arabic. The vowel marks show short vowels and case endings, so read every marked vowel instead of guessing from the bare consonants.",
+      "expert": "The reading uses fully vocalized Modern Standard Arabic. Lexical citation forms follow the established perfect-stem convention for verbs, while the learner text preserves the attested inflected form and case vocalization."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact arabic line, then check its natural English meaning. Watch for [[grammar:يَفْعَلُ + subject]] where it appears.\n\n- يَسْتَيْقِظُ سَامِي صَبَاحًا. — Sami wakes up in the morning.\n- يَشْرَبُ سَامِي مَاءً. — Sami drinks water.\n- يَأْكُلُ سَامِي خُبْزًا. — Sami eats bread.\n- يَقْرَأُ سَامِي كِتَابًا. — Sami reads a book.\n- ثُمَّ يَأْخُذُ الْقَلَمَ. — Then he takes the pen.\n- وَيَذْهَبُ إِلَى الْمَكْتَبِ. — And he goes to the desk.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:يَفْعَلُ + subject]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- يَسْتَيْقِظُ سَامِي صَبَاحًا. — Sami wakes up in the morning.\n- يَشْرَبُ سَامِي مَاءً. — Sami drinks water.\n- يَأْكُلُ سَامِي خُبْزًا. — Sami eats bread.\n- يَقْرَأُ سَامِي كِتَابًا. — Sami reads a book.\n- ثُمَّ يَأْخُذُ الْقَلَمَ. — Then he takes the pen.\n- وَيَذْهَبُ إِلَى الْمَكْتَبِ. — And he goes to the desk."
+  }
+}

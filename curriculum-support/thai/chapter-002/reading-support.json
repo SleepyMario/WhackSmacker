@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "THA-GRAMMAR-002"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Thai.",
-      "expert": "Support stays aligned to literal Chapter 2 target text and does not change canonical identity."
+      "normal": "In counting the things in Mali’s room, you will use [[grammar:N + numeral + classifier]]. Put the noun first, the number next, and the right [[grammar:classifier]] last. หนังสือหนึ่งเล่ม means ‘one book.’ Use เล่ม for the book and ตัว for furniture; do not copy one classifier for every noun.",
+      "expert": "This chapter presents [[grammar:N + numeral + classifier]] in counting the things in Mali’s room. The chapter uses noun–numeral–classifier order. The selected classifiers are lexically conditioned: ห้อง for rooms, ตัว for furniture, เล่ม for books, and แก้ว for a serving vessel of water."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:N + numeral + classifier]].",
-      "expert": "The canonical pattern [[grammar:N + numeral + classifier]] retains its language-specific analysis."
+      "normal": "Put the noun first, the number next, and the right [[grammar:classifier]] last. หนังสือหนึ่งเล่ม means ‘one book.’ Use เล่ม for the book and ตัว for furniture; do not copy one classifier for every noun.",
+      "expert": "The chapter uses noun–numeral–classifier order. The selected classifiers are lexically conditioned: ห้อง for rooms, ตัว for furniture, เล่ม for books, and แก้ว for a serving vessel of water."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Thai normally has no spaces between every word. Use the Thai-script word groups in the breakdown to find the parts, but keep the original sentence as your main reading.",
+      "expert": "The support segments the attested Thai script for reading assistance without romanization or invented tone notation. Polite particles and classifier syntax remain part of the grammatical analysis."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact thai line, then check its natural English meaning. Watch for [[grammar:N + numeral + classifier]] where it appears.\n\n- บ้านของมาลีมีห้องหนึ่งห้อง. — Mali's house has one room.\n- ในห้องมีโต๊ะหนึ่งตัว. — There is one table in the room.\n- บนโต๊ะมีหนังสือหนึ่งเล่ม. — There is one book on the table.\n- ข้างโต๊ะมีเก้าอี้หนึ่งตัว. — There is one chair beside the table.\n- มีน้ำหนึ่งแก้ว. — There is one glass of water.\n- ห้องนี้เงียบ. — This room is quiet.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:N + numeral + classifier]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- บ้านของมาลีมีห้องหนึ่งห้อง. — Mali's house has one room.\n- ในห้องมีโต๊ะหนึ่งตัว. — There is one table in the room.\n- บนโต๊ะมีหนังสือหนึ่งเล่ม. — There is one book on the table.\n- ข้างโต๊ะมีเก้าอี้หนึ่งตัว. — There is one chair beside the table.\n- มีน้ำหนึ่งแก้ว. — There is one glass of water.\n- ห้องนี้เงียบ. — This room is quiet."
+  },
   "readingItems": [
     {
       "sourceText": "บ้านของมาลีมีห้องหนึ่งห้อง.",

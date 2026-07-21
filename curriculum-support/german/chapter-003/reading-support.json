@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "GER-GRAMMAR-003"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Mia asking where belongings are, you will use [[grammar:Wo ist + N]]?. Use [[grammar:Wo ist]] before one thing to ask where it is. Wo ist das Handy? asks for a location. Use Was ist das? for identity, so do not swap wo and was.",
+      "expert": "This chapter presents [[grammar:Wo ist + N]]? in Mia asking where belongings are. Locative interrogative wo occupies the first field, finite ist occupies the second, and the nominative subject follows. This is a regular V2 content question."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Wo ist]] before one thing to ask where it is. Wo ist das Handy? asks for a location. Use Was ist das? for identity, so do not swap wo and was.",
+      "expert": "Locative interrogative wo occupies the first field, finite ist occupies the second, and the nominative subject follows. This is a regular V2 content question."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "German nouns begin with capital letters. Learn each noun with der, die, or das, and watch where the finite verb goes in each sentence.",
+      "expert": "The reading uses contemporary standard German. Noun citation forms retain nominative gender articles, while running text shows the case forms required by syntax."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact german line, then check its natural English meaning. Watch for [[grammar:Wo ist + N]]? where it appears.\n\n- Was ist das? — What is that?\n- Das ist ein Stift. — That is a pen.\n- Wo ist das Handy? — Where is the phone?\n- Das Handy ist in der Tasche. — The phone is in the bag.\n- Und wo ist der Schlüssel? — And where is the key?\n- Der Schlüssel ist auf dem Tisch. — The key is on the table.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Wo ist + N]]?. The grammar section above analyzes the relevant morphology and syntax.\n\n- Was ist das? — What is that?\n- Das ist ein Stift. — That is a pen.\n- Wo ist das Handy? — Where is the phone?\n- Das Handy ist in der Tasche. — The phone is in the bag.\n- Und wo ist der Schlüssel? — And where is the key?\n- Der Schlüssel ist auf dem Tisch. — The key is on the table."
+  }
+}

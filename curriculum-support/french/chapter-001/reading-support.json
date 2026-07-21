@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "FRA-GRAMMAR-001"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Lina and Marc meeting as neighbors, you will use [[grammar:Je suis + N]]. Use [[grammar:Je suis]] before your name or role. Je suis étudiante means ‘I am a student.’ Profession nouns usually have no article here, so do not say Je suis une étudiante for this simple role statement.",
+      "expert": "This chapter presents [[grammar:Je suis + N]] in Lina and Marc meeting as neighbors. The clause contains subject clitic je, first-person singular finite copula suis, and a nominal predicate. Profession predicates normally occur without a determiner; lexical gender remains visible in the citation form."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Je suis]] before your name or role. Je suis étudiante means ‘I am a student.’ Profession nouns usually have no article here, so do not say Je suis une étudiante for this simple role statement.",
+      "expert": "The clause contains subject clitic je, first-person singular finite copula suis, and a nominal predicate. Profession predicates normally occur without a determiner; lexical gender remains visible in the citation form."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the French aloud in short groups. Learn each noun with its article because the article helps you remember gender.",
+      "expert": "The examples use contemporary standard French with informal singular tu. Article-bearing citation forms preserve lexical gender, including explicit gender marking where elision hides it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact french line, then check its natural English meaning. Watch for [[grammar:Je suis + N]] where it appears.\n\n- Bonjour ! — Hello!\n- Salut ! — Hi!\n- Je suis Lina. — I am Lina.\n- Je suis Marc, ton voisin. — I am Marc, your neighbor.\n- Je suis étudiante. — I am a student.\n- Enchanté, je suis cuisinier. — Nice to meet you; I am a cook.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Je suis + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Bonjour ! — Hello!\n- Salut ! — Hi!\n- Je suis Lina. — I am Lina.\n- Je suis Marc, ton voisin. — I am Marc, your neighbor.\n- Je suis étudiante. — I am a student.\n- Enchanté, je suis cuisinier. — Nice to meet you; I am a cook."
+  }
+}

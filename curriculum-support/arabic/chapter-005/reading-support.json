@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ARA-GRAMMAR-005"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Layla and Sami’s café plan, you will use [[grammar:أُرِيدُ + N]]. Use [[grammar:أُرِيدُ]] before the thing you want. In أُرِيدُ قَهْوَةً, the speaker wants coffee. Do not use the third-person verb form when you mean ‘I want.’",
+      "expert": "This chapter presents [[grammar:أُرِيدُ + N]] in Layla and Sami’s café plan. أُرِيدُ is a first-person singular imperfect transitive verb with an accusative noun-phrase complement. وَأَنَا adds a coordinated topic, while نَذْهَبُ is a separately inflected occurrence of the already tracked verb ذَهَبَ."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:أُرِيدُ]] before the thing you want. In أُرِيدُ قَهْوَةً, the speaker wants coffee. Do not use the third-person verb form when you mean ‘I want.’",
+      "expert": "أُرِيدُ is a first-person singular imperfect transitive verb with an accusative noun-phrase complement. وَأَنَا adds a coordinated topic, while نَذْهَبُ is a separately inflected occurrence of the already tracked verb ذَهَبَ."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The Arabic lines are in Modern Standard Arabic. The vowel marks show short vowels and case endings, so read every marked vowel instead of guessing from the bare consonants.",
+      "expert": "The reading uses fully vocalized Modern Standard Arabic. Lexical citation forms follow the established perfect-stem convention for verbs, while the learner text preserves the attested inflected form and case vocalization."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact arabic line, then check its natural English meaning. Watch for [[grammar:أُرِيدُ + N]] where it appears.\n\n- أُرِيدُ قَهْوَةً. — I want coffee.\n- وَأَنَا أُرِيدُ شَايًا. — And I want tea.\n- هَلْ نَذْهَبُ إِلَى الْمَقْهَى؟ — Shall we go to the café?\n- نَعَمْ، نَذْهَبُ الْيَوْمَ. — Yes, we are going today.\n- الْمَقْهَى قُرْبَ الْبَيْتِ. — The café is near the house.\n- جَيِّدٌ، هَيَّا بِنَا. — Good, let's go.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:أُرِيدُ + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- أُرِيدُ قَهْوَةً. — I want coffee.\n- وَأَنَا أُرِيدُ شَايًا. — And I want tea.\n- هَلْ نَذْهَبُ إِلَى الْمَقْهَى؟ — Shall we go to the café?\n- نَعَمْ، نَذْهَبُ الْيَوْمَ. — Yes, we are going today.\n- الْمَقْهَى قُرْبَ الْبَيْتِ. — The café is near the house.\n- جَيِّدٌ، هَيَّا بِنَا. — Good, let's go."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ARA-GRAMMAR-001"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a first meeting, you will use [[grammar:أَنَا + N]]. Use [[grammar:أَنَا]] before a name or role noun to say who you are. Arabic has no present-tense word for ‘am’ in this pattern. In أَنَا طَالِبَةٌ, طَالِبَةٌ is the role. Do not add an Arabic word for ‘am’.",
+      "expert": "This chapter presents [[grammar:أَنَا + N]] in a first meeting. This is a first-person verbless nominal clause: أَنَا is the subject and the following nominative nominal is the predicate. Natural English supplies ‘am,’ but the Arabic present clause has zero copula."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:أَنَا]] before a name or role noun to say who you are. Arabic has no present-tense word for ‘am’ in this pattern. In أَنَا طَالِبَةٌ, طَالِبَةٌ is the role. Do not add an Arabic word for ‘am’.",
+      "expert": "This is a first-person verbless nominal clause: أَنَا is the subject and the following nominative nominal is the predicate. Natural English supplies ‘am,’ but the Arabic present clause has zero copula."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The Arabic lines are in Modern Standard Arabic. The vowel marks show short vowels and case endings, so read every marked vowel instead of guessing from the bare consonants.",
+      "expert": "The reading uses fully vocalized Modern Standard Arabic. Lexical citation forms follow the established perfect-stem convention for verbs, while the learner text preserves the attested inflected form and case vocalization."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact arabic line, then check its natural English meaning. Watch for [[grammar:أَنَا + N]] where it appears.\n\n- مَرْحَبًا. — Hello.\n- أَهْلًا. — Hello.\n- أَنَا لَيْلَى. — I am Layla.\n- أَنَا سَامِي. — I am Sami.\n- أَنَا طَالِبَةٌ. — I am a female student.\n- نَعَمْ، أَنَا طَالِبٌ. — Yes, I am a male student.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:أَنَا + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- مَرْحَبًا. — Hello.\n- أَهْلًا. — Hello.\n- أَنَا لَيْلَى. — I am Layla.\n- أَنَا سَامِي. — I am Sami.\n- أَنَا طَالِبَةٌ. — I am a female student.\n- نَعَمْ، أَنَا طَالِبٌ. — Yes, I am a male student."
+  }
+}

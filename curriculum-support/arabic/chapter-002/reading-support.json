@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ARA-GRAMMAR-002"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a description of Layla’s room, you will use [[grammar:فِي + place]]. Put [[grammar:فِي]] before a place to mean ‘in.’ In فِي الْغُرْفَةِ مَكْتَبٌ, الْغُرْفَةِ is the place and مَكْتَبٌ is what is there. Do not put فِي after the place.",
+      "expert": "This chapter presents [[grammar:فِي + place]] in a description of Layla’s room. The preposition فِي heads a locative prepositional phrase and assigns genitive case to الْغُرْفَةِ. The postposed indefinite مَكْتَبٌ is the nominative theme of the verbless existential clause."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Put [[grammar:فِي]] before a place to mean ‘in.’ In فِي الْغُرْفَةِ مَكْتَبٌ, الْغُرْفَةِ is the place and مَكْتَبٌ is what is there. Do not put فِي after the place.",
+      "expert": "The preposition فِي heads a locative prepositional phrase and assigns genitive case to الْغُرْفَةِ. The postposed indefinite مَكْتَبٌ is the nominative theme of the verbless existential clause."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The Arabic lines are in Modern Standard Arabic. The vowel marks show short vowels and case endings, so read every marked vowel instead of guessing from the bare consonants.",
+      "expert": "The reading uses fully vocalized Modern Standard Arabic. Lexical citation forms follow the established perfect-stem convention for verbs, while the learner text preserves the attested inflected form and case vocalization."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact arabic line, then check its natural English meaning. Watch for [[grammar:فِي + place]] where it appears.\n\n- هَذِهِ غُرْفَةُ لَيْلَى. — This is Layla's room.\n- الْغُرْفَةُ فِي الْبَيْتِ. — The room is in the house.\n- فِي الْغُرْفَةِ مَكْتَبٌ. — There is a desk in the room.\n- عَلَى الْمَكْتَبِ كِتَابٌ. — There is a book on the desk.\n- قُرْبَ الْمَكْتَبِ كُرْسِيٌّ. — There is a chair near the desk.\n- فِي الْغُرْفَةِ قَلَمٌ. — There is a pen in the room.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:فِي + place]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- هَذِهِ غُرْفَةُ لَيْلَى. — This is Layla's room.\n- الْغُرْفَةُ فِي الْبَيْتِ. — The room is in the house.\n- فِي الْغُرْفَةِ مَكْتَبٌ. — There is a desk in the room.\n- عَلَى الْمَكْتَبِ كِتَابٌ. — There is a book on the desk.\n- قُرْبَ الْمَكْتَبِ كُرْسِيٌّ. — There is a chair near the desk.\n- فِي الْغُرْفَةِ قَلَمٌ. — There is a pen in the room."
+  }
+}

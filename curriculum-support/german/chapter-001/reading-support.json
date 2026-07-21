@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "GER-GRAMMAR-001"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Mia and Jonas meeting as neighbors, you will use [[grammar:Ich bin + N]]. Use [[grammar:Ich bin]] before your name or role. Ich bin Studentin means ‘I am a student.’ A profession has no article here, so do not add eine before Studentin.",
+      "expert": "This chapter presents [[grammar:Ich bin + N]] in Mia and Jonas meeting as neighbors. The clause contains nominative subject ich, first-person singular finite copula bin, and a nominal predicate. Profession nouns are bare in this predicative use while retaining lexical gender."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Ich bin]] before your name or role. Ich bin Studentin means ‘I am a student.’ A profession has no article here, so do not add eine before Studentin.",
+      "expert": "The clause contains nominative subject ich, first-person singular finite copula bin, and a nominal predicate. Profession nouns are bare in this predicative use while retaining lexical gender."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "German nouns begin with capital letters. Learn each noun with der, die, or das, and watch where the finite verb goes in each sentence.",
+      "expert": "The reading uses contemporary standard German. Noun citation forms retain nominative gender articles, while running text shows the case forms required by syntax."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact german line, then check its natural English meaning. Watch for [[grammar:Ich bin + N]] where it appears.\n\n- Hallo! — Hello!\n- Guten Tag! — Good day!\n- Ich bin Mia. — I am Mia.\n- Ich bin Jonas, dein Nachbar. — I am Jonas, your neighbor.\n- Ich bin Studentin. — I am a student.\n- Schön, ich bin Bäcker. — Nice; I am a baker.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Ich bin + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Hallo! — Hello!\n- Guten Tag! — Good day!\n- Ich bin Mia. — I am Mia.\n- Ich bin Jonas, dein Nachbar. — I am Jonas, your neighbor.\n- Ich bin Studentin. — I am a student.\n- Schön, ich bin Bäcker. — Nice; I am a baker."
+  }
+}

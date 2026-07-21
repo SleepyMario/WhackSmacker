@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "SPA-GRAMMAR-003"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In questions about nearby belongings, you will use [[grammar:¿Qué es esto]]?. Use [[grammar:¿Qué es esto]]? to ask what a nearby thing is. Keep the written accent on qué and both question marks. Do not use dónde when you want identity rather than location.",
+      "expert": "This chapter presents [[grammar:¿Qué es esto]]? in questions about nearby belongings. Interrogative pronoun qué bears an accent and precedes finite copula es plus neutral demonstrative esto. The location question ¿Dónde está la llave? instead selects estar."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:¿Qué es esto]]? to ask what a nearby thing is. Keep the written accent on qué and both question marks. Do not use dónde when you want identity rather than location.",
+      "expert": "Interrogative pronoun qué bears an accent and precedes finite copula es plus neutral demonstrative esto. The location question ¿Dónde está la llave? instead selects estar."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Spanish punctuation with the sentence: ¿ starts a question and ¡ starts an exclamation. Learn nouns with el or la when an article is shown.",
+      "expert": "The reading uses broadly intelligible contemporary Spanish with tú as neutral informal singular address. Null subjects and article-bearing citation forms are analyzed only where attested."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact spanish line, then check its natural English meaning. Watch for [[grammar:¿Qué es esto]]? where it appears.\n\n- ¿Qué es esto? — What is this?\n- Es un bolígrafo. — It is a pen.\n- ¿Esto es un teléfono? — Is this a phone?\n- Sí, es un teléfono. — Yes, it is a phone.\n- ¿Dónde está la llave? — Where is the key?\n- La llave está en la mochila. — The key is in the backpack.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:¿Qué es esto]]?. The grammar section above analyzes the relevant morphology and syntax.\n\n- ¿Qué es esto? — What is this?\n- Es un bolígrafo. — It is a pen.\n- ¿Esto es un teléfono? — Is this a phone?\n- Sí, es un teléfono. — Yes, it is a phone.\n- ¿Dónde está la llave? — Where is the key?\n- La llave está en la mochila. — The key is in the backpack."
+  }
+}

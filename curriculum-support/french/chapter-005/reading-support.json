@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "FRA-GRAMMAR-005"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a plan to shop at the market, you will use [[grammar:On va + infinitif]]. Use [[grammar:On va]] followed by an infinitive for a shared plan. On va acheter des tomates means ‘We are going to buy tomatoes.’ Do not confuse this with on va au marché, where au marks a destination.",
+      "expert": "This chapter presents [[grammar:On va + infinitif]] in a plan to shop at the market. Conversational on has first-person plural reference. Finite va plus a bare infinitive forms the aller periphrasis; va au marché instead contains the contracted destination phrase à + le."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:On va]] followed by an infinitive for a shared plan. On va acheter des tomates means ‘We are going to buy tomatoes.’ Do not confuse this with on va au marché, where au marks a destination.",
+      "expert": "Conversational on has first-person plural reference. Finite va plus a bare infinitive forms the aller periphrasis; va au marché instead contains the contracted destination phrase à + le."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the French aloud in short groups. Learn each noun with its article because the article helps you remember gender.",
+      "expert": "The examples use contemporary standard French with informal singular tu. Article-bearing citation forms preserve lexical gender, including explicit gender marking where elision hides it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact french line, then check its natural English meaning. Watch for [[grammar:On va + infinitif]] where it appears.\n\n- On va au marché demain ? — Shall we go to the market tomorrow?\n- Oui, on va acheter des tomates. — Yes, we are going to buy tomatoes.\n- Je veux aussi des fruits. — I also want some fruit.\n- D'accord, le marché est près du parc. — Okay, the market is near the park.\n- On part le matin ? — Shall we leave in the morning?\n- Oui, à neuf heures. — Yes, at nine o'clock.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:On va + infinitif]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- On va au marché demain ? — Shall we go to the market tomorrow?\n- Oui, on va acheter des tomates. — Yes, we are going to buy tomatoes.\n- Je veux aussi des fruits. — I also want some fruit.\n- D'accord, le marché est près du parc. — Okay, the market is near the park.\n- On part le matin ? — Shall we leave in the morning?\n- Oui, à neuf heures. — Yes, at nine o'clock."
+  }
+}

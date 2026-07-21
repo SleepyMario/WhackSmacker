@@ -22,7 +22,7 @@ const configs = [
   ["russian", "Russian", "ru", "RUS", 52, 104],
   ["spanish", "Spanish", "es", "SPA", 56, 112],
   ["thai", "Thai", "th", "THA", 52, 104],
-  ["zulu", "Zulu", "zu", "ZUL", 43, 86]
+  ["zulu", "Zulu", "zu", "ZUL", 42, 84]
 ].map(([slug, name, code, prefix, senses, cards]) => ({ slug, name, code, prefix, senses, cards, core: `${slug}-core` }));
 
 for (const config of configs) {
@@ -183,19 +183,19 @@ test("repaired French, German, Russian, Spanish, Thai, and Zulu grammar examples
     };
   };
   const french = await summaries("french");
-  assert.match(french.easy, /Example: `On va acheter des tomates\.`/u);
+  assert.match(french.easy, /Example: On va acheter des tomates\./u);
   assert.match(french.hard, /Profession predicates.*omit the article/su);
-  assert.doesNotMatch(french.hard, /Example: `On va au marché demain \?`/u);
+  assert.doesNotMatch(french.hard, /Example: On va au marché demain \?/u);
   const german = await summaries("german");
-  assert.match(german.easy, /Example: `Wo ist das Handy\?`/u);
+  assert.match(german.easy, /Example: Wo ist das Handy\?/u);
   assert.match(german.hard, /polar question.*verb-first order/su);
   assert.doesNotMatch(german.easy, /Heute \+ Verb \+ subject/u);
   const russian = await summaries("russian");
-  assert.match(russian.easy, /Example: `Где телефон\?`/u);
-  assert.match(russian.easy, /Example: `Иван ест хлеб\.`/u);
-  assert.doesNotMatch(russian.easy, /Example: `На столе вода\.`/u);
+  assert.match(russian.easy, /Example: Где телефон\?/u);
+  assert.match(russian.easy, /Example: Иван ест хлеб\./u);
+  assert.doesNotMatch(russian.easy, /Example: На столе вода\./u);
   const spanish = await summaries("spanish");
-  assert.match(spanish.easy, /Example: `Vamos a comprar fruta\.`/u);
+  assert.match(spanish.easy, /Example: Vamos a comprar fruta\./u);
   assert.match(spanish.hard, /el agua.*remains feminine/su);
   const thai = await summaries("thai");
   assert.match(thai.easy, /subject \+ verb \+ object/u);
@@ -203,10 +203,10 @@ test("repaired French, German, Russian, Spanish, Thai, and Zulu grammar examples
   assert.doesNotMatch(thai.easy, /subject \+ object \+ verb/u);
   const zulu = await summaries("zulu");
   for (const text of [zulu.easy, zulu.hard]) {
-    assert.match(text, /Example: `Likuphi ipeni\?`/u);
-    assert.match(text, /Example: `UThandi uphatha isikhwama\.`/u);
-    assert.match(text, /Example: `Asihambe manje\.`/u);
-    assert.doesNotMatch(text, /Example: `Yini le\?`/u);
+    assert.match(text, /Example: Likuphi ipeni\?/u);
+    assert.match(text, /Example: UThandi uphatha isikhwama\./u);
+    assert.match(text, /Example: Asihambe manje\./u);
+    assert.doesNotMatch(text, /Example: Yini le\?/u);
   }
 });
 
@@ -257,6 +257,36 @@ test("Japanese and Thai core sidecars provide exact noninvented reading support"
   assert.equal(japaneseItems, 44);
   assert.deepEqual(japaneseSenseIds, new Set(Object.values(reconstructed.languages.japanese.chapters).flatMap((chapter) => chapter.senses.map((sense) => sense.senseId))));
   assert.equal(thaiItems, 30);
+});
+
+test("canonical headwords require an explicit mapping from contracted or locative surface forms", async () => {
+  const requireSurfaceMapping = ({ canonical, surface, mapping, isInflectedSurface }) => {
+    if (isInflectedSurface && (!mapping.includes(canonical) || !mapping.includes(surface))) {
+      throw new Error(`surface ${surface} is not explicitly mapped to canonical ${canonical}`);
+    }
+  };
+  assert.throws(() => requireSurfaceMapping({ canonical: "이게", surface: "이게", mapping: "", isInflectedSurface: true }), /canonical/u);
+  assert.throws(() => requireSurfaceMapping({ canonical: "emakethe", surface: "emakethe", mapping: "", isInflectedSurface: true }), /canonical/u);
+
+  const korean = await readFile(join(root, "korean-curriculum", "units", "korean-core", "chapter-003-what-is-this", "chapter.md"), "utf8");
+  const zulu = await readFile(join(root, "zulu-curriculum", "units", "zulu-core", "chapter-005-a-shared-plan", "chapter.md"), "utf8");
+  assert.match(korean, /\| 이것 \|[\s\S]*이것이 → 이게/u);
+  assert.doesNotMatch(korean, /`ko\.demonstrative\.ige`(?:\.|`)/u);
+  assert.match(zulu, /\| imakethe \(surface locative: emakethe\) \|[\s\S]*surface locatives `emakethe`/u);
+  assert.match(zulu, /\| ipaki \(surface locative: epaki\) \|[\s\S]*`epaki`/u);
+});
+
+test("learner-facing action-location grammar cannot remain undeclared", async () => {
+  const validateJapaneseActionLocation = (reading, grammar) => {
+    if (/近くで/u.test(reading) && !/(?:action-location|場所.*で|で.*action)/iu.test(grammar)) {
+      throw new Error("learner-facing action-location で is undeclared");
+    }
+  };
+  assert.throws(() => validateJapaneseActionLocation("窓の近くで本を読みます。", "N + を + verb"), /undeclared/u);
+  const chapter = await readFile(join(root, "japanese-curriculum", "units", "japanese-core", "chapter-004-at-the-cafe", "chapter.md"), "utf8");
+  const easy = await readFile(join(root, "japanese-curriculum", "units", "japanese-core", "chapter-001-005-grammar-easy", "chapter.md"), "utf8");
+  assert.doesNotThrow(() => validateJapaneseActionLocation(primaryReading(chapter).join("\n"), easy));
+  assert.doesNotMatch(primaryReading(chapter).join("\n"), /近くで/u);
 });
 
 test("follower metadata relates every Review deck to its integrated curriculum target", async () => {

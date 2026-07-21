@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "HIN-GRAMMAR-003"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In questions about nearby belongings, you will use [[grammar:यह क्या है]]?. Use [[grammar:यह क्या है]]? to ask ‘What is this?’ Keep है at the end. यह फ़ोन है? is a yes–no question from context, so do not treat every क्या as the same kind of question marker.",
+      "expert": "This chapter presents [[grammar:यह क्या है]]? in questions about nearby belongings. Demonstrative यह is the subject, interrogative nominal क्या the predicate, and copula है clause-final. The location question कहाँ है is a separate interrogative structure in the reading."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:यह क्या है]]? to ask ‘What is this?’ Keep है at the end. यह फ़ोन है? is a yes–no question from context, so do not treat every क्या as the same kind of question marker.",
+      "expert": "Demonstrative यह is the subject, interrogative nominal क्या the predicate, and copula है clause-final. The location question कहाँ है is a separate interrogative structure in the reading."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Devanagari from left to right and keep the final verb or है form with its clause. आप is the polite way to address the other person in this block.",
+      "expert": "The examples use contemporary standard Hindi in Devanagari. Postpositions follow their hosts, predicates are clause-final, and agreement is described only where the reading supplies direct evidence."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact hindi line, then check its natural English meaning. Watch for [[grammar:यह क्या है]]? where it appears.\n\n- यह क्या है? — What is this?\n- यह कलम है. — This is a pen.\n- यह फ़ोन है? — Is this a phone?\n- हाँ, यह फ़ोन है. — Yes, this is a phone.\n- चाबी कहाँ है? — Where is the key?\n- चाबी बैग में है. — The key is in the bag.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:यह क्या है]]?. The grammar section above analyzes the relevant morphology and syntax.\n\n- यह क्या है? — What is this?\n- यह कलम है. — This is a pen.\n- यह फ़ोन है? — Is this a phone?\n- हाँ, यह फ़ोन है. — Yes, this is a phone.\n- चाबी कहाँ है? — Where is the key?\n- चाबी बैग में है. — The key is in the bag."
+  }
+}

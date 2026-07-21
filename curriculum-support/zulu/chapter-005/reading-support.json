@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ZUL-GRAMMAR-005"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Thandi and Sipho making a shared plan, you will use [[grammar:asi- + verb stem]]. Use [[grammar:asi-]] with the verb form to suggest ‘let’s ...’. Asihambe manje means ‘Let’s go now.’ The place forms emakethe and epaki are locative occurrences; learn the nouns as imakethe and ipaki.",
+      "expert": "This chapter presents [[grammar:asi- + verb stem]] in Thandi and Sipho making a shared plan. The inclusive first-person plural hortative combines a- with subject marker si- and subjunctive morphology in asihambe. Locative e- plus noun-class morphology yields surface emakethe and epaki from citation nouns imakethe and ipaki."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:asi-]] with the verb form to suggest ‘let’s ...’. Asihambe manje means ‘Let’s go now.’ The place forms emakethe and epaki are locative occurrences; learn the nouns as imakethe and ipaki.",
+      "expert": "The inclusive first-person plural hortative combines a- with subject marker si- and subjunctive morphology in asihambe. Locative e- plus noun-class morphology yields surface emakethe and epaki from citation nouns imakethe and ipaki."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the joined isiZulu word as a whole, then use the explanation to notice its noun-class or subject-concord parts. Do not remove a concord from a sentence just because the English translation has no matching word.",
+      "expert": "The analysis treats concord-bearing surface words as morphosyntactic occurrences. Noun citation forms retain their noun-class prefix, and verbs retain the infinitive uku- citation form in lexical records."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact zulu line, then check its natural English meaning. Watch for [[grammar:asi- + verb stem]] where it appears.\n\n- Siya emakethe namuhla? — Are we going to the market today?\n- Yebo, sihamba ndawonye. — Yes, we are walking together.\n- Sithenga izithelo. — We are buying fruit.\n- Bese siya epaki. — Then we are going to the park.\n- Kulungile. — Okay.\n- Asihambe manje. — Let's go now.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:asi- + verb stem]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Siya emakethe namuhla? — Are we going to the market today?\n- Yebo, sihamba ndawonye. — Yes, we are walking together.\n- Sithenga izithelo. — We are buying fruit.\n- Bese siya epaki. — Then we are going to the park.\n- Kulungile. — Okay.\n- Asihambe manje. — Let's go now."
+  }
+}

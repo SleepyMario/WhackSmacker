@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "GER-GRAMMAR-002"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a description of the kitchen, you will use [[grammar:in + Dativ]]. Use [[grammar:in + dative]] for a place where something stays. In der Küche means ‘in the kitchen.’ Die Küche changes to der Küche here; do not keep die after in for this location.",
+      "expert": "This chapter presents [[grammar:in + Dativ]] in a description of the kitchen. The two-way preposition in selects dative for static location. Feminine die Küche therefore surfaces as der Küche, while the following nominative theme controls the finite verb."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:in + dative]] for a place where something stays. In der Küche means ‘in the kitchen.’ Die Küche changes to der Küche here; do not keep die after in for this location.",
+      "expert": "The two-way preposition in selects dative for static location. Feminine die Küche therefore surfaces as der Küche, while the following nominative theme controls the finite verb."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "German nouns begin with capital letters. Learn each noun with der, die, or das, and watch where the finite verb goes in each sentence.",
+      "expert": "The reading uses contemporary standard German. Noun citation forms retain nominative gender articles, while running text shows the case forms required by syntax."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact german line, then check its natural English meaning. Watch for [[grammar:in + Dativ]] where it appears.\n\n- Die Wohnung ist am Morgen ruhig. — The apartment is quiet in the morning.\n- In der Wohnung ist eine Küche. — There is a kitchen in the apartment.\n- In der Küche steht ein Tisch. — A table stands in the kitchen.\n- Auf dem Tisch liegt ein Buch. — A book lies on the table.\n- Neben dem Tisch steht ein Stuhl. — A chair stands beside the table.\n- Auf dem Tisch steht Wasser. — There is water on the table.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:in + Dativ]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Die Wohnung ist am Morgen ruhig. — The apartment is quiet in the morning.\n- In der Wohnung ist eine Küche. — There is a kitchen in the apartment.\n- In der Küche steht ein Tisch. — A table stands in the kitchen.\n- Auf dem Tisch liegt ein Buch. — A book lies on the table.\n- Neben dem Tisch steht ein Stuhl. — A chair stands beside the table.\n- Auf dem Tisch steht Wasser. — There is water on the table."
+  }
+}

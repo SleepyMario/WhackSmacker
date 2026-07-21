@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "HIN-GRAMMAR-005"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a polite market plan, you will use [[grammar:क्या आप + place + चलेंगे]]?. Use [[grammar:क्या आप ... चलेंगे]]? to politely ask if someone will go somewhere. क्या आप आज बाज़ार चलेंगे? addresses one person respectfully. Do not translate the opening क्या as ‘what’ in this yes–no question.",
+      "expert": "This chapter presents [[grammar:क्या आप + place + चलेंगे]]? in a polite market plan. Clause-initial क्या marks a polar question. Honorific आप triggers plural/honorific future agreement in चलेंगे; the reply हम फल खरीदेंगे reinforces future planning without introducing the necessity construction हमें + infinitive + है."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:क्या आप ... चलेंगे]]? to politely ask if someone will go somewhere. क्या आप आज बाज़ार चलेंगे? addresses one person respectfully. Do not translate the opening क्या as ‘what’ in this yes–no question.",
+      "expert": "Clause-initial क्या marks a polar question. Honorific आप triggers plural/honorific future agreement in चलेंगे; the reply हम फल खरीदेंगे reinforces future planning without introducing the necessity construction हमें + infinitive + है."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Devanagari from left to right and keep the final verb or है form with its clause. आप is the polite way to address the other person in this block.",
+      "expert": "The examples use contemporary standard Hindi in Devanagari. Postpositions follow their hosts, predicates are clause-final, and agreement is described only where the reading supplies direct evidence."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact hindi line, then check its natural English meaning. Watch for [[grammar:क्या आप + place + चलेंगे]]? where it appears.\n\n- क्या आप आज बाज़ार चलेंगे? — Will you go to the market today?\n- हाँ, मैं आपके साथ चलूँगा. — Yes, I will go with you.\n- हम फल खरीदेंगे. — We will buy fruit.\n- बाज़ार घर के पास है. — The market is near the house.\n- हम तीन बजे चलेंगे. — We will go at three o'clock.\n- ठीक है, आज साथ चलते हैं. — Okay, let's go together today.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:क्या आप + place + चलेंगे]]?. The grammar section above analyzes the relevant morphology and syntax.\n\n- क्या आप आज बाज़ार चलेंगे? — Will you go to the market today?\n- हाँ, मैं आपके साथ चलूँगा. — Yes, I will go with you.\n- हम फल खरीदेंगे. — We will buy fruit.\n- बाज़ार घर के पास है. — The market is near the house.\n- हम तीन बजे चलेंगे. — We will go at three o'clock.\n- ठीक है, आज साथ चलते हैं. — Okay, let's go together today."
+  }
+}

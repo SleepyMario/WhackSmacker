@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "RUS-GRAMMAR-001"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Anna and Ivan meeting at home, you will use [[grammar:Я + N]]. Put [[grammar:Я]] before your name or role to say who you are. Я студентка means ‘I am a female student.’ Russian normally has no present-tense word for ‘am’ here, so do not add one.",
+      "expert": "This chapter presents [[grammar:Я + N]] in Anna and Ivan meeting at home. This is a present-tense zero-copula nominal clause. Predicate role nouns agree with the referent’s natural gender; contrastive а in А я преподаватель links the second identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Put [[grammar:Я]] before your name or role to say who you are. Я студентка means ‘I am a female student.’ Russian normally has no present-tense word for ‘am’ here, so do not add one.",
+      "expert": "This is a present-tense zero-copula nominal clause. Predicate role nouns agree with the referent’s natural gender; contrastive а in А я преподаватель links the second identity."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Keep Cyrillic as the main text. In the reading help, an acute accent marks the stressed vowel; the accent is a study mark and is not normally written in everyday Russian.",
+      "expert": "The support uses Cyrillic with a single acute accent on the stressed vowel of polysyllabic content words. It introduces no romanization and leaves monosyllables unmarked unless contrast requires it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact russian line, then check its natural English meaning. Watch for [[grammar:Я + N]] where it appears.\n\n- Здравствуйте! — Hello!\n- Привет! — Hi!\n- Я Анна. — I am Anna.\n- Я Иван. — I am Ivan.\n- Я студентка. — I am a female student.\n- А я преподаватель. — And I am a male teacher.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Я + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Здравствуйте! — Hello!\n- Привет! — Hi!\n- Я Анна. — I am Anna.\n- Я Иван. — I am Ivan.\n- Я студентка. — I am a female student.\n- А я преподаватель. — And I am a male teacher."
+  },
+  "readingItems": [
+    {
+      "sourceText": "Здравствуйте!",
+      "stressedText": "Здра́вствуйте"
+    },
+    {
+      "sourceText": "Привет!",
+      "stressedText": "Приве́т"
+    },
+    {
+      "sourceText": "Я Анна.",
+      "stressedText": "А́нна"
+    },
+    {
+      "sourceText": "Я Иван.",
+      "stressedText": "Ива́н"
+    },
+    {
+      "sourceText": "Я студентка.",
+      "stressedText": "студе́нтка"
+    },
+    {
+      "sourceText": "А я преподаватель.",
+      "stressedText": "преподава́тель"
+    }
+  ]
+}

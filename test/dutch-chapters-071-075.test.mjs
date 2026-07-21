@@ -67,7 +67,7 @@ function translationSentences(translation) {
 }
 
 function breakdownEvidence(text) {
-  return [...text.matchAll(/^- \[\[grammar:(.+?)\]\] —/gmu)].map((match) => match[1]);
+  return [...text.matchAll(/^- (.+?) —/gmu)].map((match) => match[1]);
 }
 
 function grammarIdentities(markdown) {
@@ -103,7 +103,7 @@ test("Dutch Chapters 71-75 are consecutive, alternate format, and Chapter 76 is 
   assert.deepEqual(results.map((result) => [result.chapter, result.newPrincipalGrammarPointCount]), [[71, 2], [72, 2], [73, 2], [74, 2], [75, 2]]);
 });
 
-test("each authored reading has 16 new senses and four aligned 32-sentence sequences", async () => {
+test("each authored reading has a complete new-sense inventory and four aligned 32-sentence sequences", async () => {
   for (const [chapter, info] of expected) {
     const markdown = await readFile(join(unitRoot, info.directory, "chapter.md"), "utf8");
     const source = sourceSentences(markdown, chapter);
@@ -118,9 +118,16 @@ test("each authored reading has 16 new senses and four aligned 32-sentence seque
     assert.deepEqual(normal, source, `Chapter ${chapter} Normal source order`);
     assert.deepEqual(expert, source, `Chapter ${chapter} Expert source order`);
     assert.equal(new Set(source).size, 32, `Chapter ${chapter} source contains no duplicate sentence`);
-    assert.equal(vocabularyIdentities(markdown).length, 16, `Chapter ${chapter} lexical identity count`);
-    assert.equal(new Set(vocabularyIdentities(markdown).map((identity) => identity[1])).size, 16);
+    const expectedSenseCount = chapter === 75 ? 17 : 16;
+    assert.equal(vocabularyIdentities(markdown).length, expectedSenseCount, `Chapter ${chapter} lexical identity count`);
+    assert.equal(new Set(vocabularyIdentities(markdown).map((identity) => identity[1])).size, expectedSenseCount);
     assert.equal(grammarIdentities(markdown).length, 2, `Chapter ${chapter} grammar identity count`);
+    assert.equal(support.semanticSpanPolicyVersion, 1, `Chapter ${chapter} opts into narrow semantic spans`);
+    const supportText = JSON.stringify(support);
+    assert.doesNotMatch(supportText, /\[\[grammar:[^\]]*[.!?。！？]\]\]/u, `Chapter ${chapter} does not colour a complete sentence`);
+    for (const match of supportText.matchAll(/\[\[grammar:([^\]]+)\]\]/gu)) {
+      assert.ok(match[1].length <= 100 && match[1].trim().split(/\s+/u).length <= 12, `Chapter ${chapter} semantic span stays narrow`);
+    }
   }
 });
 
@@ -196,7 +203,7 @@ test("installed Chapters and Grammar 71-75 preserve semantic blue spans without 
     assert.match(normal71, /\x1b\[34m[^\x1b]*comparative[^\x1b]*\x1b\[0m/u);
     assert.ok(expert72.includes(blue("Blijken")));
     assert.ok(expert72.includes(blue("te-infinitive")));
-    assert.ok(normal73.includes(blue("niet alleen ... maar ook ...")));
+    assert.ok(normal73.includes(blue("niet alleen X, maar ook Y")));
     assert.ok(normal74.includes(blue("alsof")));
     assert.ok(normal75.includes(blue("conditional clause")));
     assert.ok(normal75.includes(blue("ongeacht of")));
@@ -221,12 +228,12 @@ test("installed Chapters and Grammar 71-75 preserve semantic blue spans without 
   }
 });
 
-test("Review 71-75 contains exactly two literal cards for all 80 new senses", async () => {
+test("Review 71-75 contains exactly two literal cards for all 81 new senses", async () => {
   const path = join(reviewRoot, "chapter-071-075", "cards.tsv");
   const lines = (await readFile(path, "utf8")).trimEnd().split("\n");
   const rows = lines.slice(1).map((line) => line.split("\t"));
-  assert.equal(rows.length, 160);
-  assert.equal(new Set(rows.map((row) => row[0])).size, 160);
+  assert.equal(rows.length, 162);
+  assert.equal(new Set(rows.map((row) => row[0])).size, 162);
   const bySense = new Map();
   for (const row of rows) {
     assert.equal(row.length, 18);
@@ -242,7 +249,7 @@ test("Review 71-75 contains exactly two literal cards for all 80 new senses", as
     assert.equal(examples.every((example) => sourceSentences(source, Number(row[3])).includes(example)), true);
     assert.equal(sourceSentences(source, Number(row[3])).includes(row[15]), true);
   }
-  assert.equal(bySense.size, 80);
+  assert.equal(bySense.size, 81);
   for (const directions of bySense.values()) assert.deepEqual(directions.sort(), ["en->nl", "nl->en"]);
 });
 
@@ -268,9 +275,9 @@ test("all sense and Review card IDs remain unique and proposed lexical IDs do no
       }
     }
   }
-  assert.equal(senses.size, 685);
-  assert.equal(proposedLexical.size, 80);
-  assert.equal([...senses].filter((senseId) => /(?:wandelroute|pleeggezin|verjaardagsdiner|pottenbakkerij|wifi-signaal)/u.test(senseId)).length, 5);
+  assert.equal(senses.size, 686);
+  assert.equal(proposedLexical.size, 81);
+  assert.equal([...senses].filter((senseId) => /(?:wandelroute|pleeggezin|verjaardagsdiner|pottenbakkerij|wifi-lampje)/u.test(senseId)).length, 5);
 });
 
 test("topic diversity, cast continuity, and number continuity are recorded through Chapter 75", async () => {
@@ -292,7 +299,7 @@ test("topic diversity, cast continuity, and number continuity are recorded throu
     assert.ok(topic, info.topic);
     assert.equal(topic.chapter_attestations.includes(chapter), true);
     const chapterSenseCount = [...topic.anchor_senses, ...topic.initial_expansion_senses, ...topic.later_expansion_senses].filter((sense) => sense.first_introduction_chapter === chapter).length;
-    assert.equal(chapterSenseCount, 16, `${info.topic} Chapter ${chapter} senses`);
+    assert.equal(chapterSenseCount, chapter === 75 ? 17 : 16, `${info.topic} Chapter ${chapter} senses`);
   }
   assert.equal(new Set([...expected.values()].map((info) => info.topic)).size, 5);
   await assert.rejects(access(join(unitRoot, "chapter-076")));

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "HIN-GRAMMAR-002"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a description of Rina’s room, you will use [[grammar:N + में + N + है]]. Put [[grammar:में]] after the place and [[grammar:है]] at the end. कमरे में एक मेज़ है means there is a table in the room. Do not put में before the place as you would put English ‘in.’",
+      "expert": "This chapter presents [[grammar:N + में + N + है]] in a description of Rina’s room. The postposition में follows an oblique nominal host. The locative phrase precedes the nominative theme, and singular copula है closes the existential clause."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Put [[grammar:में]] after the place and [[grammar:है]] at the end. कमरे में एक मेज़ है means there is a table in the room. Do not put में before the place as you would put English ‘in.’",
+      "expert": "The postposition में follows an oblique nominal host. The locative phrase precedes the nominative theme, and singular copula है closes the existential clause."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Devanagari from left to right and keep the final verb or है form with its clause. आप is the polite way to address the other person in this block.",
+      "expert": "The examples use contemporary standard Hindi in Devanagari. Postpositions follow their hosts, predicates are clause-final, and agreement is described only where the reading supplies direct evidence."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact hindi line, then check its natural English meaning. Watch for [[grammar:N + में + N + है]] where it appears.\n\n- रीना का घर छोटा है. — Rina's house is small.\n- घर में एक कमरा है. — There is one room in the house.\n- कमरे में एक मेज़ है. — There is a table in the room.\n- मेज़ पर एक किताब है. — There is a book on the table.\n- पास में एक कुर्सी है. — There is a chair nearby.\n- कमरे में पानी है. — There is water in the room.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:N + में + N + है]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- रीना का घर छोटा है. — Rina's house is small.\n- घर में एक कमरा है. — There is one room in the house.\n- कमरे में एक मेज़ है. — There is a table in the room.\n- मेज़ पर एक किताब है. — There is a book on the table.\n- पास में एक कुर्सी है. — There is a chair nearby.\n- कमरे में पानी है. — There is water in the room."
+  }
+}

@@ -2206,7 +2206,7 @@ test("two-pane renderer starts chapter content near the content pane border", ()
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
     "# Chapter 1 -- A Polite First Meeting",
     "",
-    "A polite first meeting advances the initial beginner sequence.",
+    "A polite first meeting introduces the topic particle 은/는.",
     "",
     "```text",
     "민지: 안녕하세요.",

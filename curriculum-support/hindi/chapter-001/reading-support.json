@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "HIN-GRAMMAR-001"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Rina and Amit introducing themselves, you will use [[grammar:मैं + N + हूँ]]. Put [[grammar:मैं]] first and [[grammar:हूँ]] at the end to say who you are. मैं छात्रा हूँ means ‘I am a female student.’ Match the role noun to the person; do not drop हूँ in this polite full sentence.",
+      "expert": "This chapter presents [[grammar:मैं + N + हूँ]] in Rina and Amit introducing themselves. This first-person singular copular clause has subject मैं, a gender-sensitive nominal predicate, and agreement-bearing copula हूँ in clause-final position."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Put [[grammar:मैं]] first and [[grammar:हूँ]] at the end to say who you are. मैं छात्रा हूँ means ‘I am a female student.’ Match the role noun to the person; do not drop हूँ in this polite full sentence.",
+      "expert": "This first-person singular copular clause has subject मैं, a gender-sensitive nominal predicate, and agreement-bearing copula हूँ in clause-final position."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Devanagari from left to right and keep the final verb or है form with its clause. आप is the polite way to address the other person in this block.",
+      "expert": "The examples use contemporary standard Hindi in Devanagari. Postpositions follow their hosts, predicates are clause-final, and agreement is described only where the reading supplies direct evidence."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact hindi line, then check its natural English meaning. Watch for [[grammar:मैं + N + हूँ]] where it appears.\n\n- नमस्ते. — Hello.\n- नमस्ते जी. — Hello.\n- मैं रीना हूँ. — I am Rina.\n- मैं अमित हूँ. — I am Amit.\n- मैं छात्रा हूँ. — I am a female student.\n- मैं छात्र हूँ. — I am a male student.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:मैं + N + हूँ]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- नमस्ते. — Hello.\n- नमस्ते जी. — Hello.\n- मैं रीना हूँ. — I am Rina.\n- मैं अमित हूँ. — I am Amit.\n- मैं छात्रा हूँ. — I am a female student.\n- मैं छात्र हूँ. — I am a male student."
+  }
+}

@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "THA-GRAMMAR-004"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Thai.",
-      "expert": "Support stays aligned to literal Chapter 4 target text and does not change canonical identity."
+      "normal": "In Mali and Non’s morning routine, you will use [[grammar:subject + verb + object]]. Thai usually puts the action before its object, and the verb does not change for the subject. มาลีกินข้าว has Mali, then ‘eat,’ then ‘rice/meal.’ A clear subject may be left out, but do not leave it out when the reader cannot tell who acts.",
+      "expert": "This chapter presents [[grammar:subject + verb + object]] in Mali and Non’s morning routine. The analytic clauses use ordinary SVO order with uninflected predicates and discourse-supported subject omission. Temporal ตอนเช้า frames the first event, and ที่บ้าน is a postverbal location phrase."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:subject + verb + object]].",
-      "expert": "The canonical pattern [[grammar:subject + verb + object]] retains its language-specific analysis."
+      "normal": "Thai usually puts the action before its object, and the verb does not change for the subject. มาลีกินข้าว has Mali, then ‘eat,’ then ‘rice/meal.’ A clear subject may be left out, but do not leave it out when the reader cannot tell who acts.",
+      "expert": "The analytic clauses use ordinary SVO order with uninflected predicates and discourse-supported subject omission. Temporal ตอนเช้า frames the first event, and ที่บ้าน is a postverbal location phrase."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Thai normally has no spaces between every word. Use the Thai-script word groups in the breakdown to find the parts, but keep the original sentence as your main reading.",
+      "expert": "The support segments the attested Thai script for reading assistance without romanization or invented tone notation. Polite particles and classifier syntax remain part of the grammatical analysis."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact thai line, then check its natural English meaning. Watch for [[grammar:subject + verb + object]] where it appears.\n\n- ตอนเช้ามาลีดื่มกาแฟ. — In the morning Mali drinks coffee.\n- มาลีกินข้าวที่บ้าน. — Mali eats rice at home.\n- จากนั้นอ่านหนังสือ. — Then she reads a book.\n- นนท์ดื่มน้ำ. — Non drinks water.\n- นนท์ถือกระเป๋า. — Non carries a bag.\n- ทั้งสองคนออกจากบ้าน. — Both leave the house.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:subject + verb + object]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- ตอนเช้ามาลีดื่มกาแฟ. — In the morning Mali drinks coffee.\n- มาลีกินข้าวที่บ้าน. — Mali eats rice at home.\n- จากนั้นอ่านหนังสือ. — Then she reads a book.\n- นนท์ดื่มน้ำ. — Non drinks water.\n- นนท์ถือกระเป๋า. — Non carries a bag.\n- ทั้งสองคนออกจากบ้าน. — Both leave the house."
+  },
   "readingItems": [
     {
       "sourceText": "ตอนเช้ามาลีดื่มกาแฟ.",

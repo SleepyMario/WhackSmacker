@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "SPA-GRAMMAR-001"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Ana and Luis meeting as neighbors, you will use [[grammar:Soy + N]]. Use [[grammar:Soy]] before your name or role. Soy estudiante means ‘I am a student.’ Spanish can leave out yo because soy already shows who speaks; do not add an article before the simple profession role.",
+      "expert": "This chapter presents [[grammar:Soy + N]] in Ana and Luis meeting as neighbors. Finite copula soy encodes first-person singular agreement and licenses a null subject. Bare profession predicates agree for grammatical gender where their form varies."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Soy]] before your name or role. Soy estudiante means ‘I am a student.’ Spanish can leave out yo because soy already shows who speaks; do not add an article before the simple profession role.",
+      "expert": "Finite copula soy encodes first-person singular agreement and licenses a null subject. Bare profession predicates agree for grammatical gender where their form varies."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Spanish punctuation with the sentence: ¿ starts a question and ¡ starts an exclamation. Learn nouns with el or la when an article is shown.",
+      "expert": "The reading uses broadly intelligible contemporary Spanish with tú as neutral informal singular address. Null subjects and article-bearing citation forms are analyzed only where attested."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact spanish line, then check its natural English meaning. Watch for [[grammar:Soy + N]] where it appears.\n\n- ¡Hola! — Hello!\n- Buenos días. — Good morning.\n- Soy Ana. — I am Ana.\n- Soy Luis, tu vecino. — I am Luis, your neighbor.\n- Soy estudiante. — I am a student.\n- Mucho gusto, soy cocinero. — Nice to meet you; I am a cook.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Soy + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- ¡Hola! — Hello!\n- Buenos días. — Good morning.\n- Soy Ana. — I am Ana.\n- Soy Luis, tu vecino. — I am Luis, your neighbor.\n- Soy estudiante. — I am a student.\n- Mucho gusto, soy cocinero. — Nice to meet you; I am a cook."
+  }
+}

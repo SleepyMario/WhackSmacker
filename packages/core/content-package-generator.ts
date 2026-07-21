@@ -591,6 +591,46 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     source: `curriculum-support/vietnamese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/reading-support.json`
   })),
+  "arabic-curriculum": [
+    [1, "chapter-001-greetings-and-identity"],
+    [2, "chapter-002-layla-s-room"],
+    [3, "chapter-003-what-is-this"],
+    [4, "chapter-004-sami-s-morning"],
+    [5, "chapter-005-a-cafe-plan"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/arabic/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/arabic-core/${directory}/reading-support.json`
+  })),
+  "french-curriculum": [
+    [1, "chapter-001-meeting-a-neighbor"],
+    [2, "chapter-002-breakfast-in-the-apartment"],
+    [3, "chapter-003-do-you-like-tea"],
+    [4, "chapter-004-a-walk-nearby"],
+    [5, "chapter-005-going-to-the-market"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/french/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/french-core/${directory}/reading-support.json`
+  })),
+  "german-curriculum": [
+    [1, "chapter-001-new-neighbors"],
+    [2, "chapter-002-in-the-kitchen"],
+    [3, "chapter-003-where-is-the-key"],
+    [4, "chapter-004-jonas-in-the-morning"],
+    [5, "chapter-005-a-plan-for-today"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/german/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/german-core/${directory}/reading-support.json`
+  })),
+  "hindi-curriculum": [
+    [1, "chapter-001-polite-introductions"],
+    [2, "chapter-002-a-room-at-home"],
+    [3, "chapter-003-what-is-this"],
+    [4, "chapter-004-rina-s-morning"],
+    [5, "chapter-005-a-market-plan"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/hindi/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/hindi-core/${directory}/reading-support.json`
+  })),
   "japanese-curriculum": [
     [1, "chapter-001-a-first-meeting"],
     [2, "chapter-002-a-quiet-room"],
@@ -601,6 +641,36 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     source: `curriculum-support/japanese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/japanese-core/${directory}/reading-support.json`
   })),
+  "korean-curriculum": [
+    [1, "chapter-001-a-polite-first-meeting"],
+    [2, "chapter-002-a-room-at-home"],
+    [3, "chapter-003-what-is-this"],
+    [4, "chapter-004-minji-s-morning"],
+    [5, "chapter-005-going-out-together"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/korean/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/korean-core/${directory}/reading-support.json`
+  })),
+  "russian-curriculum": [
+    [1, "chapter-001-meeting-at-home"],
+    [2, "chapter-002-anna-s-room"],
+    [3, "chapter-003-where-is-the-key"],
+    [4, "chapter-004-ivan-s-morning"],
+    [5, "chapter-005-a-walk-today"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/russian/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/russian-core/${directory}/reading-support.json`
+  })),
+  "spanish-curriculum": [
+    [1, "chapter-001-meeting-a-neighbor"],
+    [2, "chapter-002-breakfast-at-home"],
+    [3, "chapter-003-what-is-this"],
+    [4, "chapter-004-luis-in-the-morning"],
+    [5, "chapter-005-a-market-plan"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/spanish/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/spanish-core/${directory}/reading-support.json`
+  })),
   "thai-curriculum": [
     [1, "chapter-001-a-polite-meeting"],
     [2, "chapter-002-one-quiet-room"],
@@ -610,6 +680,16 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
   ].map(([chapter, directory]) => ({
     source: `curriculum-support/thai/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/thai-core/${directory}/reading-support.json`
+  })),
+  "zulu-curriculum": [
+    [1, "chapter-001-meeting-thandi"],
+    [2, "chapter-002-thandi-s-home"],
+    [3, "chapter-003-where-is-the-key"],
+    [4, "chapter-004-thandi-s-morning"],
+    [5, "chapter-005-a-shared-plan"]
+  ].map(([chapter, directory]) => ({
+    source: `curriculum-support/zulu/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
+    destination: `units/zulu-core/${directory}/reading-support.json`
   })),
   "dutch-curriculum": [
     [1, "chapter-001-basic-sentences-1"],

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "HIN-GRAMMAR-004"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Rina’s morning routine, you will use [[grammar:feminine subject + ती है]]. With one feminine subject, a habitual verb often ends in [[grammar:ती है]]. रीना चाय पीती है says what Rina usually does. Do not use the masculine form पीता है for Rina.",
+      "expert": "This chapter presents [[grammar:feminine subject + ती है]] in Rina’s morning routine. The habitual participle agrees feminine singular with रीना, while auxiliary है carries present tense. The masculine अमित example and plural दोनों example show contrasting agreement outside the canonical identity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "With one feminine subject, a habitual verb often ends in [[grammar:ती है]]. रीना चाय पीती है says what Rina usually does. Do not use the masculine form पीता है for Rina.",
+      "expert": "The habitual participle agrees feminine singular with रीना, while auxiliary है carries present tense. The masculine अमित example and plural दोनों example show contrasting agreement outside the canonical identity."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Devanagari from left to right and keep the final verb or है form with its clause. आप is the polite way to address the other person in this block.",
+      "expert": "The examples use contemporary standard Hindi in Devanagari. Postpositions follow their hosts, predicates are clause-final, and agreement is described only where the reading supplies direct evidence."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact hindi line, then check its natural English meaning. Watch for [[grammar:feminine subject + ती है]] where it appears.\n\n- रीना सुबह जल्दी उठती है. — Rina gets up early in the morning.\n- वह चाय पीती है. — She drinks tea.\n- वह रोटी खाती है. — She eats flatbread.\n- फिर वह किताब पढ़ती है. — Then she reads a book.\n- अमित पानी पीता है. — Amit drinks water.\n- दोनों घर से निकलते हैं. — Both leave the house.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:feminine subject + ती है]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- रीना सुबह जल्दी उठती है. — Rina gets up early in the morning.\n- वह चाय पीती है. — She drinks tea.\n- वह रोटी खाती है. — She eats flatbread.\n- फिर वह किताब पढ़ती है. — Then she reads a book.\n- अमित पानी पीता है. — Amit drinks water.\n- दोनों घर से निकलते हैं. — Both leave the house."
+  }
+}

@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "JPN-GRAMMAR-002"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Japanese.",
-      "expert": "Support stays aligned to literal Chapter 2 target text and does not change canonical identity."
+      "normal": "In a description of a quiet room, you will use [[grammar:place + に + N + があります]]. Put [[grammar:に]] after the place and [[grammar:があります]] after an inanimate thing. 机の横にいすがあります means there is a chair beside the desk. Do not use います for these objects.",
+      "expert": "This chapter presents [[grammar:place + に + N + があります]] in a description of a quiet room. Locative に marks the site, nominative が the theme, and polite existential あります selects an inanimate subject. Relative nouns such as 上 and 横 form the locative phrase with の."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:place + に + N + があります]].",
-      "expert": "The canonical pattern [[grammar:place + に + N + があります]] retains its language-specific analysis."
+      "normal": "Put [[grammar:に]] after the place and [[grammar:があります]] after an inanimate thing. 机の横にいすがあります means there is a chair beside the desk. Do not use います for these objects.",
+      "expert": "Locative に marks the site, nominative が the theme, and polite existential あります selects an inanimate subject. Relative nouns such as 上 and 横 form the locative phrase with の."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Use the readings in the line-by-line help for unfamiliar kanji. Read the Japanese sentence first, then check the natural English meaning.",
+      "expert": "The reading uses standard polite です／ます style with discourse-supported argument omission. Kana readings identify the attested lexical forms without replacing the Japanese script."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact japanese line, then check its natural English meaning. Watch for [[grammar:place + に + N + があります]] where it appears.\n\n- 部屋に机があります。 — There is a desk in the room.\n- 机の上に本があります。 — There is a book on the desk.\n- 机の横にいすがあります。 — There is a chair beside the desk.\n- いすの上にかばんがあります。 — There is a bag on the chair.\n- 部屋に窓があります。 — There is a window in the room.\n- 窓の近くに小さい机があります。 — There is a small desk near the window.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:place + に + N + があります]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- 部屋に机があります。 — There is a desk in the room.\n- 机の上に本があります。 — There is a book on the desk.\n- 机の横にいすがあります。 — There is a chair beside the desk.\n- いすの上にかばんがあります。 — There is a bag on the chair.\n- 部屋に窓があります。 — There is a window in the room.\n- 窓の近くに小さい机があります。 — There is a small desk near the window."
+  },
   "readingItems": [
     {
       "surface": "部屋",

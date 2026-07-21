@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "FRA-GRAMMAR-002"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In breakfast in Lina’s apartment, you will use [[grammar:Il y a + N]]. Use [[grammar:Il y a]] to say something is present. Dans la cuisine, il y a une table means there is a table in the kitchen. Keep all three words together; do not translate il as a real person here.",
+      "expert": "This chapter presents [[grammar:Il y a + N]] in breakfast in Lina’s apartment. Il y a is an impersonal existential construction. A fronted locative phrase sets the spatial frame, and the following usually indefinite noun phrase introduces the entity."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Il y a]] to say something is present. Dans la cuisine, il y a une table means there is a table in the kitchen. Keep all three words together; do not translate il as a real person here.",
+      "expert": "Il y a is an impersonal existential construction. A fronted locative phrase sets the spatial frame, and the following usually indefinite noun phrase introduces the entity."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the French aloud in short groups. Learn each noun with its article because the article helps you remember gender.",
+      "expert": "The examples use contemporary standard French with informal singular tu. Article-bearing citation forms preserve lexical gender, including explicit gender marking where elision hides it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact french line, then check its natural English meaning. Watch for [[grammar:Il y a + N]] where it appears.\n\n- L'appartement est calme le matin. — The apartment is quiet in the morning.\n- Il y a une petite cuisine. — There is a small kitchen.\n- Dans la cuisine, il y a une table. — In the kitchen, there is a table.\n- Sur la table, il y a du café. — On the table, there is coffee.\n- Il y a aussi du pain. — There is also bread.\n- Lina boit un verre d'eau. — Lina drinks a glass of water.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Il y a + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- L'appartement est calme le matin. — The apartment is quiet in the morning.\n- Il y a une petite cuisine. — There is a small kitchen.\n- Dans la cuisine, il y a une table. — In the kitchen, there is a table.\n- Sur la table, il y a du café. — On the table, there is coffee.\n- Il y a aussi du pain. — There is also bread.\n- Lina boit un verre d'eau. — Lina drinks a glass of water."
+  }
+}

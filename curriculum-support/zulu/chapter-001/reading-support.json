@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "ZUL-GRAMMAR-001"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In Thandi and Sipho introducing themselves, you will use [[grammar:ngi- + ngu- + N]]. Use [[grammar:ngi- + ngu-]] with a name or role to say ‘I am ...’. Ngingumfundi means ‘I am a student.’ The pieces join into one written word, so do not separate ngi and ngu with spaces.",
+      "expert": "This chapter presents [[grammar:ngi- + ngu- + N]] in Thandi and Sipho introducing themselves. First-person singular subject concord ngi- combines with identifying copulative ngu- before a vowel-initial noun. The resulting phonological word is written conjunctively."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:ngi- + ngu-]] with a name or role to say ‘I am ...’. Ngingumfundi means ‘I am a student.’ The pieces join into one written word, so do not separate ngi and ngu with spaces.",
+      "expert": "First-person singular subject concord ngi- combines with identifying copulative ngu- before a vowel-initial noun. The resulting phonological word is written conjunctively."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the joined isiZulu word as a whole, then use the explanation to notice its noun-class or subject-concord parts. Do not remove a concord from a sentence just because the English translation has no matching word.",
+      "expert": "The analysis treats concord-bearing surface words as morphosyntactic occurrences. Noun citation forms retain their noun-class prefix, and verbs retain the infinitive uku- citation form in lexical records."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact zulu line, then check its natural English meaning. Watch for [[grammar:ngi- + ngu- + N]] where it appears.\n\n- Sawubona. — Hello.\n- Yebo, sawubona. — Yes, hello.\n- NginguThandi. — I am Thandi.\n- NginguSipho. — I am Sipho.\n- Ngingumfundi, unjani? — I am a student; how are you?\n- Nginguthisha, ngiyaphila. — I am a teacher; I am well.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:ngi- + ngu- + N]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Sawubona. — Hello.\n- Yebo, sawubona. — Yes, hello.\n- NginguThandi. — I am Thandi.\n- NginguSipho. — I am Sipho.\n- Ngingumfundi, unjani? — I am a student; how are you?\n- Nginguthisha, ngiyaphila. — I am a teacher; I am well."
+  }
+}

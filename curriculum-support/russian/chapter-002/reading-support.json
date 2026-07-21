@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "RUS-GRAMMAR-002"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a description of Anna’s room, you will use [[grammar:в + предложный падеж]]. Use [[grammar:в]] with the location form of a noun to mean ‘in.’ В комнате means ‘in the room’; комната changes to комнате. Do not keep the dictionary ending after в in this location.",
+      "expert": "This chapter presents [[grammar:в + предложный падеж]] in a description of Anna’s room. For static location, preposition в selects the prepositional case. Existential есть introduces a present entity, while находится lexically predicates location."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:в]] with the location form of a noun to mean ‘in.’ В комнате means ‘in the room’; комната changes to комнате. Do not keep the dictionary ending after в in this location.",
+      "expert": "For static location, preposition в selects the prepositional case. Existential есть introduces a present entity, while находится lexically predicates location."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Keep Cyrillic as the main text. In the reading help, an acute accent marks the stressed vowel; the accent is a study mark and is not normally written in everyday Russian.",
+      "expert": "The support uses Cyrillic with a single acute accent on the stressed vowel of polysyllabic content words. It introduces no romanization and leaves monosyllables unmarked unless contrast requires it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact russian line, then check its natural English meaning. Watch for [[grammar:в + предложный падеж]] where it appears.\n\n- Это комната Анны. — This is Anna's room.\n- Комната находится в доме. — The room is in the house.\n- В комнате есть стол. — There is a table in the room.\n- На столе лежит книга. — A book lies on the table.\n- Рядом стоит стул. — A chair stands nearby.\n- В комнате есть окно. — There is a window in the room.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:в + предложный падеж]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Это комната Анны. — This is Anna's room.\n- Комната находится в доме. — The room is in the house.\n- В комнате есть стол. — There is a table in the room.\n- На столе лежит книга. — A book lies on the table.\n- Рядом стоит стул. — A chair stands nearby.\n- В комнате есть окно. — There is a window in the room."
+  },
+  "readingItems": [
+    {
+      "sourceText": "Это комната Анны.",
+      "stressedText": "ко́мната А́нны"
+    },
+    {
+      "sourceText": "Комната находится в доме.",
+      "stressedText": "ко́мната нахо́дится в до́ме"
+    },
+    {
+      "sourceText": "В комнате есть стол.",
+      "stressedText": "В ко́мнате есть стол"
+    },
+    {
+      "sourceText": "На столе лежит книга.",
+      "stressedText": "На столе́ лежи́т кни́га"
+    },
+    {
+      "sourceText": "Рядом стоит стул.",
+      "stressedText": "Ря́дом стои́т стул"
+    },
+    {
+      "sourceText": "В комнате есть окно.",
+      "stressedText": "В ко́мнате есть окно́"
+    }
+  ]
+}

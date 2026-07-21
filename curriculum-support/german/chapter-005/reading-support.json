@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "GER-GRAMMAR-005"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a yes–no question about today’s plan, you will use [[grammar:finite verb + subject]]. Start a yes–no question with the [[grammar:finite verb]], then put the subject next. Gehen wir heute in den Park? asks whether the plan is true. Do not use statement order when no question word is present.",
+      "expert": "This chapter presents [[grammar:finite verb + subject]] in a yes–no question about today’s plan. The polar question has an unoccupied first field and finite gehen in initial position, followed by nominative wir. This V1 order contrasts with the V2 declaratives elsewhere in the dialogue."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Start a yes–no question with the [[grammar:finite verb]], then put the subject next. Gehen wir heute in den Park? asks whether the plan is true. Do not use statement order when no question word is present.",
+      "expert": "The polar question has an unoccupied first field and finite gehen in initial position, followed by nominative wir. This V1 order contrasts with the V2 declaratives elsewhere in the dialogue."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "German nouns begin with capital letters. Learn each noun with der, die, or das, and watch where the finite verb goes in each sentence.",
+      "expert": "The reading uses contemporary standard German. Noun citation forms retain nominative gender articles, while running text shows the case forms required by syntax."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact german line, then check its natural English meaning. Watch for [[grammar:finite verb + subject]] where it appears.\n\n- Gehen wir heute in den Park? — Are we going to the park today?\n- Ja, wir gehen zusammen. — Yes, we are going together.\n- Der Park ist nicht weit. — The park is not far.\n- Danach gehen wir ins Café. — Afterward we are going to the café.\n- Gut, das machen wir. — Good, we will do that.\n- Dann gehen wir um drei. — Then we will go at three.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:finite verb + subject]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- Gehen wir heute in den Park? — Are we going to the park today?\n- Ja, wir gehen zusammen. — Yes, we are going together.\n- Der Park ist nicht weit. — The park is not far.\n- Danach gehen wir ins Café. — Afterward we are going to the café.\n- Gut, das machen wir. — Good, we will do that.\n- Dann gehen wir um drei. — Then we will go at three."
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "FRA-GRAMMAR-003"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a conversation about general likes, you will use [[grammar:Tu aimes + N ]]?. Use [[grammar:Tu aimes]] plus a food or drink to ask one familiar person what they like. Tu aimes le thé ? asks about tea in general. For a general plural category, say j’aime les pommes, not j’aime la pomme.",
+      "expert": "This chapter presents [[grammar:Tu aimes + N ]]? in a conversation about general likes. The informal singular subject clitic tu combines with finite aimes and a direct-object noun phrase. Rising intonation marks the polar question; generic food preferences use the definite article, with plural les pommes for apples as a category."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Tu aimes]] plus a food or drink to ask one familiar person what they like. Tu aimes le thé ? asks about tea in general. For a general plural category, say j’aime les pommes, not j’aime la pomme.",
+      "expert": "The informal singular subject clitic tu combines with finite aimes and a direct-object noun phrase. Rising intonation marks the polar question; generic food preferences use the definite article, with plural les pommes for apples as a category."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the French aloud in short groups. Learn each noun with its article because the article helps you remember gender.",
+      "expert": "The examples use contemporary standard French with informal singular tu. Article-bearing citation forms preserve lexical gender, including explicit gender marking where elision hides it."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact french line, then check its natural English meaning. Watch for [[grammar:Tu aimes + N ]]? where it appears.\n\n- Tu aimes le thé ? — Do you like tea?\n- Oui, j'aime le thé. — Yes, I like tea.\n- Tu aimes le fromage ? — Do you like cheese?\n- Non, mais j'aime les pommes. — No, but I like apples.\n- Et ce gâteau ? — And this cake?\n- Oui, il est bon. — Yes, it is good.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Tu aimes + N ]]?. The grammar section above analyzes the relevant morphology and syntax.\n\n- Tu aimes le thé ? — Do you like tea?\n- Oui, j'aime le thé. — Yes, I like tea.\n- Tu aimes le fromage ? — Do you like cheese?\n- Non, mais j'aime les pommes. — No, but I like apples.\n- Et ce gâteau ? — And this cake?\n- Oui, il est bon. — Yes, it is good."
+  }
+}

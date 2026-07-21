@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "THA-GRAMMAR-003"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter uses the reading support established for Thai.",
-      "expert": "Support stays aligned to literal Chapter 3 target text and does not change canonical identity."
+      "normal": "In questions about nearby belongings, you will use [[grammar:นี่คืออะไร]]. Use [[grammar:นี่คืออะไร]] to ask what a nearby thing is. คือ identifies the thing, and คะ makes Mali’s question polite. Do not use เป็น for this object-identification question.",
+      "expert": "This chapter presents [[grammar:นี่คืออะไร]] in questions about nearby belongings. Proximal demonstrative นี่ precedes identifying copula คือ and interrogative อะไร. Role classification uses เป็น; yes–no ไหม and polite คะ are supporting particles in other lines."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "The chapter pattern is [[grammar:นี่คืออะไร]].",
-      "expert": "The canonical pattern [[grammar:นี่คืออะไร]] retains its language-specific analysis."
+      "normal": "Use [[grammar:นี่คืออะไร]] to ask what a nearby thing is. คือ identifies the thing, and คะ makes Mali’s question polite. Do not use เป็น for this object-identification question.",
+      "expert": "Proximal demonstrative นี่ precedes identifying copula คือ and interrogative อะไร. Role classification uses เป็น; yes–no ไหม and polite คะ are supporting particles in other lines."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Thai normally has no spaces between every word. Use the Thai-script word groups in the breakdown to find the parts, but keep the original sentence as your main reading.",
+      "expert": "The support segments the attested Thai script for reading assistance without romanization or invented tone notation. Polite particles and classifier syntax remain part of the grammatical analysis."
     }
   ],
+  "breakdown": {
+    "normal": "Read each exact thai line, then check its natural English meaning. Watch for [[grammar:นี่คืออะไร]] where it appears.\n\n- นี่คืออะไรคะ. — What is this?\n- นี่คือปากกาครับ. — This is a pen.\n- นี่คือโทรศัพท์ใช่ไหมคะ. — Is this a phone?\n- ใช่ครับ. — Yes.\n- กุญแจอยู่ที่ไหนคะ. — Where is the key?\n- กุญแจอยู่ในกระเป๋าครับ. — The key is in the bag.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:นี่คืออะไร]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- นี่คืออะไรคะ. — What is this?\n- นี่คือปากกาครับ. — This is a pen.\n- นี่คือโทรศัพท์ใช่ไหมคะ. — Is this a phone?\n- ใช่ครับ. — Yes.\n- กุญแจอยู่ที่ไหนคะ. — Where is the key?\n- กุญแจอยู่ในกระเป๋าครับ. — The key is in the bag."
+  },
   "readingItems": [
     {
       "sourceText": "นี่คืออะไรคะ.",

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "SPA-GRAMMAR-005"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "In a shared plan for the market, you will use [[grammar:Vamos a + infinitivo]]. Use [[grammar:Vamos a]] plus an infinitive for a shared near-future plan. Vamos a comprar fruta means ‘We are going to buy fruit.’ Do not confuse it with vamos al mercado, where al marks a destination.",
+      "expert": "This chapter presents [[grammar:Vamos a + infinitivo]] in a shared plan for the market. First-person plural vamos plus a and infinitive forms the periphrastic future. Destination al is the contraction of a + el and does not introduce an infinitive."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "Use [[grammar:Vamos a]] plus an infinitive for a shared near-future plan. Vamos a comprar fruta means ‘We are going to buy fruit.’ Do not confuse it with vamos al mercado, where al marks a destination.",
+      "expert": "First-person plural vamos plus a and infinitive forms the periphrastic future. Destination al is the contraction of a + el and does not introduce an infinitive."
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Read the Spanish punctuation with the sentence: ¿ starts a question and ¡ starts an exclamation. Learn nouns with el or la when an article is shown.",
+      "expert": "The reading uses broadly intelligible contemporary Spanish with tú as neutral informal singular address. Null subjects and article-bearing citation forms are analyzed only where attested."
+    }
+  ],
+  "breakdown": {
+    "normal": "Read each exact spanish line, then check its natural English meaning. Watch for [[grammar:Vamos a + infinitivo]] where it appears.\n\n- ¿Vamos al mercado hoy? — Shall we go to the market today?\n- Sí, vamos a comprar fruta. — Yes, we are going to buy fruit.\n- También quiero tomates. — I also want tomatoes.\n- El mercado está cerca de la casa. — The market is near the house.\n- ¿Vamos juntos a las tres? — Shall we go together at three?\n- Sí, nos vemos allí. — Yes, see you there.",
+    "expert": "These exact reading lines provide the distributional evidence for [[grammar:Vamos a + infinitivo]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- ¿Vamos al mercado hoy? — Shall we go to the market today?\n- Sí, vamos a comprar fruta. — Yes, we are going to buy fruit.\n- También quiero tomates. — I also want tomatoes.\n- El mercado está cerca de la casa. — The market is near the house.\n- ¿Vamos juntos a las tres? — Shall we go together at three?\n- Sí, nos vemos allí. — Yes, see you there."
+  }
+}
