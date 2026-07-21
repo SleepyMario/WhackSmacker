@@ -228,12 +228,34 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "research",
       "units"
     ]
+  },
+  {
+    id: "korean-curriculum",
+    packageId: "com.sleepymario.language.korean",
+    displayName: "Korean",
+    description: "Korean language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    contentType: "language-curriculum",
+    contentSchemaVersion: "1.0.0",
+    packageVersion: "0.1.0",
+    sourcePath: "../korean-curriculum",
+    sourceRepository: "https://github.com/SleepyMario/korean-curriculum",
+    languages: ["ko", "en"],
+    subjects: ["language", "korean"],
+    license: { spdx: null, name: null, path: null },
+    include: [
+      "README.md",
+      "lexical-topics.json",
+      "lexical-topic-audit.json",
+      "lexical-topic-audit.md",
+      "units"
+    ]
   }
 ];
 
 const reviewPackageByReadingPackage = new Map<string, string>([
   ["com.sleepymario.language.vietnamese", "com.sleepymario.language.vietnamese.reviews"],
-  ["com.sleepymario.language.dutch", "com.sleepymario.language.dutch.reviews"]
+  ["com.sleepymario.language.dutch", "com.sleepymario.language.dutch.reviews"],
+  ["com.sleepymario.language.korean", "com.sleepymario.language.korean.reviews"]
 ]);
 
 const readingTargets = legacyGeneratorTargets.map((target): ContentPackageGeneratorTarget => {
@@ -266,7 +288,7 @@ const coreReviewTargets: readonly {
   { slug: "german", name: "German", languages: ["de", "en"], packageVersion: "0.1.0" },
   { slug: "hindi", name: "Hindi", languages: ["hi", "en"], packageVersion: "0.1.0" },
   { slug: "japanese", name: "Japanese", languages: ["ja", "en"], packageVersion: "0.1.0" },
-  { slug: "korean", name: "Korean", languages: ["ko", "en"], packageVersion: "0.1.0" },
+  { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0" },
   { slug: "russian", name: "Russian", languages: ["ru", "en"], packageVersion: "0.1.0" },
   { slug: "spanish", name: "Spanish", languages: ["es", "en"], packageVersion: "0.1.0" },
   { slug: "thai", name: "Thai", languages: ["th", "en"], packageVersion: "0.1.0" },

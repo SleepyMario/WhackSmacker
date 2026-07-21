@@ -21,6 +21,7 @@ test("content package generator exposes the supported local package targets", ()
       ["linguistic-terminology", "com.sleepymario.language.linguistic-terminology"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
+      ["korean-curriculum", "com.sleepymario.language.korean"],
       ["vietnamese-core-reviews", "com.sleepymario.language.vietnamese.reviews"],
       ["dutch-core-reviews", "com.sleepymario.language.dutch.reviews"],
       ["arabic-core-reviews", "com.sleepymario.language.arabic.reviews"],
@@ -348,6 +349,57 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik ben N" || item.answer.text === "Ik ben N"), false);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "Ik heb N" || item.answer.text === "Ik heb N"), false);
     assert.equal(allReviewItems.some((item) => item.prompt.text === "${FOREIGN-NAME-1}" || item.answer.text === "${FOREIGN-NAME-1}"), false);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("content package generator creates only the rebuilt Korean Chapters 1 through 5 and its authoritative Review", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-korean-package-"));
+
+  try {
+    const result = await generateContentPackage({
+      targetId: "korean-curriculum",
+      outputDirectory: directory,
+      generatedAt: "2026-07-21T00:00:00Z"
+    });
+    const readingArchive = await readZip(result.filePath);
+    const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
+    const readingContent = JSON.parse(readingArchive.get("content/content.json").toString("utf8"));
+    const { reviewArchive, reviewManifest } = await mergedSplitArchive(readingArchive, directory, "korean-core-reviews");
+    const reviewItems = JSON.parse(reviewArchive.get("content/memorization/review-decks/chapter-001-005.json").toString("utf8")).items;
+    const chapterFiles = readingContent.files.filter((file) => /^units\/korean-core\/chapter-\d{3}-(?!005-grammar-)[^/]+\/chapter\.md$/u.test(file.path));
+
+    assert.equal(result.packageId, "com.sleepymario.language.korean");
+    assert.equal(result.packageVersion, "0.1.0");
+    assert.equal(manifest.packageId, "com.sleepymario.language.korean");
+    assert.equal(manifest.contentType, "language-curriculum");
+    assert.deepEqual(manifest.capabilities, ["reading-curriculum"]);
+    assert.deepEqual(manifest.relatedPackageIds, ["com.sleepymario.language.korean.reviews"]);
+    assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
+    assert.deepEqual(chapterFiles.map((file) => file.path), [
+      "units/korean-core/chapter-001-a-polite-first-meeting/chapter.md",
+      "units/korean-core/chapter-002-a-room-at-home/chapter.md",
+      "units/korean-core/chapter-003-what-is-this/chapter.md",
+      "units/korean-core/chapter-004-minji-s-morning/chapter.md",
+      "units/korean-core/chapter-005-going-out-together/chapter.md"
+    ]);
+    assert.equal(readingContent.files.some((file) => /^units\/korean-core\/chapter-006-/u.test(file.path)), false);
+    for (const level of ["easy", "hard"]) {
+      assert.ok(readingContent.files.some((file) => file.path === `units/korean-core/chapter-001-005-grammar-${level}/chapter.md`));
+    }
+    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 5);
+    assert.ok(readingContent.files.some((file) => file.path === "units/korean-core/cumulative-ledger.md"));
+    assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
+    assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
+    assert.equal(readingContent.files.some((file) => /basic-(?:life-)?sentences|foundation/u.test(file.path)), false);
+    assert.equal(reviewManifest.packageId, "com.sleepymario.language.korean.reviews");
+    assert.deepEqual(reviewManifest.relatedPackageIds, ["com.sleepymario.language.korean"]);
+    assert.equal(reviewItems.length, 94);
+    assert.equal(new Set(reviewItems.map((item) => item.testedLexicalIds.at(-1))).size, 47);
+    assert.deepEqual(new Set(reviewItems.map((item) => item.reviewDirection)), new Set(["ko-to-en", "en-to-ko"]));
+    assertCoreReviewItemsHaveExamples(reviewItems, "Korean");
+    assertOrdinaryBidirectionalItems(reviewItems, "Korean");
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

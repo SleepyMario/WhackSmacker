@@ -232,16 +232,17 @@ test("Japanese and Thai core sidecars provide exact noninvented reading support"
   assert.equal(thaiItems, 30);
 });
 
-test("review-only metadata recognizes all ten decks without adding curriculum targets", async () => {
+test("follower metadata recognizes all ten decks and only the integrated Korean curriculum target", async () => {
   const targets = new Map(contentPackageGeneratorTargets.map(target => [target.id, target]));
   for (const config of configs) {
-    assert.equal(targets.has(`${config.slug}-curriculum`), false, `${config.name} full curriculum target must remain absent`);
+    const integratedReadingPackage = config.slug === "korean";
+    assert.equal(targets.has(`${config.slug}-curriculum`), integratedReadingPackage, `${config.name} curriculum integration scope changed`);
     const target = targets.get(`${config.slug}-core-reviews`);
     assert.ok(target);
     assert.equal(target.packageId, `com.sleepymario.language.${config.slug}.reviews`);
     assert.equal(target.contentType, "core-review");
     assert.deepEqual(target.capabilities, ["core-review"]);
-    assert.equal(target.relatedPackageIds, undefined);
+    assert.deepEqual(target.relatedPackageIds, integratedReadingPackage ? ["com.sleepymario.language.korean"] : undefined);
   }
   const directory = await mkdtemp(join(tmpdir(), "wsm-follower-reviews-"));
   try {
@@ -249,7 +250,7 @@ test("review-only metadata recognizes all ten decks without adding curriculum ta
       const result = await generateContentPackage({ targetId: `${config.slug}-core-reviews`, outputDirectory: directory, generatedAt: "2026-07-20T00:00:00Z" });
       assert.deepEqual(validateContentPackageManifest(result.manifest).errors, []);
       assert.equal(result.manifest.packageId, `com.sleepymario.language.${config.slug}.reviews`);
-      assert.equal(result.manifest.relatedPackageIds, undefined);
+      assert.deepEqual(result.manifest.relatedPackageIds, config.slug === "korean" ? ["com.sleepymario.language.korean"] : undefined);
     }
   } finally {
     await rm(directory, { recursive: true, force: true });
