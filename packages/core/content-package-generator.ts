@@ -150,7 +150,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     description: "Vietnamese language curriculum content generated from the canonical Vietnamese curriculum repository.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
-    packageVersion: "0.2.0",
+    packageVersion: "0.1.0",
     sourcePath: "../vietnamese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
     languages: ["vi", "en"],
@@ -456,7 +456,7 @@ const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = cor
   languages,
   subjects: ["language", "review"],
   dependencies: slug === "vietnamese"
-    ? [{ packageId: readingId, version: ">=0.2.0 <0.3.0", optional: true }]
+    ? [{ packageId: readingId, version: ">=0.1.0 <0.2.0", optional: true }]
     : [],
   license: { spdx: "GPL-3.0-or-later", name: "GNU General Public License version 3 or later", path: "LICENSE-SOFTWARE" },
   include: ["README.md", "LICENSE-SOFTWARE", "review-decks"]

@@ -51,13 +51,18 @@ test("Vietnamese package targets retain the current versions and include the com
   const targets = new Map(contentPackageGeneratorTargets.map((target) => [target.id, target]));
   const reading = targets.get("vietnamese-curriculum");
   const reviews = targets.get("vietnamese-core-reviews");
-  assert.equal(reading?.packageVersion, "0.2.0");
+  assert.equal(reading?.packageVersion, "0.1.0");
   assert.equal(reading?.contentSchemaVersion, "1.0.0");
   assert.deepEqual(reading?.readingContentInclude, [
     "README.md", "philosophy.md", "scope.md", "curriculum-map.md", "progress.md", "backlog.md", "decisions.md",
     "geography-ledger.json", "number-progression.json", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "sino-vietnamese-lexicon.json", "sino-vietnamese-audit.json", "sino-vietnamese-audit.md", "name-pools", "units/README.md", "units/vietnamese-foundation", "units/vietnamese-core"
   ]);
   assert.equal(reviews?.packageVersion, "0.2.0");
+  assert.deepEqual(reviews?.dependencies, [{
+    packageId: "com.sleepymario.language.vietnamese",
+    version: ">=0.1.0 <0.2.0",
+    optional: true
+  }]);
   assert.deepEqual(reviews?.include, ["README.md", "LICENSE-SOFTWARE", "review-decks"]);
   assert.equal(isContentPackageSourceFileAllowed("number-progression.json"), true);
   assert.equal(isContentPackageSourceFileAllowed("lexical-topics.json"), true);
@@ -102,8 +107,8 @@ test("content package generator creates complete Vietnamese reading and review p
     const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
     const readingContent = JSON.parse(readingArchive.get("content/content.json").toString("utf8"));
     const { reviewArchive, reviewContent, reviewManifest } = await mergedSplitArchive(readingArchive, directory, "vietnamese-core-reviews");
-    assert.equal(result.packageVersion, "0.2.0");
-    assert.equal(manifest.packageVersion, "0.2.0");
+    assert.equal(result.packageVersion, "0.1.0");
+    assert.equal(manifest.packageVersion, "0.1.0");
     assert.equal(reviewManifest.packageVersion, "0.2.0");
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
     for (const chapter of [1, 10, 11, 25, 31, 41, 50]) {
