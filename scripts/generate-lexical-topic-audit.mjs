@@ -8,7 +8,7 @@ const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_lan
 
 const configs = [
   {
-    language: "Dutch", code: "nl", slug: "dutch", repository: "dutch-curriculum", maxChapter: 75,
+    language: "Dutch", code: "nl", slug: "dutch", repository: "dutch-curriculum", maxChapter: 80,
     newlyRegisteredTopics: ["administration.documents", "communication.greetings", "communication.media", "daily.routines", "education.learning", "emotions.general", "food.cooking", "furniture.general", "gardening.plants", "geography.places", "leisure.crafts", "leisure.culture", "numbers.cardinal", "technology.networking", "travel.hiking", "work.projects"],
     corrections: [
       "Separated furniture.general from household.objects and moved the household anchor to the earliest remaining household sense, nl.noun.raam.window (Chapter 4).",
@@ -16,7 +16,8 @@ const configs = [
       "Expanded existing topic membership to include all clearly applicable canonical senses found in Chapters 1-70.",
       "Moved measurement.dimensions first attestation to Chapter 30 because nl.adjective.ruim.spacious predates the Chapter 48 measurement reading.",
       "Replaced the former administrative Chapter 66, 67, and 70 topic memberships with literal bicycle-repair, gardening, and film evidence.",
-      "Extended the inventory through Chapter 75 with hiking, pet-care, cooking, craft, and home-networking evidence, preserving all 607 earlier senses and adding exactly 80 collision-free senses."
+      "Extended the inventory through Chapter 75 with hiking, pet-care, cooking, craft, and home-networking evidence, preserving all 607 earlier senses and adding exactly 80 collision-free senses.",
+      "Extended the canonical Review audit through Chapter 80 with exactly 103 approved senses from the authored Chapters 76–80 bundle."
     ],
     variants: [
       { kind: "polysemy", finding: "Dutch lexical identity remains sense- and part-of-speech-based; identical spellings are not merged across unrelated senses." },
@@ -27,7 +28,8 @@ const configs = [
       { chapter_range: "16-30", topics: ["descriptive.colours", "clothing.general", "household.objects", "furniture.general"], note: "Gift, home, and renovation contexts are possible future expansion points." },
       { chapter_range: "31-50", topics: ["animals.pets", "food.vegetables", "measurement.dimensions"], note: "Animal-care, market, and measurement readings can support gradual additions." },
       { chapter_range: "51-70", topics: ["weather.general", "health.general", "occupations.professions"], note: "Existing weather, clinic, gardening, repair, and film settings offer future reinforcement or one-at-a-time expansion." },
-      { chapter_range: "71-75", topics: ["travel.hiking", "animals.pets", "food.cooking", "leisure.crafts", "technology.networking"], note: "The completed block establishes five deliberately distinct practical fields; future chapters should reuse them selectively without clustering adjacent topics." }
+      { chapter_range: "71-75", topics: ["travel.hiking", "animals.pets", "food.cooking", "leisure.crafts", "technology.networking"], note: "The completed block establishes five deliberately distinct practical fields; future chapters should reuse them selectively without clustering adjacent topics." },
+      { chapter_range: "76-80", topics: ["home and household", "clothing", "animals and plants", "education"], note: "The approved completion-mode block closes documented practical lexical gaps while retaining sense-level identity." }
     ],
     deferred: [
       { topic_id: "body.parts", reason: "No standalone canonical body-part sense occurs; tanden appears only inside the canonical routine phrase poetst zijn tanden." },

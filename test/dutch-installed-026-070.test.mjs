@@ -16,7 +16,7 @@ import {
   readInstalledContentEntry
 } from "../dist/packages/core/index.js";
 
-const expectedReviewLabels = Array.from({ length: 15 }, (_, index) => {
+const expectedReviewLabels = Array.from({ length: 16 }, (_, index) => {
   const start = index * 5 + 1;
   return `Chapter ${start}-${start + 4}`;
 });
@@ -70,7 +70,7 @@ async function createInstalledDutchFixture() {
   return { dataDir, cleanup: () => rm(root, { recursive: true, force: true }) };
 }
 
-test("installed Dutch Chapters 26-75 expose all views and independent translation and breakdown toggles", async () => {
+test("installed Dutch Chapters 26-80 expose all views and independent translation and breakdown toggles", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir, "developer");
@@ -84,11 +84,11 @@ test("installed Dutch Chapters 26-75 expose all views and independent translatio
     const chapters = readContent.children
       .filter((node) => {
         const chapter = chapterNumber(node);
-        return chapter >= 26 && chapter <= 75 && (node.filePath ?? "").endsWith("/chapter.md") && !/grammar/u.test(node.filePath ?? "");
+        return chapter >= 26 && chapter <= 80 && (node.filePath ?? "").endsWith("/chapter.md") && !/grammar/u.test(node.filePath ?? "");
       })
       .sort((a, b) => chapterNumber(a) - chapterNumber(b));
-    assert.deepEqual(chapters.map(chapterNumber), Array.from({ length: 50 }, (_, index) => index + 26));
-    assert.equal(readContent.children.some((node) => chapterNumber(node) === 76), false);
+    assert.deepEqual(chapters.map(chapterNumber), Array.from({ length: 55 }, (_, index) => index + 26));
+    assert.equal(readContent.children.some((node) => chapterNumber(node) === 81), false);
     assert.deepEqual(reviewDecks.children.map((node) => node.label), expectedReviewLabels);
 
     const sources = await listReadingReviewSources({
@@ -137,7 +137,8 @@ test("installed Dutch Chapters 26-75 expose all views and independent translatio
       assert.match(both, /^### Line-by-line Breakdown$/mu);
 
       const brief = sectionBody(normal, "Brief Introduction");
-      assert.match(brief, /^This chapter (?:teaches|introduces)/u);
+      if (number <= 75) assert.match(brief, /^This chapter (?:teaches|introduces)/u);
+      else assert.ok(brief.length > 0, `Chapter ${number} has learner-directed introductory support`);
       const readingBlocks = sectionBody(normal, type).split(/\n\s*\n/u).filter(Boolean);
       assert.ok(readingBlocks.length >= 2, `Chapter ${number} has a separate scene introduction`);
       const sceneIntroduction = readingBlocks[0].trim();

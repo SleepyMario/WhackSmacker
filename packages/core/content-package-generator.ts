@@ -848,7 +848,12 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     [72, "chapter-072-a-shelter-dog-finds-a-foster-home"],
     [73, "chapter-073-cooking-a-birthday-dinner-together"],
     [74, "chapter-074-making-a-first-ceramic-bowl"],
-    [75, "chapter-075-fixing-the-wifi-before-a-family-call"]
+    [75, "chapter-075-fixing-the-wifi-before-a-family-call"],
+    [76, "chapter-076-a-new-home-for-noor"],
+    [77, "chapter-077-the-bag-for-the-party"],
+    [78, "chapter-078-a-morning-in-the-garden"],
+    [79, "chapter-079-building-a-bookcase-together"],
+    [80, "chapter-080-the-first-week-of-the-course"]
   ].map(([chapter, directory]) => ({
     source: `curriculum-support/dutch/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/dutch-core/${directory}/reading-support.json`

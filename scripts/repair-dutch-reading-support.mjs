@@ -37,7 +37,7 @@ function synchronize(text) {
   return result;
 }
 
-for (let chapter = 1; chapter <= 75; chapter += 1) {
+for (let chapter = 1; chapter <= 80; chapter += 1) {
   const directory = `chapter-${String(chapter).padStart(3, "0")}`;
   const path = join(root.pathname, directory, "reading-support.json");
   let document = JSON.parse(await readFile(path, "utf8"));
@@ -58,4 +58,4 @@ for (let chapter = 1; chapter <= 75; chapter += 1) {
   await writeFile(path, `${JSON.stringify(document, null, 2)}\n`);
 }
 
-console.log("Repaired Dutch reading support for chapters 1-75; constrained semantic spans in chapters 71-75.");
+console.log("Repaired Dutch reading support for chapters 1-80; constrained semantic spans in chapters 71-80.");

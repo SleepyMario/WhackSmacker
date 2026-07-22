@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -85,10 +85,10 @@ async function chapterSources() {
   })));
 }
 
-test("Dutch Chapters 71-75 are consecutive, alternate format, and Chapter 76 is absent", async () => {
+test("Dutch Chapters 71-75 remain consecutive and alternate format while Chapter 81 is absent", async () => {
   const directories = await readdir(unitRoot);
   assert.deepEqual([...expected].map(([chapter, info]) => directories.includes(info.directory) ? chapter : 0), [71, 72, 73, 74, 75]);
-  assert.equal(directories.some((directory) => /^chapter-076-/u.test(directory)), false);
+  assert.equal(directories.some((directory) => /^chapter-081-/u.test(directory)), false);
   const sources = await chapterSources();
   for (const { chapter, markdown } of sources) {
     assert.match(markdown, new RegExp(`^# Chapter ${chapter} -- ${expected.get(chapter).title}$`, "mu"));
@@ -97,6 +97,7 @@ test("Dutch Chapters 71-75 are consecutive, alternate format, and Chapter 76 is 
   const allEarlier = [];
   for (const directory of directories.filter((entry) => /^chapter-\d{3}-(?!\d{3}-grammar)/u.test(entry) && !entry.includes("grammar"))) {
     const chapter = Number(/^chapter-(\d{3})-/u.exec(directory)[1]);
+    if (chapter > 75) continue;
     allEarlier.push({ chapter, markdown: await readFile(join(unitRoot, directory, "chapter.md"), "utf8") });
   }
   const results = assertLanguageCurriculumChapter71140Requirements(allEarlier);
@@ -258,7 +259,9 @@ test("all sense and Review card IDs remain unique and proposed lexical IDs do no
   const proposedLexical = new Set();
   const senses = new Set();
   const cards = new Set();
-  for (const directory of (await readdir(reviewRoot)).filter((entry) => /^chapter-\d{3}-\d{3}$/u.test(entry)).sort()) {
+  for (const directory of (await readdir(reviewRoot))
+    .filter((entry) => /^chapter-\d{3}-\d{3}$/u.test(entry) && Number(entry.slice(-3)) <= 75)
+    .sort()) {
     const rows = (await readFile(join(reviewRoot, directory, "cards.tsv"), "utf8")).trimEnd().split("\n").slice(1).map((line) => line.split("\t"));
     for (const row of rows) {
       assert.equal(cards.has(row[0]), false, row[0]);
@@ -285,13 +288,13 @@ test("topic diversity, cast continuity, and number continuity are recorded throu
   const cast = JSON.parse(await readFile(join(curriculumRoot, "name-pools", "canonical-cast.json"), "utf8"));
   const numbers = JSON.parse(await readFile(join(curriculumRoot, "number-progression.json"), "utf8"));
   const reviewRows = (await readFile(join(reviewRoot, "chapter-071-075", "cards.tsv"), "utf8")).trimEnd().split("\n").slice(1).map((line) => line.split("\t"));
-  assert.equal(topics.max_ordinary_chapter, 75);
+  assert.equal(topics.max_ordinary_chapter, 80);
   assert.equal(numbers.highestCompletedChapter, 75);
   assert.equal(numbers.magnitudeBlocks.at(-1).status, "in-progress");
   assert.deepEqual(numbers.reviewDecks.at(-1).cards.map((card) => card.mode).sort(), ["contextual", "digits-to-words", "words-to-digits"]);
   assert.deepEqual(numbers.reviewDecks.at(-1).cards.map((card) => card.testedValues), [[24, 40], [24, 40], [24, 40]]);
   assert.equal(reviewRows.some((row) => JSON.parse(row[10]).some((id) => id.startsWith("nl.numeral."))), false, "inherited number evidence is not relabelled as a new lexical sense");
-  assert.equal(cast.activeCast.legacyMigration.status, "complete-through-chapter-75");
+  assert.equal(cast.activeCast.legacyMigration.status, "complete-through-chapter-80");
   const permitted = new Set(cast.activeCast.progression.slice(0, 14));
   for (const [chapter, info] of expected) {
     assert.equal(info.cast.every((id) => permitted.has(id)), true, `Chapter ${chapter} cast is active`);
@@ -302,7 +305,7 @@ test("topic diversity, cast continuity, and number continuity are recorded throu
     assert.equal(chapterSenseCount, chapter === 75 ? 17 : 16, `${info.topic} Chapter ${chapter} senses`);
   }
   assert.equal(new Set([...expected.values()].map((info) => info.topic)).size, 5);
-  await assert.rejects(access(join(unitRoot, "chapter-076")));
+  assert.equal((await readdir(unitRoot)).some((directory) => /^chapter-081-/u.test(directory)), false);
 });
 
 async function installedDutch() {

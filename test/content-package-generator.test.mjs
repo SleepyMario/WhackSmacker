@@ -175,7 +175,8 @@ test("content package generator creates a valid Dutch package", async () => {
       { start: 56, end: 60, cards: 100 },
       { start: 61, end: 65, cards: 100 },
       { start: 66, end: 70, cards: 110 },
-      { start: 71, end: 75, cards: 162 }
+      { start: 71, end: 75, cards: 162 },
+      { start: 76, end: 80, cards: 206 }
     ];
     const additionalReviewItems = additionalReviewBlocks.map(({ start, end, cards }) => {
       const slug = `${String(start).padStart(3, "0")}-${String(end).padStart(3, "0")}`;
@@ -241,8 +242,8 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.doesNotMatch(chapter1Entry.text, /Complete Rereading/u);
     assert.equal(chapter1Entry.text, chapter1Source.toString("utf8").split("\n").filter((line) => !/^#{1,6}\s+Content\s*$/iu.test(line.trim())).join("\n"));
     assert.equal(createHash("sha256").update(chapter1Source).digest("hex"), "497add825e7ba091e9f42f8a2c7f23fd122aabc4abeb0cc39a116a927dad57e3");
-    assert.equal(translationEntries.length, 75);
-    for (let chapterNumber = 1; chapterNumber <= 75; chapterNumber += 1) {
+    assert.equal(translationEntries.length, 80);
+    for (let chapterNumber = 1; chapterNumber <= 80; chapterNumber += 1) {
       const padded = String(chapterNumber).padStart(3, "0");
       const chapterFile = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/chapter.md") && !file.path.includes("grammar"));
       const translationFile = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/reading-translation.en.json"));
@@ -251,7 +252,7 @@ test("content package generator creates a valid Dutch package", async () => {
       assertChapterIntroductionRoles(chapterFile.text, JSON.parse(translationFile.text), chapterNumber);
     }
     assert.equal(content.files.some((file) => file.path === supportPath), true);
-    for (let chapterNumber = 1; chapterNumber <= 75; chapterNumber += 1) {
+    for (let chapterNumber = 1; chapterNumber <= 80; chapterNumber += 1) {
       const padded = String(chapterNumber).padStart(3, "0");
       const supportEntry = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/reading-support.json"));
       assert.ok(supportEntry, `Chapter ${chapterNumber} semantic support is packaged`);
@@ -303,11 +304,12 @@ test("content package generator creates a valid Dutch package", async () => {
     const chapter11Path = "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md";
     assert.ok(content.files.some((file) => file.path === chapter11Path));
     assert.match(content.files.find((file) => file.path === chapter11Path).text, /^chapter:\s*11$/mu);
-    for (let chapter = 12; chapter <= 75; chapter += 1) {
+    for (let chapter = 12; chapter <= 80; chapter += 1) {
       assert.ok(content.files.some((file) => file.path.startsWith(`units/dutch-core/chapter-${String(chapter).padStart(3, "0")}-`) && file.path.endsWith("/chapter.md")));
     }
     assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-075-/u.test(file.path)), true);
-    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-076-/u.test(file.path)), false);
+    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-080-/u.test(file.path)), true);
+    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-081-/u.test(file.path)), false);
     assert.equal(content.files.some((file) => file.path === "lexical-topics.json"), true);
     assert.equal(content.files.some((file) => file.path === "lexical-topic-audit.json"), true);
     assert.equal(content.files.some((file) => file.path === "lexical-topic-audit.md"), true);

@@ -31,8 +31,8 @@ const representativeTargets = new Map([
 ]);
 const blue = (text) => `\x1b[34m${text}\x1b[0m`;
 
-test("Dutch Chapters 1-75 retain the canonical semantic grammar-role contract", async () => {
-  for (let chapter = 1; chapter <= 75; chapter += 1) {
+test("Dutch Chapters 1-80 retain the canonical semantic grammar-role contract", async () => {
+  for (let chapter = 1; chapter <= 80; chapter += 1) {
     const number = String(chapter).padStart(3, "0");
     const support = JSON.parse(await readFile(join(curriculumSupportRoot, `chapter-${number}`, "reading-support.json"), "utf8"));
     assert.equal(support.semanticRoleSyntaxVersion, 1, `Chapter ${chapter} uses semantic role syntax version 1`);

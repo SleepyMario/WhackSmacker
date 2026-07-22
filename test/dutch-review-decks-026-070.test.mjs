@@ -96,7 +96,7 @@ test("Dutch shared spellings keep interrogative, demonstrative, relative, and co
 
 test("every Dutch verb Review headword is its canonical infinitive", async () => {
   const rows = [];
-  for (let start = 1; start <= 75; start += 5) {
+  for (let start = 1; start <= 80; start += 5) {
     const path = join("review-content", "dutch", "review-decks", `chapter-${String(start).padStart(3,"0")}-${String(start + 4).padStart(3,"0")}`, "cards.tsv");
     rows.push(...(await readFile(path, "utf8")).trimEnd().split("\n").slice(1).map((line) => line.split("\t")));
   }
