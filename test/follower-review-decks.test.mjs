@@ -270,8 +270,8 @@ test("canonical headwords require an explicit mapping from contracted or locativ
 
   const korean = await readFile(join(root, "korean-curriculum", "units", "korean-core", "chapter-003-what-is-this", "chapter.md"), "utf8");
   const zulu = await readFile(join(root, "zulu-curriculum", "units", "zulu-core", "chapter-005-a-shared-plan", "chapter.md"), "utf8");
-  assert.match(korean, /\| 이게 ← 이것 \|[^\n]*contracted from 이것이/u);
-  assert.match(korean, /\| 이건 ← 이것 \|[^\n]*contracted from 이것은/u);
+  assert.match(korean, /\| 이게 ← 이것 \| this; this thing \| demonstrative pronoun \| contracted from 이것이 \|/u);
+  assert.match(korean, /\| 이건 ← 이것 \| this; this thing \| demonstrative pronoun \| contracted from 이것은 \|/u);
   assert.doesNotMatch(korean, /`ko\.demonstrative\.ige`(?:\.|`)/u);
   assert.match(zulu, /\| emakethe ← imakethe \|[^\n]*locative surface form/u);
   assert.match(zulu, /\| epaki ← ipaki \|[^\n]*locative surface form/u);
