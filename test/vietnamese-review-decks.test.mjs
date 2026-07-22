@@ -29,8 +29,8 @@ test("Vietnamese review decks exactly cover the canonical newly introduced lexic
   assert.deepEqual(report, {
     "chapter-001-005": { inventoryCount: 30, cardCount: 60 },
     "chapter-006-010": { inventoryCount: 36, cardCount: 72 },
-    "chapter-011-015": { inventoryCount: 46, cardCount: 92 },
-    "chapter-016-020": { inventoryCount: 40, cardCount: 80 },
+    "chapter-011-015": { inventoryCount: 47, cardCount: 94 },
+    "chapter-016-020": { inventoryCount: 43, cardCount: 86 },
     "chapter-021-025": { inventoryCount: 40, cardCount: 80 },
     "chapter-026-030": { inventoryCount: 35, cardCount: 70 },
     "chapter-031-035": { inventoryCount: 37, cardCount: 74 },
@@ -228,6 +228,38 @@ test("Vietnamese grammar frames cannot enter lexical Review", async () => {
   assert.equal(noRows.length, 2);
   assert.deepEqual(noRows.map((row) => row.prompt), ["không", "no"]);
   assert.equal(noRows.every((row) => row.examples.length === 1 && row.examples[0].startsWith("Không,")), true);
+});
+
+test("Vietnamese omitted Chapter 12 and 18 senses have exact first introductions and Review directions", async () => {
+  const inventory = parseCanonicalInventory(await readFile(ledgerPath, "utf8"));
+  const bySense = new Map(inventory.map((item) => [item.senseId, item]));
+  assert.equal(bySense.get("vi.preposition.cho.preparation-for")?.firstIntroductionChapter, 12);
+  assert.equal(bySense.get("vi.noun.nha.house-home")?.firstIntroductionChapter, 18);
+  assert.equal(bySense.get("vi.preposition.trong.in-inside")?.firstIntroductionChapter, 18);
+  assert.equal(bySense.get("vi.noun.phong.room")?.firstIntroductionChapter, 18);
+
+  const before12 = await Promise.all(Array.from({ length: 11 }, (_, index) => readFile(join(curriculumRoot, canonicalPath(index + 1)), "utf8")));
+  assert.equal(before12.some((source) => /(^|[^\p{L}\p{M}])cho([^\p{L}\p{M}]|$)/iu.test(extractLearnerFacingLines(source).join("\n"))), false);
+  assert.equal(before12.some((source) => /chợ/iu.test(source)), true, "chợ remains an excluded lexical identity");
+
+  const chapters1to17 = await Promise.all(Array.from({ length: 17 }, async (_, index) => readFile(join(curriculumRoot, canonicalPath(index + 1)), "utf8")));
+  const vocabularyForms = chapters1to17.flatMap((source) => [...source.matchAll(/^\| ([^|]+) \|/gmu)].map((match) => match[1].trim().toLocaleLowerCase("vi")));
+  assert.equal(vocabularyForms.includes("nhà"), false);
+  assert.equal(vocabularyForms.includes("trong"), false);
+  assert.equal(vocabularyForms.includes("phòng"), false);
+  assert.equal(vocabularyForms.includes("nhà hàng"), true);
+  assert.equal(vocabularyForms.some((form) => ["phòng học", "nhân viên văn phòng"].includes(form)), true);
+
+  const chapter18 = await readFile(join(curriculumRoot, canonicalPath(18)), "utf8");
+  assert.doesNotMatch(chapter18, /Màn hình ở phòng\./u);
+  assert.match(chapter18, /Màn hình ở trong phòng\./u);
+  const deck11 = parseDeck(await readFile(join(process.cwd(), deckPaths[2]), "utf8"), deckPaths[2]);
+  const deck16 = parseDeck(await readFile(join(process.cwd(), deckPaths[3]), "utf8"), deckPaths[3]);
+  assert.deepEqual(deck11.rows.filter((row) => row.lexicalIds[1] === "vi.preposition.cho.preparation-for").map((row) => `${row.promptLanguage}->${row.answerLanguage}`).sort(), ["en->vi", "vi->en"]);
+  for (const sense of ["vi.noun.nha.house-home", "vi.preposition.trong.in-inside", "vi.noun.phong.room"]) {
+    assert.deepEqual(deck16.rows.filter((row) => row.lexicalIds[1] === sense).map((row) => `${row.promptLanguage}->${row.answerLanguage}`).sort(), ["en->vi", "vi->en"]);
+  }
+  assert.equal([...deck11.rows, ...deck16.rows].every((row) => row.grammarIds.length === 0), true);
 });
 
 function parseDeck(text, path) {

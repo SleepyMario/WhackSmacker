@@ -12,7 +12,7 @@ const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_lan
 
 for (const config of [
   { language: "Dutch", code: "dutch", repository: "dutch-curriculum", maxChapter: 75, canonicalSenses: 683, topics: 38, forbidden: /^chapter-076-/u },
-  { language: "Vietnamese", code: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 50, canonicalSenses: 396, topics: 33, forbidden: /^chapter-051-/u }
+  { language: "Vietnamese", code: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 50, canonicalSenses: 400, topics: 33, forbidden: /^chapter-051-/u }
 ]) {
   test(`${config.language} lexical-topic inventory resolves to reading and bidirectional review evidence`, async () => {
     const curriculumRoot = join(appRoot, "..", config.repository);

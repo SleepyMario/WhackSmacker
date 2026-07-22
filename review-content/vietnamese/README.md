@@ -20,5 +20,5 @@ but do not own or package these decks.
 
 Review decks now follow every completed five-chapter block through Chapter 50. Each deck contains all and only canonical lexical senses first introduced in its block, in both ordinary directions, with one to three literal Vietnamese primary-reading examples.
 
-Chapters 11–50 introduce 345 review-eligible senses and therefore 690 directional cards. No fixed quota is used.
+Chapters 11–50 introduce 349 review-eligible senses and therefore 698 directional cards. No fixed quota is used. Chapters 11–15 contain 47 senses/94 cards; Chapters 16–20 contain 43 senses/86 cards.
 <!-- whacksmacker:vietnamese-011-050:end -->

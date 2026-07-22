@@ -16,8 +16,8 @@
     {
       "sourceHeading": "Vietnamese Usage Notes",
       "normalHeading": "Language Notes",
-      "normal": "Put the needed item directly after `cần`: `S + cần + N`. This chapter does not yet use `cần` before a full action.",
-      "expert": "Cần can introduce a needed object directly. This chapter does not yet teach need followed by a full verb phrase. The grammar IDs remain distinct and cumulative."
+      "normal": "Put the needed item directly after `cần`: `S + cần + N`. This chapter does not yet use `cần` before a full action. `Cho` means “for” here. `Chuẩn bị cho ngày mai` means “prepare for tomorrow”: `cho` connects `chuẩn bị` to what the preparation is for.",
+      "expert": "Cần can introduce a needed object directly. This chapter does not yet teach need followed by a full verb phrase. In `chuẩn bị cho ngày mai`, `cho` introduces the preparation target or complement of `chuẩn bị`; this differs from recipient or beneficiary `cho`, verbal `cho` “give,” and request expressions such as `cho tôi`. This lexical sense does not add a principal grammar identity. The grammar IDs remain distinct and cumulative."
     }
   ],
   "breakdown": {

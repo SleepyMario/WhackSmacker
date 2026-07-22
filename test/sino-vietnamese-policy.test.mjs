@@ -105,7 +105,7 @@ test("Sino-Vietnamese metadata leaves lexical topics, reviews, and the Chapter 5
   assert.equal(topics.max_ordinary_chapter, 50);
   assert.equal(topics.topics.length, 33);
   assert.equal(JSON.stringify(topics).includes("sino-vietnamese"), false);
-  assert.deepEqual(lexicalAudit.review_findings.map((finding) => finding.card_count), [60, 72, 92, 80, 80, 70, 74, 84, 102, 78]);
+  assert.deepEqual(lexicalAudit.review_findings.map((finding) => finding.card_count), [60, 72, 94, 86, 80, 70, 74, 84, 102, 78]);
   assert.equal(lexicalAudit.review_findings.every((finding) => finding.mismatch_count === 0 && finding.card_count === finding.canonical_sense_count * 2), true);
   assert.equal(sinoAudit.preservation.lexical_topics_changed, false);
   assert.equal(sinoAudit.preservation.review_cards_changed, false);

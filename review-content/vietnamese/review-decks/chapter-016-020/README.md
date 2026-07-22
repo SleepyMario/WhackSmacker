@@ -2,8 +2,8 @@
 
 Authoritative ordinary bidirectional review for every canonical lexical sense first introduced in Vietnamese Core Chapters 16–20.
 
-- New senses: 40
-- Directional cards: 80
+- New senses: 43
+- Directional cards: 86
 - Directions: Vietnamese → English and English/Arabic digits → Vietnamese
 - Examples: one to three literal primary-reading examples per card
 - Schema: canonical 18-column TSV v2
