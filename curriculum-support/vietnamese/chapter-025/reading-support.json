@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### S + giúp + person + V\n\nUse giúp before a person and action to say that someone helps that person do something. Example: [[grammar:Tôi giúp Lê Hoàng Nam mang hộp.]]",
-      "expert": "#### S + giúp + person + V\n\nGiúp licenses a beneficiary/person followed by a bare verbal complement in this controlled assistance construction. Literal example: [[grammar:Tôi giúp Lê Hoàng Nam mang hộp.]]"
+      "normal": "#### S + giúp + person + V\n\nUse giúp before a person and action to say that someone helps that person do something. Example: [[grammar:Tôi giúp Hoàng Nam mang hộp.]]",
+      "expert": "#### S + giúp + person + V\n\nGiúp licenses a beneficiary/person followed by a bare verbal complement in this controlled assistance construction. Literal example: [[grammar:Tôi giúp Hoàng Nam mang hộp.]]"
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
@@ -21,8 +21,8 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Hộp nặng.]] — The box is heavy.\n- [[grammar:Tôi giúp Lê Hoàng Nam mang hộp.]] — I help Lê Hoàng Nam carry the box.\n- [[grammar:Cảm ơn.]] — Thank you.\n- [[grammar:Hộp ở tầng một.]] — The box is on the first floor.\n- [[grammar:Cầu thang ở đây.]] — The staircase is here.\n- [[grammar:Túi nhẹ.]] — The bag is light.\n- [[grammar:Tôi mang túi.]] — I carry the bag.\n- [[grammar:Tôi giúp Lê Hoàng Nam mang hộp nặng.]] — I help Lê Hoàng Nam carry the heavy box.\n- [[grammar:Cảm ơn.]] — Thank you.\n- [[grammar:Vâng.]] — Yes.",
-    "expert": "- [[grammar:Hộp nặng.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi giúp Lê Hoàng Nam mang hộp.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Cảm ơn.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Hộp ở tầng một.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Cầu thang ở đây.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Túi nhẹ.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi mang túi.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi giúp Lê Hoàng Nam mang hộp nặng.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Cảm ơn.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+    "normal": "- [[grammar:Hộp nặng.]] — The box is heavy.\n- [[grammar:Tôi giúp Hoàng Nam mang hộp.]] — I help Hoàng Nam carry the box.\n- [[grammar:Cảm ơn.]] — Thank you.\n- [[grammar:Hộp ở tầng một.]] — The box is on the first floor.\n- [[grammar:Cầu thang ở đây.]] — The staircase is here.\n- [[grammar:Túi nhẹ.]] — The bag is light.\n- [[grammar:Tôi mang túi.]] — I carry the bag.\n- [[grammar:Tôi giúp Hoàng Nam mang hộp nặng.]] — I help Hoàng Nam carry the heavy box.\n- [[grammar:Cảm ơn.]] — Thank you.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Hộp nặng.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi giúp Hoàng Nam mang hộp.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Cảm ơn.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Hộp ở tầng một.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Cầu thang ở đây.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Túi nhẹ.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi mang túi.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi giúp Hoàng Nam mang hộp nặng.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Cảm ơn.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",

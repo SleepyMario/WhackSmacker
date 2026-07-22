@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### trong khi + clause\n\nUse trong khi to connect actions or situations happening at the same time. Example: [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]]\n\n#### A + adjective + hơn + B\n\nPut hơn after an adjective to compare A with B. Example: [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]]",
-      "expert": "#### trong khi + clause\n\nTrong khi introduces a simultaneous frame and can also support contrast; this chapter emphasizes temporal overlap. Literal example: [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]]\n\n#### A + adjective + hơn + B\n\nThe comparative marker hơn follows the gradable predicate; the comparison standard follows it without a copula. Literal example: [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]]"
+      "normal": "#### trong khi + clause\n\nUse trong khi to connect actions or situations happening at the same time. Example: [[grammar:Trong khi tôi xem bản hướng dẫn, Mai Chi xem bản đồ.]]\n\n#### A + adjective + hơn + B\n\nPut hơn after an adjective to compare A with B. Example: [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]]",
+      "expert": "#### trong khi + clause\n\nTrong khi introduces a simultaneous frame and can also support contrast; this chapter emphasizes temporal overlap. Literal example: [[grammar:Trong khi tôi xem bản hướng dẫn, Mai Chi xem bản đồ.]]\n\n#### A + adjective + hơn + B\n\nThe comparative marker hơn follows the gradable predicate; the comparison standard follows it without a copula. Literal example: [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]]"
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]] — This route is shorter than that route.\n- [[grammar:Tuyến đường kia dài hơn tuyến đường này.]] — That route is longer than this route.\n- [[grammar:Tôi đi nhanh.]] — I go quickly.\n- [[grammar:Tôi đi chậm.]] — I go slowly.\n- [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]] — While I look at the guide, Nguyễn Mai Chi looks at the map.\n- [[grammar:Đi tuyến đường này nhanh hơn.]] — Taking this route is faster.\n- [[grammar:Tuyến đường kia chậm hơn.]] — The other route is slower.\n- [[grammar:Bản hướng dẫn rất rõ.]] — The guide is very clear.\n- [[grammar:Tôi chọn tuyến đường ngắn.]] — I choose the short route.\n- [[grammar:Trong khi đi, tôi nghe radio.]] — While traveling, I listen to the radio.\n- [[grammar:Tuyến đường dài không nhanh hơn.]] — The long route is not faster.\n- [[grammar:Vâng.]] — Yes.",
-    "expert": "- [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tuyến đường kia dài hơn tuyến đường này.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi đi nhanh.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi đi chậm.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Đi tuyến đường này nhanh hơn.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tuyến đường kia chậm hơn.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Bản hướng dẫn rất rõ.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi chọn tuyến đường ngắn.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Trong khi đi, tôi nghe radio.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tuyến đường dài không nhanh hơn.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+    "normal": "- [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]] — This route is shorter than that route.\n- [[grammar:Tuyến đường kia dài hơn tuyến đường này.]] — That route is longer than this route.\n- [[grammar:Tôi đi nhanh.]] — I go quickly.\n- [[grammar:Tôi đi chậm.]] — I go slowly.\n- [[grammar:Trong khi tôi xem bản hướng dẫn, Mai Chi xem bản đồ.]] — While I look at the guide, Mai Chi looks at the map.\n- [[grammar:Đi tuyến đường này nhanh hơn.]] — Taking this route is faster.\n- [[grammar:Tuyến đường kia chậm hơn.]] — The other route is slower.\n- [[grammar:Bản hướng dẫn rất rõ.]] — The guide is very clear.\n- [[grammar:Tôi chọn tuyến đường ngắn.]] — I choose the short route.\n- [[grammar:Trong khi đi, tôi nghe radio.]] — While traveling, I listen to the radio.\n- [[grammar:Tuyến đường dài không nhanh hơn.]] — The long route is not faster.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Tuyến đường này ngắn hơn tuyến đường kia.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tuyến đường kia dài hơn tuyến đường này.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi đi nhanh.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi đi chậm.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Trong khi tôi xem bản hướng dẫn, Mai Chi xem bản đồ.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Đi tuyến đường này nhanh hơn.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tuyến đường kia chậm hơn.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Bản hướng dẫn rất rõ.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi chọn tuyến đường ngắn.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Trong khi đi, tôi nghe radio.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tuyến đường dài không nhanh hơn.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bản hướng dẫn | 本向引 | guide; instruction sheet | `Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bản hướng dẫn | 本向引 | guide; instruction sheet | `Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bản hướng dẫn | 本向引 | guide; instruction sheet | `Trong khi tôi xem bản hướng dẫn, Mai Chi xem bản đồ.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| bản hướng dẫn | 本向引 | guide; instruction sheet | `Trong khi tôi xem bản hướng dẫn, Mai Chi xem bản đồ.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "bản hướng dẫn",
@@ -36,11 +36,11 @@
         "lexicalEntryId": "vi.noun.ban-huong-dan",
         "senseId": "vi.noun.ban-huong-dan.guide-instruction-sheet",
         "firstIntroductionChapter": 35,
-        "usage": "Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ.",
+        "usage": "Trong khi tôi xem bản hướng dẫn, Mai Chi xem bản đồ.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-035-basic-sentences-35/chapter.md",
           "section": "Dialogue",
-          "locator": "line containing: Trong khi tôi xem bản hướng dẫn, Nguyễn Mai Chi xem bản đồ."
+          "locator": "line containing: Trong khi tôi xem bản hướng dẫn, Mai Chi xem bản đồ."
         }
       }
     ]

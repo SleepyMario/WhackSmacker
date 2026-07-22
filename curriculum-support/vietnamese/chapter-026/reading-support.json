@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### S + đang + V\n\nPut đang before an action to show that it is in progress now. Example: [[grammar:Nguyễn Mai Chi đang ở thư viện.]]",
-      "expert": "#### S + đang + V\n\nĐang is introduced as an imperfective/progressive marker preceding a dynamic predicate; it does not independently encode tense. Literal example: [[grammar:Nguyễn Mai Chi đang ở thư viện.]]"
+      "normal": "#### S + đang + V\n\nPut đang before an action to show that it is in progress now. Example: [[grammar:Mai Chi đang ở thư viện.]]",
+      "expert": "#### S + đang + V\n\nĐang is introduced as an imperfective/progressive marker preceding a dynamic predicate; it does not independently encode tense. Literal example: [[grammar:Mai Chi đang ở thư viện.]]"
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Nguyễn Mai Chi đang ở thư viện.]] — Nguyễn Mai Chi is at the library now.\n- [[grammar:Nguyễn Mai Chi đang tìm sách tham khảo.]] — Nguyễn Mai Chi is looking for a reference book.\n- [[grammar:Thủ thư đang ở kệ sách.]] — The librarian is by the bookshelf.\n- [[grammar:Nguyễn Mai Chi có thẻ thư viện.]] — Nguyễn Mai Chi has a library card.\n- [[grammar:Nguyễn Mai Chi đang mượn sách tham khảo.]] — Nguyễn Mai Chi is borrowing the reference book.\n- [[grammar:Trần Thu Hà đang đọc báo.]] — Trần Thu Hà is reading a newspaper.\n- [[grammar:Nguyễn Mai Chi trả sách.]] — Nguyễn Mai Chi returns a book.\n- [[grammar:Thủ thư kiểm tra thẻ thư viện.]] — The librarian checks the library card.\n- [[grammar:Kệ sách rất yên tĩnh.]] — The bookshelf area is very quiet.\n- [[grammar:Trần Thu Hà đang tìm tạp chí.]] — Trần Thu Hà is looking for a magazine.",
-    "expert": "- [[grammar:Nguyễn Mai Chi đang ở thư viện.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Nguyễn Mai Chi đang tìm sách tham khảo.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Thủ thư đang ở kệ sách.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Nguyễn Mai Chi có thẻ thư viện.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Nguyễn Mai Chi đang mượn sách tham khảo.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Trần Thu Hà đang đọc báo.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Nguyễn Mai Chi trả sách.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Thủ thư kiểm tra thẻ thư viện.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Kệ sách rất yên tĩnh.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Trần Thu Hà đang tìm tạp chí.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+    "normal": "- [[grammar:Mai Chi đang ở thư viện.]] — Mai Chi is at the library now.\n- [[grammar:Mai Chi đang tìm sách tham khảo.]] — Mai Chi is looking for a reference book.\n- [[grammar:Thủ thư đang ở kệ sách.]] — The librarian is by the bookshelf.\n- [[grammar:Mai Chi có thẻ thư viện.]] — Mai Chi has a library card.\n- [[grammar:Mai Chi đang mượn sách tham khảo.]] — Mai Chi is borrowing the reference book.\n- [[grammar:Thu Hà đang đọc báo.]] — Thu Hà is reading a newspaper.\n- [[grammar:Mai Chi trả sách.]] — Mai Chi returns a book.\n- [[grammar:Thủ thư kiểm tra thẻ thư viện.]] — The librarian checks the library card.\n- [[grammar:Kệ sách rất yên tĩnh.]] — The bookshelf area is very quiet.\n- [[grammar:Thu Hà đang tìm tạp chí.]] — Thu Hà is looking for a magazine.",
+    "expert": "- [[grammar:Mai Chi đang ở thư viện.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Mai Chi đang tìm sách tham khảo.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Thủ thư đang ở kệ sách.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Mai Chi có thẻ thư viện.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Mai Chi đang mượn sách tham khảo.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Thu Hà đang đọc báo.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Mai Chi trả sách.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Thủ thư kiểm tra thẻ thư viện.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Kệ sách rất yên tĩnh.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Thu Hà đang tìm tạp chí.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sách tham khảo | 冊參考 | reference book | `Nguyễn Mai Chi đang tìm sách tham khảo.` |\n| thủ thư | 守書 | librarian | `Thủ thư đang ở kệ sách.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sách tham khảo | 冊參考 | reference book | `Nguyễn Mai Chi đang tìm sách tham khảo.` |\n| thủ thư | 守書 | librarian | `Thủ thư đang ở kệ sách.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sách tham khảo | 冊參考 | reference book | `Mai Chi đang tìm sách tham khảo.` |\n| thủ thư | 守書 | librarian | `Thủ thư đang ở kệ sách.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| sách tham khảo | 冊參考 | reference book | `Mai Chi đang tìm sách tham khảo.` |\n| thủ thư | 守書 | librarian | `Thủ thư đang ở kệ sách.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "sách tham khảo",
@@ -36,11 +36,11 @@
         "lexicalEntryId": "vi.noun.sach-tham-khao",
         "senseId": "vi.noun.sach-tham-khao.reference-book",
         "firstIntroductionChapter": 26,
-        "usage": "Nguyễn Mai Chi đang tìm sách tham khảo.",
+        "usage": "Mai Chi đang tìm sách tham khảo.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-026-basic-sentences-26/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Nguyễn Mai Chi đang tìm sách tham khảo."
+          "locator": "line containing: Mai Chi đang tìm sách tham khảo."
         }
       },
       {

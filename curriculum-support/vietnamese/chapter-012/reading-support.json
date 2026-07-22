@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### S + cần + N\n\nUse cần before a thing to say that it is needed. Example: [[grammar:Nguyễn Minh Anh cần một túi.]]",
-      "expert": "#### S + cần + N\n\nCần functions as a necessity predicate taking a nominal complement in this controlled frame. Literal example: [[grammar:Nguyễn Minh Anh cần một túi.]]"
+      "normal": "#### S + cần + N\n\nUse cần before a thing to say that it is needed. Example: [[grammar:Minh Anh cần một túi.]]",
+      "expert": "#### S + cần + N\n\nCần functions as a necessity predicate taking a nominal complement in this controlled frame. Literal example: [[grammar:Minh Anh cần một túi.]]"
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Nguyễn Minh Anh chuẩn bị cho ngày mai.]] — Nguyễn Minh Anh prepares for tomorrow.\n- [[grammar:Nguyễn Minh Anh cần một túi.]] — Nguyễn Minh Anh needs a bag.\n- [[grammar:Nguyễn Minh Anh cần giấy.]] — Nguyễn Minh Anh needs paper.\n- [[grammar:Nguyễn Minh Anh cần hộ chiếu.]] — Nguyễn Minh Anh needs a passport.\n- [[grammar:Nguyễn Minh Anh cần vé.]] — Nguyễn Minh Anh needs a ticket.\n- [[grammar:Nguyễn Minh Anh cần sạc.]] — Nguyễn Minh Anh needs a charger.\n- [[grammar:Trần Thu Hà có vé.]] — Trần Thu Hà has the ticket.\n- [[grammar:Ngày mai, Nguyễn Minh Anh đi.]] — Tomorrow, Nguyễn Minh Anh goes.",
-    "expert": "- [[grammar:Nguyễn Minh Anh chuẩn bị cho ngày mai.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Nguyễn Minh Anh cần một túi.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Nguyễn Minh Anh cần giấy.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Nguyễn Minh Anh cần hộ chiếu.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Nguyễn Minh Anh cần vé.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Nguyễn Minh Anh cần sạc.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Trần Thu Hà có vé.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Ngày mai, Nguyễn Minh Anh đi.]] — Literal reading evidence at Narrative > line 8."
+    "normal": "- [[grammar:Minh Anh chuẩn bị cho ngày mai.]] — Minh Anh prepares for tomorrow.\n- [[grammar:Minh Anh cần một túi.]] — Minh Anh needs a bag.\n- [[grammar:Minh Anh cần giấy.]] — Minh Anh needs paper.\n- [[grammar:Minh Anh cần hộ chiếu.]] — Minh Anh needs a passport.\n- [[grammar:Minh Anh cần vé.]] — Minh Anh needs a ticket.\n- [[grammar:Minh Anh cần sạc.]] — Minh Anh needs a charger.\n- [[grammar:Thu Hà có vé.]] — Thu Hà has the ticket.\n- [[grammar:Ngày mai, Minh Anh đi.]] — Tomorrow, Minh Anh goes.",
+    "expert": "- [[grammar:Minh Anh chuẩn bị cho ngày mai.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Minh Anh cần một túi.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Minh Anh cần giấy.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Minh Anh cần hộ chiếu.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Minh Anh cần vé.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Minh Anh cần sạc.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Thu Hà có vé.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Ngày mai, Minh Anh đi.]] — Literal reading evidence at Narrative > line 8."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| hộ chiếu | 護照 | passport | `Nguyễn Minh Anh cần hộ chiếu.` |\n| chuẩn bị | 準備 | prepare | `Nguyễn Minh Anh chuẩn bị cho ngày mai.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| hộ chiếu | 護照 | passport | `Nguyễn Minh Anh cần hộ chiếu.` |\n| chuẩn bị | 準備 | prepare | `Nguyễn Minh Anh chuẩn bị cho ngày mai.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| hộ chiếu | 護照 | passport | `Minh Anh cần hộ chiếu.` |\n| chuẩn bị | 準備 | prepare | `Minh Anh chuẩn bị cho ngày mai.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| hộ chiếu | 護照 | passport | `Minh Anh cần hộ chiếu.` |\n| chuẩn bị | 準備 | prepare | `Minh Anh chuẩn bị cho ngày mai.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "hộ chiếu",
@@ -36,11 +36,11 @@
         "lexicalEntryId": "vi.noun.ho-chieu",
         "senseId": "vi.noun.ho-chieu.passport",
         "firstIntroductionChapter": 12,
-        "usage": "Nguyễn Minh Anh cần hộ chiếu.",
+        "usage": "Minh Anh cần hộ chiếu.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-012-basic-sentences-12/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Nguyễn Minh Anh cần hộ chiếu."
+          "locator": "line containing: Minh Anh cần hộ chiếu."
         }
       },
       {
@@ -50,11 +50,11 @@
         "lexicalEntryId": "vi.verb.chuan-bi",
         "senseId": "vi.verb.chuan-bi.prepare",
         "firstIntroductionChapter": 12,
-        "usage": "Nguyễn Minh Anh chuẩn bị cho ngày mai.",
+        "usage": "Minh Anh chuẩn bị cho ngày mai.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-012-basic-sentences-12/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Nguyễn Minh Anh chuẩn bị cho ngày mai."
+          "locator": "line containing: Minh Anh chuẩn bị cho ngày mai."
         }
       }
     ]

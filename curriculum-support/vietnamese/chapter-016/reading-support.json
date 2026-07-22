@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### S + đọc + N\n\nUse đọc before written material to say what someone reads. Example: [[grammar:Trần Thu Hà đọc báo.]]",
-      "expert": "#### S + đọc + N\n\nĐọc is introduced as a transitive reading predicate selecting written or textual material. Literal example: [[grammar:Trần Thu Hà đọc báo.]]"
+      "normal": "#### S + đọc + N\n\nUse đọc before written material to say what someone reads. Example: [[grammar:Thu Hà đọc báo.]]",
+      "expert": "#### S + đọc + N\n\nĐọc is introduced as a transitive reading predicate selecting written or textual material. Literal example: [[grammar:Thu Hà đọc báo.]]"
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Trần Thu Hà ở thư viện.]] — Trần Thu Hà is at the library.\n- [[grammar:Trần Thu Hà đọc báo.]] — Trần Thu Hà reads a newspaper.\n- [[grammar:Trần Thu Hà đọc tạp chí.]] — Trần Thu Hà reads a magazine.\n- [[grammar:Trần Thu Hà đọc truyện.]] — Trần Thu Hà reads a story.\n- [[grammar:Trần Thu Hà đọc thư.]] — Trần Thu Hà reads a letter.\n- [[grammar:Trần Thu Hà đọc tin tức.]] — Trần Thu Hà reads the news.\n- [[grammar:Mỗi ngày, Trần Thu Hà đọc.]] — Every day, Trần Thu Hà reads.\n- [[grammar:Nguyễn Quốc Huy chọn tạp chí.]] — Nguyễn Quốc Huy chooses a magazine.\n- [[grammar:Thư viện yên tĩnh.]] — The library is quiet.",
-    "expert": "- [[grammar:Trần Thu Hà ở thư viện.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Trần Thu Hà đọc báo.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Trần Thu Hà đọc tạp chí.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Trần Thu Hà đọc truyện.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Trần Thu Hà đọc thư.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Trần Thu Hà đọc tin tức.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Mỗi ngày, Trần Thu Hà đọc.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Nguyễn Quốc Huy chọn tạp chí.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Thư viện yên tĩnh.]] — Literal reading evidence at Narrative > line 9."
+    "normal": "- [[grammar:Thu Hà ở thư viện.]] — Thu Hà is at the library.\n- [[grammar:Thu Hà đọc báo.]] — Thu Hà reads a newspaper.\n- [[grammar:Thu Hà đọc tạp chí.]] — Thu Hà reads a magazine.\n- [[grammar:Thu Hà đọc truyện.]] — Thu Hà reads a story.\n- [[grammar:Thu Hà đọc thư.]] — Thu Hà reads a letter.\n- [[grammar:Thu Hà đọc tin tức.]] — Thu Hà reads the news.\n- [[grammar:Mỗi ngày, Thu Hà đọc.]] — Every day, Thu Hà reads.\n- [[grammar:Quốc Huy chọn tạp chí.]] — Quốc Huy chooses a magazine.\n- [[grammar:Thư viện yên tĩnh.]] — The library is quiet.",
+    "expert": "- [[grammar:Thu Hà ở thư viện.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Thu Hà đọc báo.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Thu Hà đọc tạp chí.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Thu Hà đọc truyện.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Thu Hà đọc thư.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Thu Hà đọc tin tức.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Mỗi ngày, Thu Hà đọc.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Quốc Huy chọn tạp chí.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Thư viện yên tĩnh.]] — Literal reading evidence at Narrative > line 9."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| yên tĩnh | 安靜 | quiet | `Thư viện yên tĩnh.` |\n| báo | 報 | newspaper | `Trần Thu Hà đọc báo.` |\n| tạp chí | 雜誌 | magazine | `Trần Thu Hà đọc tạp chí.` |\n| thư | 書 | letter | `Trần Thu Hà ở thư viện.` |\n| truyện | 傳 | story; fiction | `Trần Thu Hà đọc truyện.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| yên tĩnh | 安靜 | quiet | `Thư viện yên tĩnh.` |\n| báo | 報 | newspaper | `Trần Thu Hà đọc báo.` |\n| tạp chí | 雜誌 | magazine | `Trần Thu Hà đọc tạp chí.` |\n| thư | 書 | letter | `Trần Thu Hà ở thư viện.` |\n| truyện | 傳 | story; fiction | `Trần Thu Hà đọc truyện.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| yên tĩnh | 安靜 | quiet | `Thư viện yên tĩnh.` |\n| báo | 報 | newspaper | `Thu Hà đọc báo.` |\n| tạp chí | 雜誌 | magazine | `Thu Hà đọc tạp chí.` |\n| thư | 書 | letter | `Thu Hà ở thư viện.` |\n| truyện | 傳 | story; fiction | `Thu Hà đọc truyện.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| yên tĩnh | 安靜 | quiet | `Thư viện yên tĩnh.` |\n| báo | 報 | newspaper | `Thu Hà đọc báo.` |\n| tạp chí | 雜誌 | magazine | `Thu Hà đọc tạp chí.` |\n| thư | 書 | letter | `Thu Hà ở thư viện.` |\n| truyện | 傳 | story; fiction | `Thu Hà đọc truyện.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "yên tĩnh",
@@ -50,11 +50,11 @@
         "lexicalEntryId": "vi.noun.bao",
         "senseId": "vi.noun.bao.newspaper",
         "firstIntroductionChapter": 16,
-        "usage": "Trần Thu Hà đọc báo.",
+        "usage": "Thu Hà đọc báo.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-016-basic-sentences-16/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Trần Thu Hà đọc báo."
+          "locator": "line containing: Thu Hà đọc báo."
         }
       },
       {
@@ -64,11 +64,11 @@
         "lexicalEntryId": "vi.noun.tap-chi",
         "senseId": "vi.noun.tap-chi.magazine",
         "firstIntroductionChapter": 16,
-        "usage": "Trần Thu Hà đọc tạp chí.",
+        "usage": "Thu Hà đọc tạp chí.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-016-basic-sentences-16/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Trần Thu Hà đọc tạp chí."
+          "locator": "line containing: Thu Hà đọc tạp chí."
         }
       },
       {
@@ -78,11 +78,11 @@
         "lexicalEntryId": "vi.noun.thu",
         "senseId": "vi.noun.thu.letter",
         "firstIntroductionChapter": 16,
-        "usage": "Trần Thu Hà ở thư viện.",
+        "usage": "Thu Hà ở thư viện.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-016-basic-sentences-16/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Trần Thu Hà ở thư viện."
+          "locator": "line containing: Thu Hà ở thư viện."
         }
       },
       {
@@ -92,11 +92,11 @@
         "lexicalEntryId": "vi.noun.truyen",
         "senseId": "vi.noun.truyen.story-fiction",
         "firstIntroductionChapter": 16,
-        "usage": "Trần Thu Hà đọc truyện.",
+        "usage": "Thu Hà đọc truyện.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-016-basic-sentences-16/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Trần Thu Hà đọc truyện."
+          "locator": "line containing: Thu Hà đọc truyện."
         }
       }
     ]

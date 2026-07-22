@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### S + học + N\n\nUse học before a language or subject to say what someone studies or learns. Example: [[grammar:Maria Garcia học tiếng Việt.]]",
-      "expert": "#### S + học + N\n\nHọc is introduced as a learning predicate with language, subject, and instructional-material complements. Literal example: [[grammar:Maria Garcia học tiếng Việt.]]"
+      "normal": "#### S + học + N\n\nUse học before a language or subject to say what someone studies or learns. Example: [[grammar:Maria học tiếng Việt.]]",
+      "expert": "#### S + học + N\n\nHọc is introduced as a learning predicate with language, subject, and instructional-material complements. Literal example: [[grammar:Maria học tiếng Việt.]]"
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Maria Garcia học tiếng Việt.]] — Maria Garcia studies Vietnamese.\n- [[grammar:Nguyễn Minh Anh học tiếng Việt.]] — Nguyễn Minh Anh studies Vietnamese.\n- [[grammar:Trần Thu Hà học từ mới.]] — Trần Thu Hà studies new words.\n- [[grammar:Nguyễn Minh Anh học phát âm.]] — Nguyễn Minh Anh studies pronunciation.\n- [[grammar:Maria Garcia học ngữ pháp.]] — Maria Garcia studies grammar.\n- [[grammar:Lớp có giáo trình.]] — The class has a coursebook.\n- [[grammar:Maria Garcia luyện tập.]] — Maria Garcia practices.\n- [[grammar:Trần Thu Hà luyện tập.]] — Trần Thu Hà practices.\n- [[grammar:Tiếng Việt rất thú vị.]] — Vietnamese is very interesting.",
-    "expert": "- [[grammar:Maria Garcia học tiếng Việt.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Nguyễn Minh Anh học tiếng Việt.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Trần Thu Hà học từ mới.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Nguyễn Minh Anh học phát âm.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Maria Garcia học ngữ pháp.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Lớp có giáo trình.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Maria Garcia luyện tập.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Trần Thu Hà luyện tập.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Tiếng Việt rất thú vị.]] — Literal reading evidence at Narrative > line 9."
+    "normal": "- [[grammar:Maria học tiếng Việt.]] — Maria studies Vietnamese.\n- [[grammar:Minh Anh học tiếng Việt.]] — Minh Anh studies Vietnamese.\n- [[grammar:Thu Hà học từ mới.]] — Thu Hà studies new words.\n- [[grammar:Minh Anh học phát âm.]] — Minh Anh studies pronunciation.\n- [[grammar:Maria học ngữ pháp.]] — Maria studies grammar.\n- [[grammar:Lớp có giáo trình.]] — The class has a coursebook.\n- [[grammar:Maria luyện tập.]] — Maria practices.\n- [[grammar:Thu Hà luyện tập.]] — Thu Hà practices.\n- [[grammar:Tiếng Việt rất thú vị.]] — Vietnamese is very interesting.",
+    "expert": "- [[grammar:Maria học tiếng Việt.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Minh Anh học tiếng Việt.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Thu Hà học từ mới.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Minh Anh học phát âm.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Maria học ngữ pháp.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Lớp có giáo trình.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Maria luyện tập.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Thu Hà luyện tập.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Tiếng Việt rất thú vị.]] — Literal reading evidence at Narrative > line 9."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| giáo trình | 教程 | coursebook; textbook | `Lớp có giáo trình.` |\n| ngữ pháp | 語法 | grammar | `Maria Garcia học ngữ pháp.` |\n| phát âm | 發音 | pronunciation | `Nguyễn Minh Anh học phát âm.` |\n| học | 學 | study; learn | `Maria Garcia học tiếng Việt.` |\n| luyện tập | 練習 | practice | `Maria Garcia luyện tập.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| giáo trình | 教程 | coursebook; textbook | `Lớp có giáo trình.` |\n| ngữ pháp | 語法 | grammar | `Maria Garcia học ngữ pháp.` |\n| phát âm | 發音 | pronunciation | `Nguyễn Minh Anh học phát âm.` |\n| học | 學 | study; learn | `Maria Garcia học tiếng Việt.` |\n| luyện tập | 練習 | practice | `Maria Garcia luyện tập.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| giáo trình | 教程 | coursebook; textbook | `Lớp có giáo trình.` |\n| ngữ pháp | 語法 | grammar | `Maria học ngữ pháp.` |\n| phát âm | 發音 | pronunciation | `Minh Anh học phát âm.` |\n| học | 學 | study; learn | `Maria học tiếng Việt.` |\n| luyện tập | 練習 | practice | `Maria luyện tập.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| giáo trình | 教程 | coursebook; textbook | `Lớp có giáo trình.` |\n| ngữ pháp | 語法 | grammar | `Maria học ngữ pháp.` |\n| phát âm | 發音 | pronunciation | `Minh Anh học phát âm.` |\n| học | 學 | study; learn | `Maria học tiếng Việt.` |\n| luyện tập | 練習 | practice | `Maria luyện tập.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "giáo trình",
@@ -50,11 +50,11 @@
         "lexicalEntryId": "vi.noun.ngu-phap",
         "senseId": "vi.noun.ngu-phap.grammar",
         "firstIntroductionChapter": 20,
-        "usage": "Maria Garcia học ngữ pháp.",
+        "usage": "Maria học ngữ pháp.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-020-basic-sentences-20/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Maria Garcia học ngữ pháp."
+          "locator": "line containing: Maria học ngữ pháp."
         }
       },
       {
@@ -64,11 +64,11 @@
         "lexicalEntryId": "vi.noun.phat-am",
         "senseId": "vi.noun.phat-am.pronunciation",
         "firstIntroductionChapter": 20,
-        "usage": "Nguyễn Minh Anh học phát âm.",
+        "usage": "Minh Anh học phát âm.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-020-basic-sentences-20/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Nguyễn Minh Anh học phát âm."
+          "locator": "line containing: Minh Anh học phát âm."
         }
       },
       {
@@ -78,11 +78,11 @@
         "lexicalEntryId": "vi.verb.hoc",
         "senseId": "vi.verb.hoc.study-learn",
         "firstIntroductionChapter": 20,
-        "usage": "Maria Garcia học tiếng Việt.",
+        "usage": "Maria học tiếng Việt.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-020-basic-sentences-20/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Maria Garcia học tiếng Việt."
+          "locator": "line containing: Maria học tiếng Việt."
         }
       },
       {
@@ -92,11 +92,11 @@
         "lexicalEntryId": "vi.verb.luyen-tap",
         "senseId": "vi.verb.luyen-tap.practice",
         "firstIntroductionChapter": 20,
-        "usage": "Maria Garcia luyện tập.",
+        "usage": "Maria luyện tập.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-020-basic-sentences-20/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Maria Garcia luyện tập."
+          "locator": "line containing: Maria luyện tập."
         }
       }
     ]

@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### trước khi + clause\n\nUse trước khi to place one action before another. Example: [[grammar:Trước khi đi học, Lê Hoàng Nam thức dậy sớm.]]\n\n#### S + tự + V\n\nPut tự before an action to say that someone does it by themself. Example: [[grammar:Lê Hoàng Nam tự đánh răng.]]",
-      "expert": "#### trước khi + clause\n\nTrước khi introduces the event that follows in temporal order; the main clause describes the earlier event. Literal example: [[grammar:Trước khi đi học, Lê Hoàng Nam thức dậy sớm.]]\n\n#### S + tự + V\n\nTự is an autonomy/reflexive marker modifying the predicate; it emphasizes self-directed performance rather than an object pronoun. Literal example: [[grammar:Lê Hoàng Nam tự đánh răng.]]"
+      "normal": "#### trước khi + clause\n\nUse trước khi to place one action before another. Example: [[grammar:Trước khi đi học, Hoàng Nam thức dậy sớm.]]\n\n#### S + tự + V\n\nPut tự before an action to say that someone does it by themself. Example: [[grammar:Hoàng Nam tự đánh răng.]]",
+      "expert": "#### trước khi + clause\n\nTrước khi introduces the event that follows in temporal order; the main clause describes the earlier event. Literal example: [[grammar:Trước khi đi học, Hoàng Nam thức dậy sớm.]]\n\n#### S + tự + V\n\nTự is an autonomy/reflexive marker modifying the predicate; it emphasizes self-directed performance rather than an object pronoun. Literal example: [[grammar:Hoàng Nam tự đánh răng.]]"
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Trước khi đi học, Lê Hoàng Nam thức dậy sớm.]] — Before going to school, Lê Hoàng Nam wakes up early.\n- [[grammar:Lê Hoàng Nam tự đánh răng.]] — Lê Hoàng Nam brushes their teeth by themself.\n- [[grammar:Lê Hoàng Nam tự tắm.]] — Lê Hoàng Nam showers by themself.\n- [[grammar:Lê Hoàng Nam mặc quần áo.]] — Lê Hoàng Nam gets dressed.\n- [[grammar:Nguyễn Quốc Huy không vội.]] — Nguyễn Quốc Huy is not in a hurry.\n- [[grammar:Trước khi đi, Nguyễn Quốc Huy kiểm tra túi.]] — Before leaving, Nguyễn Quốc Huy checks the bag.\n- [[grammar:Lê Hoàng Nam cũng không vội.]] — Lê Hoàng Nam is not in a hurry either.\n- [[grammar:Nguyễn Quốc Huy thức dậy sớm.]] — Nguyễn Quốc Huy wakes up early.\n- [[grammar:Nguyễn Quốc Huy tự chuẩn bị.]] — Nguyễn Quốc Huy gets ready independently.\n- [[grammar:Trước khi đi, Lê Hoàng Nam kiểm tra cửa.]] — Before leaving, Lê Hoàng Nam checks the door.",
-    "expert": "- [[grammar:Trước khi đi học, Lê Hoàng Nam thức dậy sớm.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Lê Hoàng Nam tự đánh răng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Lê Hoàng Nam tự tắm.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Lê Hoàng Nam mặc quần áo.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Nguyễn Quốc Huy không vội.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Trước khi đi, Nguyễn Quốc Huy kiểm tra túi.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Lê Hoàng Nam cũng không vội.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Nguyễn Quốc Huy thức dậy sớm.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Nguyễn Quốc Huy tự chuẩn bị.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Trước khi đi, Lê Hoàng Nam kiểm tra cửa.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
+    "normal": "- [[grammar:Trước khi đi học, Hoàng Nam thức dậy sớm.]] — Before going to school, Hoàng Nam wakes up early.\n- [[grammar:Hoàng Nam tự đánh răng.]] — Hoàng Nam brushes their teeth by themself.\n- [[grammar:Hoàng Nam tự tắm.]] — Hoàng Nam showers by themself.\n- [[grammar:Hoàng Nam mặc quần áo.]] — Hoàng Nam gets dressed.\n- [[grammar:Quốc Huy không vội.]] — Quốc Huy is not in a hurry.\n- [[grammar:Trước khi đi, Quốc Huy kiểm tra túi.]] — Before leaving, Quốc Huy checks the bag.\n- [[grammar:Hoàng Nam cũng không vội.]] — Hoàng Nam is not in a hurry either.\n- [[grammar:Quốc Huy thức dậy sớm.]] — Quốc Huy wakes up early.\n- [[grammar:Quốc Huy tự chuẩn bị.]] — Quốc Huy gets ready independently.\n- [[grammar:Trước khi đi, Hoàng Nam kiểm tra cửa.]] — Before leaving, Hoàng Nam checks the door.",
+    "expert": "- [[grammar:Trước khi đi học, Hoàng Nam thức dậy sớm.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Hoàng Nam tự đánh răng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Hoàng Nam tự tắm.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Hoàng Nam mặc quần áo.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 4.\n- [[grammar:Quốc Huy không vội.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Trước khi đi, Quốc Huy kiểm tra túi.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Hoàng Nam cũng không vội.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Quốc Huy thức dậy sớm.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 4.\n- [[grammar:Quốc Huy tự chuẩn bị.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 5.\n- [[grammar:Trước khi đi, Hoàng Nam kiểm tra cửa.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 6."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| tự | 自 | by oneself; self- | `Lê Hoàng Nam tự đánh răng.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| tự | 自 | by oneself; self- | `Lê Hoàng Nam tự đánh răng.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| tự | 自 | by oneself; self- | `Hoàng Nam tự đánh răng.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| tự | 自 | by oneself; self- | `Hoàng Nam tự đánh răng.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "tự",
@@ -36,11 +36,11 @@
         "lexicalEntryId": "vi.particle.tu",
         "senseId": "vi.particle.tu.by-oneself-self",
         "firstIntroductionChapter": 34,
-        "usage": "Lê Hoàng Nam tự đánh răng.",
+        "usage": "Hoàng Nam tự đánh răng.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-034-basic-sentences-34/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Lê Hoàng Nam tự đánh răng."
+          "locator": "line containing: Hoàng Nam tự đánh răng."
         }
       }
     ]

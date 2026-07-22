@@ -10,8 +10,8 @@
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### S + bán + N\n\nUse bán before an item to say what someone sells. Example: [[grammar:Nguyễn Thị Lan bán hàng hóa trong cửa hàng.]]",
-      "expert": "#### S + bán + N\n\nBán is introduced as a transitive transfer verb whose object is the item offered for sale. Literal example: [[grammar:Nguyễn Thị Lan bán hàng hóa trong cửa hàng.]]"
+      "normal": "#### S + bán + N\n\nUse bán before an item to say what someone sells. Example: [[grammar:Thị Lan bán hàng hóa trong cửa hàng.]]",
+      "expert": "#### S + bán + N\n\nBán is introduced as a transitive transfer verb whose object is the item offered for sale. Literal example: [[grammar:Thị Lan bán hàng hóa trong cửa hàng.]]"
     },
     {
       "sourceHeading": "Vietnamese Usage Notes",
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Nguyễn Thị Lan bán hàng hóa trong cửa hàng.]] — Nguyễn Thị Lan sells goods in the shop.\n- [[grammar:Trần Thu Hà là khách hàng.]] — Trần Thu Hà is a customer.\n- [[grammar:Nguyễn Thị Lan là người bán hàng.]] — Nguyễn Thị Lan is the shop assistant.\n- [[grammar:Giá áo sơ mi rẻ.]] — The shirt price is low.\n- [[grammar:Giá giày đắt.]] — The shoes are expensive.\n- [[grammar:Trần Thu Hà chọn quần.]] — Trần Thu Hà chooses trousers.\n- [[grammar:Trần Thu Hà thanh toán.]] — Trần Thu Hà pays.\n- [[grammar:Cửa hàng bán áo sơ mi, quần và giày.]] — The shop sells shirts, trousers, and shoes.",
-    "expert": "- [[grammar:Nguyễn Thị Lan bán hàng hóa trong cửa hàng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Trần Thu Hà là khách hàng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Nguyễn Thị Lan là người bán hàng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Giá áo sơ mi rẻ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Giá giày đắt.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Trần Thu Hà chọn quần.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Trần Thu Hà thanh toán.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Cửa hàng bán áo sơ mi, quần và giày.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2."
+    "normal": "- [[grammar:Thị Lan bán hàng hóa trong cửa hàng.]] — Thị Lan sells goods in the shop.\n- [[grammar:Thu Hà là khách hàng.]] — Thu Hà is a customer.\n- [[grammar:Thị Lan là người bán hàng.]] — Thị Lan is the shop assistant.\n- [[grammar:Giá áo sơ mi rẻ.]] — The shirt price is low.\n- [[grammar:Giá giày đắt.]] — The shoes are expensive.\n- [[grammar:Thu Hà chọn quần.]] — Thu Hà chooses trousers.\n- [[grammar:Thu Hà thanh toán.]] — Thu Hà pays.\n- [[grammar:Cửa hàng bán áo sơ mi, quần và giày.]] — The shop sells shirts, trousers, and shoes.",
+    "expert": "- [[grammar:Thị Lan bán hàng hóa trong cửa hàng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Thu Hà là khách hàng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Thị Lan là người bán hàng.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Giá áo sơ mi rẻ.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Giá giày đắt.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Thu Hà chọn quần.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Thu Hà thanh toán.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Cửa hàng bán áo sơ mi, quần và giày.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| giá | 價 | price | `Giá áo sơ mi rẻ.` |\n| hàng hóa | 行貨 | goods; merchandise | `Nguyễn Thị Lan bán hàng hóa trong cửa hàng.` |\n| khách hàng | 客行 | customer | `Trần Thu Hà là khách hàng.` |\n| thanh toán | 清算 | pay; make payment | `Trần Thu Hà thanh toán.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| giá | 價 | price | `Giá áo sơ mi rẻ.` |\n| hàng hóa | 行貨 | goods; merchandise | `Nguyễn Thị Lan bán hàng hóa trong cửa hàng.` |\n| khách hàng | 客行 | customer | `Trần Thu Hà là khách hàng.` |\n| thanh toán | 清算 | pay; make payment | `Trần Thu Hà thanh toán.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| giá | 價 | price | `Giá áo sơ mi rẻ.` |\n| hàng hóa | 行貨 | goods; merchandise | `Thị Lan bán hàng hóa trong cửa hàng.` |\n| khách hàng | 客行 | customer | `Thu Hà là khách hàng.` |\n| thanh toán | 清算 | pay; make payment | `Thu Hà thanh toán.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| giá | 價 | price | `Giá áo sơ mi rẻ.` |\n| hàng hóa | 行貨 | goods; merchandise | `Thị Lan bán hàng hóa trong cửa hàng.` |\n| khách hàng | 客行 | customer | `Thu Hà là khách hàng.` |\n| thanh toán | 清算 | pay; make payment | `Thu Hà thanh toán.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "giá",
@@ -50,11 +50,11 @@
         "lexicalEntryId": "vi.noun.hang-hoa",
         "senseId": "vi.noun.hang-hoa.goods-merchandise",
         "firstIntroductionChapter": 22,
-        "usage": "Nguyễn Thị Lan bán hàng hóa trong cửa hàng.",
+        "usage": "Thị Lan bán hàng hóa trong cửa hàng.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-022-basic-sentences-22/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Nguyễn Thị Lan bán hàng hóa trong cửa hàng."
+          "locator": "line containing: Thị Lan bán hàng hóa trong cửa hàng."
         }
       },
       {
@@ -64,11 +64,11 @@
         "lexicalEntryId": "vi.noun.khach-hang",
         "senseId": "vi.noun.khach-hang.customer",
         "firstIntroductionChapter": 22,
-        "usage": "Trần Thu Hà là khách hàng.",
+        "usage": "Thu Hà là khách hàng.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-022-basic-sentences-22/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Trần Thu Hà là khách hàng."
+          "locator": "line containing: Thu Hà là khách hàng."
         }
       },
       {
@@ -78,11 +78,11 @@
         "lexicalEntryId": "vi.verb.thanh-toan",
         "senseId": "vi.verb.thanh-toan.pay-make-payment",
         "firstIntroductionChapter": 22,
-        "usage": "Trần Thu Hà thanh toán.",
+        "usage": "Thu Hà thanh toán.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-022-basic-sentences-22/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Trần Thu Hà thanh toán."
+          "locator": "line containing: Thu Hà thanh toán."
         }
       }
     ]
