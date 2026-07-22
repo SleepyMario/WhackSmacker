@@ -4,6 +4,7 @@ export const whackSmackerPackageExtension = ".wspkg";
 export const knownContentPackageTypes = [
   "language-curriculum",
   "core-review",
+  "specialized-review",
   "curriculum-source-language-pack",
   "linguistic-terminology",
   "mathematics-curriculum",
@@ -40,7 +41,7 @@ export interface ContentPackageManifest {
   readonly localization?: ContentPackageLocalizationMetadata;
 }
 
-export type ContentPackageCapability = "reading-curriculum" | "core-review" | "technical";
+export type ContentPackageCapability = "reading-curriculum" | "core-review" | "specialized-review" | "technical";
 
 export type ContentPackageLocalizationMetadata =
   | { readonly role: "base-curriculum"; readonly schemaVersion: string; readonly targetLanguage: string; readonly defaultSourceLocale: string; readonly defaultSourcePackageId: string }
@@ -154,7 +155,7 @@ function isReviewMenuStatusColorMetadataKey(key: string): boolean {
 function validateCapabilities(value: unknown, errors: string[]): void {
   if (value === undefined) return;
   if (!Array.isArray(value) || value.length === 0) { errors.push("capabilities must be a non-empty array when present."); return; }
-  const allowed = new Set(["reading-curriculum", "core-review", "technical"]);
+  const allowed = new Set(["reading-curriculum", "core-review", "specialized-review", "technical"]);
   const seen = new Set<string>();
   for (const [index, capability] of value.entries()) {
     if (typeof capability !== "string" || !allowed.has(capability)) errors.push(`capabilities[${index}] is unsupported.`);

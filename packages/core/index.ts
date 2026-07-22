@@ -18,6 +18,7 @@ export * from "./paths";
 export * from "./reading-review-integration";
 export * from "./review-progress-store";
 export * from "./review-deck-menu-status";
+export * from "./specialized-review";
 export * from "./review-scheduler";
 export * from "./sino-vietnamese-policy";
 export * from "./user-data-backup";

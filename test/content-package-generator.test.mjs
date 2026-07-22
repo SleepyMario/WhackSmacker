@@ -42,7 +42,9 @@ test("content package generator exposes the supported local package targets", ()
       ["russian-core-reviews", "com.sleepymario.language.russian.reviews"],
       ["spanish-core-reviews", "com.sleepymario.language.spanish.reviews"],
       ["thai-core-reviews", "com.sleepymario.language.thai.reviews"],
-      ["zulu-core-reviews", "com.sleepymario.language.zulu.reviews"]
+      ["zulu-core-reviews", "com.sleepymario.language.zulu.reviews"],
+      ["dutch-specialized-medical-1", "com.sleepymario.language.dutch.specialized.medical-1"],
+      ["chinese-traditional-specialized-medical-1", "com.sleepymario.language.chinese-traditional.specialized.medical-1"]
     ]
   );
 });

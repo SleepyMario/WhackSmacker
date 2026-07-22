@@ -60,6 +60,7 @@ export interface MemorizationItemV2 extends Omit<MemorizationItemV1, "schemaVers
     readonly title: string;
     readonly chapterStart: number;
     readonly chapterEnd: number;
+    readonly scope?: "curriculum" | "specialized";
   };
   readonly sourceChapters: readonly number[];
   readonly reviewDirection: string;
@@ -316,8 +317,11 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
   }
   validateStringArray(value.examples, `${field}.examples`, errors, false);
   if (value.schemaVersion === 2 && value.examples !== undefined) {
-    if (!Array.isArray(value.examples) || value.examples.length < 1 || value.examples.length > 3) {
-      errors.push(`${field}.examples must contain between one and three literal review examples when present.`);
+    const specializedDeck = isRecord(value.deck) && value.deck.scope === "specialized";
+    if (!Array.isArray(value.examples) || (!specializedDeck && value.examples.length < 1) || value.examples.length > 3) {
+      errors.push(specializedDeck
+        ? `${field}.examples must contain no more than three literal review examples when present.`
+        : `${field}.examples must contain between one and three literal review examples when present.`);
     } else {
       for (const [index, example] of value.examples.entries()) {
         if (typeof example === "string" && (example !== example.normalize("NFC") || example !== example.trim())) {
@@ -352,7 +356,12 @@ function validateV2Fields(value: Record<string, unknown>, field: string, errors:
   } else {
     validateChapter(value.deck.chapterStart, `${field}.deck.chapterStart`, errors);
     validateChapter(value.deck.chapterEnd, `${field}.deck.chapterEnd`, errors);
-    if (typeof value.deck.chapterStart === "number" && typeof value.deck.chapterEnd === "number" && value.deck.chapterEnd - value.deck.chapterStart !== 4) {
+    if (value.deck.scope !== undefined && value.deck.scope !== "curriculum" && value.deck.scope !== "specialized") {
+      errors.push(`${field}.deck.scope must be curriculum or specialized when present.`);
+    }
+    if (typeof value.deck.chapterStart === "number" && typeof value.deck.chapterEnd === "number" && value.deck.scope === "specialized" && value.deck.chapterEnd < value.deck.chapterStart) {
+      errors.push(`${field}.deck specialized unit range must not end before it starts.`);
+    } else if (typeof value.deck.chapterStart === "number" && typeof value.deck.chapterEnd === "number" && value.deck.scope !== "specialized" && value.deck.chapterEnd - value.deck.chapterStart !== 4) {
       errors.push(`${field}.deck must cover exactly five consecutive chapters.`);
     }
   }

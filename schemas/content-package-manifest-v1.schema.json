@@ -41,6 +41,7 @@
           "enum": [
             "language-curriculum",
             "core-review",
+            "specialized-review",
             "linguistic-terminology",
             "mathematics-curriculum",
             "geography-dataset",
@@ -60,7 +61,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "enum": ["reading-curriculum", "core-review", "technical"] }
+      "items": { "enum": ["reading-curriculum", "core-review", "specialized-review", "technical"] }
     },
     "relatedPackageIds": {
       "type": "array",

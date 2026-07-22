@@ -50,6 +50,15 @@ test("v2 review examples allow one to three literal NFC strings", () => {
   assertInvalidItem({ ...item, examples: [" Xin chào."] }, /no leading or trailing whitespace/u);
 });
 
+test("v2 specialized decks may preserve an explicitly empty examples array", () => {
+  const item = validV2Item();
+  assertValidItem({
+    ...item,
+    deck: { ...item.deck, chapterEnd: 11, scope: "specialized" },
+    examples: []
+  });
+});
+
 test("v2 duplicate stable card IDs and invalid fingerprints fail", () => {
   const item = validV2Item();
   assertInvalidCollection({ schemaVersion: 2, items: [item, item] }, /Duplicate memorization item ID/);

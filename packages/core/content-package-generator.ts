@@ -27,6 +27,7 @@ import {
   type BroaderTopicRecord
 } from "./language-curriculum-policy";
 import { removeCompleteRereadingSection, removeContentWrapperHeading } from "./curriculum-display";
+import { specializedReviewPackageDefinitions } from "./specialized-review";
 
 type BufferValue = {
   readonly length: number;
@@ -102,6 +103,11 @@ export interface ContentPackageGeneratorTarget {
   readonly license?: ContentPackageManifest["license"];
   readonly include: readonly string[];
   readonly readingContentInclude?: readonly string[];
+  readonly specializedDeck?: {
+    readonly displayName: string;
+    readonly unitStart: number;
+    readonly unitEnd: number;
+  };
 }
 
 export interface GenerateContentPackageOptions {
@@ -466,7 +472,28 @@ const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = cor
   include: ["README.md", "LICENSE-SOFTWARE", "review-decks"]
 } as ContentPackageGeneratorTarget));
 
-export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...generatedCoreReviewTargets];
+const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = specializedReviewPackageDefinitions.map((definition) => ({
+  id: definition.targetId,
+  packageId: definition.packageId,
+  displayName: `${definition.languageDisplayName} Specialized ${definition.deckDisplayName}`,
+  description: definition.targetLanguage === "nl"
+    ? "Private specialized Dutch and English medical terminology deck, separate from the ordinary Dutch curriculum."
+    : "Private specialized English and Traditional Chinese medical terminology deck; no ordinary Traditional Chinese curriculum is included.",
+  contentType: "specialized-review",
+  capabilities: ["specialized-review"],
+  contentSchemaVersion: "2.0.0",
+  packageVersion: "0.1.0",
+  sourcePath: definition.sourcePath,
+  sourceRepository: "https://github.com/SleepyMario/language-curriculum-specialized",
+  languages: definition.languages,
+  targetLanguage: definition.targetLanguage,
+  subjects: ["language", "medical", "specialized-review"],
+  dependencies: [],
+  include: ["README.md", "deck.json", "cards.tsv"],
+  specializedDeck: { displayName: definition.deckDisplayName, unitStart: 1, unitEnd: 11 }
+}));
+
+export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...generatedCoreReviewTargets, ...specializedReviewTargets];
 
 export async function generateContentPackage(options: GenerateContentPackageOptions): Promise<GeneratedContentPackageResult> {
   const target = getContentPackageGeneratorTarget(options.targetId);
@@ -496,8 +523,9 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     if (chapters.some((chapter) => chapter.chapter === 140)) assertLanguageCurriculumStage71140Coverage(chapters, { requireCompleteStage: true });
     assertPackagedCanonicalVocabulary(sourceFiles);
   }
-  const sourceCommit = normalizeGitCommit(readGitValue(sourceRoot, ["rev-parse", "HEAD"]));
-  const sourceDirty = readGitValue(sourceRoot, ["status", "--short"]).trim().length > 0;
+  const bundledSource = target.capabilities?.includes("specialized-review") === true;
+  const sourceCommit = normalizeGitCommit(bundledSource ? tryReadGitValue(sourceRoot, ["rev-parse", "HEAD"]) : readGitValue(sourceRoot, ["rev-parse", "HEAD"]));
+  const sourceDirty = (bundledSource ? tryReadGitValue(sourceRoot, ["status", "--short"]) : readGitValue(sourceRoot, ["status", "--short"])).trim().length > 0;
   const generatorCommit = readGitValue(repositoryRoot, ["rev-parse", "HEAD"]);
 
   const content = buildContentSnapshot(target, sourceRoot, sourceFiles, sourceCommit, sourceDirty);
@@ -506,7 +534,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const reviewEvidenceFiles = target.capabilities?.includes("core-review")
     ? await collectReviewEvidenceFiles(target, options.env)
     : [];
-  const memorizationFiles = target.capabilities?.includes("core-review") ? buildMemorizationFiles(target, sourceFiles, reviewEvidenceFiles, options.generatedAt) : [];
+  const memorizationFiles = isReviewPackageTarget(target) ? buildMemorizationFiles(target, sourceFiles, reviewEvidenceFiles, options.generatedAt) : [];
   const packagedSourceFiles = sourceFiles
     .filter((file) => packagedCurriculumMetadataPaths.has(file.path) || file.path === target.license?.path || file.path === "NOTICE")
     .map((file) => ({ record: createFileRecord(file.path, file.mediaType, file.buffer), buffer: file.buffer }));
@@ -1004,6 +1032,7 @@ export function isContentPackageSourceFileAllowed(path: string): boolean {
     || packagedCurriculumMetadataPaths.has(path)
     || path.endsWith("/reading-translation.en.json")
     || path.endsWith("/reading-support.json")
+    || path === "deck.json"
     || path === ".gitignore"
     || path === "LICENSE-CONTENT"
     || path === "LICENSE-SOFTWARE"
@@ -1085,12 +1114,14 @@ function buildMemorizationFiles(
 ): readonly GeneratedMemorizationFile[] {
   const reviewExampleIndex = buildReviewExampleIndex(target, evidenceFiles);
   return sourceFiles
-    .filter((file) => isReviewDeckCardsPath(file.path))
+    .filter((file) => isReviewDeckCardsPath(file.path) || (target.capabilities?.includes("specialized-review") === true && file.path === "cards.tsv"))
     .map((file) => {
       const collection = parseReviewDeckCards(target, file, generatedAt, reviewExampleIndex);
       assertValidMemorizationItemCollection(collection);
       const buffer = Buffer.from(`${JSON.stringify(collection, null, 2)}\n`, "utf8");
-      const outputPath = `content/memorization/${file.path.replace(/\/cards\.tsv$/u, ".json")}`;
+      const outputPath = target.capabilities?.includes("specialized-review") === true
+        ? "content/memorization/medical-i.json"
+        : `content/memorization/${file.path.replace(/\/cards\.tsv$/u, ".json")}`;
       return {
         record: createFileRecord(outputPath, memorizationItemFileMediaType, buffer),
         buffer
@@ -1201,10 +1232,11 @@ function reviewDeckV2RowToItem(
     ? parseV2StringArray(row[16] ?? "", "examples", sourcePath, rowNumber)
     : [provenanceEvidence];
   const tagsJson = row[includesExamples ? 17 : 16] ?? "";
+  const specialized = target.capabilities?.includes("specialized-review") === true;
   const range = deckTitle.match(/^Chapter (\d+)-(\d+)$/u);
-  if (range === null) throw new Error(`Review deck v2 row ${rowNumber + 1} has an invalid five-chapter deck title: ${deckTitle}`);
-  const chapterStart = Number.parseInt(range[1], 10);
-  const chapterEnd = Number.parseInt(range[2], 10);
+  if (!specialized && range === null) throw new Error(`Review deck v2 row ${rowNumber + 1} has an invalid five-chapter deck title: ${deckTitle}`);
+  const chapterStart = specialized ? target.specializedDeck?.unitStart ?? 1 : Number.parseInt(range?.[1] ?? "", 10);
+  const chapterEnd = specialized ? target.specializedDeck?.unitEnd ?? chapterStart : Number.parseInt(range?.[2] ?? "", 10);
   const sourceChapter = Number.parseInt(chapterText, 10);
   const acceptedAnswers = parseV2StringArray(acceptedJson, "accepted_answers", sourcePath, rowNumber);
   const distractors = parseV2StringArray(distractorsJson, "distractors", sourcePath, rowNumber);
@@ -1218,26 +1250,29 @@ function reviewDeckV2RowToItem(
   const reviewDirection = `${promptLanguage}-to-${answerLanguage}`;
   const targetLanguage = target.targetLanguage ?? target.languages?.find((language) => language !== "en") ?? answerLanguage;
   const sourceLanguage = target.languages?.find((language) => language !== targetLanguage) ?? "en";
-  if (target.capabilities?.includes("core-review")) {
-    if (kind !== "vocabulary") throw new Error(`Normal core review row ${rowNumber + 1} must be a vocabulary card in ${sourcePath}`);
+  if (isReviewPackageTarget(target)) {
+    if (kind !== "vocabulary") throw new Error(`Review row ${rowNumber + 1} must be a vocabulary card in ${sourcePath}`);
     const targetToSource = promptLanguage === targetLanguage && answerLanguage === sourceLanguage;
     const sourceToTarget = promptLanguage === sourceLanguage && answerLanguage === targetLanguage;
     const japaneseReadingToTarget = targetLanguage === "ja" && promptLanguage === "ja-Kana" && answerLanguage === "ja";
     if (!targetToSource && !sourceToTarget && !japaneseReadingToTarget) {
-      throw new Error(`Normal core review row ${rowNumber + 1} has an unsupported review direction in ${sourcePath}`);
+      throw new Error(`Review row ${rowNumber + 1} has an unsupported review direction in ${sourcePath}`);
     }
-    if (distractors.length > 0) throw new Error(`Normal core review row ${rowNumber + 1} must not contain distractors in ${sourcePath}`);
-    if (testedLexicalIds.length === 0) throw new Error(`Normal core review row ${rowNumber + 1} must identify its canonical lexical item in ${sourcePath}`);
-    if (testedGrammarIds.length > 0) throw new Error(`Normal core review row ${rowNumber + 1} must not test grammar in ${sourcePath}`);
+    if (distractors.length > 0) throw new Error(`Review row ${rowNumber + 1} must not contain distractors in ${sourcePath}`);
+    if (testedLexicalIds.length === 0) throw new Error(`Review row ${rowNumber + 1} must identify its canonical lexical item in ${sourcePath}`);
+    if (testedGrammarIds.length > 0) throw new Error(`Review row ${rowNumber + 1} must not test grammar in ${sourcePath}`);
   }
-  const deckId = `${targetLanguage}-core-review-${String(chapterStart).padStart(3, "0")}-${String(chapterEnd).padStart(3, "0")}`;
+  const learnerDeckTitle = specialized ? target.specializedDeck?.displayName ?? "Specialized" : deckTitle;
+  const deckId = specialized
+    ? `${target.packageId}/medical-1`
+    : `${targetLanguage}-core-review-${String(chapterStart).padStart(3, "0")}-${String(chapterEnd).padStart(3, "0")}`;
   const item: MemorizationItemV2 = {
     schemaVersion: 2,
     id: cardId,
     cardId,
     pedagogicalFingerprint: "0".repeat(64),
     kind: kind as MemorizationItemV2["kind"],
-    deck: { id: deckId, title: deckTitle, chapterStart, chapterEnd },
+    deck: { id: deckId, title: learnerDeckTitle, chapterStart, chapterEnd, ...(specialized ? { scope: "specialized" as const } : {}) },
     sourceChapters: [sourceChapter],
     reviewDirection,
     prompt: { text: prompt, plainText: prompt, language: promptLanguage, mediaType: "text/plain" },
@@ -1255,7 +1290,7 @@ function reviewDeckV2RowToItem(
     examples,
     notes: explanation,
     tags,
-    source: { path: sourcePath, title: deckTitle },
+    source: { path: sourcePath, title: learnerDeckTitle },
     language: { target: targetLanguage, base: "en", script: scriptLabelForTarget(target) },
     createdAt: generatedAt,
     updatedAt: generatedAt
@@ -1745,7 +1780,11 @@ function normalizeExampleSourceLine(line: string): string | undefined {
 }
 
 function isLanguageCurriculumTarget(target: ContentPackageGeneratorTarget): boolean {
-  return target.contentType === "language-curriculum" || target.contentType === "core-review";
+  return target.contentType === "language-curriculum" || target.contentType === "core-review" || target.contentType === "specialized-review";
+}
+
+function isReviewPackageTarget(target: ContentPackageGeneratorTarget): boolean {
+  return target.capabilities?.includes("core-review") === true || target.capabilities?.includes("specialized-review") === true;
 }
 
 function languageCodeForReviewLabel(label: string): string | undefined {
@@ -1793,7 +1832,7 @@ function scriptLabelForTarget(target: ContentPackageGeneratorTarget): string {
   const targetLanguage = target.targetLanguage ?? target.languages?.find((language) => language !== "en");
   const scriptByLanguage: Readonly<Record<string, string>> = {
     ar: "Arabic", de: "Latin", es: "Latin", fr: "Latin", hi: "Devanagari", ja: "Japanese",
-    ko: "Hangul", nl: "Latin", ru: "Cyrillic", th: "Thai", vi: "Latin", zu: "Latin"
+    ko: "Hangul", nl: "Latin", ru: "Cyrillic", th: "Thai", vi: "Latin", "zh-Hant": "Traditional Chinese", zu: "Latin"
   };
   if (targetLanguage !== undefined && scriptByLanguage[targetLanguage] !== undefined) return scriptByLanguage[targetLanguage];
   switch (curriculumIdentityTargetId(target)) {
@@ -1969,6 +2008,14 @@ function readGitValue(cwd: string, args: readonly string[]): string {
 
 function normalizeGitCommit(value: string): string {
   return /^[0-9a-f]{40}$/u.test(value) ? value : "0".repeat(40);
+}
+
+function tryReadGitValue(cwd: string, args: readonly string[]): string {
+  try {
+    return readGitValue(cwd, args);
+  } catch {
+    return "";
+  }
 }
 
 function mediaTypeForPath(path: string): string {

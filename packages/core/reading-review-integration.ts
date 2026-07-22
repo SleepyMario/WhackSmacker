@@ -335,7 +335,7 @@ async function findReadingReviewItem(options: RenderReadingReviewItemOptions | R
 
 async function selectInstalledPackages(options: ReadingReviewOptions): Promise<readonly InstalledPackageRecord[]> {
   const matches = (await listInstalledContentPackages(options.dataDir))
-    .filter((record) => record.capabilities?.includes("core-review") || (record.capabilities === undefined && record.contentType === "language-curriculum"))
+    .filter((record) => record.capabilities?.includes("core-review") || record.capabilities?.includes("specialized-review") || (record.capabilities === undefined && record.contentType === "language-curriculum"))
     .filter((record) => options.packageId === undefined || record.packageId === options.packageId || record.relatedPackageIds?.includes(options.packageId))
     .filter((record) => options.packageVersion === undefined || record.packageVersion === options.packageVersion || record.relatedPackageIds?.includes(options.packageId ?? "") === true)
     .sort((left, right) => {

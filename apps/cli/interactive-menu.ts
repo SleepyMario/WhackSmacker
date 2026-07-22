@@ -7,6 +7,7 @@ import {
   installContentPackage,
   isLanguageLikeModulePackage,
   listAvailableContentPackages,
+  listInstalledContentPackages,
   listIntegratedDueReviewItems,
   listReadableContentEntries,
   listInstalledReadablePackages,
@@ -32,6 +33,7 @@ import {
   renderReadingContent,
   reviewIdentityKey,
   sortFirstClassModules,
+  specializedReviewPackageDefinitions,
   syncReadingReviewItems,
   type ContentPackageCatalogueEntry,
   type CurriculumDisplayMode,
@@ -46,7 +48,8 @@ import {
   type ReviewItemState,
   type ReviewRating,
   type ReadingReviewSource,
-  type InstalledReadablePackage
+  type InstalledReadablePackage,
+  type InstalledPackageRecord
 } from "../../packages/core";
 import {
   defaultBeginnerVolumeOneOutputPath,
@@ -1554,7 +1557,7 @@ export async function listAvailableModuleDescriptors(
 
   if (cataloguePath !== undefined) {
     for (const entry of await listAvailableContentPackages(cataloguePath)) {
-      if (entry.contentType === "curriculum-source-language-pack" || entry.contentType === "core-review" || !entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
+      if (entry.contentType === "curriculum-source-language-pack" || entry.contentType === "core-review" || entry.contentType === "specialized-review" || !entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
         continue;
       }
       descriptors.push(catalogueEntryToModuleDescriptor(entry, installedByPackageId.get(entry.packageId), locale));
@@ -1899,6 +1902,8 @@ async function buildLanguageTreeFromDescriptors(
     });
   }
 
+  await addInstalledSpecializedReviewBranches(packageNodes, dataDir, locale);
+
   return {
     id: "languages",
     label: translate(locale, "menu.languages"),
@@ -1914,6 +1919,126 @@ async function buildLanguageTreeFromDescriptors(
         "Installed packages appear here automatically after installation."
       ].join("\n")
     }]
+  };
+}
+
+async function addInstalledSpecializedReviewBranches(
+  packageNodes: LanguageTreeNode[],
+  dataDir: string | undefined,
+  locale: SourceLocale
+): Promise<void> {
+  const installed = (await listInstalledContentPackages(dataDir))
+    .filter((record) => record.capabilities?.includes("specialized-review"));
+  for (const definition of specializedReviewPackageDefinitions) {
+    const record = newestInstalledPackage(installed.filter((candidate) => candidate.packageId === definition.packageId));
+    if (record === undefined) continue;
+    const sources = await listReadingReviewSources({
+      dataDir,
+      sourceLocale: locale,
+      packageId: record.packageId,
+      packageVersion: record.packageVersion
+    });
+    const medicalSources = sources.filter((source) => source.title === definition.deckDisplayName);
+    const status = await Promise.all(medicalSources.map((source) => describeReviewSourceMenuStatus(source, { dataDir, locale })));
+    const medicalChildren: LanguageTreeNode[] = medicalSources.map((source, index) => ({
+      id: `${record.packageId}:specialized:${source.sourcePath}`,
+      label: definition.deckDisplayName,
+      kind: "review-source",
+      moduleId: definition.languagePackageId,
+      moduleVersion: record.packageVersion,
+      sourceKind: "content-package",
+      packageId: record.packageId,
+      packageVersion: record.packageVersion,
+      packageLabel: record.displayName,
+      sourcePath: source.sourcePath,
+      itemCount: source.itemCount,
+      reviewStatus: status[index]?.kind,
+      dueCardCount: status[index]?.dueCardCount,
+      reviewStatusText: status[index]?.text
+    }));
+    const specializedBranch: LanguageTreeNode = {
+      id: `${definition.languagePackageId}:specialized`,
+      label: "Specialized",
+      kind: "category",
+      previewText: "Specialized\n\nTechnical decks kept separate from the ordinary language curriculum.",
+      children: medicalChildren.length > 0 ? medicalChildren : [{
+        id: `${definition.languagePackageId}:specialized:none`,
+        label: "No specialized decks",
+        kind: "message",
+        previewText: "No specialized decks are available."
+      }]
+    };
+    const ordinaryIndex = packageNodes.findIndex((node) => node.packageId === definition.languagePackageId);
+    if (ordinaryIndex >= 0) {
+      const ordinary = packageNodes[ordinaryIndex];
+      const children = [...(ordinary.children ?? [])];
+      const packageInfoIndex = children.findIndex((child) => child.kind === "package-info");
+      children.splice(packageInfoIndex < 0 ? children.length : packageInfoIndex, 0, specializedBranch);
+      packageNodes[ordinaryIndex] = { ...ordinary, children };
+      continue;
+    }
+    packageNodes.push(emptyLanguagePackageNode(definition, record, specializedBranch, locale));
+    packageNodes.sort((left, right) => left.label.localeCompare(right.label));
+  }
+}
+
+function newestInstalledPackage(records: readonly InstalledPackageRecord[]): InstalledPackageRecord | undefined {
+  return [...records].sort((left, right) => right.packageVersion.localeCompare(left.packageVersion))[0];
+}
+
+function emptyLanguagePackageNode(
+  definition: (typeof specializedReviewPackageDefinitions)[number],
+  record: InstalledPackageRecord,
+  specializedBranch: LanguageTreeNode,
+  locale: SourceLocale
+): LanguageTreeNode {
+  const noCurriculum = "No ordinary curriculum is available for this language yet. Specialized decks remain fully usable.";
+  return {
+    id: definition.languagePackageId,
+    label: definition.languageDisplayName,
+    kind: "package",
+    moduleId: definition.languagePackageId,
+    moduleVersion: record.packageVersion,
+    sourceKind: "content-package",
+    packageId: definition.languagePackageId,
+    packageVersion: record.packageVersion,
+    packageLabel: definition.languageDisplayName,
+    previewText: noCurriculum,
+    children: [
+      {
+        id: `${definition.languagePackageId}:read`,
+        label: translate(locale, "menu.readContent"),
+        kind: "read-section",
+        children: [{ id: `${definition.languagePackageId}:read:none`, label: "No ordinary curriculum", kind: "message", previewText: noCurriculum }]
+      },
+      {
+        id: `${definition.languagePackageId}:review`,
+        label: translate(locale, "menu.reviewDecks"),
+        kind: "review-section",
+        children: [{ id: `${definition.languagePackageId}:review:none`, label: "No ordinary review decks", kind: "message", previewText: noCurriculum }]
+      },
+      specializedBranch,
+      {
+        id: `${definition.languagePackageId}:info`,
+        label: translate(locale, "menu.packageInfo"),
+        kind: "package-info",
+        sourceKind: "content-package",
+        packageId: record.packageId,
+        packageVersion: record.packageVersion,
+        packageLabel: record.displayName,
+        previewText: `${definition.languageDisplayName}\n\n${noCurriculum}\n\nInstalled specialized package: ${record.packageId}\nVersion: ${record.packageVersion}`
+      },
+      {
+        id: `${definition.languagePackageId}:uninstall`,
+        label: translate(locale, "menu.uninstall"),
+        kind: "uninstall",
+        sourceKind: "content-package",
+        packageId: record.packageId,
+        packageVersion: record.packageVersion,
+        packageLabel: record.displayName,
+        previewText: renderUninstallPreview(record.displayName, locale)
+      }
+    ]
   };
 }
 
