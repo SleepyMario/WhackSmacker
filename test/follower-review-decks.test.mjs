@@ -16,7 +16,7 @@ const configs = [
   ["arabic", "Arabic", "ar", "ARA", 40, 80],
   ["french", "French", "fr", "FRA", 60, 120],
   ["german", "German", "de", "GER", 55, 110],
-  ["hindi", "Hindi", "hi", "HIN", 50, 100],
+  ["hindi", "Hindi", "hi", "HIN", 46, 92],
   ["japanese", "Japanese", "ja", "JPN", 44, 132],
   ["korean", "Korean", "ko", "KOR", 47, 94],
   ["russian", "Russian", "ru", "RUS", 52, 104],
@@ -154,7 +154,7 @@ test("ledger and Review agreement cannot conceal an omitted taught sense", () =>
 test("grammar-only particles and classifiers cannot enter follower lexical Review", async () => {
   const forbiddenByLanguage = {
     arabic: ["ar.particle.hal.yes-no-question", "ar.verb.nadhhabu.we-go"],
-    hindi: ["hi.particle.kya.yes-no-question"],
+    hindi: ["hi.particle.kya.yes-no-question", "hi.postposition.ka.of-possessive", "hi.postposition.mem.in", "hi.postposition.par.on", "hi.postposition.se.from"],
     thai: [
       "th.particle.kha-f.polite-particle-female-statement",
       "th.particle.khrap.polite-particle-male",
@@ -270,10 +270,11 @@ test("canonical headwords require an explicit mapping from contracted or locativ
 
   const korean = await readFile(join(root, "korean-curriculum", "units", "korean-core", "chapter-003-what-is-this", "chapter.md"), "utf8");
   const zulu = await readFile(join(root, "zulu-curriculum", "units", "zulu-core", "chapter-005-a-shared-plan", "chapter.md"), "utf8");
-  assert.match(korean, /\| 이것 \|[\s\S]*이것이 → 이게/u);
+  assert.match(korean, /\| 이게 ← 이것 \|[^\n]*contracted from 이것이/u);
+  assert.match(korean, /\| 이건 ← 이것 \|[^\n]*contracted from 이것은/u);
   assert.doesNotMatch(korean, /`ko\.demonstrative\.ige`(?:\.|`)/u);
-  assert.match(zulu, /\| imakethe \(surface locative: emakethe\) \|[\s\S]*surface locatives `emakethe`/u);
-  assert.match(zulu, /\| ipaki \(surface locative: epaki\) \|[\s\S]*`epaki`/u);
+  assert.match(zulu, /\| emakethe ← imakethe \|[^\n]*locative surface form/u);
+  assert.match(zulu, /\| epaki ← ipaki \|[^\n]*locative surface form/u);
 });
 
 test("learner-facing action-location grammar cannot remain undeclared", async () => {

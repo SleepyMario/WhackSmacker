@@ -450,7 +450,7 @@
             {
               "entryId": "fr.determiner.ton",
               "senseId": "fr.determiner.ton.your-informal-singular",
-              "form": "ton",
+              "form": "ton / ta / tes",
               "meaning": "your (informal singular)",
               "pos": "determiner",
               "line": 4,
@@ -902,7 +902,7 @@
             {
               "entryId": "fr.noun.tomates",
               "senseId": "fr.noun.tomates.tomatoes",
-              "form": "les tomates",
+              "form": "la tomate",
               "meaning": "tomatoes",
               "pos": "noun",
               "line": 2,
@@ -911,7 +911,7 @@
             {
               "entryId": "fr.noun.fruit",
               "senseId": "fr.noun.fruit.fruit",
-              "form": "les fruits",
+              "form": "le fruit",
               "meaning": "fruit",
               "pos": "noun",
               "line": 3,
@@ -1570,15 +1570,6 @@
               "evidence": "रीना का घर छोटा है."
             },
             {
-              "entryId": "hi.postposition.ka",
-              "senseId": "hi.postposition.ka.of-possessive",
-              "form": "का",
-              "meaning": "of; possessive marker",
-              "pos": "postposition",
-              "line": 1,
-              "evidence": "रीना का घर छोटा है."
-            },
-            {
               "entryId": "hi.adjective.chhota",
               "senseId": "hi.adjective.chhota.small",
               "form": "छोटा",
@@ -1593,15 +1584,6 @@
               "form": "कमरा",
               "meaning": "room",
               "pos": "noun",
-              "line": 2,
-              "evidence": "घर में एक कमरा है."
-            },
-            {
-              "entryId": "hi.postposition.mem",
-              "senseId": "hi.postposition.mem.in",
-              "form": "में",
-              "meaning": "in",
-              "pos": "postposition",
               "line": 2,
               "evidence": "घर में एक कमरा है."
             },
@@ -1629,15 +1611,6 @@
               "form": "किताब",
               "meaning": "book",
               "pos": "noun",
-              "line": 4,
-              "evidence": "मेज़ पर एक किताब है."
-            },
-            {
-              "entryId": "hi.postposition.par",
-              "senseId": "hi.postposition.par.on",
-              "form": "पर",
-              "meaning": "on",
-              "pos": "postposition",
               "line": 4,
               "evidence": "मेज़ पर एक किताब है."
             },
@@ -1846,15 +1819,6 @@
               "form": "दोनों",
               "meaning": "both",
               "pos": "pronoun",
-              "line": 6,
-              "evidence": "दोनों घर से निकलते हैं."
-            },
-            {
-              "entryId": "hi.postposition.se",
-              "senseId": "hi.postposition.se.from",
-              "form": "से",
-              "meaning": "from",
-              "pos": "postposition",
               "line": 6,
               "evidence": "दोनों घर से निकलते हैं."
             },
@@ -4473,7 +4437,7 @@
             {
               "entryId": "zu.adjective.ncane",
               "senseId": "zu.adjective.ncane.small",
-              "form": "lincane",
+              "form": "-ncane",
               "meaning": "is small",
               "pos": "adjective",
               "line": 1,
@@ -4518,7 +4482,7 @@
             {
               "entryId": "zu.locative.phezu",
               "senseId": "zu.locative.phezu.on-top-of",
-              "form": "iphezu",
+              "form": "phezu",
               "meaning": "is on top of",
               "pos": "locative",
               "line": 4,
@@ -4536,7 +4500,7 @@
             {
               "entryId": "zu.locative.duze",
               "senseId": "zu.locative.duze.near",
-              "form": "siseduze",
+              "form": "duze",
               "meaning": "is near",
               "pos": "locative",
               "line": 5,
@@ -4758,7 +4722,7 @@
             {
               "entryId": "zu.noun.izithelo",
               "senseId": "zu.noun.izithelo.fruit",
-              "form": "izithelo",
+              "form": "isithelo",
               "meaning": "fruit",
               "pos": "noun",
               "line": 3,

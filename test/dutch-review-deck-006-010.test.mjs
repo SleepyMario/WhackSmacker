@@ -9,8 +9,8 @@ const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_lan
 
 test("Dutch Chapter 8 identifies eten and drinken only as the attested verb senses", async () => {
   const chapter = await readFile(join(curriculumRoot, "units/dutch-core/chapter-008-basic-sentences-8/chapter.md"), "utf8");
-  assert.match(chapter, /^\| eten \| to eat \| Verb \|$/mu);
-  assert.match(chapter, /^\| drinken \| to drink \| Verb \|$/mu);
+  assert.match(chapter, /^\| eten \| to eat \| verb \|\s*\|$/mu);
+  assert.match(chapter, /^\| drinken \| to drink \| verb \|\s*\|$/mu);
   assert.doesNotMatch(chapter, /^\| eten \| food;/mu);
   assert.doesNotMatch(chapter, /^\| drinken \| drink;/mu);
 

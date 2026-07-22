@@ -6,7 +6,7 @@ This directory is the authoritative WhackSmacker source for Dutch review decks. 
 
 The complete consecutive five-chapter inventory is:
 
-- Chapters 1-5: 35 new senses / 70 review cards;
+- Chapters 1-5: 30 canonical lexical senses / 60 review cards; the three grammatical article identities remain in instruction, not lexical Review;
 - Chapters 6-10: 42 new senses / 84 review cards;
 - Chapters 11-15: 37 new senses / 74 review cards;
 - Chapters 16-20: 42 new senses / 84 review cards;

@@ -34,7 +34,8 @@ test("Vietnamese Core Chapters 11-50 form one cumulative alternating sequence", 
     const min = chapter <= 25 ? 6 : 10;
     assert.equal(units.length >= min && units.length <= 30, true, `Chapter ${chapter}: ${units.length} primary units`);
     const vocabulary = /^### New Vocabulary\s*$([\s\S]*?)(?=^<!-- whacksmacker:developer-only:start -->)/mu.exec(markdown)?.[1] ?? "";
-    const count = (vocabulary.match(/^\|\s*[^|]+\s*\|\s*[^|]+\s*\|\s*[^|]+\s*\|$/gmu) ?? []).length - 2;
+    assert.match(vocabulary, /^\| Form \| Meaning \| Part of speech \| Note \|$/mu);
+    const count = vocabulary.split(/\r?\n/u).filter((line) => line.startsWith("|") && !/^\|(?: Form |---)/u.test(line)).length;
     const lexicalMinimum = chapter === 47 ? 5 : 6;
     assert.equal(count >= lexicalMinimum && count <= (chapter <= 25 ? 10 : 20), true, `Chapter ${chapter}: ${count} vocabulary rows`);
     const principals = (markdown.match(/^- Principal:\s*VIE-GRAMMAR-/gmu) ?? []).length;

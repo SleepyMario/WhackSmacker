@@ -642,8 +642,8 @@ test("Dutch Chapter 1 Normal and Developer projections preserve one complete sou
     assert.doesNotMatch(normal, /It does not introduce `je`, `jij`, or `u` yet\./u);
     assert.doesNotMatch(normal, /Do not turn this into a full verb-conjugation chapter yet\./u);
     assert.doesNotMatch(normal, /grammar_id:|DUT-GRAMMAR-001|See `ledger\.md`/u);
-    assert.match(normal, /row marked Infinitive gives the base verb form\./u);
-    assert.doesNotMatch(normal, /\[\[grammar:Infinitive\]\]/u);
+    assert.match(normal, /ben ← zijn.*encountered form.*infinitive citation form/u);
+    assert.doesNotMatch(normal, /row marked `Infinitive`|\[\[grammar:Infinitive\]\]/u);
     assert.match(developer, /It does not introduce `je`, `jij`, or `u` yet\./u);
     assert.equal((developer.match(/^### Grammar$/gmu) ?? []).length, 1);
     assert.match(developer, /^#### Normal$/mu);
@@ -655,22 +655,15 @@ test("Dutch Chapter 1 Normal and Developer projections preserve one complete sou
     const renderedNormal = renderTwoPaneLanguageTree(tree, new Set(), 0, normal, false, 0, 80, "en-US", "navigation", 180);
     const renderedDeveloper = renderTwoPaneLanguageTree(tree, new Set(), 0, developer, false, 0, 80, "en-US", "navigation", 180, 1, "developer");
     const outputLines = renderedNormal.split("\n").map(rightPaneCell);
-    const entryIndexes = Object.fromEntries(["hallo", "dag", "ik", "ben", "zijn", "de student", "de docent", "de vriend"].map((entry) => [entry, outputLines.findIndex((line) => new RegExp(`^\\| ${escapeRegExp(entry)}\\s+\\|`, "u").test(line))]));
-    assert.equal(entryIndexes.dag - entryIndexes.hallo, 2);
-    assert.equal(entryIndexes.ik - entryIndexes.dag, 2);
-    assert.equal(entryIndexes.ben - entryIndexes.ik, 2);
-    assert.equal(entryIndexes.zijn - entryIndexes.ben, 1);
-    assert.equal(entryIndexes["de student"] - entryIndexes.zijn, 2);
-    assert.equal(entryIndexes["de docent"] - entryIndexes["de student"], 2);
-    assert.equal(entryIndexes["de vriend"] - entryIndexes["de docent"], 2);
-    assert.match(outputLines[entryIndexes.ben], /ben\s+\| am\s+\| Verb\s+\|$/u);
-    assert.match(outputLines[entryIndexes.zijn], /zijn\s+\| to be\s+\| Infinitive\s+\|$/u);
-    for (const index of [entryIndexes.hallo + 1, entryIndexes.dag + 1, entryIndexes.ik + 1, entryIndexes.zijn + 1, entryIndexes["de student"] + 1, entryIndexes["de docent"] + 1]) {
-      assert.match(outputLines[index], /^\|\s+\|\s+\|\s+\|$/u);
-    }
+    const forms = ["Hallo ← hallo", "Dag ← dag", "Ik ← ik", "ben ← zijn", "student ← de student", "docent ← de docent", "de vriend"];
+    const entryIndexes = forms.map((form) => outputLines.findIndex((line) => new RegExp(`^\\| ${escapeRegExp(form)}\\s+\\|`, "u").test(line)));
+    assert.equal(entryIndexes.every((index) => index >= 0), true);
+    assert.deepEqual([...entryIndexes].sort((left, right) => left - right), entryIndexes);
+    assert.match(outputLines[entryIndexes[3]], /ben ← zijn\s+\| am\s+\| verb\s+\| encountered verb form/u);
+    assert.equal(outputLines.some((line) => /^\| zijn\s+\| to be\s+\| Infinitive/u.test(line)), false);
     const vocabularyRows = (rendered) => {
       const lines = rendered.split("\n").map(rightPaneCell);
-      const start = lines.findIndex((line) => /^\| Dutch\s+\| English\s+\| Notes\s+\|$/u.test(line));
+      const start = lines.findIndex((line) => /^\| Form\s+\| Meaning\s+\| Part of speech\s+\| Note\s+\|$/u.test(line));
       const end = lines.findIndex((line) => /^\| de vriend\s+\|/u.test(line));
       return lines.slice(start, end + 1);
     };
@@ -1244,7 +1237,7 @@ test("Dutch Chapters 16-20 summaries share canonical patterns and hide IDs in No
     assert.doesNotMatch(easyDeveloper, /DUT-GRAMMAR-/u);
     assert.doesNotMatch(chapter19Developer, /DUT-GRAMMAR-/u);
     assert.match(chapter19Developer, /Kun je \+ infinitive\?/u);
-    assert.match(chapter19Normal, /kun[\s\S]*kunnen[\s\S]*to be able to[\s\S]*Infinitive[\s\S]*natuurlijk/u);
+    assert.match(chapter19Normal, /Kun ← kunnen[\s\S]*can[\s\S]*verb[\s\S]*encountered verb form[\s\S]*natuurlijk/u);
   } finally {
     await fixture.cleanup();
   }
@@ -2370,12 +2363,12 @@ test("changing Source reprojects the active Dutch review card without resetting 
     const traditionalChinese = screens.find((screen) => screen.includes("Source: 中文（臺灣）") && screen.includes("Review: Dutch / Chapter 1-5") && screen.includes("Examples:"));
     assert.ok(english, "answer side is visible before Source changes");
     assert.ok(traditionalChinese, "the same answer-side session remains visible after Source changes");
-    assert.match(english, /Card: 1\/66/u);
-    assert.match(traditionalChinese, /Card: 1\/66/u);
+    assert.match(english, /Card: 1\/60/u);
+    assert.match(traditionalChinese, /Card: 1\/60/u);
     assert.match(traditionalChinese, /Phrase:/u);
     assert.match(traditionalChinese, /Answer:/u);
     assert.match(traditionalChinese, /Examples:/u);
-    assert.doesNotMatch(traditionalChinese, /目前有 66 張牌卡需要複習|Press Enter or Space to start review/u);
+    assert.doesNotMatch(traditionalChinese, /目前有 60 張牌卡需要複習|Press Enter or Space to start review/u);
   } finally {
     await fixture.cleanup();
   }

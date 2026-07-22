@@ -219,18 +219,46 @@ export interface MultiwordExpressionVocabularyRecord extends LexicalIdentityMeta
 }
 export type CanonicalLexicalRecord = (NounVocabularyRecord | MeasureExpressionVocabularyRecord) & LexicalIdentityMetadata | VerbVocabularyRecord | MultiwordExpressionVocabularyRecord;
 export type LearnerFacingVocabularyRecord = NounVocabularyRecord | MeasureExpressionVocabularyRecord | VerbVocabularyRecord | MultiwordExpressionVocabularyRecord | SimpleVocabularyRecord;
-export type LearnerFacingLexicalLabel = "Noun" | "Verb" | "Infinitive" | "Adjective" | "Adverb" | "Preposition" | "Conjunction" | "Pronoun" | "Numeral" | "Phrase" | "Sequence word" | "Classifier" | "Counter" | "Measure word";
-export interface LearnerFacingLexicalDisplayRecord {
-  readonly lexicalType: "noun" | "verb" | "adjective" | "adverb" | "preposition" | "conjunction" | "pronoun" | "numeral" | "phrase" | "sequence-word" | "classifier" | "counter" | "measure-word";
-  readonly notesLabel: string;
-  readonly surfaceForm: string;
-  readonly citationForm: string;
-  readonly infinitiveFormLine?: string;
-  readonly infinitiveTranslation?: string;
-  readonly infinitiveNotesLabel?: string;
-  readonly infinitiveApplicable?: boolean;
-  readonly infinitiveMappingUseful?: boolean;
+export type CanonicalVocabularyFormRelationship = "identical" | "inflection" | "contraction" | "cliticization" | "article-or-determiner-marking" | "case" | "number" | "agreement" | "possession" | "particle" | "postposition" | "locative" | "concord" | "politeness" | "phonological-allomorphy" | "separable-form" | "lexicalized" | "other";
+export interface CanonicalVocabularyMorphology {
+  readonly number?: string;
+  readonly gender?: string;
+  readonly case?: string;
+  readonly person?: string;
+  readonly tense?: string;
+  readonly mood?: string;
+  readonly aspect?: string;
+  readonly politeness?: string;
+  readonly agreement?: string;
+  readonly definiteness?: string;
+  readonly nonfiniteForm?: string;
+  readonly attachedArticle?: string;
+  readonly attachedParticle?: string;
+  readonly attachedClitic?: string;
+  readonly attachedPostposition?: string;
+  readonly attachedMarker?: string;
+  readonly nounClass?: string;
+  readonly concord?: string;
+  readonly phonologicalRealization?: string;
+  readonly separableRealization?: string;
+  readonly derivation?: string;
 }
+export interface LearnerFacingLexicalDisplayRecord {
+  readonly surfaceForm: string;
+  readonly expandedForm?: string;
+  readonly canonicalForm?: string;
+  readonly canonicalParadigm?: readonly string[];
+  readonly formRelationship: CanonicalVocabularyFormRelationship;
+  readonly canonicalLexicalId: string;
+  readonly canonicalSenseId: string;
+  readonly contextualMeaning: string;
+  readonly partOfSpeech: string;
+  readonly note: string;
+  readonly morphology: CanonicalVocabularyMorphology;
+  readonly reviewEligible: boolean;
+  readonly lexicalizedJustification?: string;
+}
+export const canonicalVocabularyTableHeaders = ["Form", "Meaning", "Part of speech", "Note"] as const;
 export interface LexicalInventoryAuditResult {
   readonly newVocabularyCount: number;
   readonly newSenseIds: readonly string[];
@@ -374,12 +402,15 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "An encountered inflected verb form and its language-appropriate citation form are one lexical introduction; ordinary later inflections are reuse.",
     "Lexicalized multiword expressions have their own complete entry and sense; internal untaught morphology remains fixed or unanalyzed rather than implicitly productive.",
     "Review and reintroduction retain the original first-introduction chapter and do not count toward new-vocabulary quotas.",
-    "Learner-facing vocabulary Notes use concise labels only and never expose internal lexical identity, citation, history, or morphology fields.",
-    "Normal vocabulary Notes use accessible broad categories; Expert may use only concise grammatical subclasses supported by current authored or structured data, and Developer may retain raw fields.",
+    "Every learner-facing vocabulary table uses exactly Form, Meaning, Part of speech, and Note, in that order.",
+    "The Form cell is encountered surface form ← canonical citation form or learning paradigm when they differ, and shows the form only once when they are identical.",
+    "Expanded or decomposed forms remain structured metadata and are explained concisely in Note when contraction, cliticization, fusion, or allomorphy makes them useful.",
+    "Multiple visible surface rows may share one canonical lexical and sense identity; predictable morphology never creates another semantic sense or Review card.",
+    "Normal explains a form relationship directly in accessible language; Expert may name the supported inflection, case, concord, allomorphy, cliticization, or paradigm without changing identity.",
     "Unsupported Expert vocabulary subclasses are not invented, internal metadata stays hidden, and review decks are never rewritten merely to refine read-content Notes.",
     "Normal reading vocabulary lists hide the raw structured Usage field; necessary distinctions are rewritten as clear learner-facing prose.",
-    "Where infinitives apply, a differing encountered verb form stays primary and is followed by a bare-infinitive row with a natural English infinitive and exactly Infinitive in Notes, in the same uninterrupted lexical entry.",
-    "The infinitive row shares lexical and sense identity with the encountered row; languages without an applicable infinitive do not invent one, and full structured metadata remains internal.",
+    "A differing encountered verb form and its language-appropriate citation form occupy one canonical row; Dutch, French, German, Spanish, Russian, and Hindi use infinitives, Korean uses -다 dictionary forms, Japanese uses dictionary/plain forms, Thai and Vietnamese use bare verbs, Zulu normally uses the adopted uku- form, and Arabic never invents an infinitive.",
+    "Participles, gerunds, converbs, te-forms, connective forms, and other nonfinite realizations map to the same verb sense unless independently lexicalized with justification.",
     "First-introduced verbs store canonical regularityStatus and optional language-specific verbClass; later forms and reviews inherit them.",
     "Use regular/irregular only where meaningful, not-applicable for systems such as ordinary Chinese, and undetermined only for pending legacy migration.",
     "Verb regularity/class survives package and memorization metadata but does not appear in learner-facing Notes.",
@@ -550,6 +581,8 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "One normal vocabulary review deck follows every completed consecutive five-chapter block.",
     "The deck contains exactly one card for every vocabulary item or lexical sense first introduced in that block; there is no fixed card count.",
     "Reused vocabulary retains its original first-introduction chapter and is not added again as new in a later block.",
+    "Review is organized by canonical lexical sense; visible conjugations, plurals, case forms, agreeing forms, contractions, clitics, and particle-marked forms do not automatically add cards.",
+    "Grammar identities and purely grammatical articles, particles, postpositions, agreement rules, and construction labels remain absent from lexical Review.",
     "Every normal card prompts in the target language and answers in the source language, with no reverse duplicate.",
     "Normal vocabulary decks contain no grammar, comprehension, cloze, multiple-choice, production, or distractor-based questions.",
     "Normal learner-facing five-chapter review decks hide the raw structured Notes field while retaining it for authoring, validation, provenance, migrations, and debugging."
@@ -562,8 +595,9 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Examples must not come from metadata, notes, generated fields, or internal strings."
   ],
   surfaceFormRules: [
-    "Conjugated, inflected, particle-attached, plural, declined, tone-changed, sandhi, phonological, and normal language-specific surface forms may match.",
-    "The source read-content sentence must be preserved exactly and must not be rewritten to a base form."
+    "Conjugated, inflected, particle-attached, plural, declined, tone-changed, sandhi, phonological, and other language-specific surface forms are preserved exactly before the canonical-form arrow.",
+    "Expanded forms, canonical citation forms or paradigms, exact contextual meanings, part of speech, morphology, and literal occurrence evidence are preserved as separate structured fields.",
+    "The source read-content sentence is preserved exactly and is never rewritten to a base form; generated and installed vocabulary use the same canonical row."
   ]
 };
 
@@ -1230,17 +1264,43 @@ export function assertLearnerFacingVocabularyRecord(record: LearnerFacingVocabul
 }
 
 export function assertLearnerFacingLexicalDisplay(record: LearnerFacingLexicalDisplayRecord): void {
-  const expectedLabels: Readonly<Record<LearnerFacingLexicalDisplayRecord["lexicalType"], LearnerFacingLexicalLabel>> = {
-    noun: "Noun", verb: "Verb", adjective: "Adjective", adverb: "Adverb", preposition: "Preposition", conjunction: "Conjunction", pronoun: "Pronoun", numeral: "Numeral", phrase: "Phrase",
-    "sequence-word": "Sequence word", classifier: "Classifier", counter: "Counter", "measure-word": "Measure word"
-  };
-  if (record.notesLabel !== expectedLabels[record.lexicalType]) throw new Error(`Learner-facing Notes for ${record.surfaceForm} must be exactly ${expectedLabels[record.lexicalType]}.`);
-  if (/(?:lemma|lexical|sense\s*id|surface[- ]form|citation[- ]form|first[- ]introduction|attestation|morphology)/iu.test(record.notesLabel)) throw new Error(`Learner-facing Notes for ${record.surfaceForm} expose internal lexical metadata.`);
-  const needsInfinitive = record.lexicalType === "verb" && record.infinitiveApplicable !== false && record.surfaceForm !== record.citationForm && record.infinitiveMappingUseful !== false;
-  if (needsInfinitive && record.infinitiveFormLine !== record.citationForm) throw new Error(`${record.surfaceForm}: differing encountered verb form must show bare infinitive ${record.citationForm}.`);
-  if (needsInfinitive && (record.infinitiveTranslation === undefined || record.infinitiveTranslation.trim() === "")) throw new Error(`${record.surfaceForm}: infinitive row requires a natural English infinitive translation.`);
-  if (needsInfinitive && record.infinitiveNotesLabel !== "Infinitive") throw new Error(`${record.surfaceForm}: infinitive row Notes must be exactly Infinitive.`);
-  if (!needsInfinitive && (record.infinitiveFormLine !== undefined || record.infinitiveTranslation !== undefined || record.infinitiveNotesLabel !== undefined)) throw new Error(`${record.surfaceForm}: omit the infinitive row when no useful or applicable mapping is required.`);
+  for (const [field, value] of Object.entries({ surfaceForm: record.surfaceForm, canonicalLexicalId: record.canonicalLexicalId, canonicalSenseId: record.canonicalSenseId, contextualMeaning: record.contextualMeaning, partOfSpeech: record.partOfSpeech })) {
+    if (typeof value !== "string" || value.trim() === "") throw new Error(`Canonical vocabulary display requires non-empty ${field}.`);
+  }
+  if (typeof record.note !== "string") throw new Error(`${record.surfaceForm}: Note must be a string.`);
+  if (record.expandedForm !== undefined && record.expandedForm.trim() === "") throw new Error(`${record.surfaceForm}: omit expandedForm when no expansion exists.`);
+  const hasForm = typeof record.canonicalForm === "string" && record.canonicalForm.trim() !== "";
+  const hasParadigm = Array.isArray(record.canonicalParadigm) && record.canonicalParadigm.length >= 2 && record.canonicalParadigm.every((form) => form.trim() !== "");
+  if (hasForm === hasParadigm) throw new Error(`${record.surfaceForm}: provide exactly one canonicalForm or multi-form canonicalParadigm.`);
+  const canonical = hasForm ? record.canonicalForm! : record.canonicalParadigm!.join(" / ");
+  if (record.formRelationship === "identical" && record.surfaceForm !== canonical) throw new Error(`${record.surfaceForm}: identical relationship requires the same canonical form.`);
+  if (record.formRelationship !== "identical" && record.surfaceForm === canonical) throw new Error(`${record.surfaceForm}: identical surface and canonical forms must not be repeated around an arrow.`);
+  if (["contraction", "cliticization"].includes(record.formRelationship) && record.expandedForm === undefined) throw new Error(`${record.surfaceForm}: ${record.formRelationship} requires expandedForm.`);
+  if (record.formRelationship === "number" && record.morphology.number !== "plural") throw new Error(`${record.surfaceForm}: plural mapping requires plural morphology.`);
+  if (record.formRelationship === "case" && !record.morphology.case) throw new Error(`${record.surfaceForm}: case mapping requires case morphology.`);
+  if (record.formRelationship === "particle" && !record.morphology.attachedParticle && !record.morphology.attachedMarker) throw new Error(`${record.surfaceForm}: particle mapping requires the attached particle or marker.`);
+  if (record.formRelationship === "postposition" && !record.morphology.attachedPostposition) throw new Error(`${record.surfaceForm}: postposition mapping requires the attached postposition.`);
+  if (record.formRelationship === "possession" && !hasParadigm) throw new Error(`${record.surfaceForm}: possessive mapping requires a canonical learning paradigm.`);
+  if (record.formRelationship === "lexicalized" && !record.lexicalizedJustification?.trim()) throw new Error(`${record.surfaceForm}: lexicalized form requires a justification.`);
+}
+
+export function formatLearnerFacingVocabularyRow(record: LearnerFacingLexicalDisplayRecord): string {
+  assertLearnerFacingLexicalDisplay(record);
+  const canonical = record.canonicalForm ?? record.canonicalParadigm!.join(" / ");
+  const form = record.surfaceForm === canonical ? record.surfaceForm : `${record.surfaceForm} ← ${canonical}`;
+  const escape = (value: string): string => value.replaceAll("|", "\\|").replaceAll("\n", " ").trim();
+  return `| ${escape(form)} | ${escape(record.contextualMeaning)} | ${escape(record.partOfSpeech)} | ${escape(record.note)} |`;
+}
+
+export function assertCanonicalVocabularyReviewMapping(records: readonly LearnerFacingLexicalDisplayRecord[], canonicalReviewSenseIds: readonly string[], grammarReviewIds: readonly string[]): void {
+  if (grammarReviewIds.length > 0) throw new Error("Lexical Review must contain no grammar identities.");
+  const review = new Set(canonicalReviewSenseIds);
+  if (review.size !== canonicalReviewSenseIds.length) throw new Error("Canonical Review sense IDs must be unique.");
+  for (const record of records) {
+    assertLearnerFacingLexicalDisplay(record);
+    if (record.reviewEligible && !review.has(record.canonicalSenseId)) throw new Error(`${record.canonicalSenseId}: review-eligible surface row is missing its canonical Review sense.`);
+  }
+  for (const senseId of review) if (!records.some((record) => record.reviewEligible && record.canonicalSenseId === senseId)) throw new Error(`${senseId}: canonical Review sense has no visible vocabulary mapping.`);
 }
 
 export function assertCanonicalLexicalRecord(record: CanonicalLexicalRecord): void {

@@ -20,6 +20,10 @@ import {
   assertLanguageCurriculumChapter5170Requirements,
   assertLanguageCurriculumChapter71140Requirements,
   assertLanguageCurriculumStage71140Coverage,
+  assertCanonicalVocabularyReviewMapping,
+  canonicalVocabularyTableHeaders,
+  formatLearnerFacingVocabularyRow,
+  type LearnerFacingLexicalDisplayRecord,
   type BroaderTopicRecord
 } from "./language-curriculum-policy";
 import { removeCompleteRereadingSection, removeContentWrapperHeading } from "./curriculum-display";
@@ -490,6 +494,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     const broaderTopics = topicInventoryFile === undefined ? [] : JSON.parse(topicInventoryFile.text) as BroaderTopicRecord[];
     assertLanguageCurriculumChapter71140Requirements(chapters, broaderTopics);
     if (chapters.some((chapter) => chapter.chapter === 140)) assertLanguageCurriculumStage71140Coverage(chapters, { requireCompleteStage: true });
+    assertPackagedCanonicalVocabulary(sourceFiles);
   }
   const sourceCommit = normalizeGitCommit(readGitValue(sourceRoot, ["rev-parse", "HEAD"]));
   const sourceDirty = readGitValue(sourceRoot, ["status", "--short"]).trim().length > 0;
@@ -584,6 +589,41 @@ interface SourceFile {
   readonly sha256: string;
   readonly text: string;
   readonly buffer: BufferValue;
+}
+
+interface PackagedCanonicalVocabularyOccurrence extends LearnerFacingLexicalDisplayRecord {
+  readonly id: string;
+  readonly displayRowIds: readonly string[];
+  readonly sourcePath: string;
+  readonly sentenceOrExample: string;
+}
+
+interface PackagedCanonicalVocabularyDocument {
+  readonly canonicalTable: { readonly headers: readonly string[]; readonly arrow: string };
+  readonly displayRows: readonly (LearnerFacingLexicalDisplayRecord & { readonly id: string; readonly sourcePath: string; readonly occurrenceId: string })[];
+  readonly occurrences: readonly PackagedCanonicalVocabularyOccurrence[];
+  readonly review: { readonly canonicalSenseIds: readonly string[]; readonly grammarIds: readonly string[] };
+}
+
+function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): void {
+  const metadata = sourceFiles.find((file) => file.path === vocabularyFormsPath);
+  if (metadata === undefined) throw new Error("Language curriculum package requires vocabulary-forms.json.");
+  const document = JSON.parse(metadata.text) as PackagedCanonicalVocabularyDocument;
+  if (JSON.stringify(document.canonicalTable?.headers) !== JSON.stringify(canonicalVocabularyTableHeaders) || document.canonicalTable?.arrow !== "←") throw new Error("Canonical vocabulary table must be Form | Meaning | Part of speech | Note with ←.");
+  if (!Array.isArray(document.displayRows) || !Array.isArray(document.occurrences)) throw new Error("Canonical vocabulary displayRows and occurrences are required.");
+  assertCanonicalVocabularyReviewMapping(document.displayRows, document.review?.canonicalSenseIds ?? [], document.review?.grammarIds ?? []);
+  const occurrences = new Map(document.occurrences.map((occurrence) => [occurrence.id, occurrence]));
+  const sourceByPath = new Map(sourceFiles.map((file) => [file.path, file.text]));
+  for (const row of document.displayRows) {
+    const occurrence = occurrences.get(row.occurrenceId);
+    if (occurrence === undefined || !occurrence.displayRowIds.includes(row.id)) throw new Error(`${row.id}: canonical occurrence mapping is incomplete.`);
+    for (const field of ["surfaceForm", "expandedForm", "canonicalForm", "canonicalParadigm", "formRelationship", "canonicalLexicalId", "canonicalSenseId", "contextualMeaning", "partOfSpeech"] as const) {
+      if (JSON.stringify(row[field]) !== JSON.stringify(occurrence[field])) throw new Error(`${row.id}: ${field} disagrees with its occurrence.`);
+    }
+    const source = sourceByPath.get(row.sourcePath);
+    if (source === undefined || !source.includes(formatLearnerFacingVocabularyRow(row))) throw new Error(`${row.id}: canonical learner-facing vocabulary row is absent from its packaged chapter.`);
+    if (!source.includes(occurrence.sentenceOrExample) || !occurrence.sentenceOrExample.normalize("NFC").includes(row.surfaceForm.normalize("NFC"))) throw new Error(`${row.id}: occurrence evidence does not preserve the exact surface form.`);
+  }
 }
 
 const readingSupportPackages: Readonly<Record<string, readonly { readonly source: string; readonly destination: string }[]>> = {
@@ -851,9 +891,10 @@ const geographyLedgerPath = "geography-ledger.json";
 const numberProgressionPath = "number-progression.json";
 const lexicalTopicsPath = "lexical-topics.json";
 const lexicalTopicAuditPath = "lexical-topic-audit.json";
+const vocabularyFormsPath = "vocabulary-forms.json";
 const sinoVietnameseLexiconPath = "sino-vietnamese-lexicon.json";
 const sinoVietnameseAuditPath = "sino-vietnamese-audit.json";
-const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath]);
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath, vocabularyFormsPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
@@ -862,6 +903,7 @@ async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, so
   if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path)) separatedIncludes.push(target.license.path);
   if (target.capabilities?.includes("reading-curriculum")) {
     try { await access(resolve(sourceRoot, "NOTICE")); separatedIncludes.push("NOTICE"); } catch { /* legacy repository without notice */ }
+    try { await access(resolve(sourceRoot, vocabularyFormsPath)); separatedIncludes.push(vocabularyFormsPath); } catch { /* non-language legacy target */ }
   }
   const castAlreadyIncluded = target.include.some((include) => canonicalCastPath === include || canonicalCastPath.startsWith(`${include}/`));
   if (target.contentType !== "language-curriculum" || castAlreadyIncluded) {

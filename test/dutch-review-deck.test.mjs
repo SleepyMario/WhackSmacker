@@ -7,11 +7,11 @@ const deckPath = "review-content/dutch/review-decks/chapter-001-005/cards.tsv";
 const curriculumRoot = join(process.cwd(), "..", "dutch-curriculum");
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 
-test("Dutch Chapters 1–5 review exactly covers 33 canonical lexical senses in both directions", async () => {
+test("Dutch Chapters 1–5 review exactly covers 30 canonical lexical senses in both directions", async () => {
   const rows = parseDeck(await readFile(deckPath, "utf8"));
-  assert.equal(rows.length, 66);
-  assert.deepEqual(countBy(rows, (row) => row.sourceChapter), { 1: 18, 2: 10, 3: 16, 4: 12, 5: 10 });
-  assert.deepEqual(countBy(rows, (row) => row.examples.length), { 1: 32, 2: 24, 3: 10 });
+  assert.equal(rows.length, 60);
+  assert.deepEqual(countBy(rows, (row) => row.sourceChapter), { 1: 14, 2: 10, 3: 14, 4: 12, 5: 10 });
+  assert.deepEqual(countBy(rows, (row) => row.examples.length), { 1: 30, 2: 22, 3: 8 });
 
   const ids = new Set();
   const directionsBySense = new Map();
@@ -63,19 +63,19 @@ test("Dutch Chapters 1–5 review exactly covers 33 canonical lexical senses in 
     }
   }
 
-  assert.equal(directionsBySense.size, 33);
+  assert.equal(directionsBySense.size, 30);
   for (const [senseId, directions] of directionsBySense) {
     assert.deepEqual([...directions].sort(), ["en-to-nl", "nl-to-en"], senseId);
   }
 
   const ledgerInventory = await canonicalLedgerInventory();
-  assert.equal(ledgerInventory.length, 33);
+  assert.equal(ledgerInventory.length, 30);
   const targetRows = rows.filter((row) => row.promptLanguage === "nl");
   assert.deepEqual(targetRows.map((row) => ({ form: row.prompt, first: row.sourceChapter })), ledgerInventory);
   assert.equal(targetRows.some((row) => row.sourceChapter > 5), false);
   assert.equal(targetRows.some((row) => row.prompt === "dit"), false, "grammar-only/reused dit is not a canonical new-vocabulary card");
   assert.equal(targetRows.some((row) => row.lexicalIds.includes("nl.pronoun.er.existential")), false, "existential er stays in grammar rather than lexical Review");
-  assert.deepEqual(targetRows.filter((row) => row.examples.length === 3).map((row) => row.prompt), ["ik", "zijn", "de", "geen", "de tafel"]);
+  assert.deepEqual(targetRows.filter((row) => row.examples.length === 3).map((row) => row.prompt), ["ik", "zijn", "geen", "de tafel"]);
 });
 
 async function canonicalLedgerInventory() {

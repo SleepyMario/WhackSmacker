@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { assertCanonicalLexicalRecord, assertLearnerFacingLexicalDisplay, assertLearnerFacingVocabularyRecord, auditLexicalInventory } from "../dist/packages/core/index.js";
+import { assertCanonicalLexicalRecord, assertCanonicalVocabularyReviewMapping, assertLearnerFacingLexicalDisplay, assertLearnerFacingVocabularyRecord, auditLexicalInventory, canonicalVocabularyTableHeaders, formatLearnerFacingVocabularyRow } from "../dist/packages/core/index.js";
 
 const dutch = { language: "Dutch", nounCategorySystem: { citationFormDefiniteArticles: ["de", "het"] } };
 const base = (overrides = {}) => ({ lexicalType: "noun", learnerFacingForm: "de kop", lexicalEntryId: "nl.noun.kop", senseId: "nl.noun.kop.mug", surfaceForm: "kop", lemma: "kop", citationForm: "de kop", partOfSpeech: "noun", meaning: "mug or cup", introductionStatus: "new-entry", firstIntroductionChapter: 3, encounteredForms: ["kop"], relatedSenseIds: [], definiteArticle: "de", ...overrides });
@@ -50,22 +50,29 @@ test("ordinary Chinese verbs use not-applicable rather than forced regularity", 
   assert.equal(verb("喝", "喝", "Chinese").regularityStatus, "not-applicable");
 });
 
-test("learner-facing lexical display uses concise labels and canonical infinitive rows", () => {
-  assert.doesNotThrow(() => assertLearnerFacingLexicalDisplay({ lexicalType: "noun", notesLabel: "Noun", surfaceForm: "het boek", citationForm: "het boek" }));
-  assert.doesNotThrow(() => assertLearnerFacingLexicalDisplay({ lexicalType: "verb", notesLabel: "Verb", surfaceForm: "drinkt", citationForm: "drinken", infinitiveFormLine: "drinken", infinitiveTranslation: "to drink", infinitiveNotesLabel: "Infinitive" }));
-  assert.doesNotThrow(() => assertLearnerFacingLexicalDisplay({ lexicalType: "sequence-word", notesLabel: "Sequence word", surfaceForm: "daarna", citationForm: "daarna" }));
-  assert.doesNotThrow(() => assertLearnerFacingLexicalDisplay({ lexicalType: "numeral", notesLabel: "Numeral", surfaceForm: "elf", citationForm: "elf" }));
-  assert.throws(() => assertLearnerFacingLexicalDisplay({ lexicalType: "noun", notesLabel: "Lemma: boek", surfaceForm: "het boek", citationForm: "het boek" }), /must be exactly Noun/u);
-  assert.throws(() => assertLearnerFacingLexicalDisplay({ lexicalType: "verb", notesLabel: "Verb", surfaceForm: "drinkt", citationForm: "drinken", infinitiveFormLine: "INF: drinken", infinitiveTranslation: "to drink", infinitiveNotesLabel: "Infinitive" }), /bare infinitive drinken/u);
-  assert.throws(() => assertLearnerFacingLexicalDisplay({ lexicalType: "verb", notesLabel: "Verb", surfaceForm: "drinken", citationForm: "drinken", infinitiveFormLine: "drinken", infinitiveTranslation: "to drink", infinitiveNotesLabel: "Infinitive" }), /omit the infinitive row/u);
+const display = (overrides = {}) => ({ surfaceForm: "drinkt", canonicalForm: "drinken", formRelationship: "inflection", canonicalLexicalId: "nl.verb.drinken", canonicalSenseId: "nl.verb.drinken.drink", contextualMeaning: "to drink", partOfSpeech: "verb", note: "third-person singular present", morphology: { person: "third", number: "singular", tense: "present" }, reviewEligible: true, ...overrides });
+
+test("canonical vocabulary display renders one four-column surface-to-citation row", () => {
+  assert.deepEqual(canonicalVocabularyTableHeaders, ["Form", "Meaning", "Part of speech", "Note"]);
+  assert.equal(formatLearnerFacingVocabularyRow(display()), "| drinkt ← drinken | to drink | verb | third-person singular present |");
+  assert.equal(formatLearnerFacingVocabularyRow(display({ surfaceForm: "drinken", canonicalForm: "drinken", formRelationship: "identical", note: "" })), "| drinken | to drink | verb |  |");
+  assert.throws(() => assertLearnerFacingLexicalDisplay(display({ surfaceForm: "drinken", canonicalForm: "drinken" })), /must not be repeated/u);
+  assert.throws(() => assertLearnerFacingLexicalDisplay(display({ canonicalForm: undefined, canonicalParadigm: undefined })), /exactly one/u);
 });
 
-test("infinitive applicability is language-adaptive while structured lexical metadata stays complete", () => {
-  assert.doesNotThrow(() => assertLearnerFacingLexicalDisplay({ lexicalType: "verb", notesLabel: "Verb", surfaceForm: "飲みます", citationForm: "飲む", infinitiveApplicable: false }));
-  assert.throws(() => assertLearnerFacingLexicalDisplay({ lexicalType: "verb", notesLabel: "Verb", surfaceForm: "飲みます", citationForm: "飲む", infinitiveApplicable: false, infinitiveFormLine: "飲む", infinitiveTranslation: "to drink", infinitiveNotesLabel: "Infinitive" }), /omit the infinitive row/u);
-  const internal = verb("drinkt", "drinken");
-  assert.doesNotThrow(() => assertCanonicalLexicalRecord(internal));
-  for (const field of ["lexicalEntryId", "senseId", "surfaceForm", "lemma", "citationForm", "partOfSpeech", "meaning", "introductionStatus", "firstIntroductionChapter", "encounteredForms", "morphologyStatus", "regularityStatus"]) assert.ok(field in internal);
+test("expanded forms, paradigms, morphology, and lexicalized exceptions are semantic", () => {
+  assert.doesNotThrow(() => assertLearnerFacingLexicalDisplay(display({ surfaceForm: "au", expandedForm: "à + le", canonicalForm: "à + le", formRelationship: "contraction", partOfSpeech: "contraction", note: "masculine singular" })));
+  assert.throws(() => assertLearnerFacingLexicalDisplay(display({ surfaceForm: "au", canonicalForm: "à + le", formRelationship: "contraction" })), /requires expandedForm/u);
+  assert.doesNotThrow(() => assertLearnerFacingLexicalDisplay(display({ surfaceForm: "ta", canonicalForm: undefined, canonicalParadigm: ["ton", "ta", "tes"], formRelationship: "possession", partOfSpeech: "possessive determiner", morphology: { gender: "feminine", number: "singular" } })));
+  assert.throws(() => assertLearnerFacingLexicalDisplay(display({ surfaceForm: "pommes", canonicalForm: "la pomme", formRelationship: "number", morphology: {} })), /plural morphology/u);
+  assert.throws(() => assertLearnerFacingLexicalDisplay(display({ surfaceForm: "bekende", canonicalForm: "de bekende", formRelationship: "lexicalized" })), /requires a justification/u);
+});
+
+test("multiple surface rows share one Review sense and grammar remains absent", () => {
+  const rows = [display({ surfaceForm: "ben", canonicalForm: "zijn" }), display({ surfaceForm: "is", canonicalForm: "zijn" })];
+  assert.doesNotThrow(() => assertCanonicalVocabularyReviewMapping(rows, ["nl.verb.drinken.drink"], []));
+  assert.throws(() => assertCanonicalVocabularyReviewMapping(rows, ["nl.verb.drinken.drink"], ["nl.grammar.present"]), /no grammar identities/u);
+  assert.throws(() => assertCanonicalVocabularyReviewMapping(rows, [], []), /missing its canonical Review sense/u);
 });
 
 test("ordinary conjugation is reuse while a distinct part of speech may be new", () => {

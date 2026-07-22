@@ -182,7 +182,7 @@ test("rendered reading content normalizes noun-only vocabulary notes", () => {
   assert.doesNotMatch(rendered, /Can fill the N slot|New noun; not self-ID here/u);
 });
 
-test("reading projections hide developer blocks by default and preserve uninterrupted infinitive rows", () => {
+test("reading projections hide developer blocks and preserve canonical surface-to-citation rows", () => {
   const result = {
     package: {
       packageId: "com.sleepymario.language.dutch",
@@ -198,18 +198,17 @@ test("reading projections hide developer blocks by default and preserve uninterr
     text: [
       "# Chapter 1",
       "",
-      "The infinitive row gives the base verb form.",
+      "The arrow links the encountered form to the infinitive citation form.",
       "",
       "<!-- whacksmacker:developer-only:start -->",
       "It does not introduce `je`, `jij`, or `u` yet.",
       "<!-- whacksmacker:developer-only:end -->",
       "",
-      "| Dutch | Meaning | Notes |",
-      "|---|---|---|",
-      "| ben | am | Verb |",
-      "| zijn | to be | Infinitive |",
-      "| de student | student | Noun |",
-      "| de docent | teacher | Noun |"
+      "| Form | Meaning | Part of speech | Note |",
+      "|---|---|---|---|",
+      "| ben ← zijn | to be | verb | first-person singular present |",
+      "| student ← de student | student | noun | article omitted after ben |",
+      "| docent ← de docent | teacher | noun | article omitted after ben |"
     ].join("\n")
   };
 
@@ -217,22 +216,14 @@ test("reading projections hide developer blocks by default and preserve uninterr
   const developer = renderReadingContent(result, "developer");
 
   assert.doesNotMatch(normal, /does not introduce/u);
-  assert.match(normal, /infinitive row gives the base verb form/u);
-  const expectedVocabulary = [
-    "| Dutch | Meaning | Notes |",
-    "| --- | --- | --- |",
-    "| ben | am | Verb |",
-    "| zijn | to be | Infinitive |",
-    "|  |  |  |",
-    "| de student | student | Noun |",
-    "|  |  |  |",
-    "| de docent | teacher | Noun |"
-  ].join("\n");
-  assert.match(normal, new RegExp(expectedVocabulary.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
+  assert.match(normal, /arrow links the encountered form to the infinitive citation form/u);
+  assert.match(normal, /\| ben ← zijn \| to be \| verb \| first-person singular present \|/u);
+  assert.match(normal, /\| student ← de student \| student \| noun \| article omitted after ben \|/u);
+  assert.doesNotMatch(normal, /\| zijn \| to be \| Infinitive \|/u);
   assert.doesNotMatch(normal, /<br\s*\/?/iu);
   assert.match(developer, /It does not introduce `je`, `jij`, or `u` yet\./u);
-  assert.match(developer, new RegExp(expectedVocabulary.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"));
-  assert.equal(result.text.split("\n").filter((line) => line.startsWith("|") && !line.startsWith("|---")).length, 5);
+  assert.match(developer, /\| ben ← zijn \| to be \| verb \| first-person singular present \|/u);
+  assert.equal(result.text.split("\n").filter((line) => line.startsWith("|") && !line.startsWith("|---")).length, 4);
 });
 
 async function createInstalledReadingFixture() {

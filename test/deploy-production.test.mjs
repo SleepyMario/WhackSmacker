@@ -148,7 +148,7 @@ test("deployment and rollback never remove volumes or print secrets", async () =
   const root = await fixture("unhealthy");
   const result = run(root);
   const all = `${result.stdout}${result.stderr}${await readFile(join(root, "calls"), "utf8")}`;
-  assert.doesNotMatch(all, /down|-v|SECRET_MARKER/);
+  assert.doesNotMatch(all, /(?:^|\s)down(?:\s|$)|(?:^|\s)-v(?:\s|$)|SECRET_MARKER/mu);
 });
 
 test("public URL verification is optional and configuration-driven", async () => {

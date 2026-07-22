@@ -236,7 +236,7 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.ok(chapter1Entry);
     assert.doesNotMatch(chapter1Entry.text, /Complete Rereading/u);
     assert.equal(chapter1Entry.text, chapter1Source.toString("utf8").split("\n").filter((line) => !/^#{1,6}\s+Content\s*$/iu.test(line.trim())).join("\n"));
-    assert.equal(createHash("sha256").update(chapter1Source).digest("hex"), "41751c7642ced56bdd526ef8121509049e5c14c8de449bb6ffeb131f9631ba64");
+    assert.equal(createHash("sha256").update(chapter1Source).digest("hex"), "497add825e7ba091e9f42f8a2c7f23fd122aabc4abeb0cc39a116a927dad57e3");
     assert.equal(translationEntries.length, 75);
     for (let chapterNumber = 1; chapterNumber <= 75; chapterNumber += 1) {
       const padded = String(chapterNumber).padStart(3, "0");
@@ -329,7 +329,7 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.equal(archive.has(itemPath1115), true);
     assert.equal(archive.has(itemPath1620), true);
     assert.equal(archive.has(itemPath2125), true);
-    assert.equal(reviewItems0105.items.length, 66);
+    assert.equal(reviewItems0105.items.length, 60);
     assert.equal(reviewItems0610.items.length, 84);
     assert.equal(reviewItems0610.items.every((item) => item.schemaVersion === 2), true);
     assert.equal(reviewItems1115.items.length, 74);
@@ -372,7 +372,7 @@ const followerReadingPackageConfigs = [
   ["arabic", "Arabic", "ar", 40, 80, 5],
   ["french", "French", "fr", 60, 120, 5],
   ["german", "German", "de", 55, 110, 5],
-  ["hindi", "Hindi", "hi", 50, 100, 5],
+  ["hindi", "Hindi", "hi", 46, 92, 5],
   ["japanese", "Japanese", "ja", 44, 132, 5],
   ["russian", "Russian", "ru", 52, 104, 5],
   ["spanish", "Spanish", "es", 56, 112, 5],
@@ -423,6 +423,7 @@ for (const config of followerReadingPackageConfigs) {
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.md"));
+      assert.ok(readingContent.files.some((file) => file.path === "vocabulary-forms.json"));
       assert.equal(readingArchive.has("LICENSE-CONTENT"), true);
       assert.equal(readingArchive.has("NOTICE"), true);
       assert.equal(reviewManifest.packageId, `com.sleepymario.language.${config.slug}.reviews`);

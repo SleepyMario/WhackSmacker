@@ -25,14 +25,14 @@ ${developerOnlyStartMarker}
 Original developer instruction stays in source.
 ${developerOnlyEndMarker}
 
-The infinitive row gives the base verb form.
+The arrow links the encountered form to the citation form.
 `;
 
 test("Normal is the default curriculum projection", () => {
   assert.equal(defaultCurriculumDisplayMode, "normal");
   assert.equal(projectCurriculumMarkdown(source), projectCurriculumMarkdown(source, "normal"));
   assert.doesNotMatch(projectCurriculumMarkdown(source), /grammar_id|developer instruction/u);
-  assert.match(projectCurriculumMarkdown(source), /Learner guidance stays|infinitive row gives/u);
+  assert.match(projectCurriculumMarkdown(source), /Learner guidance stays|arrow links the encountered form/u);
 });
 
 test("audience headings project only into rendered section Markdown", () => {

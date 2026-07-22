@@ -294,7 +294,9 @@ test("language curriculum policy records continuity and strict example rules", (
   assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /target language.*source language/u.test(rule)));
   assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /no grammar, comprehension, cloze, multiple-choice, production, or distractor/u.test(rule)));
   assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /five-chapter review decks hide.*Notes/u.test(rule)));
-  assert.ok(languageCurriculumPolicy.lexicalFoundationRules.some((rule) => /hide.*structured Usage/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.lexicalFoundationRules.some((rule) => /Form, Meaning, Part of speech, and Note/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.lexicalFoundationRules.some((rule) => /surface form ← canonical citation form/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.reviewDeckRules.some((rule) => /canonical lexical sense/u.test(rule)));
   assert.ok(languageCurriculumPolicy.strictExampleRules.some((rule) => /one to three literal read-content examples/u.test(rule)));
   assert.ok(languageCurriculumPolicy.strictExampleRules.some((rule) => /vocabulary lists/u.test(rule)));
   assert.ok(languageCurriculumPolicy.surfaceFormRules.some((rule) => /Conjugated, inflected/u.test(rule)));
