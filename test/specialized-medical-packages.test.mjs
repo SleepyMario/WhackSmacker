@@ -72,11 +72,28 @@ test("specialized packages load beneath Dutch and empty Traditional Chinese with
       await generateContentPackage({ targetId, outputDirectory: packageDirectory, generatedAt: "2026-07-22T00:00:00Z" });
     }
     await generateLocalContentPackageCatalogue({ packagesDirectory: packageDirectory, outputPath: cataloguePath, generatedAt: "2026-07-22T00:00:00Z" });
+    const installedByPackageId = new Map();
     for (const packageId of ["com.sleepymario.language.dutch", ...packages.map((definition) => definition.packageId)]) {
-      await installContentPackage({ cataloguePath, dataDir, packageId, installedAt: "2026-07-22T00:00:00Z" });
+      installedByPackageId.set(packageId, await installContentPackage({ cataloguePath, dataDir, packageId, installedAt: "2026-07-22T00:00:00Z" }));
     }
 
     for (const definition of packages) {
+      const installed = installedByPackageId.get(definition.packageId);
+      assert.ok(installed);
+      const manifest = JSON.parse(await readFile(join(installed.installPath, "manifest.json"), "utf8"));
+      assert.deepEqual(manifest.license, {
+        spdx: "CC-BY-NC-4.0",
+        name: "Creative Commons Attribution-NonCommercial 4.0 International",
+        path: "LICENSE-CONTENT"
+      });
+      assert.deepEqual(
+        await readFile(join(installed.installPath, "LICENSE-CONTENT")),
+        await readFile(join(sourceRoot, "..", "..", "LICENSE-CONTENT"))
+      );
+      assert.deepEqual(
+        await readFile(join(installed.installPath, "NOTICE")),
+        await readFile(join(sourceRoot, "..", "..", "NOTICE"))
+      );
       const sourceRows = parseTsv(await readFile(join(sourceRoot, definition.source, "cards.tsv"), "utf8")).slice(1);
       const sourceById = new Map(sourceRows.map((row) => [row[0], row]));
       const items = await listReadingReviewItems({ dataDir, packageId: definition.packageId, packageVersion: "0.1.0" });

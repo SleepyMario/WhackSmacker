@@ -103,6 +103,10 @@ export interface ContentPackageGeneratorTarget {
   readonly license?: ContentPackageManifest["license"];
   readonly include: readonly string[];
   readonly readingContentInclude?: readonly string[];
+  readonly additionalSourceFiles?: readonly {
+    readonly sourcePath: string;
+    readonly packagePath: string;
+  }[];
   readonly specializedDeck?: {
     readonly displayName: string;
     readonly unitStart: number;
@@ -489,7 +493,16 @@ const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = speci
   targetLanguage: definition.targetLanguage,
   subjects: ["language", "medical", "specialized-review"],
   dependencies: [],
+  license: {
+    spdx: "CC-BY-NC-4.0",
+    name: "Creative Commons Attribution-NonCommercial 4.0 International",
+    path: "LICENSE-CONTENT"
+  },
   include: ["README.md", "deck.json", "cards.tsv"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
   specializedDeck: { displayName: definition.deckDisplayName, unitStart: 1, unitEnd: 11 }
 }));
 
@@ -507,6 +520,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     await access(sourceRoot);
     sourceFiles = [
       ...await collectSourceFiles(sourceRoot, await sourceIncludesForTarget(target, sourceRoot)),
+      ...await collectAdditionalSourceFiles(sourceRoot, target.additionalSourceFiles ?? []),
       ...await packagedReadingSupportFiles(target, sourceRoot)
     ];
   } catch (error) {
@@ -928,7 +942,8 @@ async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, so
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
     ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath || include === lexicalTopicsPath || include === lexicalTopicAuditPath || include === "lexical-topic-audit.md" || include === sinoVietnameseLexiconPath || include === sinoVietnameseAuditPath || include === "sino-vietnamese-audit.md"))]
     : [...target.include];
-  if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path)) separatedIncludes.push(target.license.path);
+  const separatelyPackagedPaths = new Set(target.additionalSourceFiles?.map((file) => file.packagePath) ?? []);
+  if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path) && !separatelyPackagedPaths.has(target.license.path)) separatedIncludes.push(target.license.path);
   if (target.capabilities?.includes("reading-curriculum")) {
     try { await access(resolve(sourceRoot, "NOTICE")); separatedIncludes.push("NOTICE"); } catch { /* legacy repository without notice */ }
     try { await access(resolve(sourceRoot, vocabularyFormsPath)); separatedIncludes.push(vocabularyFormsPath); } catch { /* non-language legacy target */ }
@@ -958,6 +973,26 @@ async function collectSourceFiles(sourceRoot: string, includes: readonly string[
   }
 
   return files.sort((left, right) => left.path.localeCompare(right.path));
+}
+
+async function collectAdditionalSourceFiles(
+  sourceRoot: string,
+  files: readonly { readonly sourcePath: string; readonly packagePath: string }[]
+): Promise<readonly SourceFile[]> {
+  return Promise.all(files.map(async ({ sourcePath, packagePath }) => {
+    if (!isContentPackageSourceFileAllowed(packagePath)) {
+      throw new Error(`Additional source file has an unsupported package path: ${packagePath}`);
+    }
+    const buffer = await readFile(resolve(sourceRoot, sourcePath));
+    return {
+      path: packagePath,
+      mediaType: mediaTypeForPath(packagePath),
+      size: buffer.length,
+      sha256: sha256Hex(buffer),
+      text: buffer.toString("utf8"),
+      buffer
+    };
+  }));
 }
 
 async function collectPath(sourceRoot: string, absolutePath: string, files: SourceFile[]): Promise<void> {
