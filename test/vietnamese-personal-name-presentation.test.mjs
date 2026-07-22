@@ -75,6 +75,9 @@ test("Vietnamese display-name changes preserve Review IDs, counts, and lexical/g
   const cardDigest = createHash("sha256").update(`${[...new Set(ids)].sort().join("\n")}\n`).digest("hex");
   assert.equal(cardDigest, inventory.identityBaseline.reviewCardIdsSha256);
   const allSource = [...(await chapters()).values()].join("\n") + (await Promise.all((await readdir(coreRoot)).filter((entry) => entry.includes("grammar")).map((entry) => readFile(join(coreRoot, entry, "chapter.md"), "utf8")))).join("\n");
+  const lexicalIds = [...new Set(allSource.match(/vi\.[a-z][a-z0-9.-]+/gu) ?? [])].sort();
+  const lexicalDigest = createHash("sha256").update(`${lexicalIds.join("\n")}\n`).digest("hex");
+  assert.equal(lexicalDigest, inventory.identityBaseline.lexicalIdsSha256);
   const grammarIds = [...new Set(allSource.match(/VIE-GRAMMAR-[0-9]+[A-Z]?/gu) ?? [])].sort();
   const grammarDigest = createHash("sha256").update(`${grammarIds.join("\n")}\n`).digest("hex");
   assert.equal(grammarDigest, inventory.identityBaseline.grammarIdsSha256);
