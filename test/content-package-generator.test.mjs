@@ -47,7 +47,7 @@ test("content package generator exposes the supported local package targets", ()
   );
 });
 
-test("Vietnamese package targets retain the current versions and include the complete curriculum through Chapter 50", () => {
+test("Vietnamese reading and Review package targets both remain normalized at version 0.1.0", () => {
   const targets = new Map(contentPackageGeneratorTargets.map((target) => [target.id, target]));
   const reading = targets.get("vietnamese-curriculum");
   const reviews = targets.get("vietnamese-core-reviews");
@@ -57,7 +57,8 @@ test("Vietnamese package targets retain the current versions and include the com
     "README.md", "philosophy.md", "scope.md", "curriculum-map.md", "progress.md", "backlog.md", "decisions.md",
     "geography-ledger.json", "number-progression.json", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "sino-vietnamese-lexicon.json", "sino-vietnamese-audit.json", "sino-vietnamese-audit.md", "name-pools", "units/README.md", "units/vietnamese-foundation", "units/vietnamese-core"
   ]);
-  assert.equal(reviews?.packageVersion, "0.2.0");
+  assert.equal(reviews?.packageId, "com.sleepymario.language.vietnamese.reviews");
+  assert.equal(reviews?.packageVersion, "0.1.0");
   assert.deepEqual(reviews?.dependencies, [{
     packageId: "com.sleepymario.language.vietnamese",
     version: ">=0.1.0 <0.2.0",
@@ -109,7 +110,8 @@ test("content package generator creates complete Vietnamese reading and review p
     const { reviewArchive, reviewContent, reviewManifest } = await mergedSplitArchive(readingArchive, directory, "vietnamese-core-reviews");
     assert.equal(result.packageVersion, "0.1.0");
     assert.equal(manifest.packageVersion, "0.1.0");
-    assert.equal(reviewManifest.packageVersion, "0.2.0");
+    assert.equal(reviewManifest.packageId, "com.sleepymario.language.vietnamese.reviews");
+    assert.equal(reviewManifest.packageVersion, "0.1.0");
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
     for (const chapter of [1, 10, 11, 25, 31, 41, 50]) {
       assert.ok(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-${String(chapter).padStart(3,"0")}-basic-sentences-${chapter}/chapter.md`));
