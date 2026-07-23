@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Minji follows a simple schedule. Put `에` after a specific time to say when an action happens.",
+      "expert": "`time + 에 + verb` is the canonical Chapter 8 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### specific times marked with e\n\nPut `에` after a specific time: `일곱 시에 일어나요` means “I get up at seven.” The same particle can mark a destination, but here the time phrase tells you when.\n\nExample: [[grammar:민지는 일곱 시에 일어나요]]\n\nWatch out: Do not add `에` after every time word automatically; this chapter teaches clear schedule times and time periods.",
+      "expert": "#### specific times marked with e\n\nThe particle `에` marks a temporal point for the event. Its temporal function is distinguished from its locative/directional uses by the semantic type of the preceding phrase.\n\nExample: [[grammar:민지는 일곱 시에 일어나요]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 8 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `time + 에 + verb`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 민지는 일곱 시에 일어나요. — Minji gets up at seven o’clock.\n- 일곱 시에 아침밥을 먹어요. — At seven, she eats breakfast.\n- 여덟 시에 학교에 가요. — At eight, she goes to school.\n- 수업은 여덟 시에 시작해요. — Class starts at eight.\n- 점심에 밥을 먹어요. — At lunchtime, she eats a meal.\n- 오후에 책을 읽어요. — In the afternoon, she reads a book.\n- 오후에 카페에 가요. — In the afternoon, she goes to a café.\n- 밤에 집에 돌아와요. — At night, she returns home.",
+    "expert": "- 민지는 일곱 시에 일어나요. — Natural translation: Minji gets up at seven o’clock.\n- 일곱 시에 아침밥을 먹어요. — Natural translation: At seven, she eats breakfast.\n- 여덟 시에 학교에 가요. — Natural translation: At eight, she goes to school.\n- 수업은 여덟 시에 시작해요. — Natural translation: Class starts at eight.\n- 점심에 밥을 먹어요. — Natural translation: At lunchtime, she eats a meal.\n- 오후에 책을 읽어요. — Natural translation: In the afternoon, she reads a book.\n- 오후에 카페에 가요. — Natural translation: In the afternoon, she goes to a café.\n- 밤에 집에 돌아와요. — Natural translation: At night, she returns home."
+  },
+  "readingItems": [
+    {
+      "surface": "일곱 시",
+      "reading": "일곱 시",
+      "evidence": "민지는 일곱 시에 일어나요.",
+      "lexicalEntryId": "ko.time.ilgop-si",
+      "senseId": "ko.time.ilgop-si.seven-oclock"
+    },
+    {
+      "surface": "일어나다",
+      "reading": "일어나다",
+      "evidence": "민지는 일곱 시에 일어나요.",
+      "lexicalEntryId": "ko.verb.ireonada",
+      "senseId": "ko.verb.ireonada.get-up"
+    },
+    {
+      "surface": "아침밥",
+      "reading": "아침밥",
+      "evidence": "일곱 시에 아침밥을 먹어요.",
+      "lexicalEntryId": "ko.noun.achimbap",
+      "senseId": "ko.noun.achimbap.breakfast"
+    },
+    {
+      "surface": "여덟 시",
+      "reading": "여덟 시",
+      "evidence": "여덟 시에 학교에 가요.",
+      "lexicalEntryId": "ko.time.yeodeol-si",
+      "senseId": "ko.time.yeodeol-si.eight-oclock"
+    },
+    {
+      "surface": "수업",
+      "reading": "수업",
+      "evidence": "수업은 여덟 시에 시작해요.",
+      "lexicalEntryId": "ko.noun.sueop",
+      "senseId": "ko.noun.sueop.class"
+    },
+    {
+      "surface": "시작하다",
+      "reading": "시작하다",
+      "evidence": "수업은 여덟 시에 시작해요.",
+      "lexicalEntryId": "ko.verb.sijakhada",
+      "senseId": "ko.verb.sijakhada.start"
+    },
+    {
+      "surface": "점심",
+      "reading": "점심",
+      "evidence": "점심에 밥을 먹어요.",
+      "lexicalEntryId": "ko.noun.jeomsim",
+      "senseId": "ko.noun.jeomsim.lunch"
+    },
+    {
+      "surface": "오후",
+      "reading": "오후",
+      "evidence": "오후에 책을 읽어요.",
+      "lexicalEntryId": "ko.noun.ohu",
+      "senseId": "ko.noun.ohu.afternoon"
+    },
+    {
+      "surface": "밤",
+      "reading": "밤",
+      "evidence": "밤에 집에 돌아와요.",
+      "lexicalEntryId": "ko.noun.bam",
+      "senseId": "ko.noun.bam.night"
+    },
+    {
+      "surface": "돌아오다",
+      "reading": "돌아오다",
+      "evidence": "밤에 집에 돌아와요.",
+      "lexicalEntryId": "ko.verb.doraoda",
+      "senseId": "ko.verb.doraoda.return"
+    }
+  ]
+}

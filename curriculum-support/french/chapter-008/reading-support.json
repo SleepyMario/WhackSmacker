@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Rain changes Lina and Marc’s plans. Use `ne ... pas` around the finite verb to make a basic negative sentence.",
+      "expert": "`ne + finite verb + pas` is the canonical Chapter 8 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### basic verbal negation with ne ... pas\n\nPut `ne` before the finite verb and `pas` after it: `elle marche` becomes `elle ne marche pas`. Before a vowel sound, `ne` becomes `n’`.\n\nExample: [[grammar:Elle ne marche pas dans le parc]]\n\nWatch out: Do not place both parts after the verb. In standard written French, the verb stays between `ne` and `pas`.",
+      "expert": "#### basic verbal negation with ne ... pas\n\nStandard written French expresses sentential negation with the discontinuous marker `ne ... pas`, which brackets the finite verb. Elision produces `n’` before a vowel sound.\n\nExample: [[grammar:Elle ne marche pas dans le parc]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 8 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `ne + finite verb + pas`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Le temps est mauvais le samedi. — The weather is bad on Saturday.\n- Il pleut le matin. — It rains in the morning.\n- Lina reste à la maison. — Lina stays at home.\n- Elle ne marche pas dans le parc. — She does not walk in the park.\n- Marc ne va pas au marché. — Marc does not go to the market.\n- Lina écoute de la musique. — Lina listens to music.\n- Elle regarde la télévision. — She watches television.\n- Lina et Marc ne sont pas fatigués. — Lina and Marc are not tired.",
+    "expert": "- Le temps est mauvais le samedi. — Natural translation: The weather is bad on Saturday.\n- Il pleut le matin. — Natural translation: It rains in the morning.\n- Lina reste à la maison. — Natural translation: Lina stays at home.\n- Elle ne marche pas dans le parc. — Natural translation: She does not walk in the park.\n- Marc ne va pas au marché. — Natural translation: Marc does not go to the market.\n- Lina écoute de la musique. — Natural translation: Lina listens to music.\n- Elle regarde la télévision. — Natural translation: She watches television.\n- Lina et Marc ne sont pas fatigués. — Natural translation: Lina and Marc are not tired."
+  }
+}

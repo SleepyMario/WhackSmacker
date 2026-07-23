@@ -149,7 +149,7 @@ test("split package capabilities and related package IDs validate explicitly", a
   const manifest = await readJson(exampleManifestUrl);
   manifest.capabilities = ["reading-curriculum"];
   manifest.relatedPackageIds = ["com.sleepymario.language.synthetic.reviews"];
-  manifest.license = { spdx: "CC-BY-NC-4.0", name: "Creative Commons Attribution-NonCommercial 4.0 International", path: manifest.files[0].path };
+  manifest.license = { spdx: null, name: "Whacksmacker Curriculum Content License", path: manifest.files[0].path };
   assertValid(manifest);
   manifest.capabilities = ["not-a-capability"];
   assertInvalid(manifest, /capabilities\[0\] is unsupported/);

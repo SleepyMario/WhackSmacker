@@ -13,17 +13,17 @@ const licenseSha256 = "c2db9f2b69f04481c3647953636e96f0752c17705b1250edcc2d3c20b
 const noticeSha256 = "6cc450547e608fb817b725bdfa5af11c7394f37dee1ace0bad7da42a1f355c34";
 const reconstructed = JSON.parse(await readFile(join(process.cwd(), "test", "fixtures", "follower-reconstructed-inventories.json"), "utf8"));
 const configs = [
-  ["arabic", "Arabic", "ar", "ARA", 40, 80],
-  ["french", "French", "fr", "FRA", 60, 120],
-  ["german", "German", "de", "GER", 55, 110],
-  ["hindi", "Hindi", "hi", "HIN", 46, 92],
-  ["japanese", "Japanese", "ja", "JPN", 44, 132],
-  ["korean", "Korean", "ko", "KOR", 47, 94],
-  ["russian", "Russian", "ru", "RUS", 52, 104],
-  ["spanish", "Spanish", "es", "SPA", 56, 112],
-  ["thai", "Thai", "th", "THA", 52, 104],
-  ["zulu", "Zulu", "zu", "ZUL", 42, 84]
-].map(([slug, name, code, prefix, senses, cards]) => ({ slug, name, code, prefix, senses, cards, core: `${slug}-core` }));
+  ["arabic", "Arabic", "ar", "ARA", 40, 80, 40, 5],
+  ["french", "French", "fr", "FRA", 60, 120, 104, 10],
+  ["german", "German", "de", "GER", 55, 110, 103, 10],
+  ["hindi", "Hindi", "hi", "HIN", 46, 92, 46, 5],
+  ["japanese", "Japanese", "ja", "JPN", 44, 132, 87, 10],
+  ["korean", "Korean", "ko", "KOR", 47, 94, 92, 10],
+  ["russian", "Russian", "ru", "RUS", 52, 104, 52, 5],
+  ["spanish", "Spanish", "es", "SPA", 56, 112, 56, 5],
+  ["thai", "Thai", "th", "THA", 52, 104, 52, 5],
+  ["zulu", "Zulu", "zu", "ZUL", 42, 84, 42, 5]
+].map(([slug, name, code, prefix, senses, cards, totalSenses, chapters]) => ({ slug, name, code, prefix, senses, cards, totalSenses, chapters, core: `${slug}-core` }));
 
 for (const config of configs) {
   test(`${config.name} Chapters 1–5, ledgers, grammar summaries, topics, and Review agree`, async () => {
@@ -32,7 +32,7 @@ for (const config of configs) {
     const files = await readdir(unitRoot, { withFileTypes: true });
     const chapterDirs = files.filter(entry => entry.isDirectory() && /^chapter-00[1-5]-/u.test(entry.name) && !/grammar/u.test(entry.name)).map(entry => entry.name).sort();
     assert.equal(chapterDirs.length, 5);
-    assert.equal(files.some(entry => /^chapter-006-/u.test(entry.name)), false);
+    assert.equal(files.some(entry => /^chapter-006-/u.test(entry.name)), config.chapters === 10);
 
     let learnerSentences = 0;
     for (const [index, directory] of chapterDirs.entries()) {
@@ -57,8 +57,8 @@ for (const config of configs) {
     assert.equal(learnerSentences, 30);
 
     const cumulative = await readFile(join(unitRoot, "cumulative-ledger.md"), "utf8");
-    const lexicalRows = parseLedger(cumulative, "## Vocabulary Inventory");
-    const grammarRows = parseLedger(cumulative, "## Grammar Inventory");
+    const lexicalRows = parseLedger(cumulative, "## Vocabulary Inventory").filter((row) => Number(row[5]) <= 5);
+    const grammarRows = parseLedger(cumulative, "## Grammar Inventory").filter((row) => Number(row[2]) <= 5);
     assert.equal(lexicalRows.length, config.senses);
     assert.equal(new Set(lexicalRows.map(row => row[0])).size, config.senses);
     assert.equal(new Set(lexicalRows.map(row => row[1])).size, config.senses);
@@ -77,11 +77,12 @@ for (const config of configs) {
 
     const topics = JSON.parse(await readFile(join(repo, "lexical-topics.json"), "utf8"));
     const topicSenseIds = topics.topics.flatMap(topic => topic.senses.map(sense => sense.sense_id));
-    assert.equal(topics.max_ordinary_chapter, 5);
-    assert.deepEqual(new Set(topicSenseIds), new Set(lexicalRows.map(row => row[1])));
+    assert.equal(topics.max_ordinary_chapter, config.chapters);
+    assert.equal(new Set(topicSenseIds).size, config.totalSenses);
+    for (const senseId of lexicalRows.map((row) => row[1])) assert.equal(topicSenseIds.includes(senseId), true);
     const audit = JSON.parse(await readFile(join(repo, "lexical-topic-audit.json"), "utf8"));
-    assert.equal(audit.canonical_senses, config.senses);
-    assert.equal(audit.assigned_unique_senses, config.senses);
+    assert.equal(audit.canonical_senses, config.totalSenses);
+    assert.equal(audit.assigned_unique_senses, config.totalSenses);
     assert.deepEqual(audit.unassigned_senses, []);
 
     const deck = parseDeck(await readFile(join(process.cwd(), "review-content", config.slug, "review-decks", "chapter-001-005", "cards.tsv"), "utf8"));
@@ -127,7 +128,7 @@ test("independently reconstructed chapter inventories match both ledgers and Rev
       const source = await readFile(join(repo, "units", config.core, sense.directory, "chapter.md"), "utf8");
       assert.equal(primaryReading(source)[sense.line - 1], sense.evidence, `${sense.senseId}: reconstructed first occurrence changed`);
     }
-    const ledgerRows = parseLedger(await readFile(join(repo, "units", config.core, "cumulative-ledger.md"), "utf8"), "## Vocabulary Inventory");
+    const ledgerRows = parseLedger(await readFile(join(repo, "units", config.core, "cumulative-ledger.md"), "utf8"), "## Vocabulary Inventory").filter((row) => Number(row[5]) <= 5);
     const deckRows = parseDeck(await readFile(join(process.cwd(), "review-content", config.slug, "review-decks", "chapter-001-005", "cards.tsv"), "utf8"));
     reconcileReconstructedInventory(expected, ledgerRows.map((row) => row[1]), deckRows.map((row) => row.lexicalIds[1]));
     for (const row of ledgerRows) {

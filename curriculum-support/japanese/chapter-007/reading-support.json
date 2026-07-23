@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Aki and Yuki talk about things they like. In Japanese, the liked thing is marked with `が` before `好きです`.",
+      "expert": "`N が 好きです` is the canonical Chapter 7 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### expressing likes with ga and suki\n\nPut `が` after the thing someone likes, then say `好きです`: `音楽が好きです`. The English subject “I” is often left out when the context is clear.\n\nExample: [[grammar:音楽が好きです]]\n\nWatch out: Do not copy English word order as if `好き` were a regular verb taking `を`.",
+      "expert": "#### expressing likes with ga and suki\n\n`好き` is a nominal/adjectival predicate rather than an ordinary transitive verb. The stimulus or liked entity is marked by `が`, while the experiencer is typically a discourse topic or is omitted.\n\nExample: [[grammar:音楽が好きです]]"
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "Read the dialogue as one connected scene. Notice the Chapter 7 pattern where it appears.",
+      "expert": "The dialogue supplies the literal distributional evidence for `N が 好きです`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 何が好きですか。 — What do you like?\n- 音楽が好きです。 — I like music.\n- 映画が好きですか。 — Do you like movies?\n- はい、映画が好きです。 — Yes, I like movies.\n- スポーツが好きですか。 — Do you like sports?\n- いいえ、犬が好きです。 — No, I like dogs.\n- 料理が好きですか。 — Do you like cooking too?\n- はい、とても好きです。 — Yes, I like it very much.",
+    "expert": "- 何が好きですか。 — Natural translation: What do you like?\n- 音楽が好きです。 — Natural translation: I like music.\n- 映画が好きですか。 — Natural translation: Do you like movies?\n- はい、映画が好きです。 — Natural translation: Yes, I like movies.\n- スポーツが好きですか。 — Natural translation: Do you like sports?\n- いいえ、犬が好きです。 — Natural translation: No, I like dogs.\n- 料理が好きですか。 — Natural translation: Do you like cooking too?\n- はい、とても好きです。 — Natural translation: Yes, I like it very much."
+  },
+  "readingItems": [
+    {
+      "surface": "好き",
+      "reading": "すき",
+      "evidence": "何が好きですか。",
+      "lexicalEntryId": "ja.adjective.suki",
+      "senseId": "ja.adjective.suki.like"
+    },
+    {
+      "surface": "音楽",
+      "reading": "おんがく",
+      "evidence": "音楽が好きです。",
+      "lexicalEntryId": "ja.noun.ongaku",
+      "senseId": "ja.noun.ongaku.music"
+    },
+    {
+      "surface": "映画",
+      "reading": "えいが",
+      "evidence": "映画が好きですか。",
+      "lexicalEntryId": "ja.noun.eiga",
+      "senseId": "ja.noun.eiga.movie"
+    },
+    {
+      "surface": "スポーツ",
+      "reading": "スポーツ",
+      "evidence": "スポーツが好きですか。",
+      "lexicalEntryId": "ja.noun.supootsu",
+      "senseId": "ja.noun.supootsu.sports"
+    },
+    {
+      "surface": "いいえ",
+      "reading": "いいえ",
+      "evidence": "いいえ、犬が好きです。",
+      "lexicalEntryId": "ja.response.iie",
+      "senseId": "ja.response.iie.no"
+    },
+    {
+      "surface": "犬",
+      "reading": "いぬ",
+      "evidence": "いいえ、犬が好きです。",
+      "lexicalEntryId": "ja.noun.inu",
+      "senseId": "ja.noun.inu.dog"
+    },
+    {
+      "surface": "料理",
+      "reading": "りょうり",
+      "evidence": "料理が好きですか。",
+      "lexicalEntryId": "ja.noun.ryouri",
+      "senseId": "ja.noun.ryouri.cooking"
+    },
+    {
+      "surface": "とても",
+      "reading": "とても",
+      "evidence": "はい、とても好きです。",
+      "lexicalEntryId": "ja.adverb.totemo",
+      "senseId": "ja.adverb.totemo.very"
+    }
+  ]
+}

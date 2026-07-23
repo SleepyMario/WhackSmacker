@@ -37,7 +37,7 @@ test("Vietnamese introductions retain full names and established prose uses stru
     }
   }
   assert.ok(sources.get(1).includes("Tôi là Nguyễn Minh Anh."));
-  assert.ok(sources.get(2).includes("Tên tôi là Nguyễn Gia Bảo."));
+  assert.ok(sources.get(2).includes("Tên tôi là Nguyễn Quốc Huy."));
   assert.ok(sources.get(10).includes("Minh Anh sống ở Hà Nội."));
   assert.ok(sources.get(50).includes("Cuối cùng, Ngọc Linh mở bảng tổng kết."));
   assert.equal(sources.get(50).includes("Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết."), false);

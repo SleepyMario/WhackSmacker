@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Lina buys bread at a bakery. Use `je voudrais` to ask for something politely.",
+      "expert": "`Je voudrais + noun` is the canonical Chapter 7 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### polite requests with je voudrais\n\nUse `je voudrais` before the thing you want. It is a polite way to say “I would like.” The form `voudrais` comes from `vouloir`, but learn the complete request as `je voudrais ...`.\n\nExample: [[grammar:Je voudrais une baguette et un croissant, s’il vous plaît]]\n\nWatch out: Do not use bare `je veux` when you want the same polite tone; `je voudrais` is softer.",
+      "expert": "#### polite requests with je voudrais\n\n`Je voudrais` uses the first-person singular present conditional of `vouloir` as a conventional politeness strategy. The requested noun phrase follows the finite verb directly.\n\nExample: [[grammar:Je voudrais une baguette et un croissant, s’il vous plaît]]"
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "Read the dialogue as one connected scene. Notice the Chapter 7 pattern where it appears.",
+      "expert": "The dialogue supplies the literal distributional evidence for `Je voudrais + noun`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Bonjour, je voudrais une baguette et un croissant, s’il vous plaît. — Hello, I would like a baguette and a croissant, please.\n- Très bien. La baguette coûte un euro et le croissant coûte deux euros. — Very good. The baguette costs one euro, and the croissant costs two euros.\n- Combien coûtent les deux ? — How much do the two cost?\n- Trois euros. — Three euros.\n- D’accord. Merci. — Okay. Thank you.\n- Merci. — Thank you.",
+    "expert": "- Bonjour, je voudrais une baguette et un croissant, s’il vous plaît. — Natural translation: Hello, I would like a baguette and a croissant, please.\n- Très bien. La baguette coûte un euro et le croissant coûte deux euros. — Natural translation: Very good. The baguette costs one euro, and the croissant costs two euros.\n- Combien coûtent les deux ? — Natural translation: How much do the two cost?\n- Trois euros. — Natural translation: Three euros.\n- D’accord. Merci. — Natural translation: Okay. Thank you.\n- Merci. — Natural translation: Thank you."
+  }
+}

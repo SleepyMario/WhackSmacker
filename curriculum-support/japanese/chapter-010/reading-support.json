@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Aki and Yuki remember yesterday. Change a polite `ます` verb to `ました` to talk about a completed past action.",
+      "expert": "`verb stem + ました` is the canonical Chapter 10 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### polite past tense with mashita\n\nChange the polite ending `ます` to `ました` for a completed past action: `行きます` becomes `行きました`, and `買います` becomes `買いました`.\n\nExample: [[grammar:あきは本を買いました]]\n\nWatch out: Do not add `ました` to the dictionary form. Use the verb’s `ます` stem.",
+      "expert": "#### polite past tense with mashita\n\n`ました` is the polite affirmative past allomorph of the `ます` auxiliary. It attaches to the continuative stem of the lexical verb.\n\nExample: [[grammar:あきは本を買いました]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 10 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `verb stem + ました`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 昨日、あきは駅へ行きました。 — Yesterday, Aki went to the station.\n- 駅の前でゆきを見ました。 — In front of the station, Aki saw Yuki.\n- 二人は店で写真を見ました。 — The two looked at photos in a shop.\n- あきは本を買いました。 — Aki bought a book.\n- ゆきはジュースを買いました。 — Yuki bought juice.\n- そのあと、二人は公園へ行きました。 — After that, the two went to the park.\n- 公園で写真を撮りました。 — They took a photo in the park.\n- 夕方、二人は部屋へ帰りました。 — In the evening, the two returned to the room.",
+    "expert": "- 昨日、あきは駅へ行きました。 — Natural translation: Yesterday, Aki went to the station.\n- 駅の前でゆきを見ました。 — Natural translation: In front of the station, Aki saw Yuki.\n- 二人は店で写真を見ました。 — Natural translation: The two looked at photos in a shop.\n- あきは本を買いました。 — Natural translation: Aki bought a book.\n- ゆきはジュースを買いました。 — Natural translation: Yuki bought juice.\n- そのあと、二人は公園へ行きました。 — Natural translation: After that, the two went to the park.\n- 公園で写真を撮りました。 — Natural translation: They took a photo in the park.\n- 夕方、二人は部屋へ帰りました。 — Natural translation: In the evening, the two returned to the room."
+  },
+  "readingItems": [
+    {
+      "surface": "昨日",
+      "reading": "きのう",
+      "evidence": "昨日、あきは駅へ行きました。",
+      "lexicalEntryId": "ja.noun.kinou",
+      "senseId": "ja.noun.kinou.yesterday"
+    },
+    {
+      "surface": "前",
+      "reading": "まえ",
+      "evidence": "駅の前でゆきを見ました。",
+      "lexicalEntryId": "ja.noun.mae",
+      "senseId": "ja.noun.mae.front"
+    },
+    {
+      "surface": "見る",
+      "reading": "みる",
+      "evidence": "駅の前でゆきを見ました。",
+      "lexicalEntryId": "ja.verb.miru",
+      "senseId": "ja.verb.miru.see"
+    },
+    {
+      "surface": "店",
+      "reading": "みせ",
+      "evidence": "二人は店で写真を見ました。",
+      "lexicalEntryId": "ja.noun.mise",
+      "senseId": "ja.noun.mise.shop"
+    },
+    {
+      "surface": "写真",
+      "reading": "しゃしん",
+      "evidence": "二人は店で写真を見ました。",
+      "lexicalEntryId": "ja.noun.shashin",
+      "senseId": "ja.noun.shashin.photo"
+    },
+    {
+      "surface": "買う",
+      "reading": "かう",
+      "evidence": "あきは本を買いました。",
+      "lexicalEntryId": "ja.verb.kau",
+      "senseId": "ja.verb.kau.buy"
+    },
+    {
+      "surface": "撮る",
+      "reading": "とる",
+      "evidence": "公園で写真を撮りました。",
+      "lexicalEntryId": "ja.verb.toru-photo",
+      "senseId": "ja.verb.toru-photo.take-photo"
+    },
+    {
+      "surface": "夕方",
+      "reading": "ゆうがた",
+      "evidence": "夕方、二人は部屋へ帰りました。",
+      "lexicalEntryId": "ja.noun.yuugata",
+      "senseId": "ja.noun.yuugata.evening"
+    }
+  ]
+}

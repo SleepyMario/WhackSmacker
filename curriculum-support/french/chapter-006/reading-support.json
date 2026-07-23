@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Lina spends a quiet Saturday at the library. The chapter shows how regular `-er` verbs use an `-e` ending with `il` and `elle`.",
+      "expert": "`il / elle + regular -er verb` is the canonical Chapter 6 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### regular -er verbs in the third-person singular\n\nWith `il` or `elle`, a regular verb ending in `-er` usually ends in `-e`. Remove `-er` and add `-e`: `travailler` becomes `travaille`, and `chercher` becomes `cherche`.\n\nExample: [[grammar:Lina travaille à la bibliothèque]]\n\nWatch out: The final `-e` is normally not pronounced. Do not pronounce `travaille` as if the written ending were a separate syllable.",
+      "expert": "#### regular -er verbs in the third-person singular\n\nRegular first-conjugation verbs form the third-person singular present indicative with the stem plus zero-sounding orthographic `-e`. The subject clitic or noun phrase precedes the finite verb in an ordinary declarative clause.\n\nExample: [[grammar:Lina travaille à la bibliothèque]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 6 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `il / elle + regular -er verb`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Le samedi, Lina travaille à la bibliothèque. — On Saturday, Lina works at the library.\n- Elle arrive le matin. — She arrives in the morning.\n- La bibliothèque est près du parc. — The library is near the park.\n- Lina cherche un livre. — Lina looks for a book.\n- Elle regarde une petite table. — She looks at a small table.\n- Le livre est sur la table. — The book is on the table.\n- Lina trouve le livre. — Lina finds the book.\n- À midi, elle rentre à la maison. — At noon, she goes home.",
+    "expert": "- Le samedi, Lina travaille à la bibliothèque. — Natural translation: On Saturday, Lina works at the library.\n- Elle arrive le matin. — Natural translation: She arrives in the morning.\n- La bibliothèque est près du parc. — Natural translation: The library is near the park.\n- Lina cherche un livre. — Natural translation: Lina looks for a book.\n- Elle regarde une petite table. — Natural translation: She looks at a small table.\n- Le livre est sur la table. — Natural translation: The book is on the table.\n- Lina trouve le livre. — Natural translation: Lina finds the book.\n- À midi, elle rentre à la maison. — Natural translation: At noon, she goes home."
+  }
+}

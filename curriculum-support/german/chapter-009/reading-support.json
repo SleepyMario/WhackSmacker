@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Mia asks Jonas for help with a bicycle. Use `können` with an infinitive to say what someone can do.",
+      "expert": "`können + infinitive` is the canonical Chapter 9 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### ability and possibility with können\n\nPut a form of `können` in the finite-verb position and the action infinitive at the end: `Ich kann das Fahrrad reparieren.` In a yes-no question, the finite form comes first: `Kannst du helfen?`\n\nExample: [[grammar:Ja, ich kann das Fahrrad reparieren]]\n\nWatch out: Do not conjugate both verbs. The second verb stays in the infinitive.",
+      "expert": "#### ability and possibility with können\n\n`Können` is a modal auxiliary. It carries person and number marking, while the lexical infinitive occupies the clause-final verbal bracket in a main clause.\n\nExample: [[grammar:Ja, ich kann das Fahrrad reparieren]]"
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "Read the dialogue as one connected scene. Notice the Chapter 9 pattern where it appears.",
+      "expert": "The dialogue supplies the literal distributional evidence for `können + infinitive`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Kannst du helfen? — Can you help?\n- Ja, ich kann das Fahrrad reparieren. — Yes, I can repair the bicycle.\n- Das Werkzeug ist in der Tasche. — The tools are in the bag.\n- Die Schraube ist locker. — The screw is loose.\n- Kannst du die Schraube festziehen? — Can you tighten the screw?\n- Ja, vielleicht. — Yes, perhaps.\n- Danke. — Thank you.\n- Gern. — Gladly.",
+    "expert": "- Kannst du helfen? — Natural translation: Can you help?\n- Ja, ich kann das Fahrrad reparieren. — Natural translation: Yes, I can repair the bicycle.\n- Das Werkzeug ist in der Tasche. — Natural translation: The tools are in the bag.\n- Die Schraube ist locker. — Natural translation: The screw is loose.\n- Kannst du die Schraube festziehen? — Natural translation: Can you tighten the screw?\n- Ja, vielleicht. — Natural translation: Yes, perhaps.\n- Danke. — Natural translation: Thank you.\n- Gern. — Natural translation: Gladly."
+  }
+}

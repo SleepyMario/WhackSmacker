@@ -12,11 +12,11 @@ const curriculumRoot = join(appRoot, "..", "vietnamese-curriculum");
 const supportRoot = join(appRoot, "curriculum-support", "vietnamese");
 const execFileAsync = promisify(execFile);
 
-test("Chapters 1-3 retain the original Sino-Vietnamese source and section formatting", async () => {
+test("repaired Chapters 1-3 retain stable Sino-Vietnamese source and section formatting", async () => {
   const expectedChapters = new Map([
-    ["../vietnamese-curriculum/units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "9068ab5c38d4f4aebe960b2dd17fd4e5698cf6830b5ef112375b9f0c64a15305"],
-    ["../vietnamese-curriculum/units/vietnamese-core/chapter-002-basic-sentences-2/chapter.md", "497c922affc0d455deea4f1e12e71859a0a0991149baefbbe4a036220dd71c9b"],
-    ["../vietnamese-curriculum/units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md", "62fbcc30520011b0eef3411f833ca84698fcad9ae99d9daa248ec75318bbcc41"]
+    ["../vietnamese-curriculum/units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "9e4e14d9193cfdd79c66e85b5d83ba2def62397f2056724cb39c34289fa6342c"],
+    ["../vietnamese-curriculum/units/vietnamese-core/chapter-002-basic-sentences-2/chapter.md", "407eb43bb61ec7d3e97f0551dd47671f6b0dacca09fcb8e74aad083e2228701e"],
+    ["../vietnamese-curriculum/units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md", "bcdebcd34ad3e85eea222edb83ddfad51c9b4a2f6e72ccc2eaae879a57653901"]
   ]);
   const expectedCharacterSections = new Map([
     [1, "f2a8ed9febccfb649e8df5ffa7e42f0774250957a0df439198503dd917c5a91a"],

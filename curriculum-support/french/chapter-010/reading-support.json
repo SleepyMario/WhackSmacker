@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Lina receives Marc at home and talks about her family. Use `son`, `sa`, and `ses` to show that something belongs to one person.",
+      "expert": "`son / sa / ses + noun` is the canonical Chapter 10 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### third-person singular possessive determiners\n\nUse `son` with a masculine singular noun, `sa` with a feminine singular noun, and `ses` with a plural noun. The form agrees with the thing owned, not with whether the owner is male or female.\n\nExample: [[grammar:Lina est à la maison avec son frère]]\n\nWatch out: Do not choose `son` or `sa` from the owner’s gender. Choose it from the following noun.",
+      "expert": "#### third-person singular possessive determiners\n\nThird-person singular possessive determiners agree morphologically with the possessed noun. They do not encode the possessor’s gender; context identifies whether the English equivalent is “his,” “her,” or “its.”\n\nExample: [[grammar:Lina est à la maison avec son frère]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 10 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `son / sa / ses + noun`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Lina est à la maison avec son frère. — Lina is at home with her brother.\n- Sa sœur est aussi dans la cuisine. — Her sister is also in the kitchen.\n- Son frère apporte un cadeau. — Her brother brings a gift.\n- Le cadeau est dans un petit sac. — The gift is in a small bag.\n- Lina montre sa chambre à Marc. — Lina shows Marc her bedroom.\n- Sur la table, il y a une photo. — There is a photo on the table.\n- Ses livres sont près de la photo. — Her books are near the photo.\n- À midi, Lina et son frère boivent du café. — At noon, Lina and her brother drink coffee.",
+    "expert": "- Lina est à la maison avec son frère. — Natural translation: Lina is at home with her brother.\n- Sa sœur est aussi dans la cuisine. — Natural translation: Her sister is also in the kitchen.\n- Son frère apporte un cadeau. — Natural translation: Her brother brings a gift.\n- Le cadeau est dans un petit sac. — Natural translation: The gift is in a small bag.\n- Lina montre sa chambre à Marc. — Natural translation: Lina shows Marc her bedroom.\n- Sur la table, il y a une photo. — Natural translation: There is a photo on the table.\n- Ses livres sont près de la photo. — Natural translation: Her books are near the photo.\n- À midi, Lina et son frère boivent du café. — Natural translation: At noon, Lina and her brother drink coffee."
+  }
+}

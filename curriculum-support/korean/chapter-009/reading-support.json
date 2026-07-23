@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Minji and Junho talk about the weather and weekend plans. Put `안` directly before a verb or descriptive verb to make a short negative.",
+      "expert": "`안 + verb / descriptive verb` is the canonical Chapter 9 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### short negation with an\n\nPut `안` directly before the action or description: `안 추워요` means “It is not cold,” and `안 운동해요` means “I do not exercise.”\n\nExample: [[grammar:아니요, 안 추워요]]\n\nWatch out: Put `안` before the predicate, not after it.",
+      "expert": "#### short negation with an\n\n`안` is a preverbal short-negation adverb. It precedes the lexical verb or descriptive verb and leaves the predicate’s politeness ending unchanged.\n\nExample: [[grammar:아니요, 안 추워요]]"
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "Read the dialogue as one connected scene. Notice the Chapter 9 pattern where it appears.",
+      "expert": "The dialogue supplies the literal distributional evidence for `안 + verb / descriptive verb`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 오늘 추워요? — Is it cold today?\n- 아니요, 안 추워요. — No, it is not cold.\n- 더워요? — Is it hot?\n- 아니요, 안 더워요. — No, it is not hot.\n- 피곤해요? — Are you tired?\n- 네, 조금 피곤해요. — Yes, I am a little tired.\n- 주말에는 운동해요? — Do you exercise on weekends?\n- 네, 주말에는 운동해요. — Yes, I exercise on weekends.",
+    "expert": "- 오늘 추워요? — Natural translation: Is it cold today?\n- 아니요, 안 추워요. — Natural translation: No, it is not cold.\n- 더워요? — Natural translation: Is it hot?\n- 아니요, 안 더워요. — Natural translation: No, it is not hot.\n- 피곤해요? — Natural translation: Are you tired?\n- 네, 조금 피곤해요. — Natural translation: Yes, I am a little tired.\n- 주말에는 운동해요? — Natural translation: Do you exercise on weekends?\n- 네, 주말에는 운동해요. — Natural translation: Yes, I exercise on weekends."
+  },
+  "readingItems": [
+    {
+      "surface": "춥다",
+      "reading": "춥다",
+      "evidence": "오늘 추워요?",
+      "lexicalEntryId": "ko.descriptive-verb.chupda",
+      "senseId": "ko.descriptive-verb.chupda.cold"
+    },
+    {
+      "surface": "아니요",
+      "reading": "아니요",
+      "evidence": "아니요, 안 추워요.",
+      "lexicalEntryId": "ko.response.aniyo",
+      "senseId": "ko.response.aniyo.no"
+    },
+    {
+      "surface": "안",
+      "reading": "안",
+      "evidence": "아니요, 안 추워요.",
+      "lexicalEntryId": "ko.adverb.an",
+      "senseId": "ko.adverb.an.not"
+    },
+    {
+      "surface": "덥다",
+      "reading": "덥다",
+      "evidence": "더워요?",
+      "lexicalEntryId": "ko.descriptive-verb.deopda",
+      "senseId": "ko.descriptive-verb.deopda.hot"
+    },
+    {
+      "surface": "피곤하다",
+      "reading": "피곤하다",
+      "evidence": "피곤해요?",
+      "lexicalEntryId": "ko.descriptive-verb.pigonhada",
+      "senseId": "ko.descriptive-verb.pigonhada.tired"
+    },
+    {
+      "surface": "조금",
+      "reading": "조금",
+      "evidence": "네, 조금 피곤해요.",
+      "lexicalEntryId": "ko.adverb.jogeum",
+      "senseId": "ko.adverb.jogeum.a-little"
+    },
+    {
+      "surface": "주말",
+      "reading": "주말",
+      "evidence": "주말에는 운동해요?",
+      "lexicalEntryId": "ko.noun.jumal",
+      "senseId": "ko.noun.jumal.weekend"
+    },
+    {
+      "surface": "운동하다",
+      "reading": "운동하다",
+      "evidence": "주말에는 운동해요?",
+      "lexicalEntryId": "ko.verb.undonghada",
+      "senseId": "ko.verb.undonghada.exercise"
+    }
+  ]
+}

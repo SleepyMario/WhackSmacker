@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Rain changes Mia and Jonas’s day. Use `weil` to give a reason, and put the finite verb at the end of the `weil` clause.",
+      "expert": "`weil + subordinate clause` is the canonical Chapter 10 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### causal clauses with weil and verb-final order\n\nUse `weil` to say why something happens. In the `weil` part, move the finite verb to the end: `weil sie krank ist` and `weil es regnet`.\n\nExample: [[grammar:Mia bleibt zu Hause, weil sie krank ist]]\n\nWatch out: Do not keep main-clause V2 order after `weil`. Say `weil sie krank ist`, not `weil sie ist krank`.",
+      "expert": "#### causal clauses with weil and verb-final order\n\nThe subordinating conjunction `weil` introduces a causal subordinate clause. The finite verb occupies the right clause bracket, producing verb-final order.\n\nExample: [[grammar:Mia bleibt zu Hause, weil sie krank ist]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 10 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `weil + subordinate clause`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Mia bleibt zu Hause, weil sie krank ist. — Mia stays at home because she is ill.\n- Jonas fährt heute Bus, weil es regnet. — Jonas is taking the bus today because it is raining.\n- Der Bus ist spät, weil es regnet. — The bus is late because it is raining.\n- Jonas wartet, weil der Bus spät ist. — Jonas waits because the bus is late.\n- Jonas ist im Café. — Jonas is in the café.\n- Mia trinkt Tee, weil sie krank ist. — Mia drinks tea because she is ill.\n- Jonas ruft Mia an, weil Mia zu Hause bleibt. — Jonas calls Mia because Mia stays at home.\n- Am Abend trinken beide Tee. — In the evening, both drink tea.",
+    "expert": "- Mia bleibt zu Hause, weil sie krank ist. — Natural translation: Mia stays at home because she is ill.\n- Jonas fährt heute Bus, weil es regnet. — Natural translation: Jonas is taking the bus today because it is raining.\n- Der Bus ist spät, weil es regnet. — Natural translation: The bus is late because it is raining.\n- Jonas wartet, weil der Bus spät ist. — Natural translation: Jonas waits because the bus is late.\n- Jonas ist im Café. — Natural translation: Jonas is in the café.\n- Mia trinkt Tee, weil sie krank ist. — Natural translation: Mia drinks tea because she is ill.\n- Jonas ruft Mia an, weil Mia zu Hause bleibt. — Natural translation: Jonas calls Mia because Mia stays at home.\n- Am Abend trinken beide Tee. — Natural translation: In the evening, both drink tea."
+  }
+}

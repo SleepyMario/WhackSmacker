@@ -141,6 +141,12 @@ export interface GeneratedContentPackageResult {
 
 export const contentPackageGeneratorName = "whacksmacker-content-builder";
 
+const curriculumContentLicense: ContentPackageManifest["license"] = {
+  spdx: null,
+  name: "Whacksmacker Curriculum Content License",
+  path: "LICENSE-CONTENT"
+};
+
 const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
   {
     id: "linguistic-terminology",
@@ -262,7 +268,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     id: "french-curriculum",
     packageId: "com.sleepymario.language.french",
     displayName: "French",
-    description: "French language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    description: "French language curriculum content generated from the canonical Chapters 1 through 10 source.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
@@ -277,7 +283,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     id: "german-curriculum",
     packageId: "com.sleepymario.language.german",
     displayName: "German",
-    description: "German language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    description: "German language curriculum content generated from the canonical Chapters 1 through 10 source.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
@@ -307,7 +313,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     id: "japanese-curriculum",
     packageId: "com.sleepymario.language.japanese",
     displayName: "Japanese",
-    description: "Japanese language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    description: "Japanese language curriculum content generated from the canonical Chapters 1 through 10 source.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
@@ -322,7 +328,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     id: "korean-curriculum",
     packageId: "com.sleepymario.language.korean",
     displayName: "Korean",
-    description: "Korean language curriculum content generated from the rebuilt canonical Chapters 1 through 5 source.",
+    description: "Korean language curriculum content generated from the canonical Chapters 1 through 10 source.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
@@ -424,11 +430,7 @@ const readingTargets = legacyGeneratorTargets.map((target): ContentPackageGenera
     ...target,
     capabilities: ["reading-curriculum"],
     ...(relatedReview === undefined ? {} : { relatedPackageIds: [relatedReview] }),
-    license: {
-      spdx: "CC-BY-NC-4.0",
-      name: "Creative Commons Attribution-NonCommercial 4.0 International",
-      path: "LICENSE-CONTENT"
-    }
+    license: curriculumContentLicense
   };
 });
 
@@ -458,8 +460,8 @@ const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = cor
   packageId: readingId === undefined ? `com.sleepymario.language.${slug}.reviews` : `${readingId}.reviews`,
   displayName: `${name} Core Reviews`,
   description: readingId === undefined
-    ? `GPL core review decks for ${name}; this metadata does not declare a full reading curriculum package.`
-    : `GPL core review decks for ${name}, usable without a reading curriculum package.`,
+    ? `Core curriculum Review decks for ${name}; this metadata does not declare a full reading curriculum package.`
+    : `Core curriculum Review decks for ${name}, usable without a reading curriculum package.`,
   contentType: "core-review",
   capabilities: ["core-review"],
   ...(readingId === undefined ? {} : { relatedPackageIds: [readingId] }),
@@ -472,8 +474,12 @@ const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = cor
   dependencies: slug === "vietnamese"
     ? [{ packageId: readingId, version: ">=0.1.0 <0.2.0", optional: true }]
     : [],
-  license: { spdx: "GPL-3.0-or-later", name: "GNU General Public License version 3 or later", path: "LICENSE-SOFTWARE" },
-  include: ["README.md", "LICENSE-SOFTWARE", "review-decks"]
+  license: curriculumContentLicense,
+  include: ["README.md", "review-decks"],
+  additionalSourceFiles: [
+    { sourcePath: "../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../NOTICE", packagePath: "NOTICE" }
+  ]
 } as ContentPackageGeneratorTarget));
 
 const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = specializedReviewPackageDefinitions.map((definition) => ({
@@ -493,11 +499,7 @@ const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = speci
   targetLanguage: definition.targetLanguage,
   subjects: ["language", "medical", "specialized-review"],
   dependencies: [],
-  license: {
-    spdx: "CC-BY-NC-4.0",
-    name: "Creative Commons Attribution-NonCommercial 4.0 International",
-    path: "LICENSE-CONTENT"
-  },
+  license: curriculumContentLicense,
   include: ["README.md", "deck.json", "cards.tsv"],
   additionalSourceFiles: [
     { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
@@ -688,7 +690,12 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     [2, "chapter-002-breakfast-in-the-apartment"],
     [3, "chapter-003-do-you-like-tea"],
     [4, "chapter-004-a-walk-nearby"],
-    [5, "chapter-005-going-to-the-market"]
+    [5, "chapter-005-going-to-the-market"],
+    [6, "chapter-006-a-saturday-at-the-library"],
+    [7, "chapter-007-buying-bread"],
+    [8, "chapter-008-a-rainy-saturday"],
+    [9, "chapter-009-choosing-clothes"],
+    [10, "chapter-010-a-family-visit"]
   ].map(([chapter, directory]) => ({
     source: `curriculum-support/french/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/french-core/${directory}/reading-support.json`
@@ -698,7 +705,12 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     [2, "chapter-002-in-the-kitchen"],
     [3, "chapter-003-where-is-the-key"],
     [4, "chapter-004-jonas-in-the-morning"],
-    [5, "chapter-005-a-plan-for-today"]
+    [5, "chapter-005-a-plan-for-today"],
+    [6, "chapter-006-a-small-shopping-trip"],
+    [7, "chapter-007-ordering-at-a-cafe"],
+    [8, "chapter-008-a-busy-evening"],
+    [9, "chapter-009-repairing-a-bicycle"],
+    [10, "chapter-010-a-rainy-bus-ride"]
   ].map(([chapter, directory]) => ({
     source: `curriculum-support/german/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/german-core/${directory}/reading-support.json`
@@ -718,7 +730,12 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     [2, "chapter-002-a-quiet-room"],
     [3, "chapter-003-what-is-this"],
     [4, "chapter-004-at-the-cafe"],
-    [5, "chapter-005-an-invitation"]
+    [5, "chapter-005-an-invitation"],
+    [6, "chapter-006-a-monday-at-school"],
+    [7, "chapter-007-talking-about-likes"],
+    [8, "chapter-008-a-simple-school-day"],
+    [9, "chapter-009-ordering-at-a-small-shop"],
+    [10, "chapter-010-yesterday-near-the-station"]
   ].map(([chapter, directory]) => ({
     source: `curriculum-support/japanese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/japanese-core/${directory}/reading-support.json`
@@ -728,7 +745,12 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     [2, "chapter-002-a-room-at-home"],
     [3, "chapter-003-what-is-this"],
     [4, "chapter-004-minji-s-morning"],
-    [5, "chapter-005-going-out-together"]
+    [5, "chapter-005-going-out-together"],
+    [6, "chapter-006-a-new-classroom"],
+    [7, "chapter-007-ordering-a-snack"],
+    [8, "chapter-008-a-simple-daily-schedule"],
+    [9, "chapter-009-a-quiet-weekend"],
+    [10, "chapter-010-yesterday-at-the-market"]
   ].map(([chapter, directory]) => ({
     source: `curriculum-support/korean/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/korean-core/${directory}/reading-support.json`

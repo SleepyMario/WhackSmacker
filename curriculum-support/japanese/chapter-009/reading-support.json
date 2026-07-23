@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Yuki buys a few things at a small shop. Use `Nをください` to ask for an item politely.",
+      "expert": "`N を ください` is the canonical Chapter 9 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### requesting an item with kudasai\n\nPut `を` after the item and add `ください`: `水をください`. This is a polite way to ask someone to give or sell you that item.\n\nExample: [[grammar:水をください]]\n\nWatch out: Use `を` with the requested item. `水ください` is common in casual speech, but this chapter teaches the complete polite pattern.",
+      "expert": "#### requesting an item with kudasai\n\n`ください` is the imperative/request form of `くださる` used in a conventional polite request construction. The requested object is marked with accusative `を`.\n\nExample: [[grammar:水をください]]"
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "Read the dialogue as one connected scene. Notice the Chapter 9 pattern where it appears.",
+      "expert": "The dialogue supplies the literal distributional evidence for `N を ください`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 店員ですか。水をください。 — Are you the clerk? Water, please.\n- はい。 — Yes.\n- ジュースをください。 — Juice, please.\n- サンドイッチがあります。 — We have sandwiches.\n- サンドイッチをください。 — A sandwich, please.\n- 三つですか。 — Three items?\n- はい。いくらですか。 — Yes. How much is it?\n- 六百円です。 — It is six hundred yen.",
+    "expert": "- 店員ですか。水をください。 — Natural translation: Are you the clerk? Water, please.\n- はい。 — Natural translation: Yes.\n- ジュースをください。 — Natural translation: Juice, please.\n- サンドイッチがあります。 — Natural translation: We have sandwiches.\n- サンドイッチをください。 — Natural translation: A sandwich, please.\n- 三つですか。 — Natural translation: Three items?\n- はい。いくらですか。 — Natural translation: Yes. How much is it?\n- 六百円です。 — Natural translation: It is six hundred yen."
+  },
+  "readingItems": [
+    {
+      "surface": "水",
+      "reading": "みず",
+      "evidence": "店員ですか。水をください。",
+      "lexicalEntryId": "ja.noun.mizu",
+      "senseId": "ja.noun.mizu.water"
+    },
+    {
+      "surface": "ください",
+      "reading": "ください",
+      "evidence": "店員ですか。水をください。",
+      "lexicalEntryId": "ja.expression.kudasai",
+      "senseId": "ja.expression.kudasai.please-give"
+    },
+    {
+      "surface": "店員",
+      "reading": "てんいん",
+      "evidence": "店員ですか。水をください。",
+      "lexicalEntryId": "ja.noun.tenin",
+      "senseId": "ja.noun.tenin.shop-clerk"
+    },
+    {
+      "surface": "ジュース",
+      "reading": "ジュース",
+      "evidence": "ジュースをください。",
+      "lexicalEntryId": "ja.noun.juusu",
+      "senseId": "ja.noun.juusu.juice"
+    },
+    {
+      "surface": "サンドイッチ",
+      "reading": "サンドイッチ",
+      "evidence": "サンドイッチがあります。",
+      "lexicalEntryId": "ja.noun.sandoicchi",
+      "senseId": "ja.noun.sandoicchi.sandwich"
+    },
+    {
+      "surface": "三つ",
+      "reading": "みっつ",
+      "evidence": "三つですか。",
+      "lexicalEntryId": "ja.counter.mittsu",
+      "senseId": "ja.counter.mittsu.three-things"
+    },
+    {
+      "surface": "いくら",
+      "reading": "いくら",
+      "evidence": "はい。いくらですか。",
+      "lexicalEntryId": "ja.question.ikura",
+      "senseId": "ja.question.ikura.how-much"
+    },
+    {
+      "surface": "六百",
+      "reading": "ろっぴゃく",
+      "evidence": "六百円です。",
+      "lexicalEntryId": "ja.numeral.roppyaku",
+      "senseId": "ja.numeral.roppyaku.six-hundred"
+    },
+    {
+      "surface": "円",
+      "reading": "えん",
+      "evidence": "六百円です。",
+      "lexicalEntryId": "ja.currency.en",
+      "senseId": "ja.currency.en.yen"
+    }
+  ]
+}

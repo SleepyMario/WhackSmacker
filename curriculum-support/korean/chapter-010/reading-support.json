@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Minji remembers a trip to the market. Use `-았/었어요` to describe a completed past action politely.",
+      "expert": "`verb-았/었어요` is the canonical Chapter 10 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### polite past tense with ass/eosseoyo\n\nUse a past form ending in `-았어요` or `-었어요` for a completed action: `가요` becomes `갔어요`, and `봐요` becomes `봤어요`.\n\nExample: [[grammar:어제 민지는 시장에 갔어요]]\n\nWatch out: Learn the actual surface form together with the dictionary form; contractions such as `봤어요 ← 보다` are regular parts of the paradigm.",
+      "expert": "#### polite past tense with ass/eosseoyo\n\nThe polite past is formed by the lexical stem plus the past marker `-았/었-` and the polite ending `-어요`. Vowel contraction and stem alternations produce forms such as `갔어요`, `봤어요`, and `왔어요`.\n\nExample: [[grammar:어제 민지는 시장에 갔어요]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 10 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `verb-았/었어요`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 어제 민지는 시장에 갔어요. — Yesterday, Minji went to the market.\n- 친구가 시장에 왔어요. — A friend came to the market.\n- 두 사람은 사진을 봤어요. — The two looked at a photo.\n- 민지는 사과를 샀어요. — Minji bought an apple.\n- 친구는 빵을 샀어요. — The friend bought bread.\n- 그다음에 공원에 갔어요. — After that, they went to the park.\n- 두 사람은 사진을 찍었어요. — The two took a photo.\n- 저녁에 집에 왔어요. — In the evening, Minji came home.",
+    "expert": "- 어제 민지는 시장에 갔어요. — Natural translation: Yesterday, Minji went to the market.\n- 친구가 시장에 왔어요. — Natural translation: A friend came to the market.\n- 두 사람은 사진을 봤어요. — Natural translation: The two looked at a photo.\n- 민지는 사과를 샀어요. — Natural translation: Minji bought an apple.\n- 친구는 빵을 샀어요. — Natural translation: The friend bought bread.\n- 그다음에 공원에 갔어요. — Natural translation: After that, they went to the park.\n- 두 사람은 사진을 찍었어요. — Natural translation: The two took a photo.\n- 저녁에 집에 왔어요. — Natural translation: In the evening, Minji came home."
+  },
+  "readingItems": [
+    {
+      "surface": "어제",
+      "reading": "어제",
+      "evidence": "어제 민지는 시장에 갔어요.",
+      "lexicalEntryId": "ko.noun-adverb.eoje",
+      "senseId": "ko.noun-adverb.eoje.yesterday"
+    },
+    {
+      "surface": "시장",
+      "reading": "시장",
+      "evidence": "어제 민지는 시장에 갔어요.",
+      "lexicalEntryId": "ko.noun.sijang",
+      "senseId": "ko.noun.sijang.market"
+    },
+    {
+      "surface": "친구",
+      "reading": "친구",
+      "evidence": "친구가 시장에 왔어요.",
+      "lexicalEntryId": "ko.noun.chingu",
+      "senseId": "ko.noun.chingu.friend"
+    },
+    {
+      "surface": "사진",
+      "reading": "사진",
+      "evidence": "두 사람은 사진을 봤어요.",
+      "lexicalEntryId": "ko.noun.sajin",
+      "senseId": "ko.noun.sajin.photo"
+    },
+    {
+      "surface": "보다",
+      "reading": "보다",
+      "evidence": "두 사람은 사진을 봤어요.",
+      "lexicalEntryId": "ko.verb.boda",
+      "senseId": "ko.verb.boda.see"
+    },
+    {
+      "surface": "사과",
+      "reading": "사과",
+      "evidence": "민지는 사과를 샀어요.",
+      "lexicalEntryId": "ko.noun.sagwa",
+      "senseId": "ko.noun.sagwa.apple"
+    },
+    {
+      "surface": "사다",
+      "reading": "사다",
+      "evidence": "민지는 사과를 샀어요.",
+      "lexicalEntryId": "ko.verb.sada",
+      "senseId": "ko.verb.sada.buy"
+    },
+    {
+      "surface": "찍다",
+      "reading": "찍다",
+      "evidence": "두 사람은 사진을 찍었어요.",
+      "lexicalEntryId": "ko.verb.jjikda",
+      "senseId": "ko.verb.jjikda.take-photo"
+    },
+    {
+      "surface": "저녁",
+      "reading": "저녁",
+      "evidence": "저녁에 집에 왔어요.",
+      "lexicalEntryId": "ko.noun.jeonyeok",
+      "senseId": "ko.noun.jeonyeok.evening"
+    },
+    {
+      "surface": "오다",
+      "reading": "오다",
+      "evidence": "저녁에 집에 왔어요.",
+      "lexicalEntryId": "ko.verb.oda",
+      "senseId": "ko.verb.oda.come"
+    }
+  ]
+}

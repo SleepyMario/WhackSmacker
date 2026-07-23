@@ -66,7 +66,8 @@ test("Vietnamese reading and Review package targets both remain normalized at ve
     version: ">=0.1.0 <0.2.0",
     optional: true
   }]);
-  assert.deepEqual(reviews?.include, ["README.md", "LICENSE-SOFTWARE", "review-decks"]);
+  assert.deepEqual(reviews?.include, ["README.md", "review-decks"]);
+  assert.deepEqual(reviews?.license, { spdx: null, name: "Whacksmacker Curriculum Content License", path: "LICENSE-CONTENT" });
   assert.equal(isContentPackageSourceFileAllowed("number-progression.json"), true);
   assert.equal(isContentPackageSourceFileAllowed("lexical-topics.json"), true);
   assert.equal(isContentPackageSourceFileAllowed("lexical-topic-audit.json"), true);
@@ -379,19 +380,19 @@ test("content package generator creates a valid Dutch package", async () => {
 });
 
 const followerReadingPackageConfigs = [
-  ["arabic", "Arabic", "ar", 40, 80, 5],
-  ["french", "French", "fr", 60, 120, 5],
-  ["german", "German", "de", 55, 110, 5],
-  ["hindi", "Hindi", "hi", 46, 92, 5],
-  ["japanese", "Japanese", "ja", 44, 132, 5],
-  ["russian", "Russian", "ru", 52, 104, 5],
-  ["spanish", "Spanish", "es", 56, 112, 5],
-  ["thai", "Thai", "th", 52, 104, 5],
-  ["zulu", "Zulu", "zu", 42, 84, 5]
-].map(([slug, name, language, senses, cards, readingSupport]) => ({ slug, name, language, senses, cards, readingSupport }));
+  ["arabic", "Arabic", "ar", 40, 80, 5, 5],
+  ["french", "French", "fr", 104, 208, 10, 10],
+  ["german", "German", "de", 103, 206, 10, 10],
+  ["hindi", "Hindi", "hi", 46, 92, 5, 5],
+  ["japanese", "Japanese", "ja", 87, 261, 10, 10],
+  ["russian", "Russian", "ru", 52, 104, 5, 5],
+  ["spanish", "Spanish", "es", 56, 112, 5, 5],
+  ["thai", "Thai", "th", 52, 104, 5, 5],
+  ["zulu", "Zulu", "zu", 42, 84, 5, 5]
+].map(([slug, name, language, senses, cards, readingSupport, chapters]) => ({ slug, name, language, senses, cards, readingSupport, chapters }));
 
 for (const config of followerReadingPackageConfigs) {
-  test(`content package generator creates only rebuilt ${config.name} Chapters 1 through 5 and its authoritative Review`, async () => {
+  test(`content package generator creates approved ${config.name} chapters and authoritative Review milestones`, async () => {
     const directory = await mkdtemp(join(tmpdir(), `wsm-${config.slug}-package-`));
 
     try {
@@ -404,10 +405,11 @@ for (const config of followerReadingPackageConfigs) {
       const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
       const readingContent = JSON.parse(readingArchive.get("content/content.json").toString("utf8"));
       const { reviewArchive, reviewManifest } = await mergedSplitArchive(readingArchive, directory, `${config.slug}-core-reviews`);
-      const reviewItems = JSON.parse(reviewArchive.get("content/memorization/review-decks/chapter-001-005.json").toString("utf8")).items;
+      const reviewItems = ["chapter-001-005", ...(config.chapters === 10 ? ["chapter-006-010"] : [])]
+        .flatMap((block) => JSON.parse(reviewArchive.get(`content/memorization/review-decks/${block}.json`).toString("utf8")).items);
       const unitPrefix = `units/${config.slug}-core/`;
       const chapterFiles = readingContent.files.filter((file) => file.path.startsWith(unitPrefix)
-        && /^chapter-00[1-5]-/u.test(file.path.slice(unitPrefix.length))
+        && /^chapter-\d{3}-/u.test(file.path.slice(unitPrefix.length))
         && !file.path.includes("-grammar-")
         && file.path.endsWith("/chapter.md"));
 
@@ -420,14 +422,15 @@ for (const config of followerReadingPackageConfigs) {
       assert.deepEqual(manifest.relatedPackageIds, [`com.sleepymario.language.${config.slug}.reviews`]);
       assert.deepEqual(manifest.languages, ["en", config.language].sort());
       assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
-      assert.equal(chapterFiles.length, 5);
-      assert.deepEqual(chapterFiles.map((file) => Number.parseInt(file.text.match(/^chapter:\s*(\d+)$/mu)?.[1] ?? "0", 10)).sort((a, b) => a - b), [1, 2, 3, 4, 5]);
-      assert.equal(readingContent.files.some((file) => new RegExp(`^${unitPrefix}chapter-(?:00[6-9]|0[1-9]\\d|[1-9]\\d{2})-`, "u").test(file.path)), false);
+      assert.equal(chapterFiles.length, config.chapters);
+      assert.deepEqual(chapterFiles.map((file) => Number.parseInt(file.text.match(/^chapter:\s*(\d+)$/mu)?.[1] ?? "0", 10)).sort((a, b) => a - b), Array.from({ length: config.chapters }, (_, index) => index + 1));
+      assert.equal(readingContent.files.some((file) => new RegExp(`^${unitPrefix}chapter-(?:0${String(config.chapters + 1).padStart(2, "0")}|[1-9]\\d{2})-`, "u").test(file.path)), false);
       assert.equal(readingContent.files.some((file) => /(?:foundation|basic-life-sentences|review-decks)/u.test(file.path)), false);
       for (const level of ["easy", "hard"]) {
         assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}chapter-001-005-grammar-${level}/chapter.md`));
+        if (config.chapters === 10) assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}chapter-006-010-grammar-${level}/chapter.md`));
       }
-      assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 5);
+      assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, config.chapters);
       assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, config.readingSupport);
       assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}cumulative-ledger.md`));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
@@ -452,7 +455,7 @@ for (const config of followerReadingPackageConfigs) {
   });
 }
 
-test("content package generator creates only the rebuilt Korean Chapters 1 through 5 and its authoritative Review", async () => {
+test("content package generator creates Korean Chapters 1 through 10 and both authoritative Review milestones", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-korean-package-"));
 
   try {
@@ -465,8 +468,9 @@ test("content package generator creates only the rebuilt Korean Chapters 1 throu
     const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
     const readingContent = JSON.parse(readingArchive.get("content/content.json").toString("utf8"));
     const { reviewArchive, reviewManifest } = await mergedSplitArchive(readingArchive, directory, "korean-core-reviews");
-    const reviewItems = JSON.parse(reviewArchive.get("content/memorization/review-decks/chapter-001-005.json").toString("utf8")).items;
-    const chapterFiles = readingContent.files.filter((file) => /^units\/korean-core\/chapter-\d{3}-(?!005-grammar-)[^/]+\/chapter\.md$/u.test(file.path));
+    const reviewItems = ["chapter-001-005", "chapter-006-010"]
+      .flatMap((block) => JSON.parse(reviewArchive.get(`content/memorization/review-decks/${block}.json`).toString("utf8")).items);
+    const chapterFiles = readingContent.files.filter((file) => /^units\/korean-core\/chapter-\d{3}-[^/]+\/chapter\.md$/u.test(file.path) && !file.path.includes("-grammar-"));
 
     assert.equal(result.packageId, "com.sleepymario.language.korean");
     assert.equal(result.packageVersion, "0.1.0");
@@ -480,22 +484,27 @@ test("content package generator creates only the rebuilt Korean Chapters 1 throu
       "units/korean-core/chapter-002-a-room-at-home/chapter.md",
       "units/korean-core/chapter-003-what-is-this/chapter.md",
       "units/korean-core/chapter-004-minji-s-morning/chapter.md",
-      "units/korean-core/chapter-005-going-out-together/chapter.md"
+      "units/korean-core/chapter-005-going-out-together/chapter.md",
+      "units/korean-core/chapter-006-a-new-classroom/chapter.md",
+      "units/korean-core/chapter-007-ordering-a-snack/chapter.md",
+      "units/korean-core/chapter-008-a-simple-daily-schedule/chapter.md",
+      "units/korean-core/chapter-009-a-quiet-weekend/chapter.md",
+      "units/korean-core/chapter-010-yesterday-at-the-market/chapter.md"
     ]);
-    assert.equal(readingContent.files.some((file) => /^units\/korean-core\/chapter-006-/u.test(file.path)), false);
     for (const level of ["easy", "hard"]) {
       assert.ok(readingContent.files.some((file) => file.path === `units/korean-core/chapter-001-005-grammar-${level}/chapter.md`));
+      assert.ok(readingContent.files.some((file) => file.path === `units/korean-core/chapter-006-010-grammar-${level}/chapter.md`));
     }
-    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 5);
-    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, 5);
+    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 10);
+    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, 10);
     assert.ok(readingContent.files.some((file) => file.path === "units/korean-core/cumulative-ledger.md"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
     assert.equal(readingContent.files.some((file) => /basic-(?:life-)?sentences|foundation/u.test(file.path)), false);
     assert.equal(reviewManifest.packageId, "com.sleepymario.language.korean.reviews");
     assert.deepEqual(reviewManifest.relatedPackageIds, ["com.sleepymario.language.korean"]);
-    assert.equal(reviewItems.length, 94);
-    assert.equal(new Set(reviewItems.map((item) => item.testedLexicalIds.at(-1))).size, 47);
+    assert.equal(reviewItems.length, 184);
+    assert.equal(new Set(reviewItems.map((item) => item.testedLexicalIds.at(-1))).size, 92);
     assert.deepEqual(new Set(reviewItems.map((item) => item.reviewDirection)), new Set(["ko-to-en", "en-to-ko"]));
     assertCoreReviewItemsHaveExamples(reviewItems, "Korean");
     assertOrdinaryBidirectionalItems(reviewItems, "Korean");
@@ -567,7 +576,7 @@ async function mergedSplitArchive(readingArchive, directory, reviewTargetId) {
   const reviewManifest = JSON.parse(reviewArchive.get("manifest.json").toString("utf8"));
   const reviewContent = JSON.parse(reviewArchive.get("content/content.json").toString("utf8"));
   assert.deepEqual(reviewManifest.capabilities, ["core-review"]);
-  assert.equal(reviewManifest.license.spdx, "GPL-3.0-or-later");
+  assert.deepEqual(reviewManifest.license, { spdx: null, name: "Whacksmacker Curriculum Content License", path: "LICENSE-CONTENT" });
   return {
     archive: new Map([...readingArchive, ...[...reviewArchive].filter(([path]) => path !== "manifest.json" && path !== "content/content.json")]),
     content: { ...readingContent, files: [...readingContent.files, ...reviewContent.files] },

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Jonas and Mia buy a few things for the park. The chapter shows the accusative forms `einen`, `eine`, and `ein` with direct objects.",
+      "expert": "`einen / eine / ein + direct object` is the canonical Chapter 6 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### indefinite articles in the accusative\n\nUse `einen` with a masculine direct object, `eine` with a feminine direct object, and `ein` with a neuter direct object. Compare `einen Apfel`, `eine Banane`, and `ein Brot`.\n\nExample: [[grammar:Jonas kauft einen Apfel]]\n\nWatch out: Do not use `ein Apfel` after a transitive verb such as `kaufen`; the masculine direct object needs `einen`.",
+      "expert": "#### indefinite articles in the accusative\n\nThe indefinite article marks accusative case overtly only in the masculine singular: nominative `ein` becomes accusative `einen`. Feminine `eine` and neuter `ein` are syncretic between nominative and accusative.\n\nExample: [[grammar:Jonas kauft einen Apfel]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 6 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `einen / eine / ein + direct object`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Jonas kauft einen Apfel. — Jonas buys an apple.\n- Er kauft eine Banane. — He buys a banana.\n- Er nimmt ein Brot. — He takes a loaf of bread.\n- Mia braucht einen Saft. — Mia needs a juice.\n- Mia nimmt eine Flasche Wasser. — She takes a bottle of water.\n- Jonas trägt einen Beutel. — Jonas carries a bag.\n- Der Beutel ist auf dem Tisch. — The bag is on the table.\n- Danach gehen beide in den Park. — After that, both go to the park.",
+    "expert": "- Jonas kauft einen Apfel. — Natural translation: Jonas buys an apple.\n- Er kauft eine Banane. — Natural translation: He buys a banana.\n- Er nimmt ein Brot. — Natural translation: He takes a loaf of bread.\n- Mia braucht einen Saft. — Natural translation: Mia needs a juice.\n- Mia nimmt eine Flasche Wasser. — Natural translation: She takes a bottle of water.\n- Jonas trägt einen Beutel. — Natural translation: Jonas carries a bag.\n- Der Beutel ist auf dem Tisch. — Natural translation: The bag is on the table.\n- Danach gehen beide in den Park. — Natural translation: After that, both go to the park."
+  }
+}

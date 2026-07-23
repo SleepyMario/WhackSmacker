@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Lina and Marc choose clothes. Use `quel` or `quelle` before a noun when you ask which one.",
+      "expert": "`quel / quelle + noun` is the canonical Chapter 9 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### interrogative determiners quel and quelle\n\nUse `quel` before a masculine singular noun and `quelle` before a feminine singular noun. The form changes to match the noun: `quel sac`, but `quelle robe`.\n\nExample: [[grammar:Quelle robe ]]\n\nWatch out: Choose the form from the French noun’s gender, not from the English word “which.”",
+      "expert": "#### interrogative determiners quel and quelle\n\nThe interrogative determiner agrees in gender and number with its head noun. This chapter contrasts masculine singular `quel` and feminine singular `quelle` in short noun-phrase questions.\n\nExample: [[grammar:Quelle robe ]]"
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "Read the dialogue as one connected scene. Notice the Chapter 9 pattern where it appears.",
+      "expert": "The dialogue supplies the literal distributional evidence for `quel / quelle + noun`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Quelle robe ? — Which dress?\n- La robe rouge. — The red dress.\n- Et quelle chemise ? — And which shirt?\n- La chemise bleue. — The blue shirt.\n- Et le sac, quelle couleur ? — And the bag—what color?\n- Bleu. — Blue.\n- D’accord, je préfère le sac bleu. — Okay, I prefer the blue bag.\n- Et moi, la robe rouge. — And I prefer the red dress.",
+    "expert": "- Quelle robe ? — Natural translation: Which dress?\n- La robe rouge. — Natural translation: The red dress.\n- Et quelle chemise ? — Natural translation: And which shirt?\n- La chemise bleue. — Natural translation: The blue shirt.\n- Et le sac, quelle couleur ? — Natural translation: And the bag—what color?\n- Bleu. — Natural translation: Blue.\n- D’accord, je préfère le sac bleu. — Natural translation: Okay, I prefer the blue bag.\n- Et moi, la robe rouge. — Natural translation: And I prefer the red dress."
+  }
+}

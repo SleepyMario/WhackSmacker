@@ -82,8 +82,8 @@ test("specialized packages load beneath Dutch and empty Traditional Chinese with
       assert.ok(installed);
       const manifest = JSON.parse(await readFile(join(installed.installPath, "manifest.json"), "utf8"));
       assert.deepEqual(manifest.license, {
-        spdx: "CC-BY-NC-4.0",
-        name: "Creative Commons Attribution-NonCommercial 4.0 International",
+        spdx: null,
+        name: "Whacksmacker Curriculum Content License",
         path: "LICENSE-CONTENT"
       });
       assert.deepEqual(

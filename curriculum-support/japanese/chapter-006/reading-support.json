@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Aki spends Monday at school. The chapter shows how an `い`-adjective describes a topic politely before `です`.",
+      "expert": "`N は い-adjective です` is the canonical Chapter 6 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### polite predicates with i-adjectives\n\nPut an `い`-adjective before `です` to make a polite description: `教室は大きいです`. Keep the final `い` in the adjective.\n\nExample: [[grammar:教室は大きいです]]\n\nWatch out: Do not remove the final `い` before `です`: say `大きいです`, not `大きです`.",
+      "expert": "#### polite predicates with i-adjectives\n\nAn `い`-adjective functions directly as the predicate, with `です` adding politeness rather than serving as the lexical copula. The nonpast affirmative form retains final `-い`.\n\nExample: [[grammar:教室は大きいです]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 6 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `N は い-adjective です`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 今日は月曜日です。 — Today is Monday.\n- あきは学校にいます。 — Aki is at school.\n- 教室は大きいです。 — The classroom is large.\n- 教室は明るいです。 — The classroom is bright.\n- 机は長いです。 — The desk is long.\n- いすは小さいです。 — The chair is small.\n- 教室は静かです。 — The classroom is quiet.\n- あきは忙しいです。 — Aki is busy.",
+    "expert": "- 今日は月曜日です。 — Natural translation: Today is Monday.\n- あきは学校にいます。 — Natural translation: Aki is at school.\n- 教室は大きいです。 — Natural translation: The classroom is large.\n- 教室は明るいです。 — Natural translation: The classroom is bright.\n- 机は長いです。 — Natural translation: The desk is long.\n- いすは小さいです。 — Natural translation: The chair is small.\n- 教室は静かです。 — Natural translation: The classroom is quiet.\n- あきは忙しいです。 — Natural translation: Aki is busy."
+  },
+  "readingItems": [
+    {
+      "surface": "今日",
+      "reading": "きょう",
+      "evidence": "今日は月曜日です。",
+      "lexicalEntryId": "ja.noun.kyou",
+      "senseId": "ja.noun.kyou.today"
+    },
+    {
+      "surface": "月曜日",
+      "reading": "げつようび",
+      "evidence": "今日は月曜日です。",
+      "lexicalEntryId": "ja.noun.getsuyoubi",
+      "senseId": "ja.noun.getsuyoubi.monday"
+    },
+    {
+      "surface": "学校",
+      "reading": "がっこう",
+      "evidence": "あきは学校にいます。",
+      "lexicalEntryId": "ja.noun.gakkou",
+      "senseId": "ja.noun.gakkou.school"
+    },
+    {
+      "surface": "教室",
+      "reading": "きょうしつ",
+      "evidence": "教室は大きいです。",
+      "lexicalEntryId": "ja.noun.kyoushitsu",
+      "senseId": "ja.noun.kyoushitsu.classroom"
+    },
+    {
+      "surface": "大きい",
+      "reading": "おおきい",
+      "evidence": "教室は大きいです。",
+      "lexicalEntryId": "ja.adjective.ookii",
+      "senseId": "ja.adjective.ookii.big"
+    },
+    {
+      "surface": "明るい",
+      "reading": "あかるい",
+      "evidence": "教室は明るいです。",
+      "lexicalEntryId": "ja.adjective.akarui",
+      "senseId": "ja.adjective.akarui.bright"
+    },
+    {
+      "surface": "長い",
+      "reading": "ながい",
+      "evidence": "机は長いです。",
+      "lexicalEntryId": "ja.adjective.nagai",
+      "senseId": "ja.adjective.nagai.long"
+    },
+    {
+      "surface": "忙しい",
+      "reading": "いそがしい",
+      "evidence": "あきは忙しいです。",
+      "lexicalEntryId": "ja.adjective.isogashii",
+      "senseId": "ja.adjective.isogashii.busy"
+    }
+  ]
+}

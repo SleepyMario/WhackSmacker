@@ -2,9 +2,10 @@
 
 ## Licensing and content images
 
-WhackSmacker application code, technical tooling, and core review decks are
-`GPL-3.0-or-later` (see `COPYING`). Authored reading curricula are separate
-`CC-BY-NC-4.0` packages and are not distributed in the public core image.
+WhackSmacker application code and technical tooling are `GPL-3.0-or-later`
+(see `COPYING`). Authored reading curricula, core Review decks, and specialized
+Review decks are governed by the separate Whacksmacker Curriculum Content
+License in `LICENSE-CONTENT` and are not distributed in the public core image.
 Review packages declare `core-review`; reading packages declare
 `reading-curriculum`. Optional related package IDs connect them without making
 either a runtime dependency of the other. Legacy manifests without a

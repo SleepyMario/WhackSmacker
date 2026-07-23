@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "sourcePath": "chapter.md",
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "Mia and Jonas prepare for an evening at home. The chapter shows how a separable prefix moves to the end of a main clause.",
+      "expert": "`separable prefix + finite verb` is the canonical Chapter 8 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### separable verbs in main clauses\n\nA separable verb has a prefix that moves to the end of a main clause. `aufstehen` becomes `Mia steht früh auf`, and `anrufen` becomes `Mia ruft eine Freundin an`.\n\nExample: [[grammar:Mia ruft eine Freundin an]]\n\nWatch out: Do not keep the prefix attached to the finite verb in an ordinary main clause: say `ruft ... an`, not `anruft ...`.",
+      "expert": "#### separable verbs in main clauses\n\nIn a finite independent clause, the separable prefix is stranded in the right bracket while the finite verb stem occupies the V2 position. The infinitive and citation form remain written as one word.\n\nExample: [[grammar:Mia ruft eine Freundin an]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Read the narrative as one connected scene. Notice the Chapter 8 pattern where it appears.",
+      "expert": "The narrative supplies the literal distributional evidence for `separable prefix + finite verb`."
+    }
+  ],
+  "breakdown": {
+    "normal": "- Mia steht früh auf. — Mia gets up early.\n- Jonas steht auch auf. — Jonas gets up too.\n- Am Morgen kaufen beide ein. — In the morning, both go shopping.\n- Mia ruft eine Freundin an. — Mia calls a female friend.\n- Die Freundin kommt am Abend. — The friend comes in the evening.\n- Jonas kocht eine Suppe. — Jonas cooks a soup.\n- Das Brot ist auf dem Tisch. — The bread is on the table.\n- Später essen Mia, Jonas und die Freundin zusammen. — Later, Mia, Jonas, and the friend eat together.",
+    "expert": "- Mia steht früh auf. — Natural translation: Mia gets up early.\n- Jonas steht auch auf. — Natural translation: Jonas gets up too.\n- Am Morgen kaufen beide ein. — Natural translation: In the morning, both go shopping.\n- Mia ruft eine Freundin an. — Natural translation: Mia calls a female friend.\n- Die Freundin kommt am Abend. — Natural translation: The friend comes in the evening.\n- Jonas kocht eine Suppe. — Natural translation: Jonas cooks a soup.\n- Das Brot ist auf dem Tisch. — Natural translation: The bread is on the table.\n- Später essen Mia, Jonas und die Freundin zusammen. — Natural translation: Later, Mia, Jonas, and the friend eat together."
+  }
+}
