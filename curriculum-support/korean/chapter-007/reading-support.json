@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Minji orders a few things. Use `N 주세요` to ask politely for an item.",
-      "expert": "`N 주세요` is the canonical Chapter 7 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+      "normal": "Minji is at a snack shop, where a clerk helps with an order for juice, milk, bread, and a sandwich and gives the price.",
+      "expert": "Minji is at a snack shop, where a clerk helps with an order for juice, milk, bread, and a sandwich and gives the price."
     },
     {
       "sourceHeading": "Grammar",

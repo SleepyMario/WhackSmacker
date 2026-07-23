@@ -202,6 +202,7 @@ interface StructuredReadingTranslation {
     readonly speaker: string;
     readonly text: string;
   }[];
+  readonly sentences?: readonly string[];
   readonly paragraphs?: readonly string[];
 }
 
@@ -2323,9 +2324,12 @@ function parseStructuredReadingTranslation(text: string): StructuredReadingTrans
       && typeof turn.text === "string"
       && turn.text.trim().length > 0);
   const narrativeIsValid = value.readingType === "narrative"
-    && Array.isArray(value.paragraphs)
-    && value.paragraphs.length > 0
-    && value.paragraphs.every((paragraph) => typeof paragraph === "string" && paragraph.trim().length > 0);
+    && ((Array.isArray(value.sentences)
+      && value.sentences.length > 0
+      && value.sentences.every((sentence) => typeof sentence === "string" && sentence.trim().length > 0))
+      || (Array.isArray(value.paragraphs)
+        && value.paragraphs.length > 0
+        && value.paragraphs.every((paragraph) => typeof paragraph === "string" && paragraph.trim().length > 0)));
   if (!dialogueIsValid && !narrativeIsValid) {
     return undefined;
   }
@@ -2352,6 +2356,10 @@ function applyReadingSupport(markdown: string, support: ReadingSupport, options:
   const mode = options.displayMode ?? defaultCurriculumDisplayMode;
   let output = markdown;
   for (const section of support.audienceSections) {
+    // The authoritative Dialogue or Narrative is immutable learner content.
+    // Audience support may explain surrounding sections, but must never replace
+    // the authored reading body.
+    if (isPrimaryReadingHeading(section.sourceHeading)) continue;
     output = replaceNamedSection(output, section.sourceHeading, projectReadingAudienceSection(section, mode));
   }
   const embeddedBreakdown = markdownSectionBody(output, "Line-by-Line Breakdown")
@@ -2377,6 +2385,10 @@ function applyReadingSupport(markdown: string, support: ReadingSupport, options:
     output = insertBeforeExercises(output, body);
   }
   return output;
+}
+
+function isPrimaryReadingHeading(title: string): boolean {
+  return /^(?:Dialogue|Narrative|Learner-facing (?:Dialogue|Narrative|Controlled Reading|Read Content)|Controlled Reading|Read Content|Model Dialogue|Model Mini Dialogue|Model Mini Text)$/iu.test(title.trim());
 }
 
 function markdownSectionBody(markdown: string, title: string): string | undefined {
@@ -2443,7 +2455,7 @@ function insertStructuredReadingTranslation(
   }
   const translationBody = translation.readingType === "dialogue"
     ? formatStructuredTranslationTurns(translation.turns ?? [])
-    : translation.paragraphs ?? [];
+    : translation.sentences ?? translation.paragraphs ?? [];
   const translationLines = [
     "### Natural English Translation",
     "",

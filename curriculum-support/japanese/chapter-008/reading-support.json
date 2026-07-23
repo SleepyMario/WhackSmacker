@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Aki follows a simple school schedule. Put `に` after a specific time to say when an action happens.",
-      "expert": "`time + に + verb` is the canonical Chapter 8 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+      "normal": "Aki follows a school-day routine, starting with breakfast at seven. After school, Aki reads, visits the park, and returns home at night.",
+      "expert": "Aki follows a school-day routine, starting with breakfast at seven. After school, Aki reads, visits the park, and returns home at night."
     },
     {
       "sourceHeading": "Grammar",

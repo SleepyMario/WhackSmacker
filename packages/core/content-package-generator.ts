@@ -910,6 +910,10 @@ async function assertValidReadingSupport(value: unknown, source: string, sourceR
       && (typeof section.expertHeading !== "string" || section.expertHeading.trim().length === 0)) {
       throw new Error(`${source}: audienceSections[${index}].expertHeading must be a nonempty string`);
     }
+    if (section.sourceHeading === "Brief Introduction" && isStrictReadingRepairSupport(source)) {
+      assertLearnerFacingIntroduction(section.normal as string, `${source}: audienceSections[${index}].normal`);
+      assertLearnerFacingIntroduction(section.expert as string, `${source}: audienceSections[${index}].expert`);
+    }
   }
   const characters = (value as Record<string, unknown>).characters;
   if (characters === undefined) return;
@@ -942,6 +946,15 @@ async function assertValidReadingSupport(value: unknown, source: string, sourceR
     }
     if (!chapter.includes(entry.usage as string)) throw new Error(`${source}: characters.entries[${index}].usage is not literal primary reading evidence`);
   }
+}
+
+function isStrictReadingRepairSupport(source: string): boolean {
+  return /^curriculum-support\/(?:french|german|japanese|korean)\/chapter-0(?:0[6-9]|10)\/reading-support\.json$/u.test(source);
+}
+
+function assertLearnerFacingIntroduction(value: string, source: string): void {
+  const technicalToken = /\b(?:grammarId|lexicalId|schemaVersion|sourcePath|chapterMode|sentenceCount|reviewCards)\b|(?:^|\s)[\[{]\s*["'][A-Za-z][^\n]*[}\]]|(?:^|\s)(?:\/[\w.-]+){2,}|\bcom\.sleepymario\.[\w.-]+\b|\b(?:whacksmacker|curriculum-builder|[a-z]+-curriculum)\b|\bcanonical Chapter \d+ pattern\b|\bliteral source evidence\b|\bcanonical citation forms\b/iu;
+  if (technicalToken.test(value)) throw new Error(`${source} must contain short learner-facing cast, setting, and situation prose without technical metadata`);
 }
 
 interface ArchiveEntry {

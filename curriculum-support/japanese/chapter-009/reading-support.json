@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Yuki buys a few things at a small shop. Use `Nをください` to ask for an item politely.",
-      "expert": "`N を ください` is the canonical Chapter 9 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+      "normal": "Yuki is at a small shop, where a clerk helps with an order for water, juice, and sandwiches and gives the price.",
+      "expert": "Yuki is at a small shop, where a clerk helps with an order for water, juice, and sandwiches and gives the price."
     },
     {
       "sourceHeading": "Grammar",

@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina buys bread at a bakery. Use `je voudrais` to ask for something politely.",
-      "expert": "`Je voudrais + noun` is the canonical Chapter 7 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+      "normal": "Lina is at a bakery, where she asks the vendor for a baguette and a croissant and pays for them.",
+      "expert": "Lina is at a bakery, where she asks the vendor for a baguette and a croissant and pays for them."
     },
     {
       "sourceHeading": "Grammar",

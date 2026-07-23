@@ -1,15 +1,21 @@
 import assert from "node:assert/strict";
-import { readFile, readdir } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
+import { buildLanguageTree, renderLanguageTreeRightPane } from "../dist/apps/cli/interactive-menu.js";
+import { generateContentPackage, generateLocalContentPackageCatalogue, installContentPackage } from "../dist/packages/core/index.js";
+
 const workspace = join(process.cwd(), "..");
 const configs = [
-  { slug: "french", code: "fr", prefix: "FRA", senses: 44, cards: 88, lines: 38, directions: ["en-to-fr", "fr-to-en"] },
-  { slug: "german", code: "de", prefix: "GER", senses: 48, cards: 96, lines: 40, directions: ["de-to-en", "en-to-de"] },
-  { slug: "japanese", code: "ja", prefix: "JPN", senses: 43, cards: 129, lines: 40, directions: ["en-to-ja", "ja-Kana-to-ja", "ja-to-en"] },
-  { slug: "korean", code: "ko", prefix: "KOR", senses: 45, cards: 90, lines: 40, directions: ["en-to-ko", "ko-to-en"] }
+  { slug: "french", label: "French", code: "fr", prefix: "FRA", senses: 44, cards: 88, lines: 38, directions: ["en-to-fr", "fr-to-en"] },
+  { slug: "german", label: "German", code: "de", prefix: "GER", senses: 48, cards: 96, lines: 40, directions: ["de-to-en", "en-to-de"] },
+  { slug: "japanese", label: "Japanese", code: "ja", prefix: "JPN", senses: 43, cards: 129, lines: 40, directions: ["en-to-ja", "ja-Kana-to-ja", "ja-to-en"] },
+  { slug: "korean", label: "Korean", code: "ko", prefix: "KOR", senses: 45, cards: 90, lines: 40, directions: ["en-to-ko", "ko-to-en"] }
 ];
+
+const technicalIntroduction = /\b(?:grammarId|lexicalId|schemaVersion|sourcePath|chapterMode|sentenceCount|reviewCards)\b|\bcanonical Chapter \d+ pattern\b|\bliteral source evidence\b|\bcanonical citation forms\b|\bcom\.sleepymario\.[\w.-]+\b|(?:^|\s)(?:\/[\w.-]+){2,}|[{}]\s*["'][A-Za-z]/iu;
 
 for (const config of configs) {
   test(`${config.slug} Chapters 6–10 reconstruct lexical, grammar, support, and Review evidence`, async () => {
@@ -28,6 +34,8 @@ for (const config of configs) {
       const chapter = offset + 6;
       const markdown = await readFile(join(unitRoot, directory, "chapter.md"), "utf8");
       const reading = primaryReading(markdown);
+      const rawReading = primaryReading(markdown, false);
+      const introduction = sectionBody(markdown, "Brief Introduction", 2);
       const translation = JSON.parse(await readFile(join(unitRoot, directory, "reading-translation.en.json"), "utf8"));
       const translated = translation.readingType === "dialogue" ? translation.turns : translation.sentences;
       const ledger = parseMarkdownTable(await readFile(join(unitRoot, directory, "ledger.md"), "utf8"), "| Entry ID | Sense ID | Form | Meaning | POS | Reading line |");
@@ -38,6 +46,13 @@ for (const config of configs) {
       assert.equal(reading.length >= 6, true);
       assert.equal(JSON.stringify(translation), JSON.stringify(translation).normalize("NFC"));
       assert.doesNotMatch(markdown, /TODO|FIXME|placeholder|dummy/iu);
+      assert.ok(introduction.length > 0 && introduction.length <= 300);
+      assert.doesNotMatch(introduction, technicalIntroduction);
+      assert.doesNotMatch(introduction, /\b(?:this chapter teaches|this chapter shows|use .+ to|canonical|schema|source evidence)\b/iu);
+      assert.equal(rawReading.includes(introduction), false);
+      assert.equal(JSON.stringify(translation).includes(introduction), false);
+      assert.ok(markdown.indexOf(`### ${chapter % 2 === 1 ? "Dialogue" : "Narrative"}`) < markdown.indexOf("### New Vocabulary"));
+      assert.ok(markdown.indexOf("### New Vocabulary") < markdown.indexOf("### Grammar"));
       learnerFacingLines += reading.length;
       grammarIds.push(grammarId);
       for (const row of ledger) {
@@ -46,9 +61,17 @@ for (const config of configs) {
         reconstructed.push({ chapter, directory, lexicalId: row[0], senseId: row[1], canonical: row[2], evidence: reading[line - 1], line });
       }
       const support = JSON.parse(await readFile(join(process.cwd(), "curriculum-support", config.slug, `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json"), "utf8"));
-      for (const line of reading) {
-        assert.equal(support.breakdown.normal.includes(line), true, `${config.slug} ${chapter} Normal breakdown omits a line`);
-        assert.equal(support.breakdown.expert.includes(line), true, `${config.slug} ${chapter} Expert breakdown omits a line`);
+      const supportIntroduction = support.audienceSections.find((section) => section.sourceHeading === "Brief Introduction");
+      assert.ok(supportIntroduction);
+      assert.equal(supportIntroduction.normal, introduction);
+      assert.equal(supportIntroduction.expert, introduction);
+      assert.doesNotMatch(supportIntroduction.normal, technicalIntroduction);
+      assert.doesNotMatch(supportIntroduction.expert, technicalIntroduction);
+      for (const audience of ["normal", "expert"]) {
+        const breakdownRows = support.breakdown[audience].split("\n").filter((line) => line.startsWith("- "));
+        assert.equal(breakdownRows.length, reading.length, `${config.slug} ${chapter} ${audience} breakdown count`);
+        assert.equal(support.breakdown[audience].includes(introduction), false);
+        for (const line of reading) assert.equal(support.breakdown[audience].includes(line), true, `${config.slug} ${chapter} ${audience} breakdown omits a line`);
       }
     }
     assert.equal(learnerFacingLines, config.lines);
@@ -84,6 +107,9 @@ for (const config of configs) {
       assert.equal(card.locator, `${/dialogue/iu.test((await readFile(join(unitRoot, source.directory, "chapter.md"), "utf8")).match(/^type:\s*"?([^"\n]+)/mu)?.[1] ?? "") ? "Dialogue" : "Narrative"} > line ${source.line}`);
       assert.equal(card.evidence, source.evidence);
       assert.equal(card.examples.includes(source.evidence), true);
+      const chapterMarkdown = await readFile(join(unitRoot, source.directory, "chapter.md"), "utf8");
+      assert.equal(card.evidence.includes(sectionBody(chapterMarkdown, "Brief Introduction", 2)), false);
+      assert.equal(card.examples.includes(sectionBody(chapterMarkdown, "Brief Introduction", 2)), false);
       const directions = directionsBySense.get(card.senseId) ?? new Set();
       directions.add(`${card.promptLanguage}-to-${card.answerLanguage}`);
       directionsBySense.set(card.senseId, directions);
@@ -97,10 +123,75 @@ for (const config of configs) {
   });
 }
 
-function primaryReading(markdown) {
+test("French, German, Japanese, and Korean Chapters 6–10 render complete installed readings in every learner view", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-reading-repair-006-010-"));
+  const packagesDirectory = join(root, "packages");
+  const cataloguePath = join(root, "catalogue.json");
+  const dataDir = join(root, "data");
+  try {
+    for (const config of configs) {
+      await generateContentPackage({ targetId: `${config.slug}-curriculum`, outputDirectory: packagesDirectory, generatedAt: "2026-07-23T00:00:00Z" });
+    }
+    await generateLocalContentPackageCatalogue({ packagesDirectory, outputPath: cataloguePath, generatedAt: "2026-07-23T00:00:00Z" });
+    for (const config of configs) {
+      await installContentPackage({ cataloguePath, dataDir, packageId: `com.sleepymario.language.${config.slug}`, installedAt: "2026-07-23T00:00:00Z" });
+    }
+
+    const tree = await buildLanguageTree(dataDir, "normal");
+    for (const config of configs) {
+      const language = tree.children.find((node) => node.label === config.label);
+      const readContent = language?.children?.find((node) => node.label === "Read content");
+      assert.ok(readContent, `${config.label} Read content menu`);
+      for (const chapter of [6, 7, 8, 9, 10]) {
+        const node = readContent.children.find((candidate) => candidate.filePath?.includes(`/chapter-${String(chapter).padStart(3, "0")}-`) && candidate.filePath.endsWith("/chapter.md"));
+        assert.ok(node, `${config.label} Chapter ${chapter} menu node`);
+        const source = await readFile(join(workspace, `${config.slug}-curriculum`, node.filePath), "utf8");
+        const heading = chapter % 2 === 1 ? "Dialogue" : "Narrative";
+        const expectedReading = primaryReading(source, false);
+        const expectedIntroduction = sectionBody(source, "Brief Introduction", 2);
+        for (const displayMode of ["normal", "expert"]) {
+          const rendered = await renderLanguageTreeRightPane(node, { dataDir, displayMode });
+          assert.equal(sectionBody(rendered, "Brief Introduction"), expectedIntroduction);
+          assert.equal(sectionBody(rendered, heading), expectedReading);
+          assert.doesNotMatch(sectionBody(rendered, "Brief Introduction"), technicalIntroduction);
+          assert.ok(rendered.indexOf(`### ${heading}`) < rendered.indexOf("### New Vocabulary"));
+          assert.ok(rendered.indexOf("### New Vocabulary") < rendered.indexOf("### Grammar"));
+        }
+
+        const translated = await renderLanguageTreeRightPane(node, { dataDir, displayMode: "normal", translationsEnabled: true });
+        const brokenDown = await renderLanguageTreeRightPane(node, { dataDir, displayMode: "normal", breakdownEnabled: true });
+        const translationBody = sectionBody(translated, "Natural English Translation");
+        const breakdownBody = sectionBody(brokenDown, "Line-by-line Breakdown");
+        assert.ok(translationBody.length > 0, `${config.label} Chapter ${chapter} Translation`);
+        assert.ok(breakdownBody.length > 0, `${config.label} Chapter ${chapter} Breakdown`);
+        assert.equal(translationBody.includes(expectedIntroduction), false);
+        assert.equal(breakdownBody.includes(expectedIntroduction), false);
+        assert.equal(sectionBody(translated, heading), expectedReading);
+        assert.equal(sectionBody(brokenDown, heading), expectedReading);
+        assert.equal(breakdownBody.split("\n").filter((line) => line.startsWith("- ")).length, primaryReading(source).length);
+      }
+    }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+function primaryReading(markdown, stripSpeakers = true) {
   const match = /^### (Dialogue|Narrative)\s*$\n([\s\S]*?)(?=^### New Vocabulary\s*$)/mu.exec(markdown);
   assert.ok(match);
-  return match[2].trim().split(/\r?\n/u).map((line) => match[1] === "Dialogue" ? line.replace(/^[^:]+:\s*/u, "").trim() : line.trim()).filter(Boolean);
+  const lines = match[2].trim().split(/\r?\n/u).map((line) => stripSpeakers && match[1] === "Dialogue" ? line.replace(/^[^:]+:\s*/u, "").trim() : line.trim()).filter(Boolean);
+  return stripSpeakers ? lines : lines.join("\n");
+}
+
+function sectionBody(markdown, heading, level = 3) {
+  const lines = markdown.split(/\r?\n/u);
+  const marker = `${"#".repeat(level)} ${heading}`;
+  const start = lines.indexOf(marker);
+  assert.notEqual(start, -1, marker);
+  const end = lines.findIndex((line, index) => index > start && (heading === "Brief Introduction"
+    ? /^#{1,6}\s/u.test(line)
+    : new RegExp(`^#{1,${level}}\\s`, "u").test(line)));
+  return lines.slice(start + 1, end < 0 ? lines.length : end).join("\n").trim();
 }
 
 function parseMarkdownTable(text, header) {

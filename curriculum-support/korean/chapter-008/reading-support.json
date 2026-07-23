@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Minji follows a simple schedule. Put `에` after a specific time to say when an action happens.",
-      "expert": "`time + 에 + verb` is the canonical Chapter 8 pattern. The chapter provides literal source evidence and keeps lexical surface forms linked to canonical citation forms."
+      "normal": "Minji follows a daily routine from breakfast and school through the afternoon. She reads, visits a café, and returns home at night.",
+      "expert": "Minji follows a daily routine from breakfast and school through the afternoon. She reads, visits a café, and returns home at night."
     },
     {
       "sourceHeading": "Grammar",
