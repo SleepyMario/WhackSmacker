@@ -11,7 +11,7 @@
     {
       "sourceHeading": "New Grammar / Pattern",
       "normal": "#### Wie is dat?\n\nAsk [[grammar:Wie is dat?]] when you do not know who a person is. Answer with [[grammar:Dat is ...]].",
-      "expert": "#### Wie is dat?\n\nInterrogative pronoun [[grammar:wie]] occupies clause-initial position, followed by finite copula [[grammar:is]] and demonstrative subject [[grammar:dat]]. The answer preserves declarative order in [[grammar:Dat is Eva ...]]."
+      "expert": "#### Wie is dat?\n\nInterrogative pronoun [[grammar:wie]] occupies clause-initial position, followed by finite copula [[grammar:is]] and demonstrative subject [[grammar:dat]]. The answer preserves declarative order in [[grammar:Dat is Sophie ...]]."
     },
     {
       "sourceHeading": "Dutch Usage Notes",
@@ -20,7 +20,7 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Dag Sophie! Wie is dat?]] greets Sophie and asks who someone is.\n- [[grammar:Dat is Eva, mijn moeder.]] identifies Eva as Sophie’s mother.\n- [[grammar:En wie is dat?]] asks about another person.\n- [[grammar:Dat is Anja, mijn oma.]] identifies Anja as Sophie’s grandmother.\n- [[grammar:Hallo Alex. Noor is de nicht van Sophie en Daan.]] greets Alex and explains Noor’s family relationship.\n- [[grammar:Noor bezoekt Sophie en Daan vandaag.]] says what Noor does today.\n- [[grammar:Ja, ik blijf vandaag.]] says that Noor is staying today.\n- [[grammar:Welkom, Noor!]] welcomes her.",
-    "expert": "- [[grammar:Wie is dat?]] contains initial interrogative [[grammar:wie]], finite [[grammar:is]], and demonstrative [[grammar:dat]].\n- The two [[grammar:Dat is ...]] answers use declarative copular order and possessive noun phrases.\n- [[grammar:van Sophie en Daan]] expresses Noor’s family relationship in a prepositional phrase.\n- [[grammar:bezoekt]] supplies a third-person present form; [[grammar:blijf]] reuses Chapter 18 [[grammar:blijven]].\n- [[grammar:vandaag]] anchors both actions to the current day."
+    "normal": "- [[grammar:Dag Sophie! Wie is dat?]] greets Sophie and asks who someone is.\n- [[grammar:Dat is Eva, mijn moeder.]] identifies Sophie as Sophie’s mother.\n- [[grammar:En wie is dat?]] asks about another person.\n- [[grammar:Dat is Anja, mijn oma.]] identifies Anja as Sophie’s grandmother.\n- [[grammar:Hallo Alex. Noor is de nicht van Sophie en Daan.]] greets Alex and explains Oma Anja’s family relationship.\n- [[grammar:Oma Anja bezoekt ons vandaag.]] says what Oma Anja does today.\n- [[grammar:Ja, ik blijf vandaag.]] says that Oma Anja is staying today.\n- [[grammar:Welkom, Oma Anja!]] welcomes her.",
+    "expert": "- [[grammar:Wie is dat?]] contains initial interrogative [[grammar:wie]], finite [[grammar:is]], and demonstrative [[grammar:dat]].\n- The two [[grammar:Dat is ...]] answers use declarative copular order and possessive noun phrases.\n- [[grammar:van Sophie en Alex]] expresses Oma Anja’s family relationship in a prepositional phrase.\n- [[grammar:bezoekt]] supplies a third-person present form; [[grammar:blijf]] reuses Chapter 18 [[grammar:blijven]].\n- [[grammar:vandaag]] anchors both actions to the current day."
   }
 }

@@ -41,7 +41,7 @@ function splitSentences(text) {
 }
 
 function readingSentences(markdown, mode) {
-  const section = markdown.split(new RegExp(`^### ${mode === "dialogue" ? "Dialogue" : "Narrative"}$`, "mu"))[1].split(/^### /mu)[0].trim();
+  const section = markdown.split(new RegExp(`^#{2,3} ${mode === "dialogue" ? "Dialogue" : "Narrative"}$`, "mu"))[1].split(/^#{2,3} /mu)[0].trim();
   if (mode === "dialogue") {
     return section.split("\n")
       .filter((line) => /^[^:]+:\s*/u.test(line))
@@ -68,7 +68,11 @@ test("Dutch Chapters 76–80 use the approved modes and aligned 36-sentence supp
     const source = readingSentences(markdown, mode);
     const translation = JSON.parse(await readFile(join(unitRoot, directory, "reading-translation.en.json"), "utf8"));
     const support = JSON.parse(await readFile(join(supportRoot, `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json"), "utf8"));
-    assert.match(markdown, new RegExp(`^### ${mode === "dialogue" ? "Dialogue" : "Narrative"}$`, "mu"));
+    assert.match(markdown, new RegExp(`^#{2,3} ${mode === "dialogue" ? "Dialogue" : "Narrative"}$`, "mu"));
+    if (mode === "narrative") {
+      assert.doesNotMatch(markdown, /^## Brief Introduction$/mu);
+      assert.equal(support.audienceSections.some((section) => section.sourceHeading === "Brief Introduction"), false);
+    }
     assert.equal(source.length, 36, `Chapter ${chapter} source sentences`);
     assert.equal(translationSentences(translation).length, 36, `Chapter ${chapter} translation sentences`);
     assert.deepEqual(breakdownSentences(support.breakdown.normal), source, `Chapter ${chapter} Normal parity`);
@@ -147,6 +151,10 @@ test("generated and installed Dutch packages expose Chapters, Review, and Gramma
       assert.ok(node, `Chapter ${chapter} menu node`);
       const rendered = await renderLanguageTreeRightPane(node, { dataDir, displayMode: "normal" });
       assert.match(rendered, new RegExp(`Chapter ${chapter}`), `Chapter ${chapter} opens`);
+      if (chapters.get(chapter)[1] === "narrative") {
+        assert.doesNotMatch(rendered, /Brief Introduction/u);
+        assert.match(rendered, /^## Narrative\s*\n\n\S/mu, `Chapter ${chapter} begins its reading with narrative content`);
+      }
     }
     assert.equal(read.children.some((node) => node.label.startsWith("Chapter 81 --")), false);
     assert.equal(read.children.some((node) => node.label === "Review -- Chapters 76–80"), true);

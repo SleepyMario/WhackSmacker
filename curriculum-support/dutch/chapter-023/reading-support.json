@@ -20,7 +20,7 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Hoe laat begint de film?]] asks for the starting time.\n- [[grammar:De film begint om half negen.]] gives the starting time.\n- [[grammar:En hoe laat eindigt de film?]] asks for the ending time.\n- [[grammar:De film eindigt om elf uur.]] gives the ending time.\n- [[grammar:Ik heb het kaartje.]] says that Noor has the ticket.\n- [[grammar:Ik ga naar de film.]] says that Oma Anja is going to the film.\n- [[grammar:Dan gaan we samen.]] links the next plan.\n- [[grammar:We vertrekken om acht uur.]] gives the departure time.\n- [[grammar:Het plan klopt.]] confirms the plan.",
+    "normal": "- [[grammar:Hoe laat begint de film?]] asks for the starting time.\n- [[grammar:De film begint om half negen.]] gives the starting time.\n- [[grammar:En hoe laat eindigt de film?]] asks for the ending time.\n- [[grammar:De film eindigt om elf uur.]] gives the ending time.\n- [[grammar:Ik heb het kaartje.]] says that Noor has the ticket.\n- [[grammar:Ik ga naar de film.]] says that Eva is going to the film.\n- [[grammar:Dan gaan we samen.]] links the next plan.\n- [[grammar:We vertrekken om acht uur.]] gives the departure time.\n- [[grammar:Het plan klopt.]] confirms the plan.",
     "expert": "- The two [[grammar:Hoe laat ...?]] questions use wh-first, finite-second order with subject [[grammar:de film]].\n- [[grammar:om half negen]], [[grammar:om elf uur]], and [[grammar:om acht uur]] are clock-time complements.\n- [[grammar:begint]] reuses Chapter 17 [[grammar:beginnen]]; [[grammar:eindigt]] introduces [[grammar:eindigen]].\n- [[grammar:dan]] sequences the plan while plural [[grammar:we]] and inherited V2 remain supporting."
   }
 }

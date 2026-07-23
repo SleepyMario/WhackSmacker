@@ -20,7 +20,7 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Het is hier gezellig.]] describes the atmosphere.\n- [[grammar:Oma Anja is oud, maar zij is blij.]] gives two descriptions of Oma Anja.\n- [[grammar:Daan is jong en Daan leest een boek.]] describes Daan and tells what he does.\n- [[grammar:Eva is moe en zit in de tuin.]] describes Eva and places her in the garden.\n- [[grammar:Noor zit naast Eva.]] says where Noor is sitting.\n- [[grammar:Sophie kookt.]] says what Sophie does.\n- [[grammar:Het huis is rustig.]] describes the house.\n- [[grammar:Iedereen is samen.]] says that everyone is together.",
+    "normal": "- [[grammar:Het is hier gezellig.]] describes the atmosphere.\n- [[grammar:Oma Anja is oud, maar zij is blij.]] gives two descriptions of Oma Anja.\n- [[grammar:Daan is jong en Daan leest een boek.]] describes Daan and tells what he does.\n- [[grammar:Eva is moe en zit in de tuin.]] describes Eva and places her in the garden.\n- [[grammar:Daan zit naast Eva.]] says where Daan is sitting.\n- [[grammar:Eva kookt.]] says what Eva does.\n- [[grammar:Het huis is rustig.]] describes the house.\n- [[grammar:Iedereen is samen.]] says that everyone is together.",
     "expert": "- [[grammar:Het is hier gezellig.]], [[grammar:Oma Anja is oud]], [[grammar:zij is blij]], [[grammar:Daan is jong]], and [[grammar:Het huis is rustig.]] instantiate predicative adjectives.\n- [[grammar:maar]] and [[grammar:en]] coordinate simple clauses without becoming new principal grammar.\n- [[grammar:zit]] is the third-person present of [[grammar:zitten]]; [[grammar:naast Eva]] is a bounded spatial complement.\n- The three source paragraphs preserve scene-level discourse rather than sentence-per-line formatting after Chapter 21."
   }
 }

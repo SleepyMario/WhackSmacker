@@ -1818,15 +1818,13 @@ async function buildLanguageTreeFromDescriptors(
       dueCardCount: item.dueCardCount,
       reviewStatusText: item.reviewStatusText
     }));
-    const readingChildren = descriptor.packageId === "com.sleepymario.language.dutch"
-      ? interleaveReviewSources(contentChildren, reviewChildren)
-      : descriptor.packageId === "com.sleepymario.language.vietnamese"
-        ? interleaveReviewSources(
-            contentChildren,
-            reviewChildren,
-            /^units\/vietnamese-core\/chapter-(\d{3})-[^/]+\/chapter\.md$/u
-          )
-        : contentChildren;
+    const coreSlug = /(?:^|\.)language\.([a-z-]+)$/u.exec(descriptor.packageId)?.[1];
+    const coreChapterPattern = coreSlug === undefined
+      ? undefined
+      : new RegExp(`^units/${coreSlug}-core/chapter-(\\d{3})-[^/]+/chapter\\.md$`, "u");
+    const readingChildren = coreChapterPattern === undefined
+      ? contentChildren
+      : interleaveReviewSources(contentChildren, reviewChildren, coreChapterPattern);
 
     packageNodes.push({
       id: packageBase,
@@ -2042,7 +2040,7 @@ function emptyLanguagePackageNode(
   };
 }
 
-function interleaveReviewSources(
+export function interleaveReviewSources(
   contentChildren: readonly LanguageTreeNode[],
   reviewChildren: readonly LanguageTreeNode[],
   chapterPathPattern = /(?:^|\/)chapter-(\d{3})-[^/]+\/chapter\.md$/u
@@ -2433,8 +2431,9 @@ function insertStructuredReadingTranslation(
   translation: StructuredReadingTranslation
 ): string {
   const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
-  const sourceHeading = `### ${translation.sourceSection}`;
-  const sourceHeadingIndex = lines.findIndex((line) => line.trim() === sourceHeading);
+  const escapedSourceSection = translation.sourceSection.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  const sourceHeading = new RegExp(`^#{2,3}\\s+${escapedSourceSection}$`, "u");
+  const sourceHeadingIndex = lines.findIndex((line) => sourceHeading.test(line.trim()));
   if (sourceHeadingIndex < 0) {
     return markdown;
   }
@@ -4632,24 +4631,49 @@ function formatMarkdownTable(rawLines: readonly string[], width: number, colorsE
   const formattedRows: string[] = [];
   const vocabularyTable = isVocabularyTableHeader(headerRow);
   let renderedVocabularyEntries = 0;
-  for (const row of rows) {
+  let vocabularyEntryOpen = false;
+  for (const [rowIndex, row] of rows.entries()) {
     if (isMarkdownTableSeparatorRow(row)) {
       formattedRows.push(`| ${widths.map((cellWidth) => "-".repeat(cellWidth)).join(" | ")} |`);
       continue;
     }
-    const isVocabularyRow = vocabularyTable && row !== rows[0];
-    const isContinuation = isVocabularyRow && (row[noteColumn] ?? "").trim() === "Infinitive";
-    if (isVocabularyRow && !isContinuation && renderedVocabularyEntries > 0) {
+    const isVocabularyRow = vocabularyTable && rowIndex > 0;
+    const isContinuation = isVocabularyRow && isLogicalVocabularyContinuation(row, headerRow, noteColumn);
+    if (isVocabularyRow && !isContinuation) {
       formattedRows.push(`| ${widths.map((cellWidth) => " ".repeat(cellWidth)).join(" | ")} |`);
+      renderedVocabularyEntries += 1;
+      vocabularyEntryOpen = true;
     }
     const wrappedCells = widths.map((cellWidth, column) => wrapMultilineTableCell(row[column] ?? "", cellWidth));
     const rowHeight = Math.max(...wrappedCells.map((cell) => cell.length));
     for (let lineIndex = 0; lineIndex < rowHeight; lineIndex += 1) {
       formattedRows.push(`| ${widths.map((cellWidth, column) => padRightDisplay(wrappedCells[column]?.[lineIndex] ?? "", cellWidth)).join(" | ")} |`);
     }
-    if (isVocabularyRow && !isContinuation) renderedVocabularyEntries += 1;
+  }
+  if (vocabularyEntryOpen && renderedVocabularyEntries > 0) {
+    formattedRows.push(`| ${widths.map((cellWidth) => " ".repeat(cellWidth)).join(" | ")} |`);
   }
   return formattedRows;
+}
+
+function isLogicalVocabularyContinuation(
+  row: readonly string[],
+  header: readonly string[],
+  noteColumn: number
+): boolean {
+  const labels = header.map((cell) => cell.trim().toLowerCase());
+  const value = (label: string): string => {
+    const column = labels.findIndex((candidate) => candidate === label);
+    return column < 0 ? "" : (row[column] ?? "").trim();
+  };
+  const form = value("form") || value("surface form") || value("word") || value("phrase");
+  const meaning = value("meaning") || value("english") || value("meaning in this usage");
+  const identity = value("sense id") || value("senseid") || value("sense identity")
+    || value("entry id") || value("entryid") || value("lexical entry id");
+  const note = noteColumn < 0 ? "" : (row[noteColumn] ?? "").trim();
+  const continuationRole = value("row role") || value("entry role") || value("logical role") || note;
+  return /^(?:continuation|citation(?: form)?|canonical(?: form)?|expanded(?: form)?|decomposed(?: form)?|infinitive|paradigm(?: continuation)?|wrapped note)$/iu.test(continuationRole)
+    || (meaning.length === 0 && identity.length === 0 && (/^(?:[↳→]|(?:citation|canonical|expanded|decomposed|infinitive|paradigm)\b)/iu.test(form) || form.length === 0));
 }
 
 function isVocabularyTableHeader(header: readonly string[]): boolean {

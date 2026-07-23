@@ -121,7 +121,7 @@ test("installed Dutch Chapters 26-80 expose all views and independent translatio
       });
 
       assert.notEqual(normal, expert, `Chapter ${number} Normal and Expert differ`);
-      assert.match(normal, new RegExp(`^### ${type}$`, "mu"));
+      assert.match(normal, new RegExp(`^${[76, 78, 80].includes(number) ? "##" : "###"} ${type}$`, "mu"));
       assert.doesNotMatch(normal, /Natural English Translation|Line-by-line Breakdown/u);
       assert.doesNotMatch(normal, /DUT-GRAMMAR-\d+/u);
       assert.doesNotMatch(expert, /DUT-GRAMMAR-\d+/u);
@@ -137,13 +137,15 @@ test("installed Dutch Chapters 26-80 expose all views and independent translatio
       assert.match(both, /^### Line-by-line Breakdown$/mu);
 
       const brief = sectionBody(normal, "Brief Introduction");
-      if (number <= 75) assert.match(brief, /^This chapter (?:teaches|introduces)/u);
+      const directNarrative = [76, 78, 80].includes(number);
+      if (directNarrative) assert.equal(brief, "", `Chapter ${number} omits setup projection`);
+      else if (number <= 75) assert.match(brief, /^This chapter (?:teaches|introduces)/u);
       else assert.ok(brief.length > 0, `Chapter ${number} has learner-directed introductory support`);
       const readingBlocks = sectionBody(normal, type).split(/\n\s*\n/u).filter(Boolean);
-      assert.ok(readingBlocks.length >= 2, `Chapter ${number} has a separate scene introduction`);
+      assert.ok(readingBlocks.length >= (directNarrative ? 1 : 2), `Chapter ${number} has expected narrative blocks`);
       const sceneIntroduction = readingBlocks[0].trim();
       assert.doesNotMatch(sceneIntroduction, /^This chapter (?:teaches|introduces)/u);
-      assert.doesNotMatch(brief, new RegExp(escapeRegExp(sceneIntroduction), "u"));
+      if (!directNarrative) assert.doesNotMatch(brief, new RegExp(escapeRegExp(sceneIntroduction), "u"));
       const naturalTranslation = sectionBody(translated, "Natural English Translation");
       assert.doesNotMatch(naturalTranslation, new RegExp(escapeRegExp(sceneIntroduction), "u"));
       assert.doesNotMatch(naturalTranslation, /^(?:This chapter|In this chapter|The following (?:dialogue|narrative)|Context:|Setting:)/iu);

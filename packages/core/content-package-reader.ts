@@ -374,6 +374,7 @@ function removeStatusTableColumn(lines: readonly string[]): readonly string[] {
   }
   const vocabularyTable = isVocabularyTableHeader(header);
   let renderedVocabularyEntries = 0;
+  let vocabularyEntryOpen = false;
   return rows.flatMap((row, rowIndex) => {
     const cells = visibleColumns.map((column, visibleColumn) => {
     const cell = row[column] ?? "";
@@ -387,14 +388,36 @@ function removeStatusTableColumn(lines: readonly string[]): readonly string[] {
     );
     const separator = row.every((value) => /^:?-{3,}:?$/u.test(value));
     const isVocabularyRow = vocabularyTable && rowIndex > 0 && !separator;
-    const isContinuation = isVocabularyRow && (row[noteColumn] ?? "").trim() === "Infinitive";
+    const isContinuation = isVocabularyRow && isLogicalVocabularyContinuation(row, header, noteColumn);
     const isIndependentEntry = isVocabularyRow && !isContinuation;
-    const output = isIndependentEntry && renderedVocabularyEntries > 0
+    const output = isIndependentEntry
       ? [`| ${visibleColumns.map(() => "").join(" | ")} |`, ...rendered]
       : rendered;
-    if (isIndependentEntry) renderedVocabularyEntries += 1;
+    if (isIndependentEntry) {
+      renderedVocabularyEntries += 1;
+      vocabularyEntryOpen = true;
+    }
+    if (vocabularyEntryOpen && renderedVocabularyEntries > 0 && rowIndex === rows.length - 1) {
+      output.push(`| ${visibleColumns.map(() => "").join(" | ")} |`);
+    }
     return output;
   });
+}
+
+function isLogicalVocabularyContinuation(row: readonly string[], header: readonly string[], noteColumn: number): boolean {
+  const labels = header.map((cell) => cell.trim().toLowerCase());
+  const value = (label: string): string => {
+    const column = labels.findIndex((candidate) => candidate === label);
+    return column < 0 ? "" : (row[column] ?? "").trim();
+  };
+  const form = value("form") || value("surface form") || value("word") || value("phrase");
+  const meaning = value("meaning") || value("english") || value("meaning in this usage");
+  const identity = value("sense id") || value("senseid") || value("sense identity")
+    || value("entry id") || value("entryid") || value("lexical entry id");
+  const note = noteColumn < 0 ? "" : (row[noteColumn] ?? "").trim();
+  const continuationRole = value("row role") || value("entry role") || value("logical role") || note;
+  return /^(?:continuation|citation(?: form)?|canonical(?: form)?|expanded(?: form)?|decomposed(?: form)?|infinitive|paradigm(?: continuation)?|wrapped note)$/iu.test(continuationRole)
+    || (meaning.length === 0 && identity.length === 0 && (/^(?:[↳→]|(?:citation|canonical|expanded|decomposed|infinitive|paradigm)\b)/iu.test(form) || form.length === 0));
 }
 
 function isVocabularyTableHeader(header: readonly string[]): boolean {

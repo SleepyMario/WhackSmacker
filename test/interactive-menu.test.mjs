@@ -23,6 +23,7 @@ import {
   formatEmbeddedReviewReveal,
   isEmbeddedReviewItemUsable,
   installedLanguagePackagesToMenuItems,
+  interleaveReviewSources,
   languageMenuHeading,
   listAvailableModuleDescriptors,
   menuStyles,
@@ -2503,14 +2504,48 @@ test("two-pane renderer aligns Korean markdown table columns by display width", 
     .filter((line) => line.startsWith("| "));
   const pipeColumns = tableLines.map(displayPipeColumns);
 
-  assert.equal(tableLines.length, 7);
+  assert.equal(tableLines.length, 9);
   assert.deepEqual(new Set(pipeColumns.map((columns) => JSON.stringify(columns))).size, 1);
   assert.match(tableLines[0], /^\| Korean\s+\| Meaning\s+\| Notes\s+\|$/u);
-  assert.match(tableLines[2], /^\| 안녕하세요\s+\| hello\s+\| Fixed greeting expression\.\s+\|$/u);
-  assert.match(tableLines[3], /^\|\s+\|\s+\|\s+\|$/u);
-  assert.match(tableLines[5], /^\|\s+\|\s+\|\s+\|$/u);
-  assert.match(tableLines[6], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
+  assert.match(tableLines[2], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[3], /^\| 안녕하세요\s+\| hello\s+\| Fixed greeting expression\.\s+\|$/u);
+  assert.match(tableLines[4], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[6], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[7], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
+  assert.match(tableLines[8], /^\|\s+\|\s+\|\s+\|$/u);
   assert.doesNotMatch(tableLines.join("\n"), /New noun; not self-ID here|Can fill the N slot/u);
+});
+
+test("vocabulary renderer spaces logical entries without splitting semantic continuation rows", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
+    "| Form | Meaning | Notes |",
+    "|---|---|---|",
+    "| gaat | goes | finite surface form |",
+    "| → gaan |  | Citation form |",
+    "| huis | house | noun |"
+  ].join("\n"), false);
+  const rows = output.split("\n").map(rightPaneCell).filter((line) => line.startsWith("| "));
+  const blank = (line) => /^\|\s+\|\s+\|\s+\|$/u.test(line);
+  assert.equal(rows.filter(blank).length, 3, "before, between, and after two logical entries");
+  const finite = rows.findIndex((line) => /gaat/u.test(line));
+  const citation = rows.findIndex((line) => /→ gaan/u.test(line));
+  assert.equal(citation, finite + 1, "citation continuation stays contiguous with its surface row");
+});
+
+test("completed five-chapter blocks interleave their authoritative Review source generically", () => {
+  const content = [
+    { id: "c4", label: "Chapter 4", kind: "content", filePath: "units/french-core/chapter-004-topic/chapter.md" },
+    { id: "c5", label: "Chapter 5", kind: "content", filePath: "units/french-core/chapter-005-topic/chapter.md" },
+    { id: "g", label: "Grammar", kind: "content", filePath: "units/french-core/chapter-001-005-grammar-easy/chapter.md" }
+  ];
+  const review = [{
+    id: "r", label: "Deck", kind: "review-source", sourcePath: "review-decks/chapter-001-005/cards.tsv", itemCount: 12
+  }];
+  const result = interleaveReviewSources(content, review, /^units\/french-core\/chapter-(\d{3})-[^/]+\/chapter\.md$/u);
+  assert.deepEqual(result.map((node) => node.label), ["Chapter 4", "Chapter 5", "Review -- Chapters 1–5", "Grammar"]);
+  assert.equal(result[2].sourcePath, review[0].sourcePath);
+  assert.equal(result[2].itemCount, 12);
 });
 
 test("two-pane renderer hides useless Status table columns and wraps remaining cells", () => {

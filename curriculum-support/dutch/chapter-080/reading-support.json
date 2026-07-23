@@ -4,11 +4,6 @@
   "sourcePath": "chapter.md",
   "audienceSections": [
     {
-      "sourceHeading": "Brief Introduction",
-      "normal": "Emma begins a new course. You will learn [[grammar:`om`, `op`, and `in` with time expressions]] and common ordinal forms for lessons and dates.",
-      "expert": "[[grammar:`om + clock time / op + day or date / in + month or period`]] is the canonical pattern for place events at a clock time, on a day or date, or within a month or longer period. `eerste, tweede, derde; numeral + -de/-ste` is the canonical pattern for put lessons, dates, events, and ranked items in order."
-    },
-    {
       "sourceHeading": "New Grammar / Pattern",
       "normal": "#### basic temporal prepositions\n\nUse `om` before a clock time, `op` before a day or date, and `in` before a month, year, season, or longer period. Say `om half zeven`, `op maandag`, and `in september`.\n\nExample: [[grammar:Op maandag]] begint Emma aan een nieuwe cursus.\n\nWatch out: Do not copy one English preposition everywhere. Dutch uses `om`, `op`, and `in` for different kinds of time expression.\n\n#### basic ordinal numerals\n\nUse an ordinal when you mean first, second, third, and so on. Learn the common forms `eerste`, `tweede`, and `derde`; this chapter also uses `vierde` and `elfde`. In a date, Dutch can say `vrijdag de elfde` when the month is clear.\n\nExample: [[grammar:De eerste les]] begint [[grammar:om half zeven]] op een school in Utrecht.\n\nWatch out: Do not form “first” as *`éénste`; use the lexicalized form `eerste`.",
       "expert": "#### basic temporal prepositions\n\nDutch temporal preposition selection distinguishes point-like clock times (`om`), calendar days and dates (`op`), and containing periods such as months and years (`in`). These phrases can fill the first field and trigger ordinary V2 inversion.\n\nLiteral chapter example: [[grammar:Op maandag]] begint Emma aan een nieuwe cursus.\n\n#### basic ordinal numerals\n\nDutch ordinals are formed with `-de` or `-ste`, with several high-frequency lexicalized forms. `eerste` and `derde` are irregular, while `vierde` and `elfde` use `-de`. Ordinals can modify nouns and can be used substantivally in dates.\n\nLiteral chapter example: [[grammar:De eerste les]] begint [[grammar:om half zeven]] op een school in Utrecht."

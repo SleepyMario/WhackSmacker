@@ -261,8 +261,12 @@ test("content package generator creates a valid Dutch package", async () => {
       assert.match(supportEntry.text, /\[\[grammar:[^\]\n]+\]\]/u);
       assert.doesNotMatch(supportEntry.text, /\*\*[^*]+\*\*/u);
       const introduction = support.audienceSections.find((section) => section.sourceHeading === "Brief Introduction");
-      assert.ok(introduction, `Chapter ${chapterNumber} has semantic Brief Introduction support`);
-      assert.notEqual(introduction.normal, introduction.expert, `Chapter ${chapterNumber} Normal and Expert introductions differ`);
+      if ([76, 78, 80].includes(chapterNumber)) {
+        assert.equal(introduction, undefined, `Chapter ${chapterNumber} omits setup from semantic narrative support`);
+      } else {
+        assert.ok(introduction, `Chapter ${chapterNumber} has semantic Brief Introduction support`);
+        assert.notEqual(introduction.normal, introduction.expert, `Chapter ${chapterNumber} Normal and Expert introductions differ`);
+      }
     }
     const chapter1TranslationEntry = translationEntries.find((entry) => entry.path === translationPath);
     assert.ok(chapter1TranslationEntry);
@@ -641,6 +645,14 @@ function assertOddEvenChapterFormats(files, label, packageId) {
 
 function assertChapterIntroductionRoles(markdown, translation, chapterNumber) {
   const brief = /^##\s+Brief Introduction\s*$\n([\s\S]*?)(?=^#{1,6}\s+)/mu.exec(markdown)?.[1]?.trim();
+  if ([76, 78, 80].includes(chapterNumber)) {
+    assert.equal(brief, undefined, `Chapter ${chapterNumber} omits setup from learner-facing projection`);
+    assert.match(markdown, /^##\s+Narrative\s*$\n\n\S/mu, `Chapter ${chapterNumber} begins directly with narrative`);
+    for (const key of ["introduction", "context", "setting", "participants", "sceneIntroduction"]) {
+      assert.equal(Object.hasOwn(translation, key), false, `Chapter ${chapterNumber} translation has no ${key} preface`);
+    }
+    return;
+  }
   assert.ok(brief, `Chapter ${chapterNumber} has Brief Introduction`);
   assert.match(brief, /`[^`]+`|\[\[grammar:[^\]\n]+\]\]/u, `Chapter ${chapterNumber} Brief Introduction identifies taught grammar`);
 
@@ -797,7 +809,7 @@ function extractLearnerFacingReadContentLinesForTest(markdown) {
   const readLines = [];
 
   for (let index = 0; index < lines.length; index++) {
-    if (!/^### (?:Dialogue|Narrative|對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Learner-facing (?:Dialogue|Controlled Reading))$/u.test(lines[index])) {
+    if (!/^###{0,1} (?:Dialogue|Narrative|對話(?: \/ Learner-facing Dialogue)?|閱讀短文(?: \/ Learner-facing Controlled Reading)?|Learner-facing (?:Dialogue|Controlled Reading))$/u.test(lines[index])) {
       continue;
     }
     const dialogue = /Dialogue/u.test(lines[index]);

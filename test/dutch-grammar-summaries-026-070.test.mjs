@@ -27,7 +27,7 @@ test("Dutch Chapter 69B direct request and Chapter 70B reported question retain 
   assert.match(chapter69, /DUT-GRAMMAR-069B \| Direct information request: V1 matrix question addressed to u plus an embedded polar of-clause\./u);
   assert.match(chapter70, /DUT-GRAMMAR-070B \| Reported questions: declarative matrix clause with an overt reporter plus an embedded polar of-clause; not a direct request to the addressee\./u);
   assert.match(chapter69, /Kunt u mij zeggen of de aanvraag geldig is\?/u);
-  assert.match(chapter70, /Opa Henk vraagt of het geluid de dag ervoor is gecontroleerd\./u);
+  assert.match(chapter70, /Pieter vraagt of het geluid de dag ervoor is gecontroleerd\./u);
 
   for (const level of ["easy", "hard"]) {
     const summary = await readFile(join(root, `chapter-066-070-grammar-${level}`, "chapter.md"), "utf8");
