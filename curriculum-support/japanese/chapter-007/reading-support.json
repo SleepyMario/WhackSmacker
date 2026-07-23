@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Aki and Yuki are spending time together and talking about what they like, including music, movies, sports, dogs, and cooking.",
-      "expert": "Aki and Yuki are spending time together and talking about what they like, including music, movies, sports, dogs, and cooking."
+      "normal": "Aki and Yuki compare the things they like, including music, films, sports, dogs, and cooking.",
+      "expert": "Aki and Yuki compare the things they like, including music, films, sports, dogs, and cooking."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,26 +15,26 @@
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "Read the dialogue as one connected scene. Notice the Chapter 7 pattern where it appears.",
-      "expert": "The dialogue supplies the literal distributional evidence for `N が 好きです`."
+      "normal": "Follow Aki’s questions and Yuki’s answers as they compare several likes.",
+      "expert": "The liked entity takes `が`, while the experiencer is recoverable from the dialogue and remains unexpressed."
     }
   ],
   "breakdown": {
-    "normal": "- 何が好きですか。 — What do you like?\n- 音楽が好きです。 — I like music.\n- 映画が好きですか。 — Do you like movies?\n- はい、映画が好きです。 — Yes, I like movies.\n- スポーツが好きですか。 — Do you like sports?\n- いいえ、犬が好きです。 — No, I like dogs.\n- 料理が好きですか。 — Do you like cooking too?\n- はい、とても好きです。 — Yes, I like it very much.",
-    "expert": "- 何が好きですか。 — Natural translation: What do you like?\n- 音楽が好きです。 — Natural translation: I like music.\n- 映画が好きですか。 — Natural translation: Do you like movies?\n- はい、映画が好きです。 — Natural translation: Yes, I like movies.\n- スポーツが好きですか。 — Natural translation: Do you like sports?\n- いいえ、犬が好きです。 — Natural translation: No, I like dogs.\n- 料理が好きですか。 — Natural translation: Do you like cooking too?\n- はい、とても好きです。 — Natural translation: Yes, I like it very much."
+    "normal": "- スポーツが好きですか。 — Do you like sports?\n- いいえ。音楽が好きです。 — No. I like music.\n- 映画が好きですか。 — Do you like films?\n- はい、映画が好きです。 — Yes, I like films.\n- 犬が好きですか。 — Do you like dogs?\n- はい、犬が好きです。 — Yes, I like dogs.\n- 料理が好きですか。 — Do you like cooking?\n- はい、とても好きです。 — Yes, I like it very much.",
+    "expert": "- スポーツが好きですか。 — Natural translation: Do you like sports?\n- いいえ。音楽が好きです。 — Natural translation: No. I like music.\n- 映画が好きですか。 — Natural translation: Do you like films?\n- はい、映画が好きです。 — Natural translation: Yes, I like films.\n- 犬が好きですか。 — Natural translation: Do you like dogs?\n- はい、犬が好きです。 — Natural translation: Yes, I like dogs.\n- 料理が好きですか。 — Natural translation: Do you like cooking?\n- はい、とても好きです。 — Natural translation: Yes, I like it very much."
   },
   "readingItems": [
     {
       "surface": "好き",
       "reading": "すき",
-      "evidence": "何が好きですか。",
+      "evidence": "スポーツが好きですか。",
       "lexicalEntryId": "ja.adjective.suki",
       "senseId": "ja.adjective.suki.like"
     },
     {
       "surface": "音楽",
       "reading": "おんがく",
-      "evidence": "音楽が好きです。",
+      "evidence": "いいえ。音楽が好きです。",
       "lexicalEntryId": "ja.noun.ongaku",
       "senseId": "ja.noun.ongaku.music"
     },
@@ -55,14 +55,14 @@
     {
       "surface": "いいえ",
       "reading": "いいえ",
-      "evidence": "いいえ、犬が好きです。",
+      "evidence": "いいえ。音楽が好きです。",
       "lexicalEntryId": "ja.response.iie",
       "senseId": "ja.response.iie.no"
     },
     {
       "surface": "犬",
       "reading": "いぬ",
-      "evidence": "いいえ、犬が好きです。",
+      "evidence": "犬が好きですか。",
       "lexicalEntryId": "ja.noun.inu",
       "senseId": "ja.noun.inu.dog"
     },

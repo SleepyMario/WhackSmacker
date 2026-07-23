@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Aki is in a classroom at school on Monday. Before a busy day begins, Aki notices what the room and its furniture are like.",
-      "expert": "Aki is in a classroom at school on Monday. Before a busy day begins, Aki notices what the room and its furniture are like."
+      "normal": "Aki is at school on Monday. She notices the bright classroom, the long desk, and a large book before she starts reading.",
+      "expert": "Aki is at school on Monday. She notices the bright classroom, the long desk, and a large book before she starts reading."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,13 +15,13 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 6 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `N は い-adjective です`."
+      "normal": "Follow Aki through the classroom descriptions to the book she begins to read.",
+      "expert": "All new predicate adjectives are `い`-adjectives, while the final sentence reuses `大きい` attributively before `本`."
     }
   ],
   "breakdown": {
-    "normal": "- 今日は月曜日です。 — Today is Monday.\n- あきは学校にいます。 — Aki is at school.\n- 教室は大きいです。 — The classroom is large.\n- 教室は明るいです。 — The classroom is bright.\n- 机は長いです。 — The desk is long.\n- いすは小さいです。 — The chair is small.\n- 教室は静かです。 — The classroom is quiet.\n- あきは忙しいです。 — Aki is busy.",
-    "expert": "- 今日は月曜日です。 — Natural translation: Today is Monday.\n- あきは学校にいます。 — Natural translation: Aki is at school.\n- 教室は大きいです。 — Natural translation: The classroom is large.\n- 教室は明るいです。 — Natural translation: The classroom is bright.\n- 机は長いです。 — Natural translation: The desk is long.\n- いすは小さいです。 — Natural translation: The chair is small.\n- 教室は静かです。 — Natural translation: The classroom is quiet.\n- あきは忙しいです。 — Natural translation: Aki is busy."
+    "normal": "- 今日は月曜日です。 — Today is Monday.\n- あきは学校にいます。 — Aki is at school.\n- 教室は大きいです。 — The classroom is large.\n- 教室は明るいです。 — The classroom is bright.\n- 窓の近くの机は長いです。 — The desk near the window is long.\n- 机の上に大きい本があります。 — There is a large book on the desk.\n- あきは忙しいです。 — Aki is busy.\n- あきは大きい本を読みます。 — Aki reads the large book.",
+    "expert": "- 今日は月曜日です。 — Natural translation: Today is Monday.\n- あきは学校にいます。 — Natural translation: Aki is at school.\n- 教室は大きいです。 — Natural translation: The classroom is large.\n- 教室は明るいです。 — Natural translation: The classroom is bright.\n- 窓の近くの机は長いです。 — Natural translation: The desk near the window is long.\n- 机の上に大きい本があります。 — Natural translation: There is a large book on the desk.\n- あきは忙しいです。 — Natural translation: Aki is busy.\n- あきは大きい本を読みます。 — Natural translation: Aki reads the large book."
   },
   "readingItems": [
     {
@@ -69,7 +69,7 @@
     {
       "surface": "長い",
       "reading": "ながい",
-      "evidence": "机は長いです。",
+      "evidence": "窓の近くの机は長いです。",
       "lexicalEntryId": "ja.adjective.nagai",
       "senseId": "ja.adjective.nagai.long"
     },

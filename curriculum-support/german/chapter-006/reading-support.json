@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Jonas and Mia are shopping for food and drinks before going to the park. They choose fruit, bread, juice, and water.",
-      "expert": "Jonas and Mia are shopping for food and drinks before going to the park. They choose fruit, bread, juice, and water."
+      "normal": "Jonas and Mia buy food and juice before going to the park. They put everything in one small carrier bag and take it with them.",
+      "expert": "Jonas and Mia buy food and juice before going to the park. They put everything in one small carrier bag and take it with them."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,12 +15,12 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 6 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `einen / eine / ein + direct object`."
+      "normal": "Follow Jonas and Mia as they choose the food, put it in one bag, and take it to the park.",
+      "expert": "The narrative maintains one shopping event while contrasting accusative article forms across masculine, feminine, and neuter objects."
     }
   ],
   "breakdown": {
-    "normal": "- Jonas kauft einen Apfel. — Jonas buys an apple.\n- Er kauft eine Banane. — He buys a banana.\n- Er nimmt ein Brot. — He takes a loaf of bread.\n- Mia braucht einen Saft. — Mia needs a juice.\n- Mia nimmt eine Flasche Wasser. — She takes a bottle of water.\n- Jonas trägt einen Beutel. — Jonas carries a bag.\n- Der Beutel ist auf dem Tisch. — The bag is on the table.\n- Danach gehen beide in den Park. — After that, both go to the park.",
-    "expert": "- Jonas kauft einen Apfel. — Natural translation: Jonas buys an apple.\n- Er kauft eine Banane. — Natural translation: He buys a banana.\n- Er nimmt ein Brot. — Natural translation: He takes a loaf of bread.\n- Mia braucht einen Saft. — Natural translation: Mia needs a juice.\n- Mia nimmt eine Flasche Wasser. — Natural translation: She takes a bottle of water.\n- Jonas trägt einen Beutel. — Natural translation: Jonas carries a bag.\n- Der Beutel ist auf dem Tisch. — Natural translation: The bag is on the table.\n- Danach gehen beide in den Park. — Natural translation: After that, both go to the park."
+    "normal": "- Jonas kauft einen Apfel. — Jonas buys an apple.\n- Mia kauft eine Banane. — Mia buys a banana.\n- Dann nimmt Jonas ein Brot. — Then Jonas takes a loaf of bread.\n- Mia braucht Saft. — Mia needs juice.\n- Sie nimmt eine Flasche Saft. — She takes a bottle of juice.\n- Jonas trägt einen Beutel. — Jonas carries a small bag.\n- Der Apfel, die Banane und das Brot sind im Beutel. — The apple, the banana, and the bread are in the bag.\n- Danach gehen Jonas und Mia zusammen in den Park. — After that, Jonas and Mia go to the park together.",
+    "expert": "- Jonas kauft einen Apfel. — Natural translation: Jonas buys an apple.\n- Mia kauft eine Banane. — Natural translation: Mia buys a banana.\n- Dann nimmt Jonas ein Brot. — Natural translation: Then Jonas takes a loaf of bread.\n- Mia braucht Saft. — Natural translation: Mia needs juice.\n- Sie nimmt eine Flasche Saft. — Natural translation: She takes a bottle of juice.\n- Jonas trägt einen Beutel. — Natural translation: Jonas carries a small bag.\n- Der Apfel, die Banane und das Brot sind im Beutel. — Natural translation: The apple, the banana, and the bread are in the bag.\n- Danach gehen Jonas und Mia zusammen in den Park. — Natural translation: After that, Jonas and Mia go to the park together."
   }
 }

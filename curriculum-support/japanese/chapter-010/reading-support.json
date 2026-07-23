@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Yesterday, Aki met Yuki near the station. They visited a shop and a park, bought a few things, and took a photo before going home.",
-      "expert": "Yesterday, Aki met Yuki near the station. They visited a shop and a park, bought a few things, and took a photo before going home."
+      "normal": "Aki meets Yuki near the station. They visit a nearby shop, buy a book and juice, take a photo of the park, and go home in the evening.",
+      "expert": "Aki meets Yuki near the station. They visit a nearby shop, buy a book and juice, take a photo of the park, and go home in the evening."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,13 +15,13 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 10 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `verb stem + ました`."
+      "normal": "Follow one outing from the station to the nearby shop, then the park photo, and finally home.",
+      "expert": "The narrative uses a sequence of polite past predicates with stable participants and no unexplained shared destination."
     }
   ],
   "breakdown": {
-    "normal": "- 昨日、あきは駅へ行きました。 — Yesterday, Aki went to the station.\n- 駅の前でゆきを見ました。 — In front of the station, Aki saw Yuki.\n- 二人は店で写真を見ました。 — The two looked at photos in a shop.\n- あきは本を買いました。 — Aki bought a book.\n- ゆきはジュースを買いました。 — Yuki bought juice.\n- そのあと、二人は公園へ行きました。 — After that, the two went to the park.\n- 公園で写真を撮りました。 — They took a photo in the park.\n- 夕方、二人は部屋へ帰りました。 — In the evening, the two returned to the room.",
-    "expert": "- 昨日、あきは駅へ行きました。 — Natural translation: Yesterday, Aki went to the station.\n- 駅の前でゆきを見ました。 — Natural translation: In front of the station, Aki saw Yuki.\n- 二人は店で写真を見ました。 — Natural translation: The two looked at photos in a shop.\n- あきは本を買いました。 — Natural translation: Aki bought a book.\n- ゆきはジュースを買いました。 — Natural translation: Yuki bought juice.\n- そのあと、二人は公園へ行きました。 — Natural translation: After that, the two went to the park.\n- 公園で写真を撮りました。 — Natural translation: They took a photo in the park.\n- 夕方、二人は部屋へ帰りました。 — Natural translation: In the evening, the two returned to the room."
+    "normal": "- 昨日、あきは駅へ行きました。 — Yesterday, Aki went to the station.\n- 駅の前にゆきがいました。 — Yuki was in front of the station.\n- あきはゆきを見ました。 — Aki saw Yuki.\n- 二人は駅の近くの店へ行きました。 — The two of them went to a shop near the station.\n- あきは本を買いました。 — Aki bought a book.\n- ゆきはジュースを買いました。 — Yuki bought juice.\n- そのあと、二人は公園の写真を撮りました。 — After that, the two of them took a photo of the park.\n- 夕方、二人は帰りました。 — In the evening, both of them went home.",
+    "expert": "- 昨日、あきは駅へ行きました。 — Natural translation: Yesterday, Aki went to the station.\n- 駅の前にゆきがいました。 — Natural translation: Yuki was in front of the station.\n- あきはゆきを見ました。 — Natural translation: Aki saw Yuki.\n- 二人は駅の近くの店へ行きました。 — Natural translation: The two of them went to a shop near the station.\n- あきは本を買いました。 — Natural translation: Aki bought a book.\n- ゆきはジュースを買いました。 — Natural translation: Yuki bought juice.\n- そのあと、二人は公園の写真を撮りました。 — Natural translation: After that, the two of them took a photo of the park.\n- 夕方、二人は帰りました。 — Natural translation: In the evening, both of them went home."
   },
   "readingItems": [
     {
@@ -34,28 +34,28 @@
     {
       "surface": "前",
       "reading": "まえ",
-      "evidence": "駅の前でゆきを見ました。",
+      "evidence": "駅の前にゆきがいました。",
       "lexicalEntryId": "ja.noun.mae",
       "senseId": "ja.noun.mae.front"
     },
     {
       "surface": "見る",
       "reading": "みる",
-      "evidence": "駅の前でゆきを見ました。",
+      "evidence": "あきはゆきを見ました。",
       "lexicalEntryId": "ja.verb.miru",
       "senseId": "ja.verb.miru.see"
     },
     {
       "surface": "店",
       "reading": "みせ",
-      "evidence": "二人は店で写真を見ました。",
+      "evidence": "二人は駅の近くの店へ行きました。",
       "lexicalEntryId": "ja.noun.mise",
       "senseId": "ja.noun.mise.shop"
     },
     {
       "surface": "写真",
       "reading": "しゃしん",
-      "evidence": "二人は店で写真を見ました。",
+      "evidence": "そのあと、二人は公園の写真を撮りました。",
       "lexicalEntryId": "ja.noun.shashin",
       "senseId": "ja.noun.shashin.photo"
     },
@@ -69,14 +69,14 @@
     {
       "surface": "撮る",
       "reading": "とる",
-      "evidence": "公園で写真を撮りました。",
+      "evidence": "そのあと、二人は公園の写真を撮りました。",
       "lexicalEntryId": "ja.verb.toru-photo",
       "senseId": "ja.verb.toru-photo.take-photo"
     },
     {
       "surface": "夕方",
       "reading": "ゆうがた",
-      "evidence": "夕方、二人は部屋へ帰りました。",
+      "evidence": "夕方、二人は帰りました。",
       "lexicalEntryId": "ja.noun.yuugata",
       "senseId": "ja.noun.yuugata.evening"
     }

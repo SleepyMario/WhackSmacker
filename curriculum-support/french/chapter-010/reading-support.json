@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina is at home with her brother and sister when Marc visits. Her brother brings a gift, and Lina shows Marc her room.",
-      "expert": "Lina is at home with her brother and sister when Marc visits. Her brother brings a gift, and Lina shows Marc her room."
+      "normal": "Lina’s brother and sister visit her at home. Her brother brings a gift, and Lina shows her sister the room before they have coffee.",
+      "expert": "Lina’s brother and sister visit her at home. Her brother brings a gift, and Lina shows her sister the room before they have coffee."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,12 +15,12 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 10 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `son / sa / ses + noun`."
+      "normal": "Follow the family visit from the sister’s arrival to the gift, the room, and coffee at noon.",
+      "expert": "The possessive determiners track the family relationships and the objects associated with Lina and her siblings."
     }
   ],
   "breakdown": {
-    "normal": "- Lina est à la maison avec son frère. — Lina is at home with her brother.\n- Sa sœur est aussi dans la cuisine. — Her sister is also in the kitchen.\n- Son frère apporte un cadeau. — Her brother brings a gift.\n- Le cadeau est dans un petit sac. — The gift is in a small bag.\n- Lina montre sa chambre à Marc. — Lina shows Marc her bedroom.\n- Sur la table, il y a une photo. — There is a photo on the table.\n- Ses livres sont près de la photo. — Her books are near the photo.\n- À midi, Lina et son frère boivent du café. — At noon, Lina and her brother drink coffee.",
-    "expert": "- Lina est à la maison avec son frère. — Natural translation: Lina is at home with her brother.\n- Sa sœur est aussi dans la cuisine. — Natural translation: Her sister is also in the kitchen.\n- Son frère apporte un cadeau. — Natural translation: Her brother brings a gift.\n- Le cadeau est dans un petit sac. — Natural translation: The gift is in a small bag.\n- Lina montre sa chambre à Marc. — Natural translation: Lina shows Marc her bedroom.\n- Sur la table, il y a une photo. — Natural translation: There is a photo on the table.\n- Ses livres sont près de la photo. — Natural translation: Her books are near the photo.\n- À midi, Lina et son frère boivent du café. — Natural translation: At noon, Lina and her brother drink coffee."
+    "normal": "- Lina est à la maison avec son frère. — Lina is at home with her brother.\n- Sa sœur arrive aussi. — Her sister arrives too.\n- Son frère apporte un cadeau à Lina. — Her brother brings Lina a gift.\n- Le cadeau est dans un petit sac. — The gift is in a small bag.\n- Lina montre sa chambre à sa sœur. — Lina shows her sister her room.\n- Sur la table, il y a une photo de son frère. — On the table, there is a photo of her brother.\n- Elle montre ses livres à sa sœur. — She shows her books to her sister.\n- À midi, Lina, son frère et sa sœur boivent du café. — At noon, Lina, her brother, and her sister drink coffee.",
+    "expert": "- Lina est à la maison avec son frère. — Natural translation: Lina is at home with her brother.\n- Sa sœur arrive aussi. — Natural translation: Her sister arrives too.\n- Son frère apporte un cadeau à Lina. — Natural translation: Her brother brings Lina a gift.\n- Le cadeau est dans un petit sac. — Natural translation: The gift is in a small bag.\n- Lina montre sa chambre à sa sœur. — Natural translation: Lina shows her sister her room.\n- Sur la table, il y a une photo de son frère. — Natural translation: On the table, there is a photo of her brother.\n- Elle montre ses livres à sa sœur. — Natural translation: She shows her books to her sister.\n- À midi, Lina, son frère et sa sœur boivent du café. — Natural translation: At noon, Lina, her brother, and her sister drink coffee."
   }
 }

@@ -5,23 +5,23 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Aki follows a school-day routine, starting with breakfast at seven. After school, Aki reads, visits the park, and returns home at night.",
-      "expert": "Aki follows a school-day routine, starting with breakfast at seven. After school, Aki reads, visits the park, and returns home at night."
+      "normal": "Aki follows a simple school-day schedule from seven in the morning until she goes home at night.",
+      "expert": "Aki follows a simple school-day schedule from seven in the morning until she goes home at night."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### specific times marked with ni\n\nPut `に` after a specific time: `七時に起きます`. Some broad time words can omit `に`, but this chapter uses it to make the schedule clear.\n\nExample: [[grammar:あきは七時に起きます]]\n\nWatch out: Do not confuse the time marker `に` with the destination marker `へ`; the two particles do different jobs.",
-      "expert": "#### specific times marked with ni\n\nThe particle `に` marks a temporal point at which an event is located. It commonly follows clock times and other bounded temporal expressions.\n\nExample: [[grammar:あきは七時に起きます]]"
+      "normal": "#### specific times marked with ni\n\nPut `に` after a specific clock time: `七時に起きます`. Broader periods such as `昼`, `午後`, and `夜` are presented as topics with `は`.\n\nExample: [[grammar:あきは七時に起きます]]\n\nWatch out: Do not confuse the time marker `に` with the destination marker `へ`; the two particles do different jobs.",
+      "expert": "#### specific times marked with ni\n\nThe particle `に` marks a temporal point at which an event is located. It commonly follows clock times and other bounded temporal expressions; broader periods can instead be topicalized with `は`.\n\nExample: [[grammar:あきは七時に起きます]]"
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 8 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `time + に + verb`."
+      "normal": "Follow the exact clock times in the morning, then the broader parts of Aki’s day.",
+      "expert": "Exact clock times are marked with `に`; broader periods are topicalized with `は` instead of being presented as mandatory `に` phrases."
     }
   ],
   "breakdown": {
-    "normal": "- あきは七時に起きます。 — Aki gets up at seven o’clock.\n- 七時に朝ご飯を食べます。 — At seven, Aki eats breakfast.\n- 八時に学校へ行きます。 — At eight, Aki goes to school.\n- 授業は八時に始まります。 — Class starts at eight.\n- 昼にケーキを食べます。 — At noon, Aki eats cake.\n- 午後に本を読みます。 — In the afternoon, Aki reads a book.\n- 午後に公園へ行きます。 — In the afternoon, Aki goes to the park.\n- 夜に部屋へ帰ります。 — At night, Aki returns to the room.",
-    "expert": "- あきは七時に起きます。 — Natural translation: Aki gets up at seven o’clock.\n- 七時に朝ご飯を食べます。 — Natural translation: At seven, Aki eats breakfast.\n- 八時に学校へ行きます。 — Natural translation: At eight, Aki goes to school.\n- 授業は八時に始まります。 — Natural translation: Class starts at eight.\n- 昼にケーキを食べます。 — Natural translation: At noon, Aki eats cake.\n- 午後に本を読みます。 — Natural translation: In the afternoon, Aki reads a book.\n- 午後に公園へ行きます。 — Natural translation: In the afternoon, Aki goes to the park.\n- 夜に部屋へ帰ります。 — Natural translation: At night, Aki returns to the room."
+    "normal": "- あきは七時に起きます。 — Aki gets up at seven.\n- 七時に朝ご飯を食べます。 — Aki eats breakfast at seven.\n- 八時に学校へ行きます。 — Aki goes to school at eight.\n- 授業は八時に始まります。 — Class starts at eight.\n- 昼は学校にいます。 — At noon, Aki is at school.\n- 午後は本を読みます。 — In the afternoon, Aki reads a book.\n- そのあと、公園へ行きます。 — After that, Aki goes to the park.\n- 夜は帰ります。 — At night, Aki goes home.",
+    "expert": "- あきは七時に起きます。 — Natural translation: Aki gets up at seven.\n- 七時に朝ご飯を食べます。 — Natural translation: Aki eats breakfast at seven.\n- 八時に学校へ行きます。 — Natural translation: Aki goes to school at eight.\n- 授業は八時に始まります。 — Natural translation: Class starts at eight.\n- 昼は学校にいます。 — Natural translation: At noon, Aki is at school.\n- 午後は本を読みます。 — Natural translation: In the afternoon, Aki reads a book.\n- そのあと、公園へ行きます。 — Natural translation: After that, Aki goes to the park.\n- 夜は帰ります。 — Natural translation: At night, Aki goes home."
   },
   "readingItems": [
     {
@@ -69,28 +69,28 @@
     {
       "surface": "昼",
       "reading": "ひる",
-      "evidence": "昼にケーキを食べます。",
+      "evidence": "昼は学校にいます。",
       "lexicalEntryId": "ja.noun.hiru",
       "senseId": "ja.noun.hiru.noon"
     },
     {
       "surface": "午後",
       "reading": "ごご",
-      "evidence": "午後に本を読みます。",
+      "evidence": "午後は本を読みます。",
       "lexicalEntryId": "ja.noun.gogo",
       "senseId": "ja.noun.gogo.afternoon"
     },
     {
       "surface": "夜",
       "reading": "よる",
-      "evidence": "夜に部屋へ帰ります。",
+      "evidence": "夜は帰ります。",
       "lexicalEntryId": "ja.noun.yoru",
       "senseId": "ja.noun.yoru.night"
     },
     {
       "surface": "帰る",
       "reading": "かえる",
-      "evidence": "夜に部屋へ帰ります。",
+      "evidence": "夜は帰ります。",
       "lexicalEntryId": "ja.verb.kaeru",
       "senseId": "ja.verb.kaeru.return"
     }

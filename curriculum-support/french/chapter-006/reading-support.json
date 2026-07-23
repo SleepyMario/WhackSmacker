@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina is working at a library near the park on Saturday morning. She looks for a book before going home at noon.",
-      "expert": "Lina is working at a library near the park on Saturday morning. She looks for a book before going home at noon."
+      "normal": "Lina works at a library near the park on Saturdays. During a quiet morning shift, she looks for a book before going home at noon.",
+      "expert": "Lina works at a library near the park on Saturdays. During a quiet morning shift, she looks for a book before going home at noon."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,12 +15,12 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 6 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `il / elle + regular -er verb`."
+      "normal": "Follow Lina from arriving at the library to finding the book and going home at noon.",
+      "expert": "The narrative keeps Lina as the continuing referent, so the third-person singular present forms create one clear event chain."
     }
   ],
   "breakdown": {
-    "normal": "- Le samedi, Lina travaille à la bibliothèque. — On Saturday, Lina works at the library.\n- Elle arrive le matin. — She arrives in the morning.\n- La bibliothèque est près du parc. — The library is near the park.\n- Lina cherche un livre. — Lina looks for a book.\n- Elle regarde une petite table. — She looks at a small table.\n- Le livre est sur la table. — The book is on the table.\n- Lina trouve le livre. — Lina finds the book.\n- À midi, elle rentre à la maison. — At noon, she goes home.",
-    "expert": "- Le samedi, Lina travaille à la bibliothèque. — Natural translation: On Saturday, Lina works at the library.\n- Elle arrive le matin. — Natural translation: She arrives in the morning.\n- La bibliothèque est près du parc. — Natural translation: The library is near the park.\n- Lina cherche un livre. — Natural translation: Lina looks for a book.\n- Elle regarde une petite table. — Natural translation: She looks at a small table.\n- Le livre est sur la table. — Natural translation: The book is on the table.\n- Lina trouve le livre. — Natural translation: Lina finds the book.\n- À midi, elle rentre à la maison. — Natural translation: At noon, she goes home."
+    "normal": "- Le samedi, Lina travaille à la bibliothèque. — On Saturdays, Lina works at the library.\n- Elle arrive le matin. — She arrives in the morning.\n- La bibliothèque est calme. — The library is quiet.\n- Lina cherche un livre. — Lina looks for a book.\n- Elle regarde la table. — She looks at the table.\n- Le livre est sur la table. — The book is on the table.\n- Lina trouve le livre. — Lina finds the book.\n- À midi, elle rentre à la maison. — At noon, she goes home.",
+    "expert": "- Le samedi, Lina travaille à la bibliothèque. — Natural translation: On Saturdays, Lina works at the library.\n- Elle arrive le matin. — Natural translation: She arrives in the morning.\n- La bibliothèque est calme. — Natural translation: The library is quiet.\n- Lina cherche un livre. — Natural translation: Lina looks for a book.\n- Elle regarde la table. — Natural translation: She looks at the table.\n- Le livre est sur la table. — Natural translation: The book is on the table.\n- Lina trouve le livre. — Natural translation: Lina finds the book.\n- À midi, elle rentre à la maison. — Natural translation: At noon, she goes home."
   }
 }

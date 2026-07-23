@@ -5,22 +5,22 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Mia is at a café, where a waiter takes her order and asks whether she is ready to pay.",
-      "expert": "Mia is at a café, where a waiter takes her order and asks whether she is ready to pay."
+      "normal": "Mia and Jonas are practising a café conversation. Jonas plays the waiter while Mia orders tea, salad, and bread and then asks to pay.",
+      "expert": "Mia and Jonas are practising a café conversation. Jonas plays the waiter while Mia orders tea, salad, and bread and then asks to pay."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### polite wishes with möchten\n\nUse `ich möchte` before a noun or an infinitive to say politely what you would like. In a question, the finite form comes first: `Möchtest du ...?`\n\nExample: [[grammar:Ich möchte einen Tee]]\n\nWatch out: Keep an infinitive at the end: `Ich möchte bezahlen`, not `Ich möchte bezahle`.",
-      "expert": "#### polite wishes with möchten\n\n`Möchten` functions as a conventional polite desiderative. The finite modal occupies the verb-second or verb-first position, while an infinitival complement remains at the clause end.\n\nExample: [[grammar:Ich möchte einen Tee]]"
+      "normal": "#### polite wishes with möchten\n\nUse `ich möchte` before a noun or an infinitive to say politely what you would like. In a question, the finite form comes first: `Möchtest du ...?` In this role-play, Mia and Jonas are friends, so `du` is natural. With an unfamiliar adult, use `Möchten Sie ...?`.\n\nExample: [[grammar:Ich möchte einen Tee]]\n\nWatch out: Keep an infinitive at the end: `Ich möchte bezahlen`, not `Ich möchte bezahle`.",
+      "expert": "#### polite wishes with möchten\n\n`Möchten` functions as a conventional polite desiderative. The finite modal occupies the verb-second or verb-first position, while an infinitival complement remains at the clause end. The role-play licenses informal `du`; ordinary service with an unfamiliar adult normally uses formal `Sie`.\n\nExample: [[grammar:Ich möchte einen Tee]]"
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "Read the dialogue as one connected scene. Notice the Chapter 7 pattern where it appears.",
-      "expert": "The dialogue supplies the literal distributional evidence for `ich möchte + noun / infinitive`."
+      "normal": "Read this as a practice café scene between friends: Mia orders, and Jonas plays the waiter.",
+      "expert": "The role-play licenses informal `du` while preserving the modal syntax of requests and payment intentions."
     }
   ],
   "breakdown": {
-    "normal": "- Guten Tag. Ich möchte einen Tee. — Good day. I would like a tea.\n- Ich bin der Kellner. Möchtest du eine Suppe? — I am the waiter. Would you like a soup?\n- Nein, ich möchte einen Salat. — No, I would like a salad.\n- Gern. Möchtest du Brot? — Certainly. Would you like bread?\n- Ja, bitte. — Yes, please.\n- Möchtest du bezahlen? — Would you like to pay?\n- Ja, gern. — Yes, gladly.\n- Gut. — Good.",
-    "expert": "- Guten Tag. Ich möchte einen Tee. — Natural translation: Good day. I would like a tea.\n- Ich bin der Kellner. Möchtest du eine Suppe? — Natural translation: I am the waiter. Would you like a soup?\n- Nein, ich möchte einen Salat. — Natural translation: No, I would like a salad.\n- Gern. Möchtest du Brot? — Natural translation: Certainly. Would you like bread?\n- Ja, bitte. — Natural translation: Yes, please.\n- Möchtest du bezahlen? — Natural translation: Would you like to pay?\n- Ja, gern. — Natural translation: Yes, gladly.\n- Gut. — Natural translation: Good."
+    "normal": "- Guten Tag. Ich möchte einen Tee. — Good day. I would like a tea.\n- Gern. Heute bin ich der Kellner. Möchtest du eine Suppe? — Certainly. Today I am the waiter. Would you like some soup?\n- Nein, ich möchte einen Salat. — No, I would like a salad.\n- Möchtest du Brot? — Would you like bread?\n- Ja, bitte. Danach möchte ich bezahlen. — Yes, please. After that, I would like to pay.\n- Gut. — All right.\n- Danke. — Thank you.\n- Gern. — You’re welcome.",
+    "expert": "- Guten Tag. Ich möchte einen Tee. — Natural translation: Good day. I would like a tea.\n- Gern. Heute bin ich der Kellner. Möchtest du eine Suppe? — Natural translation: Certainly. Today I am the waiter. Would you like some soup?\n- Nein, ich möchte einen Salat. — Natural translation: No, I would like a salad.\n- Möchtest du Brot? — Natural translation: Would you like bread?\n- Ja, bitte. Danach möchte ich bezahlen. — Natural translation: Yes, please. After that, I would like to pay.\n- Gut. — Natural translation: All right.\n- Danke. — Natural translation: Thank you.\n- Gern. — Natural translation: You’re welcome."
   }
 }

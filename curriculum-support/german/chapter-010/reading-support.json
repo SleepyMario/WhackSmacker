@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "On a rainy day, Mia stays home sick while Jonas waits for a delayed bus. They call each other and later have tea.",
-      "expert": "On a rainy day, Mia stays home sick while Jonas waits for a delayed bus. They call each other and later have tea."
+      "normal": "Mia is sick and stays home. Jonas takes a late bus through the rain, calls her while he waits, and later visits her for tea.",
+      "expert": "Mia is sick and stays home. Jonas takes a late bus through the rain, calls her while he waits, and later visits her for tea."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,12 +15,12 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 10 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `weil + subordinate clause`."
+      "normal": "Follow the delay from Mia staying home to Jonas’s late bus, phone call, and evening visit.",
+      "expert": "The subordinate clauses place the finite verb last while the repeated causes connect the bus delay to the visit."
     }
   ],
   "breakdown": {
-    "normal": "- Mia bleibt zu Hause, weil sie krank ist. — Mia stays at home because she is ill.\n- Jonas fährt heute Bus, weil es regnet. — Jonas is taking the bus today because it is raining.\n- Der Bus ist spät, weil es regnet. — The bus is late because it is raining.\n- Jonas wartet, weil der Bus spät ist. — Jonas waits because the bus is late.\n- Jonas ist im Café. — Jonas is in the café.\n- Mia trinkt Tee, weil sie krank ist. — Mia drinks tea because she is ill.\n- Jonas ruft Mia an, weil Mia zu Hause bleibt. — Jonas calls Mia because Mia stays at home.\n- Am Abend trinken beide Tee. — In the evening, both drink tea.",
-    "expert": "- Mia bleibt zu Hause, weil sie krank ist. — Natural translation: Mia stays at home because she is ill.\n- Jonas fährt heute Bus, weil es regnet. — Natural translation: Jonas is taking the bus today because it is raining.\n- Der Bus ist spät, weil es regnet. — Natural translation: The bus is late because it is raining.\n- Jonas wartet, weil der Bus spät ist. — Natural translation: Jonas waits because the bus is late.\n- Jonas ist im Café. — Natural translation: Jonas is in the café.\n- Mia trinkt Tee, weil sie krank ist. — Natural translation: Mia drinks tea because she is ill.\n- Jonas ruft Mia an, weil Mia zu Hause bleibt. — Natural translation: Jonas calls Mia because Mia stays at home.\n- Am Abend trinken beide Tee. — Natural translation: In the evening, both drink tea."
+    "normal": "- Mia bleibt zu Hause, weil sie krank ist. — Mia stays at home because she is sick.\n- Jonas fährt mit dem Bus, weil es regnet. — Jonas travels by bus because it is raining.\n- Der Bus kommt spät, weil es regnet. — The bus arrives late because it is raining.\n- Jonas wartet, weil der Bus spät kommt. — Jonas waits because the bus arrives late.\n- Jonas ruft sie an, weil der Bus spät kommt. — Jonas calls her because the bus arrives late.\n- Mia trinkt zu Hause Tee. — Mia drinks tea at home.\n- Später kommt Jonas zu Mia. — Later, Jonas comes to Mia’s place.\n- Am Abend trinken beide Tee. — In the evening, both of them drink tea.",
+    "expert": "- Mia bleibt zu Hause, weil sie krank ist. — Natural translation: Mia stays at home because she is sick.\n- Jonas fährt mit dem Bus, weil es regnet. — Natural translation: Jonas travels by bus because it is raining.\n- Der Bus kommt spät, weil es regnet. — Natural translation: The bus arrives late because it is raining.\n- Jonas wartet, weil der Bus spät kommt. — Natural translation: Jonas waits because the bus arrives late.\n- Jonas ruft sie an, weil der Bus spät kommt. — Natural translation: Jonas calls her because the bus arrives late.\n- Mia trinkt zu Hause Tee. — Natural translation: Mia drinks tea at home.\n- Später kommt Jonas zu Mia. — Natural translation: Later, Jonas comes to Mia’s place.\n- Am Abend trinken beide Tee. — Natural translation: In the evening, both of them drink tea."
   }
 }

@@ -5,22 +5,22 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina and Marc are looking at clothes together. They compare a dress, a shirt, and a bag and say which colors they prefer.",
-      "expert": "Lina and Marc are looking at clothes together. They compare a dress, a shirt, and a bag and say which colors they prefer."
+      "normal": "Lina is choosing clothes for an event, and Marc helps her compare a dress, a shirt, and a bag.",
+      "expert": "Lina is choosing clothes for an event, and Marc helps her compare a dress, a shirt, and a bag."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### interrogative determiners quel and quelle\n\nUse `quel` before a masculine singular noun and `quelle` before a feminine singular noun. The form changes to match the noun: `quel sac`, but `quelle robe`.\n\nExample: [[grammar:Quelle robe ]]\n\nWatch out: Choose the form from the French noun’s gender, not from the English word “which.”",
-      "expert": "#### interrogative determiners quel and quelle\n\nThe interrogative determiner agrees in gender and number with its head noun. This chapter contrasts masculine singular `quel` and feminine singular `quelle` in short noun-phrase questions.\n\nExample: [[grammar:Quelle robe ]]"
+      "normal": "#### interrogative determiners quel and quelle\n\nUse `quel` before a masculine singular noun and `quelle` before a feminine singular noun. The form changes to match the noun: `quel sac`, but `quelle robe`.\n\nExample: [[grammar:Quelle robe préfères-tu ]]\n\nWatch out: Choose the form from the French noun’s gender, not from the English word “which.”",
+      "expert": "#### interrogative determiners quel and quelle\n\nThe interrogative determiner agrees in gender and number with its head noun. This chapter contrasts masculine singular `quel` and feminine singular `quelle` in complete preference questions.\n\nExample: [[grammar:Quelle robe préfères-tu ]]"
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "Read the dialogue as one connected scene. Notice the Chapter 9 pattern where it appears.",
-      "expert": "The dialogue supplies the literal distributional evidence for `quel / quelle + noun`."
+      "normal": "Follow Lina and Marc as they compare each item and state their preferences.",
+      "expert": "The dialogue expands short interrogative noun phrases into complete preference questions and answers."
     }
   ],
   "breakdown": {
-    "normal": "- Quelle robe ? — Which dress?\n- La robe rouge. — The red dress.\n- Et quelle chemise ? — And which shirt?\n- La chemise bleue. — The blue shirt.\n- Et le sac, quelle couleur ? — And the bag—what color?\n- Bleu. — Blue.\n- D’accord, je préfère le sac bleu. — Okay, I prefer the blue bag.\n- Et moi, la robe rouge. — And I prefer the red dress.",
-    "expert": "- Quelle robe ? — Natural translation: Which dress?\n- La robe rouge. — Natural translation: The red dress.\n- Et quelle chemise ? — Natural translation: And which shirt?\n- La chemise bleue. — Natural translation: The blue shirt.\n- Et le sac, quelle couleur ? — Natural translation: And the bag—what color?\n- Bleu. — Natural translation: Blue.\n- D’accord, je préfère le sac bleu. — Natural translation: Okay, I prefer the blue bag.\n- Et moi, la robe rouge. — Natural translation: And I prefer the red dress."
+    "normal": "- Quelle robe préfères-tu ? — Which dress do you prefer?\n- Je préfère la robe rouge. — I prefer the red dress.\n- Et quelle chemise préfères-tu ? — And which shirt do you prefer?\n- Je préfère la chemise bleue. — I prefer the blue shirt.\n- Et le sac ? Quelle couleur préfères-tu ? — And the bag? Which color do you prefer?\n- Je préfère le bleu. — I prefer blue.\n- D’accord. Je préfère aussi le sac bleu. — Okay. I also prefer the blue bag.\n- Moi, je préfère la robe rouge et le sac bleu. — I prefer the red dress and the blue bag.",
+    "expert": "- Quelle robe préfères-tu ? — Natural translation: Which dress do you prefer?\n- Je préfère la robe rouge. — Natural translation: I prefer the red dress.\n- Et quelle chemise préfères-tu ? — Natural translation: And which shirt do you prefer?\n- Je préfère la chemise bleue. — Natural translation: I prefer the blue shirt.\n- Et le sac ? Quelle couleur préfères-tu ? — Natural translation: And the bag? Which color do you prefer?\n- Je préfère le bleu. — Natural translation: I prefer blue.\n- D’accord. Je préfère aussi le sac bleu. — Natural translation: Okay. I also prefer the blue bag.\n- Moi, je préfère la robe rouge et le sac bleu. — Natural translation: I prefer the red dress and the blue bag."
   }
 }

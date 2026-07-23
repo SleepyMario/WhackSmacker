@@ -34,7 +34,8 @@ for (const config of configs) {
       const chapter = offset + 6;
       const markdown = await readFile(join(unitRoot, directory, "chapter.md"), "utf8");
       const reading = primaryReading(markdown);
-      const rawReading = primaryReading(markdown, false);
+      const rawReadingLines = primaryReadingLines(markdown, false);
+      const rawReading = rawReadingLines.join("\n");
       const introduction = sectionBody(markdown, "Brief Introduction", 2);
       const translation = JSON.parse(await readFile(join(unitRoot, directory, "reading-translation.en.json"), "utf8"));
       const translated = translation.readingType === "dialogue" ? translation.turns : translation.sentences;
@@ -58,7 +59,8 @@ for (const config of configs) {
       for (const row of ledger) {
         const line = Number(row[5]);
         assert.equal(line >= 1 && line <= reading.length, true, `${row[1]} locator`);
-        reconstructed.push({ chapter, directory, lexicalId: row[0], senseId: row[1], canonical: row[2], evidence: reading[line - 1], line });
+        const evidence = learnerEvidenceForRow(row, rawReadingLines[line - 1], reading[line - 1]);
+        reconstructed.push({ chapter, directory, lexicalId: row[0], senseId: row[1], canonical: row[2], evidence, line });
       }
       const support = JSON.parse(await readFile(join(process.cwd(), "curriculum-support", config.slug, `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json"), "utf8"));
       const supportIntroduction = support.audienceSections.find((section) => section.sourceHeading === "Brief Introduction");
@@ -176,11 +178,93 @@ test("French, German, Japanese, and Korean Chapters 6–10 render complete insta
   }
 });
 
+
+test("French, German, Japanese, and Korean Chapters 6–10 retain the approved content repairs", async () => {
+  const expected = {
+    french: {
+      9: {
+        includes: ["Quelle robe préfères-tu ?", "Moi, je préfère la robe rouge et le sac bleu."],
+        excludes: ["Quelle robe ?", "Et moi, la robe rouge."]
+      }
+    },
+    german: {
+      7: {
+        includes: ["Heute bin ich der Kellner.", "Danach möchte ich bezahlen."],
+        excludes: ["Kellner: Ich bin der Kellner.", "Möchtest du bezahlen?"]
+      },
+      9: {
+        includes: ["Ja, ich kann die Schraube festziehen."],
+        excludes: ["Ja, vielleicht."]
+      },
+      10: {
+        includes: ["Jonas fährt mit dem Bus, weil es regnet.", "Später kommt Jonas zu Mia."],
+        excludes: ["Jonas fährt heute Bus", "Jonas ist im Café."]
+      }
+    },
+    japanese: {
+      6: {
+        includes: ["机の上に大きい本があります。", "あきは大きい本を読みます。"],
+        excludes: ["教室は静かです。"]
+      },
+      8: {
+        includes: ["昼は学校にいます。", "午後は本を読みます。", "夜は帰ります。"],
+        excludes: ["午後に本を読みます。", "部屋へ帰ります。", "学校で本を読みます。"]
+      },
+      9: {
+        includes: ["店員: はい。", "水、ジュース、サンドイッチ、三つですね。"],
+        excludes: ["店員ですか。", "三つですか。"]
+      },
+      10: {
+        includes: ["二人は駅の近くの店へ行きました。", "夕方、二人は帰りました。"],
+        excludes: ["二人は店で写真を見ました。", "二人は部屋へ帰りました。"]
+      }
+    },
+    korean: {
+      7: {
+        includes: ["점원: 네."],
+        excludes: ["점원이에요?"]
+      },
+      9: {
+        includes: ["아니요, 오늘은 안 운동해요."],
+        excludes: ["네, 주말에는 운동해요."]
+      },
+      10: {
+        includes: ["준호가 시장에 왔어요.", "두 친구는 공원 사진을 봤어요.", "저녁에 민지는 집에 왔어요."],
+        excludes: ["친구가 시장에 왔어요.", "저녁에 집에 왔어요."]
+      }
+    }
+  };
+
+  for (const [slug, chapters] of Object.entries(expected)) {
+    const unitRoot = join(workspace, `${slug}-curriculum`, "units", `${slug}-core`);
+    for (const [chapter, rules] of Object.entries(chapters)) {
+      const directory = (await readdir(unitRoot, { withFileTypes: true }))
+        .find((entry) => entry.isDirectory() && entry.name.startsWith(`chapter-${String(chapter).padStart(3, "0")}-`) && !entry.name.includes("grammar"))?.name;
+      assert.ok(directory, `${slug} Chapter ${chapter}`);
+      const source = await readFile(join(unitRoot, directory, "chapter.md"), "utf8");
+      for (const value of rules.includes) assert.equal(source.includes(value), true, `${slug} ${chapter} includes ${value}`);
+      for (const value of rules.excludes) assert.equal(source.includes(value), false, `${slug} ${chapter} excludes ${value}`);
+    }
+  }
+});
+
 function primaryReading(markdown, stripSpeakers = true) {
+  const lines = primaryReadingLines(markdown, stripSpeakers);
+  return stripSpeakers ? lines : lines.join("\n");
+}
+
+function primaryReadingLines(markdown, stripSpeakers = true) {
   const match = /^### (Dialogue|Narrative)\s*$\n([\s\S]*?)(?=^### New Vocabulary\s*$)/mu.exec(markdown);
   assert.ok(match);
-  const lines = match[2].trim().split(/\r?\n/u).map((line) => stripSpeakers && match[1] === "Dialogue" ? line.replace(/^[^:]+:\s*/u, "").trim() : line.trim()).filter(Boolean);
-  return stripSpeakers ? lines : lines.join("\n");
+  return match[2].trim().split(/\r?\n/u)
+    .map((line) => stripSpeakers && match[1] === "Dialogue" ? line.replace(/^[^:]+:\s*/u, "").trim() : line.trim())
+    .filter(Boolean);
+}
+
+function learnerEvidenceForRow(row, rawLine, utterance) {
+  const speaker = /^([^:]+):/u.exec(rawLine)?.[1]?.trim();
+  if (speaker && row[2].normalize("NFC").includes(speaker.normalize("NFC"))) return rawLine;
+  return utterance;
 }
 
 function sectionBody(markdown, heading, level = 3) {

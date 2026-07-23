@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Minji follows a daily routine from breakfast and school through the afternoon. She reads, visits a café, and returns home at night.",
-      "expert": "Minji follows a daily routine from breakfast and school through the afternoon. She reads, visits a café, and returns home at night."
+      "normal": "Minji follows a simple daily schedule from seven in the morning until she returns home at night.",
+      "expert": "Minji follows a simple daily schedule from seven in the morning until she returns home at night."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,13 +15,13 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 8 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `time + 에 + verb`."
+      "normal": "Follow Minji’s schedule from the two clock times to lunch, the afternoon, and home at night.",
+      "expert": "The temporal phrases locate each event while the topic-marked class clause keeps the schedule’s reference time explicit."
     }
   ],
   "breakdown": {
-    "normal": "- 민지는 일곱 시에 일어나요. — Minji gets up at seven o’clock.\n- 일곱 시에 아침밥을 먹어요. — At seven, she eats breakfast.\n- 여덟 시에 학교에 가요. — At eight, she goes to school.\n- 수업은 여덟 시에 시작해요. — Class starts at eight.\n- 점심에 밥을 먹어요. — At lunchtime, she eats a meal.\n- 오후에 책을 읽어요. — In the afternoon, she reads a book.\n- 오후에 카페에 가요. — In the afternoon, she goes to a café.\n- 밤에 집에 돌아와요. — At night, she returns home.",
-    "expert": "- 민지는 일곱 시에 일어나요. — Natural translation: Minji gets up at seven o’clock.\n- 일곱 시에 아침밥을 먹어요. — Natural translation: At seven, she eats breakfast.\n- 여덟 시에 학교에 가요. — Natural translation: At eight, she goes to school.\n- 수업은 여덟 시에 시작해요. — Natural translation: Class starts at eight.\n- 점심에 밥을 먹어요. — Natural translation: At lunchtime, she eats a meal.\n- 오후에 책을 읽어요. — Natural translation: In the afternoon, she reads a book.\n- 오후에 카페에 가요. — Natural translation: In the afternoon, she goes to a café.\n- 밤에 집에 돌아와요. — Natural translation: At night, she returns home."
+    "normal": "- 민지는 일곱 시에 일어나요. — Minji gets up at seven.\n- 일곱 시에 아침밥을 먹어요. — Minji eats breakfast at seven.\n- 여덟 시에 학교에 가요. — Minji goes to school at eight.\n- 수업은 여덟 시에 시작해요. — Class starts at eight.\n- 점심에 밥을 먹어요. — Minji eats at lunchtime.\n- 오후에 책을 읽어요. — Minji reads a book in the afternoon.\n- 오후에 카페에 가요. — Minji goes to a café in the afternoon.\n- 밤에 집에 돌아와요. — Minji comes back home at night.",
+    "expert": "- 민지는 일곱 시에 일어나요. — Natural translation: Minji gets up at seven.\n- 일곱 시에 아침밥을 먹어요. — Natural translation: Minji eats breakfast at seven.\n- 여덟 시에 학교에 가요. — Natural translation: Minji goes to school at eight.\n- 수업은 여덟 시에 시작해요. — Natural translation: Class starts at eight.\n- 점심에 밥을 먹어요. — Natural translation: Minji eats at lunchtime.\n- 오후에 책을 읽어요. — Natural translation: Minji reads a book in the afternoon.\n- 오후에 카페에 가요. — Natural translation: Minji goes to a café in the afternoon.\n- 밤에 집에 돌아와요. — Natural translation: Minji comes back home at night."
   },
   "readingItems": [
     {

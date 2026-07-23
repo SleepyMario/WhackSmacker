@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Yesterday, Minji met a friend at the market. They looked at photos, bought food, visited a park, and returned home in the evening.",
-      "expert": "Yesterday, Minji met a friend at the market. They looked at photos, bought food, visited a park, and returned home in the evening."
+      "normal": "Minji meets Junho at the market. The two friends look at a park photo, buy food, visit the park, and take a new photo.",
+      "expert": "Minji meets Junho at the market. The two friends look at a park photo, buy food, visit the park, and take a new photo."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,13 +15,13 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 10 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `verb-았/었어요`."
+      "normal": "Follow Minji and Junho from the market photo to their purchases, the park, and Minji’s return home.",
+      "expert": "Named participants establish the reference of `두 친구` and `두 사람`, while the past predicates form one completed sequence."
     }
   ],
   "breakdown": {
-    "normal": "- 어제 민지는 시장에 갔어요. — Yesterday, Minji went to the market.\n- 친구가 시장에 왔어요. — A friend came to the market.\n- 두 사람은 사진을 봤어요. — The two looked at a photo.\n- 민지는 사과를 샀어요. — Minji bought an apple.\n- 친구는 빵을 샀어요. — The friend bought bread.\n- 그다음에 공원에 갔어요. — After that, they went to the park.\n- 두 사람은 사진을 찍었어요. — The two took a photo.\n- 저녁에 집에 왔어요. — In the evening, Minji came home.",
-    "expert": "- 어제 민지는 시장에 갔어요. — Natural translation: Yesterday, Minji went to the market.\n- 친구가 시장에 왔어요. — Natural translation: A friend came to the market.\n- 두 사람은 사진을 봤어요. — Natural translation: The two looked at a photo.\n- 민지는 사과를 샀어요. — Natural translation: Minji bought an apple.\n- 친구는 빵을 샀어요. — Natural translation: The friend bought bread.\n- 그다음에 공원에 갔어요. — Natural translation: After that, they went to the park.\n- 두 사람은 사진을 찍었어요. — Natural translation: The two took a photo.\n- 저녁에 집에 왔어요. — Natural translation: In the evening, Minji came home."
+    "normal": "- 어제 민지는 시장에 갔어요. — Yesterday, Minji went to the market.\n- 준호가 시장에 왔어요. — Junho came to the market.\n- 두 친구는 공원 사진을 봤어요. — The two friends looked at a photo of the park.\n- 민지는 사과를 샀어요. — Minji bought apples.\n- 준호는 빵을 샀어요. — Junho bought bread.\n- 그다음에 두 사람은 공원에 갔어요. — After that, the two of them went to the park.\n- 공원에서 사진을 찍었어요. — They took a photo in the park.\n- 저녁에 민지는 집에 왔어요. — In the evening, Minji came home.",
+    "expert": "- 어제 민지는 시장에 갔어요. — Natural translation: Yesterday, Minji went to the market.\n- 준호가 시장에 왔어요. — Natural translation: Junho came to the market.\n- 두 친구는 공원 사진을 봤어요. — Natural translation: The two friends looked at a photo of the park.\n- 민지는 사과를 샀어요. — Natural translation: Minji bought apples.\n- 준호는 빵을 샀어요. — Natural translation: Junho bought bread.\n- 그다음에 두 사람은 공원에 갔어요. — Natural translation: After that, the two of them went to the park.\n- 공원에서 사진을 찍었어요. — Natural translation: They took a photo in the park.\n- 저녁에 민지는 집에 왔어요. — Natural translation: In the evening, Minji came home."
   },
   "readingItems": [
     {
@@ -41,21 +41,21 @@
     {
       "surface": "친구",
       "reading": "친구",
-      "evidence": "친구가 시장에 왔어요.",
+      "evidence": "두 친구는 공원 사진을 봤어요.",
       "lexicalEntryId": "ko.noun.chingu",
       "senseId": "ko.noun.chingu.friend"
     },
     {
       "surface": "사진",
       "reading": "사진",
-      "evidence": "두 사람은 사진을 봤어요.",
+      "evidence": "두 친구는 공원 사진을 봤어요.",
       "lexicalEntryId": "ko.noun.sajin",
       "senseId": "ko.noun.sajin.photo"
     },
     {
       "surface": "보다",
       "reading": "보다",
-      "evidence": "두 사람은 사진을 봤어요.",
+      "evidence": "두 친구는 공원 사진을 봤어요.",
       "lexicalEntryId": "ko.verb.boda",
       "senseId": "ko.verb.boda.see"
     },
@@ -76,21 +76,21 @@
     {
       "surface": "찍다",
       "reading": "찍다",
-      "evidence": "두 사람은 사진을 찍었어요.",
+      "evidence": "공원에서 사진을 찍었어요.",
       "lexicalEntryId": "ko.verb.jjikda",
       "senseId": "ko.verb.jjikda.take-photo"
     },
     {
       "surface": "저녁",
       "reading": "저녁",
-      "evidence": "저녁에 집에 왔어요.",
+      "evidence": "저녁에 민지는 집에 왔어요.",
       "lexicalEntryId": "ko.noun.jeonyeok",
       "senseId": "ko.noun.jeonyeok.evening"
     },
     {
       "surface": "오다",
       "reading": "오다",
-      "evidence": "저녁에 집에 왔어요.",
+      "evidence": "준호가 시장에 왔어요.",
       "lexicalEntryId": "ko.verb.oda",
       "senseId": "ko.verb.oda.come"
     }

@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Mia and Jonas are at home preparing for a friend to join them for dinner. They shop, make a phone call, and cook soup.",
-      "expert": "Mia and Jonas are at home preparing for a friend to join them for dinner. They shop, make a phone call, and cook soup."
+      "normal": "Mia and Jonas prepare for a friend who is coming in the evening. They shop, call her, cook soup, and put dinner on the table.",
+      "expert": "Mia and Jonas prepare for a friend who is coming in the evening. They shop, call her, cook soup, and put dinner on the table."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,12 +15,12 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 8 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `separable prefix + finite verb`."
+      "normal": "Follow the preparations from getting up and shopping to the friend’s arrival and dinner.",
+      "expert": "The narrative places separable verbs in a connected preparation sequence and contrasts finite splitting with infinitive citation forms."
     }
   ],
   "breakdown": {
-    "normal": "- Mia steht früh auf. — Mia gets up early.\n- Jonas steht auch auf. — Jonas gets up too.\n- Am Morgen kaufen beide ein. — In the morning, both go shopping.\n- Mia ruft eine Freundin an. — Mia calls a female friend.\n- Die Freundin kommt am Abend. — The friend comes in the evening.\n- Jonas kocht eine Suppe. — Jonas cooks a soup.\n- Das Brot ist auf dem Tisch. — The bread is on the table.\n- Später essen Mia, Jonas und die Freundin zusammen. — Later, Mia, Jonas, and the friend eat together.",
-    "expert": "- Mia steht früh auf. — Natural translation: Mia gets up early.\n- Jonas steht auch auf. — Natural translation: Jonas gets up too.\n- Am Morgen kaufen beide ein. — Natural translation: In the morning, both go shopping.\n- Mia ruft eine Freundin an. — Natural translation: Mia calls a female friend.\n- Die Freundin kommt am Abend. — Natural translation: The friend comes in the evening.\n- Jonas kocht eine Suppe. — Natural translation: Jonas cooks a soup.\n- Das Brot ist auf dem Tisch. — Natural translation: The bread is on the table.\n- Später essen Mia, Jonas und die Freundin zusammen. — Natural translation: Later, Mia, Jonas, and the friend eat together."
+    "normal": "- Mia steht früh auf. — Mia gets up early.\n- Jonas steht später auf. — Jonas gets up later.\n- Am Morgen kaufen beide ein. — In the morning, both of them go shopping.\n- Danach ruft Mia eine Freundin an. — After that, Mia calls a female friend.\n- Die Freundin kommt am Abend. — The friend comes in the evening.\n- Jonas kocht eine Suppe. — Jonas cooks soup.\n- Später stehen die Suppe und das Brot auf dem Tisch. — Later, the soup and the bread are on the table.\n- Am Abend essen Mia, Jonas und die Freundin zusammen. — In the evening, Mia, Jonas, and the friend eat together.",
+    "expert": "- Mia steht früh auf. — Natural translation: Mia gets up early.\n- Jonas steht später auf. — Natural translation: Jonas gets up later.\n- Am Morgen kaufen beide ein. — Natural translation: In the morning, both of them go shopping.\n- Danach ruft Mia eine Freundin an. — Natural translation: After that, Mia calls a female friend.\n- Die Freundin kommt am Abend. — Natural translation: The friend comes in the evening.\n- Jonas kocht eine Suppe. — Natural translation: Jonas cooks soup.\n- Später stehen die Suppe und das Brot auf dem Tisch. — Natural translation: Later, the soup and the bread are on the table.\n- Am Abend essen Mia, Jonas und die Freundin zusammen. — Natural translation: In the evening, Mia, Jonas, and the friend eat together."
   }
 }

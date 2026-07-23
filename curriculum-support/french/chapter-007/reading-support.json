@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina is at a bakery, where she asks the vendor for a baguette and a croissant and pays for them.",
-      "expert": "Lina is at a bakery, where she asks the vendor for a baguette and a croissant and pays for them."
+      "normal": "Lina is at a bakery in the morning. She politely orders a baguette and a croissant, asks for the total, and thanks the seller.",
+      "expert": "Lina is at a bakery in the morning. She politely orders a baguette and a croissant, asks for the total, and thanks the seller."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,12 +15,12 @@
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "Read the dialogue as one connected scene. Notice the Chapter 7 pattern where it appears.",
-      "expert": "The dialogue supplies the literal distributional evidence for `Je voudrais + noun`."
+      "normal": "Follow the bakery exchange from Lina’s polite request to the total price and closing.",
+      "expert": "The dialogue follows a compact service sequence: request, itemized prices, total-price question, total, and closing."
     }
   ],
   "breakdown": {
-    "normal": "- Bonjour, je voudrais une baguette et un croissant, s’il vous plaît. — Hello, I would like a baguette and a croissant, please.\n- Très bien. La baguette coûte un euro et le croissant coûte deux euros. — Very good. The baguette costs one euro, and the croissant costs two euros.\n- Combien coûtent les deux ? — How much do the two cost?\n- Trois euros. — Three euros.\n- D’accord. Merci. — Okay. Thank you.\n- Merci. — Thank you.",
-    "expert": "- Bonjour, je voudrais une baguette et un croissant, s’il vous plaît. — Natural translation: Hello, I would like a baguette and a croissant, please.\n- Très bien. La baguette coûte un euro et le croissant coûte deux euros. — Natural translation: Very good. The baguette costs one euro, and the croissant costs two euros.\n- Combien coûtent les deux ? — Natural translation: How much do the two cost?\n- Trois euros. — Natural translation: Three euros.\n- D’accord. Merci. — Natural translation: Okay. Thank you.\n- Merci. — Natural translation: Thank you."
+    "normal": "- Bonjour, je voudrais une baguette et un croissant, s’il vous plaît. — Hello, I would like a baguette and a croissant, please.\n- Très bien. La baguette coûte un euro et le croissant coûte deux euros. — All right. The baguette costs one euro, and the croissant costs two euros.\n- Combien coûtent les deux ? — How much are they together?\n- Les deux coûtent trois euros. — Together they cost three euros.\n- D’accord. Merci. — Okay. Thank you.\n- Merci. — Thank you.",
+    "expert": "- Bonjour, je voudrais une baguette et un croissant, s’il vous plaît. — Natural translation: Hello, I would like a baguette and a croissant, please.\n- Très bien. La baguette coûte un euro et le croissant coûte deux euros. — Natural translation: All right. The baguette costs one euro, and the croissant costs two euros.\n- Combien coûtent les deux ? — Natural translation: How much are they together?\n- Les deux coûtent trois euros. — Natural translation: Together they cost three euros.\n- D’accord. Merci. — Natural translation: Okay. Thank you.\n- Merci. — Natural translation: Thank you."
   }
 }

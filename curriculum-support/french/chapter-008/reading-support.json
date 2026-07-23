@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina and Marc change their Saturday plans because it is raining. Lina stays home, and Marc does not go to the market.",
-      "expert": "Lina and Marc change their Saturday plans because it is raining. Lina stays home, and Marc does not go to the market."
+      "normal": "It is raining on Saturday, so Lina stays home and Marc skips the market. Lina spends the morning with music and television.",
+      "expert": "It is raining on Saturday, so Lina stays home and Marc skips the market. Lina spends the morning with music and television."
     },
     {
       "sourceHeading": "Grammar",
@@ -15,12 +15,12 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Read the narrative as one connected scene. Notice the Chapter 8 pattern where it appears.",
-      "expert": "The narrative supplies the literal distributional evidence for `ne + finite verb + pas`."
+      "normal": "Follow how the rain changes Lina’s and Marc’s plans, then notice what Lina does at home.",
+      "expert": "The negative clauses contrast cancelled outdoor plans with Lina’s affirmative indoor activities."
     }
   ],
   "breakdown": {
-    "normal": "- Le temps est mauvais le samedi. — The weather is bad on Saturday.\n- Il pleut le matin. — It rains in the morning.\n- Lina reste à la maison. — Lina stays at home.\n- Elle ne marche pas dans le parc. — She does not walk in the park.\n- Marc ne va pas au marché. — Marc does not go to the market.\n- Lina écoute de la musique. — Lina listens to music.\n- Elle regarde la télévision. — She watches television.\n- Lina et Marc ne sont pas fatigués. — Lina and Marc are not tired.",
-    "expert": "- Le temps est mauvais le samedi. — Natural translation: The weather is bad on Saturday.\n- Il pleut le matin. — Natural translation: It rains in the morning.\n- Lina reste à la maison. — Natural translation: Lina stays at home.\n- Elle ne marche pas dans le parc. — Natural translation: She does not walk in the park.\n- Marc ne va pas au marché. — Natural translation: Marc does not go to the market.\n- Lina écoute de la musique. — Natural translation: Lina listens to music.\n- Elle regarde la télévision. — Natural translation: She watches television.\n- Lina et Marc ne sont pas fatigués. — Natural translation: Lina and Marc are not tired."
+    "normal": "- Ce samedi, le temps est mauvais. — This Saturday, the weather is bad.\n- Il pleut le matin. — It is raining in the morning.\n- Lina reste à la maison. — Lina stays at home.\n- Elle ne marche pas dans le parc. — She does not walk in the park.\n- Marc ne va pas au marché. — Marc does not go to the market.\n- Lina écoute de la musique. — Lina listens to music.\n- Elle regarde la télévision. — She watches television.\n- Lina n’est pas fatiguée. — Lina is not tired.",
+    "expert": "- Ce samedi, le temps est mauvais. — Natural translation: This Saturday, the weather is bad.\n- Il pleut le matin. — Natural translation: It is raining in the morning.\n- Lina reste à la maison. — Natural translation: Lina stays at home.\n- Elle ne marche pas dans le parc. — Natural translation: She does not walk in the park.\n- Marc ne va pas au marché. — Natural translation: Marc does not go to the market.\n- Lina écoute de la musique. — Natural translation: Lina listens to music.\n- Elle regarde la télévision. — Natural translation: She watches television.\n- Lina n’est pas fatiguée. — Natural translation: Lina is not tired."
   }
 }
