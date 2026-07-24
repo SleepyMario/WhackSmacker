@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { promisify } from "node:util";
 import { startWebServer } from "../../dist/apps/web/server.js";
 import { assertDatabaseReady, createDatabasePool, createUser, databaseConfig, migrateDatabase, selectPackage, updateUserSettings } from "../../dist/packages/storage/postgres.js";
+import { canonicalCastFixture, chapterParticipantFixture, dialogueChapterFixture } from "../fixtures/canonical-cast.mjs";
 
 const run = promisify(execFile);
 const alpha = "com.example.playwright.alpha";
@@ -77,9 +78,13 @@ async function createPackages(dataDir) {
     packageId: alpha, version: "1.0.0", displayName: "Portable Browser Curriculum", contentType: "language-curriculum",
     localization: { role: "base-curriculum", schemaVersion: "1.0.0", targetLanguage: "nl", defaultSourceLocale: "en", defaultSourcePackageId: `${alpha}.source.en` },
     files: [
-      file("units/core/chapter-009-nine/chapter.md", "# Chapter 9 — Foundations\n\nBase English chapter nine."),
-      file("units/core/chapter-010-ten/chapter.md", "# Chapter 10 — Safe reading\n\nBase chapter ten."),
-      file("units/core/chapter-011-eleven/chapter.md", "# Chapter 11 — Een zeer lange meertalige titel 第十一章 한국어 제목\n\nBase chapter eleven."),
+      file("name-pools/canonical-cast.json", JSON.stringify(canonicalCastFixture()), "application/json"),
+      file("units/core/chapter-009-nine/chapter.md", dialogueChapterFixture(9, "Chapter 9 — Foundations", "Base English chapter nine.")),
+      file("units/core/chapter-009-nine/participants.json", JSON.stringify(chapterParticipantFixture(9)), "application/json"),
+      file("units/core/chapter-010-ten/chapter.md", dialogueChapterFixture(10, "Chapter 10 — Safe reading", "Base chapter ten.")),
+      file("units/core/chapter-010-ten/participants.json", JSON.stringify(chapterParticipantFixture(10)), "application/json"),
+      file("units/core/chapter-011-eleven/chapter.md", dialogueChapterFixture(11, "Chapter 11 — Een zeer lange meertalige titel 第十一章 한국어 제목", "Base chapter eleven.")),
+      file("units/core/chapter-011-eleven/participants.json", JSON.stringify(chapterParticipantFixture(11)), "application/json"),
       file("units/core/chapter-012-summary/summary.md", "# Summary\n\nNot a chapter."),
       file("teacher-notes/README.md", "# Teacher notes"),
       file("metadata.json", "{}", "application/json"),
@@ -89,7 +94,11 @@ async function createPackages(dataDir) {
   records.push(await writePackage(dataDir, {
     packageId: beta, version: "2.0.0", displayName: "Second Browser Curriculum", contentType: "language-curriculum",
     localization: { role: "base-curriculum", schemaVersion: "1.0.0", targetLanguage: "ko", defaultSourceLocale: "en", defaultSourcePackageId: `${beta}.source.en` },
-    files: [file("units/core/chapter-001-start/chapter.md", "# Second curriculum chapter\n\nNo stale content belongs here.")]
+    files: [
+      file("name-pools/canonical-cast.json", JSON.stringify(canonicalCastFixture()), "application/json"),
+      file("units/core/chapter-001-start/chapter.md", dialogueChapterFixture(1, "Second curriculum chapter", "No stale content belongs here.")),
+      file("units/core/chapter-001-start/participants.json", JSON.stringify(chapterParticipantFixture(1)), "application/json")
+    ]
   }));
   records.push(await writePackage(dataDir, {
     packageId: `${alpha}.source.en`, version: "1.0.0", displayName: "English source", contentType: "curriculum-source-language-pack",

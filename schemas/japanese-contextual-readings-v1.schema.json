@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whacksmacker.com/schemas/japanese-contextual-readings-v1.schema.json",
+  "title": "Japanese Contextual Reading Identities",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "policy", "curriculumId", "auditedThroughChapter", "entries"],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schemaVersion": { "const": 1 },
+    "policy": { "const": "japanese-contextual-reading-identity-policy" },
+    "curriculumId": { "type": "string", "minLength": 1 },
+    "auditedThroughChapter": { "type": "integer", "minimum": 1 },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["lexicalEntryId", "senseId", "writtenForm", "meaning", "partOfSpeech", "firstIntroductionChapter", "logicalEntryValues", "occurrences"],
+        "properties": {
+          "lexicalEntryId": { "type": "string", "minLength": 1 },
+          "senseId": { "type": "string", "minLength": 1 },
+          "writtenForm": { "type": "string", "minLength": 1 },
+          "meaning": { "type": "string", "minLength": 1 },
+          "partOfSpeech": { "type": "string", "minLength": 1 },
+          "firstIntroductionChapter": { "type": "integer", "minimum": 1 },
+          "logicalEntryValues": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 3,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "occurrences": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["occurrenceId", "chapter", "sourcePath", "sourceLocator", "evidence", "surfaceForm"],
+              "properties": {
+                "occurrenceId": { "type": "string", "minLength": 1 },
+                "chapter": { "type": "integer", "minimum": 1 },
+                "sourcePath": { "type": "string", "minLength": 1 },
+                "sourceLocator": { "type": "string", "minLength": 1 },
+                "evidence": { "type": "string", "minLength": 1 },
+                "surfaceForm": { "type": "string", "minLength": 1 },
+                "contextualReading": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

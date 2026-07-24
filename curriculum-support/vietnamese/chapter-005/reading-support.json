@@ -34,7 +34,7 @@
         "usage": "Đây có phải là phòng học không?",
         "provenance": {
           "path": "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "Gia Bảo: Đây có phải là phòng học không?"
         }
       },
@@ -48,7 +48,7 @@
         "usage": "Có điện thoại.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "Gia Bảo: Có điện thoại."
         }
       },
@@ -62,7 +62,7 @@
         "usage": "Có trà.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-005-basic-sentences-5/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "Gia Bảo: Có trà."
         }
       }

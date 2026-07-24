@@ -28,7 +28,7 @@ test("more than one third passes and less than one third fails only when complet
 });
 
 test("distinct person-chapter counting ignores duplicate lines and non-meaningful fields", () => {
-  const chapters = Array.from({ length: 40 }, (_, index) => ({ chapter: index + 1, authorship: "new", migrationStatus: "compliant", meaningfulPersonIds: index < 5 ? ids.slice(0, 5) : index >= 20 && index < 25 ? [ids[0], ids[0], ids[1], ids[5], ids[5], ids[6], ids[7]] : [], participatingPersonIds: ids.slice(0, index < 20 ? 5 : 8), reviewPersonIds: [], incidentalPeople: [] }));
+  const chapters = Array.from({ length: 40 }, (_, index) => ({ chapter: index + 1, authorship: "new", migrationStatus: "compliant", meaningfulPersonIds: index < 5 ? ids.slice(0, 5) : index >= 20 && index < 25 ? [ids[0], ids[0], ids[1], ids[5], ids[5], ids[6], ids[7]] : [], participatingPersonIds: ids.slice(0, index < 20 ? 5 : 8), reviewPersonIds: [], functionalParticipants: [] }));
   const audit = auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters });
   assert.equal(audit.blocks[1].oldCastAppearanceCount, 10);
   assert.equal(audit.blocks[1].newCastAppearanceCount, 15);

@@ -1021,6 +1021,13 @@ test("Vietnamese Chapters 1–50 project beginner Language Notes without flatten
       assert.match(normal, /^### (?:Dialogue|Narrative)$/mu);
       assert.match(normal, /^### New Vocabulary$/mu);
       assert.match(normal, /^### (?:New )?Grammar(?: \/ Pattern)?$/mu);
+      if (chapterNumber <= 10) {
+        for (const markdown of [normal, expert, developer]) {
+          assert.doesNotMatch(markdown, /^#{1,6}\s+(?:Content|Learner-facing Dialogue|Learner-facing Narrative|Complete Rereading|Grammar Easy|Grammar Hard|Grammar: Normal|Grammar: Expert|Grammar Point|Grammar Points|Grammar Section)\s*$/imu);
+          assert.match(markdown, /^### Grammar$/mu);
+          assert.doesNotMatch(markdown, /^### New Grammar(?: \/ Pattern)?$/mu);
+        }
+      }
       assert.equal(/^### Sino-Vietnamese Vocabulary$/mu.test(withCharacters), support.characters !== undefined);
       assertHeadingSpacing(normal, chapterNumber, "Normal");
       assertHeadingSpacing(expert, chapterNumber, "Expert");
@@ -2113,8 +2120,8 @@ test("learner-facing dialogue uses purple labels and pink utterances without aff
     "### Learner-facing Dialogue",
     "",
     "```text",
-    "마리아  : 안녕하세요. 저는 마리아 가르시아입니다.",
-    "김민준  : 안녕하세요. 저는 김민준입니다.",
+    "김민지: 안녕하세요. 저는 김민지입니다.",
+    "선우준호: 안녕하세요. 저는 선우준호입니다.",
     "```",
     "",
     "### Learner-facing Narrative",
@@ -2126,13 +2133,13 @@ test("learner-facing dialogue uses purple labels and pink utterances without aff
   const purple = "\x1b[38;5;141m";
   const reset = "\x1b[0m";
 
-  assert.match(output, new RegExp(`${escapeRegExp(purple)}마리아  :${escapeRegExp(reset)} ${escapeRegExp(pink)}안녕하세요\\. 저는 마리아 가르시아입니다\\.${escapeRegExp(reset)}`, "u"));
-  assert.match(output, new RegExp(`${escapeRegExp(purple)}김민준  :${escapeRegExp(reset)} ${escapeRegExp(pink)}안녕하세요\\. 저는 김민준입니다\\.${escapeRegExp(reset)}`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(purple)}김민지  :${escapeRegExp(reset)} ${escapeRegExp(pink)}안녕하세요\\. 저는 김민지입니다\\.${escapeRegExp(reset)}`, "u"));
+  assert.match(output, new RegExp(`${escapeRegExp(purple)}선우준호:${escapeRegExp(reset)} ${escapeRegExp(pink)}안녕하세요\\. 저는 선우준호입니다\\.${escapeRegExp(reset)}`, "u"));
   assert.match(output, new RegExp(`${escapeRegExp(pink)}마리아는 학생입니다\\. 제 이름은 ____입니다\\.${escapeRegExp(reset)}`, "u"));
-  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(purple)}마리아  : 안녕하세요`, "u"));
+  assert.doesNotMatch(output, new RegExp(`${escapeRegExp(purple)}김민지  : 안녕하세요`, "u"));
   assert.doesNotMatch(output, new RegExp(`${escapeRegExp(purple)}마리아는`, "u"));
-  assert.match(stripped, /마리아\s+: 안녕하세요/u);
-  assert.match(stripped, /김민준\s+: 안녕하세요/u);
+  assert.match(stripped, /김민지\s+: 안녕하세요/u);
+  assert.match(stripped, /선우준호: 안녕하세요/u);
   assert.match(stripped, /제 이름은 ____입니다\./u);
   assert.doesNotMatch(stripped, /^.*\|\s+code\s+\|.*$/mu);
 
@@ -2169,6 +2176,44 @@ test("learner-facing dialogue wrapping keeps continuation utterances pink and Un
   const aligned = stripped.split("\n").map(rightPaneCell).filter((line) => /Chào bạn|你好/u.test(line));
   assert.equal(aligned.length, 2);
   assert.deepEqual(new Set(aligned.map((line) => displayColumnOf(line, ":"))).size, 1);
+  const firstLine = stripped.split("\n").map(rightPaneCell).find(line => line.includes("Đây là")) ?? "";
+  const continuationLine = stripped.split("\n").map(rightPaneCell).find(line => line.includes("dài để buộc phần lời")) ?? "";
+  assert.equal(displayColumnOf(continuationLine, "dài"), displayColumnOf(firstLine, "Đây"));
+  assert.match(output, new RegExp(`${escapeRegExp(pink)}dài để buộc phần lời${escapeRegExp(reset)}`, "u"));
+});
+
+test("Japanese canonical names and an unnamed functional role share one Unicode colon column", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
+    "### Learner-facing Dialogue",
+    "",
+    "佐藤あき: コーヒーをお願いします。",
+    "中村ひなた: お茶をお願いします。",
+    "店員: かしこまりました。"
+  ].join("\n"), true, 0, 20, "en-US", "navigation", 120);
+  const dialogueLines = stripAnsi(output).split("\n").map(rightPaneCell).filter(line => /お願いします|かしこまりました/u.test(line));
+  assert.equal(dialogueLines.length, 3);
+  assert.deepEqual(new Set(dialogueLines.map(line => displayColumnOf(line, ":"))).size, 1);
+  assert.deepEqual(new Set(dialogueLines.map(line => displayColumnOf(line, /[コおか]/u.exec(line)?.[0] ?? ""))).size, 1);
+  assert.match(dialogueLines.join("\n"), /佐藤あき\s+: コーヒー/u);
+  assert.match(dialogueLines.join("\n"), /店員\s+: かしこまりました/u);
+  assert.match(output, /\x1b\[38;5;141m店員\s+:\x1b\[0m \x1b\[38;5;213mかしこまりました。\x1b\[0m/u);
+});
+
+test("Traditional and Simplified Chinese labels align by terminal display width", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  for (const labels of [["林雅雯", "歐陽志明"], ["林雅雯", "欧阳志明"]]) {
+    const output = renderTwoPaneLanguageTree(tree, new Set(), 0, [
+      "### Learner-facing Dialogue",
+      "",
+      `${labels[0]}: 你好。`,
+      `${labels[1]}: 您好。`,
+      "店員: 請問需要什麼？"
+    ].join("\n"), false, 0, 20, "en-US", "navigation", 120);
+    const lines = stripAnsi(output).split("\n").map(rightPaneCell).filter(line => /你好|您好|請問/u.test(line));
+    assert.equal(lines.length, 3);
+    assert.deepEqual(new Set(lines.map(line => displayColumnOf(line, ":"))).size, 1);
+  }
 });
 
 test("Source and Translation state preserve shared reading colors", () => {
@@ -2188,13 +2233,16 @@ test("Source and Translation state preserve shared reading colors", () => {
 test("NO_COLOR and non-TTY rendering preserve semantic reading text without ANSI", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const text = [
-    "### Learner-facing Dialogue", "", "Nguyễn Minh: Chào bạn!", "",
+    "### Learner-facing Dialogue", "", "김민지: 안녕하세요!", "선우준호: 반갑습니다!", "",
     "### Learner-facing Narrative", "", "Maria đi học."
   ].join("\n");
   for (const colorsEnabled of [shouldUseTerminalColors(true, { NO_COLOR: "1" }), shouldUseTerminalColors(false, {})]) {
     const output = renderTwoPaneLanguageTree(tree, new Set(), 0, text, colorsEnabled, 0, 20, "en-US", "navigation", 150);
     assert.doesNotMatch(output, /\x1b\[/u);
-    assert.match(output, /Nguyễn Minh: Chào bạn!/u);
+    assert.match(output, /김민지\s+: 안녕하세요!/u);
+    assert.match(output, /선우준호: 반갑습니다!/u);
+    const dialogueLines = output.split("\n").map(rightPaneCell).filter(line => /안녕하세요|반갑습니다/u.test(line));
+    assert.deepEqual(new Set(dialogueLines.map(line => displayColumnOf(line, ":"))).size, 1);
     assert.match(output, /Maria đi học\./u);
   }
 });
@@ -2570,14 +2618,14 @@ test("two-pane renderer hides useless Status table columns and wraps remaining c
   assert.match(tableLines.join("\n"), /do not[\s\S]*teach/u);
 });
 
-test("two-pane renderer preserves origin-based Korean dialogue name alignment by display width", () => {
+test("two-pane renderer preserves full canonical Korean dialogue name alignment by display width", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
     "### Learner-facing Dialogue",
     "",
     "```text",
-    "마리아: 안녕하세요. 저는 마리아 가르시아입니다.",
-    "김민준: 안녕하세요. 저는 김민준입니다.",
+    "김민지: 안녕하세요. 저는 김민지입니다.",
+    "선우준호: 안녕하세요. 저는 선우준호입니다.",
     "```"
   ].join("\n"), false);
   const dialogueLines = output
@@ -2591,13 +2639,12 @@ test("two-pane renderer preserves origin-based Korean dialogue name alignment by
   assert.equal(dialogueLines.length, 2);
   assert.deepEqual(new Set(colonColumns).size, 1);
   assert.deepEqual(new Set(sentenceColumns).size, 1);
-  assert.equal(dialogueLines[0]?.startsWith("마리아:"), true);
-  assert.equal(dialogueLines[1]?.startsWith("김민준:"), true);
-  assert.match(contentLines.join("\n"), /^마리아:/mu);
-  assert.match(contentLines.join("\n"), /^김민준:/mu);
+  assert.match(dialogueLines[0] ?? "", /^김민지\s+:/u);
+  assert.equal(dialogueLines[1]?.startsWith("선우준호:"), true);
+  assert.match(contentLines.join("\n"), /^김민지\s+:/mu);
+  assert.match(contentLines.join("\n"), /^선우준호:/mu);
   assert.doesNotMatch(contentLines.join("\n"), /^A:|^B:/mu);
-  assert.doesNotMatch(contentLines.join("\n"), /Maria/u);
-  assert.doesNotMatch(contentLines.join("\n"), /^마리아 가르시아:/mu);
+  assert.doesNotMatch(contentLines.join("\n"), /Minji|Junho/u);
 });
 
 test("Chinese A prompt reveals pronunciation and characters", () => {

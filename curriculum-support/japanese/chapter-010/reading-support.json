@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Aki meets Yuki near the station. They visit a nearby shop, buy a book and juice, take a photo of the park, and go home in the evening.",
-      "expert": "Aki meets Yuki near the station. They visit a nearby shop, buy a book and juice, take a photo of the park, and go home in the evening."
+      "normal": "佐藤あき (Aki) meets 中村ゆき (Yuki) near the station. They visit a nearby shop, buy a book and juice, take a photo of the park, and go home in the evening.",
+      "expert": "佐藤あき (Aki) meets 中村ゆき (Yuki) near the station. They visit a nearby shop, buy a book and juice, take a photo of the park, and go home in the evening."
     },
     {
       "sourceHeading": "Grammar",
@@ -39,8 +39,8 @@
       "senseId": "ja.noun.mae.front"
     },
     {
-      "surface": "見る",
-      "reading": "みる",
+      "surface": "見ました",
+      "reading": "みました",
       "evidence": "あきはゆきを見ました。",
       "lexicalEntryId": "ja.verb.miru",
       "senseId": "ja.verb.miru.see"
@@ -60,15 +60,15 @@
       "senseId": "ja.noun.shashin.photo"
     },
     {
-      "surface": "買う",
-      "reading": "かう",
+      "surface": "買いました",
+      "reading": "かいました",
       "evidence": "あきは本を買いました。",
       "lexicalEntryId": "ja.verb.kau",
       "senseId": "ja.verb.kau.buy"
     },
     {
-      "surface": "撮る",
-      "reading": "とる",
+      "surface": "撮りました",
+      "reading": "とりました",
       "evidence": "そのあと、二人は公園の写真を撮りました。",
       "lexicalEntryId": "ja.verb.toru-photo",
       "senseId": "ja.verb.toru-photo.take-photo"

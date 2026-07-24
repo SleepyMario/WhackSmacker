@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Aki follows a simple school-day schedule from seven in the morning until she goes home at night.",
-      "expert": "Aki follows a simple school-day schedule from seven in the morning until she goes home at night."
+      "normal": "佐藤あき (Aki) follows a simple school-day schedule from seven in the morning until she goes home at night.",
+      "expert": "佐藤あき (Aki) follows a simple school-day schedule from seven in the morning until she goes home at night."
     },
     {
       "sourceHeading": "Grammar",
@@ -32,8 +32,8 @@
       "senseId": "ja.time.shichiji.seven-oclock"
     },
     {
-      "surface": "起きる",
-      "reading": "おきる",
+      "surface": "起きます",
+      "reading": "おきます",
       "evidence": "あきは七時に起きます。",
       "lexicalEntryId": "ja.verb.okiru",
       "senseId": "ja.verb.okiru.get-up"
@@ -60,8 +60,8 @@
       "senseId": "ja.noun.jugyou.class"
     },
     {
-      "surface": "始まる",
-      "reading": "はじまる",
+      "surface": "始まります",
+      "reading": "はじまります",
       "evidence": "授業は八時に始まります。",
       "lexicalEntryId": "ja.verb.hajimaru",
       "senseId": "ja.verb.hajimaru.begin"
@@ -88,8 +88,8 @@
       "senseId": "ja.noun.yoru.night"
     },
     {
-      "surface": "帰る",
-      "reading": "かえる",
+      "surface": "帰ります",
+      "reading": "かえります",
       "evidence": "夜は帰ります。",
       "lexicalEntryId": "ja.verb.kaeru",
       "senseId": "ja.verb.kaeru.return"

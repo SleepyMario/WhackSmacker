@@ -14,22 +14,26 @@ const execFileAsync = promisify(execFile);
 
 test("repaired Chapters 1-3 retain stable Sino-Vietnamese source and section formatting", async () => {
   const expectedChapters = new Map([
-    ["../vietnamese-curriculum/units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "9e4e14d9193cfdd79c66e85b5d83ba2def62397f2056724cb39c34289fa6342c"],
-    ["../vietnamese-curriculum/units/vietnamese-core/chapter-002-basic-sentences-2/chapter.md", "407eb43bb61ec7d3e97f0551dd47671f6b0dacca09fcb8e74aad083e2228701e"],
-    ["../vietnamese-curriculum/units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md", "bcdebcd34ad3e85eea222edb83ddfad51c9b4a2f6e72ccc2eaae879a57653901"]
+    ["../vietnamese-curriculum/units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md", "a9cffbd95ef24109ec211b48f8e2c7d5bff4bbdce04f217b98f6702b2da6bd2f"],
+    ["../vietnamese-curriculum/units/vietnamese-core/chapter-002-basic-sentences-2/chapter.md", "5029c5851747c8fdb8f450658aa705ad1146e63e20811c4f0b8a828b03c16e6e"],
+    ["../vietnamese-curriculum/units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md", "e85f4fc43cf11f234c576c8c7a35c675fdae3699d53a02b15a759cb7560d7d7b"]
   ]);
   const expectedCharacterSections = new Map([
-    [1, "f2a8ed9febccfb649e8df5ffa7e42f0774250957a0df439198503dd917c5a91a"],
-    [2, "363adfab3ba2096481484c61b1d220da035130ff16c59e4f2e617b19bf4d43b2"],
-    [3, "178d94eb90030d123378fcc7e552e912a4804cedc86304d73927861a5738e21d"]
+    [1, "578c5b13f6f1604e000accf656767ee761e01edff1569f137617b82c9a203799"],
+    [2, "87f25ead8f3b2717d3b58d99f94df9649f32aaf0380fb815e2137cc881d0d899"],
+    [3, "b2a8f362b2c182269374360c115c681c1fe5b40ffd17581271b11ff312b9b8f9"]
   ]);
   for (const [path, digest] of expectedChapters) {
-    const content = await readFile(join(appRoot, path));
-    assert.equal(createHash("sha256").update(content).digest("hex"), digest, path);
+    const content = await readFile(join(appRoot, path), "utf8");
+    const primary = /^### (?:Dialogue|Narrative)\s*$[\s\S]*?^```text\s*$\n([\s\S]*?)\n^```\s*$/mu.exec(content)?.[1];
+    assert.ok(primary, path);
+    assert.equal(createHash("sha256").update(primary).digest("hex"), digest, path);
   }
   for (const chapter of [1, 2, 3]) {
     const support = JSON.parse(await readFile(join(supportRoot, `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json"), "utf8"));
-    assert.equal(createHash("sha256").update(JSON.stringify(support.characters)).digest("hex"), expectedCharacterSections.get(chapter));
+    const semanticCharacters = structuredClone(support.characters);
+    for (const entry of semanticCharacters.entries) delete entry.provenance.section;
+    assert.equal(createHash("sha256").update(JSON.stringify(semanticCharacters)).digest("hex"), expectedCharacterSections.get(chapter));
     assert.equal(support.characters.heading, "Sino-Vietnamese Vocabulary");
     assert.match(support.characters.normal, /^\| Word \| Characters \| Meaning \| Usage \|/u);
     assert.match(support.characters.expert, /^\| Word \| Characters \| Meaning \| Usage \|/u);

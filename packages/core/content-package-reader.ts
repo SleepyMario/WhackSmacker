@@ -10,6 +10,7 @@ import {
 } from "./content-package-spec";
 import { isLocalizedContentValue, localized, type LocalizedContentValue } from "./localized-content";
 import { defaultCurriculumDisplayMode, projectCurriculumMarkdown, type CurriculumDisplayMode } from "./curriculum-display";
+import { assertCanonicalCastBootstrapBeforeOrdinaryContent } from "./language-curriculum-bootstrap";
 
 type BufferValue = {
   toString(encoding: "utf8"): string;
@@ -19,12 +20,13 @@ declare function require(name: "node:fs/promises"): {
   readFile(path: string): Promise<BufferValue>;
 };
 declare function require(name: "node:path"): {
+  dirname(path: string): string;
   join(...paths: string[]): string;
   relative(from: string, to: string): string;
 };
 
 const { readFile } = require("node:fs/promises");
-const { join, relative } = require("node:path");
+const { dirname, join, relative } = require("node:path");
 
 export interface InstalledReadablePackage {
   readonly packageId: string;
@@ -97,6 +99,7 @@ export async function getInstalledLanguageCurriculum(
   }
   const snapshot = await readSnapshot(root);
   if (snapshot === null) throw new Error("Curriculum content is corrupt or unreadable.");
+  assertInstalledCurriculumParticipants(snapshot, packageId);
   const locale = canonicalSourceLocale(requestedSourceLocale);
   const overlay = await resolveSourceOverlay(manifest, selected, locale, dataDir);
   const chapters = snapshot.files
@@ -130,6 +133,9 @@ export async function readInstalledLanguageCurriculumChapter(options: {
   const root = installedPackageRoot(selected, options.dataDir);
   const manifest = await readInstalledManifest(root);
   const snapshot = await readSnapshot(root);
+  if (snapshot !== null && manifest.contentType === "language-curriculum") {
+    assertInstalledCurriculumParticipants(snapshot, selected.packageId);
+  }
   const file = snapshot?.files.find(candidate => candidate.path === chapter.path);
   if (!file) throw new Error("Learner chapter content is corrupt or unreadable.");
   const locale = canonicalSourceLocale(options.requestedSourceLocale);
@@ -195,6 +201,9 @@ export async function readInstalledContentEntry(options: ReadInstalledContentEnt
   const snapshot = await readSnapshot(root);
 
   if (snapshot !== null) {
+    if (manifest.contentType === "language-curriculum") {
+      assertInstalledCurriculumParticipants(snapshot, selected.packageId);
+    }
     const file = snapshot.files.find((candidate) => candidate.path === options.path);
     if (file === undefined || !isReadableMediaType(file.mediaType)) {
       throw new Error(`Readable content entry not found: ${options.path}`);
@@ -490,6 +499,29 @@ function isSnapshot(value: unknown): value is SourceMarkdownSnapshot {
     (file) => isRecord(file) && typeof file.path === "string" && typeof file.mediaType === "string" &&
       isLocalizedContentValue(file.text)
   );
+}
+
+export function assertInstalledCurriculumParticipants(snapshot: SourceMarkdownSnapshot, packageId: string): void {
+  assertInstalledCurriculumReadingOutput(snapshot, packageId);
+  assertCanonicalCastBootstrapBeforeOrdinaryContent(snapshot.files, {
+    sourceLabel: `installed:${packageId}`,
+    requireOrdinaryContent: true,
+    curriculumIdentity: packageId
+  });
+}
+
+export function assertInstalledCurriculumReadingOutput(snapshot: SourceMarkdownSnapshot, packageId: string): void {
+  for (const file of snapshot.files) {
+    if (file.mediaType !== "text/markdown"
+      || !/^units\/.+\/chapter-\d+[^/]*\/chapter\.md$/u.test(file.path)
+      || /-grammar-(?:easy|hard)\/chapter\.md$/u.test(file.path)) continue;
+    const text = localized(file.text, snapshot.defaultContentLocale ?? "en");
+    if (!/^chapter:\s*\d+\s*$/mu.test(text)) continue;
+    const forbidden = /^#{1,6}\s+(Content|Complete Rereading)\s*$/imu.exec(text);
+    if (forbidden !== null) {
+      throw new Error(`installed:${packageId}:${file.path}: forbidden learner-facing heading ${JSON.stringify(forbidden[1])}; regenerate from canonical reading-output source`);
+    }
+  }
 }
 
 function isReadableMediaType(mediaType: string): boolean {

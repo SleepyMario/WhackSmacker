@@ -35,6 +35,8 @@ import {
   sortFirstClassModules,
   specializedReviewPackageDefinitions,
   syncReadingReviewItems,
+  unicodeTerminalDisplayWidth,
+  isUnicodeWideCharacter,
   type ContentPackageCatalogueEntry,
   type CurriculumDisplayMode,
   type FirstClassModuleDescriptor,
@@ -2476,7 +2478,7 @@ function hasNaturalEnglishTranslation(markdown: string): boolean {
 
 function addSpeakerLabelsToEmbeddedDialogueTranslation(markdown: string): string {
   const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
-  const dialogueHeading = lines.findIndex((line) => /^###\s+Learner-facing Dialogue\s*$/iu.test(line.trim()));
+  const dialogueHeading = lines.findIndex((line) => /^###\s+(?:Learner-facing )?Dialogue\s*$/iu.test(line.trim()));
   const translationHeading = lines.findIndex((line) => /^###\s+(?:Natural English Translation|English translation)\s*$/iu.test(line.trim()));
   if (dialogueHeading < 0 || translationHeading < 0 || translationHeading <= dialogueHeading) return markdown;
   const sourceEnd = lines.findIndex((line, index) => index > dialogueHeading && /^###\s+/u.test(line.trim()));
@@ -4418,6 +4420,7 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
   let narrativeIntroduction = false;
   let narrativeIntroductionStarted = false;
   const rawLines = reflowMarkdownSourceLines(text.replace(/\t/gu, "  ").split("\n"));
+  const dialogueLabelWidths = dialogueLabelWidthsByLine(rawLines);
   for (let index = 0; index < rawLines.length; index += 1) {
     const rawLine = rawLines[index] ?? "";
     if (/^\s*```/u.test(rawLine)) {
@@ -4456,7 +4459,7 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
       continue;
     }
     if (learnerReadingSection === "dialogue" && (inCodeBlock || isDialogueSpeakerLine(rawLine))) {
-      lines.push(...formatLearnerDialogueLine(rawLine, width, colorsEnabled));
+      lines.push(...formatLearnerDialogueLine(rawLine, width, colorsEnabled, dialogueLabelWidths.get(index)));
       continue;
     }
     if (learnerReadingSection === "narrative" && narrativeIntroduction && !/^#{1,6}\s+/u.test(rawLine)) {
@@ -4586,7 +4589,42 @@ function isDialogueSpeakerLine(line: string): boolean {
   return /^(?:\s*)(?:\S(?:.*?\S)?)(?:\s*)[:：](?:\s*)\S/u.test(semanticText);
 }
 
-function formatLearnerDialogueLine(rawLine: string, width: number, colorsEnabled: boolean): readonly string[] {
+function dialogueLabelWidthsByLine(lines: readonly string[]): ReadonlyMap<number, number> {
+  const widths = new Map<number, number>();
+  let primarySection: LearnerReadingSection = undefined;
+  let section: LearnerReadingSection = undefined;
+  let sectionStart = 0;
+  const flush = (end: number): void => {
+    if (section !== "dialogue") return;
+    const labels = Array.from({ length: end - sectionStart }, (_, offset) => sectionStart + offset)
+      .flatMap(index => {
+        const label = dialogueSpeakerLabel(lines[index] ?? "");
+        return label === undefined ? [] : [{ index, label }];
+      });
+    if (labels.length === 0) return;
+    const width = Math.max(...labels.map(item => displayWidth(item.label)));
+    for (const item of labels) widths.set(item.index, width);
+  };
+  for (let index = 0; index < lines.length; index += 1) {
+    const heading = /^#{1,6}\s+(.+)$/u.exec((lines[index] ?? "").trim());
+    if (heading === null) continue;
+    flush(index);
+    const title = heading[1]?.trim() ?? "";
+    const next = learnerReadingSectionForHeading(title);
+    if (next !== undefined) primarySection = next;
+    section = /^(?:Natural English Translation|English translation)$/iu.test(title) ? primarySection : next;
+    sectionStart = index + 1;
+  }
+  flush(lines.length);
+  return widths;
+}
+
+function dialogueSpeakerLabel(line: string): string | undefined {
+  const plain = stripInlineMarkdown(line, false);
+  return /^(?:\s*)(\S(?:.*?\S)?)(?:\s*)[:：](?:\s*)\S/u.exec(plain)?.[1]?.trim();
+}
+
+function formatLearnerDialogueLine(rawLine: string, width: number, colorsEnabled: boolean, alignedLabelWidth?: number): readonly string[] {
   const plain = stripInlineMarkdown(rawLine, false);
   const match = /^(\s*)(\S(?:.*?\S)?)(\s*)([:：])(\s*)(.*)$/u.exec(plain);
   if (match === null) {
@@ -4594,8 +4632,8 @@ function formatLearnerDialogueLine(rawLine: string, width: number, colorsEnabled
   }
 
   const leading = match[1] ?? "";
-  const speaker = match[2] ?? "";
-  const alignment = match[3] ?? "";
+  const speaker = (match[2] ?? "").trimEnd();
+  const alignment = " ".repeat(Math.max(0, (alignedLabelWidth ?? displayWidth(speaker)) - displayWidth(speaker)));
   const colon = match[4] ?? ":";
   const separator = match[5] ?? "";
   const utterance = match[6] ?? "";
@@ -4897,7 +4935,7 @@ function takeDisplayWidth(text: string, width: number): string {
   let displayColumn = 0;
   let result = "";
   for (const character of [...text]) {
-    const nextWidth = displayColumn + (isWideCharacter(character) ? 2 : 1);
+    const nextWidth = displayColumn + displayWidth(character);
     if (nextWidth > width) {
       break;
     }
@@ -4916,23 +4954,11 @@ function padRightDisplay(text: string, width: number): string {
 }
 
 function displayWidth(text: string): number {
-  let width = 0;
-  for (const character of [...text]) {
-    width += /\p{Mark}/u.test(character) ? 0 : isWideCharacter(character) ? 2 : 1;
-  }
-  return width;
+  return unicodeTerminalDisplayWidth(text);
 }
 
 function isWideCharacter(character: string): boolean {
-  const codePoint = character.codePointAt(0) ?? 0;
-  return (codePoint >= 0x1100 && codePoint <= 0x11ff)
-    || (codePoint >= 0x2e80 && codePoint <= 0xa4cf)
-    || (codePoint >= 0xac00 && codePoint <= 0xd7a3)
-    || (codePoint >= 0xf900 && codePoint <= 0xfaff)
-    || (codePoint >= 0xfe10 && codePoint <= 0xfe19)
-    || (codePoint >= 0xfe30 && codePoint <= 0xfe6f)
-    || (codePoint >= 0xff00 && codePoint <= 0xff60)
-    || (codePoint >= 0xffe0 && codePoint <= 0xffe6);
+  return isUnicodeWideCharacter(character);
 }
 
 function withExpandedId(expandedIds: ReadonlySet<string>, id: string): Set<string> {

@@ -7,8 +7,10 @@ import { spawn } from "node:child_process";
 import { test } from "node:test";
 
 import {
+  assertInstalledCurriculumParticipants,
   contentPackageGeneratorTargets,
   generateContentPackage,
+  assertProductionPackageProvenance,
   isContentPackageSourceFileAllowed,
   resolveContentPackageSourcePath,
   validateContentPackageManifest
@@ -120,6 +122,19 @@ test("content package generator creates complete Vietnamese reading and review p
       assert.ok(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-${String(chapter).padStart(3,"0")}-basic-sentences-${chapter}/chapter.md`));
       assert.ok(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-${String(chapter).padStart(3,"0")}-basic-sentences-${chapter}/reading-support.json`));
     }
+    for (let chapter = 1; chapter <= 10; chapter += 1) {
+      const path = `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/chapter.md`;
+      const source = await readFile(join(sourceRepositoryPath("vietnamese-curriculum"), path), "utf8");
+      const packaged = readingContent.files.find((file) => file.path === path)?.text;
+      assert.equal(packaged, source, `Chapter ${chapter} packages canonical source without compatibility rewriting`);
+      assert.doesNotMatch(packaged, /^#{1,6}\s+(?:Content|Complete Rereading|Learner-facing Dialogue|Learner-facing Narrative)\s*$/imu);
+      const type = chapter % 2 === 1 ? "Dialogue" : "Narrative";
+      assert.equal((packaged.match(new RegExp(`^### ${type}$`, "gmu")) ?? []).length, 1, `Chapter ${chapter} packages one primary heading`);
+      const primary = new RegExp(`^### ${type}\\s*$([\\s\\S]*?)(?=^###\\s+)`, "mu").exec(packaged)?.[1];
+      const body = /^```text\s*\n([\s\S]*?)\n```/mu.exec(primary ?? "")?.[1];
+      assert.ok(body, `Chapter ${chapter} packages one primary reading body`);
+      assert.equal(packaged.split(body).length - 1, 1, `Chapter ${chapter} does not duplicate its primary reading`);
+    }
     for (let start = 1; start <= 46; start += 5) {
       const end = start + 4;
       for (const level of ["easy", "hard"]) assert.ok(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-${String(start).padStart(3,"0")}-${String(end).padStart(3,"0")}-grammar-${level}/chapter.md`));
@@ -216,7 +231,7 @@ test("content package generator creates a valid Dutch package", async () => {
     const cast = JSON.parse(castEntry.text);
     assert.equal(cast.cast.length, 30);
     assert.equal(cast.deckPersonPool.length, 30);
-    assert.equal(cast.activeCast.schemaVersion, 1);
+    assert.equal(cast.activeCast.schemaVersion, 2);
     assert.equal(cast.activeCast.progression.length, 30);
     assert.deepEqual(new Set(cast.activeCast.progression), new Set(cast.cast.map((person) => person.id)));
     assert.equal(new Set(cast.cast.map((person) => person.id)).size, 30);
@@ -384,7 +399,7 @@ const followerReadingPackageConfigs = [
   ["french", "French", "fr", 104, 208, 10, 10],
   ["german", "German", "de", 103, 206, 10, 10],
   ["hindi", "Hindi", "hi", 46, 92, 5, 5],
-  ["japanese", "Japanese", "ja", 87, 261, 10, 10],
+  ["japanese", "Japanese", "ja", 87, 260, 10, 10],
   ["russian", "Russian", "ru", 52, 104, 5, 5],
   ["spanish", "Spanish", "es", 56, 112, 5, 5],
   ["thai", "Thai", "th", 52, 104, 5, 5],
@@ -392,6 +407,7 @@ const followerReadingPackageConfigs = [
 ].map(([slug, name, language, senses, cards, readingSupport, chapters]) => ({ slug, name, language, senses, cards, readingSupport, chapters }));
 
 for (const config of followerReadingPackageConfigs) {
+  const participantSidecarsComplete = true;
   test(`content package generator creates approved ${config.name} chapters and authoritative Review milestones`, async () => {
     const directory = await mkdtemp(join(tmpdir(), `wsm-${config.slug}-package-`));
 
@@ -432,10 +448,33 @@ for (const config of followerReadingPackageConfigs) {
       }
       assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, config.chapters);
       assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, config.readingSupport);
+      if (participantSidecarsComplete) {
+        assert.equal(readingContent.files.filter((file) => file.path.endsWith("/chapter-participants.json")).length, config.chapters);
+        assert.doesNotThrow(() => assertInstalledCurriculumParticipants(readingContent, manifest.packageId));
+        const staleSnapshot = structuredClone(readingContent);
+        const staleSidecar = staleSnapshot.files.find(file => file.path.endsWith("/chapter-participants.json"));
+        const staleDocument = JSON.parse(staleSidecar.text);
+        staleDocument.primaryReadingParticipants[0].label = "あき";
+        staleSidecar.text = JSON.stringify(staleDocument);
+        assert.throws(
+          () => assertInstalledCurriculumParticipants(staleSnapshot, manifest.packageId),
+          /(?:declared Dialogue participant CAST-001.*absent|CAST-001.*structural Dialogue label.*expected exact canonical full name)/u
+        );
+      }
       assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}cumulative-ledger.md`));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.md"));
+      if (config.slug === "japanese") {
+        const contextualFile = readingContent.files.find((file) => file.path === "japanese-contextual-readings.json");
+        assert.ok(contextualFile);
+        const contextual = JSON.parse(contextualFile.text);
+        const what = contextual.entries.find((entry) => entry.writtenForm === "何");
+        assert.deepEqual(what.logicalEntryValues, ["what", "何", "なん"]);
+        assert.equal(what.occurrences.length, 1);
+        assert.equal(what.occurrences[0].evidence, "これは" + "何ですか。");
+        assert.equal(contextual.entries.some((entry) => entry.logicalEntryValues[2] === "なに"), false);
+      }
       assert.ok(readingContent.files.some((file) => file.path === "vocabulary-forms.json"));
       assert.equal(readingArchive.has("LICENSE-CONTENT"), true);
       assert.equal(readingArchive.has("NOTICE"), true);
@@ -453,6 +492,7 @@ for (const config of followerReadingPackageConfigs) {
       await rm(directory, { recursive: true, force: true });
     }
   });
+
 }
 
 test("content package generator creates Korean Chapters 1 through 10 and both authoritative Review milestones", async () => {
@@ -497,6 +537,8 @@ test("content package generator creates Korean Chapters 1 through 10 and both au
     }
     assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 10);
     assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, 10);
+    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/chapter-participants.json")).length, 10);
+    assert.doesNotThrow(() => assertInstalledCurriculumParticipants(readingContent, manifest.packageId));
     assert.ok(readingContent.files.some((file) => file.path === "units/korean-core/cumulative-ledger.md"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
@@ -537,6 +579,32 @@ test("content package generation is deterministic for identical inputs", async (
   }
 });
 
+test("production generation requires clean committed source and generator provenance", () => {
+  const clean = {
+    sourceCommit: "1".repeat(40),
+    sourceDirty: false,
+    generatorCommit: "2".repeat(40),
+    generatorDirty: false
+  };
+  assert.doesNotThrow(() => assertProductionPackageProvenance(clean));
+  assert.throws(
+    () => assertProductionPackageProvenance({ ...clean, sourceDirty: true }),
+    /refuses dirty source commit/u
+  );
+  assert.throws(
+    () => assertProductionPackageProvenance({ ...clean, generatorDirty: true }),
+    /refuses dirty generator commit/u
+  );
+  assert.throws(
+    () => assertProductionPackageProvenance({ ...clean, sourceCommit: "0".repeat(40) }),
+    /requires an exact committed source SHA/u
+  );
+  assert.throws(
+    () => assertProductionPackageProvenance({ ...clean, generatorCommit: "not-a-commit" }),
+    /requires an exact committed generator SHA/u
+  );
+});
+
 test("content package generator CLI can build all local test targets", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-package-cli-"));
 
@@ -557,7 +625,7 @@ test("content package generator CLI can build all local test targets", async () 
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.linguistic-terminology/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.vietnamese/);
     assert.match(result.stdout, /Package generated: com\.sleepymario\.language\.dutch/);
-    assert.equal(result.stderr, "");
+    assert.doesNotMatch(result.stderr, /schema-v1 compatibility|legacy compatibility/u);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

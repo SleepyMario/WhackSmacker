@@ -85,12 +85,13 @@ test("activation reports continue through Chapter 181 and stop after Chapter 200
   assert.equal(post200.distributionStatus, "not-applicable");
 });
 
-test("Chapter 201 permits ID-less functional roles but rejects a hidden detailed cast", () => {
-  const incidental = { nameOrRole: "Mr. Johnson, newsreader", function: "reads the evening bulletin", lightlyDescribed: true };
-  assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(201, [], { incidentalPeople: [incidental] })] }));
-  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(200, [], { incidentalPeople: [incidental] })] }), /only from Chapter 201/u);
-  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(201, [], { incidentalPeople: [{ ...incidental, canonicalPersonId: "CAST-031" }] })] }), /must not receive a canonical ID/u);
-  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(201, [], { incidentalPeople: [{ ...incidental, biography: "A long life story" }] })] }), /canonical-style biography/u);
+test("every chapter permits chapter-local unnamed functional roles but rejects a hidden detailed cast", () => {
+  const functional = { localId: "ROLE-NEWSREADER", roleLabel: "the newsreader" };
+  assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(1, [], { functionalParticipants: [functional] })] }));
+  assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(201, [], { functionalParticipants: [functional] })] }));
+  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(1, [], { functionalParticipants: [{ ...functional, canonicalPersonId: "CAST-031" }] })] }), /must not receive or use.*CAST/u);
+  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(1, [], { functionalParticipants: [{ ...functional, biography: "A long life story" }] })] }), /prohibited.*biography/u);
+  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(1, [], { functionalParticipants: [{ ...functional, continuityKey: "same-newsreader" }] })] }), /prohibited.*continuityKey/u);
 });
 
 test("legacy violations remain visible but new violations cannot use migration status", () => {

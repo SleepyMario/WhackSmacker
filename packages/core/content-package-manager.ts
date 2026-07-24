@@ -11,6 +11,7 @@ import {
   type ContentPackageManifest,
   type ContentPackageSourceProvenance
 } from "./content-package-spec";
+import { assertCanonicalCastBootstrapSnapshot } from "./language-curriculum-bootstrap";
 import { localized } from "./localized-content";
 
 type BufferValue = {
@@ -242,6 +243,23 @@ export async function installContentPackage(options: InstallContentPackageOption
   assertValidContentPackageManifest(manifest);
   validateManifestMatchesCatalogue(manifest, entry);
   validateDeclaredFiles(manifest, zip.entries);
+  if (manifest.contentType === "language-curriculum") {
+    const primaryPath = manifest.entryPoints.find(candidate => candidate.role === "primary")?.path;
+    const primaryEntry = zip.entries.find(candidate => candidate.path === primaryPath);
+    if (primaryEntry === undefined) {
+      throw new Error("Language curriculum package has no readable primary content snapshot.");
+    }
+    let snapshot: unknown;
+    try {
+      snapshot = JSON.parse(primaryEntry.data.toString("utf8"));
+    } catch (error) {
+      throw new Error(`Language curriculum primary content snapshot is invalid JSON: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    assertCanonicalCastBootstrapSnapshot(snapshot, {
+      sourceLabel: `install:${manifest.packageId}`,
+      requireOrdinaryContent: true
+    });
+  }
 
   const stagingPath = join(contentDir, ".staging", `${entry.packageId}-${entry.packageVersion}-${Date.now()}`);
   await rm(stagingPath, { recursive: true, force: true });

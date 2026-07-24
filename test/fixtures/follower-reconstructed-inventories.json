@@ -2129,8 +2129,8 @@
               "evidence": "これは何ですか。"
             },
             {
-              "entryId": "ja.pronoun.nani",
-              "senseId": "ja.pronoun.nani.what",
+              "entryId": "ja.pronoun.nan",
+              "senseId": "ja.pronoun.nan.what",
               "form": "何",
               "meaning": "what",
               "pos": "pronoun",

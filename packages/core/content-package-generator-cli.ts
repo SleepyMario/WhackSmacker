@@ -13,7 +13,8 @@ async function main(argv = process.argv.slice(2)): Promise<void> {
     const result = await generateContentPackage({
       targetId,
       outputDirectory: options.outputDirectory,
-      generatedAt: options.generatedAt
+      generatedAt: options.generatedAt,
+      production: options.production
     });
 
     console.log(`Package generated: ${result.packageId}`);
@@ -27,12 +28,14 @@ interface CliOptions {
   readonly outputDirectory: string;
   readonly generatedAt: string;
   readonly targets: readonly string[];
+  readonly production: boolean;
 }
 
 function parseArgs(argv: readonly string[]): CliOptions {
   let outputDirectory = "packages-output";
   let generatedAt = "2026-07-06T00:00:00Z";
   const targets: string[] = [];
+  let production = false;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -45,15 +48,17 @@ function parseArgs(argv: readonly string[]): CliOptions {
     } else if (arg === "--target") {
       targets.push(readValue(argv, index, arg));
       index += 1;
+    } else if (arg === "--production") {
+      production = true;
     } else if (arg === "--help" || arg === "-h") {
       console.log(usage);
-      return { outputDirectory, generatedAt, targets: [] };
+      return { outputDirectory, generatedAt, targets: [], production };
     } else {
       throw new Error(`Unknown package generator option: ${arg}`);
     }
   }
 
-  return { outputDirectory, generatedAt, targets };
+  return { outputDirectory, generatedAt, targets, production };
 }
 
 function readValue(argv: readonly string[], index: number, option: string): string {
@@ -68,7 +73,7 @@ function readValue(argv: readonly string[], index: number, option: string): stri
 const usage = `WhackSmacker content package generator
 
 Usage:
-  node dist/packages/core/content-package-generator-cli.js [--output-dir <path>] [--generated-at <iso-date>] [--target <id>]
+  node dist/packages/core/content-package-generator-cli.js [--output-dir <path>] [--generated-at <iso-date>] [--target <id>] [--production]
 
 Targets:
 ${contentPackageGeneratorTargets.map((target) => `  ${target.id} -> ${target.packageId}`).join("\n")}`;

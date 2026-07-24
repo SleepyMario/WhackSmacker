@@ -294,7 +294,9 @@ test("topic diversity, cast continuity, and number continuity are recorded throu
   assert.deepEqual(numbers.reviewDecks.at(-1).cards.map((card) => card.mode).sort(), ["contextual", "digits-to-words", "words-to-digits"]);
   assert.deepEqual(numbers.reviewDecks.at(-1).cards.map((card) => card.testedValues), [[24, 40], [24, 40], [24, 40]]);
   assert.equal(reviewRows.some((row) => JSON.parse(row[10]).some((id) => id.startsWith("nl.numeral."))), false, "inherited number evidence is not relabelled as a new lexical sense");
-  assert.equal(cast.activeCast.legacyMigration.status, "complete-through-chapter-80");
+  assert.equal(cast.schemaVersion, 2);
+  assert.equal(Object.hasOwn(cast.activeCast, "legacyMigration"), false);
+  assert.equal(cast.activeCast.progression.slice(0, 14).includes("CAST-012"), true);
   const permitted = new Set(cast.activeCast.progression.slice(0, 14));
   for (const [chapter, info] of expected) {
     assert.equal(info.cast.every((id) => permitted.has(id)), true, `Chapter ${chapter} cast is active`);

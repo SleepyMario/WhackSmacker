@@ -9,8 +9,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "In questions about nearby belongings, you will use [[grammar:これは何ですか]]. Use [[grammar:これは何ですか]] to politely ask what a nearby thing is. は marks これ as the topic and か marks the question. Do not omit か in this full polite pattern.",
-      "expert": "This chapter presents [[grammar:これは何ですか]] in questions about nearby belongings. The topic phrase これ + は precedes interrogative nominal 何 and polite copula です; final か marks interrogative force. 鍵はどこですか is a parallel topic question with a locative interrogative."
+      "normal": "In questions that 佐藤あき (Aki) and 中村ゆき (Yuki) ask about nearby belongings, you will use [[grammar:これは何ですか]]. Use [[grammar:これは何ですか]] to politely ask what a nearby thing is. は marks これ as the topic and か marks the question. Do not omit か in this full polite pattern.",
+      "expert": "This chapter presents [[grammar:これは何ですか]] in questions that 佐藤あき (Aki) and 中村ゆき (Yuki) ask about nearby belongings. The topic phrase これ + は precedes interrogative nominal 何 and polite copula です; final か marks interrogative force. 鍵はどこですか is a parallel topic question with a locative interrogative."
     },
     {
       "sourceHeading": "Grammar",
@@ -37,10 +37,10 @@
     },
     {
       "surface": "何",
-      "reading": "なに",
+      "reading": "なん",
       "evidence": "これは何ですか。",
-      "lexicalEntryId": "ja.pronoun.nani",
-      "senseId": "ja.pronoun.nani.what"
+      "lexicalEntryId": "ja.pronoun.nan",
+      "senseId": "ja.pronoun.nan.what"
     },
     {
       "surface": "ペン",

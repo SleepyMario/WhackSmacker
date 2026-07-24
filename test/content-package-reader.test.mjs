@@ -9,6 +9,7 @@ import {
   generateContentPackage,
   generateLocalContentPackageCatalogue,
   installContentPackage,
+  assertInstalledCurriculumReadingOutput,
   listInstalledContentPackages,
   listInstalledMemorizationItemFiles,
   listInstalledReadablePackages,
@@ -19,6 +20,21 @@ import {
   readInstalledMemorizationItems,
   renderReadingContent
 } from "../dist/packages/core/index.js";
+
+test("installed reader rejects stale ordinary chapters retaining forbidden reading headings", () => {
+  const snapshot = (heading) => ({
+    contentSchema: "whacksmacker-source-markdown-snapshot-v1",
+    defaultContentLocale: "en",
+    files: [{
+      path: "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md",
+      mediaType: "text/markdown",
+      text: `---\nchapter: 1\n---\n\n# Chapter 1\n\n## ${heading}\n\n### Dialogue\n\nMaria: Xin chào.\n`
+    }]
+  });
+  assert.throws(() => assertInstalledCurriculumReadingOutput(snapshot("Content"), "com.sleepymario.language.vietnamese"), /forbidden learner-facing heading "Content"/u);
+  assert.throws(() => assertInstalledCurriculumReadingOutput(snapshot("Complete Rereading"), "com.sleepymario.language.vietnamese"), /forbidden learner-facing heading "Complete Rereading"/u);
+  assert.doesNotThrow(() => assertInstalledCurriculumReadingOutput(snapshot("Dialogue"), "com.sleepymario.language.vietnamese"));
+});
 
 test("installed readable packages are discovered from the registry", async () => {
   const fixture = await createInstalledReadingFixture();

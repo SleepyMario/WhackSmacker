@@ -98,18 +98,18 @@ export interface ActiveCastChapterRecord {
   readonly reviewPersonIds?: readonly string[];
   readonly reviewSourceChapters?: readonly number[];
   readonly recurringRelationship?: string;
-  readonly incidentalPeople?: readonly IncidentalRoleCharacter[];
+  readonly functionalParticipants?: readonly ActiveCastFunctionalParticipant[];
 }
 
-export interface IncidentalRoleCharacter {
-  readonly nameOrRole: string;
-  readonly function: string;
+export interface ActiveCastFunctionalParticipant {
+  readonly localId: string;
+  readonly roleLabel: string;
   readonly canonicalPersonId?: never;
-  readonly lightlyDescribed: true;
   readonly biography?: never;
   readonly relationshipPersonIds?: never;
   readonly recurringStoryline?: never;
   readonly detailedPersonalityTraits?: never;
+  readonly continuityKey?: never;
 }
 
 export interface ActiveCastAppearanceBlock {
@@ -383,13 +383,16 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Five-chapter blocks, reviews, summaries, units, packages, and installation boundaries never reset cumulative curriculum identity or history."
   ],
   activeCastRules: [
-    "Canonical-cast metadata declares one explicit versioned progression containing exactly thirty unique canonical person IDs.",
+    "The canonical thirty-person cast is mandatory Phase 0: it must be fully authored and validated before Chapter 1 creation, generation, acceptance, packaging, or installation; a valid zero-chapter cast source remains package-less.",
+    "Every ordinary target-language curriculum begins with a schema-v2 canonical cast of exactly thirty people, even before Chapter 1 exists; schema v1 is historical diagnostic data only and no repository retains a compatibility path.",
+    "Canonical-cast metadata declares one explicit versioned progression and one deck-person pool, each an exact permutation of exactly thirty unique canonical person IDs.",
+    "Every strengthened person has typed plausible age, explicit controlled gender, substantive background/household/role/interest/personality/continuity data, and reciprocal structured stable-ID relationships.",
     "The active pool is the first min(30, 5 + 3 * floor((chapter - 1) / 20)) progression IDs.",
     "Previously active people remain active; Chapter 201 onward retains the same thirty people.",
     "Dialogue, narrative, metadata, and review cast IDs must be active; only meaningful learner-facing dialogue or narrative appearances satisfy block coverage.",
     "In each person's first activation block, that person appears meaningfully in at least five distinct ordinary chapters; duplicate lines in one chapter count once.",
     "In every completed activation block after Chapters 1-20, old cast supplies at least ceil(total meaningful canonical person-chapter appearances / 3).",
-    "Chapter 201 onward permits lightly described functional incidental people without canonical IDs, but never a hidden second detailed cast.",
+    "Every chapter from Chapter 1 onward may declare unnamed functional participants with chapter-local ROLE-* IDs and exact target-language role labels; they never enter the canonical cast, activation, named-cast ceilings, relationships, or appearance accounting.",
     "Builders prefer least-used suitable active people and audit severe imbalance without requiring exact equality.",
     "Only legacy-authorship records may remain pending legacy migration; newly authored violations are blocking."
   ],
@@ -1122,7 +1125,7 @@ export function auditActiveCast(values: {
         if (!sourcePeople.has(id)) throw new Error(`Chapter ${record.chapter}: review person ${id} was not active in a declared source chapter.`);
       }
     }
-    for (const person of record.incidentalPeople ?? []) assertIncidentalRoleCharacter(record.chapter, person);
+    for (const person of record.functionalParticipants ?? []) assertUnnamedFunctionalParticipant(record.chapter, person);
     const counts: Record<string, number> = {};
     for (const id of new Set(record.meaningfulPersonIds ?? [])) {
       counts[id] = 1;
@@ -1215,19 +1218,20 @@ export function activeCastBlockReport(values: {
   return { activationPeople, oldCastAppearanceCount, newCastAppearanceCount, totalCanonicalAppearanceCount, requiredMinimumOldCastCount, oldCastPercentage, distributionOnTrack: ratioPasses, distributionStatus: complete ? (ratioPasses ? "passed" : "failed") : "pending" };
 }
 
-export function assertIncidentalRoleCharacter(chapter: number, person: IncidentalRoleCharacter): void {
+export function assertUnnamedFunctionalParticipant(chapter: number, person: ActiveCastFunctionalParticipant): void {
   assertPositiveIntegerChapter(chapter);
-  if (chapter < 201) throw new Error(`Chapter ${chapter}: unrestricted incidental fictional people are permitted only from Chapter 201 onward.`);
   const unsafe = person as unknown as Record<string, unknown>;
-  if (typeof unsafe.canonicalPersonId === "string") throw new Error(`Chapter ${chapter}: incidental person ${person.nameOrRole} must not receive a canonical ID.`);
-  for (const field of ["biography", "relationshipPersonIds", "recurringStoryline", "detailedPersonalityTraits"] as const) {
+  if (typeof unsafe.canonicalPersonId === "string" || /^CAST-/u.test(person.localId)) {
+    throw new Error(`Chapter ${chapter}: unnamed functional participant ${person.roleLabel} must not receive or use a canonical CAST-* ID.`);
+  }
+  for (const field of ["biography", "relationshipPersonIds", "recurringStoryline", "detailedPersonalityTraits", "continuityKey"] as const) {
     const value = unsafe[field];
     if (value !== undefined && value !== "" && (!Array.isArray(value) || value.length > 0)) {
-      throw new Error(`Chapter ${chapter}: incidental person ${person.nameOrRole} has canonical-style ${field} metadata.`);
+      throw new Error(`Chapter ${chapter}: unnamed functional participant ${person.roleLabel} has prohibited cross-chapter or canonical-style ${field} metadata.`);
     }
   }
-  if (person.lightlyDescribed !== true || person.nameOrRole.trim() === "" || person.function.trim() === "") {
-    throw new Error(`Chapter ${chapter}: incidental people must remain lightly described and functional.`);
+  if (!/^ROLE-[A-Z0-9][A-Z0-9-]*$/u.test(person.localId) || person.roleLabel.trim() === "") {
+    throw new Error(`Chapter ${chapter}: unnamed functional participants require a chapter-local ROLE-* ID and exact nonempty target-language role label.`);
   }
 }
 

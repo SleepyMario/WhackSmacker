@@ -258,6 +258,8 @@ test("language curriculum pacing validates early and advanced chapters", () => {
 
 test("language curriculum policy records continuity and strict example rules", () => {
   assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /min\(30, 5 \+ 3 \* floor\(\(chapter - 1\) \/ 20\)\)/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /schema-v2 canonical cast of exactly thirty people, even before Chapter 1 exists/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /Chapter 1 onward.*unnamed functional participants/u.test(rule)));
   assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /newly authored violations are blocking/u.test(rule)));
   assert.ok(languageCurriculumPolicy.chapterFormatRules.some((rule) => /Odd-numbered chapters are dialogues/u.test(rule)));
   assert.ok(languageCurriculumPolicy.chapterFormatRules.some((rule) => /Even-numbered chapters are narratives/u.test(rule)));
@@ -303,6 +305,15 @@ test("language curriculum policy records continuity and strict example rules", (
   assert.ok(languageCurriculumPolicy.surfaceFormRules.some((rule) => /preserved exactly/u.test(rule)));
   assert.equal(grammarEasyMenuLabel, "Grammar - Easy");
   assert.equal(grammarHardMenuLabel, "Grammar - Hard");
+});
+
+test("language curriculum policy makes canonical cast Phase 0 mandatory before Chapter 1 and packaging", () => {
+  assert.equal(
+    languageCurriculumPolicy.activeCastRules.some(rule =>
+      /mandatory Phase 0[\s\S]*before Chapter 1 creation, generation, acceptance, packaging, or installation[\s\S]*zero-chapter cast source remains package-less/iu.test(rule)
+    ),
+    true
+  );
 });
 
 test("Chapters 31, 40, 41, and 50 require two new points with exactly one connector-domain point", () => {

@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whacksmacker.com/schemas/chapter-participants-v1.schema.json",
+  "title": "WhackSmacker chapter-local participant reconciliation metadata",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "chapter",
+    "canonicalCastIds",
+    "unnamedFunctionalParticipants",
+    "primaryReadingParticipants",
+    "introductionParticipants"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "chapter": { "type": "integer", "minimum": 1 },
+    "canonicalCastIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/castId" }
+    },
+    "unnamedFunctionalParticipants": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/functionalParticipant" }
+    },
+    "primaryReadingParticipants": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/participantUse" }
+    },
+    "introductionParticipants": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/projectedParticipant" }
+    },
+    "translationParticipants": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/projectedParticipant" }
+    },
+    "supportParticipants": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/projectedParticipant" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "castId": {
+      "type": "string",
+      "pattern": "^CAST-[0-9]{3}$"
+    },
+    "localRoleId": {
+      "type": "string",
+      "pattern": "^ROLE-[A-Z0-9][A-Z0-9-]*$"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "functionalParticipant": {
+      "type": "object",
+      "required": ["localId", "roleLabel"],
+      "properties": {
+        "localId": { "$ref": "#/$defs/localRoleId" },
+        "roleLabel": { "$ref": "#/$defs/label" },
+        "supportedProjectionLabels": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/label" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "participantUse": {
+      "type": "object",
+      "required": ["participantId", "kind", "label"],
+      "properties": {
+        "participantId": {
+          "oneOf": [
+            { "$ref": "#/$defs/castId" },
+            { "$ref": "#/$defs/localRoleId" }
+          ]
+        },
+        "kind": {
+          "enum": ["dialogue-speaker", "narrative-participant", "narrative-subject"]
+        },
+        "label": { "$ref": "#/$defs/label" }
+      },
+      "additionalProperties": false
+    },
+    "projectedParticipant": {
+      "type": "object",
+      "required": ["participantId", "label"],
+      "properties": {
+        "participantId": {
+          "oneOf": [
+            { "$ref": "#/$defs/castId" },
+            { "$ref": "#/$defs/localRoleId" }
+          ]
+        },
+        "label": { "$ref": "#/$defs/label" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

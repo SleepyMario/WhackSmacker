@@ -297,7 +297,7 @@ function parseDeck(text, path) {
 }
 
 function extractLearnerFacingLines(markdown) {
-  const match = markdown.match(/### Learner-facing (?:Dialogue|Narrative)[\s\S]*?```text\n([\s\S]*?)\n```/u);
+  const match = markdown.match(/### (?:Learner-facing )?(?:Dialogue|Narrative)[\s\S]*?```text\n([\s\S]*?)\n```/u);
   if (match !== null) return match[1].split("\n").filter((line) => line.trim().length > 0).map((line) => {
     const dialogue = line.match(/^.*?\s*:\s*(.+)$/u);
     return (dialogue?.[1] ?? line).trim();

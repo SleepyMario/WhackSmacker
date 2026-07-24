@@ -4,6 +4,11 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { getInstalledLanguageCurriculum, readInstalledLanguageCurriculumChapter } from "../dist/packages/core/content-package-reader.js";
+import {
+  canonicalCastFixture,
+  chapterParticipantFixture,
+  dialogueChapterFixture
+} from "./fixtures/canonical-cast.mjs";
 
 test("curriculum view exposes only numerically ordered learner chapters and exact versions", async()=>{
   const fixture=await curriculumFixture();
@@ -45,15 +50,19 @@ async function curriculumFixture(){
   const root=await mkdtemp(join(tmpdir(),"wsm-web-reader-")),dataDir=join(root,"content"),packageId="com.example.language.test",records=[];
   for(const version of ["1.0.0","2.0.0"]){
     const files=[
-      file("units/core/chapter-009-nine/chapter.md",{en:"# Chapter Nine\n\nBase nine.","zh-TW":"# 第九章\n\n第九章內容。"}),
-      file("units/core/chapter-010-ten/chapter.md","# Chapter Ten\n\nBase ten."),
-      file("units/core/chapter-011-eleven/chapter.md","# Chapter Eleven\n\nBase eleven."),
+      file("name-pools/canonical-cast.json",JSON.stringify(canonicalCastFixture()),"application/json"),
+      file("units/core/chapter-009-nine/chapter.md",{en:dialogueChapterFixture(9,"Chapter Nine","Base nine."),"zh-TW":dialogueChapterFixture(9,"第九章","第九章內容。")}),
+      file("units/core/chapter-009-nine/chapter-participants.json",JSON.stringify(chapterParticipantFixture(9)),"application/json"),
+      file("units/core/chapter-010-ten/chapter.md",dialogueChapterFixture(10,"Chapter Ten","Base ten.")),
+      file("units/core/chapter-010-ten/chapter-participants.json",JSON.stringify(chapterParticipantFixture(10)),"application/json"),
+      file("units/core/chapter-011-eleven/chapter.md",dialogueChapterFixture(11,"Chapter Eleven","Base eleven.")),
+      file("units/core/chapter-011-eleven/chapter-participants.json",JSON.stringify(chapterParticipantFixture(11)),"application/json"),
       file("units/introduction/chapter-01-start/README.md","# Introduction\n\nStart here."),
       file("units/core/chapter-012-summary/summary.md","# Summary"),file("metadata.json","{}","application/json"),file("review/cards.tsv","x","text/tab-separated-values")
     ];
     records.push(await writePackage(dataDir,{packageId,version,contentType:"language-curriculum",displayName:"Test Curriculum",localization:{role:"base-curriculum",schemaVersion:"1.0.0",targetLanguage:"nl",defaultSourceLocale:"en",defaultSourcePackageId:"com.example.language.test.source.en"},files}));
   }
-  records.push(await writePackage(dataDir,{packageId:"com.example.language.test.source.en",version:"1.0.0",contentType:"curriculum-source-language-pack",displayName:"English",localization:{role:"source-language-pack",schemaVersion:"1.0.0",basePackageId:packageId,sourceLocale:"en",targetLanguage:"nl",compatibleBaseVersion:">=1.0.0 <2.0.0"},files:[file("units/core/chapter-010-ten/chapter.md","# Chapter Ten\n\nEnglish overlay ten.")]}));
+  records.push(await writePackage(dataDir,{packageId:"com.example.language.test.source.en",version:"1.0.0",contentType:"curriculum-source-language-pack",displayName:"English",localization:{role:"source-language-pack",schemaVersion:"1.0.0",basePackageId:packageId,sourceLocale:"en",targetLanguage:"nl",compatibleBaseVersion:">=1.0.0 <2.0.0"},files:[file("units/core/chapter-010-ten/chapter.md",dialogueChapterFixture(10,"Chapter Ten","English overlay ten."))]}));
   records.push(await writePackage(dataDir,{packageId:"com.example.language.test.source.zh",version:"1.0.0",contentType:"curriculum-source-language-pack",displayName:"Chinese",localization:{role:"source-language-pack",schemaVersion:"1.0.0",basePackageId:packageId,sourceLocale:"zh-TW",targetLanguage:"nl",compatibleBaseVersion:">=3.0.0 <4.0.0"},files:[file("units/core/chapter-010-ten/chapter.md","不應使用")]}));
   await mkdir(dataDir,{recursive:true});await writeFile(join(dataDir,"registry.json"),JSON.stringify({registryFormatVersion:1,updatedAt:"2026-07-12T00:00:00Z",packages:records}));
   return{root,dataDir,packageId,cleanup:()=>rm(root,{recursive:true,force:true})};

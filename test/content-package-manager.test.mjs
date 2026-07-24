@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { chmod, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { spawn } from "node:child_process";
@@ -12,15 +12,52 @@ import {
   generateContentPackage,
   generateLocalContentPackageCatalogue,
   installContentPackage,
+  listInstalledMemorizationItemFiles,
   listAvailableContentPackages,
   listInstalledContentPackages,
   loadInstalledPackageRegistry,
   maxPackageUncompressedSizeBytes,
   removeContentPackage,
+  readInstalledMemorizationItems,
+  pedagogicalContentForMemorizationItem,
+  pedagogicalFingerprint,
   updateContentPackage,
   validateContentPackageManifest,
   validateInstalledPackageRegistry
 } from "../dist/packages/core/index.js";
+
+test("installed Japanese Review rejects a stale reading that disagrees with the canonical reading package", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-japanese-contextual-installed-"));
+  const packageDirectory = join(root, "packages");
+  const cataloguePath = join(root, "catalogue", "catalogue.json");
+  const dataDir = join(root, "data", "content");
+  try {
+    await generateContentPackage({ targetId: "japanese-curriculum", outputDirectory: packageDirectory, generatedAt: "2026-07-24T00:00:00Z" });
+    await generateContentPackage({ targetId: "japanese-core-reviews", outputDirectory: packageDirectory, generatedAt: "2026-07-24T00:00:00Z" });
+    await generateLocalContentPackageCatalogue({ packagesDirectory: packageDirectory, outputPath: cataloguePath, generatedAt: "2026-07-24T00:00:00Z" });
+    await installContentPackage({ cataloguePath, dataDir, packageId: "com.sleepymario.language.japanese" });
+    const review = await installContentPackage({ cataloguePath, dataDir, packageId: "com.sleepymario.language.japanese.reviews" });
+    const [file] = await listInstalledMemorizationItemFiles("com.sleepymario.language.japanese.reviews", dataDir);
+    assert.ok(file);
+    await assert.doesNotReject(() => readInstalledMemorizationItems(file.packageId, file.path, dataDir, file.packageVersion));
+
+    const installedPath = join(review.installPath, file.path);
+    const document = JSON.parse(await readFile(installedPath, "utf8"));
+    for (const item of document.items.filter((candidate) => candidate.testedLexicalIds?.includes("ja.pronoun.nan.what"))) {
+      if (item.prompt.language === "ja-Kana") item.prompt.text = "なに";
+      item.acceptedAnswers = item.acceptedAnswers.map((answer) => answer.replace("なん", "なに"));
+      item.pedagogicalFingerprint = pedagogicalFingerprint(pedagogicalContentForMemorizationItem(item));
+    }
+    await chmod(installedPath, 0o600);
+    await writeFile(installedPath, `${JSON.stringify(document, null, 2)}\n`);
+    await assert.rejects(
+      () => readInstalledMemorizationItems(file.packageId, file.path, dataDir, file.packageVersion),
+      /disagrees with canonical contextual identity|complete lexical reading/u
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
 
 test("available packages can be listed from a valid catalogue", async () => {
   const fixture = await createPackageFixture();
@@ -81,6 +118,38 @@ test("installing from a file package succeeds and updates the registry", async (
     assert.equal((await stat(contentPath)).size > 0, true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
     assert.deepEqual(validateInstalledPackageRegistry(registry).errors, []);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("install rejects an ordinary Chapter 1 package that bypassed canonical-cast Phase 0", async () => {
+  const fixture = await createPackageFixture();
+  const packageId = "com.sleepymario.language.bootstrap-bypass";
+  try {
+    const archivePath = await createCustomPackage(fixture, {
+      packageId,
+      packageVersion: "0.1.0",
+      contentType: "language-curriculum",
+      entryPointPath: "content/content.json",
+      filePath: "content/content.json",
+      contentDocument: {
+        contentSchema: "whacksmacker-source-markdown-snapshot-v1",
+        packageId,
+        files: [{
+          path: "units/example-core/chapter-001-test/chapter.md",
+          mediaType: "text/markdown",
+          text: "# Chapter 1\n\n## Dialogue\n\nAlice Example: Hello.\n"
+        }]
+      }
+    });
+    const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId, "language-curriculum");
+
+    await assert.rejects(
+      () => installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId }),
+      /complete canonical 30-person cast must be authored and validated before Chapter 1[\s\S]*canonical-cast\.json is absent/iu
+    );
+    assert.equal((await listInstalledContentPackages(fixture.dataDir)).some(record => record.packageId === packageId), false);
   } finally {
     await fixture.cleanup();
   }
@@ -629,14 +698,19 @@ async function createPackageFixture() {
 }
 
 async function createCustomPackage(fixture, options) {
-  const content = Buffer.from(JSON.stringify({ packageId: options.packageId, packageVersion: options.packageVersion, value: options.contentValue }), "utf8");
+  const content = Buffer.from(JSON.stringify(options.contentDocument ?? {
+    packageId: options.packageId,
+    packageVersion: options.packageVersion,
+    value: options.contentValue
+  }), "utf8");
+  const contentType = options.contentType ?? "linguistic-terminology";
   const manifest = {
     packageFormatVersion: 1,
     packageId: options.packageId,
     packageVersion: options.packageVersion,
     displayName: "Custom Package",
     description: "Custom package.",
-    contentType: "language-curriculum",
+    contentType,
     contentSchemaVersion: "1.0.0",
     minimumWhackSmackerVersion: "0.1.0",
     source: {
@@ -659,7 +733,7 @@ async function createCustomPackage(fixture, options) {
   return archivePath;
 }
 
-async function writeSinglePackageCatalogue(fixture, archivePath, packageId) {
+async function writeSinglePackageCatalogue(fixture, archivePath, packageId, contentType = "linguistic-terminology") {
   const cataloguePath = join(fixture.root, `${packageId}.catalogue.json`);
   await writeJson(cataloguePath, {
     catalogueFormatVersion: 1,
@@ -667,19 +741,19 @@ async function writeSinglePackageCatalogue(fixture, archivePath, packageId) {
     displayName: "Local Catalogue",
     description: "Local catalogue.",
     generatedAt: "2026-07-06T00:00:00Z",
-    packages: [await packageEntryFromArchive(archivePath, packageId, "0.1.0")]
+    packages: [await packageEntryFromArchive(archivePath, packageId, "0.1.0", contentType)]
   });
   return cataloguePath;
 }
 
-async function packageEntryFromArchive(archivePath, packageId, packageVersion) {
+async function packageEntryFromArchive(archivePath, packageId, packageVersion, contentType = "linguistic-terminology") {
   const archive = await readFile(archivePath);
   return {
     packageId,
     packageVersion,
     displayName: "Custom Package",
     description: "Custom package.",
-    contentType: "language-curriculum",
+    contentType,
     contentSchemaVersion: "1.0.0",
     minimumWhackSmackerVersion: "0.1.0",
     source: {

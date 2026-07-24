@@ -39,7 +39,7 @@
         "usage": "Tôi đi công viên.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-009-basic-sentences-9/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "line containing: Tôi đi công viên."
         }
       },
@@ -53,7 +53,7 @@
         "usage": "Tôi đi thư viện.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-009-basic-sentences-9/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "line containing: Tôi đi thư viện."
         }
       },
@@ -67,7 +67,7 @@
         "usage": "Đây là trường.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-009-basic-sentences-9/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "line containing: Đây là trường."
         }
       }

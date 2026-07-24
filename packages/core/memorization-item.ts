@@ -11,6 +11,10 @@ import {
 import { isLocalizedContentValue, type LocalizedContentValue } from "./localized-content";
 import { assertCanonicalLexicalRecord, type CanonicalLexicalRecord, type LearnerFacingVocabularyRecord } from "./language-curriculum-policy";
 import { pedagogicalFingerprint, type PedagogicalContent } from "./pedagogical-fingerprint";
+import {
+  assertValidJapaneseStructuredReviewItems,
+  type JapaneseContextualReadingDocument
+} from "./japanese-vocabulary";
 
 type BufferValue = {
   toString(encoding: "utf8"): string;
@@ -228,12 +232,46 @@ export async function readInstalledMemorizationItems(
   ensureInside(root, destination);
   const collection = normalizeMemorizationItemCollection(JSON.parse((await readFile(destination)).toString("utf8")) as unknown);
   const items = await applySourceReviewOverlay(collection.items, selected, sourceLocale, dataDir);
+  if (collection.schemaVersion === 2 && items.every((item) => item.schemaVersion === 2 && item.language?.target === "ja")) {
+    const contextualReadings = await installedJapaneseContextualReadings(manifest, dataDir, items as readonly MemorizationItemV2[]);
+    assertValidJapaneseStructuredReviewItems((items as readonly MemorizationItemV2[]).map((item) => ({
+      cardId: item.cardId,
+      sourceChapter: item.sourceChapters[0],
+      promptLanguage: item.prompt.language ?? "",
+      answerLanguage: item.answer.language ?? "",
+      prompt: typeof item.prompt.text === "string" ? item.prompt.text : "",
+      acceptedAnswers: item.acceptedAnswers,
+      testedLexicalIds: item.testedLexicalIds,
+      examples: item.examples,
+      provenance: item.provenance
+    })), path, contextualReadings);
+  }
   return {
     packageId: selected.packageId,
     packageVersion: selected.packageVersion,
     path,
     items
   };
+}
+
+async function installedJapaneseContextualReadings(
+  reviewManifest: ContentPackageManifest,
+  dataDir: string | undefined,
+  items: readonly MemorizationItemV2[]
+): Promise<JapaneseContextualReadingDocument | undefined> {
+  const relatedId = reviewManifest.relatedPackageIds?.find((packageId) => packageId === "com.sleepymario.language.japanese");
+  if (relatedId === undefined) return undefined;
+  const reading = (await listInstalledContentPackages(dataDir)).find((record) => record.packageId === relatedId);
+  if (reading === undefined) return undefined;
+  const snapshot = JSON.parse((await readFile(join(installedPackageRoot(reading, dataDir), "content", "content.json"))).toString("utf8")) as {
+    files?: readonly { path?: string; text?: unknown }[];
+  };
+  const source = snapshot.files?.find((file) => file.path === "japanese-contextual-readings.json");
+  if (typeof source?.text !== "string") throw new Error(`Installed Japanese reading package ${reading.packageId} is missing japanese-contextual-readings.json.`);
+  const document = JSON.parse(source.text) as JapaneseContextualReadingDocument;
+  const start = Math.min(...items.flatMap((item) => item.sourceChapters));
+  const end = Math.max(...items.flatMap((item) => item.sourceChapters));
+  return { ...document, entries: document.entries.filter((entry) => entry.firstIntroductionChapter >= start && entry.firstIntroductionChapter <= end) };
 }
 
 async function applySourceReviewOverlay(items: readonly MemorizationItem[], base: InstalledPackageRecord, locale: string | undefined, dataDir?: string): Promise<readonly MemorizationItem[]> {

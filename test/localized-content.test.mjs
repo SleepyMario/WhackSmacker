@@ -15,6 +15,11 @@ import {
   validateContentPackageManifest,
   validateMemorizationItem
 } from "../dist/packages/core/index.js";
+import {
+  canonicalCastFixture,
+  chapterParticipantFixture,
+  dialogueChapterFixture
+} from "./fixtures/canonical-cast.mjs";
 
 test("localized content values use deterministic selected English and first-available fallback", () => {
   assert.equal(localized("English-only text", "en-US"), "English-only text");
@@ -180,6 +185,21 @@ async function createLocalizedFixture() {
   const snapshot = {
     contentSchema: "whacksmacker-source-markdown-snapshot-v1",
     files: [
+      {
+        path: "name-pools/canonical-cast.json",
+        mediaType: "application/json",
+        text: JSON.stringify(canonicalCastFixture())
+      },
+      {
+        path: "units/fixture-core/chapter-001-localized/chapter.md",
+        mediaType: "text/markdown",
+        text: dialogueChapterFixture(1, "Localized Fixture", "Hallo.")
+      },
+      {
+        path: "units/fixture-core/chapter-001-localized/chapter-participants.json",
+        mediaType: "application/json",
+        text: JSON.stringify(chapterParticipantFixture(1))
+      },
       {
         path: "lesson.md",
         mediaType: "text/markdown",

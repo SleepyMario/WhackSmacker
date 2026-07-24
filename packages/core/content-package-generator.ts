@@ -14,6 +14,15 @@ import {
   type MemorizationItemV1,
   type MemorizationItemV2
 } from "./memorization-item";
+import {
+  assertValidJapaneseStructuredReviewItems,
+  validateJapaneseContextualReadingDocument,
+  type JapaneseContextualReadingDocument
+} from "./japanese-vocabulary";
+import { chapterParticipantMetadataFileName } from "./chapter-participants";
+import {
+  assertCanonicalCastBootstrapBeforeOrdinaryContent
+} from "./language-curriculum-bootstrap";
 import { pedagogicalFingerprint } from "./pedagogical-fingerprint";
 import type { LocalizedContentValue } from "./localized-content";
 import {
@@ -120,6 +129,14 @@ export interface GenerateContentPackageOptions {
   readonly generatedAt: string;
   readonly sourceRoot?: string;
   readonly env?: Readonly<Record<string, string | undefined>>;
+  readonly production?: boolean;
+}
+
+export interface ProductionPackageProvenance {
+  readonly sourceCommit: string;
+  readonly sourceDirty: boolean;
+  readonly generatorCommit: string;
+  readonly generatorDirty: boolean;
 }
 
 export interface ContentPackageSourceResolution {
@@ -322,7 +339,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     languages: ["ja", "en"],
     subjects: ["language", "japanese"],
     license: { spdx: null, name: null, path: null },
-    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "units"]
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "japanese-contextual-readings.json", "units"]
   },
   {
     id: "korean-curriculum",
@@ -529,6 +546,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     throw contentPackageSourceError(sourceResolution, error);
   }
   if (target.contentType === "language-curriculum") {
+    assertPackagedCanonicalCastAndParticipants(target, sourceFiles);
     const chapters = sourceFiles
       .filter((file) => isReadableChapterMarkdownPath(file.path))
       .map((file) => ({ chapter: Number.parseInt(chapterNumberForPath(file.path) ?? "0", 10), markdown: file.text }));
@@ -543,6 +561,10 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   const sourceCommit = normalizeGitCommit(bundledSource ? tryReadGitValue(sourceRoot, ["rev-parse", "HEAD"]) : readGitValue(sourceRoot, ["rev-parse", "HEAD"]));
   const sourceDirty = (bundledSource ? tryReadGitValue(sourceRoot, ["status", "--short"]) : readGitValue(sourceRoot, ["status", "--short"])).trim().length > 0;
   const generatorCommit = readGitValue(repositoryRoot, ["rev-parse", "HEAD"]);
+  const generatorDirty = readGitValue(repositoryRoot, ["status", "--short"]).trim().length > 0;
+  if (options.production === true) {
+    assertProductionPackageProvenance({ sourceCommit, sourceDirty, generatorCommit, generatorDirty });
+  }
 
   const content = buildContentSnapshot(target, sourceRoot, sourceFiles, sourceCommit, sourceDirty);
   const contentBuffer = Buffer.from(`${JSON.stringify(content, null, 2)}\n`, "utf8");
@@ -617,6 +639,21 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
   };
 }
 
+export function assertProductionPackageProvenance(provenance: ProductionPackageProvenance): void {
+  if (!/^[0-9a-f]{40}$/u.test(provenance.sourceCommit) || /^0{40}$/u.test(provenance.sourceCommit)) {
+    throw new Error("Production package generation requires an exact committed source SHA.");
+  }
+  if (provenance.sourceDirty) {
+    throw new Error(`Production package generation refuses dirty source commit ${provenance.sourceCommit}.`);
+  }
+  if (!/^[0-9a-f]{40}$/u.test(provenance.generatorCommit) || /^0{40}$/u.test(provenance.generatorCommit)) {
+    throw new Error("Production package generation requires an exact committed generator SHA.");
+  }
+  if (provenance.generatorDirty) {
+    throw new Error(`Production package generation refuses dirty generator commit ${provenance.generatorCommit}.`);
+  }
+}
+
 export function getContentPackageGeneratorTarget(targetId: string): ContentPackageGeneratorTarget {
   const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === targetId);
   if (target === undefined) {
@@ -639,6 +676,7 @@ interface PackagedCanonicalVocabularyOccurrence extends LearnerFacingLexicalDisp
   readonly id: string;
   readonly displayRowIds: readonly string[];
   readonly sourcePath: string;
+  readonly sourceLocator: string;
   readonly sentenceOrExample: string;
 }
 
@@ -668,6 +706,43 @@ function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): 
     if (source === undefined || !source.includes(formatLearnerFacingVocabularyRow(row))) throw new Error(`${row.id}: canonical learner-facing vocabulary row is absent from its packaged chapter.`);
     if (!source.includes(occurrence.sentenceOrExample) || !occurrence.sentenceOrExample.normalize("NFC").includes(row.surfaceForm.normalize("NFC"))) throw new Error(`${row.id}: occurrence evidence does not preserve the exact surface form.`);
   }
+  const contextualMetadata = sourceFiles.find((file) => file.path === japaneseContextualReadingsPath);
+  if (contextualMetadata === undefined) return;
+  const contextual = JSON.parse(contextualMetadata.text) as JapaneseContextualReadingDocument;
+  const entries = validateJapaneseContextualReadingDocument(contextual, contextualMetadata.path);
+  if (contextual.curriculumId !== "japanese-core") throw new Error(`${contextualMetadata.path}: curriculumId must be japanese-core.`);
+  const expectedSenses = new Set(document.review?.canonicalSenseIds ?? []);
+  const actualSenses = new Set(contextual.entries.map((entry) => entry.senseId));
+  for (const senseId of expectedSenses) if (!actualSenses.has(senseId)) throw new Error(`${contextualMetadata.path}: missing canonical Review sense ${senseId}.`);
+  for (const senseId of actualSenses) if (!expectedSenses.has(senseId)) throw new Error(`${contextualMetadata.path}: orphaned reading-aware sense ${senseId}.`);
+  const contextualOccurrences = new Map(contextual.entries.flatMap((entry) => entry.occurrences).map((occurrence) => [occurrence.occurrenceId, occurrence]));
+  for (const occurrence of document.occurrences) {
+    const contextualOccurrence = contextualOccurrences.get(occurrence.id);
+    if (contextualOccurrence === undefined) throw new Error(`${contextualMetadata.path}: missing occurrence reading identity for ${occurrence.id}.`);
+    for (const field of ["chapter", "sourcePath", "sourceLocator", "surfaceForm"] as const) {
+      if (contextualOccurrence[field] !== occurrence[field]) throw new Error(`${contextualMetadata.path}: occurrence ${occurrence.id} ${field} disagrees with vocabulary-forms.json.`);
+    }
+    if (contextualOccurrence.evidence !== occurrence.sentenceOrExample) throw new Error(`${contextualMetadata.path}: occurrence ${occurrence.id} evidence disagrees with vocabulary-forms.json.`);
+    const identity = `${occurrence.canonicalLexicalId}\0${occurrence.canonicalSenseId}`;
+    if (!entries.has(identity)) throw new Error(`${contextualMetadata.path}: occurrence ${occurrence.id} maps to another reading identity ${identity.replace("\0", " / ")}.`);
+  }
+  const supportItems = sourceFiles
+    .filter((file) => file.path.startsWith("units/japanese-core/") && file.path.endsWith("/reading-support.json"))
+    .flatMap((file) => {
+      const support = JSON.parse(file.text) as { readingItems?: readonly { surface: string; reading: string; evidence: string; lexicalEntryId: string; senseId: string }[] };
+      return (support.readingItems ?? []).map((item) => ({ ...item, source: file.path }));
+    });
+  for (const entry of contextual.entries) {
+    const item = supportItems.find((candidate) => candidate.lexicalEntryId === entry.lexicalEntryId && candidate.senseId === entry.senseId);
+    if (item === undefined) throw new Error(`${contextualMetadata.path}: ${entry.lexicalEntryId} / ${entry.senseId} has no reading-support projection.`);
+    const occurrence = entry.occurrences.find((candidate) => candidate.evidence === item.evidence && candidate.evidence.includes(item.surface));
+    if (occurrence === undefined) throw new Error(`${item.source}: ${entry.lexicalEntryId} / ${entry.senseId} surface/evidence does not map to its canonical occurrence.`);
+    if (japaneseExpressionContainsKanjiForPackage(item.surface) && occurrence.contextualReading?.includes(item.reading) !== true) throw new Error(`${item.source}: ${entry.lexicalEntryId} / ${entry.senseId} stored reading ${item.reading} disagrees with contextual reading ${occurrence.contextualReading}.`);
+  }
+}
+
+function japaneseExpressionContainsKanjiForPackage(value: string): boolean {
+  return /\p{Script=Han}/u.test(value);
 }
 
 const readingSupportPackages: Readonly<Record<string, readonly { readonly source: string; readonly destination: string }[]>> = {
@@ -974,13 +1049,14 @@ const numberProgressionPath = "number-progression.json";
 const lexicalTopicsPath = "lexical-topics.json";
 const lexicalTopicAuditPath = "lexical-topic-audit.json";
 const vocabularyFormsPath = "vocabulary-forms.json";
+const japaneseContextualReadingsPath = "japanese-contextual-readings.json";
 const sinoVietnameseLexiconPath = "sino-vietnamese-lexicon.json";
 const sinoVietnameseAuditPath = "sino-vietnamese-audit.json";
-const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath, vocabularyFormsPath]);
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath, vocabularyFormsPath, japaneseContextualReadingsPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
-    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath || include === lexicalTopicsPath || include === lexicalTopicAuditPath || include === "lexical-topic-audit.md" || include === sinoVietnameseLexiconPath || include === sinoVietnameseAuditPath || include === "sino-vietnamese-audit.md"))]
+    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath || include === lexicalTopicsPath || include === lexicalTopicAuditPath || include === "lexical-topic-audit.md" || include === japaneseContextualReadingsPath || include === sinoVietnameseLexiconPath || include === sinoVietnameseAuditPath || include === "sino-vietnamese-audit.md"))]
     : [...target.include];
   const separatelyPackagedPaths = new Set(target.additionalSourceFiles?.map((file) => file.packagePath) ?? []);
   if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path) && !separatelyPackagedPaths.has(target.license.path)) separatedIncludes.push(target.license.path);
@@ -1105,6 +1181,7 @@ export function isContentPackageSourceFileAllowed(path: string): boolean {
   return path.endsWith(".md")
     || path.endsWith(".tsv")
     || packagedCurriculumMetadataPaths.has(path)
+    || path.endsWith(`/${chapterParticipantMetadataFileName}`)
     || path.endsWith("/reading-translation.en.json")
     || path.endsWith("/reading-support.json")
     || path === "deck.json"
@@ -1112,6 +1189,19 @@ export function isContentPackageSourceFileAllowed(path: string): boolean {
     || path === "LICENSE-CONTENT"
     || path === "LICENSE-SOFTWARE"
     || path === "NOTICE";
+}
+
+export function assertPackagedCanonicalCastAndParticipants(
+  target: Pick<ContentPackageGeneratorTarget, "id" | "contentType">,
+  sourceFiles: readonly { readonly path: string; readonly text: string }[]
+): void {
+  if (target.contentType !== "language-curriculum") return;
+  const result = assertCanonicalCastBootstrapBeforeOrdinaryContent(sourceFiles, {
+    sourceLabel: `package-source:${target.id}`,
+    requireOrdinaryContent: true,
+    curriculumIdentity: target.id
+  });
+  for (const warning of result.warnings) console.warn(`WARNING: ${warning}`);
 }
 
 function buildContentSnapshot(
@@ -1188,10 +1278,13 @@ function buildMemorizationFiles(
   generatedAt: string
 ): readonly GeneratedMemorizationFile[] {
   const reviewExampleIndex = buildReviewExampleIndex(target, evidenceFiles);
+  const japaneseContextualReadings = target.languages?.includes("ja") === true
+    ? parseJapaneseContextualReadings(evidenceFiles)
+    : undefined;
   return sourceFiles
     .filter((file) => isReviewDeckCardsPath(file.path) || (target.capabilities?.includes("specialized-review") === true && file.path === "cards.tsv"))
     .map((file) => {
-      const collection = parseReviewDeckCards(target, file, generatedAt, reviewExampleIndex);
+      const collection = parseReviewDeckCards(target, file, generatedAt, reviewExampleIndex, japaneseContextualReadings);
       assertValidMemorizationItemCollection(collection);
       const buffer = Buffer.from(`${JSON.stringify(collection, null, 2)}\n`, "utf8");
       const outputPath = target.capabilities?.includes("specialized-review") === true
@@ -1224,7 +1317,8 @@ function parseReviewDeckCards(
   target: ContentPackageGeneratorTarget,
   file: SourceFile,
   generatedAt: string,
-  reviewExampleIndex: ReviewExampleIndex
+  reviewExampleIndex: ReviewExampleIndex,
+  japaneseContextualReadings?: JapaneseContextualReadingDocument
 ): MemorizationItemCollection {
   const rows = parseTabSeparatedRows(file.text);
   if (rows.length === 0) {
@@ -1244,12 +1338,39 @@ function parseReviewDeckCards(
 
   if (usesV2Rows) {
     const items = body.map((row, index) => reviewDeckV2RowToItem(target, file.path, row, index + 1, generatedAt, header.length === v2ExamplesHeader.length));
+    if ((target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
+      const chapterStart = Math.min(...items.flatMap((item) => item.sourceChapters));
+      const chapterEnd = Math.max(...items.flatMap((item) => item.sourceChapters));
+      const deckContext = japaneseContextualReadings === undefined ? undefined : {
+        ...japaneseContextualReadings,
+        entries: japaneseContextualReadings.entries.filter((entry) => entry.firstIntroductionChapter >= chapterStart && entry.firstIntroductionChapter <= chapterEnd)
+      };
+      assertValidJapaneseStructuredReviewItems(items.map((item) => ({
+        cardId: item.cardId,
+        sourceChapter: item.sourceChapters[0],
+        promptLanguage: item.prompt.language ?? "",
+        answerLanguage: item.answer.language ?? "",
+        prompt: typeof item.prompt.text === "string" ? item.prompt.text : "",
+        acceptedAnswers: item.acceptedAnswers,
+        testedLexicalIds: item.testedLexicalIds,
+        examples: item.examples,
+        provenance: item.provenance
+      })), file.path, deckContext);
+    }
     return { schemaVersion: 2, items };
   }
 
   const completeBody = ordinaryReviewRowsWithRequiredDirections(target, body, usesLocalizedRows);
   const items: MemorizationItemV1[] = completeBody.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex, usesLocalizedRows) as MemorizationItemV1);
   return { schemaVersion: 1, items };
+}
+
+function parseJapaneseContextualReadings(evidenceFiles: readonly SourceFile[]): JapaneseContextualReadingDocument {
+  const source = evidenceFiles.find((file) => file.path === japaneseContextualReadingsPath);
+  if (source === undefined) throw new Error(`Japanese Review generation requires ${japaneseContextualReadingsPath} from the canonical reading curriculum.`);
+  const document = JSON.parse(source.text) as JapaneseContextualReadingDocument;
+  validateJapaneseContextualReadingDocument(document, source.path);
+  return document;
 }
 
 function ordinaryReviewRowsWithRequiredDirections(

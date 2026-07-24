@@ -34,7 +34,7 @@
         "usage": "Đây là sách.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "Minh Anh: Đây là sách."
         }
       },
@@ -48,7 +48,7 @@
         "usage": "Đây là bút.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "Maria: Đây là bút."
         }
       },
@@ -62,7 +62,7 @@
         "usage": "Đây là bàn.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-003-basic-sentences-3/chapter.md",
-          "section": "Learner-facing Dialogue",
+          "section": "Dialogue",
           "locator": "Minh Anh: Đây là bàn."
         }
       }

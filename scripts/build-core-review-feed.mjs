@@ -9,5 +9,5 @@ const targets = ["vietnamese", "dutch"].map(value => `${value}-core-reviews`);
 
 await rm(output, { recursive: true, force: true });
 await mkdir(`${output}/packages`, { recursive: true });
-execFileSync("node", ["dist/packages/core/content-package-generator-cli.js", ...targets.flatMap(target => ["--target", target]), "--output-dir", `${output}/packages`, "--generated-at", generatedAt], { stdio: "inherit" });
+execFileSync("node", ["dist/packages/core/content-package-generator-cli.js", ...targets.flatMap(target => ["--target", target]), "--output-dir", `${output}/packages`, "--generated-at", generatedAt, "--production"], { stdio: "inherit" });
 execFileSync("node", ["dist/packages/core/content-package-catalogue-cli.js", "--packages-dir", `${output}/packages`, "--output", `${output}/catalogue.json`, "--generated-at", generatedAt], { stdio: "inherit" });

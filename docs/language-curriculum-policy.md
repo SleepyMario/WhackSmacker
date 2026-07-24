@@ -2,6 +2,20 @@
 
 These rules are hard WhackSmacker language-curriculum constraints. They apply to normal language core chapters and normal core review decks.
 
+## Mandatory canonical-cast Phase 0
+
+The canonical 30-person cast is Phase 0 of every ordinary language
+curriculum. It must be fully authored and validated before Chapter 1.
+Chapter creation, generation, validation, packaging, and installation reject
+any attempt to bypass this phase.
+
+The order is canonical source directory, complete cast, validated activation
+progression and relationships, then Chapter 1 using only its active prefix.
+A schema-valid cast with zero chapters is valid source state and remains
+package-less. It does not need fabricated appearances, participant metadata,
+dialogue, narrative, Review cards, vocabulary, or packages. Unnamed functional
+participants remain available from Chapter 1 but do not waive Phase 0.
+
 ## Canonical cumulative continuity from Chapter 1
 
 For every chapter through Chapter 140, continuity begins at Chapter 1 and
@@ -16,10 +30,37 @@ one ordered Chapter-1-origin sequence and rejects missing earlier state.
 
 ## Canonical cast and active cast
 
-Language packages preserve the complete thirty-person `canonical-cast.json`,
-including its versioned `activeCast.progression`. That explicit list is a
-permutation of all thirty canonical IDs; cast-array, object, and filesystem
-order are never activation order.
+Every ordinary target-language curriculum starts with
+`name-pools/canonical-cast.json`, even when Chapter 1 has not been authored.
+The strengthened schema is `canonical-cast-v2.schema.json`; newly created and
+migrated casts use schema version 2. Schema v1 remains an explicit diagnostic
+legacy format and is accepted temporarily only for the repository-named Dutch
+and Vietnamese migrations. Those paths warn visibly, do not make either cast
+compliant, do not suppress participant/activation errors, and are removed when
+the named repository validates as v2.
+Their `activeCast.legacyMigration.status` is separately validated as `pending`
+or `complete-through-chapter-N`, plus a substantive note, so actual authored
+progress is represented without mutating the historical v1 schema or claiming
+full compliance.
+
+Language packages preserve exactly thirty canonical people, thirty unique
+stable `CAST-NNN` IDs, a thirty-ID `deckPersonPool`, and a versioned
+`activeCast.progression`. The pool and progression are exact permutations of
+the cast IDs. The progression list, never cast-array, object, or filesystem
+order, determines activation.
+
+Every v2 person has one typed plausible integer `age`, explicit `gender`
+(`female`, `male`, or `nonbinary`), full canonical name, origin, residence,
+accurate occupation/education/life status, relationship and household status,
+relevant family, specific personal background, interests, personality,
+recurring contexts, continuity notes, and structured stable-ID relationships.
+Gender is never inferred from a name. Placeholder/filler biographies and
+generic role labels stored as people are invalid.
+
+Relationships use controlled directed types and reciprocal stable-ID records.
+Validation rejects dangling/self/duplicate/incompatible relations,
+spouse/partner contradictions, impossible age chronology, and any relationship
+to an unnamed functional participant.
 
 For chapter `c`, the active prefix length is
 `min(30, 5 + 3 × floor((c - 1) / 20))`. Chapters 1-20 therefore permit 5
@@ -28,10 +69,26 @@ people, Chapters 21-40 permit 8, and every twenty-chapter boundary adds exactly
 person. Chapter 201 onward stays at those same 30. Earlier
 people remain active permanently and no thirty-first identity is allowed.
 
-Participant declarations, speaker IDs, narrative subject/narrator IDs,
-learner-facing content, cast-assignment metadata, and reviews are checked.
-Reviews can only reuse IDs present in declared source chapters. Ordinary proper
-nouns are not cast identities unless explicitly assigned a canonical ID.
+Each authored v2 chapter has a colocated `chapter-participants.json`. It
+separates `canonicalCastIds` from `unnamedFunctionalParticipants`, whose
+chapter-local IDs match `ROLE-*` and whose exact target-language `roleLabel` is
+declared. `primaryReadingParticipants`, `introductionParticipants`, and
+optional translation/support projections reconcile IDs and exact labels with
+the actual Dialogue or Narrative. Package generation and installed reading use
+the same reconciliation path. This applies to every ordinary curriculum.
+Outside the East Asian full-name policy, natural short, familiar, inflected,
+and native-script labels may map to one canonical full identity. Target,
+translation, and reading-support projections must resolve to the same ID and
+never expose that ID to learners.
+
+Unnamed functional and relational participants retain an exact target-language
+primary label and may declare explicit natural labels for introductions,
+translations, and support. They never enter activation, canonical-person
+ceilings, cast relationships, biographies, or appearance ledgers. Names and
+role labels do not automatically become vocabulary or Review content.
+Reviews can only reuse IDs present in declared
+source chapters. Ordinary proper nouns are not cast identities unless
+explicitly assigned a canonical ID.
 
 Appearance auditing reports counts by chapter, twenty-chapter block, and
 cumulatively. Generation prefers least-used suitable active people; recurring
@@ -53,13 +110,41 @@ status; they do not fail merely because future chapters are absent. Completed
 shortfalls hard-fail. After Chapter 200, activation and old/new accounting cease
 entirely. Severe concentration and long-term imbalance auditing may continue.
 
-From Chapter 201, chapters may use ID-less, lightly described functional role
-characters when a setting requires them. They do not enter the progression,
-active totals, relationship graphs, or balancing. Adding a canonical ID or
-substantial biography, relationships, personality, recurring personal plot, or
-long-term continuity is a blocking hidden-cast violation. Before Chapter 201,
-fictional incidental people remain prohibited except where another policy
-already permits a non-cast real, historical, literary, or public figure.
+From Chapter 1 onward, chapters may use any naturally required number of
+unnamed functional participants: for example a baker, shopkeeper, clerk,
+waiter, cashier, receptionist, driver, doctor, nurse, teacher, newsreader,
+police officer, ticket seller, `店員`, `점원`, or `Vendeur`. They may speak,
+act in a Narrative, and be introduced by role. They are not cast members, have
+no canonical ID, activation position, biography, relationship, appearance
+obligation, or named-cast-ceiling cost. Their `ROLE-*` identity is local to one
+chapter; the same lexical label in another chapter asserts no continuity.
+
+A functional role cannot acquire a personal name, biography, family/friend
+network, recurring storyline, stable personal history, or hidden canonical
+identity. If it does, the person must enter the canonical cast and obey all
+ordinary cast rules. Generic A/B/C speaker labels remain prohibited, and a
+canonical person cannot be relabeled as a role to evade activation or the
+three/four-person ceiling.
+
+### East Asian full-name presentation
+
+The separately named hardcoded policy
+`east-asian-full-name-presentation-policy` applies to ordinary Chinese,
+Japanese, and Korean curricula. Every actual canonical participant in a primary
+Dialogue or Narrative appears by exact full canonical target-script name in the
+scene introduction. Every canonical structural Dialogue label is that same
+full name on every turn. Chinese chooses its Traditional or Simplified field
+from package context while resolving both forms to the same shared cast ID;
+Japanese and Korean use canonical native name order and orthography.
+
+The rule does not rewrite natural reference inside utterances or Narrative
+prose. Language-appropriate given names, family names, titles, kinship terms,
+pronouns, ellipsis, and zero reference remain valid there. An unnamed
+functional participant keeps its exact natural role label and chapter-local
+`ROLE-*` ID, has no invented personal name, and remains outside cast ceilings.
+Normal and Expert introduction projections both retain the required names;
+Developer presentation never exposes cast IDs. Full names and role labels do
+not become vocabulary merely because this policy displays them.
 
 ## Chapter 1 lexical systems and learner-facing vocabulary
 
@@ -555,11 +640,52 @@ Changed surface forms can satisfy matching when they are normal for the language
 
 Preserve the read-content sentence exactly. Do not rewrite it to dictionary or base form.
 
+### Japanese structured Review readings
+
+Japanese A/B/C Review keeps the fixed schema-v2 TSV and reconstructs one
+variable-width logical vocabulary entry across its cards. If the Japanese
+expression contains kanji, the entry has exactly source meaning, Japanese
+expression, and the complete lexical pronunciation of the entire expression in
+hiragana. The required reading preserves authored punctuation, spaces, and the
+long-vowel mark `ー`; it contains no kanji, romaji, or ordinary katakana
+letters. Readings are authored lexical data and are never synthesized by
+joining isolated character readings.
+
+If the Japanese expression contains no kanji, the logical entry has exactly
+source meaning and Japanese expression. It has no separate or empty third
+value. Its kana written form may serve directly as the structured B prompt,
+while A and C omit the redundant Reading component. The package generator
+validates this rule for every Japanese schema-v2 Review source that passes
+through the shared general or specialized parser.
+
+Under `japanese-contextual-reading-identity-policy`, readings are explicit
+authored contextual lexical data. Every kanji-containing primary occurrence
+stores the complete hiragana reading of its exact surface and maps to the
+canonical lexical/sense identity for that reading. Dictionary possibility and
+automatic morphological analysis are not authority. When a different reading
+of an identical kanji-containing written form is actually introduced, it gets
+a separate stable vocabulary and Review identity, independently reconstructed
+first-introduction chapter, occurrences, examples, provenance, and
+deterministic card IDs. One identity may not mix readings.
+
+If several taught identities share the same written form, the C prompt uses
+the deterministic structured discriminator `Japanese: <written form>;
+Context: <exact literal occurrence>`. The context must resolve to that one
+reading identity. Core WhackSmacker remains the sole editable authority for
+Japanese Review TSV; package generation and installed reading reconcile it
+against the Japanese curriculum's canonical contextual-reading source.
+
 ## Chapter introduction roles
 
 `Brief Introduction` is reserved for a concise explanation of the principal
 grammar pattern or construction taught in the chapter and what it enables. It
 must not carry character, relationship, plot, or setting exposition.
+
+Chinese, Japanese, and Korean additionally project each actual participant's
+exact canonical full name into both Normal and Expert `Brief Introduction`
+prose under `east-asian-full-name-presentation-policy`. This identity projection
+does not turn that grammar-focused section into scene, relationship, or plot
+exposition.
 
 Every primary Dialogue or Narrative starts with a separate short scene
 introduction immediately below its reading heading. That introduction identifies
@@ -579,6 +705,13 @@ language packages: dialogue speaker labels, including their colons, are purple;
 spoken target-language utterances are pink; and learner-facing target-language
 narrative prose is pink. The speaker-label purple ends at the colon, so an
 entire dialogue line is never made purple.
+
+Within one Dialogue, canonical full names and functional role labels share one
+colon column computed from terminal display width. ANSI sequences have zero
+width, combining marks add no column, and Han, Hangul, hiragana, and katakana
+use their wide-cell widths. Visual padding is renderer-only. Wrapped
+continuations begin beneath the utterance; `NO_COLOR` and non-TTY output keep
+the exact text, colon alignment, line structure, and continuation indentation.
 
 Natural English translations, Source-language support, headings, vocabulary,
 grammar, exercises, and review metadata do not inherit the target-reading pink

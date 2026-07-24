@@ -17,7 +17,7 @@ const configs = [
   ["french", "French", "fr", "FRA", 60, 120, 104, 10],
   ["german", "German", "de", "GER", 55, 110, 103, 10],
   ["hindi", "Hindi", "hi", "HIN", 46, 92, 46, 5],
-  ["japanese", "Japanese", "ja", "JPN", 44, 132, 87, 10],
+  ["japanese", "Japanese", "ja", "JPN", 44, 131, 87, 10],
   ["korean", "Korean", "ko", "KOR", 47, 94, 92, 10],
   ["russian", "Russian", "ru", "RUS", 52, 104, 52, 5],
   ["spanish", "Spanish", "es", "SPA", 56, 112, 56, 5],
@@ -110,8 +110,15 @@ for (const config of configs) {
       }
     }
     assert.deepEqual(new Set(senses.keys()), new Set(lexicalRows.map(row => row[1])));
-    const expectedDirections = config.code === "ja" ? ["en-to-ja", "ja-Kana-to-ja", "ja-to-en"] : [`${config.code}-to-en`, `en-to-${config.code}`].sort();
-    for (const directions of senses.values()) assert.deepEqual([...directions].sort(), [...expectedDirections].sort());
+    const ordinaryExpectedDirections = [`${config.code}-to-en`, `en-to-${config.code}`].sort();
+    for (const [senseId, directions] of senses) {
+      const expectedDirections = config.code === "ja"
+        ? senseId === "ja.copula.da.be"
+          ? ["en-to-ja", "ja-to-en"]
+          : ["en-to-ja", "ja-Kana-to-ja", "ja-to-en"]
+        : ordinaryExpectedDirections;
+      assert.deepEqual([...directions].sort(), [...expectedDirections].sort());
+    }
 
     assert.equal(await sha256(join(repo, "LICENSE-CONTENT")), licenseSha256);
     assert.equal(await sha256(join(repo, "NOTICE")), noticeSha256);
