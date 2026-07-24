@@ -38,6 +38,7 @@ declare function require(name: "node:fs/promises"): {
   writeFile(path: string, data: string): Promise<void>;
 };
 declare function require(name: "node:path"): {
+  basename(path: string): string;
   dirname(path: string): string;
   join(...paths: string[]): string;
   resolve(...paths: string[]): string;
@@ -46,7 +47,7 @@ declare function require(name: "node:path"): {
 const { Buffer } = require("node:buffer");
 const { createHash } = require("node:crypto");
 const { mkdir, readdir, readFile, stat, writeFile } = require("node:fs/promises");
-const { dirname, join, resolve } = require("node:path");
+const { basename, dirname, join, resolve } = require("node:path");
 
 export const contentPackageCatalogueFormatVersion = 1;
 export const whackSmackerPackageMediaType = "application/vnd.whacksmacker.package+zip";
@@ -101,6 +102,7 @@ export interface GenerateLocalContentPackageCatalogueOptions {
   readonly catalogueId?: string;
   readonly displayName?: string;
   readonly description?: string;
+  readonly packageBaseUrl?: string;
 }
 
 export interface GeneratedLocalContentPackageCatalogueResult {
@@ -147,7 +149,7 @@ export async function generateLocalContentPackageCatalogue(
   options: GenerateLocalContentPackageCatalogueOptions
 ): Promise<GeneratedLocalContentPackageCatalogueResult> {
   const packagePaths = await findPackageArchives(options.packagesDirectory);
-  const packages = await Promise.all(packagePaths.map((packagePath) => createCatalogueEntry(packagePath)));
+  const packages = await Promise.all(packagePaths.map((packagePath) => createCatalogueEntry(packagePath, options.packageBaseUrl)));
   const catalogue: ContentPackageCatalogue = {
     catalogueFormatVersion: contentPackageCatalogueFormatVersion,
     catalogueId: options.catalogueId ?? "com.sleepymario.local",
@@ -187,7 +189,7 @@ export function sortCatalogueEntries(entries: readonly ContentPackageCatalogueEn
   });
 }
 
-async function createCatalogueEntry(packagePath: string): Promise<ContentPackageCatalogueEntry> {
+async function createCatalogueEntry(packagePath: string, packageBaseUrl?: string): Promise<ContentPackageCatalogueEntry> {
   const archive = await readFile(packagePath);
   const manifest = readManifestFromPackageArchive(archive);
   const archiveStats = await stat(packagePath);
@@ -206,7 +208,7 @@ async function createCatalogueEntry(packagePath: string): Promise<ContentPackage
     ...(manifest.subjects === undefined ? {} : { subjects: [...manifest.subjects].sort() }),
     source: manifest.source,
     package: {
-      url: pathToFileUrl(resolve(packagePath)),
+      url: packageBaseUrl === undefined ? pathToFileUrl(resolve(packagePath)) : packageUrl(packageBaseUrl, basename(packagePath)),
       mediaType: whackSmackerPackageMediaType,
       size: archiveStats.size,
       sha256: sha256Hex(archive)
@@ -218,6 +220,19 @@ async function createCatalogueEntry(packagePath: string): Promise<ContentPackage
     ...(manifest.keywords === undefined ? {} : { keywords: [...manifest.keywords].sort() })
     ,...(manifest.localization === undefined ? {} : { localization: manifest.localization })
   };
+}
+
+function packageUrl(baseUrl: string, filename: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`);
+  } catch {
+    throw new Error(`Invalid package base URL: ${baseUrl}`);
+  }
+  if (parsed.protocol !== "file:" && parsed.protocol !== "https:") {
+    throw new Error(`Package base URL must use file: or https:, received ${parsed.protocol}`);
+  }
+  return new URL(encodeURIComponent(filename), parsed).toString();
 }
 
 function readManifestFromPackageArchive(archive: BufferValue): ContentPackageManifest {

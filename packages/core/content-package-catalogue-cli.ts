@@ -22,6 +22,7 @@ interface CliOptions {
   readonly catalogueId?: string;
   readonly displayName?: string;
   readonly description?: string;
+  readonly packageBaseUrl?: string;
 }
 
 function parseArgs(argv: readonly string[]): CliOptions {
@@ -31,6 +32,7 @@ function parseArgs(argv: readonly string[]): CliOptions {
   let catalogueId: string | undefined;
   let displayName: string | undefined;
   let description: string | undefined;
+  let packageBaseUrl: string | undefined;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -52,6 +54,9 @@ function parseArgs(argv: readonly string[]): CliOptions {
     } else if (arg === "--description") {
       description = readValue(argv, index, arg);
       index += 1;
+    } else if (arg === "--package-base-url") {
+      packageBaseUrl = readValue(argv, index, arg);
+      index += 1;
     } else if (arg === "--help" || arg === "-h") {
       console.log(usage);
       return { packagesDirectory: "", outputPath: "", generatedAt };
@@ -64,7 +69,7 @@ function parseArgs(argv: readonly string[]): CliOptions {
     throw new Error("Both --packages-dir and --output are required.");
   }
 
-  return { packagesDirectory, outputPath, generatedAt, catalogueId, displayName, description };
+  return { packagesDirectory, outputPath, generatedAt, catalogueId, displayName, description, packageBaseUrl };
 }
 
 function readValue(argv: readonly string[], index: number, option: string): string {
@@ -78,7 +83,7 @@ function readValue(argv: readonly string[], index: number, option: string): stri
 const usage = `WhackSmacker local content package catalogue generator
 
 Usage:
-  node dist/packages/core/content-package-catalogue-cli.js --packages-dir <dir> --output <catalogue.json> [--generated-at <iso-date>]`;
+  node dist/packages/core/content-package-catalogue-cli.js --packages-dir <dir> --output <catalogue.json> [--generated-at <iso-date>] [--package-base-url <file-or-https-url>]`;
 
 main().catch((error) => {
   console.error(error instanceof Error ? error.message : String(error));

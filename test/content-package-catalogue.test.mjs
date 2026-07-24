@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { test } from "node:test";
 
 import {
@@ -188,6 +188,38 @@ test("generated catalogue from validation packages contains expected local packa
   } finally {
     await rm(packageDirectory, { recursive: true, force: true });
     await rm(catalogueDirectory, { recursive: true, force: true });
+  }
+});
+
+test("an explicit package base URL makes catalogue bytes independent of the staging directory", async () => {
+  const firstPackages = await mkdtemp(join(tmpdir(), "wsm-catalogue-first-packages-"));
+  const secondPackages = await mkdtemp(join(tmpdir(), "wsm-catalogue-second-packages-"));
+  const firstOutput = join(await mkdtemp(join(tmpdir(), "wsm-catalogue-first-output-")), "catalogue.json");
+  const secondOutput = join(await mkdtemp(join(tmpdir(), "wsm-catalogue-second-output-")), "catalogue.json");
+  const generatedAt = "2026-07-24T00:00:00Z";
+  try {
+    for (const outputDirectory of [firstPackages, secondPackages]) {
+      await generateContentPackage({ targetId: "arabic-curriculum", outputDirectory, generatedAt });
+    }
+    const options = {
+      generatedAt,
+      packageBaseUrl: "file:///srv/whacksmacker/packages",
+      catalogueId: "com.sleepymario.deterministic",
+      displayName: "Deterministic catalogue",
+      description: "Deterministic staging fixture."
+    };
+    await generateLocalContentPackageCatalogue({ ...options, packagesDirectory: firstPackages, outputPath: firstOutput });
+    await generateLocalContentPackageCatalogue({ ...options, packagesDirectory: secondPackages, outputPath: secondOutput });
+    assert.deepEqual(await readFile(firstOutput), await readFile(secondOutput));
+    assert.equal(
+      JSON.parse(await readFile(firstOutput, "utf8")).packages[0].package.url,
+      "file:///srv/whacksmacker/packages/com.sleepymario.language.arabic-0.1.0.wspkg"
+    );
+  } finally {
+    await rm(firstPackages, { recursive: true, force: true });
+    await rm(secondPackages, { recursive: true, force: true });
+    await rm(dirname(firstOutput), { recursive: true, force: true });
+    await rm(dirname(secondOutput), { recursive: true, force: true });
   }
 });
 
