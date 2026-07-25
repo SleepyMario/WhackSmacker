@@ -2555,15 +2555,13 @@ test("two-pane renderer aligns Korean markdown table columns by display width", 
     .filter((line) => line.startsWith("| "));
   const pipeColumns = tableLines.map(displayPipeColumns);
 
-  assert.equal(tableLines.length, 9);
+  assert.equal(tableLines.length, 7);
   assert.deepEqual(new Set(pipeColumns.map((columns) => JSON.stringify(columns))).size, 1);
   assert.match(tableLines[0], /^\| Korean\s+\| Meaning\s+\| Notes\s+\|$/u);
-  assert.match(tableLines[2], /^\|\s+\|\s+\|\s+\|$/u);
-  assert.match(tableLines[3], /^\| 안녕하세요\s+\| hello\s+\| Fixed greeting expression\.\s+\|$/u);
-  assert.match(tableLines[4], /^\|\s+\|\s+\|\s+\|$/u);
-  assert.match(tableLines[6], /^\|\s+\|\s+\|\s+\|$/u);
-  assert.match(tableLines[7], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
-  assert.match(tableLines[8], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[2], /^\| 안녕하세요\s+\| hello\s+\| Fixed greeting expression\.\s+\|$/u);
+  assert.match(tableLines[3], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[5], /^\|\s+\|\s+\|\s+\|$/u);
+  assert.match(tableLines[6], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
   assert.doesNotMatch(tableLines.join("\n"), /New noun; not self-ID here|Can fill the N slot/u);
 });
 
@@ -2578,10 +2576,79 @@ test("vocabulary renderer spaces logical entries without splitting semantic cont
   ].join("\n"), false);
   const rows = output.split("\n").map(rightPaneCell).filter((line) => line.startsWith("| "));
   const blank = (line) => /^\|\s+\|\s+\|\s+\|$/u.test(line);
-  assert.equal(rows.filter(blank).length, 3, "before, between, and after two logical entries");
+  assert.equal(rows.filter(blank).length, 1, "exactly one separator appears between two logical entries");
   const finite = rows.findIndex((line) => /gaat/u.test(line));
   const citation = rows.findIndex((line) => /→ gaan/u.test(line));
+  assert.equal(blank(rows[2]), false, "no blank appears before the first logical entry");
+  assert.equal(blank(rows.at(-1)), false, "no blank appears after the final logical entry");
   assert.equal(citation, finite + 1, "citation continuation stays contiguous with its surface row");
+});
+
+test("canonical vocabulary spacing survives Notes modes, Japanese Reading, ANSI, narrow wrapping, and every view", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
+  const tables = [
+    [
+      "| Form | Reading | Meaning | Part of speech | Note |",
+      "|---|---|---|---|---|",
+      "| alpha |  | first | noun | short note |",
+      "| β-one<br>β-two |  | second meaning that can wrap in a narrow pane | phrase | longer note that can also wrap |",
+      "| gamma | がんま | third | noun | final note |"
+    ].join("\n"),
+    [
+      "| Form | Reading | Meaning | Part of speech |",
+      "|---|---|---|---|",
+      "| alpha |  | first | noun |",
+      "| β-one<br>β-two |  | second meaning that can wrap in a narrow pane | phrase |",
+      "| gamma | がんま | third | noun |"
+    ].join("\n")
+  ];
+  const blank = (line) => /^\|(?:\s+\|)+$/u.test(line);
+
+  for (const markdown of tables) {
+    for (const colorsEnabled of [false, true]) {
+      for (const terminalWidth of [82, 160]) {
+        for (const mode of ["normal", "expert", "developer"]) {
+          const output = renderTwoPaneLanguageTree(
+            tree,
+            new Set(["whacksmacker"]),
+            0,
+            markdown,
+            colorsEnabled,
+            0,
+            28,
+            "en-US",
+            "navigation",
+            terminalWidth,
+            0,
+            mode
+          );
+          const rows = output.split("\n").map((line) => stripAnsi(rightPaneCell(line))).filter((line) => line.startsWith("| "));
+          const dataRows = rows.slice(2);
+          assert.equal(dataRows.filter(blank).length, 2, `${mode}/${colorsEnabled}/${terminalWidth}`);
+          assert.equal(blank(dataRows[0]), false, "no leading logical-entry separator");
+          assert.equal(blank(dataRows.at(-1)), false, "no trailing logical-entry separator");
+          for (let index = 1; index < dataRows.length; index += 1) {
+            assert.equal(blank(dataRows[index]) && blank(dataRows[index - 1]), false, "entry separators never duplicate");
+          }
+          const betaRows = dataRows.map((line, index) => line.includes("β") ? index : -1).filter((index) => index >= 0);
+          assert.equal(betaRows.length, 2);
+          const betaFirst = betaRows[0];
+          const betaSecond = betaRows[1];
+          assert.equal(dataRows.slice(betaFirst, betaSecond + 1).some(blank), false, "no separator appears inside one multi-line entry");
+        }
+      }
+    }
+  }
+
+  const single = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
+    "| Form | Meaning | Part of speech |",
+    "|---|---|---|",
+    "| only | one entry | phrase |"
+  ].join("\n"), false);
+  const singleRows = single.split("\n").map(rightPaneCell).filter((line) => line.startsWith("| ")).slice(2);
+  assert.equal(singleRows.length, 1);
+  assert.match(singleRows[0], /only/u);
+  assert.equal(singleRows.some(blank), false);
 });
 
 test("completed five-chapter blocks interleave their authoritative Review source generically", () => {

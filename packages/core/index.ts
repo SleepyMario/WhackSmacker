@@ -30,3 +30,4 @@ export * from "./sino-vietnamese-policy";
 export * from "./user-data-backup";
 export * from "./user-data-migration";
 export * from "./ui";
+export * from "./vocabulary-rendering";

@@ -37,6 +37,9 @@ import {
   syncReadingReviewItems,
   unicodeTerminalDisplayWidth,
   isUnicodeWideCharacter,
+  isLogicalVocabularyContinuation,
+  isVocabularyTableHeader,
+  vocabularyNoteColumn,
   type ContentPackageCatalogueEntry,
   type CurriculumDisplayMode,
   type FirstClassModuleDescriptor,
@@ -4676,7 +4679,8 @@ function formatMarkdownTable(rawLines: readonly string[], width: number, colorsE
   const headerRow = parsedRows.find((row) => !isMarkdownTableSeparatorRow(row)) ?? [];
   const visibleColumns = Array.from({ length: originalColumnCount }, (_, column) => column)
     .filter((column) => (headerRow[column] ?? "").trim().toLowerCase() !== "status");
-  const noteColumn = visibleColumns.findIndex((column) => (headerRow[column] ?? "").trim().toLowerCase() === "notes");
+  const visibleHeader = visibleColumns.map((column) => headerRow[column] ?? "");
+  const noteColumn = vocabularyNoteColumn(visibleHeader);
   const rows = parsedRows.map((row) => visibleColumns.map((column, visibleColumn) => {
     const cell = row[column] ?? "";
     return visibleColumn === noteColumn && !isMarkdownTableSeparatorRow(row) ? normalizeVocabularyNote(cell) : cell;
@@ -4690,20 +4694,20 @@ function formatMarkdownTable(rawLines: readonly string[], width: number, colorsE
   ));
   const widths = constrainTableWidths(idealWidths, width);
   const formattedRows: string[] = [];
-  const vocabularyTable = isVocabularyTableHeader(headerRow);
+  const vocabularyTable = isVocabularyTableHeader(visibleHeader);
   let renderedVocabularyEntries = 0;
-  let vocabularyEntryOpen = false;
   for (const [rowIndex, row] of rows.entries()) {
     if (isMarkdownTableSeparatorRow(row)) {
       formattedRows.push(`| ${widths.map((cellWidth) => "-".repeat(cellWidth)).join(" | ")} |`);
       continue;
     }
     const isVocabularyRow = vocabularyTable && rowIndex > 0;
-    const isContinuation = isVocabularyRow && isLogicalVocabularyContinuation(row, headerRow, noteColumn);
-    if (isVocabularyRow && !isContinuation) {
+    const isContinuation = isVocabularyRow && isLogicalVocabularyContinuation(row, visibleHeader, noteColumn);
+    if (isVocabularyRow && !isContinuation && renderedVocabularyEntries > 0) {
       formattedRows.push(`| ${widths.map((cellWidth) => " ".repeat(cellWidth)).join(" | ")} |`);
+    }
+    if (isVocabularyRow && !isContinuation) {
       renderedVocabularyEntries += 1;
-      vocabularyEntryOpen = true;
     }
     const wrappedCells = widths.map((cellWidth, column) => wrapMultilineTableCell(row[column] ?? "", cellWidth));
     const rowHeight = Math.max(...wrappedCells.map((cell) => cell.length));
@@ -4711,35 +4715,7 @@ function formatMarkdownTable(rawLines: readonly string[], width: number, colorsE
       formattedRows.push(`| ${widths.map((cellWidth, column) => padRightDisplay(wrappedCells[column]?.[lineIndex] ?? "", cellWidth)).join(" | ")} |`);
     }
   }
-  if (vocabularyEntryOpen && renderedVocabularyEntries > 0) {
-    formattedRows.push(`| ${widths.map((cellWidth) => " ".repeat(cellWidth)).join(" | ")} |`);
-  }
   return formattedRows;
-}
-
-function isLogicalVocabularyContinuation(
-  row: readonly string[],
-  header: readonly string[],
-  noteColumn: number
-): boolean {
-  const labels = header.map((cell) => cell.trim().toLowerCase());
-  const value = (label: string): string => {
-    const column = labels.findIndex((candidate) => candidate === label);
-    return column < 0 ? "" : (row[column] ?? "").trim();
-  };
-  const form = value("form") || value("surface form") || value("word") || value("phrase");
-  const meaning = value("meaning") || value("english") || value("meaning in this usage");
-  const identity = value("sense id") || value("senseid") || value("sense identity")
-    || value("entry id") || value("entryid") || value("lexical entry id");
-  const note = noteColumn < 0 ? "" : (row[noteColumn] ?? "").trim();
-  const continuationRole = value("row role") || value("entry role") || value("logical role") || note;
-  return /^(?:continuation|citation(?: form)?|canonical(?: form)?|expanded(?: form)?|decomposed(?: form)?|infinitive|paradigm(?: continuation)?|wrapped note)$/iu.test(continuationRole)
-    || (meaning.length === 0 && identity.length === 0 && (/^(?:[↳→]|(?:citation|canonical|expanded|decomposed|infinitive|paradigm)\b)/iu.test(form) || form.length === 0));
-}
-
-function isVocabularyTableHeader(header: readonly string[]): boolean {
-  const labels = header.map((cell) => cell.trim().toLowerCase());
-  return labels.includes("notes") && labels.some((label) => label === "meaning" || label === "english");
 }
 
 function wrapMultilineTableCell(value: string, width: number): readonly string[] {

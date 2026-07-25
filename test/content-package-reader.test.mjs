@@ -79,6 +79,62 @@ test("installed content entry can be read and rendered", async () => {
   }
 });
 
+test("non-TTY installed rendering preserves canonical logical-entry spacing in every view", () => {
+  const result = (text) => ({
+    package: {
+      packageId: "com.sleepymario.language.fixture",
+      packageVersion: "0.1.0",
+      displayName: "Fixture",
+      contentType: "reading-curriculum"
+    },
+    entry: {
+      path: "units/fixture-core/chapter-001/chapter.md",
+      mediaType: "text/markdown",
+      title: "Fixture",
+      source: "snapshot"
+    },
+    text
+  });
+  const variants = [
+    [
+      "# Chapter 1",
+      "",
+      "### New Vocabulary",
+      "",
+      "| Form | Reading | Meaning | Part of speech | Note |",
+      "|---|---|---|---|---|",
+      "| alpha |  | first | noun | note |",
+      "| beta line 1<br>beta line 2 |  | second | phrase | long note |",
+      "| gamma | がんま | third | noun | note |"
+    ].join("\n"),
+    [
+      "# Chapter 1",
+      "",
+      "### New Vocabulary",
+      "",
+      "| Form | Reading | Meaning | Part of speech |",
+      "|---|---|---|---|",
+      "| alpha |  | first | noun |",
+      "| beta line 1<br>beta line 2 |  | second | phrase |",
+      "| gamma | がんま | third | noun |"
+    ].join("\n")
+  ];
+  const blank = (line) => /^\|(?:\s+\|)+$/u.test(line);
+
+  for (const text of variants) {
+    for (const mode of ["normal", "expert", "developer"]) {
+      const rows = renderReadingContent(result(text), mode).split("\n").filter((line) => line.startsWith("| "));
+      const dataRows = rows.slice(2);
+      assert.equal(dataRows.filter(blank).length, 2, mode);
+      assert.equal(blank(dataRows[0]), false);
+      assert.equal(blank(dataRows.at(-1)), false);
+      const betaFirst = dataRows.findIndex((line) => line.includes("beta line 1"));
+      const betaSecond = dataRows.findIndex((line) => line.includes("beta line 2"));
+      assert.equal(betaSecond, betaFirst + 1);
+    }
+  }
+});
+
 test("reader rejects unsafe requested paths", async () => {
   const fixture = await createInstalledReadingFixture();
   try {
