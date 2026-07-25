@@ -586,6 +586,7 @@ export interface InteractiveMenuOptions {
   readonly translationsEnabled?: boolean;
   readonly breakdownEnabled?: boolean;
   readonly charactersEnabled?: boolean;
+  readonly notesEnabled?: boolean;
 }
 
 export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal(), options: InteractiveMenuOptions = {}): Promise<void> {
@@ -902,6 +903,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     translationsEnabled: options.translationsEnabled ?? false
     , breakdownEnabled: options.breakdownEnabled ?? false
     , charactersEnabled: options.charactersEnabled ?? false
+    , notesEnabled: options.notesEnabled ?? true
   };
   let tree = await buildModuleTree(options);
   let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
@@ -919,9 +921,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     selection = Math.min(selection, visible.length - 1);
     const selectedNode = visible[selection]?.node ?? tree;
     const charactersApplicable = charactersToggleAppliesToNode(selectedNode);
-    const toggleCount = charactersApplicable ? 5 : 4;
+    const toggleCount = charactersApplicable ? 6 : 5;
     toggleSelection = Math.min(toggleSelection, toggleCount - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -1044,7 +1046,8 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         else if (toggleSelection === 1) options = { ...options, displayMode: nextCurriculumDisplayMode(options.displayMode ?? defaultCurriculumDisplayMode) };
         else if (toggleSelection === 2) options = { ...options, translationsEnabled: options.translationsEnabled !== true };
         else if (charactersApplicable && toggleSelection === 3) options = { ...options, charactersEnabled: options.charactersEnabled !== true };
-        else options = { ...options, breakdownEnabled: options.breakdownEnabled !== true };
+        else if (toggleSelection === (charactersApplicable ? 4 : 3)) options = { ...options, breakdownEnabled: options.breakdownEnabled !== true };
+        else options = { ...options, notesEnabled: options.notesEnabled === false };
         if (sourceChanged && embeddedReview !== null) {
           embeddedReview = await reprojectEmbeddedReviewSession(embeddedReview, options);
         } else {
@@ -2231,7 +2234,8 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     }
     return projectCurriculumMarkdown(markdown, options.displayMode ?? defaultCurriculumDisplayMode, {
       contentRole: curriculumContentRoleForPath(node.filePath),
-      translationsEnabled: options.translationsEnabled === true
+      translationsEnabled: options.translationsEnabled === true,
+      notesEnabled: options.notesEnabled !== false
     });
   }
   if (node.kind === "package-info") {
@@ -3137,12 +3141,16 @@ function japanesePromptLinesForView(view: JapaneseReviewView): readonly string[]
 
 function japaneseAnswerLinesForView(view: JapaneseReviewView, fallbackAnswerLines: readonly string[]): readonly string[] {
   const lines: string[] = [];
+  const redundantKanaReading = view.fields.reading !== undefined
+    && view.fields.japanese !== undefined
+    && view.fields.reading === view.fields.japanese
+    && !containsHanCharacter(view.fields.japanese);
   if (view.promptSide === "meaning") {
-    pushJapaneseReviewLine(lines, "Reading", view.fields.reading);
+    pushJapaneseReviewLine(lines, "Reading", redundantKanaReading ? undefined : view.fields.reading);
     pushJapaneseReviewLine(lines, "Japanese", view.fields.japanese);
   } else if (view.promptSide === "japanese") {
     pushJapaneseReviewLine(lines, "Meaning", view.fields.meaning);
-    pushJapaneseReviewLine(lines, "Reading", view.fields.reading);
+    pushJapaneseReviewLine(lines, "Reading", redundantKanaReading ? undefined : view.fields.reading);
   } else if (view.promptSide === "reading") {
     pushJapaneseReviewLine(lines, "Meaning", view.fields.meaning);
     pushJapaneseReviewLine(lines, "Japanese", view.fields.japanese);
@@ -4140,9 +4148,10 @@ function renderLanguageTreeMenu(
   translationsEnabled = false,
   breakdownEnabled = false,
   charactersEnabled = false,
-  charactersApplicable = false
+  charactersApplicable = false,
+  notesEnabled = true
 ): void {
-  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable)}`);
+  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled)}`);
 }
 
 const rightPanePageSize = 24;
@@ -4166,7 +4175,8 @@ export function renderTwoPaneLanguageTree(
   translationsEnabled = false,
   breakdownEnabled = false,
   charactersEnabled = false,
-  charactersApplicable = false
+  charactersApplicable = false,
+  notesEnabled = true
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
   const layout = threePaneLayout(terminalWidth);
@@ -4199,7 +4209,7 @@ export function renderTwoPaneLanguageTree(
   lines.push(`${separator} ${padRight(navigationTitle, leftWidth)} ${separator} ${padRight(outputTitle, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(togglesTitle, layout.toggleWidth)} ${separator}` : ""}`);
   lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}${layout.showToggles ? ` ${" ".repeat(layout.toggleWidth)} ${separator}` : ""}`);
 
-  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
+  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
@@ -4224,14 +4234,15 @@ export function renderSourceLanguageToggle(sourceLocale: SourceLocale, colorsEna
   return colorsEnabled ? `${ansi.bold}${ansi.orange}${label}${ansi.reset}` : label;
 }
 
-function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
+function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
   const viewLabel: Record<CurriculumDisplayMode, string> = { normal: "Normal", expert: "Expert", developer: "Developer" };
   const raw = [
     `Source: ${sourceLocaleLabel(sourceLocale, sourceLocale)}`,
     `View mode: ${viewLabel[displayMode]}`,
     `Translation: ${translationsEnabled ? "On" : "Off"}`,
     ...(charactersApplicable ? [`Characters: ${charactersEnabled ? "On" : "Off"}`] : []),
-    `Breakdown: ${breakdownEnabled ? "On" : "Off"}`
+    `Breakdown: ${breakdownEnabled ? "On" : "Off"}`,
+    `Notes: ${notesEnabled ? "On" : "Off"}`
   ];
   return raw.map((value, index) => {
     const selected = focused && selection === index;

@@ -61,7 +61,7 @@ function breakdownSentences(value) {
 
 test("Dutch Chapters 76–80 use the approved modes and aligned 36-sentence support", async () => {
   const directories = await readdir(unitRoot);
-  assert.equal(directories.some((directory) => /^chapter-081-/u.test(directory)), false);
+  assert.equal(directories.some((directory) => /^chapter-086-/u.test(directory)), false);
   for (const [chapter, [directory, mode]] of chapters) {
     assert.equal(directories.includes(directory), true, `Chapter ${chapter} source directory`);
     const markdown = await readFile(join(unitRoot, directory, "chapter.md"), "utf8");
@@ -86,8 +86,8 @@ test("Grammar Easy and Hard 76–80 expose the same ten canonical identities", a
   assert.deepEqual(identities[0], grammarIds);
   assert.deepEqual(identities[1], grammarIds);
   const coverage = JSON.parse(await readFile(join(curriculumRoot, "grammar-coverage.json"), "utf8"));
-  assert.equal(coverage.highestAuthoredChapter, 80);
-  assert.deepEqual(coverage.chapterMappings.slice(-5).flatMap((row) => row.newGrammarIds), grammarIds);
+  assert.equal(coverage.highestAuthoredChapter, 85);
+  assert.deepEqual(coverage.chapterMappings.filter((row) => row.chapter >= 76 && row.chapter <= 80).flatMap((row) => row.newGrammarIds), grammarIds);
   for (const id of grammarIds) {
     const row = coverage.structures.find((candidate) => candidate.grammarId === id);
     assert.equal(row.status, "introduced", id);
@@ -124,7 +124,7 @@ test("Review 76–80 contains exactly 103 senses and 206 literal bidirectional c
   for (const directions of bySense.values()) assert.deepEqual(directions.sort(), ["en->nl", "nl->en"]);
 });
 
-test("generated and installed Dutch packages expose Chapters, Review, and Grammar 76–80 but no Chapter 81", async () => {
+test("generated and installed Dutch packages expose Chapters, Review, and Grammar 76–80 while Chapter 86 remains absent", async () => {
   const root = await mkdtemp(join(tmpdir(), "wsm-dutch-076-080-"));
   const packagesDirectory = join(root, "packages");
   const cataloguePath = join(root, "catalogue.json");
@@ -139,7 +139,7 @@ test("generated and installed Dutch packages expose Chapters, Review, and Gramma
     const readingContent = JSON.parse(await readFile(join(dataDir, "packages", "com.sleepymario.language.dutch", reading.packageVersion, "content", "content.json"), "utf8"));
     const reviewContent = JSON.parse(await readFile(join(dataDir, "packages", "com.sleepymario.language.dutch.reviews", review.packageVersion, "content", "content.json"), "utf8"));
     for (const [, [directory]] of chapters) assert.equal(readingContent.files.some((file) => file.path === `units/dutch-core/${directory}/chapter.md`), true, directory);
-    assert.equal(readingContent.files.some((file) => /^units\/dutch-core\/chapter-081-/u.test(file.path)), false);
+    assert.equal(readingContent.files.some((file) => /^units\/dutch-core\/chapter-086-/u.test(file.path)), false);
     assert.equal(reviewContent.files.some((file) => file.path === "review-decks/chapter-076-080/cards.tsv"), true);
 
     const tree = await buildLanguageTree(dataDir);
@@ -156,7 +156,7 @@ test("generated and installed Dutch packages expose Chapters, Review, and Gramma
         assert.match(rendered, /^## Narrative\s*\n\n\S/mu, `Chapter ${chapter} begins its reading with narrative content`);
       }
     }
-    assert.equal(read.children.some((node) => node.label.startsWith("Chapter 81 --")), false);
+    assert.equal(read.children.some((node) => node.label.startsWith("Chapter 86 --")), false);
     assert.equal(read.children.some((node) => node.label === "Review -- Chapters 76–80"), true);
     const grammarEasy = read.children.find((node) => node.filePath === "units/dutch-core/chapter-076-080-grammar-easy/chapter.md");
     assert.ok(grammarEasy, "Grammar Easy 76–80 normal-mode menu node");

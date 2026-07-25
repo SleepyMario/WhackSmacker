@@ -4,6 +4,7 @@ export type CurriculumContentRole = "reading" | "grammar-easy" | "grammar-hard";
 export interface CurriculumProjectionOptions {
   readonly contentRole?: CurriculumContentRole;
   readonly translationsEnabled?: boolean;
+  readonly notesEnabled?: boolean;
 }
 
 export interface ReadingAudienceSection {
@@ -81,8 +82,44 @@ export function projectCurriculumMarkdown(
   const readerSafe = projectReadContentInternalFields(withoutGrammarIdentifiers, mode);
   const audienceVocabulary = mode === "developer" ? readerSafe : projectVocabularyNotes(readerSafe, mode);
   const withoutRawUsage = mode === "developer" ? audienceVocabulary : hideRawVocabularyUsage(audienceVocabulary);
-  const grammarProjected = projectGrammarRole(withoutRawUsage, mode, options.contentRole ?? "reading");
+  const notesProjected = options.notesEnabled === false ? hideNewVocabularyNoteColumn(withoutRawUsage) : withoutRawUsage;
+  const grammarProjected = projectGrammarRole(notesProjected, mode, options.contentRole ?? "reading");
   return normalizeReadContentHeadingSpacing(collapseExcessBlankLines(simplifyReadingHeadings(grammarProjected)));
+}
+
+export function hideNewVocabularyNoteColumn(text: string): string {
+  const output: string[] = [];
+  const lines = text.split("\n");
+  let vocabularyHeadingLevel: number | undefined;
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index] ?? "";
+    const heading = /^(#{1,6})\s+(.+)$/u.exec(line.trim());
+    if (heading !== null) {
+      const level = heading[1]?.length ?? 0;
+      if (/^(?:New\s+)?Vocabulary\b/iu.test(heading[2] ?? "")) vocabularyHeadingLevel = level;
+      else if (vocabularyHeadingLevel !== undefined && level <= vocabularyHeadingLevel) vocabularyHeadingLevel = undefined;
+    }
+    if (!isMarkdownTableRow(line.trim())) {
+      output.push(line);
+      continue;
+    }
+    const table: string[] = [line];
+    while (index + 1 < lines.length && isMarkdownTableRow((lines[index + 1] ?? "").trim())) {
+      index += 1;
+      table.push(lines[index] ?? "");
+    }
+    output.push(...hideNoteColumn(table, vocabularyHeadingLevel !== undefined));
+  }
+  return output.join("\n");
+}
+
+function hideNoteColumn(lines: readonly string[], inVocabularySection: boolean): readonly string[] {
+  if (!inVocabularySection) return lines;
+  const rows = lines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => cell.trim()));
+  const header = rows.find((row) => !isMarkdownSeparatorRow(row)) ?? [];
+  const noteColumn = header.findIndex((cell) => /^(?:note|notes)$/iu.test(cell));
+  if (noteColumn < 0) return lines;
+  return rows.map((row) => `| ${row.filter((_, column) => column !== noteColumn).join(" | ")} |`);
 }
 
 const internalIdentityLabels = new Set([

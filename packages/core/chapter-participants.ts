@@ -327,6 +327,8 @@ function extractPrimaryReading(markdown: string, source: string): {
   const headingPattern = /^(#{2,3})\s+(?:Learner-facing )?(Dialogue|Narrative|Controlled Reading|Read Content)\s*$/gimu;
   const heading = headingPattern.exec(normalized);
   if (heading === null) throw new Error(`${source}: chapter has no primary Dialogue or Narrative heading`);
+  const explicitIntroductionMatch = /^### Brief Introduction\s*\n\s*\n([\s\S]*?)(?=\n#{1,3}\s|$)/mu.exec(normalized.slice(0, heading.index).trimEnd());
+  const explicitIntroduction = explicitIntroductionMatch?.[1].trim();
   const level = heading[1].length;
   const start = heading.index + heading[0].length;
   const rest = normalized.slice(start).replace(/^\s*\n/u, "");
@@ -337,13 +339,16 @@ function extractPrimaryReading(markdown: string, source: string): {
     const lines = section.split("\n");
     const firstSpeaker = lines.findIndex(line => structuralSpeakerLabel(line) !== undefined);
     if (firstSpeaker < 0) throw new Error(`${source}: Dialogue contains no structural speaker labels`);
-    const introduction = lines.slice(0, firstSpeaker).join("\n").trim();
+    const introduction = explicitIntroduction ?? lines.slice(0, firstSpeaker).join("\n").trim();
     const body = lines.slice(firstSpeaker).join("\n").trim();
     const dialogueSpeakerLabels = [...new Set(lines.slice(firstSpeaker).flatMap(line => {
       const label = structuralSpeakerLabel(line);
       return label === undefined ? [] : [label];
     }))];
     return { mode, introduction, body, dialogueSpeakerLabels };
+  }
+  if (explicitIntroduction !== undefined) {
+    return { mode, introduction: explicitIntroduction, body: section, dialogueSpeakerLabels: [] };
   }
   const paragraphs = section.split(/\n\s*\n/u).map(part => part.trim()).filter(Boolean);
   if (paragraphs.length < 2) throw new Error(`${source}: Narrative must contain a separate people/subject-and-setting introduction before its body`);

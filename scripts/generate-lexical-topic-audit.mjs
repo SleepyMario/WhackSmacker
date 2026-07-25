@@ -8,7 +8,7 @@ const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_lan
 
 const configs = [
   {
-    language: "Dutch", code: "nl", slug: "dutch", repository: "dutch-curriculum", maxChapter: 80,
+    language: "Dutch", code: "nl", slug: "dutch", repository: "dutch-curriculum", maxChapter: 85,
     newlyRegisteredTopics: ["administration.documents", "communication.greetings", "communication.media", "daily.routines", "education.learning", "emotions.general", "food.cooking", "furniture.general", "gardening.plants", "geography.places", "leisure.crafts", "leisure.culture", "numbers.cardinal", "technology.networking", "travel.hiking", "work.projects"],
     corrections: [
       "Separated furniture.general from household.objects and moved the household anchor to the earliest remaining household sense, nl.noun.raam.window (Chapter 4).",

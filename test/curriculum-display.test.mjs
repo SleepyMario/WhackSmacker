@@ -194,6 +194,30 @@ test("Normal reading vocabulary tables hide raw Usage while Developer preserves 
   assert.doesNotMatch(expert, /\bUsage\b|compressed editorial metadata/u);
 });
 
+test("Notes default On and Off reclaims only the New Vocabulary Note column in every view", () => {
+  const vocabulary = [
+    "### New Vocabulary", "",
+    "| Form | Reading | Meaning | Part of speech | Note |",
+    "|---|---|---|---|---|",
+    "| 学生 | がくせい | student | noun | contextual note |", "",
+    "### Other Table", "",
+    "| Form | Note |", "|---|---|", "| keep | other note |"
+  ].join("\n");
+  for (const mode of ["normal", "expert", "developer"]) {
+    const defaultOn = projectCurriculumMarkdown(vocabulary, mode);
+    const explicitOn = projectCurriculumMarkdown(vocabulary, mode, { notesEnabled: true });
+    const off = projectCurriculumMarkdown(vocabulary, mode, { notesEnabled: false });
+    assert.equal(defaultOn, explicitOn);
+    assert.match(defaultOn, /\| Form \| Reading \| Meaning \| Part of speech \| Note \|/u);
+    assert.match(off, /\| Form \| Reading \| Meaning \| Part of speech \|/u);
+    assert.doesNotMatch(off, /contextual note/u);
+    assert.match(off, /\| Form \| Note \|[\s\S]*other note/u);
+    const onVocabularyLine = defaultOn.split("\n").find((line) => line.includes("学生"));
+    const offVocabularyLine = off.split("\n").find((line) => line.includes("学生"));
+    assert.ok(offVocabularyLine.length < onVocabularyLine.length, `${mode} reclaims Note width`);
+  }
+});
+
 test("Characters tables hide internal identity in every view and use learner-facing Usage", () => {
   const characters = [
     "### Sino-Vietnamese Vocabulary", "",

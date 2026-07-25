@@ -31,6 +31,7 @@ import {
   assertLanguageCurriculumStage71140Coverage,
   assertCanonicalVocabularyReviewMapping,
   canonicalVocabularyTableHeaders,
+  japaneseCanonicalVocabularyTableHeaders,
   formatLearnerFacingVocabularyRow,
   type LearnerFacingLexicalDisplayRecord,
   type BroaderTopicRecord
@@ -339,7 +340,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     languages: ["ja", "en"],
     subjects: ["language", "japanese"],
     license: { spdx: null, name: null, path: null },
-    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "japanese-contextual-readings.json", "units"]
+    include: ["README.md", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "japanese-contextual-readings.json", "japanese-grammar-readings.json", "units"]
   },
   {
     id: "korean-curriculum",
@@ -691,7 +692,9 @@ function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): 
   const metadata = sourceFiles.find((file) => file.path === vocabularyFormsPath);
   if (metadata === undefined) throw new Error("Language curriculum package requires vocabulary-forms.json.");
   const document = JSON.parse(metadata.text) as PackagedCanonicalVocabularyDocument;
-  if (JSON.stringify(document.canonicalTable?.headers) !== JSON.stringify(canonicalVocabularyTableHeaders) || document.canonicalTable?.arrow !== "←") throw new Error("Canonical vocabulary table must be Form | Meaning | Part of speech | Note with ←.");
+  const contextualMetadata = sourceFiles.find((file) => file.path === japaneseContextualReadingsPath);
+  const expectedHeaders = contextualMetadata === undefined ? canonicalVocabularyTableHeaders : japaneseCanonicalVocabularyTableHeaders;
+  if (JSON.stringify(document.canonicalTable?.headers) !== JSON.stringify(expectedHeaders) || document.canonicalTable?.arrow !== "←") throw new Error(`Canonical vocabulary table must be ${expectedHeaders.join(" | ")} with ←.`);
   if (!Array.isArray(document.displayRows) || !Array.isArray(document.occurrences)) throw new Error("Canonical vocabulary displayRows and occurrences are required.");
   assertCanonicalVocabularyReviewMapping(document.displayRows, document.review?.canonicalSenseIds ?? [], document.review?.grammarIds ?? []);
   const occurrences = new Map(document.occurrences.map((occurrence) => [occurrence.id, occurrence]));
@@ -699,14 +702,13 @@ function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): 
   for (const row of document.displayRows) {
     const occurrence = occurrences.get(row.occurrenceId);
     if (occurrence === undefined || !occurrence.displayRowIds.includes(row.id)) throw new Error(`${row.id}: canonical occurrence mapping is incomplete.`);
-    for (const field of ["surfaceForm", "expandedForm", "canonicalForm", "canonicalParadigm", "formRelationship", "canonicalLexicalId", "canonicalSenseId", "contextualMeaning", "partOfSpeech"] as const) {
+    for (const field of ["surfaceForm", "displayForm", "expandedForm", "canonicalForm", "canonicalParadigm", "contextualReading", "formRelationship", "canonicalLexicalId", "canonicalSenseId", "contextualMeaning", "partOfSpeech"] as const) {
       if (JSON.stringify(row[field]) !== JSON.stringify(occurrence[field])) throw new Error(`${row.id}: ${field} disagrees with its occurrence.`);
     }
     const source = sourceByPath.get(row.sourcePath);
-    if (source === undefined || !source.includes(formatLearnerFacingVocabularyRow(row))) throw new Error(`${row.id}: canonical learner-facing vocabulary row is absent from its packaged chapter.`);
+    if (source === undefined || !source.includes(formatLearnerFacingVocabularyRow(row, expectedHeaders))) throw new Error(`${row.id}: canonical learner-facing vocabulary row is absent from its packaged chapter.`);
     if (!source.includes(occurrence.sentenceOrExample) || !occurrence.sentenceOrExample.normalize("NFC").includes(row.surfaceForm.normalize("NFC"))) throw new Error(`${row.id}: occurrence evidence does not preserve the exact surface form.`);
   }
-  const contextualMetadata = sourceFiles.find((file) => file.path === japaneseContextualReadingsPath);
   if (contextualMetadata === undefined) return;
   const contextual = JSON.parse(contextualMetadata.text) as JapaneseContextualReadingDocument;
   const entries = validateJapaneseContextualReadingDocument(contextual, contextualMetadata.path);
@@ -723,6 +725,7 @@ function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): 
       if (contextualOccurrence[field] !== occurrence[field]) throw new Error(`${contextualMetadata.path}: occurrence ${occurrence.id} ${field} disagrees with vocabulary-forms.json.`);
     }
     if (contextualOccurrence.evidence !== occurrence.sentenceOrExample) throw new Error(`${contextualMetadata.path}: occurrence ${occurrence.id} evidence disagrees with vocabulary-forms.json.`);
+    if (contextualOccurrence.contextualReading !== occurrence.contextualReading) throw new Error(`${contextualMetadata.path}: occurrence ${occurrence.id} Reading disagrees with vocabulary-forms.json.`);
     const identity = `${occurrence.canonicalLexicalId}\0${occurrence.canonicalSenseId}`;
     if (!entries.has(identity)) throw new Error(`${contextualMetadata.path}: occurrence ${occurrence.id} maps to another reading identity ${identity.replace("\0", " / ")}.`);
   }
@@ -738,6 +741,23 @@ function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): 
     const occurrence = entry.occurrences.find((candidate) => candidate.evidence === item.evidence && candidate.evidence.includes(item.surface));
     if (occurrence === undefined) throw new Error(`${item.source}: ${entry.lexicalEntryId} / ${entry.senseId} surface/evidence does not map to its canonical occurrence.`);
     if (japaneseExpressionContainsKanjiForPackage(item.surface) && occurrence.contextualReading?.includes(item.reading) !== true) throw new Error(`${item.source}: ${entry.lexicalEntryId} / ${entry.senseId} stored reading ${item.reading} disagrees with contextual reading ${occurrence.contextualReading}.`);
+  }
+  const grammarMetadata = sourceFiles.find((file) => file.path === japaneseGrammarReadingsPath);
+  if (grammarMetadata === undefined) throw new Error(`Japanese reading package is missing ${japaneseGrammarReadingsPath}.`);
+  const grammar = JSON.parse(grammarMetadata.text) as { readonly schemaVersion?: number; readonly entries?: readonly { readonly block?: string; readonly grammarId?: string; readonly example?: string; readonly reading?: string }[] };
+  if (grammar.schemaVersion !== 1 || grammar.entries?.length !== 10) throw new Error(`${japaneseGrammarReadingsPath}: exactly ten schema-v1 entries are required.`);
+  const grammarIds = new Set<string>();
+  for (const entry of grammar.entries) {
+    if (typeof entry.grammarId !== "string" || grammarIds.has(entry.grammarId)) throw new Error(`${japaneseGrammarReadingsPath}: grammar IDs must be ten unique strings.`);
+    grammarIds.add(entry.grammarId);
+    if (typeof entry.block !== "string" || typeof entry.example !== "string" || typeof entry.reading !== "string") throw new Error(`${japaneseGrammarReadingsPath}: ${entry.grammarId} requires block, example, and reading.`);
+    for (const audience of ["easy", "hard"] as const) {
+      const path = `units/japanese-core/chapter-${entry.block}-grammar-${audience}/chapter.md`;
+      const source = sourceByPath.get(path);
+      if (source === undefined || !source.includes(entry.example)) throw new Error(`${path}: missing authored example for ${entry.grammarId}.`);
+      const redundantKanaReading = !japaneseExpressionContainsKanjiForPackage(entry.example) && entry.example === entry.reading;
+      if (!redundantKanaReading && !source.includes(`Reading: ${entry.reading}`)) throw new Error(`${path}: missing authored Reading for ${entry.grammarId}.`);
+    }
   }
 }
 
@@ -950,7 +970,12 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     [77, "chapter-077-the-bag-for-the-party"],
     [78, "chapter-078-a-morning-in-the-garden"],
     [79, "chapter-079-building-a-bookcase-together"],
-    [80, "chapter-080-the-first-week-of-the-course"]
+    [80, "chapter-080-the-first-week-of-the-course"],
+    [81, "chapter-081-a-new-member-of-the-study-group"],
+    [82, "chapter-082-emmas-first-photo-exhibition"],
+    [83, "chapter-083-a-safe-route-to-the-station"],
+    [84, "chapter-084-furnishing-noors-studio"],
+    [85, "chapter-085-preparing-a-school-presentation"]
   ].map(([chapter, directory]) => ({
     source: `curriculum-support/dutch/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/dutch-core/${directory}/reading-support.json`
@@ -1050,13 +1075,14 @@ const lexicalTopicsPath = "lexical-topics.json";
 const lexicalTopicAuditPath = "lexical-topic-audit.json";
 const vocabularyFormsPath = "vocabulary-forms.json";
 const japaneseContextualReadingsPath = "japanese-contextual-readings.json";
+const japaneseGrammarReadingsPath = "japanese-grammar-readings.json";
 const sinoVietnameseLexiconPath = "sino-vietnamese-lexicon.json";
 const sinoVietnameseAuditPath = "sino-vietnamese-audit.json";
-const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath, vocabularyFormsPath, japaneseContextualReadingsPath]);
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath, vocabularyFormsPath, japaneseContextualReadingsPath, japaneseGrammarReadingsPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
-    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath || include === lexicalTopicsPath || include === lexicalTopicAuditPath || include === "lexical-topic-audit.md" || include === japaneseContextualReadingsPath || include === sinoVietnameseLexiconPath || include === sinoVietnameseAuditPath || include === "sino-vietnamese-audit.md"))]
+    ? [...(target.readingContentInclude ?? target.include.filter((include) => include === "units" || include.startsWith("units/") || include === "name-pools" || include.startsWith("name-pools/") || include === geographyLedgerPath || include === lexicalTopicsPath || include === lexicalTopicAuditPath || include === "lexical-topic-audit.md" || include === japaneseContextualReadingsPath || include === japaneseGrammarReadingsPath || include === sinoVietnameseLexiconPath || include === sinoVietnameseAuditPath || include === "sino-vietnamese-audit.md"))]
     : [...target.include];
   const separatelyPackagedPaths = new Set(target.additionalSourceFiles?.map((file) => file.packagePath) ?? []);
   if (target.license?.path !== undefined && target.license.path !== null && !separatedIncludes.includes(target.license.path) && !separatelyPackagedPaths.has(target.license.path)) separatedIncludes.push(target.license.path);
@@ -1148,7 +1174,7 @@ async function collectPath(sourceRoot: string, absolutePath: string, files: Sour
     }
   }
   if (relativePath.endsWith("/reading-translation.en.json")) {
-    assertNaturalEnglishTranslationHasNoIntroduction(relativePath, text);
+    await assertNaturalEnglishTranslationIntroductionBoundary(sourceRoot, relativePath, text);
   }
   files.push({
     path: relativePath,
@@ -1160,7 +1186,7 @@ async function collectPath(sourceRoot: string, absolutePath: string, files: Sour
   });
 }
 
-function assertNaturalEnglishTranslationHasNoIntroduction(path: string, text: string): void {
+async function assertNaturalEnglishTranslationIntroductionBoundary(sourceRoot: string, path: string, text: string): Promise<void> {
   let value: unknown;
   try {
     value = JSON.parse(text);
@@ -1170,7 +1196,18 @@ function assertNaturalEnglishTranslationHasNoIntroduction(path: string, text: st
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new Error(`Invalid ${path}: structured reading translation must be a JSON object.`);
   }
-  for (const key of ["introduction", "context", "setting", "participants", "sceneIntroduction"]) {
+  const record = value as Record<string, unknown>;
+  if (record.introduction !== undefined) {
+    if (typeof record.introduction !== "string" || record.introduction.trim().length === 0) {
+      throw new Error(`Invalid ${path}: introduction must be a nonempty exact source projection when supplied.`);
+    }
+    const chapter = (await readFile(resolve(sourceRoot, dirname(path), "chapter.md"))).toString("utf8");
+    const exactIntroduction = /^### Brief Introduction\s*\n\s*\n([\s\S]*?)(?=\n###\s)/mu.exec(chapter)?.[1].trim();
+    if (record.introduction !== exactIntroduction) {
+      throw new Error(`Invalid ${path}: introduction must exactly match the source Brief Introduction and remains outside translated reading-unit counts.`);
+    }
+  }
+  for (const key of ["context", "setting", "participants", "sceneIntroduction"]) {
     if (Object.prototype.hasOwnProperty.call(value, key)) {
       throw new Error(`Invalid ${path}: Natural English Translation must contain translated reading content only; prefatory field ${key} is prohibited.`);
     }
@@ -1329,15 +1366,19 @@ function parseReviewDeckCards(
   const localizedHeader = ["deck", "direction", "front", "back", "front_zh_tw", "back_zh_tw", "front_en", "back_en", "source_chapter", "entry_type", "notes_zh_tw", "notes_en"];
   const v2Header = ["card_id", "deck", "kind", "source_chapter", "prompt_language", "answer_language", "prompt", "accepted_answers", "distractors", "explanation", "lexical_ids", "grammar_ids", "geographic_ids", "provenance_path", "provenance_locator", "provenance_evidence", "tags"];
   const v2ExamplesHeader = [...v2Header.slice(0, -1), "examples", "tags"];
+  const authoredV2Header = ["card_id", "deck", "kind", "chapter", "source_language", "target_language", "prompt", "answers", "alternatives", "explanation", "identity_ids", "grammar_ids", "person_ids", "source_path", "source_locator", "evidence", "examples", "tags"];
+  const usesAuthoredV2Rows = header.length === authoredV2Header.length && header.every((field, index) => field === authoredV2Header[index]);
   const usesV2Rows = (header.length === v2Header.length && header.every((field, index) => field === v2Header[index]))
-    || (header.length === v2ExamplesHeader.length && header.every((field, index) => field === v2ExamplesHeader[index]));
+    || (header.length === v2ExamplesHeader.length && header.every((field, index) => field === v2ExamplesHeader[index]))
+    || usesAuthoredV2Rows;
   const usesLocalizedRows = header.length === localizedHeader.length && header.every((field, index) => field === localizedHeader[index]);
   if (!usesV2Rows && !usesLocalizedRows && (header.length !== legacyHeader.length || header.some((field, index) => field !== legacyHeader[index]))) {
     throw new Error(`Review deck cards file has unsupported header: ${file.path}`);
   }
 
   if (usesV2Rows) {
-    const items = body.map((row, index) => reviewDeckV2RowToItem(target, file.path, row, index + 1, generatedAt, header.length === v2ExamplesHeader.length));
+    const normalizedBody = usesAuthoredV2Rows ? body.map((row, index) => normalizeAuthoredReviewV2Row(row, file.path, index + 1)) : body;
+    const items = normalizedBody.map((row, index) => reviewDeckV2RowToItem(target, file.path, row, index + 1, generatedAt, header.length === v2ExamplesHeader.length || usesAuthoredV2Rows));
     if ((target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
       const chapterStart = Math.min(...items.flatMap((item) => item.sourceChapters));
       const chapterEnd = Math.max(...items.flatMap((item) => item.sourceChapters));
@@ -1363,6 +1404,24 @@ function parseReviewDeckCards(
   const completeBody = ordinaryReviewRowsWithRequiredDirections(target, body, usesLocalizedRows);
   const items: MemorizationItemV1[] = completeBody.map((row, index) => reviewDeckRowToItem(target, file.path, row, index + 1, generatedAt, reviewExampleIndex, usesLocalizedRows) as MemorizationItemV1);
   return { schemaVersion: 1, items };
+}
+
+function normalizeAuthoredReviewV2Row(row: readonly string[], sourcePath: string, rowNumber: number): readonly string[] {
+  if (row.length !== 18) throw new Error(`Authored Review deck row ${rowNumber + 1} has the wrong number of tab-separated fields in ${sourcePath}`);
+  const decoded = row.map((value) => decodeAuthoredTsvField(value));
+  const personIds = parseV2StringArray(decoded[12] ?? "", "person_ids", sourcePath, rowNumber);
+  if (personIds.length > 0) throw new Error(`Authored Review deck row ${rowNumber + 1} must not test cast identities in ${sourcePath}`);
+  return [
+    decoded[0] ?? "", decoded[1] ?? "", decoded[2] ?? "", decoded[3] ?? "", decoded[4] ?? "", decoded[5] ?? "",
+    decoded[6] ?? "", decoded[7] ?? "", decoded[8] ?? "", decoded[9] ?? "", decoded[10] ?? "", decoded[11] ?? "", "[]",
+    decoded[13] ?? "", decoded[14] ?? "", decoded[15] ?? "", decoded[16] ?? "", decoded[17] ?? ""
+  ];
+}
+
+function decodeAuthoredTsvField(value: string): string {
+  return value.length >= 2 && value.startsWith('"') && value.endsWith('"')
+    ? value.slice(1, -1).replaceAll('""', '"')
+    : value;
 }
 
 function parseJapaneseContextualReadings(evidenceFiles: readonly SourceFile[]): JapaneseContextualReadingDocument {
@@ -1440,6 +1499,7 @@ function reviewDeckV2RowToItem(
   const testedGrammarIds = parseV2StringArray(grammarJson, "grammar_ids", sourcePath, rowNumber);
   const testedGeographicIds = parseV2StringArray(geographicJson, "geographic_ids", sourcePath, rowNumber);
   const tags = parseV2StringArray(tagsJson, "tags", sourcePath, rowNumber);
+  const resolvedExplanation = explanation.trim().length === 0 ? provenanceEvidence : explanation;
   if (!Number.isSafeInteger(sourceChapter) || sourceChapter < chapterStart || sourceChapter > chapterEnd) {
     throw new Error(`Review deck v2 row ${rowNumber + 1} source chapter is outside its deck block in ${sourcePath}`);
   }
@@ -1475,7 +1535,7 @@ function reviewDeckV2RowToItem(
     answer: { text: acceptedAnswers[0] ?? "", plainText: acceptedAnswers[0] ?? "", language: answerLanguage, mediaType: "text/plain" },
     acceptedAnswers,
     distractors,
-    explanation,
+    explanation: resolvedExplanation,
     testedMeaning: acceptedAnswers.join(" | "),
     testedLexicalIds,
     testedGrammarIds,
@@ -1484,7 +1544,7 @@ function reviewDeckV2RowToItem(
     testedSkillIds: [],
     provenance: { path: provenancePath, locator: provenanceLocator, evidence: provenanceEvidence },
     examples,
-    notes: explanation,
+    notes: resolvedExplanation,
     tags,
     source: { path: sourcePath, title: learnerDeckTitle },
     language: { target: targetLanguage, base: "en", script: scriptLabelForTarget(target) },

@@ -85,10 +85,10 @@ async function chapterSources() {
   })));
 }
 
-test("Dutch Chapters 71-75 remain consecutive and alternate format while Chapter 81 is absent", async () => {
+test("Dutch Chapters 71-75 remain consecutive and alternate format while Chapter 86 is absent", async () => {
   const directories = await readdir(unitRoot);
   assert.deepEqual([...expected].map(([chapter, info]) => directories.includes(info.directory) ? chapter : 0), [71, 72, 73, 74, 75]);
-  assert.equal(directories.some((directory) => /^chapter-081-/u.test(directory)), false);
+  assert.equal(directories.some((directory) => /^chapter-086-/u.test(directory)), false);
   const sources = await chapterSources();
   for (const { chapter, markdown } of sources) {
     assert.match(markdown, new RegExp(`^# Chapter ${chapter} -- ${expected.get(chapter).title}$`, "mu"));
@@ -288,7 +288,7 @@ test("topic diversity, cast continuity, and number continuity are recorded throu
   const cast = JSON.parse(await readFile(join(curriculumRoot, "name-pools", "canonical-cast.json"), "utf8"));
   const numbers = JSON.parse(await readFile(join(curriculumRoot, "number-progression.json"), "utf8"));
   const reviewRows = (await readFile(join(reviewRoot, "chapter-071-075", "cards.tsv"), "utf8")).trimEnd().split("\n").slice(1).map((line) => line.split("\t"));
-  assert.equal(topics.max_ordinary_chapter, 80);
+  assert.equal(topics.max_ordinary_chapter, 85);
   assert.equal(numbers.highestCompletedChapter, 75);
   assert.equal(numbers.magnitudeBlocks.at(-1).status, "in-progress");
   assert.deepEqual(numbers.reviewDecks.at(-1).cards.map((card) => card.mode).sort(), ["contextual", "digits-to-words", "words-to-digits"]);
@@ -307,7 +307,7 @@ test("topic diversity, cast continuity, and number continuity are recorded throu
     assert.equal(chapterSenseCount, chapter === 75 ? 17 : 16, `${info.topic} Chapter ${chapter} senses`);
   }
   assert.equal(new Set([...expected.values()].map((info) => info.topic)).size, 5);
-  assert.equal((await readdir(unitRoot)).some((directory) => /^chapter-081-/u.test(directory)), false);
+  assert.equal((await readdir(unitRoot)).some((directory) => /^chapter-086-/u.test(directory)), false);
 });
 
 async function installedDutch() {

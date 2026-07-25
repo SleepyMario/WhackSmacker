@@ -541,7 +541,7 @@ test("language tree exposes Dutch content and review deck labels", async () => {
     assert.equal(inlineReview?.sourcePath, "review-decks/chapter-001-005/cards.tsv");
     assert.equal(chapter5Index < chapter6Index && chapter5Index + 1 < chapter6Index, true);
     assert.equal(readContent.children.some((node) => /^Ch (?:1|5) -- Review/u.test(node.label)), false);
-    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70", "Chapter 71-75", "Chapter 76-80"]);
+    assert.deepEqual(reviewDecks.children.map((node) => node.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70", "Chapter 71-75", "Chapter 76-80", "Chapter 81-85"]);
   } finally {
     await fixture.cleanup();
   }
@@ -1406,7 +1406,7 @@ test("Vietnamese read content interleaves reviews after Core Chapters 5 and 10",
   }
 });
 
-test("Dutch read tree includes the complete zero-padded Chapters 11-80 blocks", async () => {
+test("Dutch read tree includes the complete zero-padded Chapters 11-85 blocks", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
@@ -1420,6 +1420,7 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-80 blocks", 
     const chapter70 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-070-reporting-the-meeting/chapter.md");
     const chapter75 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-075-fixing-the-wifi-before-a-family-call/chapter.md");
     const chapter80 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-080-the-first-week-of-the-course/chapter.md");
+    const chapter85 = readContent.children.find((node) => node.filePath === "units/dutch-core/chapter-085-preparing-a-school-presentation/chapter.md");
 
     assert.equal(chapter11?.label, "Chapter 11 -- Asking How Someone Is");
     assert.equal(chapter15?.label, "Chapter 15 -- Asking Where Someone Lives");
@@ -1429,10 +1430,12 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-80 blocks", 
     assert.equal(chapter70?.label, "Chapter 70 -- Sharing a Short Film");
     assert.equal(chapter75?.label, "Chapter 75 -- Fixing the Wi-Fi Before a Family Call");
     assert.equal(chapter80?.label, "Chapter 80 -- The First Week of the Course");
+    assert.equal(chapter85?.label, "Chapter 85 -- Preparing a School Presentation");
     assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-071-/u.test(node.filePath ?? "")), true);
     assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-075-/u.test(node.filePath ?? "")), true);
     assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-080-/u.test(node.filePath ?? "")), true);
-    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-081-/u.test(node.filePath ?? "")), false);
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-085-/u.test(node.filePath ?? "")), true);
+    assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-086-/u.test(node.filePath ?? "")), false);
     assert.equal(readContent.children.some((node) => /chapter-011-015-grammar-(?:easy|hard)/u.test(node.filePath ?? "")), true);
     const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 11-15"), true);
@@ -2328,7 +2331,7 @@ test("Dutch review sources submenu uses clean selectable deck labels", async () 
     });
     const items = reviewSourcesToMenuItems(sources);
 
-    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70", "Chapter 71-75", "Chapter 76-80"]);
+    assert.deepEqual(items.map((item) => item.label), ["Chapter 1-5", "Chapter 6-10", "Chapter 11-15", "Chapter 16-20", "Chapter 21-25", "Chapter 26-30", "Chapter 31-35", "Chapter 36-40", "Chapter 41-45", "Chapter 46-50", "Chapter 51-55", "Chapter 56-60", "Chapter 61-65", "Chapter 66-70", "Chapter 71-75", "Chapter 76-80", "Chapter 81-85"]);
     assert.equal(items.some((item) => item.label.includes("com.sleepymario.language.dutch")), false);
     assert.equal(items.some((item) => item.label.includes("cards.tsv")), false);
   } finally {
@@ -2726,6 +2729,20 @@ test("Japanese A prompt reveals reading and mixed written form", () => {
   assert.doesNotMatch(output, /review-decks\//);
   assert.doesNotMatch(output, /^Prompt$/m);
   assert.doesNotMatch(output, /^Answer$/m);
+});
+
+test("Japanese answers suppress identical kana-only Reading without removing the card", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "en",
+    answerLanguage: "ja",
+    promptLines: ["hello"],
+    answerLines: ["Reading: こんにちは", "Japanese: こんにちは"]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false, "com.sleepymario.language.japanese");
+
+  assert.match(output, /Phrase:[\s\S]+hello/u);
+  assert.match(output, /Answer:[\s\S]+Japanese: こんにちは/u);
+  assert.doesNotMatch(output, /Reading: こんにちは/u);
 });
 
 test("Japanese C prompt reveals meaning and kana-only reading", () => {
@@ -3328,6 +3345,44 @@ test("Dutch Chapter 1 right-pane translation item toggles with Enter and Space",
     const finalScreen = screens.at(-1);
     assert.match(finalScreen, /Translation: Off/u);
     assert.doesNotMatch(finalScreen, /Natural English Translation|I'm Alex Chen|I'm a teacher/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("Notes toggle defaults On, uses keyboard controls, persists across navigation, and renders without ANSI", async () => {
+  const fixture = await createInstalledDutchFixture();
+  try {
+    const terminal = new FakeTerminal([
+      ...openDutchChapter1Keys(),
+      key("right"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("left"),
+      key("down"),
+      key("up"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+
+    assert.doesNotMatch(terminal.output, /\x1b\[[0-9;]*m/u);
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi);
+    const on = screens.find((screen) => screen.includes("Notes: On"));
+    const off = screens.find((screen) => screen.includes("> Notes: Off"));
+    assert.ok(on, "the default learner screen exposes Notes: On");
+    assert.ok(off, "Enter toggles the selected Notes control Off");
+    assert.match(screens.at(-1), /Notes: Off/u, "the state persists after leaving the toggle pane and navigating");
+
+    const fresh = new FakeTerminal([
+      ...openDutchChapter1Keys(),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), fresh, { dataDir: fixture.dataDir });
+    assert.match(fresh.output, /Notes: On/u, "a new session defaults Notes On");
   } finally {
     await fixture.cleanup();
   }

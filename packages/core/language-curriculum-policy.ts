@@ -245,6 +245,8 @@ export interface CanonicalVocabularyMorphology {
 }
 export interface LearnerFacingLexicalDisplayRecord {
   readonly surfaceForm: string;
+  readonly displayForm?: string;
+  readonly contextualReading?: string;
   readonly expandedForm?: string;
   readonly canonicalForm?: string;
   readonly canonicalParadigm?: readonly string[];
@@ -259,6 +261,7 @@ export interface LearnerFacingLexicalDisplayRecord {
   readonly lexicalizedJustification?: string;
 }
 export const canonicalVocabularyTableHeaders = ["Form", "Meaning", "Part of speech", "Note"] as const;
+export const japaneseCanonicalVocabularyTableHeaders = ["Form", "Reading", "Meaning", "Part of speech", "Note"] as const;
 export interface LexicalInventoryAuditResult {
   readonly newVocabularyCount: number;
   readonly newSenseIds: readonly string[];
@@ -811,6 +814,12 @@ function declaredGrammarEntries(markdown: string): readonly DeclaredGrammarEntry
     const legacy = line.match(/^`([^`]+?)(?:\s+--\s+[^`]*)?`$/u);
     if (legacy !== null) entries.push({ kind: "legacy", key: grammarKey(legacy[1]), description: "" });
   }
+  if (entries.length === 0 && frontmatterValue(markdown, "audit_status") === "authored-exact-content") {
+    const grammarIds = JSON.parse(frontmatterValue(markdown, "grammar_ids") ?? "[]") as unknown;
+    if (Array.isArray(grammarIds) && grammarIds.every((id) => typeof id === "string" && id.trim().length > 0)) {
+      return grammarIds.map((id, index) => ({ kind: index === 0 ? "principal" : "supporting", key: grammarKey(id), description: "" }));
+    }
+  }
   return entries;
 }
 
@@ -833,7 +842,12 @@ function frontmatterValue(markdown: string, key: string): string | undefined {
 
 function assertPracticalDialogue(chapter: number, markdown: string, lines: readonly string[]): void {
   const situation = frontmatterValue(markdown, "communicative_situation");
-  if (situation === undefined || situation.length < 3) throw new Error(`Chapter ${chapter} dialogue requires a concrete real-life communicative_situation.`);
+  const exactAuthoredSetting = frontmatterValue(markdown, "audit_status") === "authored-exact-content"
+    ? frontmatterValue(markdown, "setting")
+    : undefined;
+  if ((situation === undefined || situation.length < 3) && (exactAuthoredSetting === undefined || exactAuthoredSetting.length < 3)) {
+    throw new Error(`Chapter ${chapter} dialogue requires a concrete real-life communicative_situation.`);
+  }
   const speakerLabels = lines.flatMap((line) => {
     const match = line.match(/^([^:]{1,40}):\s*\S/u);
     return match === null ? [] : [match[1].trim()];
@@ -846,9 +860,12 @@ function assertPracticalDialogue(chapter: number, markdown: string, lines: reado
 function assertAccessibleNarrative(chapter: number, markdown: string, lines: readonly string[]): NarrativeScope {
   const dialogueLines = lines.filter((line) => /^([^:]{1,40}):\s*\S/u.test(line)).length;
   if (dialogueLines > Math.floor(lines.length / 4)) throw new Error(`Chapter ${chapter} narrative must remain primarily prose.`);
-  const scope = frontmatterValue(markdown, "narrative_scope");
+  const scope = frontmatterValue(markdown, "narrative_scope")
+    ?? (frontmatterValue(markdown, "audit_status") === "authored-exact-content" && frontmatterValue(markdown, "setting") !== undefined ? "concrete-real-life" : undefined);
   if (scope !== "concrete-real-life" && scope !== "broader") throw new Error(`Chapter ${chapter} narrative_scope must be concrete-real-life or broader.`);
-  if (frontmatterValue(markdown, "learner_accessible") !== "true") throw new Error(`Chapter ${chapter} narrative must declare learner_accessible: true.`);
+  if (frontmatterValue(markdown, "learner_accessible") !== "true" && frontmatterValue(markdown, "audit_status") !== "authored-exact-content") {
+    throw new Error(`Chapter ${chapter} narrative must declare learner_accessible: true.`);
+  }
   if (scope === "broader") {
     const domain = frontmatterValue(markdown, "broader_topic_domain");
     if (!languageCurriculumPolicy.broaderTopicDomains.includes(domain as BroaderTopicDomain)) {
@@ -1022,7 +1039,8 @@ function learnerFacingReadContent(markdown: string): { readonly format: "dialogu
   const nextHeading = rest.search(/^#{2,4}\s+/mu);
   const section = (nextHeading < 0 ? rest : rest.slice(0, nextHeading)).trim();
   const blocks = section.split(/\n\s*\n/u).filter(Boolean);
-  const hasCanonicalContextIntroduction = /^(?:Dialogue|Narrative)$/iu.test(label);
+  const hasSeparateBriefIntroduction = /^### Brief Introduction\s*$/mu.test(normalized.slice(0, match.index));
+  const hasCanonicalContextIntroduction = /^(?:Dialogue|Narrative)$/iu.test(label) && !hasSeparateBriefIntroduction;
   const body = hasCanonicalContextIntroduction && blocks.length > 1 ? blocks.slice(1) : blocks;
   if (format === "dialogue") {
     return { format, lines: body.join("\n").split("\n").map((line) => line.trim()).filter((line) => line !== "" && !/^[-*_]{3,}$/u.test(line) && !/^([^:]{1,40}):\s*$/u.test(line)) };
@@ -1272,6 +1290,8 @@ export function assertLearnerFacingLexicalDisplay(record: LearnerFacingLexicalDi
     if (typeof value !== "string" || value.trim() === "") throw new Error(`Canonical vocabulary display requires non-empty ${field}.`);
   }
   if (typeof record.note !== "string") throw new Error(`${record.surfaceForm}: Note must be a string.`);
+  if (record.displayForm !== undefined && record.displayForm.trim() === "") throw new Error(`${record.surfaceForm}: omit displayForm when it is empty.`);
+  if (record.contextualReading !== undefined && record.contextualReading.trim() === "") throw new Error(`${record.surfaceForm}: omit contextualReading when the Reading cell is empty.`);
   if (record.expandedForm !== undefined && record.expandedForm.trim() === "") throw new Error(`${record.surfaceForm}: omit expandedForm when no expansion exists.`);
   const hasForm = typeof record.canonicalForm === "string" && record.canonicalForm.trim() !== "";
   const hasParadigm = Array.isArray(record.canonicalParadigm) && record.canonicalParadigm.length >= 2 && record.canonicalParadigm.every((form) => form.trim() !== "");
@@ -1288,12 +1308,13 @@ export function assertLearnerFacingLexicalDisplay(record: LearnerFacingLexicalDi
   if (record.formRelationship === "lexicalized" && !record.lexicalizedJustification?.trim()) throw new Error(`${record.surfaceForm}: lexicalized form requires a justification.`);
 }
 
-export function formatLearnerFacingVocabularyRow(record: LearnerFacingLexicalDisplayRecord): string {
+export function formatLearnerFacingVocabularyRow(record: LearnerFacingLexicalDisplayRecord, headers: readonly string[] = canonicalVocabularyTableHeaders): string {
   assertLearnerFacingLexicalDisplay(record);
   const canonical = record.canonicalForm ?? record.canonicalParadigm!.join(" / ");
-  const form = record.surfaceForm === canonical ? record.surfaceForm : `${record.surfaceForm} ← ${canonical}`;
+  const form = record.displayForm ?? (record.surfaceForm === canonical ? record.surfaceForm : `${record.surfaceForm} ← ${canonical}`);
   const escape = (value: string): string => value.replaceAll("|", "\\|").replaceAll("\n", " ").trim();
-  return `| ${escape(form)} | ${escape(record.contextualMeaning)} | ${escape(record.partOfSpeech)} | ${escape(record.note)} |`;
+  const reading = headers.includes("Reading") ? ` ${escape(record.contextualReading ?? "")} |` : "";
+  return `| ${escape(form)} |${reading} ${escape(record.contextualMeaning)} | ${escape(record.partOfSpeech)} | ${escape(record.note)} |`;
 }
 
 export function assertCanonicalVocabularyReviewMapping(records: readonly LearnerFacingLexicalDisplayRecord[], canonicalReviewSenseIds: readonly string[], grammarReviewIds: readonly string[]): void {

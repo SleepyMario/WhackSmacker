@@ -258,8 +258,8 @@ test("content package generator creates a valid Dutch package", async () => {
     assert.doesNotMatch(chapter1Entry.text, /Complete Rereading/u);
     assert.equal(chapter1Entry.text, chapter1Source.toString("utf8").split("\n").filter((line) => !/^#{1,6}\s+Content\s*$/iu.test(line.trim())).join("\n"));
     assert.equal(createHash("sha256").update(chapter1Source).digest("hex"), "497add825e7ba091e9f42f8a2c7f23fd122aabc4abeb0cc39a116a927dad57e3");
-    assert.equal(translationEntries.length, 80);
-    for (let chapterNumber = 1; chapterNumber <= 80; chapterNumber += 1) {
+    assert.equal(translationEntries.length, 85);
+    for (let chapterNumber = 1; chapterNumber <= 85; chapterNumber += 1) {
       const padded = String(chapterNumber).padStart(3, "0");
       const chapterFile = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/chapter.md") && !file.path.includes("grammar"));
       const translationFile = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/reading-translation.en.json"));
@@ -324,12 +324,13 @@ test("content package generator creates a valid Dutch package", async () => {
     const chapter11Path = "units/dutch-core/chapter-011-asking-how-someone-is/chapter.md";
     assert.ok(content.files.some((file) => file.path === chapter11Path));
     assert.match(content.files.find((file) => file.path === chapter11Path).text, /^chapter:\s*11$/mu);
-    for (let chapter = 12; chapter <= 80; chapter += 1) {
+    for (let chapter = 12; chapter <= 85; chapter += 1) {
       assert.ok(content.files.some((file) => file.path.startsWith(`units/dutch-core/chapter-${String(chapter).padStart(3, "0")}-`) && file.path.endsWith("/chapter.md")));
     }
     assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-075-/u.test(file.path)), true);
     assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-080-/u.test(file.path)), true);
-    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-081-/u.test(file.path)), false);
+    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-085-/u.test(file.path)), true);
+    assert.equal(content.files.some((file) => /^units\/dutch-core\/chapter-086-/u.test(file.path)), false);
     assert.equal(content.files.some((file) => file.path === "lexical-topics.json"), true);
     assert.equal(content.files.some((file) => file.path === "lexical-topic-audit.json"), true);
     assert.equal(content.files.some((file) => file.path === "lexical-topic-audit.md"), true);
@@ -721,7 +722,14 @@ function assertOddEvenChapterFormats(files, label, packageId) {
 }
 
 function assertChapterIntroductionRoles(markdown, translation, chapterNumber) {
-  const brief = /^##\s+Brief Introduction\s*$\n([\s\S]*?)(?=^#{1,6}\s+)/mu.exec(markdown)?.[1]?.trim();
+  const brief = /^#{2,4}\s+Brief Introduction\s*$\n([\s\S]*?)(?=^#{1,6}\s+)/mu.exec(markdown)?.[1]?.trim();
+  const exactAuthored = /^audit_status:\s*["']?authored-exact-content["']?\s*$/mu.test(markdown);
+  if (exactAuthored) {
+    assert.ok(brief, `Chapter ${chapterNumber} has the exact authored Brief Introduction`);
+    assert.equal(translation.introduction, brief, `Chapter ${chapterNumber} carries the exact introduction in structural translation metadata`);
+    assert.match(markdown, /^###\s+(?:Dialogue|Narrative)\s*$/mu, `Chapter ${chapterNumber} has the authored primary reading`);
+    return;
+  }
   if ([76, 78, 80].includes(chapterNumber)) {
     assert.equal(brief, undefined, `Chapter ${chapterNumber} omits setup from learner-facing projection`);
     assert.match(markdown, /^##\s+Narrative\s*$\n\n\S/mu, `Chapter ${chapterNumber} begins directly with narrative`);
@@ -751,7 +759,8 @@ function assertChapterIntroductionRoles(markdown, translation, chapterNumber) {
 
 function analyzeChapterReadFormatForTest(markdown) {
   const sections = extractReadSectionsForFormatTest(markdown);
-  const hasSeparateIntroduction = /^##\s+Brief Introduction\s*$[\s\S]+?(?=^#{1,6}\s+)/imu.test(markdown);
+  const hasSeparateIntroduction = /^#{2,4}\s+Brief Introduction\s*$[\s\S]+?(?=^#{1,6}\s+)/imu.test(markdown);
+  const exactAuthored = /^audit_status:\s*"authored-exact-content"\s*$/mu.test(markdown);
   const speakerLines = sections.flatMap((section) => section.lines.filter(isDialogueSpeakerLineForTest));
   const headingSuggestsDialogue = sections.some((section) => /dialogue/iu.test(section.heading));
   const genericSpeakerLabels = speakerLines
@@ -772,7 +781,7 @@ function analyzeChapterReadFormatForTest(markdown) {
         dialogueBlockWithoutIntro = true;
       }
       const colonColumns = block.lines.map((line) => displayWidthForTest(line.slice(0, line.indexOf(":"))));
-      if (new Set(colonColumns).size !== 1) {
+      if (!exactAuthored && new Set(colonColumns).size !== 1) {
         misalignedDialogueColons = true;
       }
     }
@@ -935,7 +944,8 @@ function assertDialogueBlocksHaveIntroductionsAndAlignedColons(files, label) {
 
   for (const file of files.filter((candidate) => candidate.path.startsWith("units/") && candidate.path.endsWith("/chapter.md"))) {
     const lines = file.text.split(/\r?\n/u);
-    const hasSeparateIntroduction = /^##\s+Brief Introduction\s*$[\s\S]+?(?=^#{1,6}\s+)/imu.test(file.text);
+    const hasSeparateIntroduction = /^#{2,4}\s+Brief Introduction\s*$[\s\S]+?(?=^#{1,6}\s+)/imu.test(file.text);
+    const authoredExact = /^audit_status:\s*["']?authored-exact-content["']?\s*$/mu.test(file.text);
     for (let index = 0; index < lines.length; index++) {
       if (lines[index] !== "```text") {
         continue;
@@ -960,7 +970,7 @@ function assertDialogueBlocksHaveIntroductionsAndAlignedColons(files, label) {
       }
 
       const colonColumns = speakerLines.map((line) => displayWidthForTest(line.slice(0, line.indexOf(":"))));
-      if (new Set(colonColumns).size !== 1) {
+      if (!authoredExact && new Set(colonColumns).size !== 1) {
         misaligned.push(`${file.path}:${index + 1}: ${speakerLines.slice(0, 3).join(" | ")}`);
       }
     }
@@ -1004,7 +1014,7 @@ function assertDialogueBlocksHaveIntroductionsAndAlignedColons(files, label) {
       }
 
       const colonColumns = speakerLines.map((line) => displayWidthForTest(line.slice(0, line.indexOf(":"))));
-      if (new Set(colonColumns).size !== 1) {
+      if (!authoredExact && new Set(colonColumns).size !== 1) {
         misaligned.push(`${file.path}:${start + 1}: ${speakerLines.slice(0, 3).join(" | ")}`);
       }
     }

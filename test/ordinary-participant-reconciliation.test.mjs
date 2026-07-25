@@ -77,7 +77,7 @@ test("Phase 7A participant IDs do not enter canonical casts or learner-facing ch
 });
 
 test("Phase 7B Dutch and Vietnamese sidecars resolve, remain active, and preserve exact repaired sets", async () => {
-  for (const [language, expectedCount, through] of [["dutch", 80, 80], ["vietnamese", 50, 50]]) {
+  for (const [language, expectedCount, through] of [["dutch", 85, 85], ["vietnamese", 50, 50]]) {
     const repository = join(modulesRoot, `${language}-curriculum`);
     const cast = JSON.parse(await readFile(join(repository, "name-pools/canonical-cast.json"), "utf8"));
     assert.equal(cast.schemaVersion, 2, language);

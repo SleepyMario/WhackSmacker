@@ -16,7 +16,7 @@ import {
   readInstalledContentEntry
 } from "../dist/packages/core/index.js";
 
-const expectedReviewLabels = Array.from({ length: 16 }, (_, index) => {
+const expectedReviewLabels = Array.from({ length: 17 }, (_, index) => {
   const start = index * 5 + 1;
   return `Chapter ${start}-${start + 4}`;
 });
@@ -88,7 +88,7 @@ test("installed Dutch Chapters 26-80 expose all views and independent translatio
       })
       .sort((a, b) => chapterNumber(a) - chapterNumber(b));
     assert.deepEqual(chapters.map(chapterNumber), Array.from({ length: 55 }, (_, index) => index + 26));
-    assert.equal(readContent.children.some((node) => chapterNumber(node) === 81), false);
+    assert.equal(readContent.children.some((node) => chapterNumber(node) === 86), false);
     assert.deepEqual(reviewDecks.children.map((node) => node.label), expectedReviewLabels);
 
     const sources = await listReadingReviewSources({
