@@ -24,6 +24,132 @@ export interface LanguageCurriculumChapterSource {
   readonly markdown: string;
 }
 
+export interface CanonicalSectionAndGrammarValidationInput {
+  readonly markdown: string;
+  readonly source: string;
+  readonly readingSupport?: unknown;
+  readonly readingTranslation?: unknown;
+}
+
+export const canonicalSectionAndGrammarRuleIds = [
+  "WSM-BRIEF-GRAMMAR-001",
+  "WSM-PRIMARY-SETUP-001",
+  "WSM-GRAMMAR-PROSE-001",
+  "WSM-GRAMMAR-INVENTORY-PROJECTION-001"
+] as const;
+
+const forbiddenLearnerGrammarScaffolding = [
+  /analysed as a productive .* morphosyntactic system rather than as an isolated phrase/iu,
+  /without treating them as lexical Review identities/iu,
+  /^\s*(?:Canonical pattern|Restriction):/gimu
+] as const;
+
+export function assertCanonicalSectionAndGrammarRules(input: CanonicalSectionAndGrammarValidationInput): void {
+  const introduction = markdownSection(input.markdown, "Brief Introduction");
+  if (introduction === undefined) throw new Error(`${input.source}: Brief Introduction is required by WSM-BRIEF-GRAMMAR-001.`);
+  assertGrammarOnlyIntroduction(introduction, `${input.source}: Brief Introduction`);
+  const dialogue = markdownSection(input.markdown, "Dialogue");
+  const narrative = markdownSection(input.markdown, "Narrative");
+  if ((dialogue === undefined) === (narrative === undefined)) throw new Error(`${input.source}: exactly one primary Dialogue or Narrative is required by WSM-PRIMARY-SETUP-001.`);
+  const readingType = dialogue === undefined ? "narrative" : "dialogue";
+  const reading = dialogue ?? narrative ?? "";
+  const setup = firstReadingParagraph(reading);
+  const introductionOffset = input.markdown.search(/^#{1,6}\s+Brief Introduction\s*$/imu);
+  const readingOffset = input.markdown.search(new RegExp(`^#{1,6}\\s+${readingType === "dialogue" ? "Dialogue" : "Narrative"}\\s*$`, "imu"));
+  if (readingOffset < introductionOffset) throw new Error(`${input.source}: primary reading must follow Brief Introduction.`);
+  if (setup.length === 0) throw new Error(`${input.source}: primary reading setup is missing.`);
+  if (normalizedProse(introduction).includes(normalizedProse(setup))) throw new Error(`${input.source}: primary-reading setup cannot be projected beneath Brief Introduction.`);
+  if (readingType === "dialogue") {
+    if (setup.split("\n").some((line) => isDialogueTurn(line))) throw new Error(`${input.source}: Dialogue setup must precede the first spoken turn and must not be a turn.`);
+    const turns = reading.split("\n").filter(isDialogueTurn);
+    if (turns.length === 0) throw new Error(`${input.source}: Dialogue must contain spoken turns after its setup.`);
+    assertTranslationBoundary(input.readingTranslation, readingType, setup, turns.length, input.source);
+  } else {
+    const sourceSentenceCount = countSentences(reading);
+    if (sourceSentenceCount === 0) throw new Error(`${input.source}: Narrative setup must be part of the aligned Narrative sentence sequence.`);
+    assertTranslationBoundary(input.readingTranslation, readingType, setup, sourceSentenceCount, input.source);
+  }
+  assertAuthoredGrammarProse(input.markdown, input.source);
+  if (input.readingSupport !== undefined) assertCanonicalReadingSupport(input.readingSupport, setup, input.source);
+}
+
+export function assertAuthoredGrammarProse(value: string, source: string): void {
+  for (const pattern of forbiddenLearnerGrammarScaffolding) {
+    pattern.lastIndex = 0;
+    if (pattern.test(value)) throw new Error(`${source}: learner-facing grammar contains forbidden generic implementation scaffolding (${pattern.source}).`);
+  }
+}
+
+function assertCanonicalReadingSupport(value: unknown, primarySetup: string, source: string): void {
+  if (!isPolicyRecord(value) || !Array.isArray(value.audienceSections)) throw new Error(`${source}: reading support must provide audienceSections.`);
+  for (const [index, candidate] of value.audienceSections.entries()) {
+    if (!isPolicyRecord(candidate)) throw new Error(`${source}: reading support audienceSections[${index}] must be an object.`);
+    for (const audience of ["normal", "expert"] as const) {
+      const prose = candidate[audience];
+      if (typeof prose !== "string" || prose.trim() === "") throw new Error(`${source}: reading support audienceSections[${index}].${audience} must be authored prose.`);
+      assertAuthoredGrammarProse(prose, `${source}: audienceSections[${index}].${audience}`);
+      if (candidate.sourceHeading === "Brief Introduction") {
+        assertGrammarOnlyIntroduction(prose, `${source}: Brief Introduction ${audience}`);
+        if (normalizedProse(prose).includes(normalizedProse(primarySetup))) throw new Error(`${source}: reading support projects primary setup beneath Brief Introduction.`);
+      }
+    }
+  }
+}
+
+function assertGrammarOnlyIntroduction(value: string, source: string): void {
+  const sentenceCount = countSentences(value);
+  if (sentenceCount < 1 || sentenceCount > 3) throw new Error(`${source} must contain one to three concise grammar sentences; found ${sentenceCount}.`);
+  if (!/(?:\b(?:grammar|grammatical|pattern|construction|word order|pronoun|verb|noun|adjective|adverb|preposition|particle|clause|sentence|tense|aspect|mood|agreement|plural|singular|determiner|conjunction|case|register)\b|`[^`]+`|\[\[grammar:)/iu.test(value)) {
+    throw new Error(`${source} must name or clearly describe the chapter grammar.`);
+  }
+  if (/\b(?:is a \d{1,3}-year-old|lives? in|joins?|prepares?|look(?:s|ing)? for|helps? .* (?:arrange|prepare|find)|before an? (?:evening|afternoon|morning)|scene|setting|plot|biograph)/iu.test(value)) {
+    throw new Error(`${source} contains scene, profile, or plot setup.`);
+  }
+  assertAuthoredGrammarProse(value, source);
+}
+
+function assertTranslationBoundary(value: unknown, readingType: "dialogue" | "narrative", setup: string, expectedUnits: number, source: string): void {
+  if (value === undefined) return;
+  if (!isPolicyRecord(value)) throw new Error(`${source}: reading translation must be an object.`);
+  if (readingType === "dialogue") {
+    if (value.introduction !== undefined && value.introduction !== setup) throw new Error(`${source}: Dialogue translation setup must exactly match the setup under Dialogue.`);
+    if (!Array.isArray(value.turns) || value.turns.length !== expectedUnits) throw new Error(`${source}: Dialogue setup must not count toward the ${expectedUnits} spoken turns.`);
+  } else {
+    for (const key of ["introduction", "context", "setting", "participants", "sceneIntroduction"]) {
+      if (key in value) throw new Error(`${source}: Narrative setup must be aligned as Narrative content, not stored in translation field ${key}.`);
+    }
+    let translatedUnits = 0;
+    if (Array.isArray(value.sentences)) translatedUnits = value.sentences.length;
+    else if (Array.isArray(value.paragraphs)) translatedUnits = value.paragraphs.reduce((total, paragraph) => total + countSentences(typeof paragraph === "string" ? paragraph : ""), 0);
+    if (translatedUnits !== expectedUnits) throw new Error(`${source}: Narrative source/translation sentence count mismatch ${expectedUnits}/${translatedUnits}.`);
+  }
+}
+
+function markdownSection(markdown: string, heading: string): string | undefined {
+  return new RegExp(`^#{1,6}\\s+${heading}\\s*$\\n([\\s\\S]*?)(?=^#{1,6}\\s+)`, "imu").exec(markdown)?.[1]?.trim();
+}
+
+function firstReadingParagraph(value: string): string {
+  return value.split(/\n\s*\n/u).find((part) => part.trim() !== "")?.trim() ?? "";
+}
+
+function isDialogueTurn(line: string): boolean {
+  return /^[^:\n]{1,80}:\s+\S/u.test(line);
+}
+
+function countSentences(value: string): number {
+  return [...new Intl.Segmenter(undefined, { granularity: "sentence" }).segment(value.replace(/\n+/gu, " "))]
+    .filter((part) => part.segment.trim() !== "").length;
+}
+
+function normalizedProse(value: string): string {
+  return value.normalize("NFKC").replace(/\s+/gu, " ").trim();
+}
+
+function isPolicyRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 export interface CumulativeCurriculumChapterState {
   readonly chapter: number;
   readonly inheritedChapterNumbers: readonly number[];
@@ -755,11 +881,14 @@ export function assertLanguageCurriculumChapter71140Requirements(
       const rule = languageCurriculumPolicy.chapterSizeRules.find((candidate) => source.chapter >= candidate.chapterStart && source.chapter <= candidate.chapterEnd);
       if (rule === undefined) throw new Error("Missing Chapters 71-140 chapter-size policy.");
       const readContent = learnerFacingReadContent(source.markdown);
+      const readContentUnitCount = readContent.format === "dialogue"
+        ? spokenDialogueSentenceCount(readContent.lines)
+        : readContent.lines.length;
       const expectedFormat = source.chapter % 2 === 1 ? "dialogue" : "narrative";
       const grammarRange = source.chapter <= 75 ? { min: 2, max: 2 } : { min: 1, max: 1 };
       assertInRange(newPrincipalGrammar.size, grammarRange, `Chapter ${source.chapter} new principal grammar point count`);
       assertInRange(newVocabulary.size, rule.newVocabularyItems, `Chapter ${source.chapter} new learner-facing vocabulary item count`);
-      assertInRange(readContent.lines.length, rule.learnerFacingReadContentLines, `Chapter ${source.chapter} learner-facing dialogue or narrative line count`);
+      assertInRange(readContentUnitCount, rule.learnerFacingReadContentLines, `Chapter ${source.chapter} learner-facing dialogue or narrative unit count`);
       if (readContent.format !== expectedFormat) throw new Error(`Chapter ${source.chapter} must use learner-facing ${expectedFormat} content; detected ${readContent.format}.`);
 
       let narrativeScope: NarrativeScope | undefined;
@@ -773,7 +902,7 @@ export function assertLanguageCurriculumChapter71140Requirements(
         chapter: source.chapter,
         newPrincipalGrammarPointCount: newPrincipalGrammar.size,
         newVocabularyItemCount: newVocabulary.size,
-        learnerFacingReadContentLineCount: readContent.lines.length,
+        learnerFacingReadContentLineCount: readContentUnitCount,
         format: readContent.format,
         ...(narrativeScope === undefined ? {} : { narrativeScope })
       });
@@ -1047,6 +1176,13 @@ function learnerFacingReadContent(markdown: string): { readonly format: "dialogu
   }
   const segmenter = new Intl.Segmenter("nl", { granularity: "sentence" });
   return { format, lines: body.flatMap((paragraph) => [...segmenter.segment(paragraph)].map(({ segment }) => segment.trim()).filter(Boolean)) };
+}
+
+function spokenDialogueSentenceCount(lines: readonly string[]): number {
+  const segmenter = new Intl.Segmenter(undefined, { granularity: "sentence" });
+  return lines
+    .filter((line) => /^[^:：\n]{1,80}\s*[:：]\s*\S/u.test(line))
+    .reduce((count, line) => count + [...segmenter.segment(line.replace(/^[^:：\n]{1,80}\s*[:：]\s*/u, ""))].filter(({ segment }) => segment.trim() !== "").length, 0);
 }
 
 export function activeCastSizeForChapter(chapter: number): number {

@@ -5,18 +5,18 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Joris Meijer is a 21-year-old university student who lives and studies in Amsterdam. He is an older student in Marieke’s wider study network, is interested in local history, and often travels by bicycle and train. Emma and Daan ask him to help them test a safer route to the station.",
-      "expert": "Joris Meijer is a 21-year-old university student who lives and studies in Amsterdam. He is an older student in Marieke’s wider study network, is interested in local history, and often travels by bicycle and train. Emma and Daan ask him to help them test a safer route to the station."
+      "normal": "This chapter introduces plural spelling alternations and present-tense modal paradigms. Preserve vowel length and consonant sound when adding a plural ending. Use a finite modal verb with a bare infinitive at the end of the clause.",
+      "expert": "This chapter introduces plural spelling alternations and present-tense modal paradigms. Preserve vowel length and consonant sound when adding a plural ending. Use a finite modal verb with a bare infinitive at the end of the clause."
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### plural spelling alternations\n\nDutch spelling may change when a plural ending is added so vowel length and consonant sound remain clear.\n\nExample: [[grammar:Omdat we wegen schrijven om de lange klank te behouden.]]\n\nWatch out: Do not copy the singular spelling mechanically when the spelling rule requires a change.\n\n#### present modal paradigms\n\nUse a finite modal verb with a bare infinitive at the end of the main clause.\n\nExample: [[grammar:Jullie mogen de bewaakte stalling gebruiken.]]\n\nWatch out: Do not add te before the infinitive after these basic modal verbs.",
-      "expert": "#### plural spelling alternations\n\nCanonical pattern: [[grammar:vowel/consonant spelling + -en or -s]]. Dutch spelling may change when a plural ending is added so vowel length and consonant sound remain clear.\n\nLiteral chapter example: [[grammar:Omdat we wegen schrijven om de lange klank te behouden.]]\n\nRestriction: Do not copy the singular spelling mechanically when the spelling rule requires a change.\n\n#### present modal paradigms\n\nCanonical pattern: [[grammar:kunnen, moeten, mogen, willen, zullen + bare infinitive]]. Use a finite modal verb with a bare infinitive at the end of the main clause.\n\nLiteral chapter example: [[grammar:Jullie mogen de bewaakte stalling gebruiken.]]\n\nRestriction: Do not add te before the infinitive after these basic modal verbs."
+      "normal": "#### plural spelling alternations\n\nDutch spelling may change when a plural ending is added so vowel length and consonant sound remain clear.\n\nExample: [[grammar:Omdat we wegen schrijven om de lange klank te behouden.]]\n\nWatch out: Do not copy the singular spelling mechanically when the spelling rule requires a change.\n\n#### present modal paradigms\n\nUse a finite modal verb with a bare infinitive at the end of the main clause.\n\nExample: [[grammar:Jullie mogen de bewaakte stalling gebruiken.]]\n\nWatch out: Do not add `te` before the infinitive after these basic modal verbs.",
+      "expert": "#### plural spelling alternations\n\nDutch plural spelling preserves vowel length and consonant quality. Adding `-en` or `-s` can therefore require changes to the written vowel or consonant pattern.\n\nLiteral chapter example: [[grammar:Omdat we wegen schrijven om de lange klank te behouden.]]\n\n#### present modal paradigms\n\nA finite modal verb carries tense and agreement, while the lexical infinitive normally appears bare at the end of the clause. The core modals are `kunnen`, `moeten`, `mogen`, `willen`, and `zullen`.\n\nLiteral chapter example: [[grammar:Jullie mogen de bewaakte stalling gebruiken.]]"
     },
     {
       "sourceHeading": "Dutch Usage Notes",
-      "normal": "Use the two chapter patterns consistently in the scene.",
-      "expert": "The chapter integrates the two productive grammar systems without treating them as lexical Review identities."
+      "normal": "Preserve vowel length and consonant sound when forming plurals. Put a bare infinitive at the end after a finite modal verb.",
+      "expert": "Plural spelling preserves sound contrasts. Modal verbs carry tense and agreement, while their lexical infinitive remains bare and normally appears at the clause end."
     }
   ],
   "breakdown": {

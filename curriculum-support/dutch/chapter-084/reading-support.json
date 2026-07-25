@@ -5,18 +5,18 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Noor de Vries, a 20-year-old university student living in Amsterdam, has received the key to a compact studio apartment. Emma and Joris help her arrange the room so that it remains practical, safe, and comfortable.",
-      "expert": "Noor de Vries, a 20-year-old university student living in Amsterdam, has received the key to a compact studio apartment. Emma and Joris help her arrange the room so that it remains practical, safe, and comfortable."
+      "normal": "This chapter introduces attributive adjective endings with indefinite nouns. Most attributive adjectives take `-e`. Leave the ending off before an indefinite singular `het`-word, as in `een praktisch bureau`.",
+      "expert": "This chapter introduces attributive adjective endings with indefinite nouns. Most attributive adjectives take `-e`. Leave the ending off before an indefinite singular `het`-word, as in `een praktisch bureau`."
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### attributive adjectives with indefinite nouns\n\nMost attributive adjectives before an indefinite singular noun take -e.\n\nExample: [[grammar:Emma zet een kleine fauteuil naast het raam.]]\n\nWatch out: Check whether the noun is a de-word or a het-word before choosing the ending.\n\n#### zero ending with indefinite neuter singular\n\nWith an indefinite singular het-word, the adjective normally has no -e.\n\nExample: [[grammar:Het is een praktisch bureau met twee laden.]]\n\nWatch out: Do not add -e in a phrase such as een praktisch bureau.",
-      "expert": "#### attributive adjectives with indefinite nouns\n\nCanonical pattern: [[grammar:een + adjective(-e) + noun]]. Most attributive adjectives before an indefinite singular noun take -e.\n\nLiteral chapter example: [[grammar:Emma zet een kleine fauteuil naast het raam.]]\n\nRestriction: Check whether the noun is a de-word or a het-word before choosing the ending.\n\n#### zero ending with indefinite neuter singular\n\nCanonical pattern: [[grammar:een + adjective-Ø + singular het-word]]. With an indefinite singular het-word, the adjective normally has no -e.\n\nLiteral chapter example: [[grammar:Het is een praktisch bureau met twee laden.]]\n\nRestriction: Do not add -e in a phrase such as een praktisch bureau."
+      "normal": "#### attributive adjectives with indefinite nouns\n\nMost attributive adjectives before an indefinite singular noun take `-e`.\n\nExample: [[grammar:Emma zet een kleine fauteuil naast het raam.]]\n\nWatch out: Check whether the noun is a `de`-word or a `het`-word before choosing the ending.\n\n#### zero ending with indefinite neuter singular\n\nWith an indefinite singular `het`-word, the adjective normally has no `-e`.\n\nExample: [[grammar:Het is een praktisch bureau met twee laden.]]\n\nWatch out: Do not add `-e` in a phrase such as `een praktisch bureau`.",
+      "expert": "#### attributive adjectives with indefinite nouns\n\nAttributive adjectives normally take `-e` before a noun. The principal exception at this level is an indefinite singular neuter noun.\n\nLiteral chapter example: [[grammar:Emma zet een kleine fauteuil naast het raam.]]\n\n#### zero ending with indefinite neuter singular\n\nAn adjective has no `-e` before an indefinite singular `het`-word, as in `een praktisch bureau`. Definite forms and `de`-words normally take `-e`.\n\nLiteral chapter example: [[grammar:Het is een praktisch bureau met twee laden.]]"
     },
     {
       "sourceHeading": "Dutch Usage Notes",
-      "normal": "Use the two chapter patterns consistently in the scene.",
-      "expert": "The chapter integrates the two productive grammar systems without treating them as lexical Review identities."
+      "normal": "Most attributive adjectives take `-e`. Leave the ending off before an indefinite singular `het`-word.",
+      "expert": "The regular attributive ending is `-e`; the principal zero-ending environment is an indefinite singular `het`-word."
     }
   ],
   "breakdown": {

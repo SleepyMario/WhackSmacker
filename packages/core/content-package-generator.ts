@@ -29,6 +29,8 @@ import {
   assertLanguageCurriculumChapter5170Requirements,
   assertLanguageCurriculumChapter71140Requirements,
   assertLanguageCurriculumStage71140Coverage,
+  assertCanonicalSectionAndGrammarRules,
+  assertAuthoredGrammarProse,
   assertCanonicalVocabularyReviewMapping,
   canonicalVocabularyTableHeaders,
   japaneseCanonicalVocabularyTableHeaders,
@@ -557,6 +559,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     assertLanguageCurriculumChapter71140Requirements(chapters, broaderTopics);
     if (chapters.some((chapter) => chapter.chapter === 140)) assertLanguageCurriculumStage71140Coverage(chapters, { requireCompleteStage: true });
     assertPackagedCanonicalVocabulary(sourceFiles);
+    assertChangedSectionAndGrammarContent(target, sourceRoot, sourceFiles, options.production === true);
   }
   const bundledSource = target.capabilities?.includes("specialized-review") === true;
   const sourceCommit = normalizeGitCommit(bundledSource ? tryReadGitValue(sourceRoot, ["rev-parse", "HEAD"]) : readGitValue(sourceRoot, ["rev-parse", "HEAD"]));
@@ -982,6 +985,67 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
   }))
 };
 
+const changedContentPathCache = new Map<string, ReadonlySet<string>>();
+
+function changedContentPaths(path: string, includeCommittedHead: boolean): ReadonlySet<string> {
+  let root: string;
+  try { root = readGitValue(path, ["rev-parse", "--show-toplevel"]); }
+  catch { return new Set(); }
+  const cacheKey = `${root}\0${includeCommittedHead ? "head" : "working-tree"}`;
+  const cached = changedContentPathCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+  const paths = new Set<string>();
+  const collect = (args: readonly string[]) => {
+    try {
+      for (const file of readGitValue(root, args).split(/\r?\n/u).filter(Boolean)) paths.add(file);
+    } catch {
+      // A repository without a parent commit still has working-tree and staged gates.
+    }
+  };
+  collect(["diff", "--name-only", "HEAD", "--"]);
+  collect(["diff", "--cached", "--name-only", "HEAD", "--"]);
+  collect(["ls-files", "--others", "--exclude-standard"]);
+  if (includeCommittedHead) collect(["diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD^", "HEAD"]);
+  changedContentPathCache.set(cacheKey, paths);
+  return paths;
+}
+
+function assertChangedSectionAndGrammarContent(
+  target: ContentPackageGeneratorTarget,
+  sourceRoot: string,
+  sourceFiles: readonly SourceFile[],
+  includeCommittedHead: boolean
+): void {
+  const sourceChanges = changedContentPaths(sourceRoot, includeCommittedHead);
+  const generatorChanges = changedContentPaths(repositoryRoot, includeCommittedHead);
+  const strictChapterPaths = new Set<string>();
+  const chapters = sourceFiles.filter((file) => isReadableChapterMarkdownPath(file.path));
+  for (const chapter of chapters) {
+    const directory = dirname(chapter.path);
+    if ([...sourceChanges].some((path) => path === chapter.path || path.startsWith(`${directory}/`))) strictChapterPaths.add(chapter.path);
+  }
+  for (const mapping of readingSupportPackages[target.id] ?? []) {
+    if (generatorChanges.has(mapping.source)) strictChapterPaths.add(mapping.destination.replace(/reading-support\.json$/u, "chapter.md"));
+  }
+  const filesByPath = new Map(sourceFiles.map((file) => [file.path, file]));
+  for (const chapterPath of strictChapterPaths) {
+    const chapter = filesByPath.get(chapterPath);
+    if (chapter === undefined) throw new Error(`${chapterPath}: changed-content gate cannot find the packaged chapter`);
+    const directory = dirname(chapterPath);
+    const supportFile = filesByPath.get(`${directory}/reading-support.json`);
+    const translationFile = filesByPath.get(`${directory}/reading-translation.en.json`);
+    assertCanonicalSectionAndGrammarRules({
+      markdown: chapter.text,
+      source: chapterPath,
+      ...(supportFile === undefined ? {} : { readingSupport: JSON.parse(supportFile.text) as unknown }),
+      ...(translationFile === undefined ? {} : { readingTranslation: JSON.parse(translationFile.text) as unknown })
+    });
+  }
+  for (const file of sourceFiles.filter((candidate) => /grammar-(?:easy|hard)\/chapter\.md$/u.test(candidate.path) && sourceChanges.has(candidate.path))) {
+    assertAuthoredGrammarProse(file.text, file.path);
+  }
+}
+
 async function packagedReadingSupportFiles(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly SourceFile[]> {
   return Promise.all((readingSupportPackages[target.id] ?? []).map(async ({ source, destination }) => {
     const buffer = await readFile(resolve(repositoryRoot, source));
@@ -1049,12 +1113,18 @@ async function assertValidReadingSupport(value: unknown, source: string, sourceR
 }
 
 function isStrictReadingRepairSupport(source: string): boolean {
-  return /^curriculum-support\/(?:french|german|japanese|korean)\/chapter-0(?:0[6-9]|10)\/reading-support\.json$/u.test(source);
+  return changedContentPaths(repositoryRoot, false).has(source);
 }
 
 function assertLearnerFacingIntroduction(value: string, source: string): void {
   const technicalToken = /\b(?:grammarId|lexicalId|schemaVersion|sourcePath|chapterMode|sentenceCount|reviewCards)\b|(?:^|\s)[\[{]\s*["'][A-Za-z][^\n]*[}\]]|(?:^|\s)(?:\/[\w.-]+){2,}|\bcom\.sleepymario\.[\w.-]+\b|\b(?:whacksmacker|curriculum-builder|[a-z]+-curriculum)\b|\bcanonical Chapter \d+ pattern\b|\bliteral source evidence\b|\bcanonical citation forms\b/iu;
-  if (technicalToken.test(value)) throw new Error(`${source} must contain short learner-facing cast, setting, and situation prose without technical metadata`);
+  if (technicalToken.test(value)) throw new Error(`${source} must contain short learner-facing grammar prose without technical metadata`);
+  if (!/(?:\b(?:grammar|grammatical|pattern|construction|word order|pronoun|verb|noun|adjective|adverb|preposition|particle|clause|sentence|tense|aspect|mood|agreement|plural|singular|determiner|conjunction|case|register)\b|`[^`]+`|\[\[grammar:)/iu.test(value)) {
+    throw new Error(`${source} must name or clearly describe the chapter grammar`);
+  }
+  if (/\b(?:is a \d{1,3}-year-old|lives? in|joins?|prepares?|look(?:s|ing)? for|helps? .* (?:arrange|prepare|find)|scene|setting|plot|biograph)/iu.test(value)) {
+    throw new Error(`${source} must not contain scene, profile, or plot setup`);
+  }
 }
 
 interface ArchiveEntry {
@@ -1202,9 +1272,10 @@ async function assertNaturalEnglishTranslationIntroductionBoundary(sourceRoot: s
       throw new Error(`Invalid ${path}: introduction must be a nonempty exact source projection when supplied.`);
     }
     const chapter = (await readFile(resolve(sourceRoot, dirname(path), "chapter.md"))).toString("utf8");
-    const exactIntroduction = /^### Brief Introduction\s*\n\s*\n([\s\S]*?)(?=\n###\s)/mu.exec(chapter)?.[1].trim();
-    if (record.introduction !== exactIntroduction) {
-      throw new Error(`Invalid ${path}: introduction must exactly match the source Brief Introduction and remains outside translated reading-unit counts.`);
+    const dialogue = /^#{1,6}\s+Dialogue\s*$\n([\s\S]*?)(?=^#{1,6}\s+)/imu.exec(chapter)?.[1]?.trim();
+    const dialogueSetup = dialogue?.split(/\n\s*\n/u).find((part) => part.trim() !== "")?.trim();
+    if (dialogueSetup === undefined || record.introduction !== dialogueSetup) {
+      throw new Error(`Invalid ${path}: introduction is permitted only as the exact setup beneath Dialogue and remains outside spoken-turn counts.`);
     }
   }
   for (const key of ["context", "setting", "participants", "sceneIntroduction"]) {

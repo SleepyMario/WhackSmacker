@@ -234,8 +234,8 @@ for (const [language, config] of Object.entries(curricula)) {
       audienceSections: [
         {
           sourceHeading: "Brief Introduction",
-          normal: `In ${situation}, you will use [[grammar:${pattern}]]. ${normalGrammar}`,
-          expert: `This chapter presents [[grammar:${pattern}]] in ${situation}. ${expertGrammar}`
+          normal: `This chapter introduces [[grammar:${pattern}]]. ${normalGrammar}`,
+          expert: `This chapter presents [[grammar:${pattern}]]. ${expertGrammar}`
         },
         {
           sourceHeading: "Grammar",

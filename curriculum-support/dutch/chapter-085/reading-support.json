@@ -5,18 +5,18 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Bram, Emma, and Joris prepare a school presentation with their 41-year-old teacher, Marieke Smit. They combine their research on a safer cycling route and must present both advantages and disadvantages fairly to the class.",
-      "expert": "Bram, Emma, and Joris prepare a school presentation with their 41-year-old teacher, Marieke Smit. They combine their research on a safer cycling route and must present both advantages and disadvantages fairly to the class."
+      "normal": "This chapter consolidates basic attributive adjective inflection and introduces verb-final order in subordinate clauses. Choose `-e` or a zero ending from definiteness, number, and the noun’s `de`/`het` class. After a subordinator such as `omdat`, `dat`, `als`, `voordat`, or `zodat`, place the finite verb or verb cluster at the end.",
+      "expert": "This chapter consolidates basic attributive adjective inflection and introduces verb-final order in subordinate clauses. Choose `-e` or a zero ending from definiteness, number, and the noun’s `de`/`het` class. After a subordinator such as `omdat`, `dat`, `als`, `voordat`, or `zodat`, place the finite verb or verb cluster at the end."
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### full basic attributive adjective inflection\n\nChoose -e or zero from the determiner, number, and de/het class of the noun.\n\nExample: [[grammar:Ik vind een veilige schoolroute een belangrijk onderwerp.]]\n\nWatch out: Do not treat adjective endings as optional; they follow the noun-phrase pattern.\n\n#### basic subordinate-clause verb-final order\n\nAfter a basic subordinator such as omdat, dat, als, voordat, or zodat, place the finite verb or verb cluster at the end.\n\nExample: [[grammar:Wij oefenen morgen omdat we vrijdag willen presenteren.]]\n\nWatch out: Do not keep ordinary main-clause V2 order after a subordinator.",
-      "expert": "#### full basic attributive adjective inflection\n\nCanonical pattern: [[grammar:determiner class + adjective-e/Ø + noun]]. Choose -e or zero from the determiner, number, and de/het class of the noun.\n\nLiteral chapter example: [[grammar:Ik vind een veilige schoolroute een belangrijk onderwerp.]]\n\nRestriction: Do not treat adjective endings as optional; they follow the noun-phrase pattern.\n\n#### basic subordinate-clause verb-final order\n\nCanonical pattern: [[grammar:subordinator + subject + middle field + verb cluster]]. After a basic subordinator such as omdat, dat, als, voordat, or zodat, place the finite verb or verb cluster at the end.\n\nLiteral chapter example: [[grammar:Wij oefenen morgen omdat we vrijdag willen presenteren.]]\n\nRestriction: Do not keep ordinary main-clause V2 order after a subordinator."
+      "normal": "#### full basic attributive adjective inflection\n\nChoose `-e` or zero from the determiner, number, and `de`/`het` class of the noun.\n\nExample: [[grammar:Ik vind een veilige schoolroute een belangrijk onderwerp.]]\n\nWatch out: Do not treat adjective endings as optional; they follow the noun-phrase pattern.\n\n#### basic subordinate-clause verb-final order\n\nAfter a basic subordinator such as `omdat`, `dat`, `als`, `voordat`, or `zodat`, place the finite verb or verb cluster at the end.\n\nExample: [[grammar:Wij oefenen morgen omdat we vrijdag willen presenteren.]]\n\nWatch out: Do not keep ordinary main-clause V2 order after a subordinator.",
+      "expert": "#### full basic attributive adjective inflection\n\nBasic attributive adjective inflection depends on definiteness, number, and the `de`/`het` class of the noun. The zero ending is restricted mainly to indefinite singular neuter phrases.\n\nLiteral chapter example: [[grammar:Ik vind een veilige schoolroute een belangrijk onderwerp.]]\n\n#### basic subordinate-clause verb-final order\n\nA subordinating conjunction places the finite verb or verb cluster at the end of its clause. The subordinate clause may precede or follow the main clause.\n\nLiteral chapter example: [[grammar:Wij oefenen morgen omdat we vrijdag willen presenteren.]]"
     },
     {
       "sourceHeading": "Dutch Usage Notes",
-      "normal": "Use the two chapter patterns consistently in the scene.",
-      "expert": "The chapter integrates the two productive grammar systems without treating them as lexical Review identities."
+      "normal": "Choose adjective endings from definiteness, number, and noun class. In clauses introduced by words such as `omdat` or `zodat`, place the finite verb or verb cluster at the end.",
+      "expert": "Attributive adjective endings follow definiteness, number, and noun class. Subordinators trigger clause-final placement of the finite verb or verb cluster."
     }
   ],
   "breakdown": {

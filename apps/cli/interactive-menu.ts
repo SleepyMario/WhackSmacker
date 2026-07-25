@@ -2364,11 +2364,15 @@ function parseReadingSupport(text: string): ReadingSupport | undefined {
 function applyReadingSupport(markdown: string, support: ReadingSupport, options: InteractiveMenuOptions): string {
   const mode = options.displayMode ?? defaultCurriculumDisplayMode;
   let output = markdown;
+  const primarySetup = primaryReadingSetup(markdown);
   for (const section of support.audienceSections) {
     // The authoritative Dialogue or Narrative is immutable learner content.
     // Audience support may explain surrounding sections, but must never replace
     // the authored reading body.
     if (isPrimaryReadingHeading(section.sourceHeading)) continue;
+    if (section.sourceHeading === "Brief Introduction"
+      && primarySetup !== undefined
+      && [section.normal, section.expert].some((value) => normalizedSetup(value).includes(normalizedSetup(primarySetup)))) continue;
     output = replaceNamedSection(output, section.sourceHeading, projectReadingAudienceSection(section, mode));
   }
   const embeddedBreakdown = markdownSectionBody(output, "Line-by-Line Breakdown")
@@ -2394,6 +2398,19 @@ function applyReadingSupport(markdown: string, support: ReadingSupport, options:
     output = insertBeforeExercises(output, body);
   }
   return output;
+}
+
+function primaryReadingSetup(markdown: string): string | undefined {
+  for (const heading of ["Dialogue", "Narrative"]) {
+    const body = markdownSectionBody(markdown, heading);
+    if (body === undefined) continue;
+    return body.split(/\n\s*\n/u).find((part) => part.trim() !== "")?.trim();
+  }
+  return undefined;
+}
+
+function normalizedSetup(value: string): string {
+  return value.normalize("NFKC").replace(/\s+/gu, " ").trim();
 }
 
 function isPrimaryReadingHeading(title: string): boolean {

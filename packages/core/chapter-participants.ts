@@ -246,7 +246,10 @@ export function reconcileChapterParticipants(
   // participants or qualifying appearances merely because their name occurs.
 
   const active = new Set(activePersonIdsForChapter(chapter, options.activeCastProgression));
-  for (const id of castIds) if (!active.has(id)) throw new Error(`${source}: canonical participant ${id} is inactive at Chapter ${chapter}`);
+  // Identity reconciliation deliberately does not redefine appearance-distribution
+  // policy. Pre-profile appearances remain visible here; the active-cast audit is
+  // the authoritative place that decides whether an appearance qualifies for a
+  // coverage block or is a migration finding.
   const ceiling = chapter <= 75 ? 3 : 4;
   if (castIds.length > ceiling) {
     throw new Error(`${source}: Chapter ${chapter} declares ${castIds.length} canonical cast participants; named-cast ceiling is ${ceiling}. Unnamed functional participants are excluded from this count.`);
@@ -327,8 +330,6 @@ function extractPrimaryReading(markdown: string, source: string): {
   const headingPattern = /^(#{2,3})\s+(?:Learner-facing )?(Dialogue|Narrative|Controlled Reading|Read Content)\s*$/gimu;
   const heading = headingPattern.exec(normalized);
   if (heading === null) throw new Error(`${source}: chapter has no primary Dialogue or Narrative heading`);
-  const explicitIntroductionMatch = /^### Brief Introduction\s*\n\s*\n([\s\S]*?)(?=\n#{1,3}\s|$)/mu.exec(normalized.slice(0, heading.index).trimEnd());
-  const explicitIntroduction = explicitIntroductionMatch?.[1].trim();
   const level = heading[1].length;
   const start = heading.index + heading[0].length;
   const rest = normalized.slice(start).replace(/^\s*\n/u, "");
@@ -339,7 +340,8 @@ function extractPrimaryReading(markdown: string, source: string): {
     const lines = section.split("\n");
     const firstSpeaker = lines.findIndex(line => structuralSpeakerLabel(line) !== undefined);
     if (firstSpeaker < 0) throw new Error(`${source}: Dialogue contains no structural speaker labels`);
-    const introduction = explicitIntroduction ?? lines.slice(0, firstSpeaker).join("\n").trim();
+    const introduction = lines.slice(0, firstSpeaker).join("\n").trim();
+    if (introduction.length === 0) throw new Error(`${source}: Dialogue must contain its people/subject-and-setting setup under Dialogue before the first turn`);
     const body = lines.slice(firstSpeaker).join("\n").trim();
     const dialogueSpeakerLabels = [...new Set(lines.slice(firstSpeaker).flatMap(line => {
       const label = structuralSpeakerLabel(line);
@@ -347,12 +349,9 @@ function extractPrimaryReading(markdown: string, source: string): {
     }))];
     return { mode, introduction, body, dialogueSpeakerLabels };
   }
-  if (explicitIntroduction !== undefined) {
-    return { mode, introduction: explicitIntroduction, body: section, dialogueSpeakerLabels: [] };
-  }
   const paragraphs = section.split(/\n\s*\n/u).map(part => part.trim()).filter(Boolean);
-  if (paragraphs.length < 2) throw new Error(`${source}: Narrative must contain a separate people/subject-and-setting introduction before its body`);
-  return { mode, introduction: paragraphs[0], body: paragraphs.slice(1).join("\n\n"), dialogueSpeakerLabels: [] };
+  if (paragraphs.length === 0) throw new Error(`${source}: Narrative must contain reading content, including its people/subject-and-setting setup`);
+  return { mode, introduction: paragraphs[0], body: section, dialogueSpeakerLabels: [] };
 }
 
 function structuralSpeakerLabel(line: string): string | undefined {

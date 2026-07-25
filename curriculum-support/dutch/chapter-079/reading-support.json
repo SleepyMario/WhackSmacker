@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Opa Henk helps Daan and Milan build a bookcase. You will learn the [[grammar:basic imperative]] and see how separable verbs split in commands and finite main clauses.",
-      "expert": "[[grammar:`verb stem + remainder`]] is the canonical pattern for give a direct everyday instruction without an expressed subject. `finite stem in V2 ... particle final; infinitive written together` is the canonical pattern for place a separable particle at the clause edge in finite clauses and keep the infinitive together."
+      "normal": "This chapter introduces the basic imperative and separable verbs in finite clauses. Use the verb stem to give a direct instruction. In commands and V2 main clauses, place a separable particle at the end; keep the infinitive written as one word.",
+      "expert": "This chapter introduces the basic imperative and separable verbs in finite clauses. Use the verb stem to give a direct instruction. In commands and V2 main clauses, place a separable particle at the end; keep the infinitive written as one word."
     },
     {
       "sourceHeading": "New Grammar / Pattern",
@@ -15,8 +15,8 @@
     },
     {
       "sourceHeading": "Dutch Usage Notes",
-      "normal": "Use the [[grammar:verb stem for a basic command]]. With a separable verb, put its particle at the end of the command or finite main clause, but keep the infinitive together.",
-      "expert": "The [[grammar:unmarked Dutch imperative is morphologically identical to the verb stem]] and normally lacks an overt subject. It occupies the finite initial position, while complements and separable particles follow. Pragmatic softeners can reduce directness without changing the construction. A separable particle verb forms a discontinuous predicate in V2 main clauses and imperatives: the finite stem occupies the left bracket and the stressed particle the right bracket. In infinitival environments, the components are written together. Inseparable prefixes do not behave this way."
+      "normal": "Use the verb stem for a basic command. With a separable verb, put its particle at the end of the command or finite main clause, but keep the infinitive together.",
+      "expert": "The unmarked Dutch imperative is morphologically identical to the verb stem and normally lacks an overt subject. It occupies the finite initial position, while complements and separable particles follow. Pragmatic softeners can reduce directness without changing the construction. A separable particle verb forms a discontinuous predicate in V2 main clauses and imperatives: the finite stem occupies the left bracket and the stressed particle the right bracket. In infinitival environments, the components are written together. Inseparable prefixes do not behave this way."
     }
   ],
   "breakdown": {

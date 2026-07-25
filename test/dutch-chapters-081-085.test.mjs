@@ -27,8 +27,16 @@ test("Dutch Chapters 81-85 preserve modes, 160 reading units, and introduction b
     assert.match(markdown, /^### Brief Introduction$/mu);
     assert.equal(translation.chapter, chapter);
     assert.equal(translation.mode, mode);
-    assert.equal(typeof translation.introduction, "string");
-    assert.ok(translation.introduction.length > 0);
+    const introduction = sectionBody(markdown, "Brief Introduction");
+    const primary = sectionBody(markdown, mode === "dialogue" ? "Dialogue" : "Narrative");
+    const setup = primary.split(/\n\s*\n/u)[0].trim();
+    assert.match(introduction, /\b(?:grammar|introduces|pronoun|paradigm|plural|possessive|modal|adjective|conjunction|word order)\b/iu);
+    assert.equal(introduction.includes(setup), false, `Chapter ${chapter} setup is not projected under Brief Introduction`);
+    if (mode === "dialogue") {
+      assert.equal(translation.introduction, setup, `Chapter ${chapter} dialogue setup translation`);
+    } else {
+      assert.equal(translation.introduction, undefined, `Chapter ${chapter} narrative has no detached setup`);
+    }
     const readingUnits = mode === "dialogue" ? translation.turns : translation.sentences;
     assert.equal(readingUnits.length, 32, `Chapter ${chapter}`);
     assert.equal(readingUnits.some((unit) => Object.values(unit).includes(translation.introduction)), false);
@@ -70,19 +78,44 @@ test("Dutch Chapters 81-85 introduce exactly 75 lexical senses and 150 pure bidi
 
 test("Dutch Grammar Easy and Hard preserve the same ten chapter identities", async () => {
   const [easy, hard] = await Promise.all(["easy", "hard"].map((variant) => readFile(join(unitsRoot, `chapter-081-085-grammar-${variant}`, "chapter.md"), "utf8")));
-  const ids = (markdown) => [...markdown.matchAll(/^### (DUT-GRAMMAR-[A-Z0-9-]+) —/gmu)].map((match) => match[1]);
+  const ids = (markdown) => [...markdown.matchAll(/^Grammar ID:\s*`(DUT-GRAMMAR-[A-Z0-9-]+)`/gmu)].map((match) => match[1]);
   assert.equal(ids(easy).length, 10);
   assert.deepEqual(ids(hard), ids(easy));
   const coverage = await readJson(join(curriculumRoot, "grammar-coverage.json"));
+  const inventory = await readJson(join(curriculumRoot, "grammar-inventory.json"));
   for (const [chapter, [directory]] of chapters) {
     const source = await readFile(join(unitsRoot, directory, "chapter.md"), "utf8");
     const frontmatterIds = JSON.parse(/^grammar_ids: (\[[^\n]+\])$/mu.exec(source)?.[1] ?? "[]");
     assert.equal(frontmatterIds.length, 2);
     assert.deepEqual(ids(easy).slice((chapter - 81) * 2, (chapter - 80) * 2), frontmatterIds);
-    for (const grammarId of frontmatterIds) {
-      const mapping = coverage.chapterMappings.find((entry) => entry.chapter === chapter);
-      assert.ok(mapping?.newGrammarIds.includes(grammarId), grammarId);
-    }
+    const sourcePatterns = JSON.parse(/^grammar_patterns: (\[[^\n]+\])$/mu.exec(source)?.[1] ?? "[]");
+    const mapping = coverage.chapterMappings.find((entry) => entry.chapter === chapter);
+    assert.equal(mapping?.newGrammarIds.length, 2);
+    assert.deepEqual(mapping.newGrammarIds.map((grammarId) => inventory.structures.find((entry) => entry.id === grammarId)?.canonicalPattern), sourcePatterns);
+  }
+});
+
+test("subject-pronoun invariant projects the authored Chapter 81 Normal and Expert prose", async () => {
+  const invariantId = "DUT-GRAMMAR-INV-A1-SUBJECT-PRONOUN-PARADIGM";
+  const forbidden = [
+    /analysed as a productive morphosyntactic system rather than as an isolated phrase/iu,
+    /without treating them as lexical Review identities/iu
+  ];
+  const [inventory, coverage, easy, hard, support] = await Promise.all([
+    readJson(join(curriculumRoot, "grammar-inventory.json")),
+    readJson(join(curriculumRoot, "grammar-coverage.json")),
+    readFile(join(unitsRoot, "chapter-081-085-grammar-easy", "chapter.md"), "utf8"),
+    readFile(join(unitsRoot, "chapter-081-085-grammar-hard", "chapter.md"), "utf8"),
+    readJson(join(process.cwd(), "curriculum-support", "dutch", "chapter-081", "reading-support.json"))
+  ]);
+  const invariant = inventory.structures.find((entry) => entry.id === invariantId);
+  assert.ok(invariant, invariantId);
+  assert.match(invariant.label, /subject personal pronoun/iu);
+  const mapping = coverage.chapterMappings.find((entry) => entry.chapter === 81);
+  assert.ok(mapping.newGrammarIds.includes(invariantId));
+  for (const prose of [easy, hard, support.audienceSections.find((section) => section.sourceHeading === "New Grammar / Pattern").normal, support.audienceSections.find((section) => section.sourceHeading === "New Grammar / Pattern").expert]) {
+    assert.match(prose, /subject (?:personal )?pronoun/iu);
+    for (const phrase of forbidden) assert.doesNotMatch(prose, phrase);
   }
 });
 

@@ -295,7 +295,7 @@ test("functional declarations reject CAST IDs, generic speakers, continuity/biog
   assert.throws(() => reconcile(disguised), /cannot be disguised/u);
 });
 
-test("participant reconciliation rejects omitted, undeclared, absent, inactive, and label-mismatched identities", () => {
+test("participant reconciliation rejects omitted, undeclared, absent, and label-mismatched identities while activation remains an audit concern", () => {
   const matched = dialogueFixture({ canonicalCount: 1 });
   assert.doesNotThrow(() => reconcile(matched));
 
@@ -336,7 +336,7 @@ test("participant reconciliation rejects omitted, undeclared, absent, inactive, 
   inactive.document.introductionParticipants[0].participantId = ids[5];
   inactive.document.introductionParticipants[0].label = "Person 6 Example";
   inactive.markdown = inactive.markdown.replaceAll("Person 1 Example", "Person 6 Example");
-  assert.throws(() => reconcile(inactive), /inactive at Chapter 1/u);
+  assert.doesNotThrow(() => reconcile(inactive));
 });
 
 test("a bare canonical-name reference does not create a participant or appearance", () => {

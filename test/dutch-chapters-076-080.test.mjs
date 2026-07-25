@@ -68,11 +68,13 @@ test("Dutch Chapters 76–80 use the approved modes and aligned 36-sentence supp
     const source = readingSentences(markdown, mode);
     const translation = JSON.parse(await readFile(join(unitRoot, directory, "reading-translation.en.json"), "utf8"));
     const support = JSON.parse(await readFile(join(supportRoot, `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json"), "utf8"));
+    const introduction = sectionBody(markdown, "Brief Introduction");
+    const primary = sectionBody(markdown, mode === "dialogue" ? "Dialogue" : "Narrative");
     assert.match(markdown, new RegExp(`^#{2,3} ${mode === "dialogue" ? "Dialogue" : "Narrative"}$`, "mu"));
-    if (mode === "narrative") {
-      assert.doesNotMatch(markdown, /^## Brief Introduction$/mu);
-      assert.equal(support.audienceSections.some((section) => section.sourceHeading === "Brief Introduction"), false);
-    }
+    assert.ok(introduction.length > 0, `Chapter ${chapter} grammar-only introduction`);
+    assert.match(introduction, /\b(?:grammar|introduces|word order|pronoun|preposition|verb|numeral|imperative|demonstrative)\b/iu);
+    assert.equal(primary.includes(introduction), false, `Chapter ${chapter} setup is not projected as introduction`);
+    assert.equal(support.audienceSections.some((section) => section.sourceHeading === "Brief Introduction"), true);
     assert.equal(source.length, 36, `Chapter ${chapter} source sentences`);
     assert.equal(translationSentences(translation).length, 36, `Chapter ${chapter} translation sentences`);
     assert.deepEqual(breakdownSentences(support.breakdown.normal), source, `Chapter ${chapter} Normal parity`);
@@ -151,10 +153,8 @@ test("generated and installed Dutch packages expose Chapters, Review, and Gramma
       assert.ok(node, `Chapter ${chapter} menu node`);
       const rendered = await renderLanguageTreeRightPane(node, { dataDir, displayMode: "normal" });
       assert.match(rendered, new RegExp(`Chapter ${chapter}`), `Chapter ${chapter} opens`);
-      if (chapters.get(chapter)[1] === "narrative") {
-        assert.doesNotMatch(rendered, /Brief Introduction/u);
-        assert.match(rendered, /^## Narrative\s*\n\n\S/mu, `Chapter ${chapter} begins its reading with narrative content`);
-      }
+      assert.match(rendered, /^#{2,3} Brief Introduction\s*\n\n\S/mu, `Chapter ${chapter} exposes its grammar preview`);
+      assert.match(rendered, new RegExp(`^#{2,3} ${chapters.get(chapter)[1] === "narrative" ? "Narrative" : "Dialogue"}\\s*\\n\\n\\S`, "mu"), `Chapter ${chapter} keeps setup under its reading section`);
     }
     assert.equal(read.children.some((node) => node.label.startsWith("Chapter 86 --")), false);
     assert.equal(read.children.some((node) => node.label === "Review -- Chapters 76–80"), true);
@@ -171,3 +171,8 @@ test("generated and installed Dutch packages expose Chapters, Review, and Gramma
     await rm(root, { recursive: true, force: true });
   }
 });
+
+function sectionBody(markdown, heading) {
+  const match = new RegExp(`^#{1,6} ${heading}$\\n([\\s\\S]*?)(?=^#{1,6} )`, "mu").exec(markdown);
+  return match?.[1]?.trim() ?? "";
+}

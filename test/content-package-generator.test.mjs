@@ -268,7 +268,7 @@ test("content package generator creates a valid Dutch package", async () => {
       assertChapterIntroductionRoles(chapterFile.text, JSON.parse(translationFile.text), chapterNumber);
     }
     assert.equal(content.files.some((file) => file.path === supportPath), true);
-    for (let chapterNumber = 1; chapterNumber <= 80; chapterNumber += 1) {
+    for (let chapterNumber = 1; chapterNumber <= 85; chapterNumber += 1) {
       const padded = String(chapterNumber).padStart(3, "0");
       const supportEntry = content.files.find((file) => file.path.includes(`/chapter-${padded}-`) && file.path.endsWith("/reading-support.json"));
       assert.ok(supportEntry, `Chapter ${chapterNumber} semantic support is packaged`);
@@ -277,11 +277,11 @@ test("content package generator creates a valid Dutch package", async () => {
       assert.match(supportEntry.text, /\[\[grammar:[^\]\n]+\]\]/u);
       assert.doesNotMatch(supportEntry.text, /\*\*[^*]+\*\*/u);
       const introduction = support.audienceSections.find((section) => section.sourceHeading === "Brief Introduction");
-      if ([76, 78, 80].includes(chapterNumber)) {
-        assert.equal(introduction, undefined, `Chapter ${chapterNumber} omits setup from semantic narrative support`);
-      } else {
-        assert.ok(introduction, `Chapter ${chapterNumber} has semantic Brief Introduction support`);
+      assert.ok(introduction, `Chapter ${chapterNumber} has semantic Brief Introduction support`);
+      if (chapterNumber <= 75) {
         assert.notEqual(introduction.normal, introduction.expert, `Chapter ${chapterNumber} Normal and Expert introductions differ`);
+      } else {
+        assert.equal(introduction.normal, introduction.expert, `Chapter ${chapterNumber} preserves the exact authored grammar-only introduction`);
       }
     }
     const chapter1TranslationEntry = translationEntries.find((entry) => entry.path === translationPath);
@@ -726,8 +726,18 @@ function assertChapterIntroductionRoles(markdown, translation, chapterNumber) {
   const exactAuthored = /^audit_status:\s*["']?authored-exact-content["']?\s*$/mu.test(markdown);
   if (exactAuthored) {
     assert.ok(brief, `Chapter ${chapterNumber} has the exact authored Brief Introduction`);
-    assert.equal(translation.introduction, brief, `Chapter ${chapterNumber} carries the exact introduction in structural translation metadata`);
-    assert.match(markdown, /^###\s+(?:Dialogue|Narrative)\s*$/mu, `Chapter ${chapterNumber} has the authored primary reading`);
+    const primary = /^###\s+(Dialogue|Narrative)\s*$\n([\s\S]*?)(?=^#{1,6}\s+)/mu.exec(markdown);
+    assert.ok(primary, `Chapter ${chapterNumber} has the authored primary reading`);
+    const setup = primary[2].trim().split(/\n\s*\n/u)[0];
+    if (primary[1] === "Dialogue") {
+      if (Object.hasOwn(translation, "introduction")) {
+        assert.equal(translation.introduction, setup, `Chapter ${chapterNumber} carries exact Dialogue setup when structural translation metadata includes it`);
+      }
+    } else {
+      for (const key of ["introduction", "context", "setting", "participants", "sceneIntroduction"]) {
+        assert.equal(Object.hasOwn(translation, key), false, `Chapter ${chapterNumber} Narrative translation has no ${key} preface`);
+      }
+    }
     return;
   }
   if ([76, 78, 80].includes(chapterNumber)) {

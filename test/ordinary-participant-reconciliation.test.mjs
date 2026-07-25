@@ -76,7 +76,7 @@ test("Phase 7A participant IDs do not enter canonical casts or learner-facing ch
   }
 });
 
-test("Phase 7B Dutch and Vietnamese sidecars resolve, remain active, and preserve exact repaired sets", async () => {
+test("Phase 7B Dutch and Vietnamese sidecars resolve, expose activation previews, and preserve exact authored sets", async () => {
   for (const [language, expectedCount, through] of [["dutch", 85, 85], ["vietnamese", 50, 50]]) {
     const repository = join(modulesRoot, `${language}-curriculum`);
     const cast = JSON.parse(await readFile(join(repository, "name-pools/canonical-cast.json"), "utf8"));
@@ -87,9 +87,7 @@ test("Phase 7B Dutch and Vietnamese sidecars resolve, remain active, and preserv
     for (const path of files) {
       const document = JSON.parse(await readFile(path, "utf8"));
       assert.equal(document.chapter <= through, true);
-      const activeSize = Math.min(30, 5 + 3 * Math.floor((document.chapter - 1) / 20));
-      const active = new Set(cast.activeCast.progression.slice(0, activeSize));
-      assert.equal(document.canonicalCastIds.every(id => ids.has(id) && active.has(id)), true, path);
+      assert.equal(document.canonicalCastIds.every(id => ids.has(id)), true, path);
       assert.deepEqual(
         new Set(document.primaryReadingParticipants.filter(person => person.participantId.startsWith("CAST-")).map(person => person.participantId)),
         new Set(document.canonicalCastIds),
@@ -105,16 +103,17 @@ test("Phase 7B Dutch and Vietnamese sidecars resolve, remain active, and preserv
   })));
   assert.deepEqual(byChapter.get(76).canonicalCastIds, ["CAST-006", "CAST-001", "CAST-004"]);
   assert.deepEqual(byChapter.get(77).canonicalCastIds, ["CAST-008", "CAST-007", "CAST-010"]);
-  assert.deepEqual(byChapter.get(78).canonicalCastIds, ["CAST-010", "CAST-004", "CAST-002"]);
-  assert.deepEqual(byChapter.get(79).canonicalCastIds, ["CAST-011", "CAST-002", "CAST-007"]);
-  assert.deepEqual(byChapter.get(80).canonicalCastIds, ["CAST-001", "CAST-012", "CAST-013"]);
+  assert.deepEqual(byChapter.get(78).canonicalCastIds, ["CAST-016", "CAST-004", "CAST-025"]);
+  assert.deepEqual(byChapter.get(79).canonicalCastIds, ["CAST-024", "CAST-002", "CAST-027"]);
+  assert.deepEqual(byChapter.get(80).canonicalCastIds, ["CAST-015", "CAST-014", "CAST-013"]);
 });
 
 test("Phase 7B literal identity evidence and completed appearance coverage are current", async () => {
   const dutch = join(modulesRoot, "dutch-curriculum");
   const appearance = await readFile(join(dutch, "name-pools/appearance-ledger.md"), "utf8");
   assert.match(appearance, /CAST-005.*21, 22, 24, 37, 38.*5\/5 — passed/u);
-  assert.match(appearance, /61–80.*completed.*CAST-010: 10; CAST-011: 6; CAST-012: 9.*passed/u);
+  assert.match(appearance, /61–80.*completed.*CAST-010: 9; CAST-011: 5; CAST-012: 8.*passed/u);
+  assert.match(appearance, /Pre-activation preview appearances.*CAST-016 in Chapter 78.*CAST-027 in Chapter 79.*CAST-014 in Chapter 80/u);
   const changed = [
     join(dutch, "units/dutch-core/chapter-078-a-morning-in-the-garden/chapter.md"),
     join(dutch, "units/dutch-core/chapter-079-building-a-bookcase-together/chapter.md"),
@@ -122,16 +121,18 @@ test("Phase 7B literal identity evidence and completed appearance coverage are c
     join(modulesRoot, "whacksmacker/review-content/dutch/review-decks/chapter-076-080/cards.tsv")
   ];
   const text = (await Promise.all(changed.map(path => readFile(path, "utf8")))).join("\n");
-  assert.doesNotMatch(text, /\b(?:Joris|Finn|Gerard|Luuk)\b/u);
+  assert.match(text, /\bJoris\b/u);
+  assert.match(text, /\bFinn\b/u);
+  assert.match(text, /\bGerard\b/u);
+  assert.match(text, /\bLuuk\b/u);
   const chapter78 = await readFile(changed[0], "utf8");
-  assert.match(chapter78, /Fatima sluit de kast, maar zij laat het hek nog even open\./u);
-  assert.doesNotMatch(chapter78, /Fatima sluit de kast, maar hij laat/u);
+  assert.match(chapter78, /Joris sluit de kast, maar hij laat het hek nog even open\./u);
   const chapter78Translation = await readFile(join(dutch, "units/dutch-core/chapter-078-a-morning-in-the-garden/reading-translation.en.json"), "utf8");
   const chapter78Support = await readFile(join(modulesRoot, "whacksmacker/curriculum-support/dutch/chapter-078/reading-support.json"), "utf8");
-  assert.match(chapter78Translation, /Fatima closes the cupboard, but she leaves/u);
-  assert.match(chapter78Support, /Fatima \[\[grammar:sluit\]\] de kast, maar zij \[\[grammar:laat\]\]/u);
+  assert.match(chapter78Translation, /Joris closes the cupboard, but he leaves/u);
+  assert.match(chapter78Support, /Joris \[\[grammar:sluit\]\] de kast, maar hij \[\[grammar:laat\]\]/u);
   const chapter80 = await readFile(changed[2], "utf8");
-  assert.doesNotMatch(chapter80, /\b(?:Emma|Bram)\b/u);
+  assert.match(chapter80, /\b(?:Emma|Bram)\b/u);
   const vietnameseAppearance = await readFile(join(modulesRoot, "vietnamese-curriculum/name-pools/appearance-ledger.md"), "utf8");
   assert.match(vietnameseAppearance, /41–60 \| incomplete progress.*pending/u);
 });

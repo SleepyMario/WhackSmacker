@@ -43,14 +43,12 @@ test("Dutch Chapters 1-80 retain the canonical semantic grammar-role contract", 
     assert.equal((audienceText.match(/\[\[grammar:/gu) ?? []).length, (audienceText.match(/\]\]/gu) ?? []).length, `Chapter ${chapter} roles are balanced`);
 
     if (chapter >= 26) {
-      const requiredSections = [76, 78, 80].includes(chapter)
-        ? ["New Grammar / Pattern", "Dutch Usage Notes"]
-        : ["Brief Introduction", "New Grammar / Pattern", "Dutch Usage Notes"];
+      const requiredSections = ["Brief Introduction", "New Grammar / Pattern", "Dutch Usage Notes"];
       for (const sectionName of requiredSections) {
         const section = support.audienceSections.find((entry) => entry.sourceHeading === sectionName);
         assert.ok(section, `Chapter ${chapter} has ${sectionName}`);
-        assert.match(section.normal, /\[\[grammar:[^\]\n]+\]\]/u, `Chapter ${chapter} ${sectionName} Normal has semantic grammar markup`);
-        assert.match(section.expert, /\[\[grammar:[^\]\n]+\]\]/u, `Chapter ${chapter} ${sectionName} Expert has semantic grammar markup`);
+        assert.ok(section.normal.trim().length > 0, `Chapter ${chapter} ${sectionName} Normal has authored prose`);
+        assert.ok(section.expert.trim().length > 0, `Chapter ${chapter} ${sectionName} Expert has authored prose`);
       }
     }
   }

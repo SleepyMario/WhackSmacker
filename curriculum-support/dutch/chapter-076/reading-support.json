@@ -4,14 +4,19 @@
   "sourcePath": "chapter.md",
   "audienceSections": [
     {
+      "sourceHeading": "Brief Introduction",
+      "normal": "This chapter introduces spatial prepositions and `die + de-word / dat + het-word`. Use `in`, `op`, `aan`, `bij`, `naast`, `onder`, `boven`, `voor`, and `achter` to describe location. Use `die` with a singular `de`-word and `dat` with a singular `het`-word.",
+      "expert": "This chapter introduces spatial prepositions and `die + de-word / dat + het-word`. Use `in`, `op`, `aan`, `bij`, `naast`, `onder`, `boven`, `voor`, and `achter` to describe location. Use `die` with a singular `de`-word and `dat` with a singular `het`-word."
+    },
+    {
       "sourceHeading": "New Grammar / Pattern",
       "normal": "#### basic locative prepositions\n\nUse these short words to say where something is. Use `in` for inside, `op` for on top of, `aan` for attached to, `bij` for near, `naast` for next to, `onder` for below, `boven` for above, `voor` for in front of, and `achter` for behind. Put the place or object after the preposition.\n\nExample: Sophie zet de bank [[grammar:naast de muur]], zodat de deur goed open kan.\n\nWatch out: Do not translate every English “at” with one Dutch word; choose the Dutch preposition that matches the real spatial relation.\n\n#### distal demonstrative determiners\n\nUse `die` before a singular `de`-word and `dat` before a singular `het`-word. These forms often point to something farther away or to something already identified. Say `die woning` but `dat bed`.\n\nExample: [[grammar:Die doos]] [[grammar:bij de bank]] is voor de woonkamer, maar [[grammar:dat pakket]] [[grammar:onder het raam]] hoort bij de slaapkamer.\n\nWatch out: Do not choose `die` or `dat` from the English word “that”; choose it from the Dutch noun’s `de` or `het` class.",
       "expert": "#### basic locative prepositions\n\nThese prepositions head locative prepositional phrases. Their interpretation encodes containment, support or contact, attachment, proximity, vertical ordering, or projective front/back orientation. The phrase can function as a complement or an adjunct.\n\nLiteral chapter example: Sophie zet de bank [[grammar:naast de muur]], zodat de deur goed open kan.\n\n#### distal demonstrative determiners\n\nThe distal demonstrative determiner agrees with the singular noun-class contrast: common-gender `de`-words select `die`, while neuter singular `het`-words select `dat`. Plural nouns select `die`. The demonstrative can be deictic or anaphoric.\n\nLiteral chapter example: [[grammar:Die doos]] [[grammar:bij de bank]] is voor de woonkamer, maar [[grammar:dat pakket]] [[grammar:onder het raam]] hoort bij de slaapkamer."
     },
     {
       "sourceHeading": "Dutch Usage Notes",
-      "normal": "Choose a place word from the real spatial relation. Use [[grammar:`die` with a singular `de`-word and `dat` with a singular `het`-word]].",
-      "expert": "These prepositions head [[grammar:locative prepositional phrases]]. Their interpretation encodes containment, support or contact, attachment, proximity, vertical ordering, or projective front/back orientation. The phrase can function as a complement or an adjunct. The distal demonstrative determiner agrees with the singular noun-class contrast: common-gender `de`-words select `die`, while neuter singular `het`-words select `dat`. Plural nouns select `die`. The demonstrative can be deictic or anaphoric."
+      "normal": "Choose a place word from the real spatial relation. Use `die` with a singular `de`-word and `dat` with a singular `het`-word.",
+      "expert": "These prepositions head locative prepositional phrases. Their interpretation encodes containment, support or contact, attachment, proximity, vertical ordering, or projective front/back orientation. The phrase can function as a complement or an adjunct. The distal demonstrative determiner agrees with the singular noun-class contrast: common-gender `de`-words select `die`, while neuter singular `het`-words select `dat`. Plural nouns select `die`. The demonstrative can be deictic or anaphoric."
     }
   ],
   "breakdown": {

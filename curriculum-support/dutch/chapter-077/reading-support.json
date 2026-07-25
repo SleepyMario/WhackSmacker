@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lotte, Milan, and Fatima are getting ready for a party. You will learn a [[grammar:productive Dutch question pattern]] and the common object-pronoun forms used after verbs.",
-      "expert": "[[grammar:`wh-constituent + finite verb + subject + remainder?`]] is the canonical pattern for ask productive questions about people, things, places, reasons, choices, and manner. `mij/me, jou/je, u, hem, haar, het, ons, jullie, hen/ze as object` is the canonical pattern for replace an object noun phrase with the appropriate personal pronoun."
+      "normal": "This chapter introduces content-question word order and object personal pronouns. Put the question word first, followed by the finite verb and then the subject when the question word is not the subject. Use object forms such as `mij/me`, `jou/je`, `hem`, `haar`, `ons`, and `jullie` for the person or thing receiving the action.",
+      "expert": "This chapter introduces content-question word order and object personal pronouns. Put the question word first, followed by the finite verb and then the subject when the question word is not the subject. Use object forms such as `mij/me`, `jou/je`, `hem`, `haar`, `ons`, and `jullie` for the person or thing receiving the action."
     },
     {
       "sourceHeading": "New Grammar / Pattern",
@@ -15,8 +15,8 @@
     },
     {
       "sourceHeading": "Dutch Usage Notes",
-      "normal": "Put a wh-word first and keep the [[grammar:finite verb in V2 position]]. Use an object pronoun only when its referent is clear from the conversation.",
-      "expert": "Productive Dutch content questions place a wh-constituent in the first field. The [[grammar:finite verb remains in V2 position]]. A non-subject wh-constituent is followed by finite-verb–subject inversion; a subject wh-pronoun itself occupies the subject position. Dutch object pronouns distinguish person, number, and in the third-person singular, gender. Weak forms occupy an unstressed middle-field position; strong forms can bear contrastive focus. The pronoun’s grammatical role is determined by the clause, not by English word order alone."
+      "normal": "Put a wh-word first and keep the finite verb in V2 position. Use an object pronoun only when its referent is clear from the conversation.",
+      "expert": "Productive Dutch content questions place a wh-constituent in the first field. The finite verb remains in V2 position. A non-subject wh-constituent is followed by finite-verb–subject inversion; a subject wh-pronoun itself occupies the subject position. Dutch object pronouns distinguish person, number, and in the third-person singular, gender. Weak forms occupy an unstressed middle-field position; strong forms can bear contrastive focus. The pronoun’s grammatical role is determined by the clause, not by English word order alone."
     }
   ],
   "breakdown": {

@@ -5,18 +5,18 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Bram Bakker is a 17-year-old secondary-school student from Utrecht. He is Sophie de Vries’s classmate, enjoys reading and cycling, and is joining Marieke Smit’s study group for the first time. Sophie and Marieke help him register before the afternoon meeting.",
-      "expert": "Bram Bakker is a 17-year-old secondary-school student from Utrecht. He is Sophie de Vries’s classmate, enjoys reading and cycling, and is joining Marieke Smit’s study group for the first time. Sophie and Marieke help him register before the afternoon meeting."
+      "normal": "This chapter introduces subject personal pronouns and common irregular present-tense paradigms. Use subject pronouns to distinguish person, number, and register. Learn the frequent present forms of `zijn`, `hebben`, `gaan`, `komen`, `doen`, and `weten` as complete paradigms.",
+      "expert": "This chapter introduces subject personal pronouns and common irregular present-tense paradigms. Use subject pronouns to distinguish person, number, and register. Learn the frequent present forms of `zijn`, `hebben`, `gaan`, `komen`, `doen`, and `weten` as complete paradigms."
     },
     {
       "sourceHeading": "New Grammar / Pattern",
-      "normal": "#### subject personal pronouns\n\nUse subject pronouns to distinguish person, number, and register.\n\nExample: [[grammar:Dan ben jij op donderdag onze vaste deelnemer.]]\n\nWatch out: Do not use informal jij where formal u is required.\n\n#### common irregular present paradigms\n\nLearn the frequent present forms of these common irregular verbs as complete paradigms.\n\nExample: [[grammar:Dan weten jullie wat ik van iedere deelnemer verwacht.]]\n\nWatch out: Do not force these verbs into the regular stem-plus-t pattern.",
-      "expert": "#### subject personal pronouns\n\nCanonical pattern: [[grammar:ik, jij/je, u, hij, zij/ze, het, wij/we, jullie, zij/ze]]. Use subject pronouns to distinguish person, number, and register.\n\nLiteral chapter example: [[grammar:Dan ben jij op donderdag onze vaste deelnemer.]]\n\nRestriction: Do not use informal jij where formal u is required.\n\n#### common irregular present paradigms\n\nCanonical pattern: [[grammar:zijn, hebben, gaan, komen, doen, weten]]. Learn the frequent present forms of these common irregular verbs as complete paradigms.\n\nLiteral chapter example: [[grammar:Dan weten jullie wat ik van iedere deelnemer verwacht.]]\n\nRestriction: Do not force these verbs into the regular stem-plus-t pattern."
+      "normal": "#### subject personal pronouns\n\nUse subject pronouns to distinguish person, number, and register.\n\nExample: [[grammar:Dan ben jij op donderdag onze vaste deelnemer.]]\n\nWatch out: Do not use informal `jij` where formal `u` is required.\n\n#### common irregular present paradigms\n\nLearn the frequent present forms of `zijn`, `hebben`, `gaan`, `komen`, `doen`, and `weten` as complete paradigms.\n\nExample: [[grammar:Dan weten jullie wat ik van iedere deelnemer verwacht.]]\n\nWatch out: Do not force these verbs into the regular stem-plus-`t` pattern.",
+      "expert": "#### subject personal pronouns\n\nDutch subject pronouns distinguish person, number, and register. Unstressed variants such as `je`, `ze`, and `we` are common, while formal `u` can refer to one or more people depending on context.\n\nLiteral chapter example: [[grammar:Dan ben jij op donderdag onze vaste deelnemer.]]\n\n#### common irregular present paradigms\n\nThe high-frequency verbs `zijn`, `hebben`, `gaan`, `komen`, `doen`, and `weten` have irregular present-tense forms that must be learned as paradigms rather than generated from the regular stem-plus-`t` pattern.\n\nLiteral chapter example: [[grammar:Dan weten jullie wat ik van iedere deelnemer verwacht.]]"
     },
     {
       "sourceHeading": "Dutch Usage Notes",
-      "normal": "Use the two chapter patterns consistently in the scene.",
-      "expert": "The chapter integrates the two productive grammar systems without treating them as lexical Review identities."
+      "normal": "Choose subject pronouns from person, number, and register. Learn common irregular present forms as complete sets instead of applying the regular ending mechanically.",
+      "expert": "Dutch subject pronouns encode person, number, and register. The frequent irregular verbs in this chapter must be learned as complete present-tense paradigms."
     }
   ],
   "breakdown": {
