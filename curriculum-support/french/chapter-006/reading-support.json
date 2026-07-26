@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina works at a library near the park on Saturdays. During a quiet morning shift, she looks for a book before going home at noon.",
-      "expert": "Lina works at a library near the park on Saturdays. During a quiet morning shift, she looks for a book before going home at noon."
+      "normal": "Use [[grammar:il / elle + regular -er verb]] to describe what he or she does; remove [[grammar:-er]] and add [[grammar:-e]] in the third-person singular.",
+      "expert": "Regular first-conjugation verbs form the third-person singular present with the stem plus orthographic [[grammar:-e]], while the subject noun phrase or clitic precedes the finite verb."
     },
     {
       "sourceHeading": "Grammar",

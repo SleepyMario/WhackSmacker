@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Mia is sick and stays home. Jonas takes a late bus through the rain, calls her while he waits, and later visits her for tea.",
-      "expert": "Mia is sick and stays home. Jonas takes a late bus through the rain, calls her while he waits, and later visits her for tea."
+      "normal": "Use [[grammar:weil + subordinate clause]] to give a reason, placing the finite verb at the end of the [[grammar:weil]] clause.",
+      "expert": "The subordinating conjunction [[grammar:weil]] introduces a causal clause whose finite verb occupies the final position."
     },
     {
       "sourceHeading": "Grammar",

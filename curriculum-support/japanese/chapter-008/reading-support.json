@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "佐藤あき (Aki) follows a simple school-day schedule from seven in the morning until she goes home at night.",
-      "expert": "佐藤あき (Aki) follows a simple school-day schedule from seven in the morning until she goes home at night."
+      "normal": "Use [[grammar:time + に + verb]] to state when an action happens at a specific time.",
+      "expert": "Temporal [[grammar:に]] marks a specific clock time before the event predicate; broad periods may occur without it."
     },
     {
       "sourceHeading": "Grammar",

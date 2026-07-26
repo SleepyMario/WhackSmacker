@@ -137,7 +137,7 @@ test("installed Dutch Chapters 26-80 expose all views and independent translatio
       assert.match(both, /^### Line-by-line Breakdown$/mu);
 
       const brief = sectionBody(normal, "Brief Introduction");
-      if (number <= 75) assert.match(brief, /^This chapter (?:teaches|introduces)/u);
+      if (number <= 75) assert.match(brief.trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
       else assert.ok(brief.length > 0, `Chapter ${number} has learner-directed introductory support`);
       const readingBlocks = sectionBody(normal, type).split(/\n\s*\n/u).filter(Boolean);
       assert.ok(readingBlocks.length >= 1, `Chapter ${number} has expected reading blocks`);

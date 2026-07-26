@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:nếu + clause, thì + clause]]. Use nếu for a condition and thì for its result. This chapter teaches [[grammar:bao nhiêu + classifier + N?]]. Put bao nhiêu before a classifier and noun to ask for an unknown count.",
-      "expert": "This chapter introduces [[grammar:nếu + clause, thì + clause]]: Nếu introduces the conditional antecedent; thì explicitly marks the consequent and may be omitted in other contexts. This chapter introduces [[grammar:bao nhiêu + classifier + N?]]: The interrogative quantifier precedes the classifier–noun sequence in a Vietnamese quantity question."
+      "normal": "Use [[grammar:nếu + clause, thì + clause]] to connect a condition with its result and [[grammar:bao nhiêu + classifier + N]]? to ask for an unknown count.",
+      "expert": "The conditional antecedent is introduced by [[grammar:nếu]] and the consequent may be marked by [[grammar:thì]], while quantity questions place [[grammar:bao nhiêu]] before the classifier-noun sequence."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

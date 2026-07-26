@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina is at a bakery in the morning. She politely orders a baguette and a croissant, asks for the total, and thanks the seller.",
-      "expert": "Lina is at a bakery in the morning. She politely orders a baguette and a croissant, asks for the total, and thanks the seller."
+      "normal": "Use [[grammar:Je voudrais + noun]] to request an item politely.",
+      "expert": "The polite request frame [[grammar:je voudrais + noun]] uses the conditional form of [[grammar:vouloir]] to soften the speaker's wish."
     },
     {
       "sourceHeading": "Grammar",

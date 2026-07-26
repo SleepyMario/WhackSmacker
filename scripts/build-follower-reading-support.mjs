@@ -49,6 +49,28 @@ const languageNotes = {
   }
 };
 
+
+const briefIntroductionOverrides = {
+  arabic: {
+    3: {
+      normal: "Use [[grammar:مَا هَذَا]]؟ for a masculine item and [[grammar:مَا هَذِهِ]]؟ for a feminine item; match the demonstrative to the noun.",
+      expert: "The identification questions [[grammar:مَا هَذَا]]؟ and [[grammar:مَا هَذِهِ]]؟ combine interrogative مَا with a proximal demonstrative that agrees with the noun's grammatical gender."
+    }
+  },
+  german: {
+    3: {
+      normal: "Use [[grammar:Wo ist + N]]? to ask where one thing is.",
+      expert: "The locative content question [[grammar:Wo ist + N]]? places interrogative [[grammar:wo]] in the first field and finite [[grammar:ist]] in the second."
+    }
+  },
+  hindi: {
+    5: {
+      normal: "Use [[grammar:क्या आप + place + चलेंगे]]? to ask politely whether someone will go somewhere.",
+      expert: "Clause-initial [[grammar:क्या]] marks a polar question, while honorific [[grammar:आप]] selects plural-honorific agreement in [[grammar:चलेंगे]]."
+    }
+  }
+};
+
 const curricula = {
   arabic: {
     core: "arabic-core",
@@ -222,7 +244,12 @@ for (const [language, config] of Object.entries(curricula)) {
     const lines = extractReading(markdown);
     const translations = translationLines(translation);
     const [pattern, situation, normalGrammar, expertGrammar] = config.lessons[index];
-    const outputFile = join(supportRoot, language, `chapter-${String(index + 1).padStart(3, "0")}`, "reading-support.json");
+    const chapterNumber = index + 1;
+    const briefIntroduction = briefIntroductionOverrides[language]?.[chapterNumber] ?? {
+      normal: `This chapter introduces [[grammar:${pattern}]].`,
+      expert: `This chapter presents [[grammar:${pattern}]].`
+    };
+    const outputFile = join(supportRoot, language, `chapter-${String(chapterNumber).padStart(3, "0")}`, "reading-support.json");
     let previous = {};
     try { previous = JSON.parse(readFileSync(outputFile, "utf8")); } catch {}
     const output = {
@@ -234,8 +261,8 @@ for (const [language, config] of Object.entries(curricula)) {
       audienceSections: [
         {
           sourceHeading: "Brief Introduction",
-          normal: `This chapter introduces [[grammar:${pattern}]]. ${normalGrammar}`,
-          expert: `This chapter presents [[grammar:${pattern}]]. ${expertGrammar}`
+          normal: briefIntroduction.normal,
+          expert: briefIntroduction.expert
         },
         {
           sourceHeading: "Grammar",

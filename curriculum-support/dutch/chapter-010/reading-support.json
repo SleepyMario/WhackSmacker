@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:Ik woon in ...]], a simple way to say where you live.",
-      "expert": "This chapter introduces the residence pattern [[grammar:Ik woon in N]], with intransitive [[grammar:wonen]] and an [[grammar:in]]-headed locative complement. Proper-name and common-noun locations remain inside an elementary present-tense frame."
+      "normal": "Use [[grammar:Ik woon in N]] to state a place of residence.",
+      "expert": "The residence pattern [[grammar:Ik woon in N]] combines finite [[grammar:wonen]] with an [[grammar:in]]-headed locative complement."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

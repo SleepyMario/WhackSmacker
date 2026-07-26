@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Lina is choosing clothes for an event, and Marc helps her compare a dress, a shirt, and a bag.",
-      "expert": "Lina is choosing clothes for an event, and Marc helps her compare a dress, a shirt, and a bag."
+      "normal": "Use [[grammar:quel / quelle + noun]] to ask which item is meant, matching the determiner to the noun's gender.",
+      "expert": "The interrogative determiner appears as [[grammar:quel]] before a masculine singular noun and [[grammar:quelle]] before a feminine singular noun."
     },
     {
       "sourceHeading": "Grammar",

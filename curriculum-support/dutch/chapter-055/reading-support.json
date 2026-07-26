@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:Zullen we + infinitive?]] and [[grammar:misschien + V2 clause]]. Use [[grammar:Zullen we]] ...? to suggest doing something together. Use [[grammar:misschien]] for maybe or perhaps.",
-      "expert": "This chapter introduces [[grammar:Zullen we + infinitive?]]: The modal [[grammar:zullen]] forms an inclusive proposal question; the lexical infinitive remains final.; [[grammar:misschien + V2 clause]]: Fronted [[grammar:misschien]] occupies the initial field and is followed by the finite verb in V2 order."
+      "normal": "Use [[grammar:Zullen we + infinitive]]? to suggest a shared action and [[grammar:misschien + V2 clause]] to present an idea as possible.",
+      "expert": "The proposal question uses finite [[grammar:zullen]] with a final lexical infinitive; fronted [[grammar:misschien]] occupies the first field and triggers ordinary V2 order."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

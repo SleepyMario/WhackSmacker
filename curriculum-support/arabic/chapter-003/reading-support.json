@@ -9,8 +9,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "In questions about nearby objects, you will use [[grammar:مَا هَذَا؟ / مَا هَذِهِ]]؟. Use [[grammar:مَا هَذَا]]؟ for a masculine item and [[grammar:مَا هَذِهِ]]؟ for a feminine item. Match هَذَا or هَذِهِ to the noun in the answer. Do not use the same demonstrative for every noun.",
-      "expert": "This chapter presents [[grammar:مَا هَذَا؟ / مَا هَذِهِ]]؟ in questions about nearby objects. Interrogative مَا combines with a gender-agreeing proximal demonstrative in a verbless identification question. هَلْ in the yes–no example is separate supporting question grammar, not another lexical sense."
+      "normal": "Use [[grammar:مَا هَذَا]]؟ for a masculine item and [[grammar:مَا هَذِهِ]]؟ for a feminine item; match the demonstrative to the noun.",
+      "expert": "The identification questions [[grammar:مَا هَذَا]]؟ and [[grammar:مَا هَذِهِ]]؟ combine interrogative مَا with a proximal demonstrative that agrees with the noun's grammatical gender."
     },
     {
       "sourceHeading": "Grammar",

@@ -37,10 +37,10 @@ test("installed Dutch Chapters 11–15 provide authored modes, translation, brea
         assert.match(both, /^### Line-by-line Breakdown/mu);
         assertHeadingSpacing(both);
         if (mode === "developer") {
-          assert.match(sectionBody(plain, "Brief Introduction: Normal"), /^This chapter (?:teaches|introduces)/u);
-          assert.match(sectionBody(plain, "Brief Introduction: Expert"), /^This chapter (?:teaches|introduces)/u);
+          assert.match(sectionBody(plain, "Brief Introduction: Normal").trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
+          assert.match(sectionBody(plain, "Brief Introduction: Expert").trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
         } else {
-          assert.match(sectionBody(plain, "Brief Introduction"), /^This chapter (?:teaches|introduces)/u);
+          assert.match(sectionBody(plain, "Brief Introduction").trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
         }
         const readingBlocks = sectionBody(plain, readingType).split(/\n\s*\n/u).filter(Boolean);
         assert.ok(readingBlocks.length >= 2, `Chapter ${number} has a separate scene introduction and reading body`);

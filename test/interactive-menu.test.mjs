@@ -744,7 +744,7 @@ test("Dutch Chapters 2–5 expose distinct views, independent support, and stage
       const grammarOnly = sectionBody(both, "Grammar");
       assert.doesNotMatch(grammarOnly, /Natural English Translation|Line-by-line Breakdown/u);
       const briefIntroduction = sectionBody(normal, "Brief Introduction");
-      assert.match(briefIntroduction.trimStart(), /^This chapter (?:teaches|introduces)/u);
+      assert.match(briefIntroduction.trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
       const readingBlocks = sectionBody(normal, expectedType.get(chapterNumber)).split(/\n\s*\n/u).filter(Boolean);
       assert.ok(readingBlocks.length >= 2, `Chapter ${chapterNumber} has a separate scene introduction and reading body`);
       const sceneIntroduction = readingBlocks[0];
@@ -822,7 +822,7 @@ test("Dutch Chapters 6–10 expose complete audience support, translations, brea
       assert.match(both, /### Natural English Translation[\s\S]*### Line-by-line Breakdown/u);
       assert.doesNotMatch(sectionBody(both, "Grammar"), /Natural English Translation|Line-by-line Breakdown/u);
       const briefIntroduction = sectionBody(normal, "Brief Introduction");
-      assert.match(briefIntroduction.trimStart(), /^This chapter (?:teaches|introduces)/u);
+      assert.match(briefIntroduction.trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
       const readingBlocks = sectionBody(normal, expectedType.get(chapterNumber)).split(/\n\s*\n/u).filter(Boolean);
       assert.ok(readingBlocks.length >= 2, `Chapter ${chapterNumber} has a separate scene introduction and reading body`);
       const sceneIntroduction = readingBlocks[0];

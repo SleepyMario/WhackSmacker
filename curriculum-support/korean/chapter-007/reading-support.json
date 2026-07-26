@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "김민지 (Minji) orders drinks, bread, and a sandwich from 점원, an unnamed shop clerk, before asking the total price.",
-      "expert": "김민지 (Minji) orders drinks, bread, and a sandwich from 점원, an unnamed shop clerk, before asking the total price."
+      "normal": "Use [[grammar:N 주세요]] to request an item politely; the object particle is commonly omitted in this short pattern.",
+      "expert": "The item precedes the polite request form [[grammar:주세요]], with accusative [[grammar:을/를]] commonly omitted in this compact construction."
     },
     {
       "sourceHeading": "Grammar",

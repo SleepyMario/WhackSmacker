@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "佐藤あき (Aki) is at school on Monday. She notices the bright classroom, the long desk, and a large book before she starts reading.",
-      "expert": "佐藤あき (Aki) is at school on Monday. She notices the bright classroom, the long desk, and a large book before she starts reading."
+      "normal": "Use [[grammar:N は い-adjective です]] to describe a topic politely, keeping the adjective's final [[grammar:い]] before [[grammar:です]].",
+      "expert": "An [[grammar:い-adjective]] functions directly as the predicate, while [[grammar:です]] adds politeness and the nonpast affirmative retains final [[grammar:-い]]."
     },
     {
       "sourceHeading": "Grammar",

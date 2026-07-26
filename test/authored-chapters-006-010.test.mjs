@@ -14,6 +14,11 @@ const configs = [
   { slug: "japanese", label: "Japanese", code: "ja", prefix: "JPN", senses: 43, cards: 129, lines: 40, directions: ["en-to-ja", "ja-Kana-to-ja", "ja-to-en"] },
   { slug: "korean", label: "Korean", code: "ko", prefix: "KOR", senses: 45, cards: 90, lines: 40, directions: ["en-to-ko", "ko-to-en"] }
 ];
+const briefIntroductionCorrections = new Map(
+  JSON.parse(await readFile(join(process.cwd(), "test", "fixtures", "brief-introduction-repair-corrections.json"), "utf8"))
+    .records
+    .map((record) => [`${record.language}:${record.chapter}`, record])
+);
 
 const technicalIntroduction = /\b(?:grammarId|lexicalId|schemaVersion|sourcePath|chapterMode|sentenceCount|reviewCards)\b|\bcanonical Chapter \d+ pattern\b|\bliteral source evidence\b|\bcanonical citation forms\b|\bcom\.sleepymario\.[\w.-]+\b|(?:^|\s)(?:\/[\w.-]+){2,}|[{}]\s*["'][A-Za-z]/iu;
 
@@ -41,6 +46,8 @@ for (const config of configs) {
       const translated = translation.readingType === "dialogue" ? translation.turns : translation.sentences;
       const ledger = parseMarkdownTable(await readFile(join(unitRoot, directory, "ledger.md"), "utf8"), "| Entry ID | Sense ID | Form | Meaning | POS | Reading line |");
       const grammarId = `${config.prefix}-GRAMMAR-${String(chapter).padStart(3, "0")}`;
+      const correction = briefIntroductionCorrections.get(`${config.label}:${chapter}`);
+      assert.ok(correction, `${config.label} Chapter ${chapter} has a Brief Introduction correction record`);
       assert.match(markdown, new RegExp(`^chapter: ${chapter}$`, "mu"));
       assert.match(markdown, new RegExp(`grammar_id: "${grammarId}"`, "u"));
       assert.equal(reading.length, translated.length);
@@ -48,8 +55,9 @@ for (const config of configs) {
       assert.equal(JSON.stringify(translation), JSON.stringify(translation).normalize("NFC"));
       assert.doesNotMatch(markdown, /TODO|FIXME|placeholder|dummy/iu);
       assert.ok(introduction.length > 0 && introduction.length <= 300);
+      assert.equal(introduction, correction.source_brief_introduction);
       assert.doesNotMatch(introduction, technicalIntroduction);
-      assert.doesNotMatch(introduction, /\b(?:this chapter teaches|this chapter shows|use .+ to|canonical|schema|source evidence)\b/iu);
+      assert.doesNotMatch(introduction, /\b(?:this chapter teaches|this chapter shows|canonical|schema|source evidence)\b/iu);
       assert.equal(rawReading.includes(introduction), false);
       assert.equal(JSON.stringify(translation).includes(introduction), false);
       assert.ok(markdown.indexOf(`### ${chapter % 2 === 1 ? "Dialogue" : "Narrative"}`) < markdown.indexOf("### New Vocabulary"));
@@ -65,8 +73,8 @@ for (const config of configs) {
       const support = JSON.parse(await readFile(join(process.cwd(), "curriculum-support", config.slug, `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json"), "utf8"));
       const supportIntroduction = support.audienceSections.find((section) => section.sourceHeading === "Brief Introduction");
       assert.ok(supportIntroduction);
-      assert.equal(supportIntroduction.normal, introduction);
-      assert.equal(supportIntroduction.expert, introduction);
+      assert.equal(supportIntroduction.normal, correction.normal_brief_introduction);
+      assert.equal(supportIntroduction.expert, correction.expert_brief_introduction);
       assert.doesNotMatch(supportIntroduction.normal, technicalIntroduction);
       assert.doesNotMatch(supportIntroduction.expert, technicalIntroduction);
       for (const audience of ["normal", "expert"]) {
@@ -152,9 +160,11 @@ test("Japanese and Korean Chapters 6–10 render complete installed readings in 
         const heading = chapter % 2 === 1 ? "Dialogue" : "Narrative";
         const expectedReading = sectionBody(source, heading);
         const expectedIntroduction = sectionBody(source, "Brief Introduction", 2);
+        const correction = briefIntroductionCorrections.get(`${config.label}:${chapter}`);
+        assert.ok(correction, `${config.label} Chapter ${chapter} has a Brief Introduction correction record`);
         for (const displayMode of ["normal", "expert"]) {
           const rendered = await renderLanguageTreeRightPane(node, { dataDir, displayMode });
-          assert.equal(sectionBody(rendered, "Brief Introduction"), expectedIntroduction);
+          assert.equal(sectionBody(rendered, "Brief Introduction"), correction[`${displayMode}_brief_introduction`]);
           assert.equal(sectionBody(rendered, heading), expectedReading);
           assert.doesNotMatch(sectionBody(rendered, "Brief Introduction"), technicalIntroduction);
           assert.ok(rendered.indexOf(`### ${heading}`) < rendered.indexOf("### New Vocabulary"));

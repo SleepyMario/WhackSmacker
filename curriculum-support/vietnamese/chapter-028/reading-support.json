@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:S + đã + V; S + đã + V + chưa?]]. Put đã before an action to present it as completed. Use đã ... chưa? to ask whether it is complete yet.",
-      "expert": "This chapter introduces [[grammar:S + đã + V; S + đã + V + chưa?]]: Đã is treated as a perfect/completive marker rather than a simple obligatory past tense; the polar frame đã ... chưa? asks about completion."
+      "normal": "Use [[grammar:S + đã + V]] to present a completed action and [[grammar:S + đã + V + chưa]]? to ask whether it is complete yet.",
+      "expert": "The completive marker [[grammar:đã]] precedes the verb, while the polar frame [[grammar:đã + V + chưa]]? asks whether completion has occurred."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

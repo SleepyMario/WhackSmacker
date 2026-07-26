@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "中村ゆき (Yuki) orders water, juice, and a sandwich from 店員, an unnamed shop clerk, before asking the price.",
-      "expert": "中村ゆき (Yuki) orders water, juice, and a sandwich from 店員, an unnamed shop clerk, before asking the price."
+      "normal": "Use [[grammar:N を ください]] to request an item politely, marking the requested item with [[grammar:を]].",
+      "expert": "The requested noun phrase takes accusative [[grammar:を]] before the polite request predicate [[grammar:ください]]."
     },
     {
       "sourceHeading": "Grammar",

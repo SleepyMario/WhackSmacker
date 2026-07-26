@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches how siblings can ask whether each other has something.",
-      "expert": "Vietnamese Core Chapter 7 is retained as the canonical early-stage source; no future material is introduced by this support record."
+      "normal": "Use [[grammar:reference + có + N + không]]? to ask whether someone has an item, choosing the reference word from the speakers' relationship.",
+      "expert": "The polar possession frame places a relationship-sensitive person reference before [[grammar:có + N + không]]?, with final [[grammar:không]] marking the question."
     },
     {
       "sourceHeading": "New Grammar",

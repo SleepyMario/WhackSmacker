@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:Wie is dat?]] and the answer [[grammar:Dat is ...]]. Use them to ask who a person is and identify that person.",
-      "expert": "This chapter introduces the person-identity interrogative [[grammar:Wie is dat?]] and its demonstrative copular answer [[grammar:Dat is ...]]. It remains distinct from the inherited confirmation question [[grammar:Is dit N?]]."
+      "normal": "Use [[grammar:Wie is dat]]? to ask who someone is and answer with [[grammar:Dat is]] plus the person's name or role.",
+      "expert": "The person-identity interrogative [[grammar:Wie is dat]]? uses copular inversion, while the answer [[grammar:Dat is]] identifies the referent."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

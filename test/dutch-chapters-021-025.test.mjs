@@ -54,10 +54,10 @@ test("installed Dutch Chapters 21–25 provide authored modes, translation, brea
         assertHeadingSpacing(both);
 
         if (mode === "developer") {
-          assert.match(sectionBody(plain, "Brief Introduction: Normal"), /^This chapter (?:teaches|introduces)/u);
-          assert.match(sectionBody(plain, "Brief Introduction: Expert"), /^This chapter (?:teaches|introduces)/u);
+          assert.match(sectionBody(plain, "Brief Introduction: Normal").trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
+          assert.match(sectionBody(plain, "Brief Introduction: Expert").trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
         } else {
-          assert.match(sectionBody(plain, "Brief Introduction"), /^This chapter (?:teaches|introduces)/u);
+          assert.match(sectionBody(plain, "Brief Introduction").trim(), /\S[\s\S]*[.!?](?:\]\]|[”’"'])*$/u);
         }
 
         const readingBlocks = sectionBody(plain, readingType).split(/\n\s*\n/u).filter(Boolean);

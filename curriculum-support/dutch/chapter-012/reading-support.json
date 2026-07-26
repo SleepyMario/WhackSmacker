@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches a controlled third-person present-action pattern, such as [[grammar:Sophie staat op.]]. Notice the action word in each sentence.",
-      "expert": "This chapter introduces controlled third-person singular present predicates in the pattern [[grammar:Sophie + V stem-t]]. It includes a separable verb and several strong-verb forms without presenting the full conjugational system."
+      "normal": "Use [[grammar:Sophie + V stem-t]] to describe a named third-person subject performing a present action.",
+      "expert": "The pattern [[grammar:Sophie + V stem-t]] presents controlled third-person singular present predicates without generalizing the full conjugation system."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

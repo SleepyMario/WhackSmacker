@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "佐藤あき (Aki) and 中村ゆき (Yuki) compare the things they like, including music, films, sports, dogs, and cooking.",
-      "expert": "佐藤あき (Aki) and 中村ゆき (Yuki) compare the things they like, including music, films, sports, dogs, and cooking."
+      "normal": "Use [[grammar:N が 好きです]] to say that someone likes something, marking the liked item with [[grammar:が]].",
+      "expert": "The liked entity is marked by [[grammar:が]], and [[grammar:好きです]] forms an adjectival predicate rather than a transitive verb phrase."
     },
     {
       "sourceHeading": "Grammar",

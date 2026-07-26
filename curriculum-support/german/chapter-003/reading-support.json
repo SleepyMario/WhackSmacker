@@ -9,8 +9,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "In Mia asking where belongings are, you will use [[grammar:Wo ist + N]]?. Use [[grammar:Wo ist]] before one thing to ask where it is. Wo ist das Handy? asks for a location. Use Was ist das? for identity, so do not swap wo and was.",
-      "expert": "This chapter presents [[grammar:Wo ist + N]]? in Mia asking where belongings are. Locative interrogative wo occupies the first field, finite ist occupies the second, and the nominative subject follows. This is a regular V2 content question."
+      "normal": "Use [[grammar:Wo ist + N]]? to ask where one thing is.",
+      "expert": "The locative content question [[grammar:Wo ist + N]]? places interrogative [[grammar:wo]] in the first field and finite [[grammar:ist]] in the second."
     },
     {
       "sourceHeading": "Grammar",

@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:Zou u + infinitive + kunnen?]] and [[grammar:direct formal Kunt u mij zeggen of + embedded polar clause?]]. Use [[grammar:Zou u ... kunnen?]] for a polite formal request. Use the second frame to ask the listener directly whether something is true; here of means whether, not or.",
-      "expert": "This chapter introduces [[grammar:Zou u + infinitive + kunnen?]]: The conditional modal [[grammar:zou]] mitigates the request; [[grammar:u]] marks formal address and [[grammar:kunnen]] remains infinitival.; [[grammar:direct formal Kunt u mij zeggen of + embedded polar clause?]]: The utterance directly requests information from the addressee. The matrix clause has V1 question order; the embedded polar interrogative is introduced by complementizer [[grammar:of]] with verb-final order."
+      "normal": "Use [[grammar:Zou u + infinitive + kunnen]]? for a highly polite request and [[grammar:Kunt u mij zeggen of + embedded polar clause]]? for a formal indirect yes-no question.",
+      "expert": "The first frame uses conditional [[grammar:zou]] to mitigate a formal request; the second combines a V1 matrix question with an [[grammar:of]]-introduced verb-final embedded polar clause."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:N + giá bao nhiêu?]]. Put giá bao nhiêu after an item to ask its price. This chapter teaches [[grammar:cho tôi + N]]. Use cho tôi before an item to ask for it in a shop or market.",
-      "expert": "This chapter introduces [[grammar:N + giá bao nhiêu?]]: The interrogative quantity expression bao nhiêu follows giá in a predicate-like price question. This chapter introduces [[grammar:cho tôi + N]]: Cho tôi introduces a recipient-oriented request with a first-person beneficiary and nominal complement."
+      "normal": "Use [[grammar:N + giá bao nhiêu]]? to ask an item's price and [[grammar:cho tôi + N]] to request it.",
+      "expert": "The price question places [[grammar:giá bao nhiêu]] after the item, while [[grammar:cho tôi + N]] forms a recipient-oriented request with a nominal complement."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

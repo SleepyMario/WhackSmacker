@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "佐藤あき (Aki) meets 中村ゆき (Yuki) near the station. They visit a nearby shop, buy a book and juice, take a photo of the park, and go home in the evening.",
-      "expert": "佐藤あき (Aki) meets 中村ゆき (Yuki) near the station. They visit a nearby shop, buy a book and juice, take a photo of the park, and go home in the evening."
+      "normal": "Use [[grammar:verb stem + ました]] for a completed polite past action, replacing the [[grammar:ます]] ending with [[grammar:ました]].",
+      "expert": "The polite past affirmative is formed by attaching [[grammar:ました]] to the continuative stem used before [[grammar:ます]]."
     },
     {
       "sourceHeading": "Grammar",

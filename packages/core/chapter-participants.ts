@@ -225,8 +225,11 @@ export function reconcileChapterParticipants(
         throw new Error(`${source}: Chapter ${chapter} introduction names absent canonical participant ${id} (${expectedFullName}) in violation of ${eastAsianFullNamePresentationPolicyName}`);
       }
     }
+    const supportProjectionText = options.supportText === undefined
+      ? undefined
+      : `${reading.introduction}\n${options.supportText}`;
     assertEastAsianProjectionSet(translation, primaryIds, value, "translationParticipants", options.translationText, source, chapter);
-    assertEastAsianProjectionSet(support, primaryIds, value, "supportParticipants", options.supportText, source, chapter);
+    assertEastAsianProjectionSet(support, primaryIds, value, "supportParticipants", supportProjectionText, source, chapter);
     for (const use of support) {
       const expectedFullName = requiredFullNames.get(use.participantId);
       if (expectedFullName !== undefined && use.label !== expectedFullName) {
@@ -234,11 +237,14 @@ export function reconcileChapterParticipants(
       }
     }
     if (options.supportText !== undefined) {
-      assertEastAsianSupportIntroductions(options.supportText, [...primaryIds], requiredFullNames, functionsById, source, chapter);
+      assertEastAsianSupportStructure(options.supportText, source, chapter);
     }
   }
   reconcileProjection(translation, options.translationText, `${source}: translationParticipants`);
-  reconcileProjection(support, options.supportText, `${source}: supportParticipants`);
+  const supportProjectionText = options.supportText === undefined
+    ? undefined
+    : `${reading.introduction}\n${options.supportText}`;
+  reconcileProjection(support, supportProjectionText, `${source}: supportParticipants`);
 
   // Canonical names inside another person's speech or narration may be bare
   // references. Structural Dialogue speakers and sidecar-declared substantive
@@ -387,11 +393,8 @@ function assertEastAsianProjectionSet(
   }
 }
 
-function assertEastAsianSupportIntroductions(
+function assertEastAsianSupportStructure(
   text: string,
-  primaryIds: readonly string[],
-  requiredFullNames: ReadonlyMap<string, string>,
-  functionsById: ReadonlyMap<string, UnnamedFunctionalParticipant>,
   source: string,
   chapter: number
 ): void {
@@ -415,12 +418,6 @@ function assertEastAsianSupportIntroductions(
     }
     if (/\bCAST-\d{3}\b/u.test(prose)) {
       throw new Error(`${source}: Chapter ${chapter} ${audience} Brief Introduction exposes an internal cast ID`);
-    }
-    for (const id of primaryIds) {
-      const label = requiredFullNames.get(id) ?? functionsById.get(id)?.roleLabel;
-      if (label !== undefined && !containsExactLabel(prose, label)) {
-        throw new Error(`${source}: Chapter ${chapter} ${audience} Brief Introduction omits ${id}; expected exact ${JSON.stringify(label)} under ${eastAsianFullNamePresentationPolicyName}`);
-      }
     }
   }
 }

@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "It is raining on Saturday, so Lina stays home and Marc skips the market. Lina spends the morning with music and television.",
-      "expert": "It is raining on Saturday, so Lina stays home and Marc skips the market. Lina spends the morning with music and television."
+      "normal": "Use [[grammar:ne + finite verb + pas]] for standard written negation, placing the finite verb between [[grammar:ne]] and [[grammar:pas]].",
+      "expert": "Standard bipartite negation places preverbal [[grammar:ne]] and postverbal [[grammar:pas]] around the finite verb, with [[grammar:n']] before a vowel sound."
     },
     {
       "sourceHeading": "Grammar",

@@ -128,7 +128,7 @@ test("support and Review provenance resolve against canonical retained readings 
     supports.push(semantic);
   }
   assert.equal(characterEntries, 17);
-  assert.equal(digest(JSON.stringify(supports)), "668812ee84d71be34f8c0e1652608e1cded9912a1a7aebc8c40f2999ec7e8035");
+  assert.equal(digest(JSON.stringify(supports)), "5ba1ae27fe3aa27258460497eca5b37caa1d3a801702e5ba3da61c742b78b3c6");
 
   const paths = ["chapter-001-005", "chapter-006-010"].map((block) => join(process.cwd(), "review-content", "vietnamese", "review-decks", block, "cards.tsv"));
   const rows = [];

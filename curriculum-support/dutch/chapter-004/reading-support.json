@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:Is dit ...?]]. It means [[grammar:Is this ...?]]. Use it to check what a nearby thing is.",
-      "expert": "This chapter introduces the polar interrogative [[grammar:Is dit N?]], formed with finite copula before the demonstrative subject. Expert context: this is an early bounded instance of Dutch subject-verb inversion, not a complete interrogative syntax lesson."
+      "normal": "Use [[grammar:Is dit N]]? to ask whether a nearby object is the named noun.",
+      "expert": "The polar interrogative [[grammar:Is dit N]]? places the finite copula before the demonstrative subject."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

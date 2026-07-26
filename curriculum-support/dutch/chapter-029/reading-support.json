@@ -5,8 +5,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "This chapter teaches [[grammar:Welke + noun + ...?]] and [[grammar:noun + van mij/jou/hem/haar]]. Use [[grammar:welke]] before a [[grammar:de-word]] when you ask which one. Put [[grammar:van mij]], [[grammar:van jou]], [[grammar:van hem]], or [[grammar:van haar]] after a noun to identify the owner.",
-      "expert": "This chapter introduces [[grammar:Welke + noun + ...?]]: [[grammar:Welke]] functions as an interrogative determiner and agrees here with a common-gender count noun.; [[grammar:noun + van mij/jou/hem/haar]]: The possessor is expressed analytically in a postnominal prepositional phrase headed by [[grammar:van]]."
+      "normal": "Use [[grammar:Welke + noun]] to ask which de-word item is meant, and use [[grammar:noun + van mij/jou/hem/haar]] to state who owns it.",
+      "expert": "The first pattern uses [[grammar:welke]] as an interrogative determiner with a common-gender count noun; the second expresses the possessor in a postnominal [[grammar:van]] phrase."
     },
     {
       "sourceHeading": "New Grammar / Pattern",

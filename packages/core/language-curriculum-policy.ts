@@ -65,8 +65,8 @@ export function assertCanonicalSectionAndGrammarRules(input: CanonicalSectionAnd
     if (turns.length === 0) throw new Error(`${input.source}: Dialogue must contain spoken turns after its setup.`);
     assertTranslationBoundary(input.readingTranslation, readingType, setup, turns.length, input.source);
   } else {
-    const sourceSentenceCount = countSentences(reading);
-    if (sourceSentenceCount === 0) throw new Error(`${input.source}: Narrative setup must be part of the aligned Narrative sentence sequence.`);
+    const sourceSentenceCount = countSentences(reading.slice(setup.length).trim());
+    if (sourceSentenceCount === 0) throw new Error(`${input.source}: Narrative must contain aligned reading sentences after its setup.`);
     assertTranslationBoundary(input.readingTranslation, readingType, setup, sourceSentenceCount, input.source);
   }
   assertAuthoredGrammarProse(input.markdown, input.source);
@@ -116,7 +116,7 @@ function assertTranslationBoundary(value: unknown, readingType: "dialogue" | "na
     if (!Array.isArray(value.turns) || value.turns.length !== expectedUnits) throw new Error(`${source}: Dialogue setup must not count toward the ${expectedUnits} spoken turns.`);
   } else {
     for (const key of ["introduction", "context", "setting", "participants", "sceneIntroduction"]) {
-      if (key in value) throw new Error(`${source}: Narrative setup must be aligned as Narrative content, not stored in translation field ${key}.`);
+      if (key in value) throw new Error(`${source}: Narrative setup must remain under Narrative, not be stored in translation field ${key}.`);
     }
     let translatedUnits = 0;
     if (Array.isArray(value.sentences)) translatedUnits = value.sentences.length;
