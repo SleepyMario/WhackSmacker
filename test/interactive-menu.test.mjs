@@ -2555,19 +2555,21 @@ test("two-pane renderer aligns Korean markdown table columns by display width", 
     .filter((line) => line.startsWith("| "));
   const pipeColumns = tableLines.map(displayPipeColumns);
 
-  assert.equal(tableLines.length, 7);
+  assert.equal(tableLines.length, 5);
   assert.deepEqual(new Set(pipeColumns.map((columns) => JSON.stringify(columns))).size, 1);
   assert.match(tableLines[0], /^\| Korean\s+\| Meaning\s+\| Notes\s+\|$/u);
   assert.match(tableLines[2], /^\| 안녕하세요\s+\| hello\s+\| Fixed greeting expression\.\s+\|$/u);
-  assert.match(tableLines[3], /^\|\s+\|\s+\|\s+\|$/u);
-  assert.match(tableLines[5], /^\|\s+\|\s+\|\s+\|$/u);
-  assert.match(tableLines[6], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
+  assert.match(tableLines[3], /^\| 저\s+\| I, me\s+\| Used inside .*저는.*\.\s+\|$/u);
+  assert.match(tableLines[4], /^\| 외국\s+\| foreign country, abroad\s+\| Noun\s+\|$/u);
+  assert.equal(tableLines.some((line) => /^\|\s+\|\s+\|\s+\|$/u.test(line)), false, "tables outside New Vocabulary remain compact");
   assert.doesNotMatch(tableLines.join("\n"), /New noun; not self-ID here|Can fill the N slot/u);
 });
 
 test("vocabulary renderer spaces logical entries without splitting semantic continuation rows", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const output = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
+    "### New Vocabulary",
+    "",
     "| Form | Meaning | Notes |",
     "|---|---|---|",
     "| gaat | goes | finite surface form |",
@@ -2588,6 +2590,8 @@ test("canonical vocabulary spacing survives Notes modes, Japanese Reading, ANSI,
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [] };
   const tables = [
     [
+      "### New Vocabulary",
+      "",
       "| Form | Reading | Meaning | Part of speech | Note |",
       "|---|---|---|---|---|",
       "| alpha |  | first | noun | short note |",
@@ -2595,6 +2599,8 @@ test("canonical vocabulary spacing survives Notes modes, Japanese Reading, ANSI,
       "| gamma | がんま | third | noun | final note |"
     ].join("\n"),
     [
+      "### New Vocabulary",
+      "",
       "| Form | Reading | Meaning | Part of speech |",
       "|---|---|---|---|",
       "| alpha |  | first | noun |",
@@ -2608,39 +2614,49 @@ test("canonical vocabulary spacing survives Notes modes, Japanese Reading, ANSI,
     for (const colorsEnabled of [false, true]) {
       for (const terminalWidth of [82, 160]) {
         for (const mode of ["normal", "expert", "developer"]) {
-          const output = renderTwoPaneLanguageTree(
-            tree,
-            new Set(["whacksmacker"]),
-            0,
-            markdown,
-            colorsEnabled,
-            0,
-            28,
-            "en-US",
-            "navigation",
-            terminalWidth,
-            0,
-            mode
-          );
-          const rows = output.split("\n").map((line) => stripAnsi(rightPaneCell(line))).filter((line) => line.startsWith("| "));
-          const dataRows = rows.slice(2);
-          assert.equal(dataRows.filter(blank).length, 2, `${mode}/${colorsEnabled}/${terminalWidth}`);
-          assert.equal(blank(dataRows[0]), false, "no leading logical-entry separator");
-          assert.equal(blank(dataRows.at(-1)), false, "no trailing logical-entry separator");
-          for (let index = 1; index < dataRows.length; index += 1) {
-            assert.equal(blank(dataRows[index]) && blank(dataRows[index - 1]), false, "entry separators never duplicate");
+          for (const entrySpacing of ["separated", "compact"]) {
+            const output = renderTwoPaneLanguageTree(
+              tree,
+              new Set(["whacksmacker"]),
+              0,
+              markdown,
+              colorsEnabled,
+              0,
+              28,
+              "en-US",
+              "navigation",
+              terminalWidth,
+              0,
+              mode,
+              false,
+              false,
+              false,
+              false,
+              true,
+              entrySpacing
+            );
+            const rows = output.split("\n").map((line) => stripAnsi(rightPaneCell(line))).filter((line) => line.startsWith("| "));
+            const dataRows = rows.slice(2);
+            assert.equal(dataRows.filter(blank).length, entrySpacing === "separated" ? 2 : 0, `${mode}/${colorsEnabled}/${terminalWidth}/${entrySpacing}`);
+            assert.equal(blank(dataRows[0]), false, "no leading logical-entry separator");
+            assert.equal(blank(dataRows.at(-1)), false, "no trailing logical-entry separator");
+            for (let index = 1; index < dataRows.length; index += 1) {
+              assert.equal(blank(dataRows[index]) && blank(dataRows[index - 1]), false, "entry separators never duplicate");
+            }
+            const betaRows = dataRows.map((line, index) => line.includes("β") ? index : -1).filter((index) => index >= 0);
+            assert.equal(betaRows.length, 2);
+            const betaFirst = betaRows[0];
+            const betaSecond = betaRows[1];
+            assert.equal(dataRows.slice(betaFirst, betaSecond + 1).some(blank), false, "no separator appears inside one multi-line entry");
           }
-          const betaRows = dataRows.map((line, index) => line.includes("β") ? index : -1).filter((index) => index >= 0);
-          assert.equal(betaRows.length, 2);
-          const betaFirst = betaRows[0];
-          const betaSecond = betaRows[1];
-          assert.equal(dataRows.slice(betaFirst, betaSecond + 1).some(blank), false, "no separator appears inside one multi-line entry");
         }
       }
     }
   }
 
   const single = renderTwoPaneLanguageTree(tree, new Set(["whacksmacker"]), 0, [
+    "### New Vocabulary",
+    "",
     "| Form | Meaning | Part of speech |",
     "|---|---|---|",
     "| only | one entry | phrase |"
@@ -3306,6 +3322,58 @@ test("left and right arrows focus Toggles while Enter and Space cycle its langua
   }
 });
 
+test("Notes and Spaces use focus plus Enter or Space and persist independently across menu reconstruction", async () => {
+  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-vocabulary-display-toggles-"));
+  try {
+    const disableBoth = new FakeTerminal([
+      key("right"),
+      key("down"), key("down"), key("down"), key("down"),
+      key("return"),
+      key("down"),
+      key("space", { sequence: " " }),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), disableBoth, { settingsDir });
+    assert.match(stripAnsi(disableBoth.output), /Notes: Off/u);
+    assert.match(stripAnsi(disableBoth.output), /Spaces: No/u);
+    assert.deepEqual((await loadSourceLanguageSettings(settingsDir)).newVocabulary, {
+      notesVisible: false,
+      entrySpacing: "compact"
+    });
+
+    const reconstructed = new FakeTerminal([key("q", { sequence: "q" })], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), reconstructed, { settingsDir });
+    assert.match(stripAnsi(reconstructed.output), /Notes: Off/u);
+    assert.match(stripAnsi(reconstructed.output), /Spaces: No/u);
+
+    const notesOnly = new FakeTerminal([
+      key("right"),
+      key("down"), key("down"), key("down"), key("down"),
+      key("return"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), notesOnly, { settingsDir });
+    assert.deepEqual((await loadSourceLanguageSettings(settingsDir)).newVocabulary, {
+      notesVisible: true,
+      entrySpacing: "compact"
+    });
+
+    const spacesOnly = new FakeTerminal([
+      key("right"),
+      key("down"), key("down"), key("down"), key("down"), key("down"),
+      key("return"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+    await runInteractiveMenu(createStubRegistry([]), spacesOnly, { settingsDir });
+    assert.deepEqual((await loadSourceLanguageSettings(settingsDir)).newVocabulary, {
+      notesVisible: true,
+      entrySpacing: "separated"
+    });
+  } finally {
+    await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
 test("Enter cycles Normal to Expert to Developer while navigation preserves the selection", async () => {
   const settingsDir = await mkdtemp(join(tmpdir(), "wsm-display-mode-"));
   try {
@@ -3417,7 +3485,7 @@ test("Dutch Chapter 1 right-pane translation item toggles with Enter and Space",
   }
 });
 
-test("Notes toggle defaults On, uses keyboard controls, persists across navigation, and renders without ANSI", async () => {
+test("Notes toggle defaults On, uses keyboard controls, persists across navigation and restart, and renders without ANSI", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const terminal = new FakeTerminal([
@@ -3441,6 +3509,7 @@ test("Notes toggle defaults On, uses keyboard controls, persists across navigati
     const on = screens.find((screen) => screen.includes("Notes: On"));
     const off = screens.find((screen) => screen.includes("> Notes: Off"));
     assert.ok(on, "the default learner screen exposes Notes: On");
+    assert.ok(screens.some((screen) => screen.includes("Spaces: Yes")), "the default learner screen exposes Spaces: Yes");
     assert.ok(off, "Enter toggles the selected Notes control Off");
     assert.match(screens.at(-1), /Notes: Off/u, "the state persists after leaving the toggle pane and navigating");
 
@@ -3449,7 +3518,8 @@ test("Notes toggle defaults On, uses keyboard controls, persists across navigati
       key("q", { sequence: "q" })
     ], { colorsEnabled: false, width: 150 });
     await runInteractiveMenu(createStubRegistry([]), fresh, { dataDir: fixture.dataDir });
-    assert.match(fresh.output, /Notes: On/u, "a new session defaults Notes On");
+    assert.match(fresh.output, /Notes: Off/u, "a new session restores Notes Off");
+    assert.match(fresh.output, /Spaces: Yes/u, "changing Notes does not reset Spaces");
   } finally {
     await fixture.cleanup();
   }

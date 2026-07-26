@@ -262,6 +262,17 @@ field. It remains available for authoring, validation, lexical disambiguation,
 generation, debugging, and advanced inspection. Rewrite any distinction that
 learners genuinely need as clear learner-facing prose.
 
+New Vocabulary has two independent application-owned display preferences.
+Notes are visible by default; hiding them removes only the Note column and
+reclaims its width. Logical-entry spacing is the frontend-neutral semantic
+value `separated` or `compact`, with `separated` as the default. Terminal
+surfaces render `separated` as exactly one empty row between complete logical
+entries and `compact` as no inserted empty rows. Neither value inserts a row
+before the first entry, after the final entry, or inside wrapped and semantic
+continuation rows. Graphical surfaces may map those same values to comfortable
+or compact row spacing. These preferences apply only to New Vocabulary, not to
+Review decks, other tables, or other chapter sections.
+
 When an encountered verb differs meaningfully from its infinitive in a language
 where that concept applies, keep the encounter primary. Directly below it, put
 the bare infinitive in the lexical/form column, its natural English infinitive

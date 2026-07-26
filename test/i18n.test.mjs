@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -9,6 +9,7 @@ import { classifyReviewDeckMenuStatus } from "../dist/packages/core/index.js";
 import { sourceLocaleLabel, translate } from "../dist/src/i18n/index.js";
 import {
   loadSourceLanguageSettings,
+  saveNewVocabularyDisplayPreferences,
   saveSourceLanguage,
   sourceLanguageSettingsPath
 } from "../dist/src/settings/source-language.js";
@@ -30,18 +31,71 @@ test("translation interpolation renders review card counts", () => {
   assert.equal(translate("zh-Hant-TW", "review.cardsDue", { count: 3 }), "目前有 3 張牌卡需要複習。");
 });
 
-test("source-language setting defaults to English and persists changes", async () => {
+test("source language and New Vocabulary display preferences default and persist independently", async () => {
   const settingsDir = await mkdtemp(join(tmpdir(), "wsm-i18n-settings-"));
   try {
-    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "en-US");
+    assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
+      settingsFormatVersion: 2,
+      sourceLanguage: "en-US",
+      newVocabulary: { notesVisible: true, entrySpacing: "separated" }
+    });
     await saveSourceLanguage("zh-Hant-TW", settingsDir);
-    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "zh-Hant-TW");
-    assert.deepEqual(JSON.parse(await readFile(sourceLanguageSettingsPath(settingsDir), "utf8")), {
-      settingsFormatVersion: 1,
-      sourceLanguage: "zh-Hant-TW"
+    await saveNewVocabularyDisplayPreferences({ notesVisible: false, entrySpacing: "compact" }, settingsDir);
+    assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
+      settingsFormatVersion: 2,
+      sourceLanguage: "zh-Hant-TW",
+      newVocabulary: { notesVisible: false, entrySpacing: "compact" }
     });
     await saveSourceLanguage("en-US", settingsDir);
-    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "en-US");
+    assert.deepEqual(JSON.parse(await readFile(sourceLanguageSettingsPath(settingsDir), "utf8")), {
+      settingsFormatVersion: 2,
+      sourceLanguage: "en-US",
+      newVocabulary: { notesVisible: false, entrySpacing: "compact" }
+    });
+    await saveNewVocabularyDisplayPreferences({ notesVisible: true, entrySpacing: "separated" }, settingsDir);
+    assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
+      settingsFormatVersion: 2,
+      sourceLanguage: "en-US",
+      newVocabulary: { notesVisible: true, entrySpacing: "separated" }
+    });
+  } finally {
+    await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
+test("missing, older, malformed, and obsolete settings fall back without resetting valid independent values", async () => {
+  const settingsDir = await mkdtemp(join(tmpdir(), "wsm-display-settings-recovery-"));
+  try {
+    const path = sourceLanguageSettingsPath(settingsDir);
+    await writeFile(path, "{broken", "utf8");
+    assert.deepEqual((await loadSourceLanguageSettings(settingsDir)).newVocabulary, {
+      notesVisible: true,
+      entrySpacing: "separated"
+    });
+
+    await writeFile(path, `${JSON.stringify({
+      settingsFormatVersion: 1,
+      sourceLanguage: "zh-Hant-TW",
+      notesEnabled: false
+    })}\n`, "utf8");
+    assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
+      settingsFormatVersion: 2,
+      sourceLanguage: "zh-Hant-TW",
+      newVocabulary: { notesVisible: false, entrySpacing: "separated" }
+    });
+    await saveNewVocabularyDisplayPreferences({ notesVisible: false, entrySpacing: "compact" }, settingsDir);
+    assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "zh-Hant-TW");
+
+    await writeFile(path, `${JSON.stringify({
+      settingsFormatVersion: 99,
+      sourceLanguage: "en-US",
+      newVocabulary: { notesVisible: "Off", entrySpacing: "wide" }
+    })}\n`, "utf8");
+    assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
+      settingsFormatVersion: 2,
+      sourceLanguage: "en-US",
+      newVocabulary: { notesVisible: true, entrySpacing: "separated" }
+    });
   } finally {
     await rm(settingsDir, { recursive: true, force: true });
   }

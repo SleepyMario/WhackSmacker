@@ -1,4 +1,9 @@
 import { isSourceLocale, type SourceLocale } from "../i18n";
+import {
+  defaultNewVocabularyDisplayPreferences,
+  isVocabularyEntrySpacing,
+  type NewVocabularyDisplayPreferences
+} from "../../packages/core/vocabulary-rendering";
 
 declare function require(name: "node:fs/promises"): {
   mkdir(path: string, options: { recursive: boolean }): Promise<void>;
@@ -16,15 +21,20 @@ declare const process: { env: Record<string, string | undefined>; pid: number };
 const { mkdir, readFile, rename, writeFile } = require("node:fs/promises");
 const { dirname, join, resolve } = require("node:path");
 
-export const sourceLanguageSettingsFormatVersion = 1;
+export const sourceLanguageSettingsFormatVersion = 2;
 
 export interface SourceLanguageSettings {
-  readonly settingsFormatVersion: 1;
+  readonly settingsFormatVersion: 2;
   readonly sourceLanguage: SourceLocale;
+  readonly newVocabulary: NewVocabularyDisplayPreferences;
 }
 
 export function defaultSourceLanguageSettings(): SourceLanguageSettings {
-  return { settingsFormatVersion: sourceLanguageSettingsFormatVersion, sourceLanguage: "en-US" };
+  return {
+    settingsFormatVersion: sourceLanguageSettingsFormatVersion,
+    sourceLanguage: "en-US",
+    newVocabulary: defaultNewVocabularyDisplayPreferences
+  };
 }
 
 export function resolveSettingsDirectory(settingsDir?: string, env = process.env): string {
@@ -51,12 +61,9 @@ export function sourceLanguageSettingsPath(settingsDir?: string): string {
 export async function loadSourceLanguageSettings(settingsDir?: string): Promise<SourceLanguageSettings> {
   try {
     const value = JSON.parse(await readFile(sourceLanguageSettingsPath(settingsDir), "utf8")) as unknown;
-    if (isSourceLanguageSettings(value)) {
-      return value;
-    }
-    return defaultSourceLanguageSettings();
+    return normalizeSourceLanguageSettings(value);
   } catch (error) {
-    if (isMissingFileError(error)) {
+    if (isMissingFileError(error) || error instanceof SyntaxError) {
       return defaultSourceLanguageSettings();
     }
     throw error;
@@ -64,19 +71,49 @@ export async function loadSourceLanguageSettings(settingsDir?: string): Promise<
 }
 
 export async function saveSourceLanguage(sourceLanguage: SourceLocale, settingsDir?: string): Promise<string> {
+  const current = await loadSourceLanguageSettings(settingsDir);
+  return writeSourceLanguageSettings({ ...current, sourceLanguage }, settingsDir);
+}
+
+export async function saveNewVocabularyDisplayPreferences(
+  newVocabulary: NewVocabularyDisplayPreferences,
+  settingsDir?: string
+): Promise<string> {
+  const current = await loadSourceLanguageSettings(settingsDir);
+  return writeSourceLanguageSettings({ ...current, newVocabulary }, settingsDir);
+}
+
+async function writeSourceLanguageSettings(settings: SourceLanguageSettings, settingsDir?: string): Promise<string> {
   const directory = resolveSettingsDirectory(settingsDir);
   const path = join(directory, "settings.json");
   const temporaryPath = `${path}.${process.pid}.tmp`;
   await mkdir(directory, { recursive: true });
-  await writeFile(temporaryPath, `${JSON.stringify({ settingsFormatVersion: sourceLanguageSettingsFormatVersion, sourceLanguage }, null, 2)}\n`, "utf8");
+  await writeFile(temporaryPath, `${JSON.stringify(settings, null, 2)}\n`, "utf8");
   await rename(temporaryPath, path);
   return path;
 }
 
-function isSourceLanguageSettings(value: unknown): value is SourceLanguageSettings {
-  return typeof value === "object" && value !== null &&
-    "settingsFormatVersion" in value && value.settingsFormatVersion === sourceLanguageSettingsFormatVersion &&
-    "sourceLanguage" in value && isSourceLocale(value.sourceLanguage);
+function normalizeSourceLanguageSettings(value: unknown): SourceLanguageSettings {
+  const defaults = defaultSourceLanguageSettings();
+  if (typeof value !== "object" || value === null) return defaults;
+  const record = value as Record<string, unknown>;
+  const sourceLanguage = isSourceLocale(record.sourceLanguage) ? record.sourceLanguage : defaults.sourceLanguage;
+  const nested = typeof record.newVocabulary === "object" && record.newVocabulary !== null
+    ? record.newVocabulary as Record<string, unknown>
+    : {};
+  const notesVisible = typeof nested.notesVisible === "boolean"
+    ? nested.notesVisible
+    : typeof record.notesEnabled === "boolean"
+      ? record.notesEnabled
+      : defaults.newVocabulary.notesVisible;
+  const entrySpacing = isVocabularyEntrySpacing(nested.entrySpacing)
+    ? nested.entrySpacing
+    : defaults.newVocabulary.entrySpacing;
+  return {
+    settingsFormatVersion: sourceLanguageSettingsFormatVersion,
+    sourceLanguage,
+    newVocabulary: { notesVisible, entrySpacing }
+  };
 }
 
 function isMissingFileError(error: unknown): boolean {

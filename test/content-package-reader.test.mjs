@@ -20,6 +20,10 @@ import {
   readInstalledMemorizationItems,
   renderReadingContent
 } from "../dist/packages/core/index.js";
+import {
+  defaultSettingsDirectoryForContentDataDirectory,
+  saveNewVocabularyDisplayPreferences
+} from "../dist/src/settings/source-language.js";
 
 test("installed reader rejects stale ordinary chapters retaining forbidden reading headings", () => {
   const snapshot = (heading) => ({
@@ -79,7 +83,7 @@ test("installed content entry can be read and rendered", async () => {
   }
 });
 
-test("non-TTY installed rendering preserves canonical logical-entry spacing in every view", () => {
+test("non-TTY installed rendering preserves the Notes by Spaces by Japanese Reading matrix in every view", () => {
   const result = (text) => ({
     package: {
       packageId: "com.sleepymario.language.fixture",
@@ -95,42 +99,41 @@ test("non-TTY installed rendering preserves canonical logical-entry spacing in e
     },
     text
   });
-  const variants = [
-    [
-      "# Chapter 1",
-      "",
-      "### New Vocabulary",
-      "",
-      "| Form | Reading | Meaning | Part of speech | Note |",
-      "|---|---|---|---|---|",
-      "| alpha |  | first | noun | note |",
-      "| beta line 1<br>beta line 2 |  | second | phrase | long note |",
-      "| gamma | がんま | third | noun | note |"
-    ].join("\n"),
-    [
-      "# Chapter 1",
-      "",
-      "### New Vocabulary",
-      "",
-      "| Form | Reading | Meaning | Part of speech |",
-      "|---|---|---|---|",
-      "| alpha |  | first | noun |",
-      "| beta line 1<br>beta line 2 |  | second | phrase |",
-      "| gamma | がんま | third | noun |"
-    ].join("\n")
-  ];
+  const text = [
+    "# Chapter 1",
+    "",
+    "### New Vocabulary",
+    "",
+    "| Form | Reading | Meaning | Part of speech | Note |",
+    "|---|---|---|---|---|",
+    "| 学生 | がくせい | student | noun | contextual note |",
+    "| こんにちは<br>ませ |  | hello<br>polite addition | phrase | kana-only continuation |",
+    "| 食べます | たべます | eat | verb | contextual reading |"
+  ].join("\n");
   const blank = (line) => /^\|(?:\s+\|)+$/u.test(line);
 
-  for (const text of variants) {
-    for (const mode of ["normal", "expert", "developer"]) {
-      const rows = renderReadingContent(result(text), mode).split("\n").filter((line) => line.startsWith("| "));
-      const dataRows = rows.slice(2);
-      assert.equal(dataRows.filter(blank).length, 2, mode);
-      assert.equal(blank(dataRows[0]), false);
-      assert.equal(blank(dataRows.at(-1)), false);
-      const betaFirst = dataRows.findIndex((line) => line.includes("beta line 1"));
-      const betaSecond = dataRows.findIndex((line) => line.includes("beta line 2"));
-      assert.equal(betaSecond, betaFirst + 1);
+  for (const mode of ["normal", "expert", "developer"]) {
+    for (const notesVisible of [true, false]) {
+      for (const entrySpacing of ["separated", "compact"]) {
+        const rendered = renderReadingContent(result(text), mode, { notesVisible, entrySpacing });
+        const rows = rendered.split("\n").filter((line) => line.startsWith("| "));
+        const dataRows = rows.slice(2);
+        assert.equal(dataRows.filter(blank).length, entrySpacing === "separated" ? 2 : 0, `${mode}/${notesVisible}/${entrySpacing}`);
+        assert.equal(blank(dataRows[0]), false);
+        assert.equal(blank(dataRows.at(-1)), false);
+        assert.match(rows[0], notesVisible
+          ? /^\| Form \| Reading \| Meaning \| Part of speech \| Note \|$/u
+          : /^\| Form \| Reading \| Meaning \| Part of speech \|$/u);
+        assert.match(rendered, /\| 学生 \| がくせい \| student \| noun /u);
+        assert.match(rendered, /\| 食べます \| たべます \| eat \| verb /u);
+        assert.match(rendered, /\| こんにちは \|  \| hello /u);
+        assert.doesNotMatch(rendered, /\| こんにちは \| [^| ]/u);
+        assert.equal(rendered.includes("contextual note"), notesVisible);
+        const kanaFirst = dataRows.findIndex((line) => line.includes("こんにちは"));
+        const kanaSecond = dataRows.findIndex((line) => line.includes("ませ"));
+        assert.equal(kanaSecond, kanaFirst + 1);
+        assert.equal(dataRows.slice(kanaFirst, kanaSecond + 1).some(blank), false);
+      }
     }
   }
 });
@@ -186,6 +189,24 @@ test("content read CLI lists packages files and renders selected content", async
     assert.match(packages.stdout, /Readable content packages:/);
     assert.match(files.stdout, /units\/dutch-core\/chapter-001-basic-sentences-1\/chapter\.md/u);
     assert.match(rendered.stdout, /Chapter 1/u);
+
+    await saveNewVocabularyDisplayPreferences(
+      { notesVisible: false, entrySpacing: "compact" },
+      defaultSettingsDirectoryForContentDataDirectory(fixture.dataDir)
+    );
+    const compact = await runCli([
+      "content",
+      "read",
+      "com.sleepymario.language.dutch",
+      "--file",
+      "units/dutch-core/chapter-001-basic-sentences-1/chapter.md",
+      "--data-dir",
+      fixture.dataDir
+    ]);
+    const vocabulary = compact.stdout.match(/### New Vocabulary\n\n([\s\S]*?)(?=\n### )/u)?.[1] ?? "";
+    assert.match(vocabulary, /^\| Form \| Meaning \| Part of speech \|$/mu);
+    assert.doesNotMatch(vocabulary.split("\n")[0] ?? "", /\bNote\b/u);
+    assert.equal(vocabulary.split("\n").some((line) => /^\|(?:\s+\|)+$/u.test(line)), false);
   } finally {
     await fixture.cleanup();
   }

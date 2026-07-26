@@ -12,9 +12,13 @@ import { isLocalizedContentValue, localized, type LocalizedContentValue } from "
 import { defaultCurriculumDisplayMode, projectCurriculumMarkdown, type CurriculumDisplayMode } from "./curriculum-display";
 import { assertCanonicalCastBootstrapBeforeOrdinaryContent } from "./language-curriculum-bootstrap";
 import {
+  defaultNewVocabularyDisplayPreferences,
   isLogicalVocabularyContinuation,
+  isNewVocabularyHeading,
   isVocabularyTableHeader,
-  vocabularyNoteColumn
+  shouldInsertVocabularyEntrySeparator,
+  vocabularyNoteColumn,
+  type NewVocabularyDisplayPreferences
 } from "./vocabulary-rendering";
 
 type BufferValue = {
@@ -342,29 +346,47 @@ function canonicalSourceLocale(locale: string): string {
   return locale;
 }
 
-export function renderReadingContent(result: ReadInstalledContentEntryResult, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
+export function renderReadingContent(
+  result: ReadInstalledContentEntryResult,
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode,
+  newVocabulary: NewVocabularyDisplayPreferences = defaultNewVocabularyDisplayPreferences
+): string {
   return [
     result.package.displayName,
     `${result.package.packageId} ${result.package.packageVersion}`,
     result.entry.path,
     "",
-    renderLearnerReadingText(projectCurriculumMarkdown(result.text, displayMode)).trimEnd(),
+    renderLearnerReadingText(
+      projectCurriculumMarkdown(result.text, displayMode, { notesEnabled: newVocabulary.notesVisible }),
+      newVocabulary
+    ).trimEnd(),
     ""
   ].join("\n");
 }
 
-function renderLearnerReadingText(text: string): string {
+function renderLearnerReadingText(text: string, newVocabulary: NewVocabularyDisplayPreferences): string {
   const output: string[] = [];
   const lines = text.replace(/\r\n?/gu, "\n").split("\n");
+  let vocabularyHeadingLevel: number | undefined;
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index] ?? "";
+    const heading = /^(#{1,6})\s+(.+)$/u.exec(line.trim());
+    if (heading !== null) {
+      const level = heading[1]?.length ?? 0;
+      if (isNewVocabularyHeading(heading[2] ?? "")) vocabularyHeadingLevel = level;
+      else if (vocabularyHeadingLevel !== undefined && level <= vocabularyHeadingLevel) vocabularyHeadingLevel = undefined;
+    }
     if (isMarkdownTableLine(line)) {
       const tableLines = [line];
       while (index + 1 < lines.length && isMarkdownTableLine(lines[index + 1] ?? "")) {
         index += 1;
         tableLines.push(lines[index] ?? "");
       }
-      output.push(...removeStatusTableColumn(tableLines));
+      output.push(...removeStatusTableColumn(
+        tableLines,
+        vocabularyHeadingLevel !== undefined,
+        newVocabulary.entrySpacing
+      ));
       continue;
     }
     output.push(line);
@@ -377,7 +399,11 @@ function isMarkdownTableLine(line: string): boolean {
   return trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.slice(1, -1).includes("|");
 }
 
-function removeStatusTableColumn(lines: readonly string[]): readonly string[] {
+function removeStatusTableColumn(
+  lines: readonly string[],
+  inNewVocabularySection: boolean,
+  entrySpacing: NewVocabularyDisplayPreferences["entrySpacing"]
+): readonly string[] {
   const rows = lines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => cell.trim()));
   const header = rows.find((row) => !row.every((cell) => /^:?-{3,}:?$/u.test(cell))) ?? [];
   const visibleColumns = Array.from({ length: Math.max(...rows.map((row) => row.length)) }, (_, column) => column)
@@ -387,7 +413,7 @@ function removeStatusTableColumn(lines: readonly string[]): readonly string[] {
   if (visibleColumns.length === 0) {
     return lines;
   }
-  const vocabularyTable = isVocabularyTableHeader(visibleHeader);
+  const vocabularyTable = inNewVocabularySection && isVocabularyTableHeader(visibleHeader);
   let renderedVocabularyEntries = 0;
   return rows.flatMap((row, rowIndex) => {
     const visibleRow = visibleColumns.map((column, visibleColumn) => {
@@ -405,7 +431,7 @@ function removeStatusTableColumn(lines: readonly string[]): readonly string[] {
     const isVocabularyRow = vocabularyTable && rowIndex > 0 && !separator;
     const isContinuation = isVocabularyRow && isLogicalVocabularyContinuation(visibleRow, visibleHeader, noteColumn);
     const isIndependentEntry = isVocabularyRow && !isContinuation;
-    const output = isIndependentEntry && renderedVocabularyEntries > 0
+    const output = isIndependentEntry && shouldInsertVocabularyEntrySeparator(entrySpacing, renderedVocabularyEntries)
       ? [`| ${visibleColumns.map(() => "").join(" | ")} |`, ...rendered]
       : rendered;
     if (isIndependentEntry) {

@@ -17,6 +17,7 @@ import {
   loadReviewProgressStore,
   defaultReviewProgressDirectoryForContentDataDirectory,
   defaultCurriculumDisplayMode,
+  defaultNewVocabularyDisplayPreferences,
   classifyReviewDeckMenuStatus,
   combineDeveloperGrammarMarkdown,
   grammarEasyMenuLabel,
@@ -38,7 +39,9 @@ import {
   unicodeTerminalDisplayWidth,
   isUnicodeWideCharacter,
   isLogicalVocabularyContinuation,
+  isNewVocabularyHeading,
   isVocabularyTableHeader,
+  shouldInsertVocabularyEntrySeparator,
   vocabularyNoteColumn,
   type ContentPackageCatalogueEntry,
   type CurriculumDisplayMode,
@@ -54,7 +57,8 @@ import {
   type ReviewRating,
   type ReadingReviewSource,
   type InstalledReadablePackage,
-  type InstalledPackageRecord
+  type InstalledPackageRecord,
+  type VocabularyEntrySpacing
 } from "../../packages/core";
 import {
   defaultBeginnerVolumeOneOutputPath,
@@ -64,7 +68,12 @@ import {
   defaultSixToNineOutputPath
 } from "../../packages/mathematics";
 import { sourceLocaleLabel, translate, type SourceLocale } from "../../src/i18n";
-import { defaultSettingsDirectoryForContentDataDirectory, loadSourceLanguageSettings, saveSourceLanguage } from "../../src/settings/source-language";
+import {
+  defaultSettingsDirectoryForContentDataDirectory,
+  loadSourceLanguageSettings,
+  saveNewVocabularyDisplayPreferences,
+  saveSourceLanguage
+} from "../../src/settings/source-language";
 
 declare function require(name: "node:fs/promises"): {
   stat(path: string): Promise<unknown>;
@@ -590,6 +599,7 @@ export interface InteractiveMenuOptions {
   readonly breakdownEnabled?: boolean;
   readonly charactersEnabled?: boolean;
   readonly notesEnabled?: boolean;
+  readonly vocabularyEntrySpacing?: VocabularyEntrySpacing;
 }
 
 export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal(), options: InteractiveMenuOptions = {}): Promise<void> {
@@ -906,7 +916,8 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     translationsEnabled: options.translationsEnabled ?? false
     , breakdownEnabled: options.breakdownEnabled ?? false
     , charactersEnabled: options.charactersEnabled ?? false
-    , notesEnabled: options.notesEnabled ?? true
+    , notesEnabled: options.notesEnabled ?? savedSettings.newVocabulary.notesVisible
+    , vocabularyEntrySpacing: options.vocabularyEntrySpacing ?? savedSettings.newVocabulary.entrySpacing
   };
   let tree = await buildModuleTree(options);
   let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
@@ -924,9 +935,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     selection = Math.min(selection, visible.length - 1);
     const selectedNode = visible[selection]?.node ?? tree;
     const charactersApplicable = charactersToggleAppliesToNode(selectedNode);
-    const toggleCount = charactersApplicable ? 6 : 5;
+    const toggleCount = charactersApplicable ? 7 : 6;
     toggleSelection = Math.min(toggleSelection, toggleCount - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -1045,12 +1056,25 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       }
       if (isEnter(key) || isSpace(key)) {
         const sourceChanged = toggleSelection === 0;
+        const notesIndex = charactersApplicable ? 5 : 4;
+        const spacesIndex = charactersApplicable ? 6 : 5;
         if (sourceChanged) options = await persistInteractiveSourceLocale(options, nextSourceLocale(options.locale));
         else if (toggleSelection === 1) options = { ...options, displayMode: nextCurriculumDisplayMode(options.displayMode ?? defaultCurriculumDisplayMode) };
         else if (toggleSelection === 2) options = { ...options, translationsEnabled: options.translationsEnabled !== true };
         else if (charactersApplicable && toggleSelection === 3) options = { ...options, charactersEnabled: options.charactersEnabled !== true };
         else if (toggleSelection === (charactersApplicable ? 4 : 3)) options = { ...options, breakdownEnabled: options.breakdownEnabled !== true };
-        else options = { ...options, notesEnabled: options.notesEnabled === false };
+        else if (toggleSelection === notesIndex) {
+          options = { ...options, notesEnabled: options.notesEnabled === false };
+          await persistInteractiveNewVocabularyPreferences(options);
+        } else if (toggleSelection === spacesIndex) {
+          options = {
+            ...options,
+            vocabularyEntrySpacing: (options.vocabularyEntrySpacing ?? defaultNewVocabularyDisplayPreferences.entrySpacing) === "separated"
+              ? "compact"
+              : "separated"
+          };
+          await persistInteractiveNewVocabularyPreferences(options);
+        }
         if (sourceChanged && embeddedReview !== null) {
           embeddedReview = await reprojectEmbeddedReviewSession(embeddedReview, options);
         } else {
@@ -1319,6 +1343,13 @@ function charactersToggleAppliesToNode(node: LanguageTreeNode): boolean {
 async function persistInteractiveSourceLocale(options: InteractiveMenuOptions, locale: SourceLocale): Promise<InteractiveMenuOptions> {
   await saveSourceLanguage(locale, options.settingsDir);
   return { ...options, locale };
+}
+
+async function persistInteractiveNewVocabularyPreferences(options: InteractiveMenuOptions): Promise<void> {
+  await saveNewVocabularyDisplayPreferences({
+    notesVisible: options.notesEnabled !== false,
+    entrySpacing: options.vocabularyEntrySpacing ?? defaultNewVocabularyDisplayPreferences.entrySpacing
+  }, options.settingsDir);
 }
 
 function normalizeTreeOptions(options: InteractiveMenuOptions | string | undefined): InteractiveMenuOptions {
@@ -3800,7 +3831,14 @@ async function runReadableContentAction(
     path: item.filePath,
     locale: options.locale
   });
-  return showPagedMessage(terminal, renderReadingContent(result));
+  return showPagedMessage(terminal, renderReadingContent(
+    result,
+    options.displayMode ?? defaultCurriculumDisplayMode,
+    {
+      notesVisible: options.notesEnabled !== false,
+      entrySpacing: options.vocabularyEntrySpacing ?? defaultNewVocabularyDisplayPreferences.entrySpacing
+    }
+  ));
 }
 
 async function runLinguisticTermsMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
@@ -4169,9 +4207,10 @@ function renderLanguageTreeMenu(
   breakdownEnabled = false,
   charactersEnabled = false,
   charactersApplicable = false,
-  notesEnabled = true
+  notesEnabled = true,
+  vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing
 ): void {
-  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled)}`);
+  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing)}`);
 }
 
 const rightPanePageSize = 24;
@@ -4196,7 +4235,8 @@ export function renderTwoPaneLanguageTree(
   breakdownEnabled = false,
   charactersEnabled = false,
   charactersApplicable = false,
-  notesEnabled = true
+  notesEnabled = true,
+  vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
   const layout = threePaneLayout(terminalWidth);
@@ -4208,9 +4248,11 @@ export function renderTwoPaneLanguageTree(
   const leftOffset = leftPaneOffsetForSelection(selectedLineIndex, allLeftLines.length, bodyHeight);
   const leftLines = allLeftLines.slice(leftOffset, leftOffset + bodyHeight);
   const rightPane = splitFixedBottomBar(rightPaneText);
-  const bottomBarLines = rightPane.bottomBar === undefined ? [] : formatPaneText(rightPane.bottomBar, rightWidth, colorsEnabled);
+  const bottomBarLines = rightPane.bottomBar === undefined
+    ? []
+    : formatPaneText(rightPane.bottomBar, rightWidth, colorsEnabled, vocabularyEntrySpacing);
   const scrollableHeight = Math.max(1, bodyHeight - bottomBarLines.length);
-  const rightLines = formatPaneText(rightPane.body, rightWidth, colorsEnabled);
+  const rightLines = formatPaneText(rightPane.body, rightWidth, colorsEnabled, vocabularyEntrySpacing);
   const maxOffset = Math.max(0, rightLines.length - scrollableHeight);
   const offset = Math.min(Math.max(0, rightPaneOffset), maxOffset);
   const visibleRightLines = [
@@ -4229,7 +4271,7 @@ export function renderTwoPaneLanguageTree(
   lines.push(`${separator} ${padRight(navigationTitle, leftWidth)} ${separator} ${padRight(outputTitle, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(togglesTitle, layout.toggleWidth)} ${separator}` : ""}`);
   lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}${layout.showToggles ? ` ${" ".repeat(layout.toggleWidth)} ${separator}` : ""}`);
 
-  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
+  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
@@ -4254,7 +4296,7 @@ export function renderSourceLanguageToggle(sourceLocale: SourceLocale, colorsEna
   return colorsEnabled ? `${ansi.bold}${ansi.orange}${label}${ansi.reset}` : label;
 }
 
-function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
+function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, vocabularyEntrySpacing: VocabularyEntrySpacing, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
   const viewLabel: Record<CurriculumDisplayMode, string> = { normal: "Normal", expert: "Expert", developer: "Developer" };
   const raw = [
     `Source: ${sourceLocaleLabel(sourceLocale, sourceLocale)}`,
@@ -4262,7 +4304,8 @@ function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDi
     `Translation: ${translationsEnabled ? "On" : "Off"}`,
     ...(charactersApplicable ? [`Characters: ${charactersEnabled ? "On" : "Off"}`] : []),
     `Breakdown: ${breakdownEnabled ? "On" : "Off"}`,
-    `Notes: ${notesEnabled ? "On" : "Off"}`
+    `Notes: ${notesEnabled ? "On" : "Off"}`,
+    `Spaces: ${vocabularyEntrySpacing === "separated" ? "Yes" : "No"}`
   ];
   return raw.map((value, index) => {
     const selected = focused && selection === index;
@@ -4442,7 +4485,12 @@ function displayTreeLabel(node: LanguageTreeNode): string {
   return label.replace(/^Chapter\s+(\d+)\b/u, "Ch $1");
 }
 
-function formatPaneText(text: string, width: number, colorsEnabled: boolean): readonly string[] {
+function formatPaneText(
+  text: string,
+  width: number,
+  colorsEnabled: boolean,
+  vocabularyEntrySpacing: VocabularyEntrySpacing
+): readonly string[] {
   const lines: string[] = [];
   let inCodeBlock = false;
   let learnerReadingSection: LearnerReadingSection = undefined;
@@ -4450,6 +4498,7 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
   let breakdownSection = false;
   let narrativeIntroduction = false;
   let narrativeIntroductionStarted = false;
+  let vocabularyHeadingLevel: number | undefined;
   const rawLines = reflowMarkdownSourceLines(text.replace(/\t/gu, "  ").split("\n"));
   const dialogueLabelWidths = dialogueLabelWidthsByLine(rawLines);
   for (let index = 0; index < rawLines.length; index += 1) {
@@ -4462,6 +4511,9 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
       const heading = rawLine.match(/^(#{1,6})\s+(.+)$/u);
       if (heading !== null && (heading[1]?.length ?? 0) <= 4) {
         const title = heading[2]?.trim() ?? "";
+        const level = heading[1]?.length ?? 0;
+        if (isNewVocabularyHeading(title)) vocabularyHeadingLevel = level;
+        else if (vocabularyHeadingLevel !== undefined && level <= vocabularyHeadingLevel) vocabularyHeadingLevel = undefined;
         breakdownSection = /^Line-by-line Breakdown(?:\s*:\s*(?:Normal|Expert))?$/iu.test(title);
         const nextSection = learnerReadingSectionForHeading(title);
         if (nextSection !== undefined) primaryReadingSection = nextSection;
@@ -4481,7 +4533,13 @@ function formatPaneText(text: string, width: number, colorsEnabled: boolean): re
         index += 1;
         tableLines.push(rawLines[index] ?? "");
       }
-      lines.push(...formatMarkdownTable(tableLines, width, colorsEnabled));
+      lines.push(...formatMarkdownTable(
+        tableLines,
+        width,
+        colorsEnabled,
+        vocabularyHeadingLevel !== undefined,
+        vocabularyEntrySpacing
+      ));
       continue;
     }
     if (rawLine.length === 0) {
@@ -4690,7 +4748,13 @@ function isMarkdownTableLine(line: string): boolean {
   return trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.slice(1, -1).includes("|");
 }
 
-function formatMarkdownTable(rawLines: readonly string[], width: number, colorsEnabled: boolean): readonly string[] {
+function formatMarkdownTable(
+  rawLines: readonly string[],
+  width: number,
+  colorsEnabled: boolean,
+  inNewVocabularySection: boolean,
+  vocabularyEntrySpacing: VocabularyEntrySpacing
+): readonly string[] {
   const parsedRows = rawLines.map((line) => line.trim().slice(1, -1).split("|").map((cell) => stripInlineMarkdown(cell.trim(), colorsEnabled).replace(/<br\s*\/?\s*>/giu, "\n")));
   const originalColumnCount = Math.max(...parsedRows.map((row) => row.length));
   const headerRow = parsedRows.find((row) => !isMarkdownTableSeparatorRow(row)) ?? [];
@@ -4711,7 +4775,7 @@ function formatMarkdownTable(rawLines: readonly string[], width: number, colorsE
   ));
   const widths = constrainTableWidths(idealWidths, width);
   const formattedRows: string[] = [];
-  const vocabularyTable = isVocabularyTableHeader(visibleHeader);
+  const vocabularyTable = inNewVocabularySection && isVocabularyTableHeader(visibleHeader);
   let renderedVocabularyEntries = 0;
   for (const [rowIndex, row] of rows.entries()) {
     if (isMarkdownTableSeparatorRow(row)) {
@@ -4720,7 +4784,7 @@ function formatMarkdownTable(rawLines: readonly string[], width: number, colorsE
     }
     const isVocabularyRow = vocabularyTable && rowIndex > 0;
     const isContinuation = isVocabularyRow && isLogicalVocabularyContinuation(row, visibleHeader, noteColumn);
-    if (isVocabularyRow && !isContinuation && renderedVocabularyEntries > 0) {
+    if (isVocabularyRow && !isContinuation && shouldInsertVocabularyEntrySeparator(vocabularyEntrySpacing, renderedVocabularyEntries)) {
       formattedRows.push(`| ${widths.map((cellWidth) => " ".repeat(cellWidth)).join(" | ")} |`);
     }
     if (isVocabularyRow && !isContinuation) {

@@ -1,3 +1,30 @@
+export type VocabularyEntrySpacing = "separated" | "compact";
+
+export interface NewVocabularyDisplayPreferences {
+  readonly notesVisible: boolean;
+  readonly entrySpacing: VocabularyEntrySpacing;
+}
+
+export const defaultNewVocabularyDisplayPreferences: NewVocabularyDisplayPreferences = Object.freeze({
+  notesVisible: true,
+  entrySpacing: "separated"
+});
+
+export function isVocabularyEntrySpacing(value: unknown): value is VocabularyEntrySpacing {
+  return value === "separated" || value === "compact";
+}
+
+export function shouldInsertVocabularyEntrySeparator(
+  entrySpacing: VocabularyEntrySpacing,
+  renderedEntryCount: number
+): boolean {
+  return entrySpacing === "separated" && renderedEntryCount > 0;
+}
+
+export function isNewVocabularyHeading(title: string): boolean {
+  return /^(?:[^/]+\s*\/\s*)?New Vocabulary$/iu.test(title.trim());
+}
+
 export function isVocabularyTableHeader(header: readonly string[]): boolean {
   const labels = header.map(normalizeLabel);
   const hasForm = labels.some((label) => label === "form" || label === "surface form" || label === "word" || label === "phrase" || /\bword$/u.test(label));

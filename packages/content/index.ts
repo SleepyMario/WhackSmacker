@@ -37,6 +37,10 @@ import {
   type RenderedExercise,
   type ReviewRating
 } from "../core";
+import {
+  defaultSettingsDirectoryForContentDataDirectory,
+  loadSourceLanguageSettings
+} from "../../src/settings/source-language";
 
 declare const process: {
   stdin: NodeInput;
@@ -213,7 +217,11 @@ export const contentModule: DomainModule = {
           packageVersion: parsed.options.version,
           path: parsed.options.file
         });
-        console.log(renderReadingContent(result, parsed.options.view));
+        const settingsDir = parsed.options.dataDir === undefined
+          ? undefined
+          : defaultSettingsDirectoryForContentDataDirectory(parsed.options.dataDir);
+        const settings = await loadSourceLanguageSettings(settingsDir);
+        console.log(renderReadingContent(result, parsed.options.view, settings.newVocabulary));
       }
     });
 
