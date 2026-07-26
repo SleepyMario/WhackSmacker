@@ -94,9 +94,10 @@ test("every chapter permits chapter-local unnamed functional roles but rejects a
   assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(1, [], { functionalParticipants: [{ ...functional, continuityKey: "same-newsreader" }] })] }), /prohibited.*continuityKey/u);
 });
 
-test("legacy violations remain visible but new violations cannot use migration status", () => {
-  const audit = auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [{ chapter: 1, authorship: "legacy", migrationStatus: "pending-legacy-migration", participatingPersonIds: [ids[10]] }] });
-  assert.equal(audit.status, "pending-legacy-migration");
-  assert.deepEqual(audit.pendingChapters, [1]);
+test("no legacy or preview status can permit an inactive canonical person", () => {
+  assert.throws(
+    () => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [{ chapter: 1, authorship: "legacy", migrationStatus: "pending-legacy-migration", participatingPersonIds: [ids[10]] }] }),
+    /pre-activation canonical appearances are prohibited/u
+  );
   assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [{ chapter: 1, authorship: "new", migrationStatus: "pending-legacy-migration", participatingPersonIds: [ids[10]] }] }), /newly authored content cannot be marked/u);
 });

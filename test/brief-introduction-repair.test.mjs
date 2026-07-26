@@ -105,7 +105,7 @@ test("the follower generator reproduces the three supplied overrides and keeps e
   }
 });
 
-test("the production changed-content gate excludes Narrative setup from translated body units", () => {
+test("the production changed-content gate honors Narrative sentence-unit and paragraph-unit alignment models", () => {
   const markdown = `# Chapter
 
 ## Brief Introduction
@@ -127,16 +127,30 @@ Pattern: \`N + verb\`
     markdown,
     source: "narrative-setup-fixture/chapter.md",
     readingTranslation: {
-      paragraphs: ["The lesson begins.", "Alex reads."]
+      sentences: ["The lesson begins.", "Alex reads."]
     }
   }));
   assert.throws(() => assertCanonicalSectionAndGrammarRules({
     markdown,
     source: "narrative-setup-fixture/chapter.md",
     readingTranslation: {
-      paragraphs: ["Alex prepares the room before the lesson.", "The lesson begins.", "Alex reads."]
+      sentences: ["Alex prepares the room before the lesson.", "The lesson begins.", "Alex reads."]
     }
   }), /Narrative source\/translation sentence count mismatch 2\/3/u);
+  assert.doesNotThrow(() => assertCanonicalSectionAndGrammarRules({
+    markdown,
+    source: "narrative-paragraph-fixture/chapter.md",
+    readingTranslation: {
+      paragraphs: ["Alex prepares the room before the lesson.", "The lesson begins.", "Alex reads."]
+    }
+  }));
+  assert.throws(() => assertCanonicalSectionAndGrammarRules({
+    markdown,
+    source: "narrative-paragraph-fixture/chapter.md",
+    readingTranslation: {
+      paragraphs: ["The lesson begins.", "Alex reads."]
+    }
+  }), /Narrative source\/translation sentence count mismatch 3\/2/u);
 });
 
 function section(markdown, heading) {

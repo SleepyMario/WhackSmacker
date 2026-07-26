@@ -252,10 +252,11 @@ export function reconcileChapterParticipants(
   // participants or qualifying appearances merely because their name occurs.
 
   const active = new Set(activePersonIdsForChapter(chapter, options.activeCastProgression));
-  // Identity reconciliation deliberately does not redefine appearance-distribution
-  // policy. Pre-profile appearances remain visible here; the active-cast audit is
-  // the authoritative place that decides whether an appearance qualifies for a
-  // coverage block or is a migration finding.
+  for (const id of castIds) {
+    if (!active.has(id)) {
+      throw new Error(`${source}: Chapter ${chapter} canonical participant ${id} is outside the active progression prefix; pre-activation canonical appearances are prohibited`);
+    }
+  }
   const ceiling = chapter <= 75 ? 3 : 4;
   if (castIds.length > ceiling) {
     throw new Error(`${source}: Chapter ${chapter} declares ${castIds.length} canonical cast participants; named-cast ceiling is ${ceiling}. Unnamed functional participants are excluded from this count.`);

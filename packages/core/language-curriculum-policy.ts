@@ -65,7 +65,9 @@ export function assertCanonicalSectionAndGrammarRules(input: CanonicalSectionAnd
     if (turns.length === 0) throw new Error(`${input.source}: Dialogue must contain spoken turns after its setup.`);
     assertTranslationBoundary(input.readingTranslation, readingType, setup, turns.length, input.source);
   } else {
-    const sourceSentenceCount = countSentences(reading.slice(setup.length).trim());
+    const translationUsesSentenceUnits = isPolicyRecord(input.readingTranslation)
+      && Array.isArray(input.readingTranslation.sentences);
+    const sourceSentenceCount = countSentences(translationUsesSentenceUnits ? reading.slice(setup.length).trim() : reading);
     if (sourceSentenceCount === 0) throw new Error(`${input.source}: Narrative must contain aligned reading sentences after its setup.`);
     assertTranslationBoundary(input.readingTranslation, readingType, setup, sourceSentenceCount, input.source);
   }
@@ -1268,8 +1270,7 @@ export function auditActiveCast(values: {
     const used = new Set(declared);
     const inactive = [...used].filter((id) => !active.has(id));
     if (inactive.length > 0) {
-      if (record.migrationStatus === "pending-legacy-migration" && record.authorship === "legacy") pendingChapters.push(record.chapter);
-      else throw new Error(`Chapter ${record.chapter}: inactive canonical person ${inactive[0]} appears before activation.`);
+      throw new Error(`Chapter ${record.chapter}: inactive canonical person ${inactive[0]} appears before activation; pre-activation canonical appearances are prohibited.`);
     }
     if (record.reviewPersonIds?.length) {
       const sources = record.reviewSourceChapters ?? [];

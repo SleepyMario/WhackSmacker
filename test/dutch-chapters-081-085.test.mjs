@@ -122,6 +122,16 @@ test("subject-pronoun invariant projects the authored Chapter 81 Normal and Expe
 test("Dutch cast progression and first profiles remain exact through Chapter 85", async () => {
   const expectedFirst = new Map([[81, ["CAST-014"]], [82, ["CAST-015"]], [83, ["CAST-016"]], [84, []], [85, []]]);
   const appearanceCounts = new Map([["CAST-014", 0], ["CAST-015", 0], ["CAST-016", 0]]);
+  const firstAppearances = new Map([["CAST-014", null], ["CAST-015", null], ["CAST-016", null]]);
+  for (const directory of (await readdir(unitsRoot)).filter(name => /^chapter-\d{3}-/u.test(name) && !/^chapter-\d{3}-\d{3}-/u.test(name)).sort()) {
+    const participants = await readJson(join(unitsRoot, directory, "chapter-participants.json"));
+    for (const castId of firstAppearances.keys()) {
+      if (firstAppearances.get(castId) === null && participants.canonicalCastIds.includes(castId)) {
+        firstAppearances.set(castId, participants.chapter);
+      }
+    }
+  }
+  assert.deepEqual([...firstAppearances], [["CAST-014", 81], ["CAST-015", 82], ["CAST-016", 83]]);
   for (const [chapter, [directory]] of chapters) {
     const [source, participants] = await Promise.all([
       readFile(join(unitsRoot, directory, "chapter.md"), "utf8"),

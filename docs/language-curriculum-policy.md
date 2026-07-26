@@ -93,8 +93,12 @@ explicitly assigned a canonical ID.
 Appearance auditing reports counts by chapter, twenty-chapter block, and
 cumulatively. Generation prefers least-used suitable active people; recurring
 relationships remain valid, and only severe imbalance warns. Unknown and early
-inactive IDs hard-fail. Legacy records may explicitly remain
-`pending-legacy-migration`; new records cannot claim that status.
+inactive IDs hard-fail in all ordinary chapters. There is no pre-activation
+preview, cameo, biography, Dialogue-label, named-appearance, or legacy
+migration exception. The hard failure covers source text, participant metadata,
+translations, reading support, lexical and grammar evidence, Review evidence,
+package snapshots, and installed output. A canonical person cannot be
+converted into a chapter-local `ROLE-*` to evade activation.
 
 Completed activation blocks have two independent meaningful-use requirements.
 Every newly activated person, including each initial person, participates in at
