@@ -140,7 +140,8 @@ function isDialogueTurn(line: string): boolean {
 }
 
 function countSentences(value: string): number {
-  return [...new Intl.Segmenter(undefined, { granularity: "sentence" }).segment(value.replace(/\n+/gu, " "))]
+  const prose = value.replace(/`[^`\n]*`|\[\[grammar:[^\]\n]+\]\]/gu, (token) => token.replace(/[.!?。！？]/gu, ""));
+  return [...new Intl.Segmenter(undefined, { granularity: "sentence" }).segment(prose.replace(/\n+/gu, " "))]
     .filter((part) => part.segment.trim() !== "").length;
 }
 

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-011"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "김민지 (Minji) and 이준호 (Junho) use [[grammar:N + 하고 + N]] to connect two nouns in everyday Korean. Put [[grammar:하고]] after the first noun; its form does not change after vowels or consonants.",
+      "expert": "김민지 (Minji) and 이준호 (Junho) use [[grammar:N + 하고 + N]] in this chapter. `하고` is a postpositive nominal coordinator. It links noun phrases without allomorphic alternation and can express an ordinary list or association; in this chapter it coordinates two objects."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### N + 하고 + N\n\nPut `하고` after the first noun to connect it with another noun. `책하고 사전` means “a book and a dictionary.” The coordinator has one form after both vowel-final and consonant-final nouns.\n\nExample: [[grammar:책하고 사전을 찾아요.]]\n\nWatch out: Do not insert `하고` after every noun in a longer clause; use it only where the nouns are being linked.",
+      "expert": "#### N + 하고 + N\n\n`하고` is a postpositive nominal coordinator. It links noun phrases without allomorphic alternation and can express an ordinary list or association; in this chapter it coordinates two objects.\n\nExample: [[grammar:책하고 사전을 찾아요.]]"
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "김민지 and 이준호 are at the library choosing books and other things to read.",
+      "expert": "The primary dialogue supplies literal evidence for [[grammar:N + 하고 + N]] while preserving the chapter’s cumulative Korean vocabulary and participant continuity."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 도서관에서 뭐 찾아요? — What are you looking for at the library?\n- 책하고 사전을 찾아요. — I am looking for a book and a dictionary.\n- 저는 잡지하고 신문을 읽어요. — I read a magazine and a newspaper.\n- 사전은 저기에 있어요. — The dictionary is over there.\n- 책은 어디에 있어요? — Where is the book?\n- 창가 옆 선반에 있어요. — It is on the shelf beside the window.\n- 좋아요. 책하고 사전을 같이 봐요. — Good. Let’s look at the book and the dictionary together.\n- 네, 도서관에서 같이 읽어요. — Yes, let’s read together at the library.",
+    "expert": "- 도서관에서 뭐 찾아요? — Natural translation: What are you looking for at the library?\n- 책하고 사전을 찾아요. — Natural translation: I am looking for a book and a dictionary.\n- 저는 잡지하고 신문을 읽어요. — Natural translation: I read a magazine and a newspaper.\n- 사전은 저기에 있어요. — Natural translation: The dictionary is over there.\n- 책은 어디에 있어요? — Natural translation: Where is the book?\n- 창가 옆 선반에 있어요. — Natural translation: It is on the shelf beside the window.\n- 좋아요. 책하고 사전을 같이 봐요. — Natural translation: Good. Let’s look at the book and the dictionary together.\n- 네, 도서관에서 같이 읽어요. — Natural translation: Yes, let’s read together at the library."
+  },
+  "readingItems": [
+    {
+      "surface": "도서관",
+      "reading": "도서관",
+      "evidence": "도서관에서 뭐 찾아요?",
+      "lexicalEntryId": "ko.noun.doseogwan",
+      "senseId": "ko.noun.doseogwan.library"
+    },
+    {
+      "surface": "찾다",
+      "reading": "찾다",
+      "evidence": "도서관에서 뭐 찾아요?",
+      "lexicalEntryId": "ko.verb.chatda",
+      "senseId": "ko.verb.chatda.look-for"
+    },
+    {
+      "surface": "사전",
+      "reading": "사전",
+      "evidence": "책하고 사전을 찾아요.",
+      "lexicalEntryId": "ko.noun.sajeon",
+      "senseId": "ko.noun.sajeon.dictionary"
+    },
+    {
+      "surface": "잡지",
+      "reading": "잡지",
+      "evidence": "저는 잡지하고 신문을 읽어요.",
+      "lexicalEntryId": "ko.noun.japji",
+      "senseId": "ko.noun.japji.magazine"
+    },
+    {
+      "surface": "신문",
+      "reading": "신문",
+      "evidence": "저는 잡지하고 신문을 읽어요.",
+      "lexicalEntryId": "ko.noun.sinmun",
+      "senseId": "ko.noun.sinmun.newspaper"
+    },
+    {
+      "surface": "저기",
+      "reading": "저기",
+      "evidence": "사전은 저기에 있어요.",
+      "lexicalEntryId": "ko.adverb.jeogi",
+      "senseId": "ko.adverb.jeogi.over-there"
+    },
+    {
+      "surface": "창가",
+      "reading": "창가",
+      "evidence": "창가 옆 선반에 있어요.",
+      "lexicalEntryId": "ko.noun.changga",
+      "senseId": "ko.noun.changga.window-side"
+    },
+    {
+      "surface": "선반",
+      "reading": "선반",
+      "evidence": "창가 옆 선반에 있어요.",
+      "lexicalEntryId": "ko.noun.seonban",
+      "senseId": "ko.noun.seonban.shelf"
+    }
+  ]
+}

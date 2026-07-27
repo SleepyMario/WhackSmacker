@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-015"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + (으)ㄹ까요?]] to suggest an action and ask for agreement. Use [[grammar:-ㄹ까요?]] after a vowel or [[grammar:ㄹ]], and [[grammar:-을까요?]] after another final consonant.",
+      "expert": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + (으)ㄹ까요?]] in this chapter. `-(으)ㄹ까요?` is an interrogative proposal ending. In this block it invites the addressee to agree to a shared future action; the allomorph follows the usual vowel/`ㄹ` versus other-consonant split."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### verb stem + (으)ㄹ까요?\n\nAttach `-ㄹ까요?` or `-을까요?` to a verb stem to suggest doing something together. `서점에 갈까요?` means “Shall we go to the bookstore?”\n\nExample: [[grammar:서점에 갈까요?]]\n\nWatch out: Keep the question intonation and question mark; a plain future statement is not the same construction.",
+      "expert": "#### verb stem + (으)ㄹ까요?\n\n`-(으)ㄹ까요?` is an interrogative proposal ending. In this block it invites the addressee to agree to a shared future action; the allomorph follows the usual vowel/`ㄹ` versus other-consonant split.\n\nExample: [[grammar:서점에 갈까요?]]"
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "김민지 and 이준호 are planning where to meet and what to do tomorrow.",
+      "expert": "The primary dialogue supplies literal evidence for [[grammar:verb stem + (으)ㄹ까요?]] while preserving the chapter’s cumulative Korean vocabulary and participant continuity."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 내일 아침에 어디에서 만날까요? — Where shall we meet tomorrow morning?\n- 지하철역에서 만날까요? — Shall we meet at the subway station?\n- 좋아요. 서점에 갈까요? — Good. Shall we go to the bookstore?\n- 네, 소설을 살까요? — Yes. Shall we buy a novel?\n- 그다음에 강가에서 걸을까요? — After that, shall we walk by the river?\n- 좋아요. 오후에는 영화관에 갈까요? — Good. Shall we go to the cinema in the afternoon?\n- 네, 영화를 볼까요? — Yes. Shall we watch a film?\n- 저녁에는 카페에서 이야기할까요? — Shall we talk at a café in the evening?",
+    "expert": "- 내일 아침에 어디에서 만날까요? — Natural translation: Where shall we meet tomorrow morning?\n- 지하철역에서 만날까요? — Natural translation: Shall we meet at the subway station?\n- 좋아요. 서점에 갈까요? — Natural translation: Good. Shall we go to the bookstore?\n- 네, 소설을 살까요? — Natural translation: Yes. Shall we buy a novel?\n- 그다음에 강가에서 걸을까요? — Natural translation: After that, shall we walk by the river?\n- 좋아요. 오후에는 영화관에 갈까요? — Natural translation: Good. Shall we go to the cinema in the afternoon?\n- 네, 영화를 볼까요? — Natural translation: Yes. Shall we watch a film?\n- 저녁에는 카페에서 이야기할까요? — Natural translation: Shall we talk at a café in the evening?"
+  },
+  "readingItems": [
+    {
+      "surface": "내일",
+      "reading": "내일",
+      "evidence": "내일 아침에 어디에서 만날까요?",
+      "lexicalEntryId": "ko.noun-adverb.naeil",
+      "senseId": "ko.noun-adverb.naeil.tomorrow"
+    },
+    {
+      "surface": "지하철역",
+      "reading": "지하철역",
+      "evidence": "지하철역에서 만날까요?",
+      "lexicalEntryId": "ko.noun.jihacheolyeok",
+      "senseId": "ko.noun.jihacheolyeok.subway-station"
+    },
+    {
+      "surface": "서점",
+      "reading": "서점",
+      "evidence": "좋아요. 서점에 갈까요?",
+      "lexicalEntryId": "ko.noun.seojeom",
+      "senseId": "ko.noun.seojeom.bookstore"
+    },
+    {
+      "surface": "소설",
+      "reading": "소설",
+      "evidence": "네, 소설을 살까요?",
+      "lexicalEntryId": "ko.noun.soseol",
+      "senseId": "ko.noun.soseol.novel"
+    },
+    {
+      "surface": "강가",
+      "reading": "강가",
+      "evidence": "그다음에 강가에서 걸을까요?",
+      "lexicalEntryId": "ko.noun.gangga",
+      "senseId": "ko.noun.gangga.riverside"
+    },
+    {
+      "surface": "걷다",
+      "reading": "걷다",
+      "evidence": "그다음에 강가에서 걸을까요?",
+      "lexicalEntryId": "ko.verb.geotda",
+      "senseId": "ko.verb.geotda.walk"
+    },
+    {
+      "surface": "영화관",
+      "reading": "영화관",
+      "evidence": "좋아요. 오후에는 영화관에 갈까요?",
+      "lexicalEntryId": "ko.noun.yeonghwagwan",
+      "senseId": "ko.noun.yeonghwagwan.cinema"
+    },
+    {
+      "surface": "영화",
+      "reading": "영화",
+      "evidence": "네, 영화를 볼까요?",
+      "lexicalEntryId": "ko.noun.yeonghwa",
+      "senseId": "ko.noun.yeonghwa.movie"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
+  "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-014"
+  ],
+  "audienceSections": [
+    {
+      "sourceHeading": "Brief Introduction",
+      "normal": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + (으)러 + motion verb]] to state the purpose of going somewhere. Use [[grammar:-러]] after a vowel or [[grammar:ㄹ]], and [[grammar:-으러]] after another final consonant.",
+      "expert": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + (으)러 + motion verb]] in this chapter. `-(으)러` is a purposive connective restricted to clauses whose following predicate expresses directed motion. Its allomorph is selected by the stem-final segment: `-러` after vowels or `ㄹ`, otherwise `-으러`."
+    },
+    {
+      "sourceHeading": "Grammar",
+      "normal": "#### verb stem + (으)러 + motion verb\n\nAttach `-러` or `-으러` to the purpose verb, then use a motion verb such as `가다`, `오다`, or `들어가다`. `사진을 찍으러 공원에 가요` means “go to the park to take photographs.”\n\nExample: [[grammar:사진을 찍으러 공원에 가요.]]\n\nWatch out: The second predicate must express movement; do not use this form before an unrelated stationary action.",
+      "expert": "#### verb stem + (으)러 + motion verb\n\n`-(으)러` is a purposive connective restricted to clauses whose following predicate expresses directed motion. Its allomorph is selected by the stem-final segment: `-러` after vowels or `ㄹ`, otherwise `-으러`.\n\nExample: [[grammar:사진을 찍으러 공원에 가요.]]"
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "김민지 and 이준호 spend Saturday visiting several places in town.",
+      "expert": "The primary narrative supplies literal evidence for [[grammar:verb stem + (으)러 + motion verb]] while preserving the chapter’s cumulative Korean vocabulary and participant continuity."
+    }
+  ],
+  "breakdown": {
+    "normal": "- 토요일에 김민지는 박물관에 가요. — On Saturday, Minji goes to the museum.\n- 이준호는 사진을 보러 박물관에 들어가요. — Junho enters the museum to see photographs.\n- 김민지는 지도를 보러 안내소에 가요. — Minji goes to the information desk to look at a map.\n- 이준호는 사진을 찍으러 공원에 가요. — Junho goes to the park to take photographs.\n- 두 사람은 점심을 먹으러 카페에 가요. — The two go to a café to eat lunch.\n- 오후에는 선물을 사러 시장에 가요. — In the afternoon, they go to the market to buy a gift.\n- 김민지는 엽서를 사러 가게에 가요. — Minji goes to a shop to buy a postcard.\n- 저녁에 두 사람은 집에 돌아와요. — In the evening, the two return home.",
+    "expert": "- 토요일에 김민지는 박물관에 가요. — Natural translation: On Saturday, Minji goes to the museum.\n- 이준호는 사진을 보러 박물관에 들어가요. — Natural translation: Junho enters the museum to see photographs.\n- 김민지는 지도를 보러 안내소에 가요. — Natural translation: Minji goes to the information desk to look at a map.\n- 이준호는 사진을 찍으러 공원에 가요. — Natural translation: Junho goes to the park to take photographs.\n- 두 사람은 점심을 먹으러 카페에 가요. — Natural translation: The two go to a café to eat lunch.\n- 오후에는 선물을 사러 시장에 가요. — Natural translation: In the afternoon, they go to the market to buy a gift.\n- 김민지는 엽서를 사러 가게에 가요. — Natural translation: Minji goes to a shop to buy a postcard.\n- 저녁에 두 사람은 집에 돌아와요. — Natural translation: In the evening, the two return home."
+  },
+  "readingItems": [
+    {
+      "surface": "토요일",
+      "reading": "토요일",
+      "evidence": "토요일에 김민지는 박물관에 가요.",
+      "lexicalEntryId": "ko.noun.toyoil",
+      "senseId": "ko.noun.toyoil.saturday"
+    },
+    {
+      "surface": "박물관",
+      "reading": "박물관",
+      "evidence": "토요일에 김민지는 박물관에 가요.",
+      "lexicalEntryId": "ko.noun.bangmulgwan",
+      "senseId": "ko.noun.bangmulgwan.museum"
+    },
+    {
+      "surface": "들어가다",
+      "reading": "들어가다",
+      "evidence": "이준호는 사진을 보러 박물관에 들어가요.",
+      "lexicalEntryId": "ko.verb.deureogada",
+      "senseId": "ko.verb.deureogada.enter"
+    },
+    {
+      "surface": "지도",
+      "reading": "지도",
+      "evidence": "김민지는 지도를 보러 안내소에 가요.",
+      "lexicalEntryId": "ko.noun.jido",
+      "senseId": "ko.noun.jido.map"
+    },
+    {
+      "surface": "안내소",
+      "reading": "안내소",
+      "evidence": "김민지는 지도를 보러 안내소에 가요.",
+      "lexicalEntryId": "ko.noun.annaeso",
+      "senseId": "ko.noun.annaeso.information-desk"
+    },
+    {
+      "surface": "선물",
+      "reading": "선물",
+      "evidence": "오후에는 선물을 사러 시장에 가요.",
+      "lexicalEntryId": "ko.noun.seonmul",
+      "senseId": "ko.noun.seonmul.gift"
+    },
+    {
+      "surface": "엽서",
+      "reading": "엽서",
+      "evidence": "김민지는 엽서를 사러 가게에 가요.",
+      "lexicalEntryId": "ko.noun.yeopseo",
+      "senseId": "ko.noun.yeopseo.postcard"
+    },
+    {
+      "surface": "가게",
+      "reading": "가게",
+      "evidence": "김민지는 엽서를 사러 가게에 가요.",
+      "lexicalEntryId": "ko.noun.gage",
+      "senseId": "ko.noun.gage.shop"
+    }
+  ]
+}

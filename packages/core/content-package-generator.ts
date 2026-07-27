@@ -348,7 +348,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     id: "korean-curriculum",
     packageId: "com.sleepymario.language.korean",
     displayName: "Korean",
-    description: "Korean language curriculum content generated from the canonical Chapters 1 through 10 source.",
+    description: "Korean language curriculum content generated from the canonical Chapters 1 through 15 source.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
@@ -848,7 +848,12 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     [7, "chapter-007-ordering-a-snack"],
     [8, "chapter-008-a-simple-daily-schedule"],
     [9, "chapter-009-a-quiet-weekend"],
-    [10, "chapter-010-yesterday-at-the-market"]
+    [10, "chapter-010-yesterday-at-the-market"],
+    [11, "chapter-011-books-at-the-library"],
+    [12, "chapter-012-after-class"],
+    [13, "chapter-013-choosing-dinner"],
+    [14, "chapter-014-a-saturday-outing"],
+    [15, "chapter-015-planning-tomorrow"]
   ].map(([chapter, directory]) => ({
     source: `curriculum-support/korean/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/korean-core/${directory}/reading-support.json`

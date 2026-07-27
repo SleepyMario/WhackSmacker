@@ -18,7 +18,7 @@ const configs = [
   ["german", "German", "de", "GER", 55, 110, 103, 10],
   ["hindi", "Hindi", "hi", "HIN", 46, 92, 46, 5],
   ["japanese", "Japanese", "ja", "JPN", 44, 131, 87, 10],
-  ["korean", "Korean", "ko", "KOR", 47, 94, 92, 10],
+  ["korean", "Korean", "ko", "KOR", 47, 94, 132, 15],
   ["russian", "Russian", "ru", "RUS", 52, 104, 52, 5],
   ["spanish", "Spanish", "es", "SPA", 56, 112, 56, 5],
   ["thai", "Thai", "th", "THA", 52, 104, 52, 5],
@@ -32,7 +32,7 @@ for (const config of configs) {
     const files = await readdir(unitRoot, { withFileTypes: true });
     const chapterDirs = files.filter(entry => entry.isDirectory() && /^chapter-00[1-5]-/u.test(entry.name) && !/grammar/u.test(entry.name)).map(entry => entry.name).sort();
     assert.equal(chapterDirs.length, 5);
-    assert.equal(files.some(entry => /^chapter-006-/u.test(entry.name)), config.chapters === 10);
+    assert.equal(files.some(entry => /^chapter-006-/u.test(entry.name)), config.chapters > 5);
 
     let learnerSentences = 0;
     for (const [index, directory] of chapterDirs.entries()) {

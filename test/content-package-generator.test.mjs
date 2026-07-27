@@ -496,7 +496,7 @@ for (const config of followerReadingPackageConfigs) {
 
 }
 
-test("content package generator creates Korean Chapters 1 through 10 and both authoritative Review milestones", async () => {
+test("content package generator creates Korean Chapters 1 through 15 and all three authoritative Review milestones", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-korean-package-"));
 
   try {
@@ -509,7 +509,7 @@ test("content package generator creates Korean Chapters 1 through 10 and both au
     const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
     const readingContent = JSON.parse(readingArchive.get("content/content.json").toString("utf8"));
     const { reviewArchive, reviewManifest } = await mergedSplitArchive(readingArchive, directory, "korean-core-reviews");
-    const reviewItems = ["chapter-001-005", "chapter-006-010"]
+    const reviewItems = ["chapter-001-005", "chapter-006-010", "chapter-011-015"]
       .flatMap((block) => JSON.parse(reviewArchive.get(`content/memorization/review-decks/${block}.json`).toString("utf8")).items);
     const chapterFiles = readingContent.files.filter((file) => /^units\/korean-core\/chapter-\d{3}-[^/]+\/chapter\.md$/u.test(file.path) && !file.path.includes("-grammar-"));
 
@@ -530,15 +530,21 @@ test("content package generator creates Korean Chapters 1 through 10 and both au
       "units/korean-core/chapter-007-ordering-a-snack/chapter.md",
       "units/korean-core/chapter-008-a-simple-daily-schedule/chapter.md",
       "units/korean-core/chapter-009-a-quiet-weekend/chapter.md",
-      "units/korean-core/chapter-010-yesterday-at-the-market/chapter.md"
+      "units/korean-core/chapter-010-yesterday-at-the-market/chapter.md",
+      "units/korean-core/chapter-011-books-at-the-library/chapter.md",
+      "units/korean-core/chapter-012-after-class/chapter.md",
+      "units/korean-core/chapter-013-choosing-dinner/chapter.md",
+      "units/korean-core/chapter-014-a-saturday-outing/chapter.md",
+      "units/korean-core/chapter-015-planning-tomorrow/chapter.md"
     ]);
     for (const level of ["easy", "hard"]) {
       assert.ok(readingContent.files.some((file) => file.path === `units/korean-core/chapter-001-005-grammar-${level}/chapter.md`));
       assert.ok(readingContent.files.some((file) => file.path === `units/korean-core/chapter-006-010-grammar-${level}/chapter.md`));
+      assert.ok(readingContent.files.some((file) => file.path === `units/korean-core/chapter-011-015-grammar-${level}/chapter.md`));
     }
-    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 10);
-    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, 10);
-    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/chapter-participants.json")).length, 10);
+    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, 15);
+    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, 15);
+    assert.equal(readingContent.files.filter((file) => file.path.endsWith("/chapter-participants.json")).length, 15);
     assert.doesNotThrow(() => assertInstalledCurriculumParticipants(readingContent, manifest.packageId));
     assert.ok(readingContent.files.some((file) => file.path === "units/korean-core/cumulative-ledger.md"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
@@ -546,8 +552,8 @@ test("content package generator creates Korean Chapters 1 through 10 and both au
     assert.equal(readingContent.files.some((file) => /basic-(?:life-)?sentences|foundation/u.test(file.path)), false);
     assert.equal(reviewManifest.packageId, "com.sleepymario.language.korean.reviews");
     assert.deepEqual(reviewManifest.relatedPackageIds, ["com.sleepymario.language.korean"]);
-    assert.equal(reviewItems.length, 184);
-    assert.equal(new Set(reviewItems.map((item) => item.testedLexicalIds.at(-1))).size, 92);
+    assert.equal(reviewItems.length, 264);
+    assert.equal(new Set(reviewItems.map((item) => item.testedLexicalIds.at(-1))).size, 132);
     assert.deepEqual(new Set(reviewItems.map((item) => item.reviewDirection)), new Set(["ko-to-en", "en-to-ko"]));
     assertCoreReviewItemsHaveExamples(reviewItems, "Korean");
     assertOrdinaryBidirectionalItems(reviewItems, "Korean");

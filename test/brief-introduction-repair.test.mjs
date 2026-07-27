@@ -153,6 +153,13 @@ Pattern: \`N + verb\`
   }), /Narrative source\/translation sentence count mismatch 3\/2/u);
 });
 
+test("grammar punctuation inside inline semantic markup does not create false sentence boundaries", async () => {
+  const source = "units/korean-core/chapter-015-planning-tomorrow/chapter.md";
+  const markdown = await readFile(join(workspace, "korean-curriculum", source), "utf8");
+  const readingSupport = JSON.parse(await readFile(join(process.cwd(), "curriculum-support", "korean", "chapter-015", "reading-support.json"), "utf8"));
+  assert.doesNotThrow(() => assertCanonicalSectionAndGrammarRules({ markdown, readingSupport, source }));
+});
+
 function section(markdown, heading) {
   const escaped = heading.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
   return new RegExp(`^#{1,6}\\s+${escaped}\\s*$\\n([\\s\\S]*?)(?=^#{1,6}\\s+)`, "mu").exec(markdown)?.[1]?.trim() ?? "";
