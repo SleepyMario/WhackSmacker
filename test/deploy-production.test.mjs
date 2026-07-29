@@ -6,9 +6,9 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 
 const script = resolve("scripts/deploy-production.sh");
-const oldCore = "sleepiestmario/whacksmacker:old-core";
+const oldCore = "docker.io/sleepiestmario/whacksmacker:old-core";
 const oldCurricula = "sleepiestmario/whacksmacker-curricula:old-curricula";
-const newCore = "sleepiestmario/whacksmacker:new-core";
+const newCore = "docker.io/sleepiestmario/whacksmacker:new-core";
 const newCurricula = "sleepiestmario/whacksmacker-curricula:new-curricula";
 
 async function fixture(scenario = "healthy") {

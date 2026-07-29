@@ -10,7 +10,7 @@ Review packages declare `core-review`; reading packages declare
 either a runtime dependency of the other. Legacy manifests without a
 capability retain explicit combined-package compatibility.
 
-The public `sleepiestmario/whacksmacker` image bundles only the runtime and
+The public `docker.io/sleepiestmario/whacksmacker` image bundles only the runtime and
 core review feed. The private `sleepiestmario/whacksmacker-curricula` init image
 synchronizes reading packages into `/curricula/managed` on the dedicated
 `reading-curricula` volume. Mutable application state stays in `/data` on the
