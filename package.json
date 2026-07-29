@@ -29,6 +29,7 @@
   ],
   "scripts": {
     "build": "tsc && node scripts/copy-compat-build.mjs",
+    "benchmark:cli": "npm run build && node scripts/benchmark-cli-latency.mjs",
     "chess:build": "rm -rf apps/chess-desktop/dist-electron && vite build --config apps/chess-desktop/vite.config.ts && tsc -p apps/chess-desktop/tsconfig.json",
     "chess:dev": "node scripts/chess-dev.mjs",
     "chess:test": "npm run build && node --test test/chess-core.test.mjs test/chess-desktop.test.mjs",

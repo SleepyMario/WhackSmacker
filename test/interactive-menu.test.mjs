@@ -27,6 +27,7 @@ import {
   languageMenuHeading,
   listAvailableModuleDescriptors,
   menuStyles,
+  projectionToggleRequiresModuleTreeRefresh,
   renderTwoPaneLanguageTree,
   renderLanguageTreeRightPane,
   renderSourceLanguageToggle,
@@ -40,6 +41,14 @@ import {
   whackSmackerBanner,
   whackSmackerSubtitle
 } from "../dist/apps/cli/interactive-menu.js";
+
+test("only Source and View rebuild the module tree; local projection toggles do not", () => {
+  assert.equal(projectionToggleRequiresModuleTreeRefresh(0), true);
+  assert.equal(projectionToggleRequiresModuleTreeRefresh(1), true);
+  for (const toggle of [2, 3, 4, 5, 6]) {
+    assert.equal(projectionToggleRequiresModuleTreeRefresh(toggle), false);
+  }
+});
 import {
   generateContentPackage,
   generateLocalContentPackageCatalogue,

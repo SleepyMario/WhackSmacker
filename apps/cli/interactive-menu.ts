@@ -8,7 +8,7 @@ import {
   isLanguageLikeModulePackage,
   listAvailableContentPackages,
   listInstalledContentPackages,
-  listIntegratedDueReviewItems,
+  listDueReviewStates,
   listReadableContentEntries,
   listInstalledReadablePackages,
   listReadingReviewItems,
@@ -23,10 +23,16 @@ import {
   grammarEasyMenuLabel,
   grammarHardMenuLabel,
   orderReviewItemsForSession,
+  perfCount,
+  perfMark,
+  perfSpan,
+  perfSpanSync,
+  startPerfSpan,
   projectCurriculumMarkdown,
   projectReadingAudienceSection,
   projectReviewTextForMode,
   readInstalledContentEntry,
+  readingReviewSourcesFromItems,
   recordReadingReviewAnswer,
   removeContentPackage,
   removeReadingReviewProgressForPackage,
@@ -190,6 +196,10 @@ export interface LanguageTreeNode {
 }
 
 export type ReviewDeckMenuStatusKind = CoreReviewDeckMenuStatus;
+
+export function projectionToggleRequiresModuleTreeRefresh(toggleSelection: number): boolean {
+  return toggleSelection === 0 || toggleSelection === 1;
+}
 
 export interface ReviewDeckMenuStatus {
   readonly kind: ReviewDeckMenuStatusKind;
@@ -436,17 +446,22 @@ function localizeReviewDeckMenuStatus(
   return { kind: classification.status, dueCardCount: 0, text: translate(locale, "review.notStarted") };
 }
 
-async function describeReviewSourceMenuStatus(source: ReadingReviewSource, options: InteractiveMenuOptions): Promise<ReviewDeckMenuStatus> {
+async function describeReviewSourceMenuStatus(
+  source: ReadingReviewSource,
+  options: InteractiveMenuOptions,
+  preloaded?: { readonly sourceItems: readonly ReadingReviewItem[]; readonly progressItems: readonly ReviewItemState[] }
+): Promise<ReviewDeckMenuStatus> {
+  return perfSpan("review.status", { packageId: source.packageId, packageVersion: source.packageVersion, sourcePath: source.sourcePath }, async () => {
   const progressDir = options.dataDir === undefined ? undefined : defaultReviewProgressDirectoryForContentDataDirectory(options.dataDir);
-  const [sourceItems, progress] = await Promise.all([
+  const [sourceItems, progressItems] = preloaded === undefined ? await Promise.all([
     listReadingReviewItems({
       dataDir: options.dataDir,
       packageId: source.packageId,
       packageVersion: source.packageVersion,
       sourcePath: source.sourcePath
     }),
-    loadReviewProgressStore(progressDir)
-  ]);
+    loadReviewProgressStore(progressDir).then((progress) => progress.items)
+  ]) : [preloaded.sourceItems, preloaded.progressItems];
   const usableItems = sourceItems.filter((item) => isEmbeddedReviewItemUsable(item, options.locale));
   const cardIdentities: ReviewItemIdentity[] = usableItems.map((item) => ({
         packageId: source.packageId,
@@ -458,10 +473,11 @@ async function describeReviewSourceMenuStatus(source: ReadingReviewSource, optio
   const classification = classifyReviewDeckMenuStatus({
     deckId: `${source.packageId}@${source.packageVersion}#${source.sourcePath}`,
     cardIdentities,
-    savedProgress: progress.items,
+    savedProgress: progressItems,
     now: currentReviewTimestamp()
   });
   return localizeReviewDeckMenuStatus(classification, options.locale ?? "en-US");
+  });
 }
 
 export function readableContentEntriesToMenuItems(entries: readonly ReadableContentEntry[]): readonly MenuItem[] {
@@ -928,6 +944,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   let rightPaneOffset = 0;
   let focusedPane: FocusablePane = "navigation";
   let toggleSelection = 0;
+  let firstFrame = true;
 
   while (true) {
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
@@ -937,7 +954,19 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     const toggleCount = charactersApplicable ? 7 : 6;
     toggleSelection = Math.min(toggleSelection, toggleCount - 1);
     renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing);
+    if (firstFrame) {
+      firstFrame = false;
+      perfMark("terminal.ready");
+    }
     const key = await terminal.readKey();
+    const finishDispatch = startPerfSpan("input.dispatch", {
+      key: key.name ?? (key.ctrl ? "ctrl" : "text"),
+      pane: focusedPane,
+      nodeId: selectedNode.id,
+      nodeKind: selectedNode.kind,
+      ...(focusedPane === "toggles" ? { toggleSelection } : {})
+    });
+    try {
 
     if (isCtrlC(key)) {
       process.exitCode = 130;
@@ -955,10 +984,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         const selected = visible[selection];
         embeddedReview = null;
         if (selected?.node.kind === "review-source") {
-          const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
-          tree = refreshed.tree;
-          expandedIds = refreshed.expandedIds;
-          selection = refreshed.selection;
+          tree = await refreshReviewTreeStatus(tree, selected.node, options);
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
             ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
@@ -997,11 +1023,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       }
       if (embeddedReview !== null) {
         const reviewNodeId = embeddedReview.nodeId;
+        const reviewNode = embeddedReview.node;
         embeddedReview = null;
-        const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
-        tree = refreshed.tree;
-        expandedIds = refreshed.expandedIds;
-        selection = refreshed.selection;
+        tree = await refreshReviewTreeStatus(tree, reviewNode, options);
         const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
         rightPaneText = refreshedNode?.id === reviewNodeId && refreshedNode.kind === "review-source"
           ? renderEmbeddedReviewStopped(refreshedNode)
@@ -1077,10 +1101,12 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           embeddedReview = null;
         }
         pendingUninstall = null;
-        const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
-        tree = refreshed.tree;
-        expandedIds = refreshed.expandedIds;
-        selection = refreshed.selection;
+        if (projectionToggleRequiresModuleTreeRefresh(toggleSelection)) {
+          const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
+          tree = refreshed.tree;
+          expandedIds = refreshed.expandedIds;
+          selection = refreshed.selection;
+        }
         rightPaneText = embeddedReview === null
           ? await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options)
           : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
@@ -1160,10 +1186,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       if (selected?.node.kind === "review-source" && embeddedReview.nodeId === selected.node.id) {
         embeddedReview = await advanceEmbeddedReviewSession(embeddedReview, key, options);
         if (embeddedReview.side === "complete") {
-          const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
-          tree = refreshed.tree;
-          expandedIds = refreshed.expandedIds;
-          selection = refreshed.selection;
+          tree = await refreshReviewTreeStatus(tree, selected.node, options);
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
             ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
@@ -1203,10 +1226,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           embeddedReview = await advanceEmbeddedReviewSession(embeddedReview, key, options);
         }
         if (embeddedReview.side === "complete") {
-          const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
-          tree = refreshed.tree;
-          expandedIds = refreshed.expandedIds;
-          selection = refreshed.selection;
+          tree = await refreshReviewTreeStatus(tree, selected.node, options);
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
             ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
@@ -1243,10 +1263,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     if (selected.node.kind === "review-source") {
       embeddedReview = await startEmbeddedReviewSession(selected.node, options);
       if (embeddedReview.side === "complete") {
-        const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
-        tree = refreshed.tree;
-        expandedIds = refreshed.expandedIds;
-        selection = refreshed.selection;
+        tree = await refreshReviewTreeStatus(tree, selected.node, options);
         const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
         rightPaneText = refreshedNode?.kind === "review-source"
           ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
@@ -1282,6 +1299,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     }
     rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
     rightPaneOffset = 0;
+    } finally {
+      finishDispatch();
+    }
   }
 }
 
@@ -1319,6 +1339,8 @@ function normalizeTreeOptions(options: InteractiveMenuOptions | string | undefin
 }
 
 export async function buildModuleTree(options: InteractiveMenuOptions | string | undefined = {}): Promise<LanguageTreeNode> {
+  return perfSpan("module-tree.build", {}, async () => {
+  perfCount("module-tree.build.count");
   const resolvedOptions = normalizeTreeOptions(options);
   const locale = resolvedOptions.locale ?? "en-US";
   const descriptors = await listFirstClassModuleDescriptors(resolvedOptions.dataDir, locale);
@@ -1332,6 +1354,7 @@ export async function buildModuleTree(options: InteractiveMenuOptions | string |
       buildAvailableModulesTree(availableDescriptors, resolvedOptions.cataloguePath, locale)
     ]
   };
+  });
 }
 
 async function installAvailableModuleFromTreeNode(node: LanguageTreeNode, options: InteractiveMenuOptions): Promise<string> {
@@ -1457,6 +1480,7 @@ async function refreshTreeSelection(
   selection: number,
   options: InteractiveMenuOptions
 ): Promise<{ readonly tree: LanguageTreeNode; readonly expandedIds: Set<string>; readonly selection: number }> {
+  return perfSpan("module-tree.refresh", {}, async () => {
   const selectedId = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node.id;
   const refreshedTree = await buildModuleTree(options);
   const refreshedExpandedIds = keepExistingExpandedIds(refreshedTree, expandedIds);
@@ -1467,6 +1491,36 @@ async function refreshTreeSelection(
     expandedIds: refreshedExpandedIds,
     selection: refreshedSelection < 0 ? Math.min(selection, Math.max(0, refreshedVisible.length - 1)) : refreshedSelection
   };
+  });
+}
+
+async function refreshReviewTreeStatus(
+  tree: LanguageTreeNode,
+  reviewNode: LanguageTreeNode,
+  options: InteractiveMenuOptions
+): Promise<LanguageTreeNode> {
+  if (reviewNode.packageId === undefined || reviewNode.packageVersion === undefined || reviewNode.sourcePath === undefined) return tree;
+  const source: ReadingReviewSource = {
+    packageId: reviewNode.packageId,
+    packageVersion: reviewNode.packageVersion,
+    sourcePath: reviewNode.sourcePath,
+    sourceExists: true,
+    itemCount: reviewNode.itemCount ?? 0
+  };
+  const status = await describeReviewSourceMenuStatus(source, options);
+  const update = (node: LanguageTreeNode): LanguageTreeNode => {
+    const matchingReview = node.kind === "review-source"
+      && node.packageId === reviewNode.packageId
+      && node.packageVersion === reviewNode.packageVersion
+      && node.sourcePath === reviewNode.sourcePath;
+    const children = node.children?.map(update);
+    return {
+      ...node,
+      ...(matchingReview ? { reviewStatus: status.kind, dueCardCount: status.dueCardCount, reviewStatusText: status.text } : {}),
+      ...(children === undefined ? {} : { children })
+    };
+  };
+  return update(tree);
 }
 
 function renderUninstallPreview(label: string, locale: SourceLocale = "en-US"): string {
@@ -1524,19 +1578,7 @@ export async function listFirstClassModuleDescriptors(dataDir?: string, locale: 
     if (!isLanguageLikePackage(contentPackage.packageId)) {
       continue;
     }
-    const [entries, reviewSources] = await Promise.all([
-      listReadableContentEntries(contentPackage.packageId, dataDir, contentPackage.packageVersion),
-      listReadingReviewSources({
-        dataDir,
-        sourceLocale: locale,
-        packageId: contentPackage.packageId,
-        packageVersion: contentPackage.packageVersion
-      })
-    ]);
-    const descriptor = installedPackageToFirstClassModuleDescriptor(contentPackage, {
-      readableContentCount: entries.filter((entry) => isUserFacingReadableContentPath(entry.path)).length,
-      reviewSourceCount: reviewSources.length
-    });
+    const descriptor = installedPackageToFirstClassModuleDescriptor(contentPackage);
     if (descriptor !== null) {
       installedDescriptors.push(descriptor);
     }
@@ -1739,22 +1781,34 @@ async function buildLanguageTreeFromDescriptors(
   locale: SourceLocale,
   displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode
 ): Promise<LanguageTreeNode> {
+  return perfSpan("module-tree.languages", { locale, displayMode, packageCount: descriptors.length }, async () => {
   const packageNodes: LanguageTreeNode[] = [];
+  const progressDir = dataDir === undefined ? undefined : defaultReviewProgressDirectoryForContentDataDirectory(dataDir);
+  const progressItems = (await loadReviewProgressStore(progressDir)).items;
 
   for (const descriptor of descriptors) {
     if (descriptor.packageId === undefined) {
       continue;
     }
     const languagePackage = moduleDescriptorToMenuItem(descriptor);
-    const entries = await listReadableContentEntries(descriptor.packageId, dataDir, descriptor.packageVersion);
+    const entries = await listReadableContentEntries(descriptor.packageId, dataDir, descriptor.packageVersion, locale);
     const labeledEntries = await labelReadableContentEntries(languagePackage, entries, { dataDir, locale });
-    const rawReviewSources = await listReadingReviewSources({
+    const rawReviewItems = await listReadingReviewItems({
       dataDir,
       sourceLocale: locale,
       packageId: descriptor.packageId,
       packageVersion: descriptor.packageVersion
     });
-    const reviewStatuses = await Promise.all(rawReviewSources.map((source) => describeReviewSourceMenuStatus(source, { dataDir, locale })));
+    const rawReviewSources = readingReviewSourcesFromItems(rawReviewItems, locale);
+    const enrichedDescriptor: FirstClassModuleDescriptor = {
+      ...descriptor,
+      readableContentCount: entries.filter((entry) => isUserFacingReadableContentPath(entry.path)).length,
+      reviewSourceCount: rawReviewSources.length
+    };
+    const reviewStatuses = await Promise.all(rawReviewSources.map((source) => describeReviewSourceMenuStatus(source, { dataDir, locale }, {
+      sourceItems: rawReviewItems.filter((item) => item.sourcePath === source.sourcePath),
+      progressItems
+    })));
     const reviewSources = reviewSourcesToMenuItems(rawReviewSources).map((item) => {
       const sourceIndex = rawReviewSources.findIndex(
         (source) =>
@@ -1835,7 +1889,7 @@ async function buildLanguageTreeFromDescriptors(
       packageId: descriptor.packageId,
       packageVersion: descriptor.packageVersion,
       packageLabel: descriptor.displayName,
-      previewText: formatFirstClassModuleInfo(descriptor),
+      previewText: formatFirstClassModuleInfo(enrichedDescriptor),
       children: [
         {
           id: `${packageBase}:read`,
@@ -1881,7 +1935,7 @@ async function buildLanguageTreeFromDescriptors(
           packageId: descriptor.packageId,
           packageVersion: descriptor.packageVersion,
           packageLabel: descriptor.displayName,
-          previewText: formatFirstClassModuleInfo(descriptor)
+          previewText: formatFirstClassModuleInfo(enrichedDescriptor)
         },
         {
           id: `${packageBase}:uninstall`,
@@ -1917,6 +1971,7 @@ async function buildLanguageTreeFromDescriptors(
       ].join("\n")
     }]
   };
+  });
 }
 
 async function addInstalledSpecializedReviewBranches(
@@ -2147,6 +2202,18 @@ export function flattenVisibleLanguageTree(root: LanguageTreeNode, expandedIds: 
 }
 
 export async function renderLanguageTreeRightPane(node: LanguageTreeNode, options: InteractiveMenuOptions): Promise<string> {
+  return perfSpan("content.projection", {
+    action: node.kind,
+    packageId: node.packageId,
+    packageVersion: node.packageVersion,
+    path: node.filePath ?? node.sourcePath,
+    locale: options.locale,
+    view: options.displayMode,
+    translation: options.translationsEnabled === true,
+    characters: options.charactersEnabled === true,
+    breakdown: options.breakdownEnabled === true
+  }, async () => {
+  perfCount("content.projection.count");
   const locale = options.locale ?? "en-US";
   if (node.kind === "content") {
     if (node.packageId === undefined || node.filePath === undefined) {
@@ -2291,6 +2358,7 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     "Escape collapses or backs out",
     "q quits"
   ].join("\n");
+  });
 }
 
 function parseStructuredReadingTranslation(text: string): StructuredReadingTranslation | undefined {
@@ -2580,6 +2648,7 @@ function renderReviewDeckPreview(node: LanguageTreeNode, locale: SourceLocale = 
 }
 
 async function startEmbeddedReviewSession(node: LanguageTreeNode, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
+  return perfSpan("review.session.start", { packageId: node.packageId, packageVersion: node.packageVersion, sourcePath: node.sourcePath }, async () => {
   if (node.packageId === undefined || node.sourcePath === undefined) {
     return {
       nodeId: node.id,
@@ -2592,26 +2661,22 @@ async function startEmbeddedReviewSession(node: LanguageTreeNode, options: Inter
   }
 
   const now = currentReviewTimestamp();
-  await syncReadingReviewItems({
+  const allItems = await listReadingReviewItems({
     dataDir: options.dataDir,
     packageId: node.packageId,
-    packageVersion: node.packageVersion,
-    now
+    packageVersion: node.packageVersion
   });
-
-  const sourceItems = await listReadingReviewItems({
+  const sourceItems = allItems.filter((item) => item.sourcePath === node.sourcePath);
+  const synchronized = await syncReadingReviewItems({
     dataDir: options.dataDir,
     packageId: node.packageId,
     packageVersion: node.packageVersion,
-    sourcePath: node.sourcePath
+    now,
+    reviewItems: allItems
   });
   const sourceItemIds = new Set(sourceItems.filter((item) => isEmbeddedReviewItemUsable(item, options.locale)).map((item) => item.item.id));
-  const due = (await listIntegratedDueReviewItems({
-    dataDir: options.dataDir,
-    packageId: node.packageId,
-    packageVersion: node.packageVersion,
-    now
-  })).filter((item) => sourceItemIds.has(item.itemId) && (item.sourcePath === undefined || item.sourcePath === node.sourcePath));
+  const due = listDueReviewStates(synchronized.store.items, now, { packageId: node.packageId })
+    .filter((item) => item.packageVersion === node.packageVersion && sourceItemIds.has(item.itemId) && (item.sourcePath === undefined || item.sourcePath === node.sourcePath));
   const items = orderReviewItemsForSession(due) as readonly ReviewItemState[];
 
   if (items.length === 0) {
@@ -2634,6 +2699,7 @@ async function startEmbeddedReviewSession(node: LanguageTreeNode, options: Inter
     index: 0,
     side: "prompt"
   }, options);
+  });
 }
 
 async function advanceEmbeddedReviewSession(
@@ -3931,17 +3997,18 @@ async function labelReadableContentEntries(
       continue;
     }
     try {
-      const content = await readInstalledContentEntry({
-        dataDir: options.dataDir,
-        packageId: languagePackage.packageId,
-        packageVersion: languagePackage.packageVersion,
-        path: item.filePath,
-        locale: options.locale
-      });
+      const text = entries.find((entry) => entry.path === item.filePath)?.text;
+      const contentText = text ?? (await readInstalledContentEntry({
+          dataDir: options.dataDir,
+          packageId: languagePackage.packageId,
+          packageVersion: languagePackage.packageVersion,
+          path: item.filePath,
+          locale: options.locale
+        })).text;
       labeled.push({
         ...item,
-        label: markdownContentLabel(content.text, item.filePath, options.locale),
-        ...curriculumChapterMenuMetadata(content.text)
+        label: markdownContentLabel(contentText, item.filePath, options.locale),
+        ...curriculumChapterMenuMetadata(contentText)
       });
     } catch {
       labeled.push(item);
@@ -4169,7 +4236,11 @@ function renderLanguageTreeMenu(
   notesEnabled = true,
   vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing
 ): void {
-  terminal.write(`\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing)}`);
+  const frame = perfSpanSync("terminal.frame.generate", {}, () => {
+    perfCount("render.count");
+    return `\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing)}`;
+  });
+  perfSpanSync("terminal.write", { bytes: frame.length }, () => terminal.write(frame));
 }
 
 const rightPanePageSize = 24;

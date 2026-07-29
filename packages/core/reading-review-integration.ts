@@ -18,8 +18,8 @@ import {
 import {
   createInitialReviewState,
   reviewIdentityKey,
-  upsertReviewItemState,
   type ReviewItemState,
+  type ReviewProgressStore,
   type ReviewRating
 } from "./review-scheduler";
 
@@ -42,6 +42,7 @@ export interface NextReadingReviewSourceOptions extends ReadingReviewOptions {
 
 export interface SyncReadingReviewOptions extends ReadingReviewOptions {
   readonly now: string;
+  readonly reviewItems?: readonly ReadingReviewItem[];
 }
 
 export interface ListIntegratedDueReviewOptions extends ReadingReviewOptions {
@@ -103,6 +104,7 @@ export interface SyncReadingReviewResult {
   readonly unchanged: readonly ReviewItemState[];
   readonly retired: readonly ReviewItemState[];
   readonly progressPath: string;
+  readonly store: ReviewProgressStore;
 }
 
 export interface RenderReadingReviewItemResult {
@@ -112,6 +114,10 @@ export interface RenderReadingReviewItemResult {
 
 export async function listReadingReviewSources(options: ReadingReviewOptions = {}): Promise<readonly ReadingReviewSource[]> {
   const items = await listReadingReviewItems(options);
+  return readingReviewSourcesFromItems(items, options.sourceLocale);
+}
+
+export function readingReviewSourcesFromItems(items: readonly ReadingReviewItem[], sourceLocale = "en-US"): readonly ReadingReviewSource[] {
   const groups = new Map<string, ReadingReviewSource>();
   for (const item of items) {
     if (item.sourcePath === undefined) {
@@ -123,7 +129,7 @@ export async function listReadingReviewSources(options: ReadingReviewOptions = {
       packageId: item.packageId,
       packageVersion: item.packageVersion,
       sourcePath: item.sourcePath,
-      ...(item.item.source?.title === undefined ? {} : { title: localized(item.item.source.title, options.sourceLocale ?? "en-US") }),
+      ...(item.item.source?.title === undefined ? {} : { title: localized(item.item.source.title, sourceLocale) }),
       sourceExists: item.sourceExists === true,
       itemCount: (existing?.itemCount ?? 0) + 1
     });
@@ -184,13 +190,14 @@ export async function listReadingReviewItems(options: ListReadingReviewItemsOpti
 
 export async function syncReadingReviewItems(options: SyncReadingReviewOptions): Promise<SyncReadingReviewResult> {
   const progressDir = resolveIntegrationProgressDir(options.dataDir, options.progressDir);
-  let store = await loadReviewProgressStore(progressDir);
+  const originalStore = await loadReviewProgressStore(progressDir);
   const created: ReviewItemState[] = [];
   const materiallyChanged: ReviewItemState[] = [];
   const unchanged: ReviewItemState[] = [];
   const retired: ReviewItemState[] = [];
   let metadataUpdated = false;
-  const reviewItems = await listReadingReviewItems(options);
+  const reviewItems = options.reviewItems ?? await listReadingReviewItems(options);
+  const statesByKey = new Map(originalStore.items.map((state) => [reviewIdentityKey(state), state]));
   const currentV2Keys = new Set<string>();
   const v2PackageIds = new Set<string>();
   for (const reviewItem of reviewItems) {
@@ -210,16 +217,16 @@ export async function syncReadingReviewItems(options: SyncReadingReviewOptions):
       currentV2Keys.add(key);
       v2PackageIds.add(reviewItem.packageId);
     }
-    const existing = store.items.find((candidate) => reviewIdentityKey(candidate) === key);
+    const existing = statesByKey.get(key);
     if (existing === undefined || existing.retiredAt !== undefined) {
       created.push(state);
-      store = upsertReviewItemState(store, state, options.now);
+      statesByKey.set(key, state);
       continue;
     }
     if (pedagogicalFingerprint === undefined) continue;
     if (existing.pedagogicalFingerprint !== pedagogicalFingerprint) {
       materiallyChanged.push(state);
-      store = upsertReviewItemState(store, state, options.now);
+      statesByKey.set(key, state);
       continue;
     }
     const preserved = {
@@ -229,17 +236,27 @@ export async function syncReadingReviewItems(options: SyncReadingReviewOptions):
     };
     metadataUpdated ||= existing.packageVersion !== reviewItem.packageVersion || existing.sourcePath !== reviewItem.sourcePath;
     unchanged.push(preserved);
-    store = upsertReviewItemState(store, preserved, options.now);
+    statesByKey.set(key, preserved);
   }
-  for (const existing of [...store.items]) {
+  for (const existing of originalStore.items) {
     if (existing.pedagogicalFingerprint === undefined || !v2PackageIds.has(existing.packageId) || currentV2Keys.has(reviewIdentityKey(existing)) || existing.retiredAt !== undefined) continue;
     const retiredState = { ...existing, status: "suspended" as const, retiredAt: options.now };
     retired.push(retiredState);
-    store = upsertReviewItemState(store, retiredState, options.now);
+    statesByKey.set(reviewIdentityKey(retiredState), retiredState);
   }
   const changed = created.length + materiallyChanged.length + retired.length > 0 || metadataUpdated;
+  const store: ReviewProgressStore = changed ? {
+    ...originalStore,
+    updatedAt: options.now,
+    items: [...statesByKey.values()].sort(compareIntegratedReviewStates)
+  } : originalStore;
   const progressPath = changed ? await saveReviewProgressStore(store, progressDir) : reviewProgressStorePath(progressDir);
-  return { created, materiallyChanged, unchanged, retired, progressPath };
+  return { created, materiallyChanged, unchanged, retired, progressPath, store };
+}
+
+function compareIntegratedReviewStates(left: ReviewItemState, right: ReviewItemState): number {
+  const dueOrder = left.nextReviewAt.localeCompare(right.nextReviewAt);
+  return dueOrder === 0 ? reviewIdentityKey(left).localeCompare(reviewIdentityKey(right)) : dueOrder;
 }
 
 export async function listIntegratedDueReviewItems(options: ListIntegratedDueReviewOptions): Promise<readonly ReviewItemState[]> {

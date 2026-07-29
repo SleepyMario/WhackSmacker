@@ -7,6 +7,7 @@ import {
   createDefaultAppPaths,
   createEnabledFeatures,
   InMemoryCliCommandRegistry,
+  perfMark,
   type CliCommand
 } from "../../packages/core";
 import { geographyModule } from "../../packages/geography";
@@ -199,6 +200,7 @@ async function dispatch(command: CliCommand, args: readonly string[]): Promise<v
 }
 
 export async function main(argv = process.argv.slice(2)): Promise<void> {
+  perfMark("process.initialized", { argvCount: argv.length });
   if (argv[0] === "admin") { if (argv[1] === "--help" || argv[1] === "help") { console.log(adminUsage); return; } await runAdmin(argv.slice(1)); return; }
   if (argv[0] === "web") {
     const options = parseWebOptions(argv.slice(1));

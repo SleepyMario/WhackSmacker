@@ -11,6 +11,8 @@ import {
   type ContentPackageManifest,
   type ContentPackageSourceProvenance
 } from "./content-package-spec";
+import { perfCount, perfSpan, perfSpanSync } from "./performance";
+import { invalidateInstalledContent } from "./installed-content-cache";
 import { assertCanonicalCastBootstrapSnapshot } from "./language-curriculum-bootstrap";
 import { localized } from "./localized-content";
 
@@ -159,9 +161,19 @@ export function resolveContentDataDirectory(dataDir?: string, env = process.env)
 }
 
 export async function loadContentPackageCatalogue(cataloguePath: string): Promise<ContentPackageCatalogue> {
-  const catalogue = JSON.parse((await readFile(cataloguePath)).toString("utf8")) as unknown;
-  assertValidContentPackageCatalogue(catalogue);
-  return catalogue;
+  return perfSpan("package.catalogue.load", { cataloguePath }, async () => {
+    perfCount("filesystem.read.count");
+    const bytes = await readFile(cataloguePath);
+    const catalogue = perfSpanSync("json.parse", { kind: "catalogue" }, () => {
+      perfCount("json.parse.count");
+      return JSON.parse(bytes.toString("utf8")) as unknown;
+    });
+    perfSpanSync("package.validation", { kind: "catalogue" }, () => {
+      perfCount("package.validation.count");
+      assertValidContentPackageCatalogue(catalogue);
+    });
+    return catalogue as ContentPackageCatalogue;
+  });
 }
 
 export async function listAvailableContentPackages(cataloguePath: string): Promise<readonly ContentPackageCatalogueEntry[]> {
@@ -196,9 +208,17 @@ export async function loadInstalledPackageRegistry(dataDir?: string): Promise<In
   const contentDir = resolveContentDataDirectory(dataDir);
   const registryPath = join(contentDir, "registry.json");
   try {
-    const registry = JSON.parse((await readFile(registryPath)).toString("utf8")) as unknown;
-    assertValidInstalledPackageRegistry(registry);
-    return registry;
+    perfCount("filesystem.read.count");
+    const bytes = await readFile(registryPath);
+    const registry = perfSpanSync("json.parse", { kind: "installed-registry" }, () => {
+      perfCount("json.parse.count");
+      return JSON.parse(bytes.toString("utf8")) as unknown;
+    });
+    perfSpanSync("package.validation", { kind: "installed-registry" }, () => {
+      perfCount("package.validation.count");
+      assertValidInstalledPackageRegistry(registry);
+    });
+    return registry as InstalledPackageRegistry;
   } catch (error) {
     if (isMissingFileError(error)) {
       return emptyRegistry("1970-01-01T00:00:00Z");
@@ -304,6 +324,7 @@ export async function installContentPackage(options: InstallContentPackageOption
     catalogueId: catalogue.catalogueId
   };
   await saveInstalledPackageRegistry(contentDir, upsertRecord(registry, record, installedAt));
+  invalidateInstalledContent(contentDir);
 
   return { installed: true, record, installPath: finalInstallPath };
 }
@@ -370,6 +391,7 @@ export async function removeContentPackage(options: RemoveContentPackageOptions)
   const removedKeys = new Set(matches.map((record) => recordKey(record.packageId, record.packageVersion)));
   const packages = registry.packages.filter((record) => !removedKeys.has(recordKey(record.packageId, record.packageVersion)));
   await saveInstalledPackageRegistry(contentDir, { registryFormatVersion: installedPackageRegistryFormatVersion, updatedAt: removedAt, packages });
+  invalidateInstalledContent(contentDir);
 
   return { removed: matches };
 }

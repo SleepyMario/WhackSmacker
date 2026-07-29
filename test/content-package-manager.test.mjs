@@ -18,6 +18,7 @@ import {
   loadInstalledPackageRegistry,
   maxPackageUncompressedSizeBytes,
   removeContentPackage,
+  readInstalledContentEntry,
   readInstalledMemorizationItems,
   pedagogicalContentForMemorizationItem,
   pedagogicalFingerprint,
@@ -492,27 +493,39 @@ test("force reinstall replaces an older snapshot of the same package version", a
       packageVersion: "0.1.0",
       entryPointPath: "content/content.json",
       filePath: "content/content.json",
-      contentValue: "old snapshot"
+      contentValue: "old snapshot",
+      contentDocument: readableSnapshot("old snapshot")
     });
     let cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId);
     await installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId });
+    const readOptions = { dataDir: fixture.dataDir, packageId, path: "chapter.md" };
+    assert.match((await readInstalledContentEntry(readOptions)).text, /old snapshot/u);
 
     await createCustomPackage(fixture, {
       packageId,
       packageVersion: "0.1.0",
       entryPointPath: "content/content.json",
       filePath: "content/content.json",
-      contentValue: "new snapshot with chapter 11"
+      contentValue: "new snapshot with chapter 11",
+      contentDocument: readableSnapshot("new snapshot with chapter 11")
     });
     cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId);
     const result = await installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId, force: true });
 
     assert.equal(result.installed, true);
     assert.match(await readFile(join(result.installPath, "content", "content.json"), "utf8"), /new snapshot with chapter 11/u);
+    assert.match((await readInstalledContentEntry(readOptions)).text, /new snapshot with chapter 11/u);
   } finally {
     await fixture.cleanup();
   }
 });
+
+function readableSnapshot(text) {
+  return {
+    contentSchema: "whacksmacker-source-markdown-snapshot-v1",
+    files: [{ path: "chapter.md", mediaType: "text/markdown", text }]
+  };
+}
 
 test("installed packages can be listed", async () => {
   const fixture = await createPackageFixture();

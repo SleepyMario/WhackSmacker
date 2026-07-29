@@ -21,6 +21,8 @@ export * from "./memorization-item";
 export * from "./pedagogical-fingerprint";
 export * from "./modules";
 export * from "./paths";
+export * from "./performance";
+export * from "./installed-content-cache";
 export * from "./reading-review-integration";
 export * from "./review-progress-store";
 export * from "./review-deck-menu-status";

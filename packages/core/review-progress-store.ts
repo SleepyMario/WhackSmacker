@@ -16,6 +16,7 @@ import {
   type ReviewRating,
   type ReviewEvent
 } from "./review-scheduler";
+import { perfCount, perfSpan, perfSpanSync } from "./performance";
 
 type BufferValue = {
   toString(encoding: "utf8"): string;
@@ -105,18 +106,23 @@ export function reviewProgressStorePath(progressDir?: string): string {
 }
 
 export async function loadReviewProgressStore(progressDir?: string): Promise<ReviewProgressStore> {
-  const path = reviewProgressStorePath(progressDir);
-  try {
-    const value = JSON.parse((await readFile(path)).toString("utf8")) as unknown;
-    const store = migrateLegacyReviewProgressStore(value);
-    assertValidReviewProgressStore(store);
-    return store;
-  } catch (error) {
-    if (isMissingFileError(error)) {
-      return emptyReviewProgressStore("1970-01-01T00:00:00Z");
+  return perfSpan("progress.load", { progressDir: progressDir ?? "default" }, async () => {
+    const path = reviewProgressStorePath(progressDir);
+    try {
+      perfCount("filesystem.read.count");
+      const bytes = await readFile(path);
+      const value = perfSpanSync("json.parse", { kind: "review-progress" }, () => {
+        perfCount("json.parse.count");
+        return JSON.parse(bytes.toString("utf8")) as unknown;
+      });
+      const store = migrateLegacyReviewProgressStore(value);
+      assertValidReviewProgressStore(store);
+      return store;
+    } catch (error) {
+      if (isMissingFileError(error)) return emptyReviewProgressStore("1970-01-01T00:00:00Z");
+      throw error;
     }
-    throw error;
-  }
+  });
 }
 
 export async function saveReviewProgressStore(store: ReviewProgressStore | (Omit<ReviewProgressStore, "reviewProgressFormatVersion"> & { readonly reviewProgressFormatVersion: 1 }), progressDir?: string): Promise<string> {

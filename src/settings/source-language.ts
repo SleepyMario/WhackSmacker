@@ -4,6 +4,7 @@ import {
   isVocabularyEntrySpacing,
   type NewVocabularyDisplayPreferences
 } from "../../packages/core/vocabulary-rendering";
+import { perfCount, perfSpan, perfSpanSync } from "../../packages/core/performance";
 
 declare function require(name: "node:fs/promises"): {
   mkdir(path: string, options: { recursive: boolean }): Promise<void>;
@@ -59,8 +60,14 @@ export function sourceLanguageSettingsPath(settingsDir?: string): string {
 }
 
 export async function loadSourceLanguageSettings(settingsDir?: string): Promise<SourceLanguageSettings> {
+  return perfSpan("settings.load", { settingsDir: settingsDir ?? "default" }, async () => {
   try {
-    const value = JSON.parse(await readFile(sourceLanguageSettingsPath(settingsDir), "utf8")) as unknown;
+    perfCount("filesystem.read.count");
+    const text = await readFile(sourceLanguageSettingsPath(settingsDir), "utf8");
+    const value = perfSpanSync("json.parse", { kind: "settings" }, () => {
+      perfCount("json.parse.count");
+      return JSON.parse(text) as unknown;
+    });
     return normalizeSourceLanguageSettings(value);
   } catch (error) {
     if (isMissingFileError(error) || error instanceof SyntaxError) {
@@ -68,6 +75,7 @@ export async function loadSourceLanguageSettings(settingsDir?: string): Promise<
     }
     throw error;
   }
+  });
 }
 
 export async function saveSourceLanguage(sourceLanguage: SourceLocale, settingsDir?: string): Promise<string> {

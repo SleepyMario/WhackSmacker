@@ -16,6 +16,7 @@ import {
   listReadableContentEntries,
   listReadingReviewItems,
   listReadingReviewSources,
+  removeContentPackage,
   readInstalledContentEntry,
   readInstalledMemorizationItems,
   renderReadingContent
@@ -78,6 +79,25 @@ test("installed content entry can be read and rendered", async () => {
     assert.match(result.text, /Chapter 1/u);
     assert.match(rendered, /Dutch/u);
     assert.match(rendered, /units\/dutch-core\/chapter-001-basic-sentences-1\/chapter\.md/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("opening the same installed chapter reuses its lifecycle cache and removal invalidates it", async () => {
+  const fixture = await createInstalledReadingFixture();
+  const request = {
+    dataDir: fixture.dataDir,
+    packageId: "com.sleepymario.language.dutch",
+    path: "units/dutch-core/chapter-001-basic-sentences-1/chapter.md"
+  };
+  try {
+    const first = await readInstalledContentEntry(request);
+    const second = await readInstalledContentEntry(request);
+    assert.strictEqual(second, first);
+
+    await removeContentPackage({ dataDir: fixture.dataDir, packageId: request.packageId, packageVersion: "0.1.0" });
+    await assert.rejects(() => readInstalledContentEntry(request), /Installed package not found/u);
   } finally {
     await fixture.cleanup();
   }

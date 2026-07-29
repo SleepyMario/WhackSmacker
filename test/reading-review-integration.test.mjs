@@ -92,6 +92,19 @@ test("sync creates scheduler state for discovered items outside package director
   }
 });
 
+test("sync accepts one preloaded immutable Review inventory and returns the reconciled store", async () => {
+  const fixture = await createReadingReviewFixture();
+  try {
+    const reviewItems = await listReadingReviewItems({ dataDir: fixture.dataDir });
+    const result = await syncReadingReviewItems({ dataDir: fixture.dataDir, now, reviewItems });
+    assert.equal(result.created.length, reviewItems.length);
+    assert.equal(result.store.items.length, reviewItems.length);
+    assert.deepEqual(result.store, await loadReviewProgressStore(fixture.progressDir));
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("due review listing includes integrated items", async () => {
   const fixture = await createReadingReviewFixture();
   try {

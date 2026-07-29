@@ -10,6 +10,8 @@ import {
 } from "./content-package-spec";
 import { isLocalizedContentValue, localized, type LocalizedContentValue } from "./localized-content";
 import { defaultCurriculumDisplayMode, projectCurriculumMarkdown, type CurriculumDisplayMode } from "./curriculum-display";
+import { perfCount, perfSpan, perfSpanSync } from "./performance";
+import { installedContentGeneration } from "./installed-content-cache";
 import { assertCanonicalCastBootstrapBeforeOrdinaryContent } from "./language-curriculum-bootstrap";
 import {
   defaultNewVocabularyDisplayPreferences,
@@ -50,6 +52,7 @@ export interface ReadableContentEntry {
   readonly mediaType: string;
   readonly title: string;
   readonly source: "snapshot" | "package-file";
+  readonly text?: string;
 }
 
 export interface ReadInstalledContentEntryOptions {
@@ -159,21 +162,26 @@ export async function readInstalledLanguageCurriculumChapter(options: {
 }
 
 export async function listInstalledReadablePackages(dataDir?: string, locale = "en-US"): Promise<readonly InstalledReadablePackage[]> {
-  return Promise.all((await listInstalledContentPackages(dataDir)).filter(record => record.contentType !== "curriculum-source-language-pack" && record.contentType !== "core-review" && record.contentType !== "specialized-review").map(async (record) => {
-    const manifest = await readInstalledManifest(installedPackageRoot(record, dataDir));
-    return toReadablePackage(record, manifest, locale);
-  }));
+  return perfSpan("package.discovery.readable", { dataDir: dataDir ?? "default", locale }, async () =>
+    Promise.all((await listInstalledContentPackages(dataDir)).filter(record => record.contentType !== "curriculum-source-language-pack" && record.contentType !== "core-review" && record.contentType !== "specialized-review").map(async (record) => {
+      const manifest = await readInstalledManifest(installedPackageRoot(record, dataDir));
+      return toReadablePackage(record, manifest, locale);
+    }))
+  );
 }
 
 export async function listReadableContentEntries(
   packageId: string,
   dataDir?: string,
-  packageVersion?: string
+  packageVersion?: string,
+  locale = "en-US"
 ): Promise<readonly ReadableContentEntry[]> {
+  return perfSpan("content.index", { packageId, packageVersion }, async () => {
   const selected = await selectInstalledPackage(packageId, dataDir, packageVersion);
   const root = installedPackageRoot(selected, dataDir);
   const snapshot = await readSnapshot(root);
   if (snapshot !== null) {
+    const overlay = await readSelectedSourceOverlayMap(await readInstalledManifest(root), selected, locale, dataDir);
     return snapshot.files
       .filter((file) => isReadableMediaType(file.mediaType))
       .filter((file) => snapshot.localizedPaths === undefined || snapshot.localizedPaths.includes(file.path))
@@ -181,7 +189,8 @@ export async function listReadableContentEntries(
         path: file.path,
         mediaType: file.mediaType,
         title: file.path,
-        source: "snapshot" as const
+        source: "snapshot" as const,
+        text: overlay.get(file.path) ?? localized(file.text, locale)
       }))
       .sort((left, right) => left.path.localeCompare(right.path));
   }
@@ -196,9 +205,65 @@ export async function listReadableContentEntries(
       source: "package-file" as const
     }))
     .sort((left, right) => left.path.localeCompare(right.path));
+  });
 }
 
+async function readSelectedSourceOverlayMap(
+  manifest: ContentPackageManifest,
+  base: InstalledPackageRecord,
+  locale: string,
+  dataDir?: string
+): Promise<ReadonlyMap<string, string>> {
+  if (manifest.localization?.role !== "base-curriculum") return new Map();
+  const selectedLocale = canonicalSourceLocale(locale);
+  const candidates = [selectedLocale, manifest.localization.defaultSourceLocale].filter((value, index, all) => all.indexOf(value) === index);
+  for (const candidateLocale of candidates) {
+    const resolution = await resolveSourceOverlay(manifest, base, candidateLocale, dataDir);
+    if (resolution.record === undefined) continue;
+    const root = installedPackageRoot(resolution.record, dataDir);
+    perfCount("filesystem.read.count");
+    const bytes = await readFile(join(root, "content", "content.json"));
+    const overlay = perfSpanSync("json.parse", { kind: "source-overlay", packageId: resolution.record.packageId }, () => {
+      perfCount("json.parse.count");
+      return JSON.parse(bytes.toString("utf8")) as unknown;
+    });
+    if (!isRecord(overlay) || !Array.isArray(overlay.files)) throw new Error("Source overlay content is corrupt or unreadable.");
+    return new Map(overlay.files.flatMap((file) => isRecord(file) && typeof file.path === "string" && typeof file.text === "string" ? [[file.path, file.text] as const] : []));
+  }
+  return new Map();
+}
+
+const installedContentEntryCache = new Map<string, Promise<ReadInstalledContentEntryResult>>();
+const maximumInstalledContentEntryCacheSize = 128;
+
 export async function readInstalledContentEntry(options: ReadInstalledContentEntryOptions): Promise<ReadInstalledContentEntryResult> {
+  return perfSpan("content.read", { packageId: options.packageId, packageVersion: options.packageVersion, path: options.path, locale: options.locale }, async () => {
+    const dataDirectory = resolveContentDataDirectory(options.dataDir);
+    const cacheKey = [dataDirectory, installedContentGeneration(dataDirectory), options.packageId, options.packageVersion ?? "latest", options.path, options.locale ?? "en-US"].join("\u0000");
+    const cached = installedContentEntryCache.get(cacheKey);
+    if (cached !== undefined) {
+      perfCount("cache.content.hit");
+      return cached;
+    }
+    perfCount("cache.content.miss");
+    perfCount("content.projection.count");
+    const pending = readInstalledContentEntryUncached(options);
+    installedContentEntryCache.set(cacheKey, pending);
+    while (installedContentEntryCache.size > maximumInstalledContentEntryCacheSize) {
+      const oldest = installedContentEntryCache.keys().next().value as string | undefined;
+      if (oldest === undefined) break;
+      installedContentEntryCache.delete(oldest);
+    }
+    try {
+      return await pending;
+    } catch (error) {
+      installedContentEntryCache.delete(cacheKey);
+      throw error;
+    }
+  });
+}
+
+async function readInstalledContentEntryUncached(options: ReadInstalledContentEntryOptions): Promise<ReadInstalledContentEntryResult> {
   if (!isSafeContentPackagePath(options.path)) {
     throw new Error(`Readable content path must be package-relative and safe: ${options.path}`);
   }
@@ -256,7 +321,12 @@ async function readSelectedSourceOverlayText(manifest: ContentPackageManifest, b
 async function readOverlayFile(record: InstalledPackageRecord, path: string, dataDir?: string): Promise<string | undefined> {
   try {
     const root = installedPackageRoot(record, dataDir);
-    const overlay = JSON.parse((await readFile(join(root, "content", "content.json"))).toString("utf8")) as unknown;
+    perfCount("filesystem.read.count");
+    const overlayBytes = await readFile(join(root, "content", "content.json"));
+    const overlay = perfSpanSync("json.parse", { kind: "source-overlay", packageId: record.packageId }, () => {
+      perfCount("json.parse.count");
+      return JSON.parse(overlayBytes.toString("utf8")) as unknown;
+    });
     if (!isRecord(overlay) || !Array.isArray(overlay.files) || !overlay.files.every(file => isRecord(file) && typeof file.path === "string" && typeof file.text === "string")) {
       throw new Error("Source overlay content is corrupt or unreadable.");
     }
@@ -468,18 +538,33 @@ function installedPackageRoot(record: InstalledPackageRecord, dataDir?: string):
 }
 
 async function readInstalledManifest(root: string): Promise<ContentPackageManifest> {
-  const manifest = JSON.parse((await readFile(join(root, "manifest.json"))).toString("utf8")) as unknown;
-  assertValidContentPackageManifest(manifest);
-  return manifest;
+  return perfSpan("package.manifest.read", { root }, async () => {
+    perfCount("filesystem.read.count");
+    const bytes = await readFile(join(root, "manifest.json"));
+    const manifest = perfSpanSync("json.parse", { kind: "manifest" }, () => {
+      perfCount("json.parse.count");
+      return JSON.parse(bytes.toString("utf8")) as unknown;
+    });
+    perfSpanSync("package.validation", { kind: "manifest" }, () => {
+      perfCount("package.validation.count");
+      assertValidContentPackageManifest(manifest);
+    });
+    return manifest as ContentPackageManifest;
+  });
 }
 
 async function readSnapshot(root: string): Promise<SourceMarkdownSnapshot | null> {
   try {
-    const snapshot = JSON.parse((await readFile(join(root, "content", "content.json"))).toString("utf8")) as unknown;
-    if (!isSnapshot(snapshot)) {
-      return null;
-    }
-    return snapshot;
+    return await perfSpan("package.snapshot.read", { root }, async () => {
+      perfCount("filesystem.read.count");
+      const bytes = await readFile(join(root, "content", "content.json"));
+      const snapshot = perfSpanSync("json.parse", { kind: "content-snapshot" }, () => {
+        perfCount("json.parse.count");
+        return JSON.parse(bytes.toString("utf8")) as unknown;
+      });
+      if (!isSnapshot(snapshot)) return null;
+      return snapshot;
+    });
   } catch {
     return null;
   }
