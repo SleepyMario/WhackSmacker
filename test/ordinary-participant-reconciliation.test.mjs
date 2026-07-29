@@ -10,7 +10,7 @@ const modulesRoot = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const configs = [
   ["arabic", 5, ["لَيْلَى", "سَامِي"]],
   ["french", 10, ["Lina", "Marc"]],
-  ["german", 10, ["Mia", "Jonas"]],
+  ["german", 10, ["Mia", "Jonas", "Leonie", "Tobias", "Hannah"]],
   ["hindi", 5, ["रीना", "अमित"]],
   ["russian", 5, ["Анна", "Иван"]],
   ["spanish", 5, ["Ana", "Luis"]],

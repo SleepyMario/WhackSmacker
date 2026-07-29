@@ -9,8 +9,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + 고 + verb]] to link actions in one sentence. Attach [[grammar:-고]] to the first verb stem; tense and politeness are expressed on the final verb.",
-      "expert": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + 고 + verb]] in this chapter. `-고` is a nonfinal connective ending that coordinates or sequences predicates. The final predicate carries the clause-level tense and politeness marking; temporal order is inferred from context."
+      "normal": "Use [[grammar:verb stem + 고 + verb]] to connect two actions in one sentence. Attach [[grammar:-고]] to the first verb stem; tense and politeness appear on the final verb.",
+      "expert": "[[grammar:-고]] is a nonfinal connective ending that coordinates or sequences predicates. The final predicate carries clause-level tense and politeness marking."
     },
     {
       "sourceHeading": "Grammar",
@@ -19,13 +19,13 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "김민지 and 이준호 finish class and prepare to leave school together.",
-      "expert": "The primary narrative supplies literal evidence for [[grammar:verb stem + 고 + verb]] while preserving the chapter’s cumulative Korean vocabulary and participant continuity."
+      "normal": "After class, 김민지 and 박서연 prepare to leave school together.",
+      "expert": "The narrative links successive school-day actions with nonfinal `-고` predicates and one final polite predicate."
     }
   ],
   "breakdown": {
-    "normal": "- 수업이 끝나요. — Class ends.\n- 김민지는 공책을 닫고 가방을 준비해요. — Minji closes her notebook and prepares her bag.\n- 이준호는 책상을 정리하고 문을 닫아요. — Junho tidies the desk and closes the door.\n- 두 사람은 교실을 청소하고 같이 나가요. — The two clean the classroom and leave together.\n- 두 사람은 학교에서 이야기하고 집에 가요. — They talk at school and go home.\n- 김민지는 물을 마시고 쉬어요. — Minji drinks water and rests.\n- 두 사람은 저녁에 숙제를 하고 밥을 먹어요. — In the evening, they do homework and eat.\n- 밤에는 책을 읽고 쉬어요. — At night, they read and rest.",
-    "expert": "- 수업이 끝나요. — Natural translation: Class ends.\n- 김민지는 공책을 닫고 가방을 준비해요. — Natural translation: Minji closes her notebook and prepares her bag.\n- 이준호는 책상을 정리하고 문을 닫아요. — Natural translation: Junho tidies the desk and closes the door.\n- 두 사람은 교실을 청소하고 같이 나가요. — Natural translation: The two clean the classroom and leave together.\n- 두 사람은 학교에서 이야기하고 집에 가요. — Natural translation: They talk at school and go home.\n- 김민지는 물을 마시고 쉬어요. — Natural translation: Minji drinks water and rests.\n- 두 사람은 저녁에 숙제를 하고 밥을 먹어요. — Natural translation: In the evening, they do homework and eat.\n- 밤에는 책을 읽고 쉬어요. — Natural translation: At night, they read and rest."
+    "normal": "- 수업이 끝나요. — Class ends.\n- 김민지는 공책을 닫고 가방을 준비해요. — Minji closes her notebook and prepares her bag.\n- 박서연은 책상을 정리하고 문을 닫아요. — Seoyeon tidies the desk and closes the door.\n- 두 사람은 교실을 청소하고 같이 나가요. — The two clean the classroom and leave together.\n- 두 사람은 학교에서 이야기하고 집에 가요. — They talk at school and go home.\n- 박서연은 물을 마시고 쉬어요. — Seoyeon drinks water and rests.\n- 두 사람은 저녁에 숙제를 하고 밥을 먹어요. — In the evening, they do homework and eat.\n- 밤에는 책을 읽고 쉬어요. — At night, they read and rest.",
+    "expert": "- 수업이 끝나요. — Natural translation: Class ends.\n- 김민지는 공책을 닫고 가방을 준비해요. — Natural translation: Minji closes her notebook and prepares her bag.\n- 박서연은 책상을 정리하고 문을 닫아요. — Natural translation: Seoyeon tidies the desk and closes the door.\n- 두 사람은 교실을 청소하고 같이 나가요. — Natural translation: The two clean the classroom and leave together.\n- 두 사람은 학교에서 이야기하고 집에 가요. — Natural translation: They talk at school and go home.\n- 박서연은 물을 마시고 쉬어요. — Natural translation: Seoyeon drinks water and rests.\n- 두 사람은 저녁에 숙제를 하고 밥을 먹어요. — Natural translation: In the evening, they do homework and eat.\n- 밤에는 책을 읽고 쉬어요. — Natural translation: At night, they read and rest."
   },
   "readingItems": [
     {
@@ -45,14 +45,14 @@
     {
       "surface": "정리하다",
       "reading": "정리하다",
-      "evidence": "이준호는 책상을 정리하고 문을 닫아요.",
+      "evidence": "박서연은 책상을 정리하고 문을 닫아요.",
       "lexicalEntryId": "ko.verb.jeongnihada",
       "senseId": "ko.verb.jeongnihada.tidy"
     },
     {
       "surface": "문",
       "reading": "문",
-      "evidence": "이준호는 책상을 정리하고 문을 닫아요.",
+      "evidence": "박서연은 책상을 정리하고 문을 닫아요.",
       "lexicalEntryId": "ko.noun.mun",
       "senseId": "ko.noun.mun.door"
     },
@@ -73,7 +73,7 @@
     {
       "surface": "쉬다",
       "reading": "쉬다",
-      "evidence": "김민지는 물을 마시고 쉬어요.",
+      "evidence": "박서연은 물을 마시고 쉬어요.",
       "lexicalEntryId": "ko.verb.swida",
       "senseId": "ko.verb.swida.rest"
     },

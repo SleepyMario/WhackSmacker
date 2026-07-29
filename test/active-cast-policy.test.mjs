@@ -46,21 +46,41 @@ test("reviews reuse source-chapter people and cannot independently activate late
 });
 
 test("appearance audit tracks IDs, warns on severe imbalance, and keeps recurring relationships valid", () => {
-  const chapters = Array.from({ length: 20 }, (_, index) => record(index + 1, index < 5 ? [ids[0], ids[0], ids[1], ids[2], ids[3], ids[4]] : [ids[0], ids[0]], { recurringRelationship: "recurring classmates" }));
+  const sets = [
+    [ids[0], ids[1], ids[2], ids[3], ids[4]],
+    [ids[0], ids[1], ids[2], ids[3]],
+    [ids[0], ids[1], ids[2], ids[4]],
+    [ids[0], ids[1], ids[3], ids[4]],
+    [ids[0], ids[2], ids[3], ids[4]],
+    [ids[0], ids[1], ids[2], ids[3], ids[4]],
+    [ids[0]], [ids[0]], [ids[0]], [ids[0]],
+    [], [ids[0]], [ids[0]], [ids[0]], [ids[0]],
+    [], [ids[0]], [ids[0]], [ids[0]], [ids[0]]
+  ];
+  const chapters = sets.map((personIds, index) => record(index + 1, personIds, { recurringRelationship: "recurring classmates" }));
   const audit = auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters });
   assert.equal(audit.appearancesByChapter[1][ids[0]], 1);
-  assert.equal(audit.cumulativeAppearances[ids[0]], 20);
+  assert.equal(audit.cumulativeAppearances[ids[0]], 18);
   assert.equal(audit.blocks[0].appearancesByPersonId[ids[1]], 5);
   assert.match(audit.warnings[0], /severe active-cast appearance imbalance/u);
   assert.deepEqual(leastUsedSuitableActivePersonIds({ chapter: 1, progression: ids, cumulativeAppearances: audit.cumulativeAppearances, count: 2 }), [ids[1], ids[2]]);
 });
 
 test("completed blocks require five distinct meaningful chapters for every newly activated person", () => {
-  const first = Array.from({ length: 20 }, (_, index) => record(index + 1, index < 5 ? ids.slice(0, 5) : []));
+  const firstSets = [
+    [ids[0], ids[1]], [ids[1], ids[2]], [ids[2], ids[3]], [ids[3], ids[4]], [ids[4], ids[0]],
+    [ids[0], ids[1], ids[2]], [ids[3], ids[4]], [ids[0], ids[3]], [ids[1], ids[4]], [ids[2]],
+    ids.slice(0, 5), [], [], [], [], [], [], [], [], []
+  ];
+  const first = firstSets.map((personIds, index) => record(index + 1, personIds));
   assert.equal(auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: first }).blocks[0].coverageStatus, "complete");
-  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: first.map((item) => ({ ...item, meaningfulPersonIds: item.chapter === 5 ? item.meaningfulPersonIds.filter((id) => id !== ids[4]) : item.meaningfulPersonIds })) }), /has 4 distinct.*5 required/u);
+  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: first.map((item) => ({ ...item, meaningfulPersonIds: item.chapter === 11 ? item.meaningfulPersonIds.filter((id) => id !== ids[4]) : item.meaningfulPersonIds })) }), /has 4 distinct.*5 required/u);
 
-  const second = Array.from({ length: 20 }, (_, index) => record(index + 21, index < 5 ? [ids[0], ids[1], ids[5], ids[6], ids[7]] : []));
+  const secondSets = [
+    [ids[0], ids[1], ids[5]], [ids[0], ids[1], ids[6]], [ids[0], ids[1], ids[7]], [ids[0], ids[1], ids[5], ids[6]], [ids[0], ids[1], ids[5], ids[7]],
+    [ids[5], ids[6], ids[7]], [ids[5], ids[6], ids[7]], [ids[6], ids[7]], [], [], [], [], [], [], [], [], [], [], [], []
+  ];
+  const second = secondSets.map((personIds, index) => record(index + 21, personIds));
   assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [...first, ...second] }));
   assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [...first, ...second.map((item) => ({ ...item, meaningfulPersonIds: item.meaningfulPersonIds.filter((id) => id !== ids[0] && id !== ids[1]) }))] }), /old cast has 0 of 15/u);
 });
@@ -72,6 +92,42 @@ test("incomplete blocks are pending and metadata or review references do not sat
   assert.equal(audit.blocks[0].activationPeople[0].remainingCount, 5);
   assert.deepEqual(audit.blocks[0].activationPeople[0].qualifyingChapterNumbers, []);
   assert.deepEqual(audit.pendingCoverageBlocks, ["1-20"]);
+});
+
+
+test("completed five-chapter blocks reject one repeated canonical participant set", () => {
+  const repeated = Array.from({ length: 5 }, (_, index) => record(index + 1, [ids[0], ids[1]]));
+  assert.throws(
+    () => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: repeated }),
+    /every chapter repeats the same canonical participant set/u
+  );
+
+  const varied = [
+    record(1, [ids[0], ids[1]]),
+    record(2, []),
+    record(3, [ids[2], ids[3]]),
+    record(4, [ids[0], ids[4]]),
+    record(5, [ids[2], ids[3]])
+  ];
+  assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: varied }));
+});
+
+test("newly activated people must appear before the final quarter of their activation block", () => {
+  const lateDeferred = Array.from({ length: 15 }, (_, index) =>
+    record(index + 1, index % 2 === 0 ? [ids[0]] : [ids[0], ids[1]])
+  );
+  assert.throws(
+    () => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: lateDeferred }),
+    /75% activation-block checkpoint/u
+  );
+
+  const onTrackSets = [
+    [ids[0], ids[1]], [], [ids[2], ids[3]], [ids[0], ids[4]], [ids[2], ids[3]],
+    [ids[2]], [ids[4]], [ids[1]], [ids[3], ids[4]], [ids[0], ids[1]],
+    [ids[2], ids[4]], [ids[0], ids[2]], [ids[2], ids[3]], [ids[1], ids[4]], [ids[0], ids[2], ids[3]]
+  ];
+  const onTrack = onTrackSets.map((personIds, index) => record(index + 1, personIds));
+  assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: onTrack }));
 });
 
 test("activation reports continue through Chapter 181 and stop after Chapter 200", () => {

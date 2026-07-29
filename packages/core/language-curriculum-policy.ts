@@ -29,11 +29,14 @@ export interface CanonicalSectionAndGrammarValidationInput {
   readonly source: string;
   readonly readingSupport?: unknown;
   readonly readingTranslation?: unknown;
+  readonly chapterParticipants?: unknown;
 }
 
 export const canonicalSectionAndGrammarRuleIds = [
   "WSM-BRIEF-GRAMMAR-001",
+  "WSM-BRIEF-PARTICIPANTS-001",
   "WSM-PRIMARY-SETUP-001",
+  "WSM-SIMPLE-EXERCISES-001",
   "WSM-GRAMMAR-PROSE-001",
   "WSM-GRAMMAR-INVENTORY-PROJECTION-001"
 ] as const;
@@ -45,9 +48,11 @@ const forbiddenLearnerGrammarScaffolding = [
 ] as const;
 
 export function assertCanonicalSectionAndGrammarRules(input: CanonicalSectionAndGrammarValidationInput): void {
+  const participantLabels = chapterParticipantLabels(input.chapterParticipants);
   const introduction = markdownSection(input.markdown, "Brief Introduction");
   if (introduction === undefined) throw new Error(`${input.source}: Brief Introduction is required by WSM-BRIEF-GRAMMAR-001.`);
   assertGrammarOnlyIntroduction(introduction, `${input.source}: Brief Introduction`);
+  assertParticipantFreeBriefIntroduction(introduction, participantLabels, `${input.source}: Brief Introduction`);
   const dialogue = markdownSection(input.markdown, "Dialogue");
   const narrative = markdownSection(input.markdown, "Narrative");
   if ((dialogue === undefined) === (narrative === undefined)) throw new Error(`${input.source}: exactly one primary Dialogue or Narrative is required by WSM-PRIMARY-SETUP-001.`);
@@ -71,8 +76,10 @@ export function assertCanonicalSectionAndGrammarRules(input: CanonicalSectionAnd
     if (sourceSentenceCount === 0) throw new Error(`${input.source}: Narrative must contain aligned reading sentences after its setup.`);
     assertTranslationBoundary(input.readingTranslation, readingType, setup, sourceSentenceCount, input.source);
   }
+  const chapter = chapterNumberFromMarkdown(input.markdown);
+  if (chapter !== undefined && chapter <= 25) assertSimpleExercises(input.markdown, input.source, chapter);
   assertAuthoredGrammarProse(input.markdown, input.source);
-  if (input.readingSupport !== undefined) assertCanonicalReadingSupport(input.readingSupport, setup, input.source);
+  if (input.readingSupport !== undefined) assertCanonicalReadingSupport(input.readingSupport, setup, participantLabels, input.source);
 }
 
 export function assertAuthoredGrammarProse(value: string, source: string): void {
@@ -82,7 +89,7 @@ export function assertAuthoredGrammarProse(value: string, source: string): void 
   }
 }
 
-function assertCanonicalReadingSupport(value: unknown, primarySetup: string, source: string): void {
+function assertCanonicalReadingSupport(value: unknown, primarySetup: string, participantLabels: readonly string[], source: string): void {
   if (!isPolicyRecord(value) || !Array.isArray(value.audienceSections)) throw new Error(`${source}: reading support must provide audienceSections.`);
   for (const [index, candidate] of value.audienceSections.entries()) {
     if (!isPolicyRecord(candidate)) throw new Error(`${source}: reading support audienceSections[${index}] must be an object.`);
@@ -92,6 +99,7 @@ function assertCanonicalReadingSupport(value: unknown, primarySetup: string, sou
       assertAuthoredGrammarProse(prose, `${source}: audienceSections[${index}].${audience}`);
       if (candidate.sourceHeading === "Brief Introduction") {
         assertGrammarOnlyIntroduction(prose, `${source}: Brief Introduction ${audience}`);
+        assertParticipantFreeBriefIntroduction(prose, participantLabels, `${source}: Brief Introduction ${audience}`);
         if (normalizedProse(prose).includes(normalizedProse(primarySetup))) throw new Error(`${source}: reading support projects primary setup beneath Brief Introduction.`);
       }
     }
@@ -108,6 +116,87 @@ function assertGrammarOnlyIntroduction(value: string, source: string): void {
     throw new Error(`${source} contains scene, profile, or plot setup.`);
   }
   assertAuthoredGrammarProse(value, source);
+}
+
+function chapterNumberFromMarkdown(markdown: string): number | undefined {
+  const chapter = /^chapter:\s*["']?(\d+)["']?\s*$/mu.exec(markdown)?.[1];
+  if (chapter === undefined) return undefined;
+  const value = Number.parseInt(chapter, 10);
+  return Number.isSafeInteger(value) && value > 0 ? value : undefined;
+}
+
+function assertSimpleExercises(markdown: string, source: string, chapter: number): void {
+  const exerciseOffset = markdown.search(/^### Simple Exercises\s*$/mu);
+  if (exerciseOffset < 0) {
+    throw new Error(`${source}: Chapters 1-25 require an exact ### Simple Exercises section by WSM-SIMPLE-EXERCISES-001.`);
+  }
+  const exercises = markdownSection(markdown, "Simple Exercises");
+  if (exercises === undefined) {
+    throw new Error(`${source}: Chapter ${chapter} Simple Exercises content cannot be read.`);
+  }
+  const lines = exercises.split(/\r?\n/u)
+    .map((line) => line.trim())
+    .filter((line) => line !== "" && !/^<!--\s*whacksmacker:developer-only:(?:start|end)\s*-->$/u.test(line));
+  const items = lines.map((line) => /^(\d+)\.\s+\S/u.exec(line));
+  if (lines.length !== 4 || items.some((match, index) => match === null || Number.parseInt(match[1] ?? "0", 10) !== index + 1)) {
+    throw new Error(`${source}: Chapter ${chapter} Simple Exercises must contain exactly four consecutively numbered items and no extra prose.`);
+  }
+  if (/\b(?:TODO|FIXME|placeholder|dummy)\b/iu.test(exercises)) {
+    throw new Error(`${source}: Chapter ${chapter} Simple Exercises contains placeholder text.`);
+  }
+  const grammarOffset = markdown.search(/^#{1,6}\s+Grammar\s*$/imu);
+  const ledgerOffset = markdown.search(/^#{1,6}\s+Ledger\s*$/imu);
+  if (grammarOffset < 0 || exerciseOffset < grammarOffset || (ledgerOffset >= 0 && exerciseOffset > ledgerOffset)) {
+    throw new Error(`${source}: Chapter ${chapter} Simple Exercises must follow Grammar and precede Ledger.`);
+  }
+}
+
+function chapterParticipantLabels(value: unknown): readonly string[] {
+  if (!isPolicyRecord(value)) return [];
+  const labels = new Set<string>();
+  for (const field of ["primaryReadingParticipants", "introductionParticipants", "translationParticipants", "supportParticipants"] as const) {
+    const entries = value[field];
+    if (!Array.isArray(entries)) continue;
+    for (const entry of entries) if (isPolicyRecord(entry) && typeof entry.label === "string" && entry.label.trim() !== "") labels.add(entry.label.trim());
+  }
+  const functional = value.unnamedFunctionalParticipants;
+  if (Array.isArray(functional)) {
+    for (const entry of functional) {
+      if (!isPolicyRecord(entry)) continue;
+      if (typeof entry.roleLabel === "string" && entry.roleLabel.trim() !== "") labels.add(entry.roleLabel.trim());
+      if (Array.isArray(entry.supportedProjectionLabels)) {
+        for (const label of entry.supportedProjectionLabels) if (typeof label === "string" && label.trim() !== "") labels.add(label.trim());
+      }
+    }
+  }
+  return [...labels];
+}
+
+function assertParticipantFreeBriefIntroduction(value: string, participantLabels: readonly string[], source: string): void {
+  const normalized = value.normalize("NFC");
+  const prose = normalized
+    .replace(/`[^`\n]*`/gu, " ")
+    .replace(/\[\[grammar:[^\]\n]+\]\]/gu, " ");
+  for (const label of participantLabels) {
+    const escaped = label.normalize("NFC").replace(/[\\^$.*+?()[\]{}|]/gu, "\\$&");
+    if (new RegExp(`${escaped}\\s*\\([A-Z][A-Za-z .'-]{1,40}\\)`, "u").test(prose)) {
+      throw new Error(`${source} contains a bilingual parenthetical person-name gloss for chapter participant ${JSON.stringify(label)}; identity glosses and participant framing are prohibited by WSM-BRIEF-PARTICIPANTS-001.`);
+    }
+    if (containsExactProseLabel(prose, label)) {
+      throw new Error(`${source} names chapter participant ${JSON.stringify(label)} outside grammar markup; participant and scene framing belongs beneath Dialogue or Narrative by WSM-BRIEF-PARTICIPANTS-001.`);
+    }
+  }
+}
+
+function containsExactProseLabel(text: string, label: string): boolean {
+  const normalizedText = text.normalize("NFC");
+  const normalizedLabel = label.normalize("NFC");
+  if (/^[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Thai}]+$/u.test(normalizedLabel)) return normalizedText.includes(normalizedLabel);
+  if (/^[\p{L}\p{N}_ ]+$/u.test(normalizedLabel) && /[\p{L}\p{N}_]/u.test(normalizedLabel)) {
+    const escaped = normalizedLabel.replace(/[\\^$.*+?()[\]{}|]/gu, "\\$&");
+    return new RegExp(`(^|[^\\p{L}\\p{N}_])${escaped}([^\\p{L}\\p{N}_]|$)`, "u").test(normalizedText);
+  }
+  return normalizedText.includes(normalizedLabel);
 }
 
 function assertTranslationBoundary(value: unknown, readingType: "dialogue" | "narrative", setup: string, expectedUnits: number, source: string): void {
@@ -128,7 +217,13 @@ function assertTranslationBoundary(value: unknown, readingType: "dialogue" | "na
 }
 
 function markdownSection(markdown: string, heading: string): string | undefined {
-  return new RegExp(`^#{1,6}\\s+${heading}\\s*$\\n([\\s\\S]*?)(?=^#{1,6}\\s+)`, "imu").exec(markdown)?.[1]?.trim();
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const escaped = heading.replace(/[\^$.*+?()[\]{}|]/gu, "\\$&");
+  const pattern = new RegExp(`^#{1,6}\\s+${escaped}\\s*$`, "iu");
+  const start = lines.findIndex((line) => pattern.test(line));
+  if (start < 0) return undefined;
+  const end = lines.findIndex((line, index) => index > start && /^#{1,6}\s+/u.test(line));
+  return lines.slice(start + 1, end < 0 ? lines.length : end).join("\n").trim();
 }
 
 function firstReadingParagraph(value: string): string {
@@ -523,6 +618,8 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Previously active people remain active; Chapter 201 onward retains the same thirty people.",
     "Dialogue, narrative, metadata, and review cast IDs must be active; only meaningful learner-facing dialogue or narrative appearances satisfy block coverage.",
     "In each person's first activation block, that person appears meaningfully in at least five distinct ordinary chapters; duplicate lines in one chapter count once.",
+    "By the fifteenth chapter of every twenty-chapter activation block, each newly activated person has at least one meaningful appearance; participation cannot be deferred entirely to the final five chapters.",
+    "A completed five-chapter block with three or more active people cannot repeat one identical nonempty canonical participant set in all five chapters.",
     "In every completed activation block after Chapters 1-20, old cast supplies at least ceil(total meaningful canonical person-chapter appearances / 3).",
     "Every chapter from Chapter 1 onward may declare unnamed functional participants with chapter-local ROLE-* IDs and exact target-language role labels; they never enter the canonical cast, activation, named-cast ceilings, relationships, or appearance accounting.",
     "Builders prefer least-used suitable active people and audit severe imbalance without requiring exact equality.",
@@ -1294,6 +1391,14 @@ export function auditActiveCast(values: {
   const blocks: ActiveCastAppearanceBlock[] = [];
   const warnings: string[] = [];
   const lastChapter = Math.max(0, ...values.chapters.map((chapter) => chapter.chapter));
+  for (let fiveChapterStart = 1; fiveChapterStart <= lastChapter; fiveChapterStart += 5) {
+    const chapterNumbers = Array.from({ length: 5 }, (_, index) => fiveChapterStart + index);
+    if (!chapterNumbers.every((chapter) => suppliedChapters.has(chapter))) continue;
+    const signatures = chapterNumbers.map((chapter) => Object.keys(appearancesByChapter[chapter] ?? {}).sort().join("|"));
+    if (activeCastSizeForChapter(fiveChapterStart) >= 3 && signatures.every((signature) => signature.length > 0) && new Set(signatures).size === 1) {
+      throw new Error(`Chapters ${fiveChapterStart}-${fiveChapterStart + 4}: every chapter repeats the same canonical participant set (${signatures[0]}); completed five-chapter blocks must vary meaningful cast participation.`);
+    }
+  }
   for (let chapterStart = 1; chapterStart <= lastChapter; chapterStart += activeCastBlockSize) {
     const chapterEnd = chapterStart + activeCastBlockSize - 1;
     const coverageStatus = Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index)
@@ -1303,6 +1408,13 @@ export function auditActiveCast(values: {
       for (const [id, count] of Object.entries(appearancesByChapter[chapter] ?? {})) appearancesByPersonId[id] = (appearancesByPersonId[id] ?? 0) + count;
     }
     const report = activeCastBlockReport({ chapterStart, progression: values.progression, appearancesByChapter, suppliedChapters });
+    const trajectoryCheckpoint = chapterStart + 14;
+    if (suppliedChapters.has(trajectoryCheckpoint)) {
+      const absentAtCheckpoint = report.activationPeople.find((person) => person.distinctQualifyingChapterCount === 0);
+      if (absentAtCheckpoint !== undefined) {
+        throw new Error(`Chapters ${chapterStart}-${trajectoryCheckpoint}: newly activated person ${absentAtCheckpoint.canonicalId} has no meaningful chapter appearance by the 75% activation-block checkpoint.`);
+      }
+    }
     const requiredNewPersonIds = report.activationPeople.map((person) => person.canonicalId);
     const missingNewPersonIds = report.activationPeople.filter((person) => person.remainingCount > 0).map((person) => person.canonicalId);
     if (coverageStatus === "pending") pendingCoverageBlocks.push(`${chapterStart}-${chapterEnd}`);

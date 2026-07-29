@@ -9,8 +9,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "In 김민지 (Minji) and 이준호 (Junho) meeting politely, you will use [[grammar:N은/는 — topic marking]]. Put [[grammar:은]] after a consonant sound and [[grammar:는]] after a vowel sound to mark the topic. 저는 is 저 + 는. Structural gloss: ‘as for me.’ Natural English: ‘I.’ Do not translate 은/는 as a separate English word every time.",
-      "expert": "This chapter presents [[grammar:N은/는 — topic marking]] in 김민지 (Minji) and 이준호 (Junho) meeting politely. 은/는 marks a discourse topic in topic–comment structure, with phonologically conditioned allomorphy. 저는 decomposes as 저 + 는; the copula separately alternates between 이에요 and 예요."
+      "normal": "Use [[grammar:N은/는 — topic marking]] to mark the sentence topic. Put [[grammar:은]] after a consonant sound and [[grammar:는]] after a vowel sound; 저는 is 저 + 는.",
+      "expert": "[[grammar:은/는]] marks a discourse topic in topic–comment structure, with coda-conditioned allomorphy. 저는 decomposes as 저 + 는, while the copula separately alternates between 이에요 and 예요."
     },
     {
       "sourceHeading": "Grammar",
@@ -24,7 +24,7 @@
     }
   ],
   "breakdown": {
-    "normal": "Read each exact korean line, then check its natural English meaning. Watch for [[grammar:N은/는 — topic marking]] where it appears.\n\n- 안녕하세요. — Hello.\n- 안녕하세요. — Hello.\n- 저는 민지예요. — I am Minji.\n- 저는 준호예요. — I am Junho.\n- 학생이에요. — I am a student.\n- 네, 저는 선생님이에요. — Yes, I am a teacher.",
-    "expert": "These exact reading lines provide the distributional evidence for [[grammar:N은/는 — topic marking]]. The grammar section above analyzes the relevant morphology and syntax.\n\n- 안녕하세요. — Hello.\n- 안녕하세요. — Hello.\n- 저는 민지예요. — I am Minji.\n- 저는 준호예요. — I am Junho.\n- 학생이에요. — I am a student.\n- 네, 저는 선생님이에요. — Yes, I am a teacher."
+    "normal": "- 안녕하세요. — Hello.\n- 안녕하세요. — Hello.\n- 저는 민지예요. — I am Minji.\n- 저는 준호예요. — I am Junho.\n- 학생이에요. — I am a student.\n- 네, 저는 선생님이에요. — Yes, I am a teacher.",
+    "expert": "- 안녕하세요. — Natural translation: Hello.\n- 안녕하세요. — Natural translation: Hello.\n- 저는 민지예요. — Natural translation: I am Minji.\n- 저는 준호예요. — Natural translation: I am Junho.\n- 학생이에요. — Natural translation: I am a student.\n- 네, 저는 선생님이에요. — Natural translation: Yes, I am a teacher."
   }
 }

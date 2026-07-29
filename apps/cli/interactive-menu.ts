@@ -4456,7 +4456,7 @@ function reviewDeckContentStyle(): string {
 }
 
 function reviewDeckColoredMenuTokenPattern(): RegExp {
-  return /\b(?:Foundation(?=\s+Chapter\s+--\s+\d+)|Han Gul\s+\d+(?=\s+--)|Ch\s+\d+(?=\s+--)|Grammar(?=\s*(?:--|$)))/u;
+  return /\b(?:Foundation(?=\s+Chapter\s+--\s+\d+)|Han Gul\s+\d+(?=\s+(?:--|—|–|:|-))|Ch\s+\d+(?=\s+(?:--|—|–|:|-))|Grammar(?=\s*(?:--|$)))/u;
 }
 
 function displayTreeLabel(node: LanguageTreeNode): string {
@@ -4477,7 +4477,9 @@ function displayTreeLabel(node: LanguageTreeNode): string {
       const chapter = Number.parseInt(foundationChapter, 10);
       if (chapter >= 1 && chapter <= 5) return formatFoundationChapterMenuLabel(chapter);
     }
-    const chapter = /(?:^|\/)chapter-(\d+)-/u.exec(node.filePath ?? "")?.[1]
+  }
+  if (node.kind === "content" && node.filePath?.endsWith("/chapter.md") === true) {
+    const chapter = /(?:^|\/)chapter-(\d+)-/u.exec(node.filePath)?.[1]
       ?? /^(?:Chapter|Ch)\s+(\d+)\b/u.exec(label)?.[1];
     const topic = label.replace(/^(?:Chapter|Ch)\s+\d+\s*(?:--|—|–|:|-)?\s*/u, "").trim();
     if (chapter !== undefined && topic.length > 0) return `Ch ${Number.parseInt(chapter, 10)} -- ${topic}`;

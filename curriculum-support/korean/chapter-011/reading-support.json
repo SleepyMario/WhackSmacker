@@ -9,8 +9,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "김민지 (Minji) and 이준호 (Junho) use [[grammar:N + 하고 + N]] to connect two nouns in everyday Korean. Put [[grammar:하고]] after the first noun; its form does not change after vowels or consonants.",
-      "expert": "김민지 (Minji) and 이준호 (Junho) use [[grammar:N + 하고 + N]] in this chapter. `하고` is a postpositive nominal coordinator. It links noun phrases without allomorphic alternation and can express an ordinary list or association; in this chapter it coordinates two objects."
+      "normal": "Use [[grammar:N + 하고 + N]] to connect two nouns. Put [[grammar:하고]] after the first noun; the form stays the same after vowels and consonants.",
+      "expert": "[[grammar:하고]] is a postpositive nominal coordinator that links noun phrases without allomorphic alternation. In this chapter it coordinates two objects."
     },
     {
       "sourceHeading": "Grammar",
@@ -19,8 +19,8 @@
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "김민지 and 이준호 are at the library choosing books and other things to read.",
-      "expert": "The primary dialogue supplies literal evidence for [[grammar:N + 하고 + N]] while preserving the chapter’s cumulative Korean vocabulary and participant continuity."
+      "normal": "At the library, 박서연 and 정수진 choose reading materials together.",
+      "expert": "The dialogue supplies literal examples of nominal coordination while the two speakers locate and compare reading materials."
     }
   ],
   "breakdown": {

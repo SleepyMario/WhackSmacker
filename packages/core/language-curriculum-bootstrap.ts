@@ -7,6 +7,10 @@ import {
   reconcileChapterParticipants
 } from "./chapter-participants";
 import type { ChineseScriptVariant } from "./east-asian-name-policy";
+import {
+  auditActiveCast,
+  type ActiveCastChapterRecord
+} from "./language-curriculum-policy";
 
 export const canonicalCastBootstrapPolicyName = "ordinary-language-canonical-cast-phase-0";
 export const canonicalCastBootstrapRequiredMessage =
@@ -91,6 +95,7 @@ export function assertCanonicalCastBootstrapBeforeOrdinaryContent(
   }
 
   const cast = castDocument as CanonicalCastV2;
+  const auditChapters: ActiveCastChapterRecord[] = [];
   for (const chapterFile of chapters) {
     const chapterText = canonicalText(chapterFile.text);
     if (chapterText === undefined) {
@@ -118,7 +123,7 @@ export function assertCanonicalCastBootstrapBeforeOrdinaryContent(
     const translationText = translation === undefined ? undefined : canonicalText(translation.text);
     const supportText = support === undefined ? undefined : canonicalText(support.text);
     try {
-      reconcileChapterParticipants(participants, {
+      const reconciled = reconcileChapterParticipants(participants, {
         sourceFile: `${options.sourceLabel}/${participantPath}`,
         chapterMarkdown: chapterText,
         canonicalCast: cast.cast,
@@ -128,9 +133,27 @@ export function assertCanonicalCastBootstrapBeforeOrdinaryContent(
         ...(translationText === undefined ? {} : { translationText }),
         ...(supportText === undefined ? {} : { supportText })
       });
+      auditChapters.push({
+        chapter: reconciled.chapter,
+        authorship: "new",
+        migrationStatus: "compliant",
+        participatingPersonIds: reconciled.canonicalCastIds,
+        meaningfulPersonIds: reconciled.canonicalCastIds
+      });
     } catch (error) {
       throw bootstrapFailure(error instanceof Error ? error.message : String(error));
     }
+  }
+
+  let auditWarnings: readonly string[] = [];
+  try {
+    auditWarnings = auditActiveCast({
+      canonicalPersonIds: cast.cast.map((person) => person.id),
+      progression: cast.activeCast.progression,
+      chapters: auditChapters
+    }).warnings;
+  } catch (error) {
+    throw bootstrapFailure(error instanceof Error ? error.message : String(error));
   }
 
   return {
@@ -139,7 +162,7 @@ export function assertCanonicalCastBootstrapBeforeOrdinaryContent(
     phase0Complete: true,
     packageable: true,
     legacy: false,
-    warnings: validation.warnings
+    warnings: [...validation.warnings, ...auditWarnings]
   };
 }
 

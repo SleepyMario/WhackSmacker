@@ -400,6 +400,54 @@ test("package-generation and installed-reader validation preserve and reconcile 
   assert.throws(() => assertInstalledCurriculumParticipants(snapshot, "com.example.language"), /missing required chapter-participants\.json/u);
 });
 
+
+test("package bootstrap applies the shared active-cast trajectory gate across ordinary languages", () => {
+  const sourceFilesFor = (sets) => [{
+    path: "name-pools/canonical-cast.json",
+    text: JSON.stringify(validCast())
+  }, ...sets.flatMap((personIds, index) => {
+    const chapter = index + 1;
+    const people = personIds.map((id) => ({ id, label: `Person ${Number.parseInt(id.slice(-3), 10)} Example` }));
+    const introduction = people.map(({ label }) => label).join(" and ");
+    const turns = people.map(({ label }) => `${label}: A meaningful line for Chapter ${chapter}.`).join("\n");
+    const document = {
+      schemaVersion: 1,
+      chapter,
+      canonicalCastIds: personIds,
+      unnamedFunctionalParticipants: [],
+      primaryReadingParticipants: people.map(({ id, label }) => ({ participantId: id, kind: "dialogue-speaker", label })),
+      introductionParticipants: people.map(({ id, label }) => ({ participantId: id, label }))
+    };
+    const root = `units/example-core/chapter-${String(chapter).padStart(3, "0")}-test`;
+    return [{
+      path: `${root}/chapter.md`,
+      text: `# Chapter ${chapter}\n\n## Dialogue\n\n${introduction} meet in a local setting.\n\n${turns}\n\n## New Vocabulary\n`
+    }, {
+      path: `${root}/chapter-participants.json`,
+      text: JSON.stringify(document)
+    }];
+  })];
+
+  const deferred = Array.from({ length: 15 }, (_, index) => index % 2 === 0 ? [ids[0]] : [ids[0], ids[1]]);
+  assert.throws(
+    () => assertCanonicalCastBootstrapBeforeOrdinaryContent(sourceFilesFor(deferred), {
+      sourceLabel: "package:deferred-curriculum",
+      requireOrdinaryContent: true
+    }),
+    /75% activation-block checkpoint/u
+  );
+
+  const onTrack = [
+    [ids[0], ids[1]], [ids[0]], [ids[2], ids[3]], [ids[0], ids[4]], [ids[2]],
+    [ids[2]], [ids[4]], [ids[1]], [ids[3], ids[4]], [ids[0], ids[1]],
+    [ids[2], ids[4]], [ids[0], ids[2]], [ids[2], ids[3]], [ids[1], ids[4]], [ids[0], ids[2], ids[3]]
+  ];
+  assert.doesNotThrow(() => assertCanonicalCastBootstrapBeforeOrdinaryContent(sourceFilesFor(onTrack), {
+    sourceLabel: "package:on-track-curriculum",
+    requireOrdinaryContent: true
+  }));
+});
+
 test("Phase 0 accepts a valid cast-only source but keeps it package-less", () => {
   const files = [{ path: "name-pools/canonical-cast.json", text: JSON.stringify(validCast()) }];
   const status = assertCanonicalCastBootstrapBeforeOrdinaryContent(files, {

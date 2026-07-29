@@ -108,9 +108,13 @@ post-initial block also requires old-cast appearances to be at least
 `ceil(total meaningful canonical person-chapter appearances / 3)`. This
 supersedes the former one-older-person minimum. Metadata,
 ledgers, titles, grammar notes, cast files, bare speaker labels, and review-only
-references do not satisfy coverage. Incomplete blocks report new-person chapter
-lists/counts/remaining-to-five and old/new/total ratio data with `pending`
-status; they do not fail merely because future chapters are absent. Completed
+references do not satisfy coverage. By the fifteenth chapter of every
+activation block, each newly activated person must already have at least one
+meaningful appearance; use cannot be deferred entirely to the final five
+chapters. A completed five-chapter block with at least three active people also
+fails when all five chapters repeat one identical nonempty canonical participant
+set. Incomplete blocks otherwise report new-person chapter lists/counts/
+remaining-to-five and old/new/total ratio data with `pending` status. Completed
 shortfalls hard-fail. After Chapter 200, activation and old/new accounting cease
 entirely. Severe concentration and long-term imbalance auditing may continue.
 
@@ -146,8 +150,9 @@ prose. Language-appropriate given names, family names, titles, kinship terms,
 pronouns, ellipsis, and zero reference remain valid there. An unnamed
 functional participant keeps its exact natural role label and chapter-local
 `ROLE-*` ID, has no invented personal name, and remains outside cast ceilings.
-Normal and Expert introduction projections both retain the required names;
-Developer presentation never exposes cast IDs. Full names and role labels do
+Normal and Expert primary-reading scene-introduction projections retain the
+required names; the grammar-only Brief Introduction does not. Developer
+presentation never exposes cast IDs. Full names and role labels do
 not become vocabulary merely because this policy displays them.
 
 ## Chapter 1 lexical systems and learner-facing vocabulary
@@ -624,6 +629,17 @@ Fixed indivisible expressions remain whole. Components are declared, not
 inferred from arbitrary prose, and their pedagogical form remains subject to
 human review.
 
+
+## Simple Exercises: Chapters 1-25
+
+Every ordinary Chapter 1-25 source contains a visible `### Simple Exercises`
+section after Grammar and before Ledger. The section contains exactly four
+consecutively numbered, non-placeholder tasks. It remains simple and
+learner-facing: read the complete primary text, identify or use the chapter
+pattern, review the new vocabulary, and produce one controlled new example.
+Package generation rejects a missing, misplaced, malformed, or placeholder
+section for every language.
+
 ## Strict Review Examples
 
 One normal vocabulary review deck follows each completed consecutive
@@ -696,11 +712,12 @@ against the Japanese curriculum's canonical contextual-reading source.
 grammar pattern or construction taught in the chapter and what it enables. It
 must not carry character, relationship, plot, or setting exposition.
 
-Chinese, Japanese, and Korean additionally project each actual participant's
-exact canonical full name into both Normal and Expert `Brief Introduction`
-prose under `east-asian-full-name-presentation-policy`. This identity projection
-does not turn that grammar-focused section into scene, relationship, or plot
-exposition.
+`Brief Introduction` is participant-free across every ordinary language.
+Canonical names, role labels, bilingual parenthetical name glosses, relationship
+framing, and scene setup belong under Dialogue or Narrative, not in the grammar
+introduction. A participant name may occur only inside an explicitly authored
+grammar pattern or quoted grammatical example when the pattern genuinely uses
+that lexical material.
 
 Every primary Dialogue or Narrative starts with a separate short scene
 introduction immediately below its reading heading. That introduction identifies

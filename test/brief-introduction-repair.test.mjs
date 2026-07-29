@@ -153,6 +153,129 @@ Pattern: \`N + verb\`
   }), /Narrative source\/translation sentence count mismatch 3\/2/u);
 });
 
+
+test("shared chapter validation keeps Brief Introduction participant-free in every language", () => {
+  const valid = `---
+chapter: 11
+---
+
+# Chapter 11 -- Test
+
+## Brief Introduction
+
+Use \`N + particle\` to mark the sentence topic.
+
+### Dialogue
+
+Alex Example and Bea Example meet in a classroom.
+
+Alex Example: A learner-facing line.
+Bea Example: Another learner-facing line.
+
+### New Vocabulary
+
+| Form | Meaning | Part of speech | Note |
+|---|---|---|---|
+| example | example | noun | Noun |
+
+### Grammar
+
+Use \`N + particle\` in the taught pattern.
+
+### Simple Exercises
+
+1. Read the complete dialogue.
+2. Find the chapter pattern.
+3. Match the vocabulary.
+4. Write one new sentence.
+`;
+  const chapterParticipants = {
+    primaryReadingParticipants: [
+      { participantId: "CAST-001", kind: "dialogue-speaker", label: "Alex Example" },
+      { participantId: "CAST-002", kind: "dialogue-speaker", label: "Bea Example" }
+    ],
+    introductionParticipants: [
+      { participantId: "CAST-001", label: "Alex Example" },
+      { participantId: "CAST-002", label: "Bea Example" }
+    ]
+  };
+
+  assert.doesNotThrow(() => assertCanonicalSectionAndGrammarRules({
+    markdown: valid,
+    source: "participant-free-fixture/chapter.md",
+    chapterParticipants
+  }));
+  assert.throws(() => assertCanonicalSectionAndGrammarRules({
+    markdown: valid.replace("Use `N + particle`", "Alex Example uses `N + particle`"),
+    source: "participant-name-fixture/chapter.md",
+    chapterParticipants
+  }), /names chapter participant.*Alex Example/u);
+  assert.throws(() => assertCanonicalSectionAndGrammarRules({
+    markdown: valid.replace("Use `N + particle`", "김민지 (Minji) uses `N + particle`"),
+    source: "bilingual-name-gloss-fixture/chapter.md",
+    chapterParticipants: {
+      primaryReadingParticipants: [{ participantId: "CAST-001", kind: "dialogue-speaker", label: "김민지" }],
+      introductionParticipants: [{ participantId: "CAST-001", label: "김민지" }]
+    }
+  }), /bilingual parenthetical person-name gloss/u);
+  assert.doesNotThrow(() => assertCanonicalSectionAndGrammarRules({
+    markdown: valid.replace("Use `N + particle`", "Use [[grammar:Alex Example + particle]] as the grammar pattern"),
+    source: "grammar-markup-name-fixture/chapter.md",
+    chapterParticipants
+  }));
+});
+
+test("shared Chapters 1-25 validation requires the canonical four-item Simple Exercises section", () => {
+  const valid = `---
+chapter: 12
+---
+
+# Chapter 12 -- Test
+
+## Brief Introduction
+
+Use \`N + verb\` to form a simple clause.
+
+### Narrative
+
+A short scene setup.
+
+문장이 있어요.
+
+### New Vocabulary
+
+| Form | Meaning | Part of speech | Note |
+|---|---|---|---|
+| 문장 | sentence | noun | Noun |
+
+### Grammar
+
+Use \`N + verb\` in a simple clause.
+
+### Simple Exercises
+
+1. Read the complete narrative.
+2. Find the chapter pattern.
+3. Match the vocabulary.
+4. Write one new sentence.
+`;
+  assert.doesNotThrow(() => assertCanonicalSectionAndGrammarRules({ markdown: valid, source: "exercise-fixture/chapter.md" }));
+  assert.throws(
+    () => assertCanonicalSectionAndGrammarRules({
+      markdown: valid.replace(/\n### Simple Exercises[\s\S]*$/u, "\n"),
+      source: "missing-exercises-fixture/chapter.md"
+    }),
+    /require an exact .*Simple Exercises section/u
+  );
+  assert.throws(
+    () => assertCanonicalSectionAndGrammarRules({
+      markdown: valid.replace("4. Write one new sentence.\n", ""),
+      source: "short-exercises-fixture/chapter.md"
+    }),
+    /exactly four consecutively numbered items/u
+  );
+});
+
 test("grammar punctuation inside inline semantic markup does not create false sentence boundaries", async () => {
   const source = "units/korean-core/chapter-015-planning-tomorrow/chapter.md";
   const markdown = await readFile(join(workspace, "korean-curriculum", source), "utf8");

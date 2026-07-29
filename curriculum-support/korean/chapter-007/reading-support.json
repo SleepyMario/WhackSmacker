@@ -15,7 +15,7 @@
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "Follow Minji’s short item requests until the clerk gives the total price.",
+      "normal": "Follow Sujin’s short item requests until the clerk gives the total price.",
       "expert": "The dialogue uses bare noun phrases before `주세요`, a conventional service-request pattern in which the object particle is omitted."
     }
   ],

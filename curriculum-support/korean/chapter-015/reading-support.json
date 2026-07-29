@@ -9,8 +9,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + (으)ㄹ까요?]] to suggest an action and ask for agreement. Use [[grammar:-ㄹ까요?]] after a vowel or [[grammar:ㄹ]], and [[grammar:-을까요?]] after another final consonant.",
-      "expert": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + (으)ㄹ까요?]] in this chapter. `-(으)ㄹ까요?` is an interrogative proposal ending. In this block it invites the addressee to agree to a shared future action; the allomorph follows the usual vowel/`ㄹ` versus other-consonant split."
+      "normal": "Use [[grammar:verb stem + (으)ㄹ까요?]] to suggest a shared action and ask for agreement. Use [[grammar:-ㄹ까요?]] after a vowel or [[grammar:ㄹ]], and [[grammar:-을까요?]] after another final consonant.",
+      "expert": "[[grammar:-(으)ㄹ까요?]] is an interrogative proposal ending that invites agreement on a shared future action. The allomorph follows the vowel/`ㄹ` versus other-consonant split."
     },
     {
       "sourceHeading": "Grammar",
@@ -19,8 +19,8 @@
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "김민지 and 이준호 are planning where to meet and what to do tomorrow.",
-      "expert": "The primary dialogue supplies literal evidence for [[grammar:verb stem + (으)ㄹ까요?]] while preserving the chapter’s cumulative Korean vocabulary and participant continuity."
+      "normal": "While planning tomorrow, 김민지, 박서연, and 최도윤 decide where to meet and what to do.",
+      "expert": "The three-speaker dialogue uses proposal questions to negotiate a shared sequence of future activities."
     }
   ],
   "breakdown": {

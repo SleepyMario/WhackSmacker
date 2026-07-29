@@ -1783,19 +1783,19 @@ test("two-pane renderer matches review deck color for chapter and grammar menu t
   assert.doesNotMatch(stripped, /\|\s*(?:\.\.\.|…)\s+\|/u);
 });
 
-test("Vietnamese numbered chapter labels use exact dynamic Ch N -- topic formatting", () => {
+test("ordinary chapter labels and yellow chapter-token coloring are canonical across all languages", () => {
   const chapters = [
-    { number: 1, label: "Chapter 1 — A Polite First Meeting" },
-    { number: 10, label: "Chapter 10: Places" },
-    { number: 123, label: "Chapter 123 - Future Topic" }
+    { number: 1, label: "Chapter 1 — A Polite First Meeting", slug: "korean" },
+    { number: 10, label: "Chapter 10: Places", slug: "french" },
+    { number: 123, label: "Chapter 123 - Future Topic", slug: "zulu" }
   ];
   const tree = {
     id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
       id: "read-content", label: "Read content", kind: "read-section",
-      children: chapters.map(({ number, label }) => ({
-        id: `vi-${number}`, label, kind: "content",
-        packageId: "com.sleepymario.language.vietnamese",
-        filePath: `units/vietnamese-core/chapter-${String(number).padStart(3, "0")}-topic/chapter.md`
+      children: chapters.map(({ number, label, slug }) => ({
+        id: `${slug}-${number}`, label, kind: "content",
+        packageId: `com.sleepymario.language.${slug}`,
+        filePath: `units/${slug}-core/chapter-${String(number).padStart(3, "0")}-topic/chapter.md`
       }))
     }]
   };

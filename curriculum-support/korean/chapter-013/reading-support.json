@@ -9,8 +9,8 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + 고 싶어요]] to say what they want to do. Attach [[grammar:-고 싶어요]] to an action-verb stem and keep the desired object before that verb.",
-      "expert": "김민지 (Minji) and 이준호 (Junho) use [[grammar:verb stem + 고 싶어요]] in this chapter. `-고 싶다` is a desiderative construction attached to an action-verb stem. In ordinary first-person statements and second-person questions, the experiencer is interpreted from discourse context."
+      "normal": "Use [[grammar:verb stem + 고 싶어요]] to say or ask what someone wants to do. Attach [[grammar:-고 싶어요]] to an action-verb stem and place the desired object before the verb.",
+      "expert": "[[grammar:-고 싶다]] is a desiderative construction attached to an action-verb stem. First-person statements and second-person questions identify the experiencer through discourse context."
     },
     {
       "sourceHeading": "Grammar",
@@ -19,8 +19,8 @@
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "김민지 and 이준호 are choosing dinner, drinks, and dessert.",
-      "expert": "The primary dialogue supplies literal evidence for [[grammar:verb stem + 고 싶어요]] while preserving the chapter’s cumulative Korean vocabulary and participant continuity."
+      "normal": "While choosing dinner, 박서연 and 최도윤 discuss food, drinks, and dessert.",
+      "expert": "The dialogue alternates second-person questions and first-person statements with the desiderative construction."
     }
   ],
   "breakdown": {

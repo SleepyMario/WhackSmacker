@@ -1039,11 +1039,13 @@ function assertChangedSectionAndGrammarContent(
     const directory = dirname(chapterPath);
     const supportFile = filesByPath.get(`${directory}/reading-support.json`);
     const translationFile = filesByPath.get(`${directory}/reading-translation.en.json`);
+    const participantFile = filesByPath.get(`${directory}/chapter-participants.json`);
     assertCanonicalSectionAndGrammarRules({
       markdown: chapter.text,
       source: chapterPath,
       ...(supportFile === undefined ? {} : { readingSupport: JSON.parse(supportFile.text) as unknown }),
-      ...(translationFile === undefined ? {} : { readingTranslation: JSON.parse(translationFile.text) as unknown })
+      ...(translationFile === undefined ? {} : { readingTranslation: JSON.parse(translationFile.text) as unknown }),
+      ...(participantFile === undefined ? {} : { chapterParticipants: JSON.parse(participantFile.text) as unknown })
     });
   }
   for (const file of sourceFiles.filter((candidate) => /grammar-(?:easy|hard)\/chapter\.md$/u.test(candidate.path) && sourceChanges.has(candidate.path))) {

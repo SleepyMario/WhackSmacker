@@ -15,19 +15,19 @@
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Follow Minji’s observations of the new classroom before she begins reading.",
-      "expert": "The descriptive predicates form complete clauses without a copula, and the final action locates Minji in the same classroom."
+      "normal": "Follow Seoyeon’s observations of the new classroom before she begins reading.",
+      "expert": "The descriptive predicates form complete clauses without a copula, and the final action locates Seoyeon in the same classroom."
     }
   ],
   "breakdown": {
-    "normal": "- 오늘 민지는 학교에 있어요. — Today, Minji is at school.\n- 교실이 새로워요. — The classroom is new.\n- 교실이 커요. — The classroom is big.\n- 교실이 밝아요. — The classroom is bright.\n- 창문 옆 책상이 길어요. — The desk beside the window is long.\n- 아침에는 교실이 조용해요. — In the morning, the classroom is quiet.\n- 민지는 오늘 바빠요. — Minji is busy today.\n- 민지는 교실에서 책을 읽어요. — Minji reads a book in the classroom.",
-    "expert": "- 오늘 민지는 학교에 있어요. — Natural translation: Today, Minji is at school.\n- 교실이 새로워요. — Natural translation: The classroom is new.\n- 교실이 커요. — Natural translation: The classroom is big.\n- 교실이 밝아요. — Natural translation: The classroom is bright.\n- 창문 옆 책상이 길어요. — Natural translation: The desk beside the window is long.\n- 아침에는 교실이 조용해요. — Natural translation: In the morning, the classroom is quiet.\n- 민지는 오늘 바빠요. — Natural translation: Minji is busy today.\n- 민지는 교실에서 책을 읽어요. — Natural translation: Minji reads a book in the classroom."
+    "normal": "- 오늘 서연은 학교에 있어요. — Today, Seoyeon is at school.\n- 교실이 새로워요. — The classroom is new.\n- 교실이 커요. — The classroom is big.\n- 교실이 밝아요. — The classroom is bright.\n- 창문 옆 책상이 길어요. — The desk beside the window is long.\n- 아침에는 교실이 조용해요. — In the morning, the classroom is quiet.\n- 서연은 오늘 바빠요. — Seoyeon is busy today.\n- 서연은 교실에서 책을 읽어요. — Seoyeon reads a book in the classroom.",
+    "expert": "- 오늘 서연은 학교에 있어요. — Natural translation: Today, Seoyeon is at school.\n- 교실이 새로워요. — Natural translation: The classroom is new.\n- 교실이 커요. — Natural translation: The classroom is big.\n- 교실이 밝아요. — Natural translation: The classroom is bright.\n- 창문 옆 책상이 길어요. — Natural translation: The desk beside the window is long.\n- 아침에는 교실이 조용해요. — Natural translation: In the morning, the classroom is quiet.\n- 서연은 오늘 바빠요. — Natural translation: Seoyeon is busy today.\n- 서연은 교실에서 책을 읽어요. — Natural translation: Seoyeon reads a book in the classroom."
   },
   "readingItems": [
     {
       "surface": "학교",
       "reading": "학교",
-      "evidence": "오늘 민지는 학교에 있어요.",
+      "evidence": "오늘 서연은 학교에 있어요.",
       "lexicalEntryId": "ko.noun.hakgyo",
       "senseId": "ko.noun.hakgyo.school"
     },
@@ -69,7 +69,7 @@
     {
       "surface": "바쁘다",
       "reading": "바쁘다",
-      "evidence": "민지는 오늘 바빠요.",
+      "evidence": "서연은 오늘 바빠요.",
       "lexicalEntryId": "ko.descriptive-verb.bappeuda",
       "senseId": "ko.descriptive-verb.bappeuda.busy"
     },

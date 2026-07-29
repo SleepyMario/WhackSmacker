@@ -28,7 +28,30 @@ test("more than one third passes and less than one third fails only when complet
 });
 
 test("distinct person-chapter counting ignores duplicate lines and non-meaningful fields", () => {
-  const chapters = Array.from({ length: 40 }, (_, index) => ({ chapter: index + 1, authorship: "new", migrationStatus: "compliant", meaningfulPersonIds: index < 5 ? ids.slice(0, 5) : index >= 20 && index < 25 ? [ids[0], ids[0], ids[1], ids[5], ids[5], ids[6], ids[7]] : [], participatingPersonIds: ids.slice(0, index < 20 ? 5 : 8), reviewPersonIds: [], functionalParticipants: [] }));
+  const firstBlockSets = [
+    [ids[0], ids[1], ids[2], ids[3]],
+    [ids[0], ids[1], ids[2], ids[4]],
+    [ids[0], ids[1], ids[3], ids[4]],
+    [ids[0], ids[2], ids[3], ids[4]],
+    [ids[1], ids[2], ids[3], ids[4]],
+    ids.slice(0, 5)
+  ];
+  const secondBlockSets = [
+    [ids[0], ids[0], ids[1], ids[5], ids[5], ids[6], ids[7]],
+    [ids[0], ids[2], ids[5], ids[6], ids[7]],
+    [ids[0], ids[3], ids[5], ids[6], ids[7]],
+    [ids[0], ids[4], ids[5], ids[6], ids[7]],
+    [ids[1], ids[2], ids[5], ids[6], ids[7]]
+  ];
+  const chapters = Array.from({ length: 40 }, (_, index) => ({
+    chapter: index + 1,
+    authorship: "new",
+    migrationStatus: "compliant",
+    meaningfulPersonIds: firstBlockSets[index] ?? secondBlockSets[index - 20] ?? [],
+    participatingPersonIds: ids.slice(0, index < 20 ? 5 : 8),
+    reviewPersonIds: [],
+    functionalParticipants: []
+  }));
   const audit = auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters });
   assert.equal(audit.blocks[1].oldCastAppearanceCount, 10);
   assert.equal(audit.blocks[1].newCastAppearanceCount, 15);
@@ -36,9 +59,24 @@ test("distinct person-chapter counting ignores duplicate lines and non-meaningfu
 });
 
 test("old-cast ratio and five-chapter activation minimum fail independently", () => {
-  const first = Array.from({ length: 20 }, (_, index) => ({ chapter: index + 1, authorship: "new", migrationStatus: "compliant", meaningfulPersonIds: index < 5 ? ids.slice(0, 5) : [] }));
-  const second = Array.from({ length: 20 }, (_, index) => ({ chapter: index + 21, authorship: "new", migrationStatus: "compliant", meaningfulPersonIds: index < 5 ? [ids[0], ids[1], ids[2], ids[3], ids[4], ids[5], ids[6]] : [] }));
-  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [...first, ...second] }), new RegExp(`${ids[7]}.*0 distinct.*5 required`, "u"));
+  const firstSets = [
+    [ids[0], ids[1], ids[2], ids[3]],
+    [ids[0], ids[1], ids[2], ids[4]],
+    [ids[0], ids[1], ids[3], ids[4]],
+    [ids[0], ids[2], ids[3], ids[4]],
+    [ids[1], ids[2], ids[3], ids[4]],
+    ids.slice(0, 5)
+  ];
+  const secondSets = [
+    [ids[0], ids[1], ids[5], ids[6], ids[7]],
+    [ids[0], ids[2], ids[5], ids[6]],
+    [ids[0], ids[3], ids[5], ids[6]],
+    [ids[0], ids[4], ids[5], ids[6]],
+    [ids[1], ids[2], ids[5], ids[6]]
+  ];
+  const first = Array.from({ length: 20 }, (_, index) => ({ chapter: index + 1, authorship: "new", migrationStatus: "compliant", meaningfulPersonIds: firstSets[index] ?? [] }));
+  const second = Array.from({ length: 20 }, (_, index) => ({ chapter: index + 21, authorship: "new", migrationStatus: "compliant", meaningfulPersonIds: secondSets[index] ?? [] }));
+  assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [...first, ...second] }), new RegExp(`${ids[7]}.*1 distinct.*5 required`, "u"));
 });
 
 test("the ratio remains active at 181-200 and is absent before activation and after Chapter 200", () => {

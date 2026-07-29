@@ -10,17 +10,17 @@
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### indefinite articles in the accusative\n\nUse `einen` with a masculine direct object, `eine` with a feminine direct object, and `ein` with a neuter direct object. Compare `einen Apfel`, `eine Banane`, and `ein Brot`.\n\nExample: [[grammar:Jonas kauft einen Apfel]]\n\nWatch out: Do not use `ein Apfel` after a transitive verb such as `kaufen`; the masculine direct object needs `einen`.",
-      "expert": "#### indefinite articles in the accusative\n\nThe indefinite article marks accusative case overtly only in the masculine singular: nominative `ein` becomes accusative `einen`. Feminine `eine` and neuter `ein` are syncretic between nominative and accusative.\n\nExample: [[grammar:Jonas kauft einen Apfel]]"
+      "normal": "#### indefinite articles in the accusative\n\nUse `einen` with a masculine direct object, `eine` with a feminine direct object, and `ein` with a neuter direct object. Compare `einen Apfel`, `eine Banane`, and `ein Brot`.\n\nExample: [[grammar:Hannah kauft einen Apfel]]\n\nWatch out: Do not use `ein Apfel` after a transitive verb such as `kaufen`; the masculine direct object needs `einen`.",
+      "expert": "#### indefinite articles in the accusative\n\nThe indefinite article marks accusative case overtly only in the masculine singular: nominative `ein` becomes accusative `einen`. Feminine `eine` and neuter `ein` are syncretic between nominative and accusative.\n\nExample: [[grammar:Hannah kauft einen Apfel]]"
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Follow Jonas and Mia as they choose the food, put it in one bag, and take it to the park.",
+      "normal": "Follow Hannah as she chooses the food, puts it in one bag, and takes it to the park.",
       "expert": "The narrative maintains one shopping event while contrasting accusative article forms across masculine, feminine, and neuter objects."
     }
   ],
   "breakdown": {
-    "normal": "- Jonas kauft einen Apfel. — Jonas buys an apple.\n- Mia kauft eine Banane. — Mia buys a banana.\n- Dann nimmt Jonas ein Brot. — Then Jonas takes a loaf of bread.\n- Mia braucht Saft. — Mia needs juice.\n- Sie nimmt eine Flasche Saft. — She takes a bottle of juice.\n- Jonas trägt einen Beutel. — Jonas carries a small bag.\n- Der Apfel, die Banane und das Brot sind im Beutel. — The apple, the banana, and the bread are in the bag.\n- Danach gehen Jonas und Mia zusammen in den Park. — After that, Jonas and Mia go to the park together.",
-    "expert": "- Jonas kauft einen Apfel. — Natural translation: Jonas buys an apple.\n- Mia kauft eine Banane. — Natural translation: Mia buys a banana.\n- Dann nimmt Jonas ein Brot. — Natural translation: Then Jonas takes a loaf of bread.\n- Mia braucht Saft. — Natural translation: Mia needs juice.\n- Sie nimmt eine Flasche Saft. — Natural translation: She takes a bottle of juice.\n- Jonas trägt einen Beutel. — Natural translation: Jonas carries a small bag.\n- Der Apfel, die Banane und das Brot sind im Beutel. — Natural translation: The apple, the banana, and the bread are in the bag.\n- Danach gehen Jonas und Mia zusammen in den Park. — Natural translation: After that, Jonas and Mia go to the park together."
+    "normal": "- Hannah kauft einen Apfel. — Hannah buys an apple.\n- Sie kauft eine Banane. — She buys a banana.\n- Dann nimmt Hannah ein Brot. — Then Hannah takes a loaf of bread.\n- Sie braucht Saft. — She needs juice.\n- Sie nimmt eine Flasche Saft. — She takes a bottle of juice.\n- Hannah trägt einen Beutel. — Hannah carries a small bag.\n- Der Apfel, die Banane und das Brot sind im Beutel. — The apple, the banana, and the bread are in the bag.\n- Danach geht Hannah in den Park. — After that, Hannah goes to the park.",
+    "expert": "- Hannah kauft einen Apfel. — Natural translation: Hannah buys an apple.\n- Sie kauft eine Banane. — Natural translation: She buys a banana.\n- Dann nimmt Hannah ein Brot. — Natural translation: Then Hannah takes a loaf of bread.\n- Sie braucht Saft. — Natural translation: She needs juice.\n- Sie nimmt eine Flasche Saft. — Natural translation: She takes a bottle of juice.\n- Hannah trägt einen Beutel. — Natural translation: Hannah carries a small bag.\n- Der Apfel, die Banane und das Brot sind im Beutel. — Natural translation: The apple, the banana, and the bread are in the bag.\n- Danach geht Hannah in den Park. — Natural translation: After that, Hannah goes to the park."
   }
 }
