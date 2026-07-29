@@ -40,7 +40,7 @@ The source-language selector works in the public, unauthenticated frontend. In t
 
 ## Compose and backups
 
-`compose.production.yaml` defines PostgreSQL without a host-published port, a one-shot migration service, and the application on a configurable ZeroTier or loopback bind. Copy `.env.production.example` to a protected file and create `secrets/postgres_password`. The image reference is configurable; the example does not claim that an image has already been published.
+`compose.production.yaml` defines PostgreSQL without a host-published port, a one-shot migration service, and the application on a configurable ZeroTier or loopback bind. `compose.split.production.yaml` is the repository-owned equivalent for the split core/curricula production topology. Copy `.env.production.example` to a protected file and create `secrets/postgres_password`. Both production files default to the maintained Docker Hub versioned release, preserve the `WHACKSMACKER_IMAGE` override, and never follow the automated `latest` snapshot.
 
 Run `scripts/postgres-backup.sh` with `DATABASE_URL` and optionally `BACKUP_DIR`. It writes an atomic, mode-0600 custom-format dump and retains seven daily and four Sunday weekly dumps. Test a dump only against a separate empty database:
 

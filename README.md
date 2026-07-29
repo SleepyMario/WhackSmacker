@@ -11,12 +11,38 @@ Review packages declare `core-review`; reading packages declare
 either a runtime dependency of the other. Legacy manifests without a
 capability retain explicit combined-package compatibility.
 
-The public `sleepiestmario/whacksmacker` image bundles only the runtime and
+The public `docker.io/sleepiestmario/whacksmacker` image bundles only the runtime and
 core review feed. The private `sleepiestmario/whacksmacker-curricula` init image
 synchronizes reading packages into `/curricula/managed` on the dedicated
 `reading-curricula` volume. Mutable application state stays in `/data` on the
 separate `application-data` volume. The application mounts curricula read-only
 and starts after the init container completes. See `compose.split.local.yaml`.
+
+## Docker publication lanes
+
+Docker Hub is the sole registry for the public core image, under
+`docker.io/sleepiestmario/whacksmacker`. The two publication lanes are separate:
+
+- `scripts/operations/whacksmacker-docker-daily.sh` is the automated snapshot
+  builder and publishes only `docker.io/sleepiestmario/whacksmacker:latest`.
+- `scripts/operations/whacksmacker-docker-release.sh RELEASE_TAG` is a manual,
+  explicitly authorized release action. It requires a semantic version tag,
+  validates and smokes the image before pushing, verifies the remote digest,
+  clean-pulls it without Docker credentials, and performs a second isolated
+  smoke. It does not create Git tags, GitHub releases, or deployments.
+
+Production Compose defaults to the maintained versioned release
+`docker.io/sleepiestmario/whacksmacker:0.1.0-alpha.3` and continues to support
+the `WHACKSMACKER_IMAGE` override. Production never follows `latest`.
+
+The workstation scheduler installs
+`scripts/operations/whacksmacker-docker-vm-daily.sh` at
+`/usr/local/sbin/whacksmacker-docker-vm-daily.sh`; the validation VM installs
+the daily builder at `/home/ashwin/bin/whacksmacker-docker-daily.sh`. The
+current core image is built entirely from this repository, including its core
+Review feed, so the scheduler synchronizes only `whacksmacker`. Replacing the
+wider curriculum repository topology with a centralized, versioned content or
+package source remains later architectural work.
 
 WhackSmacker is a modular learning and utility application. The current command-line application uses native downloadable content packages, native memorization items, native review progress, and terminal review commands.
 

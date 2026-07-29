@@ -6,7 +6,7 @@ services:
     restart: "no"
 
   app:
-    image: sleepiestmario/whacksmacker:local
+    image: docker.io/sleepiestmario/whacksmacker:local
     command: ["web", "--host", "0.0.0.0", "--port", "8787", "--data-dir", "/data", "--catalogue", "/curricula/managed/catalogue.json"]
     depends_on:
       curricula:
