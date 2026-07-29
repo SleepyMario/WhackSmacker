@@ -922,7 +922,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   let tree = await buildModuleTree(options);
   let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
-  let selectedReviewStartId: string | null = null;
   let embeddedReview: EmbeddedReviewSession | null = null;
   let pendingUninstall: PendingUninstallSession | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
@@ -961,12 +960,10 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           expandedIds = refreshed.expandedIds;
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
-          selectedReviewStartId = refreshedNode?.kind === "review-source" ? refreshedNode.id : null;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, true, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
+            ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
             : await renderLanguageTreeRightPane(refreshedNode ?? tree, options);
         } else {
-          selectedReviewStartId = null;
           rightPaneText = await renderLanguageTreeRightPane(selected?.node ?? tree, options);
         }
         rightPaneOffset = 0;
@@ -1009,7 +1006,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         rightPaneText = refreshedNode?.id === reviewNodeId && refreshedNode.kind === "review-source"
           ? renderEmbeddedReviewStopped(refreshedNode)
           : "Review stopped.\n\nProgress for cards already rated has been saved.";
-        selectedReviewStartId = null;
         rightPaneOffset = 0;
         continue;
       }
@@ -1079,7 +1075,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           embeddedReview = await reprojectEmbeddedReviewSession(embeddedReview, options);
         } else {
           embeddedReview = null;
-          selectedReviewStartId = null;
         }
         pendingUninstall = null;
         const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
@@ -1098,7 +1093,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       embeddedReview = null;
       pendingUninstall = null;
       selection = wrapSelection(selection - 1, visible.length);
-      selectedReviewStartId = null;
       rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
       rightPaneOffset = 0;
       continue;
@@ -1108,7 +1102,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       embeddedReview = null;
       pendingUninstall = null;
       selection = wrapSelection(selection + 1, visible.length);
-      selectedReviewStartId = null;
       rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
       rightPaneOffset = 0;
       continue;
@@ -1143,7 +1136,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         rightPaneText = result;
         rightPaneOffset = 0;
         pendingUninstall = null;
-        selectedReviewStartId = null;
         embeddedReview = null;
         continue;
       }
@@ -1155,7 +1147,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         rightPaneText = result;
         rightPaneOffset = 0;
         pendingUninstall = null;
-        selectedReviewStartId = null;
         embeddedReview = null;
         continue;
       }
@@ -1175,12 +1166,10 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
+            ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
             : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-          selectedReviewStartId = null;
         } else {
           rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-          selectedReviewStartId = selected.node.id;
         }
         rightPaneOffset = 0;
         continue;
@@ -1197,7 +1186,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       }
       pendingUninstall = { nodeId: uninstallNode.id, node: uninstallNode };
       embeddedReview = null;
-      selectedReviewStartId = null;
       rightPaneText = renderUninstallConfirmation(uninstallNode, terminal.colorsEnabled, options.locale);
       rightPaneOffset = 0;
       continue;
@@ -1221,11 +1209,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           selection = refreshed.selection;
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
+            ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
             : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-          selectedReviewStartId = null;
         } else {
-          selectedReviewStartId = selected.node.id;
           rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
         }
         rightPaneOffset = 0;
@@ -1241,7 +1227,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       }
       rightPaneText = result;
       rightPaneOffset = 0;
-      selectedReviewStartId = null;
       embeddedReview = null;
       pendingUninstall = null;
       continue;
@@ -1256,48 +1241,22 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       continue;
     }
     if (selected.node.kind === "review-source") {
-      if (embeddedReview !== null && embeddedReview.nodeId === selected.node.id) {
-        embeddedReview = await advanceEmbeddedReviewSession(embeddedReview, key, options);
-        if (embeddedReview.side === "complete") {
-          const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
-          tree = refreshed.tree;
-          expandedIds = refreshed.expandedIds;
-          selection = refreshed.selection;
-          const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
-          rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-          selectedReviewStartId = null;
-        } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-          selectedReviewStartId = selected.node.id;
-        }
-        rightPaneOffset = 0;
-      } else if (selectedReviewStartId === selected.node.id) {
-        embeddedReview = await startEmbeddedReviewSession(selected.node, options);
-        if (embeddedReview.side === "complete") {
-          const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
-          tree = refreshed.tree;
-          expandedIds = refreshed.expandedIds;
-          selection = refreshed.selection;
-          const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
-          rightPaneText = refreshedNode?.kind === "review-source"
-            ? renderReviewDeckPreview(refreshedNode, false, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-          selectedReviewStartId = null;
-        } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-          selectedReviewStartId = selected.node.id;
-        }
-        rightPaneOffset = 0;
+      embeddedReview = await startEmbeddedReviewSession(selected.node, options);
+      if (embeddedReview.side === "complete") {
+        const refreshed = await refreshTreeSelection(tree, expandedIds, selection, options);
+        tree = refreshed.tree;
+        expandedIds = refreshed.expandedIds;
+        selection = refreshed.selection;
+        const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
+        rightPaneText = refreshedNode?.kind === "review-source"
+          ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
+          : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
       } else {
-        selectedReviewStartId = selected.node.id;
-        rightPaneText = renderReviewDeckPreview(selected.node, true, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-        rightPaneOffset = 0;
+        rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
       }
+      rightPaneOffset = 0;
       continue;
     }
-    selectedReviewStartId = null;
     embeddedReview = null;
     pendingUninstall = null;
     if (selected.node.kind === "uninstall") {
@@ -2300,7 +2259,7 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     ].join("\n");
   }
   if (node.kind === "review-source") {
-    return renderReviewDeckPreview(node, false, locale, options.displayMode ?? defaultCurriculumDisplayMode);
+    return renderReviewDeckPreview(node, locale, options.displayMode ?? defaultCurriculumDisplayMode);
   }
   if (node.kind === "read-section") {
     return `${translate(locale, "menu.readContent")}\n\n${translate(locale, "pane.readContentHelp")}`;
@@ -2607,14 +2566,14 @@ async function runModuleTreeCommandAction(
   return showPagedMessage(terminal, renderLanguageActionResult(node.launchTitle ?? node.label, output));
 }
 
-function renderReviewDeckPreview(node: LanguageTreeNode, armed: boolean, locale: SourceLocale = "en-US", displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
+function renderReviewDeckPreview(node: LanguageTreeNode, locale: SourceLocale = "en-US", displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
   const normal = [
     `${translate(locale, "menu.reviewDeck")}: ${node.label}`,
     translate(locale, "review.package", { name: node.packageLabel ?? node.packageId ?? "unknown" }),
     node.itemCount === undefined ? "" : translate(locale, "review.items", { count: node.itemCount }),
     node.reviewStatusText ?? "",
     "",
-    translate(locale, armed ? "review.previewArmed" : "review.previewSelect")
+    translate(locale, "review.previewSelect")
   ].filter((line) => line.length > 0).join("\n");
   if (displayMode === "normal") return normal;
   return [normal, "", "Developer metadata", `Package ID: ${node.packageId ?? "unknown"}`, `Package version: ${node.packageVersion ?? "latest installed"}`, `Source path: ${node.sourcePath ?? "unknown"}`, `Internal item count: ${node.itemCount ?? "unknown"}`].join("\n");

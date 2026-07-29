@@ -58,6 +58,8 @@ Run a source/deck review session:
 whacksmacker review run --package <package-id> --source <path> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
 ```
 
+In the interactive menu, expand an installed language curriculum and its Review section. When a Review-source row is focused, one Enter press starts that source in the output pane. The activation key is consumed by the menu, so the first answer remains hidden; the next Enter or Space reveals it. Keys 1 through 4 rate the revealed card, and `q` leaves Review without rating the current card.
+
 After a source is completed, WhackSmacker checks the ordered review sources for the same package. If another source exists, it prompts:
 
 ```text

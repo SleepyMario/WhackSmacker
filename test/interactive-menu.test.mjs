@@ -2353,7 +2353,6 @@ test("selecting an installed review source runs review inside the right pane", a
     key("down"),
     key("return"),
     key("return"),
-    key("return"),
     key("3", { sequence: "3" }),
     key("q", { sequence: "q" }),
     key("q", { sequence: "q" })
@@ -2403,7 +2402,6 @@ test("changing Source reprojects the active Dutch review card without resetting 
     key("down"),
     key("return"),
     key("down"),
-    key("return"),
     key("return"),
     key("return"),
     key("right"),
@@ -2905,6 +2903,128 @@ test("review section can be expanded without starting review", async () => {
     assert.deepEqual(calls, []);
     assert.match(terminal.output, /Review decks/);
     assert.match(terminal.output, /Chapter 1-5/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("one Enter starts an unrevealed installed Review and the next Space reveals without duplicate progress", async () => {
+  const fixture = await createInstalledDutchFixture();
+  const terminal = new FakeTerminal([
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("q", { sequence: "q" }),
+    key("q", { sequence: "q" })
+  ], { colorsEnabled: false });
+
+  try {
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+
+    const screens = terminal.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi);
+    const started = screens.filter((screen) => screen.includes("Review: Dutch / Chapter 1-5") && screen.includes("Enter/Space Reveal Answer"));
+    const progress = await loadDutchReviewProgress(fixture.dataDir);
+    const identities = progress.items.map((item) => `${item.packageId}\0${item.packageVersion}\0${item.itemId}`);
+
+    assert.equal(started.length, 1, "the activation Enter creates exactly one embedded Review session");
+    assert.match(started[0] ?? "", /Phrase:/u);
+    assert.match(started[0] ?? "", /Answer: Answer hidden until reveal\./u, "the activation Enter is consumed before answer reveal");
+    assert.doesNotMatch(started[0] ?? "", /1 Again/u, "the activation Enter does not advance to rating controls");
+    assert.equal(progress.items.length > 0, true, "starting Review initializes progress exactly once");
+    assert.equal(new Set(identities).size, identities.length, "starting Review creates no duplicate progress state");
+    assert.equal(progress.events.length, 0, "quitting before rating records no progress event");
+
+    const revealWithSpace = new FakeTerminal([
+      key("down"),
+      key("return"),
+      key("down"),
+      key("return"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("down"),
+      key("return"),
+      key("space", { sequence: " " }),
+      key("q", { sequence: "q" }),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false });
+    await runInteractiveMenu(createStubRegistry([]), revealWithSpace, { dataDir: fixture.dataDir });
+
+    const revealedScreens = revealWithSpace.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi)
+      .filter((screen) => screen.includes("Review: Dutch / Chapter 1-5") && screen.includes("1 Again"));
+    const progressAfterRestart = await loadDutchReviewProgress(fixture.dataDir);
+    assert.equal(revealedScreens.length, 1, "Space reveals normally after one-keypress activation with existing progress");
+    assert.match(revealedScreens[0] ?? "", /Answer:/u);
+    assert.doesNotMatch(revealedScreens[0] ?? "", /Answer hidden until reveal/u);
+    assert.equal(progressAfterRestart.items.length, progress.items.length, "restarting Review does not duplicate progress initialization");
+    assert.equal(progressAfterRestart.events.length, 0, "revealing and quitting before rating records no event");
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("one Enter starts Japanese structured and Korean installed Review sources", async () => {
+  for (const definition of [
+    { targetId: "japanese-curriculum", packageId: "com.sleepymario.language.japanese", label: "Japanese" },
+    { targetId: "korean-curriculum", packageId: "com.sleepymario.language.korean", label: "Korean" }
+  ]) {
+    const fixture = await createInstalledLanguageFixture([definition.targetId], [definition.packageId]);
+    const terminal = new FakeTerminal([
+      ...focusFirstOrdinaryReviewSourceKeys(),
+      key("return"),
+      key("q", { sequence: "q" }),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false });
+    try {
+      await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+      const started = terminal.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi)
+        .filter((screen) => screen.includes(`Review: ${definition.label} / Chapter 1-5`) && screen.includes("Enter/Space Reveal Answer"));
+      const progress = await loadDutchReviewProgress(fixture.dataDir);
+      assert.equal(started.length, 1, `${definition.label} starts from one activation Enter`);
+      assert.match(started[0] ?? "", /Answer: Answer hidden until reveal\./u);
+      assert.equal(progress.items.some((item) => item.packageId === definition.packageId), true);
+      assert.equal(progress.events.length, 0);
+    } finally {
+      await fixture.cleanup();
+    }
+  }
+});
+
+test("one Enter starts an installed specialized Medical Review source", async () => {
+  const packageId = "com.sleepymario.language.dutch.specialized.medical-1";
+  const fixture = await createInstalledLanguageFixture(
+    ["dutch-curriculum", "dutch-specialized-medical-1"],
+    ["com.sleepymario.language.dutch", packageId]
+  );
+  const terminal = new FakeTerminal([
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("down"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("q", { sequence: "q" }),
+    key("q", { sequence: "q" })
+  ], { colorsEnabled: false });
+  try {
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+    const started = terminal.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi)
+      .filter((screen) => screen.includes("/ Medical I") && screen.includes("Enter/Space Reveal Answer"));
+    const progress = await loadDutchReviewProgress(fixture.dataDir);
+    assert.equal(started.length, 1);
+    assert.match(started[0] ?? "", /Answer: Answer hidden until reveal\./u);
+    assert.equal(progress.items.some((item) => item.packageId === packageId), true);
+    assert.equal(progress.events.length, 0);
   } finally {
     await fixture.cleanup();
   }
@@ -3613,10 +3733,22 @@ function embeddedDutchReviewKeys(ratingKey) {
     key("down"),
     key("return"),
     key("return"),
-    key("return"),
     key(ratingKey, { sequence: ratingKey }),
     key("q", { sequence: "q" }),
     key("q", { sequence: "q" })
+  ];
+}
+
+function focusFirstOrdinaryReviewSourceKeys() {
+  return [
+    key("down"),
+    key("return"),
+    key("down"),
+    key("return"),
+    key("down"),
+    key("down"),
+    key("return"),
+    key("down")
   ];
 }
 
@@ -3874,6 +4006,8 @@ async function createInstalledLanguageFixture(targetIds, packageIds) {
   const cataloguePath = join(root, "catalogue", "catalogue.json");
   const dataDir = join(root, "data", "content");
   const reviewTargetByReadingTarget = new Map([
+    ["japanese-curriculum", "japanese-core-reviews"],
+    ["korean-curriculum", "korean-core-reviews"],
     ["vietnamese-curriculum", "vietnamese-core-reviews"],
     ["dutch-curriculum", "dutch-core-reviews"]
   ]);
