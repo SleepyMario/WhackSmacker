@@ -75,3 +75,14 @@ test("Docker workflows enforce source provenance, clean state, and remote digest
   assert.doesNotMatch(orchestrator, /whacksmacker-site/);
   assert.doesNotMatch(orchestrator, /math-curriculum/);
 });
+
+test("Docker build context supplies both sibling Review sources at legacy generator paths", async () => {
+  const dockerfile = await readFile("Dockerfile", "utf8");
+  const ignore = await readFile("Dockerfile.dockerignore", "utf8");
+  assert.match(dockerfile, /COPY whacksmacker\/ \.\n/);
+  assert.match(dockerfile, /COPY dutch-curriculum\/ \/dutch-curriculum\//);
+  assert.match(dockerfile, /COPY vietnamese-curriculum\/ \/vietnamese-curriculum\//);
+  assert.doesNotMatch(dockerfile, /WHACKSMACKER_PACKAGE_SOURCE_ROOT/);
+  assert.match(ignore, /!dutch-curriculum\/\*\*/);
+  assert.match(ignore, /!vietnamese-curriculum\/\*\*/);
+});
