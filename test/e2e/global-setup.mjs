@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { startWebServer } from "../../dist/apps/web/server.js";
-import { assertDatabaseReady, createDatabasePool, createUser, databaseConfig, migrateDatabase, selectPackage, updateUserSettings } from "../../dist/packages/storage/postgres.js";
+import { assertDatabaseReady, createDatabasePool, createUser, databaseConfig, migrateDatabase, recordUserReview, selectPackage, updateUserSettings } from "../../dist/packages/storage/postgres.js";
 import { canonicalCastFixture, chapterParticipantFixture, dialogueChapterFixture } from "../fixtures/canonical-cast.mjs";
 
 const run = promisify(execFile);
@@ -47,6 +47,7 @@ export default async function globalSetup() {
     await selectPackage(pool, userB.id, alpha, "1.0.0");
     await updateUserSettings(pool, userA.id, "en");
     await updateUserSettings(pool, userB.id, "en");
+    await recordUserReview(pool, userA.id, { packageId: alpha, packageVersion: "1.0.0", sourcePath: "review/cards.tsv", itemId: "stable-browser-card" }, "good", "2026-07-12T00:00:00Z");
 
     fixtureRoot = await mkdtemp(join(tmpdir(), "wsm-playwright-fixtures-"));
     const dataDir = join(fixtureRoot, "content");
@@ -80,11 +81,11 @@ async function createPackages(dataDir) {
     files: [
       file("name-pools/canonical-cast.json", JSON.stringify(canonicalCastFixture()), "application/json"),
       file("units/core/chapter-009-nine/chapter.md", dialogueChapterFixture(9, "Chapter 9 — Foundations", "Base English chapter nine.")),
-      file("units/core/chapter-009-nine/participants.json", JSON.stringify(chapterParticipantFixture(9)), "application/json"),
+      file("units/core/chapter-009-nine/chapter-participants.json", JSON.stringify(chapterParticipantFixture(9)), "application/json"),
       file("units/core/chapter-010-ten/chapter.md", dialogueChapterFixture(10, "Chapter 10 — Safe reading", "Base chapter ten.")),
-      file("units/core/chapter-010-ten/participants.json", JSON.stringify(chapterParticipantFixture(10)), "application/json"),
+      file("units/core/chapter-010-ten/chapter-participants.json", JSON.stringify(chapterParticipantFixture(10)), "application/json"),
       file("units/core/chapter-011-eleven/chapter.md", dialogueChapterFixture(11, "Chapter 11 — Een zeer lange meertalige titel 第十一章 한국어 제목", "Base chapter eleven.")),
-      file("units/core/chapter-011-eleven/participants.json", JSON.stringify(chapterParticipantFixture(11)), "application/json"),
+      file("units/core/chapter-011-eleven/chapter-participants.json", JSON.stringify(chapterParticipantFixture(11)), "application/json"),
       file("units/core/chapter-012-summary/summary.md", "# Summary\n\nNot a chapter."),
       file("teacher-notes/README.md", "# Teacher notes"),
       file("metadata.json", "{}", "application/json"),
@@ -97,7 +98,7 @@ async function createPackages(dataDir) {
     files: [
       file("name-pools/canonical-cast.json", JSON.stringify(canonicalCastFixture()), "application/json"),
       file("units/core/chapter-001-start/chapter.md", dialogueChapterFixture(1, "Second curriculum chapter", "No stale content belongs here.")),
-      file("units/core/chapter-001-start/participants.json", JSON.stringify(chapterParticipantFixture(1)), "application/json")
+      file("units/core/chapter-001-start/chapter-participants.json", JSON.stringify(chapterParticipantFixture(1)), "application/json")
     ]
   }));
   records.push(await writePackage(dataDir, {
@@ -105,8 +106,8 @@ async function createPackages(dataDir) {
     localization: { role: "source-language-pack", schemaVersion: "1.0.0", basePackageId: alpha, sourceLocale: "en", targetLanguage: "nl", compatibleBaseVersion: ">=1.0.0 <2.0.0" },
     files: [
       file("units/core/chapter-009-nine/chapter.md", "# Chapter 9 — Foundations\n\nEnglish source paragraph."),
-      file("units/core/chapter-010-ten/chapter.md", "# Chapter 10 — Safe reading\n\n<img src=x onerror=alert(1)> stays text. [unsafe](JaVaScRiPt%3Aalert(1))\n\n| Term | Meaning |\n| --- | --- |\n| safe | rendered |"),
-      file("units/core/chapter-011-eleven/chapter.md", "# Chapter 11 — Een zeer lange meertalige titel 第十一章 한국어 제목\n\nEnglish fallback paragraph.")
+      file("units/core/chapter-010-ten/chapter.md", "# Chapter 10 — Safe reading\n\nEnglish source paragraph. Target reading: Goedemorgen.\n\n<img src=x onerror=alert(1)> stays text. [unsafe](JaVaScRiPt%3Aalert(1))\n\n| Term | Meaning |\n| --- | --- |\n| safe | rendered |"),
+      file("units/core/chapter-011-eleven/chapter.md", "# Chapter 11 — Een zeer lange meertalige titel 第十一章 한국어 제목\n\nEnglish fallback paragraph.\n\nTarget reading: Goedemorgen.")
     ]
   }));
   records.push(await writePackage(dataDir, {
@@ -114,7 +115,7 @@ async function createPackages(dataDir) {
     localization: { role: "source-language-pack", schemaVersion: "1.0.0", basePackageId: alpha, sourceLocale: "zh-TW", targetLanguage: "nl", compatibleBaseVersion: ">=1.0.0 <2.0.0" },
     files: [
       file("units/core/chapter-009-nine/chapter.md", "# 第九章 — 基礎\n\n繁體中文第九章。"),
-      file("units/core/chapter-010-ten/chapter.md", "# 第十章 — 安全閱讀\n\n繁體中文第十章。")
+      file("units/core/chapter-010-ten/chapter.md", "# 第十章 — 安全閱讀\n\n繁體中文第十章。\n\nTarget reading: Goedemorgen.")
     ]
   }));
   await mkdir(dataDir, { recursive: true });

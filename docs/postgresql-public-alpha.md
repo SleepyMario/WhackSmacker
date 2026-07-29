@@ -36,7 +36,7 @@ Every user-owned query takes the authenticated UUID explicitly and scopes SQL by
 
 ## Known alpha limitation
 
-The source-language selector works in the public, unauthenticated frontend. In the logged-in private app, the toggle still requires follow-up and must not be treated as fixed. Persisted per-user locale selection and source-package isolation work through the authenticated API, but users may need to refresh or use the current Settings path until the private toggle is repaired.
+The source-language selector works in both the public frontend and the logged-in private reader. The private control updates the open chapter immediately, persists the per-user locale through reload and login, retains keyboard focus, and continues to use authenticated source-package isolation.
 
 ## Compose and backups
 

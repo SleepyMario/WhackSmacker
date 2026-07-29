@@ -54,6 +54,8 @@ test("real PostgreSQL migrations, sessions, and two-user state are isolated", { 
 
     const a = await createUser(pool, "AccountA", "alpha password is safely long", "admin");
     const b = await createUser(pool, "AccountB", "bravo password is safely long", "user");
+    assert.deepEqual(await userSettings(pool, a.id), { locale: "zh-Hant-TW", theme: "light" });
+    assert.deepEqual(await userSettings(pool, b.id), { locale: "zh-Hant-TW", theme: "light" });
     assert.equal((await authenticateUser(pool, "accounta", "alpha password is safely long"))?.id, a.id);
     assert.equal(await authenticateUser(pool, "accounta", "wrong password"), undefined);
 
@@ -128,7 +130,9 @@ test("real PostgreSQL migrations, sessions, and two-user state are isolated", { 
 
     restarted = await startWebServer({ host: "127.0.0.1", port: 0, databaseUrl: process.env.TEST_DATABASE_URL });
     const restartedAddress = restarted.address(); assert.ok(restartedAddress && typeof restartedAddress === "object");
-    assert.equal((await fetch(`http://127.0.0.1:${restartedAddress.port}/api/state`, { headers: { cookie: loginB.cookies } })).status, 200);
+    const restoredState=await fetch(`http://127.0.0.1:${restartedAddress.port}/api/state`, { headers: { cookie: loginB.cookies } });
+    assert.equal(restoredState.status,200);
+    assert.equal((await restoredState.json()).locale,"en");
     await new Promise(resolve => restarted.close(resolve));
   } finally {
     for (const running of [server,restarted]) {

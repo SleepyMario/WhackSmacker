@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { alphaPackage, baseUrl, captureDiagnostics, chapter, deepLink, login, openChapter, resetUsers, revokeUserA } from "./helpers.mjs";
+import { alphaPackage, baseUrl, captureDiagnostics, chapter, deepLink, login, openChapter, resetUsers, revokeUserA, userState } from "./helpers.mjs";
 
 let diagnostics;
 test.beforeEach(async ({ page }) => { await resetUsers(); diagnostics = captureDiagnostics(page); });
@@ -58,21 +58,50 @@ test("chapter discovery, safe rendering, exact-version URLs, navigation, and cur
   await expect(page.locator("#controls")).toBeHidden();
 });
 
-test("source locale and per-chapter fallback persist without cross-user interference", async ({ browser, page }) => {
+test("source locale rerenders immediately, preserves focus and learning identity, and persists without cross-user interference", async ({ browser, page }, testInfo) => {
   await login(page, "A", deepLink({ chapterId: chapter(10) }));
+  const original = await userState("A");
+  const toggleRequests = [];
+  page.on("request", request => {
+    if (/\/api\/(?:settings|curricula|curriculum\/chapter)(?:\?|$)/u.test(request.url())) toggleRequests.push(`${request.method()} ${new URL(request.url()).pathname}`);
+  });
   const chinese = page.locator('input[name="source-locale"][value="zh-TW"]');
+  await expect(chinese).toHaveRole("radio");
+  await expect(chinese).toHaveAccessibleName("中文（臺灣）");
   await chinese.focus();
+  const startedAt = Date.now();
   await page.keyboard.press("Space");
   await expect(page).toHaveURL(/locale=zh-TW/u);
-  await openChapter(page, "Chapter 10");
   await expect(page.locator("#overlay")).toContainText(/Traditional Chinese.*active/iu);
   await expect(page.locator("#chapter-content")).toContainText("繁體中文第十章");
+  await expect(page.locator("#chapter-content")).toContainText("Target reading: Goedemorgen.");
+  await expect(chinese).toBeFocused();
+  await expect(chinese).toBeChecked();
+  await expect(page.locator("#curriculum")).toHaveValue(alphaPackage());
+  await expect(page.locator("#version")).toHaveValue("1.0.0");
+  const toggleDurationMs = Date.now() - startedAt;
+  testInfo.annotations.push({ type: "source-toggle", description: `${toggleDurationMs} ms; ${toggleRequests.length} requests` });
+  expect(toggleDurationMs).toBeLessThan(5_000);
+  expect(toggleRequests).toEqual(["PUT /api/settings", "GET /api/curricula", "GET /api/curriculum/chapter"]);
+  const changed = await userState("A");
+  expect(changed.locale).toBe("zh-TW");
+  expect(changed.packages).toEqual(original.packages);
+  expect(changed.progress).toEqual(original.progress);
+  expect(changed.historyCount).toBe(original.historyCount);
   await openChapter(page, "Chapter 11");
   await expect(page.locator("#overlay")).toContainText(/requested Traditional Chinese.*Showing English fallback/iu);
   await expect(page.locator("#chapter-content")).toContainText("English fallback paragraph");
+  await expect(page.locator("#chapter-content")).toContainText("Target reading: Goedemorgen.");
+  expect((await userState("A")).locale).toBe("zh-TW");
   await page.reload();
   await expect(chinese).toBeChecked();
   await expect(page).toHaveURL(/locale=zh-TW/u);
+
+  await page.locator("#logout").click();
+  await expect(page).toHaveURL(/\/login/u);
+  await login(page, "A", deepLink({ locale: null, chapterId: chapter(10) }));
+  await expect(chinese).toBeChecked();
+  await expect(page.locator("#chapter-content")).toContainText("繁體中文第十章");
 
   const contextB = await browser.newContext();
   const pageB = await contextB.newPage();
@@ -84,6 +113,14 @@ test("source locale and per-chapter fallback persist without cross-user interfer
   await expect(chinese).toBeChecked();
   expect(otherDiagnostics.issues).toEqual([]);
   await contextB.close();
+
+  const english = page.locator('input[name="source-locale"][value="en"]');
+  await english.focus();
+  await page.keyboard.press("Space");
+  await expect(english).toBeChecked();
+  await expect(english).toBeFocused();
+  await expect(page.locator("#chapter-content")).toContainText("English source paragraph");
+  expect((await userState("A")).locale).toBe("en");
 });
 
 test("history and generation tracking prevent stale chapter replacement", async ({ page }) => {

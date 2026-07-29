@@ -129,7 +129,7 @@ The public pages include a working browser UI-language selector for English and 
 
 The public alpha provides a dashboard, PostgreSQL-backed user accounts and isolated learning state, package install/uninstall (including keep/delete progress), review decks and live ratings with 1–4 shortcuts, persisted per-user source-language settings and source-package isolation through the API, progress summaries, readable content browsing, responsive navigation, and light/dark themes. Package updates, browser auto-opening, and rich Markdown rendering are deferred.
 
-Known alpha limitation: the source-language selector works on the public/unauthenticated pages, but the logged-in private-app toggle still requires follow-up. Until it is repaired, users may need to refresh the private app or use the currently supported Settings path after changing the source language. The persisted per-user locale and source-package isolation remain enforced through the API.
+The logged-in private reader applies source-language changes immediately, persists them per user through reload and login, preserves keyboard focus on the selected control, and keeps source-package resolution isolated from target curricula and Review progress.
 
 Installed language terminology is available through domain-prefixed commands:
 

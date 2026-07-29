@@ -21,6 +21,20 @@ export async function revokeUserA() {
   finally { await pool.end(); }
 }
 
+export async function userState(user = "A") {
+  const pool = new pg.Pool({ connectionString: required("WSM_E2E_DATABASE_URL") });
+  const userId = required(`WSM_E2E_USER_${user}_ID`);
+  try {
+    const [settings, packages, progress, history] = await Promise.all([
+      pool.query("SELECT source_locale FROM user_settings WHERE user_id=$1", [userId]),
+      pool.query("SELECT package_id,package_version,enabled FROM user_packages WHERE user_id=$1 ORDER BY package_id,package_version", [userId]),
+      pool.query("SELECT package_id,package_version,source_path,item_id,review_count,next_review_at FROM review_progress WHERE user_id=$1 ORDER BY package_id,package_version,source_path,item_id", [userId]),
+      pool.query("SELECT count(*)::int count FROM review_history WHERE user_id=$1", [userId])
+    ]);
+    return { locale: settings.rows[0]?.source_locale, packages: packages.rows, progress: progress.rows, historyCount: history.rows[0].count };
+  } finally { await pool.end(); }
+}
+
 export async function login(page, user = "A", returnTo = "/app") {
   await page.goto(`${baseUrl()}${returnTo.startsWith("/login") ? returnTo : `/login?returnTo=${encodeURIComponent(returnTo)}`}`);
   await expect(page.locator("#username")).toBeFocused();
@@ -38,7 +52,8 @@ export async function login(page, user = "A", returnTo = "/app") {
 }
 
 export function deepLink({ locale = "en", chapterId = chapter(9), packageId = alphaPackage(), version = "1.0.0" } = {}) {
-  const params = new URLSearchParams({ package: packageId, version, locale, chapter: chapterId });
+  const params = new URLSearchParams({ package: packageId, version, chapter: chapterId });
+  if (locale) params.set("locale", locale);
   return `/app?${params}`;
 }
 
