@@ -48,6 +48,27 @@ test("Docker workflows enforce source provenance, clean state, and remote digest
   }
   assert.match(daily, /source checkout is dirty/);
   assert.match(release, /manual releases require a clean source checkout/);
-  assert.match(orchestrator, /REPOS=\(whacksmacker\)/);
+  for (const repository of [
+    "whacksmacker",
+    "language-learning-curriculum-builder",
+    "linguistic-terminology",
+    "language-curriculum-specialized",
+    "arabic-curriculum",
+    "chinese-curriculum",
+    "dutch-curriculum",
+    "english-curriculum",
+    "french-curriculum",
+    "german-curriculum",
+    "hindi-curriculum",
+    "japanese-curriculum",
+    "korean-curriculum",
+    "russian-curriculum",
+    "spanish-curriculum",
+    "thai-curriculum",
+    "vietnamese-curriculum",
+    "zulu-curriculum"
+  ]) assert.match(orchestrator, new RegExp(`^  ${repository}$`, "m"));
   assert.doesNotMatch(orchestrator, /whacksmacker-packages/);
+  assert.doesNotMatch(orchestrator, /whacksmacker-site/);
+  assert.doesNotMatch(orchestrator, /math-curriculum/);
 });

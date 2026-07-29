@@ -40,9 +40,12 @@ The workstation scheduler installs
 `/usr/local/sbin/whacksmacker-docker-vm-daily.sh`; the validation VM installs
 the daily builder at `/home/ashwin/bin/whacksmacker-docker-daily.sh`. The
 current core image is built entirely from this repository, including its core
-Review feed, so the scheduler synchronizes only `whacksmacker`. Replacing the
-wider curriculum repository topology with a centralized, versioned content or
-package source remains later architectural work.
+Review feed. The mandatory full test gate still validates sibling curriculum,
+terminology, specialized-content, and builder sources, so the scheduler syncs
+that exact tested source inventory. It does not sync or mutate package feeds,
+the site, or mathematics content. Replacing these sibling test inputs with a
+centralized, versioned content or package source remains later architectural
+work.
 
 WhackSmacker is a modular learning and utility application. The current command-line application uses native downloadable content packages, native memorization items, native review progress, and terminal review commands.
 

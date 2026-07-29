@@ -8,7 +8,26 @@ VM_USER=ashwin
 ROOT=/home/ashwin/Projects/whacksmacker-modules
 REMOTE_ROOT=/home/ashwin/Projects/whacksmacker-modules
 REMOTE_SCRIPT=/home/ashwin/bin/whacksmacker-docker-daily.sh
-REPOS=(whacksmacker)
+REPOS=(
+  whacksmacker
+  language-learning-curriculum-builder
+  linguistic-terminology
+  language-curriculum-specialized
+  arabic-curriculum
+  chinese-curriculum
+  dutch-curriculum
+  english-curriculum
+  french-curriculum
+  german-curriculum
+  hindi-curriculum
+  japanese-curriculum
+  korean-curriculum
+  russian-curriculum
+  spanish-curriculum
+  thai-curriculum
+  vietnamese-curriculum
+  zulu-curriculum
+)
 VIRSH=(sudo env LC_ALL=C LANG=C virsh -c qemu:///system)
 
 log() {
