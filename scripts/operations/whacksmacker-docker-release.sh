@@ -4,6 +4,7 @@ set -euo pipefail
 export PATH=/usr/local/bin:/usr/bin:/bin
 
 APP=${WHACKSMACKER_APP_ROOT:-$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)}
+SOURCE_ROOT=$(dirname -- "$APP")
 REPOSITORY=docker.io/sleepiestmario/whacksmacker
 release_tag=${1:-}
 smoke_container=
@@ -77,15 +78,22 @@ command -v git >/dev/null || die 'git is required'
 command -v npm >/dev/null || die 'npm is required'
 command -v docker >/dev/null || die 'docker is required'
 [[ -d "$APP/.git" ]] || die "application checkout is missing: $APP"
+for repository in dutch-curriculum vietnamese-curriculum; do
+  [[ -d "$SOURCE_ROOT/$repository/.git" ]] || die "required image source checkout is missing: $SOURCE_ROOT/$repository"
+  [[ -z "$(git -C "$SOURCE_ROOT/$repository" status --porcelain)" ]] || die "required image source checkout is dirty: $repository"
+done
 
 cd "$APP"
 source_revision=$(git rev-parse HEAD)
 source_branch=$(git branch --show-current)
+dutch_revision=$(git -C "$SOURCE_ROOT/dutch-curriculum" rev-parse HEAD)
+vietnamese_revision=$(git -C "$SOURCE_ROOT/vietnamese-curriculum" rev-parse HEAD)
 [[ -z "$(git status --porcelain)" ]] || die 'manual releases require a clean source checkout'
 image="$REPOSITORY:$release_tag"
 clean_docker_config=$(mktemp -d)
 
 log "manual release authorized tag=$release_tag branch=$source_branch revision=$source_revision"
+log "image content sources dutch=$dutch_revision vietnamese=$vietnamese_revision"
 npm ci
 npm audit --audit-level=high
 npm run build
@@ -94,8 +102,11 @@ npm test
 docker build \
   --label "org.opencontainers.image.revision=$source_revision" \
   --label "org.opencontainers.image.version=$release_tag" \
+  --label "org.whacksmacker.content.dutch.revision=$dutch_revision" \
+  --label "org.whacksmacker.content.vietnamese.revision=$vietnamese_revision" \
   --tag "$image" \
-  .
+  --file "$APP/Dockerfile" \
+  "$SOURCE_ROOT"
 
 built_revision=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$image")
 built_version=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' "$image")

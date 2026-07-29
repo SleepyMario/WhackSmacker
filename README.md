@@ -40,12 +40,19 @@ The workstation scheduler installs
 `/usr/local/sbin/whacksmacker-docker-vm-daily.sh`; the validation VM installs
 the daily builder at `/home/ashwin/bin/whacksmacker-docker-daily.sh`. The
 current core image is built entirely from this repository, including its core
-Review feed. The mandatory full test gate still validates sibling curriculum,
+runtime. Its core Review feed is generated during the image build from the
+clean Dutch and Vietnamese source repositories, with all three exact Git
+revisions recorded as image labels. The mandatory full test gate also validates sibling curriculum,
 terminology, specialized-content, and builder sources, so the scheduler syncs
 that exact tested source inventory. It does not sync or mutate package feeds,
 the site, or mathematics content. Replacing these sibling test inputs with a
 centralized, versioned content or package source remains later architectural
 work.
+
+The Docker build context is the parent `whacksmacker-modules` directory because
+the Review-feed build consumes those two sibling sources. The matching command
+shape is `docker build -f whacksmacker/Dockerfile whacksmacker-modules`; the
+Dockerfile-specific ignore rules admit only the application and those sources.
 
 WhackSmacker is a modular learning and utility application. The current command-line application uses native downloadable content packages, native memorization items, native review progress, and terminal review commands.
 

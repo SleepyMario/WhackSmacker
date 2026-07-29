@@ -105,6 +105,8 @@ sync_repos_to_vm() {
       "$local_path" "$VM_USER@$VM_IP:$REMOTE_ROOT/"
     remote_revision=$(sudo -u "$HOST_USER" -H ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new "$VM_USER@$VM_IP" "git -C '$REMOTE_ROOT/$repo' rev-parse HEAD")
     [[ "$remote_revision" == "$revision" ]] || { log "ERROR: synchronized revision mismatch for $repo"; return 1; }
+    remote_status=$(sudo -u "$HOST_USER" -H ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new "$VM_USER@$VM_IP" "git -C '$REMOTE_ROOT/$repo' status --porcelain")
+    [[ -z "$remote_status" ]] || { log "ERROR: synchronized repository is dirty: $repo"; return 1; }
     log "synchronized repository=$repo revision=$remote_revision"
   done
   log "repository synchronization inventory: ${REPOS[*]}"

@@ -1,9 +1,12 @@
 FROM node:22-bookworm-slim AS build
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
-COPY package*.json ./
+COPY whacksmacker/package*.json ./
 RUN npm ci
-COPY . .
+COPY whacksmacker/ .
+COPY dutch-curriculum/ /sources/dutch-curriculum/
+COPY vietnamese-curriculum/ /sources/vietnamese-curriculum/
+ENV WHACKSMACKER_PACKAGE_SOURCE_ROOT=/sources
 RUN npm run build && node scripts/build-core-review-feed.mjs /core-feed && npm prune --omit=dev
 
 FROM node:22-bookworm-slim AS runtime

@@ -45,6 +45,9 @@ test("Docker workflows enforce source provenance, clean state, and remote digest
     assert.match(script, /remote_digest/);
     assert.match(script, /npm ci/);
     assert.match(script, /npm audit --audit-level=high/);
+    assert.match(script, /org\.whacksmacker\.content\.dutch\.revision/);
+    assert.match(script, /org\.whacksmacker\.content\.vietnamese\.revision/);
+    assert.match(script, /--file "\$APP\/Dockerfile"/);
   }
   assert.match(daily, /source checkout is dirty/);
   assert.match(release, /manual releases require a clean source checkout/);

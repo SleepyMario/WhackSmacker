@@ -1,0 +1,11 @@
+*
+!whacksmacker/
+!whacksmacker/**
+whacksmacker/node_modules
+whacksmacker/dist
+whacksmacker/coverage
+whacksmacker/.cache
+!dutch-curriculum/
+!dutch-curriculum/**
+!vietnamese-curriculum/
+!vietnamese-curriculum/**
