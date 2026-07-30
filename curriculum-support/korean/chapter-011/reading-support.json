@@ -9,64 +9,69 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:N + 하고 + N]] to connect two nouns. Put [[grammar:하고]] after the first noun; the form stays the same after vowels and consonants.",
-      "expert": "[[grammar:하고]] is a postpositive nominal coordinator that links noun phrases without allomorphic alternation. In this chapter it coordinates two objects."
+      "normal": "Use [[grammar:N + 하고 + N]] to connect two nouns in ordinary spoken Korean.",
+      "expert": "Postpositive coordinator [[grammar:하고]] links noun phrases without allomorphic alternation; case marking may appear once at the right edge of the coordinated phrase."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### N + 하고 + N\n\nPut `하고` after the first noun to connect it with another noun. `책하고 사전` means “a book and a dictionary.” The coordinator has one form after both vowel-final and consonant-final nouns.\n\nExample: [[grammar:책하고 사전을 찾아요.]]\n\nWatch out: Do not insert `하고` after every noun in a longer clause; use it only where the nouns are being linked.",
-      "expert": "#### N + 하고 + N\n\n`하고` is a postpositive nominal coordinator. It links noun phrases without allomorphic alternation and can express an ordinary list or association; in this chapter it coordinates two objects.\n\nExample: [[grammar:책하고 사전을 찾아요.]]"
+      "normal": "Put [[grammar:하고]] after the first noun to connect it to another noun: [[grammar:책하고 사전]], [[grammar:잡지하고 신문]]. The particle marking the whole object phrase appears after the final noun when needed.\n\nExample: [[grammar:도서관에서 책하고 사전을 찾아요.]]",
+      "expert": "[[grammar:하고]] is a postpositive nominal coordinator common in speech. In [[grammar:책하고 사전을 찾아요]], accusative [[grammar:을]] marks the coordinated phrase at its right edge rather than appearing on both nouns.\n\nExample: [[grammar:도서관에서 책하고 사전을 찾아요.]]"
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "`하고` coordinates nouns in this chapter. The first location answer omits the magazines and newspapers because the question has already made them clear; `책은` then resets the topic, and the final turn omits the coordinated objects after agreement.",
+      "expert": "`하고` coordinates nouns in this chapter. The first location answer omits the magazines and newspapers because the question has already made them clear; `책은` then resets the topic, and the final turn omits the coordinated objects after agreement."
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "At the library, 박서연 and 정수진 choose reading materials together.",
-      "expert": "The dialogue supplies literal examples of nominal coordination while the two speakers locate and compare reading materials."
+      "normal": "Seoyeon and librarian Sujin locate several kinds of reading material for the weekend program.",
+      "expert": "Noun coordination with `하고` combines with topic shifts and recoverable omission, allowing the speakers to avoid repeating already active materials."
     }
   ],
   "breakdown": {
-    "normal": "- 도서관에서 뭐 찾아요? — What are you looking for at the library?\n- 책하고 사전을 찾아요. — I am looking for a book and a dictionary.\n- 저는 잡지하고 신문을 읽어요. — I read a magazine and a newspaper.\n- 사전은 저기에 있어요. — The dictionary is over there.\n- 책은 어디에 있어요? — Where is the book?\n- 창가 옆 선반에 있어요. — It is on the shelf beside the window.\n- 좋아요. 책하고 사전을 같이 봐요. — Good. Let’s look at the book and the dictionary together.\n- 네, 도서관에서 같이 읽어요. — Yes, let’s read together at the library.",
-    "expert": "- 도서관에서 뭐 찾아요? — Natural translation: What are you looking for at the library?\n- 책하고 사전을 찾아요. — Natural translation: I am looking for a book and a dictionary.\n- 저는 잡지하고 신문을 읽어요. — Natural translation: I read a magazine and a newspaper.\n- 사전은 저기에 있어요. — Natural translation: The dictionary is over there.\n- 책은 어디에 있어요? — Natural translation: Where is the book?\n- 창가 옆 선반에 있어요. — Natural translation: It is on the shelf beside the window.\n- 좋아요. 책하고 사전을 같이 봐요. — Natural translation: Good. Let’s look at the book and the dictionary together.\n- 네, 도서관에서 같이 읽어요. — Natural translation: Yes, let’s read together at the library."
+    "normal": "- 도서관에서 책하고 사전을 찾아요. — I am looking for books and a dictionary at the library.\n- 사전은 저기 선반에 있어요. — The dictionary is on that shelf over there.\n- 잡지하고 신문은 어디에 있어요? — Where are the magazines and newspapers?\n- 창가 옆 선반에 있어요. — They are on the shelf by the window.\n- 책은 어디에 있어요? — Where are the books?\n- 책은 저기 선반에 있어요. — The books are on that shelf over there.\n- 좋아요. 책하고 사전을 같이 봐요. — Good. Let us look at the books and dictionary together.\n- 네, 도서관에서 읽어요. — Yes, let us read at the library.",
+    "expert": "- 도서관에서 책하고 사전을 찾아요. — Natural translation: I am looking for books and a dictionary at the library.\n- 사전은 저기 선반에 있어요. — Natural translation: The dictionary is on that shelf over there.\n- 잡지하고 신문은 어디에 있어요? — Natural translation: Where are the magazines and newspapers?\n- 창가 옆 선반에 있어요. — Natural translation: They are on the shelf by the window.\n- 책은 어디에 있어요? — Natural translation: Where are the books?\n- 책은 저기 선반에 있어요. — Natural translation: The books are on that shelf over there.\n- 좋아요. 책하고 사전을 같이 봐요. — Natural translation: Good. Let us look at the books and dictionary together.\n- 네, 도서관에서 읽어요. — Natural translation: Yes, let us read at the library."
   },
   "readingItems": [
     {
       "surface": "도서관",
       "reading": "도서관",
-      "evidence": "도서관에서 뭐 찾아요?",
+      "evidence": "도서관에서 책하고 사전을 찾아요.",
       "lexicalEntryId": "ko.noun.doseogwan",
       "senseId": "ko.noun.doseogwan.library"
     },
     {
       "surface": "찾다",
       "reading": "찾다",
-      "evidence": "도서관에서 뭐 찾아요?",
+      "evidence": "도서관에서 책하고 사전을 찾아요.",
       "lexicalEntryId": "ko.verb.chatda",
       "senseId": "ko.verb.chatda.look-for"
     },
     {
       "surface": "사전",
       "reading": "사전",
-      "evidence": "책하고 사전을 찾아요.",
+      "evidence": "사전은 저기 선반에 있어요.",
       "lexicalEntryId": "ko.noun.sajeon",
       "senseId": "ko.noun.sajeon.dictionary"
     },
     {
       "surface": "잡지",
       "reading": "잡지",
-      "evidence": "저는 잡지하고 신문을 읽어요.",
+      "evidence": "잡지하고 신문은 어디에 있어요?",
       "lexicalEntryId": "ko.noun.japji",
       "senseId": "ko.noun.japji.magazine"
     },
     {
       "surface": "신문",
       "reading": "신문",
-      "evidence": "저는 잡지하고 신문을 읽어요.",
+      "evidence": "잡지하고 신문은 어디에 있어요?",
       "lexicalEntryId": "ko.noun.sinmun",
       "senseId": "ko.noun.sinmun.newspaper"
     },
     {
       "surface": "저기",
       "reading": "저기",
-      "evidence": "사전은 저기에 있어요.",
+      "evidence": "사전은 저기 선반에 있어요.",
       "lexicalEntryId": "ko.adverb.jeogi",
       "senseId": "ko.adverb.jeogi.over-there"
     },
@@ -80,7 +85,7 @@
     {
       "surface": "선반",
       "reading": "선반",
-      "evidence": "창가 옆 선반에 있어요.",
+      "evidence": "책은 저기 선반에 있어요.",
       "lexicalEntryId": "ko.noun.seonban",
       "senseId": "ko.noun.seonban.shelf"
     }

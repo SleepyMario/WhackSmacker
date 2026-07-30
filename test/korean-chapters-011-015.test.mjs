@@ -279,8 +279,8 @@ test("installed Korean Chapters 10 and 11 share canonical menu formatting and ye
     const mini = { id: "root", label: "Korean", kind: "root", children: chapters };
     const output = renderTwoPaneLanguageTree(mini, new Set(["root"]), 1, "Preview", true, 0, 20, "en-US", "navigation", 180);
     const plain = stripAnsi(output);
-    assert.match(plain, /Ch 10 -- Yesterday at the Market/u);
-    assert.match(plain, /Ch 11 -- Books at the Library/u);
+    assert.match(plain, /Ch 10 -- Photographs for the Library Display/u);
+    assert.match(plain, /Ch 11 -- Choosing Library Materials/u);
     for (const number of [10, 11]) assert.match(output, new RegExp(`\x1b\\[33mCh ${number}\x1b\\[0m(?:\x1b\\[[0-9;]*m)* --`, "u"));
   } finally {
     await rm(root, { recursive: true, force: true });
@@ -329,19 +329,25 @@ function parseDeck(text) {
   const columns = header.split("\t");
   return lines.map(line => {
     const row = Object.fromEntries(line.split("\t").map((value, index) => [columns[index], value]));
-    const lexicalIds = JSON.parse(row.lexical_ids);
+    const lexicalIds = parseJsonTsvField(row.lexical_ids);
     return {
       id: row.card_id,
       chapter: Number(row.source_chapter),
       promptLanguage: row.prompt_language,
       answerLanguage: row.answer_language,
-      distractors: JSON.parse(row.distractors),
-      grammarIds: JSON.parse(row.grammar_ids),
+      distractors: parseJsonTsvField(row.distractors),
+      grammarIds: parseJsonTsvField(row.grammar_ids),
       senseId: lexicalIds.at(-1),
       evidence: row.provenance_evidence,
-      examples: JSON.parse(row.examples)
+      examples: parseJsonTsvField(row.examples)
     };
   });
+}
+
+function parseJsonTsvField(value) {
+  return JSON.parse(value.startsWith('"') && value.endsWith('"')
+    ? value.slice(1, -1).replaceAll('""', '"')
+    : value);
 }
 
 function stripAnsi(value) { return value.replace(/\x1b\[[0-9;]*m/gu, ""); }

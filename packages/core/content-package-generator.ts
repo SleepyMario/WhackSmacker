@@ -31,6 +31,7 @@ import {
   assertLanguageCurriculumStage71140Coverage,
   assertCanonicalSectionAndGrammarRules,
   assertAuthoredGrammarProse,
+  assertGrammarOnlyBriefIntroduction,
   assertCanonicalVocabularyReviewMapping,
   canonicalVocabularyTableHeaders,
   japaneseCanonicalVocabularyTableHeaders,
@@ -1064,28 +1065,7 @@ async function packagedReadingSupportFiles(target: ContentPackageGeneratorTarget
 }
 
 async function assertValidReadingSupport(value: unknown, source: string, sourceRoot: string, destination: string): Promise<void> {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error(`${source}: reading support must be an object`);
-  const audienceSections = (value as Record<string, unknown>).audienceSections;
-  if (!Array.isArray(audienceSections)) throw new Error(`${source}: audienceSections must be an array`);
-  for (const [index, candidate] of audienceSections.entries()) {
-    if (typeof candidate !== "object" || candidate === null || Array.isArray(candidate)) throw new Error(`${source}: audienceSections[${index}] must be an object`);
-    const section = candidate as Record<string, unknown>;
-    for (const key of ["sourceHeading", "normal", "expert"] as const) {
-      if (typeof section[key] !== "string" || (section[key] as string).trim().length === 0) throw new Error(`${source}: audienceSections[${index}].${key} must be a nonempty string`);
-    }
-    if (section.normalHeading !== undefined && section.normalHeading !== null
-      && (typeof section.normalHeading !== "string" || section.normalHeading.trim().length === 0)) {
-      throw new Error(`${source}: audienceSections[${index}].normalHeading must be a nonempty string or null`);
-    }
-    if (section.expertHeading !== undefined
-      && (typeof section.expertHeading !== "string" || section.expertHeading.trim().length === 0)) {
-      throw new Error(`${source}: audienceSections[${index}].expertHeading must be a nonempty string`);
-    }
-    if (section.sourceHeading === "Brief Introduction" && isStrictReadingRepairSupport(source)) {
-      assertLearnerFacingIntroduction(section.normal as string, `${source}: audienceSections[${index}].normal`);
-      assertLearnerFacingIntroduction(section.expert as string, `${source}: audienceSections[${index}].expert`);
-    }
-  }
+  assertPackageReadingSupportAudienceSections(value, source, isStrictReadingRepairSupport(source));
   const characters = (value as Record<string, unknown>).characters;
   if (characters === undefined) return;
   if (typeof characters !== "object" || characters === null || Array.isArray(characters)) throw new Error(`${source}: characters must be an object`);
@@ -1119,6 +1099,31 @@ async function assertValidReadingSupport(value: unknown, source: string, sourceR
   }
 }
 
+export function assertPackageReadingSupportAudienceSections(value: unknown, source: string, strictIntroduction: boolean): void {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error(`${source}: reading support must be an object`);
+  const audienceSections = (value as Record<string, unknown>).audienceSections;
+  if (!Array.isArray(audienceSections)) throw new Error(`${source}: audienceSections must be an array`);
+  for (const [index, candidate] of audienceSections.entries()) {
+    if (typeof candidate !== "object" || candidate === null || Array.isArray(candidate)) throw new Error(`${source}: audienceSections[${index}] must be an object`);
+    const section = candidate as Record<string, unknown>;
+    for (const key of ["sourceHeading", "normal", "expert"] as const) {
+      if (typeof section[key] !== "string" || (section[key] as string).trim().length === 0) throw new Error(`${source}: audienceSections[${index}].${key} must be a nonempty string`);
+    }
+    if (section.normalHeading !== undefined && section.normalHeading !== null
+      && (typeof section.normalHeading !== "string" || section.normalHeading.trim().length === 0)) {
+      throw new Error(`${source}: audienceSections[${index}].normalHeading must be a nonempty string or null`);
+    }
+    if (section.expertHeading !== undefined
+      && (typeof section.expertHeading !== "string" || section.expertHeading.trim().length === 0)) {
+      throw new Error(`${source}: audienceSections[${index}].expertHeading must be a nonempty string`);
+    }
+    if (section.sourceHeading === "Brief Introduction" && strictIntroduction) {
+      assertLearnerFacingIntroduction(section.normal as string, `${source}: audienceSections[${index}].normal`);
+      assertLearnerFacingIntroduction(section.expert as string, `${source}: audienceSections[${index}].expert`);
+    }
+  }
+}
+
 function isStrictReadingRepairSupport(source: string): boolean {
   return changedContentPaths(repositoryRoot, false).has(source);
 }
@@ -1126,12 +1131,7 @@ function isStrictReadingRepairSupport(source: string): boolean {
 function assertLearnerFacingIntroduction(value: string, source: string): void {
   const technicalToken = /\b(?:grammarId|lexicalId|schemaVersion|sourcePath|chapterMode|sentenceCount|reviewCards)\b|(?:^|\s)[\[{]\s*["'][A-Za-z][^\n]*[}\]]|(?:^|\s)(?:\/[\w.-]+){2,}|\bcom\.sleepymario\.[\w.-]+\b|\b(?:whacksmacker|curriculum-builder|[a-z]+-curriculum)\b|\bcanonical Chapter \d+ pattern\b|\bliteral source evidence\b|\bcanonical citation forms\b/iu;
   if (technicalToken.test(value)) throw new Error(`${source} must contain short learner-facing grammar prose without technical metadata`);
-  if (!/(?:\b(?:grammar|grammatical|pattern|construction|word order|pronoun|verb|noun|adjective|adverb|preposition|particle|clause|sentence|tense|aspect|mood|agreement|plural|singular|determiner|conjunction|case|register)\b|`[^`]+`|\[\[grammar:)/iu.test(value)) {
-    throw new Error(`${source} must name or clearly describe the chapter grammar`);
-  }
-  if (/\b(?:is a \d{1,3}-year-old|lives? in|joins?|prepares?|look(?:s|ing)? for|helps? .* (?:arrange|prepare|find)|scene|setting|plot|biograph)/iu.test(value)) {
-    throw new Error(`${source} must not contain scene, profile, or plot setup`);
-  }
+  assertGrammarOnlyBriefIntroduction(value, source);
 }
 
 interface ArchiveEntry {
@@ -1634,7 +1634,7 @@ function reviewDeckV2RowToItem(
 
 function parseV2StringArray(value: string, field: string, sourcePath: string, rowNumber: number): string[] {
   try {
-    const parsed = JSON.parse(value) as unknown;
+    const parsed = JSON.parse(decodeAuthoredTsvField(value)) as unknown;
     if (!Array.isArray(parsed) || parsed.some((entry) => typeof entry !== "string")) throw new Error("not a string array");
     return parsed;
   } catch (error) {

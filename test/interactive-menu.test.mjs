@@ -1260,7 +1260,7 @@ test("Dutch Chapters 16-20 summaries share canonical patterns and hide IDs in No
   }
 });
 
-test("Normal deck preview is unchanged while Developer adds package metadata", async () => {
+test("Normal and Expert deck previews hide internal metadata while Developer exposes it", async () => {
   const fixture = await createInstalledDutchFixture();
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
@@ -1269,10 +1269,13 @@ test("Normal deck preview is unchanged while Developer adds package metadata", a
     const deck = decks.children[0];
     const before = (await listReadingReviewItems({ dataDir: fixture.dataDir, packageId: deck.packageId, packageVersion: deck.packageVersion, sourcePath: deck.sourcePath })).map((item) => [item.item.id, item.item.prompt.text, item.item.answer.text]);
     const normal = await renderLanguageTreeRightPane(deck, { dataDir: fixture.dataDir, displayMode: "normal" });
+    const expert = await renderLanguageTreeRightPane(deck, { dataDir: fixture.dataDir, displayMode: "expert" });
     const developer = await renderLanguageTreeRightPane(deck, { dataDir: fixture.dataDir, displayMode: "developer" });
     const after = (await listReadingReviewItems({ dataDir: fixture.dataDir, packageId: deck.packageId, packageVersion: deck.packageVersion, sourcePath: deck.sourcePath })).map((item) => [item.item.id, item.item.prompt.text, item.item.answer.text]);
     assert.deepEqual(after, before);
     assert.doesNotMatch(normal, /Developer metadata|Package ID:|Source path:/u);
+    assert.doesNotMatch(expert, /Developer metadata|Package ID:|Source path:/u);
+    assert.equal(expert, normal);
     assert.equal(developer.startsWith(normal), true);
     assert.match(developer, /Developer metadata[\s\S]*Package ID:[\s\S]*Source path:/u);
   } finally {

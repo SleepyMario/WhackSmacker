@@ -2643,7 +2643,7 @@ function renderReviewDeckPreview(node: LanguageTreeNode, locale: SourceLocale = 
     "",
     translate(locale, "review.previewSelect")
   ].filter((line) => line.length > 0).join("\n");
-  if (displayMode === "normal") return normal;
+  if (displayMode !== "developer") return normal;
   return [normal, "", "Developer metadata", `Package ID: ${node.packageId ?? "unknown"}`, `Package version: ${node.packageVersion ?? "latest installed"}`, `Source path: ${node.sourcePath ?? "unknown"}`, `Internal item count: ${node.itemCount ?? "unknown"}`].join("\n");
 }
 

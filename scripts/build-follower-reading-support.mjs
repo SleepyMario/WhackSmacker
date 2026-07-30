@@ -4,7 +4,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 
 const workspace = resolve(process.cwd(), "..");
-const supportRoot = resolve(process.cwd(), "curriculum-support");
+const supportRoot = resolve(process.env.WHACKSMACKER_SUPPORT_ROOT ?? join(process.cwd(), "curriculum-support"));
 
 const languageNotes = {
   arabic: {
@@ -68,6 +68,69 @@ const briefIntroductionOverrides = {
       normal: "Use [[grammar:क्या आप + place + चलेंगे]]? to ask politely whether someone will go somewhere.",
       expert: "Clause-initial [[grammar:क्या]] marks a polar question, while honorific [[grammar:आप]] selects plural-honorific agreement in [[grammar:चलेंगे]]."
     }
+  }
+};
+
+const koreanAuthoredSupport = {
+  1: {
+    pattern: "N은/는 — topic marking",
+    brief: {
+      normal: "Use [[grammar:N은/는 — topic marking]] to set the sentence topic. Put [[grammar:은]] after a consonant-final expression and [[grammar:는]] after a vowel-final one. In the role questions, Korean leaves the obvious subject unspoken.",
+      expert: "[[grammar:은/는]] establishes a discourse topic with coda-conditioned allomorphy. The later role questions use zero anaphora, recovering the omitted subject from the speech situation."
+    },
+    grammar: {
+      normal: "Attach [[grammar:은/는]] to the noun phrase you want to make the topic. In [[grammar:저는]], [[grammar:저]] means “I; me” in polite or humble speech and [[grammar:는]] marks it as the topic. The questions [[grammar:선생님이에요?]] and [[grammar:학생이에요?]] omit an explicit subject because the two speakers already know whose role is being checked.\n\nExample: [[grammar:안녕하세요. 저는 김민지예요.]]",
+      expert: "[[grammar:은/는]] establishes a discourse topic in a topic–comment structure, with its allomorph selected by the preceding phonological coda. The role questions then use zero anaphora: the omitted subject is recovered from the speech situation rather than repeated.\n\nExample: [[grammar:안녕하세요. 저는 김민지예요.]]"
+    },
+    notes: "The dialogue uses informal-polite `해요` style. Structural speaker labels use full names; inside the exchange, the questions omit an explicit subject because the two speakers and the role being checked are already clear."
+  },
+  2: {
+    pattern: "place + 에 + N + 이/가 있어요",
+    brief: {
+      normal: "Use [[grammar:place + 에 + N + 이/가 있어요]] to say that something is present at a location.",
+      expert: "Locative [[grammar:에]] marks the spatial setting, nominative [[grammar:이/가]] marks the existential theme, and [[grammar:있어요]] forms the polite predicate."
+    },
+    grammar: {
+      normal: "Put the location phrase first with [[grammar:에]], then mark the thing that exists with [[grammar:이/가]], and finish with [[grammar:있어요]], as in [[grammar:책상 옆에 의자가 있어요]]. Korean may also place the thing first, as in [[grammar:책상이 창문 옆에 있어요]]; the particles preserve the roles.\n\nExample: [[grammar:작은 방에 책상이 있어요.]]",
+      expert: "Locative [[grammar:에]] marks the spatial setting, while nominative [[grammar:이/가]] marks the existential theme. Word order can vary for information structure, but the particles preserve the grammatical roles.\n\nExample: [[grammar:작은 방에 책상이 있어요.]]"
+    },
+    notes: "Particles are written attached to the word before them. `있어요` is the informal-polite existential predicate; it does not require the copula `이에요/예요`."
+  },
+  3: {
+    pattern: "이게 뭐예요?",
+    brief: {
+      normal: "Use [[grammar:이게 뭐예요]]? to ask what a nearby thing is. [[grammar:이게]] comes from 이것이, and [[grammar:이건]] comes from 이것은.",
+      expert: "The canonical demonstrative 이것 contracts with nominative 이 to [[grammar:이게]] and with topic 은 to [[grammar:이건]]; the two surfaces retain one lexical identity."
+    },
+    grammar: {
+      normal: "[[grammar:이게]] comes from [[grammar:이것이]], and [[grammar:이건]] comes from [[grammar:이것은]]. Use [[grammar:이게 뭐예요?]] to identify a nearby item; use [[grammar:이건 N이에요/예요?]] to check a proposed identification.\n\nExample: [[grammar:이게 뭐예요?]]",
+      expert: "The demonstrative pronoun [[grammar:이것]] combines with nominative [[grammar:이]] or topic [[grammar:은]], producing the spoken contractions [[grammar:이게]] and [[grammar:이건]]. These are grammatical surface forms of one lexical identity, not separate headwords.\n\nExample: [[grammar:이게 뭐예요?]]"
+    },
+    notes: "Keep `이것` as the dictionary and Review form. The contractions show the attached particle in ordinary speech. In the final exchange, Korean omits the key because it is already the active topic."
+  },
+  4: {
+    pattern: "N + 을/를 + verb",
+    brief: {
+      normal: "Use [[grammar:N + 을/를 + verb]] to mark the direct object before the clause-final action.",
+      expert: "Accusative [[grammar:을/를]] marks the direct object with coda-conditioned allomorphy, while the lexical predicate remains clause-final."
+    },
+    grammar: {
+      normal: "Put [[grammar:을]] after a consonant-final object and [[grammar:를]] after a vowel-final object. The action verb comes at the end: [[grammar:물을 마셔요]], [[grammar:커피를 마셔요]], and [[grammar:가방을 준비해요]] all follow the same object–predicate order.\n\nExample: [[grammar:준호는 집에서 커피를 마셔요.]]",
+      expert: "Accusative [[grammar:을/를]] marks the direct object and shows coda-conditioned allomorphy. The subjects remain explicit in this controlled reading, but Korean may omit them when discourse makes them recoverable.\n\nExample: [[grammar:준호는 집에서 커피를 마셔요.]]"
+    },
+    notes: "`그리고` connects the shared preparation to the preceding individual actions. The narrative uses shortened given names after the scene introduction has established the full canonical identities, and `두 사람` groups parallel actions performed in separate homes."
+  },
+  5: {
+    pattern: "같이 + place + 에 가요",
+    brief: {
+      normal: "Use [[grammar:같이 + place + 에 가요]] to invite someone to go somewhere together.",
+      expert: "Adverb [[grammar:같이]] scopes over a motion predicate, and destination [[grammar:에]] marks the goal; polite nonpast receives a shared-plan interpretation from discourse."
+    },
+    grammar: {
+      normal: "Place [[grammar:같이]] before the shared action and mark the destination with [[grammar:에]]. In friendly polite speech, [[grammar:가요]] and [[grammar:만나요]] can function as invitations or agreed plans when the context and intonation make the shared meaning clear.\n\nExample: [[grammar:공원에 같이 가요.]]",
+      expert: "Adverb [[grammar:같이]] scopes over the motion predicate, while destination [[grammar:에]] marks the goal. The informal-polite nonpast form can receive a hortative interpretation from discourse without a separate proposal ending.\n\nExample: [[grammar:공원에 같이 가요.]]"
+    },
+    notes: "Korean builds the plan through short proposals and confirmations. Once both speakers accept it, the subject “we” remains unspoken; the repeated meeting time closes the exchange by confirming the arrangement."
   }
 };
 
@@ -219,8 +282,8 @@ function extractReading(markdown) {
 }
 
 function translationLines(value) {
-  if (Array.isArray(value.turns)) return value.turns.map((item) => item.text);
-  if (Array.isArray(value.sentences)) return value.sentences.map((item) => item.text);
+  if (Array.isArray(value.turns)) return value.turns.map((item) => typeof item === "string" ? item : item.text);
+  if (Array.isArray(value.sentences)) return value.sentences.map((item) => typeof item === "string" ? item : item.text);
   throw new Error(`${value.id}: unsupported translation shape`);
 }
 
@@ -235,6 +298,14 @@ function buildBreakdown(lines, translations, pattern, language) {
   };
 }
 
+function buildKoreanAuthoredBreakdown(lines, translations) {
+  if (lines.length !== translations.length) throw new Error(`korean: reading/translation count mismatch ${lines.length}/${translations.length}`);
+  return {
+    normal: lines.map((line, index) => `- ${line} — ${translations[index]}`).join("\n"),
+    expert: lines.map((line, index) => `- ${line} — Natural translation: ${translations[index]}`).join("\n")
+  };
+}
+
 for (const [language, config] of Object.entries(curricula)) {
   for (let index = 0; index < config.chapters.length; index += 1) {
     const chapter = config.chapters[index];
@@ -245,7 +316,8 @@ for (const [language, config] of Object.entries(curricula)) {
     const translations = translationLines(translation);
     const [pattern, situation, normalGrammar, expertGrammar] = config.lessons[index];
     const chapterNumber = index + 1;
-    const briefIntroduction = briefIntroductionOverrides[language]?.[chapterNumber] ?? {
+    const koreanSupport = language === "korean" ? koreanAuthoredSupport[chapterNumber] : undefined;
+    const briefIntroduction = koreanSupport?.brief ?? briefIntroductionOverrides[language]?.[chapterNumber] ?? {
       normal: `This chapter introduces [[grammar:${pattern}]].`,
       expert: `This chapter presents [[grammar:${pattern}]].`
     };
@@ -266,16 +338,23 @@ for (const [language, config] of Object.entries(curricula)) {
         },
         {
           sourceHeading: "Grammar",
-          normal: normalGrammar,
-          expert: expertGrammar
+          normal: koreanSupport?.grammar.normal ?? normalGrammar,
+          expert: koreanSupport?.grammar.expert ?? expertGrammar
         },
         {
           sourceHeading: "Language Notes",
-          normal: languageNotes[language].normal,
-          expert: languageNotes[language].expert
-        }
+          normal: koreanSupport?.notes ?? languageNotes[language].normal,
+          expert: koreanSupport?.notes ?? languageNotes[language].expert
+        },
+        ...(koreanSupport === undefined
+          ? []
+          : (previous.audienceSections ?? []).filter(section =>
+              !["Brief Introduction", "Grammar", "Language Notes"].includes(section.sourceHeading)
+            ))
       ],
-      breakdown: buildBreakdown(lines, translations, pattern, language)
+      breakdown: koreanSupport === undefined
+        ? buildBreakdown(lines, translations, pattern, language)
+        : buildKoreanAuthoredBreakdown(lines, translations)
     };
     if (Array.isArray(previous.readingItems)) {
       output.readingItems = previous.readingItems.map((item, lineIndex) =>
@@ -305,8 +384,9 @@ for (const [language, config] of Object.entries(curricula)) {
       output.readingItems = lines.map((sourceText, lineIndex) => ({ sourceText, stressedText: russianStress[index][lineIndex] }));
     }
     mkdirSync(dirname(outputFile), { recursive: true });
-    const serialized = JSON.stringify(output, null, 2)
-      .replace(/\[\[grammar:([^"\]\n]*?)([?؟.!。！？])\]\]/gu, "[[grammar:$1]]$2");
+    const serialized = koreanSupport === undefined
+      ? JSON.stringify(output, null, 2).replace(/\[\[grammar:([^"\]\n]*?)([?؟.!。！？])\]\]/gu, "[[grammar:$1]]$2")
+      : JSON.stringify(output, null, 2);
     writeFileSync(outputFile, `${serialized}\n`);
   }
 }

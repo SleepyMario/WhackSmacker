@@ -2382,7 +2382,7 @@
               "meaning": "hello (polite)",
               "pos": "greeting",
               "line": 1,
-              "evidence": "안녕하세요."
+              "evidence": "안녕하세요. 저는 김민지예요."
             },
             {
               "entryId": "ko.pronoun.jeo",
@@ -2390,8 +2390,8 @@
               "form": "저",
               "meaning": "I; me, polite/humble",
               "pos": "pronoun",
-              "line": 3,
-              "evidence": "저는 민지예요."
+              "line": 1,
+              "evidence": "안녕하세요. 저는 김민지예요."
             },
             {
               "entryId": "ko.copula.ida",
@@ -2399,8 +2399,8 @@
               "form": "이다",
               "meaning": "to be (copula)",
               "pos": "copula",
-              "line": 3,
-              "evidence": "저는 민지예요."
+              "line": 1,
+              "evidence": "안녕하세요. 저는 김민지예요."
             },
             {
               "entryId": "ko.noun.haksaeng",
@@ -2409,7 +2409,7 @@
               "meaning": "student",
               "pos": "noun",
               "line": 5,
-              "evidence": "학생이에요."
+              "evidence": "학생이에요?"
             },
             {
               "entryId": "ko.response.ne",
@@ -2418,7 +2418,7 @@
               "meaning": "yes",
               "pos": "response",
               "line": 6,
-              "evidence": "네, 저는 선생님이에요."
+              "evidence": "네, 저는 학생이에요."
             },
             {
               "entryId": "ko.noun.seonsaengnim",
@@ -2426,9 +2426,27 @@
               "form": "선생님",
               "meaning": "teacher",
               "pos": "noun",
-              "line": 6,
-              "evidence": "네, 저는 선생님이에요."
+              "line": 3,
+              "evidence": "선생님이에요?"
             }
+          ],
+          "title": "First Day at the Reading Program",
+          "readingType": "dialogue",
+          "lines": [
+            "안녕하세요. 저는 김민지예요.",
+            "안녕하세요. 저는 이준호예요.",
+            "선생님이에요?",
+            "네, 선생님이에요.",
+            "학생이에요?",
+            "네, 저는 학생이에요."
+          ],
+          "translations": [
+            "Hello. I am Kim Minji.",
+            "Hello. I am Lee Junho.",
+            "Are you a teacher?",
+            "Yes, I am a teacher.",
+            "Are you a student?",
+            "Yes, I am a student."
           ]
         },
         "2": {
@@ -2441,7 +2459,7 @@
               "meaning": "room",
               "pos": "noun",
               "line": 1,
-              "evidence": "방에 책상이 있어요."
+              "evidence": "작은 방에 책상이 있어요."
             },
             {
               "entryId": "ko.noun.chaeksang",
@@ -2450,7 +2468,7 @@
               "meaning": "desk",
               "pos": "noun",
               "line": 1,
-              "evidence": "방에 책상이 있어요."
+              "evidence": "작은 방에 책상이 있어요."
             },
             {
               "entryId": "ko.verb.itda",
@@ -2459,7 +2477,7 @@
               "meaning": "to exist; be present",
               "pos": "verb",
               "line": 1,
-              "evidence": "방에 책상이 있어요."
+              "evidence": "작은 방에 책상이 있어요."
             },
             {
               "entryId": "ko.noun.chaek",
@@ -2467,7 +2485,7 @@
               "form": "책",
               "meaning": "book",
               "pos": "noun",
-              "line": 2,
+              "line": 5,
               "evidence": "책상 위에 책이 있어요."
             },
             {
@@ -2476,8 +2494,8 @@
               "form": "위",
               "meaning": "on; top of",
               "pos": "noun",
-              "line": 2,
-              "evidence": "책상 위에 책이 있어요."
+              "line": 4,
+              "evidence": "의자 위에 가방이 있어요."
             },
             {
               "entryId": "ko.noun.uija",
@@ -2512,18 +2530,36 @@
               "form": "창문",
               "meaning": "window",
               "pos": "noun",
-              "line": 5,
-              "evidence": "방에 창문이 있어요."
+              "line": 2,
+              "evidence": "책상이 창문 옆에 있어요."
             },
             {
               "entryId": "ko.descriptive-verb.jakda",
               "senseId": "ko.descriptive-verb.jakda.be-small",
               "form": "작다",
               "meaning": "to be small",
-              "pos": "adjective",
+              "pos": "descriptive verb",
               "line": 6,
-              "evidence": "창문 옆에 작은 책상이 있어요."
+              "evidence": "방에 작은 창문이 있어요."
             }
+          ],
+          "title": "A Quiet Study Room",
+          "readingType": "narrative",
+          "lines": [
+            "작은 방에 책상이 있어요.",
+            "책상이 창문 옆에 있어요.",
+            "책상 옆에 의자가 있어요.",
+            "의자 위에 가방이 있어요.",
+            "책상 위에 책이 있어요.",
+            "방에 작은 창문이 있어요."
+          ],
+          "translations": [
+            "There is a desk in the small room.",
+            "The desk is beside the window.",
+            "There is a chair beside the desk.",
+            "There is a bag on the chair.",
+            "There is a book on the desk.",
+            "There is a small window in the room."
           ]
         },
         "3": {
@@ -2553,8 +2589,8 @@
               "form": "펜",
               "meaning": "pen",
               "pos": "noun",
-              "line": 2,
-              "evidence": "펜이에요."
+              "line": 3,
+              "evidence": "이건 펜이에요?"
             },
             {
               "entryId": "ko.noun.gongchaek",
@@ -2562,8 +2598,8 @@
               "form": "공책",
               "meaning": "notebook",
               "pos": "noun",
-              "line": 3,
-              "evidence": "이게 공책이에요?"
+              "line": 2,
+              "evidence": "공책이에요."
             },
             {
               "entryId": "ko.noun.yeolsoe",
@@ -2592,6 +2628,24 @@
               "line": 6,
               "evidence": "휴대폰 옆에 있어요."
             }
+          ],
+          "title": "Sorting Program Supplies",
+          "readingType": "dialogue",
+          "lines": [
+            "이게 뭐예요?",
+            "공책이에요.",
+            "이건 펜이에요?",
+            "네, 펜이에요.",
+            "열쇠가 어디에 있어요?",
+            "휴대폰 옆에 있어요."
+          ],
+          "translations": [
+            "What is this?",
+            "It is a notebook.",
+            "Is this a pen?",
+            "Yes, it is a pen.",
+            "Where is the key?",
+            "It is beside the mobile phone."
           ]
         },
         "4": {
@@ -2604,7 +2658,7 @@
               "meaning": "morning",
               "pos": "noun",
               "line": 1,
-              "evidence": "아침에 민지는 물을 마셔요."
+              "evidence": "아침에 민지는 책을 읽어요."
             },
             {
               "entryId": "ko.noun.mul",
@@ -2612,8 +2666,8 @@
               "form": "물",
               "meaning": "water",
               "pos": "noun",
-              "line": 1,
-              "evidence": "아침에 민지는 물을 마셔요."
+              "line": 3,
+              "evidence": "민지는 물을 마셔요."
             },
             {
               "entryId": "ko.verb.masida",
@@ -2621,8 +2675,8 @@
               "form": "마시다",
               "meaning": "to drink",
               "pos": "verb",
-              "line": 1,
-              "evidence": "아침에 민지는 물을 마셔요."
+              "line": 2,
+              "evidence": "준호는 집에서 커피를 마셔요."
             },
             {
               "entryId": "ko.noun.bap",
@@ -2630,8 +2684,8 @@
               "form": "밥",
               "meaning": "cooked rice; meal",
               "pos": "noun",
-              "line": 2,
-              "evidence": "그리고 밥을 먹어요."
+              "line": 4,
+              "evidence": "준호는 밥을 먹어요."
             },
             {
               "entryId": "ko.verb.meokda",
@@ -2639,8 +2693,8 @@
               "form": "먹다",
               "meaning": "to eat",
               "pos": "verb",
-              "line": 2,
-              "evidence": "그리고 밥을 먹어요."
+              "line": 4,
+              "evidence": "준호는 밥을 먹어요."
             },
             {
               "entryId": "ko.conjunction.geurigo",
@@ -2648,8 +2702,8 @@
               "form": "그리고",
               "meaning": "and; then",
               "pos": "conjunction",
-              "line": 2,
-              "evidence": "그리고 밥을 먹어요."
+              "line": 5,
+              "evidence": "그리고 두 사람은 가방을 준비해요."
             },
             {
               "entryId": "ko.verb.ikda",
@@ -2657,8 +2711,8 @@
               "form": "읽다",
               "meaning": "to read",
               "pos": "verb",
-              "line": 3,
-              "evidence": "책을 읽어요."
+              "line": 1,
+              "evidence": "아침에 민지는 책을 읽어요."
             },
             {
               "entryId": "ko.noun.keopi",
@@ -2666,8 +2720,8 @@
               "form": "커피",
               "meaning": "coffee",
               "pos": "noun",
-              "line": 4,
-              "evidence": "준호는 커피를 마셔요."
+              "line": 2,
+              "evidence": "준호는 집에서 커피를 마셔요."
             },
             {
               "entryId": "ko.numeral.du",
@@ -2676,7 +2730,7 @@
               "meaning": "two",
               "pos": "numeral",
               "line": 5,
-              "evidence": "두 사람은 가방을 준비해요."
+              "evidence": "그리고 두 사람은 가방을 준비해요."
             },
             {
               "entryId": "ko.noun.saram",
@@ -2685,7 +2739,7 @@
               "meaning": "person",
               "pos": "noun",
               "line": 5,
-              "evidence": "두 사람은 가방을 준비해요."
+              "evidence": "그리고 두 사람은 가방을 준비해요."
             },
             {
               "entryId": "ko.verb.junbihada",
@@ -2694,7 +2748,7 @@
               "meaning": "to prepare",
               "pos": "verb",
               "line": 5,
-              "evidence": "두 사람은 가방을 준비해요."
+              "evidence": "그리고 두 사람은 가방을 준비해요."
             },
             {
               "entryId": "ko.noun.jip",
@@ -2703,7 +2757,7 @@
               "meaning": "home",
               "pos": "noun",
               "line": 6,
-              "evidence": "그리고 집에서 나가요."
+              "evidence": "두 사람은 집에서 나가요."
             },
             {
               "entryId": "ko.verb.nagada",
@@ -2712,8 +2766,26 @@
               "meaning": "to leave; go out",
               "pos": "verb",
               "line": 6,
-              "evidence": "그리고 집에서 나가요."
+              "evidence": "두 사람은 집에서 나가요."
             }
+          ],
+          "title": "Getting Ready for the Program",
+          "readingType": "narrative",
+          "lines": [
+            "아침에 민지는 책을 읽어요.",
+            "준호는 집에서 커피를 마셔요.",
+            "민지는 물을 마셔요.",
+            "준호는 밥을 먹어요.",
+            "그리고 두 사람은 가방을 준비해요.",
+            "두 사람은 집에서 나가요."
+          ],
+          "translations": [
+            "In the morning, Minji reads a book.",
+            "Junho drinks coffee at home.",
+            "Minji drinks water.",
+            "Junho eats a meal.",
+            "Then both people prepare their bags.",
+            "Both people leave home."
           ]
         },
         "5": {
@@ -2726,7 +2798,7 @@
               "meaning": "today",
               "pos": "noun",
               "line": 1,
-              "evidence": "오늘 공원에 같이 가요."
+              "evidence": "오늘 세 시에 만나요."
             },
             {
               "entryId": "ko.noun.gongwon",
@@ -2734,8 +2806,8 @@
               "form": "공원",
               "meaning": "park",
               "pos": "noun",
-              "line": 1,
-              "evidence": "오늘 공원에 같이 가요."
+              "line": 4,
+              "evidence": "공원에 같이 가요."
             },
             {
               "entryId": "ko.adverb.gachi",
@@ -2743,8 +2815,8 @@
               "form": "같이",
               "meaning": "together",
               "pos": "adverb",
-              "line": 1,
-              "evidence": "오늘 공원에 같이 가요."
+              "line": 4,
+              "evidence": "공원에 같이 가요."
             },
             {
               "entryId": "ko.verb.gada",
@@ -2752,17 +2824,17 @@
               "form": "가다",
               "meaning": "to go",
               "pos": "verb",
-              "line": 1,
-              "evidence": "오늘 공원에 같이 가요."
+              "line": 4,
+              "evidence": "공원에 같이 가요."
             },
             {
               "entryId": "ko.descriptive-verb.jota",
               "senseId": "ko.descriptive-verb.jota.be-good-sound-good",
               "form": "좋다",
               "meaning": "to be good; sound good",
-              "pos": "expression",
+              "pos": "descriptive verb",
               "line": 2,
-              "evidence": "좋아요."
+              "evidence": "네, 좋아요."
             },
             {
               "entryId": "ko.noun.geuncheo",
@@ -2779,7 +2851,7 @@
               "form": "카페",
               "meaning": "café",
               "pos": "noun",
-              "line": 4,
+              "line": 5,
               "evidence": "그다음에 카페에 가요."
             },
             {
@@ -2788,7 +2860,7 @@
               "form": "그다음에",
               "meaning": "after that",
               "pos": "adverb",
-              "line": 4,
+              "line": 5,
               "evidence": "그다음에 카페에 가요."
             },
             {
@@ -2798,7 +2870,7 @@
               "meaning": "three",
               "pos": "numeral",
               "line": 6,
-              "evidence": "세 시에 만나요."
+              "evidence": "좋아요. 세 시에 만나요."
             },
             {
               "entryId": "ko.noun.si",
@@ -2807,7 +2879,7 @@
               "meaning": "o'clock",
               "pos": "noun",
               "line": 6,
-              "evidence": "세 시에 만나요."
+              "evidence": "좋아요. 세 시에 만나요."
             },
             {
               "entryId": "ko.verb.mannada",
@@ -2816,10 +2888,200 @@
               "meaning": "to meet",
               "pos": "verb",
               "line": 6,
-              "evidence": "세 시에 만나요."
+              "evidence": "좋아요. 세 시에 만나요."
             }
+          ],
+          "title": "Meeting at the Park",
+          "readingType": "dialogue",
+          "lines": [
+            "오늘 세 시에 만나요.",
+            "네, 좋아요.",
+            "공원은 집 근처예요.",
+            "공원에 같이 가요.",
+            "그다음에 카페에 가요.",
+            "좋아요. 세 시에 만나요."
+          ],
+          "translations": [
+            "Let us meet at three today.",
+            "Yes, that sounds good.",
+            "The park is near home.",
+            "Let us go to the park together.",
+            "After that, let us go to a café.",
+            "Sounds good. Let us meet at three."
           ]
         }
+      },
+      "authoredFragment": {
+        "language": "Korean",
+        "chapters": [
+          {
+            "chapter": 1,
+            "path": "units/korean-core/chapter-001-a-polite-first-meeting/chapter.md",
+            "title": "First Day at the Reading Program",
+            "readingType": "dialogue",
+            "lines": [
+              "안녕하세요. 저는 김민지예요.",
+              "안녕하세요. 저는 이준호예요.",
+              "선생님이에요?",
+              "네, 선생님이에요.",
+              "학생이에요?",
+              "네, 저는 학생이에요."
+            ],
+            "translations": [
+              "Hello. I am Kim Minji.",
+              "Hello. I am Lee Junho.",
+              "Are you a teacher?",
+              "Yes, I am a teacher.",
+              "Are you a student?",
+              "Yes, I am a student."
+            ],
+            "senses": [
+              "ko.greeting.annyeonghaseyo.hello-polite",
+              "ko.pronoun.jeo.i-me-polite-humble",
+              "ko.copula.ida.be",
+              "ko.noun.haksaeng.student",
+              "ko.response.ne.yes",
+              "ko.noun.seonsaengnim.teacher"
+            ]
+          },
+          {
+            "chapter": 2,
+            "path": "units/korean-core/chapter-002-a-room-at-home/chapter.md",
+            "title": "A Quiet Study Room",
+            "readingType": "narrative",
+            "lines": [
+              "작은 방에 책상이 있어요.",
+              "책상이 창문 옆에 있어요.",
+              "책상 옆에 의자가 있어요.",
+              "의자 위에 가방이 있어요.",
+              "책상 위에 책이 있어요.",
+              "방에 작은 창문이 있어요."
+            ],
+            "translations": [
+              "There is a desk in the small room.",
+              "The desk is beside the window.",
+              "There is a chair beside the desk.",
+              "There is a bag on the chair.",
+              "There is a book on the desk.",
+              "There is a small window in the room."
+            ],
+            "senses": [
+              "ko.noun.bang.room",
+              "ko.noun.chaeksang.desk",
+              "ko.verb.itda.exist-be-present",
+              "ko.noun.chaek.book",
+              "ko.noun.wi.on-top-of",
+              "ko.noun.uija.chair",
+              "ko.noun.yeop.beside",
+              "ko.noun.gabang.bag",
+              "ko.noun.changmun.window",
+              "ko.descriptive-verb.jakda.be-small"
+            ]
+          },
+          {
+            "chapter": 3,
+            "path": "units/korean-core/chapter-003-what-is-this/chapter.md",
+            "title": "Sorting Program Supplies",
+            "readingType": "dialogue",
+            "lines": [
+              "이게 뭐예요?",
+              "공책이에요.",
+              "이건 펜이에요?",
+              "네, 펜이에요.",
+              "열쇠가 어디에 있어요?",
+              "휴대폰 옆에 있어요."
+            ],
+            "translations": [
+              "What is this?",
+              "It is a notebook.",
+              "Is this a pen?",
+              "Yes, it is a pen.",
+              "Where is the key?",
+              "It is beside the mobile phone."
+            ],
+            "senses": [
+              "ko.demonstrative.igeot.this-thing",
+              "ko.pronoun.mwo.what",
+              "ko.noun.pen.pen",
+              "ko.noun.gongchaek.notebook",
+              "ko.noun.yeolsoe.key",
+              "ko.pronoun.eodi.where",
+              "ko.noun.hyudaepon.mobile-phone"
+            ]
+          },
+          {
+            "chapter": 4,
+            "path": "units/korean-core/chapter-004-minji-s-morning/chapter.md",
+            "title": "Getting Ready for the Program",
+            "readingType": "narrative",
+            "lines": [
+              "아침에 민지는 책을 읽어요.",
+              "준호는 집에서 커피를 마셔요.",
+              "민지는 물을 마셔요.",
+              "준호는 밥을 먹어요.",
+              "그리고 두 사람은 가방을 준비해요.",
+              "두 사람은 집에서 나가요."
+            ],
+            "translations": [
+              "In the morning, Minji reads a book.",
+              "Junho drinks coffee at home.",
+              "Minji drinks water.",
+              "Junho eats a meal.",
+              "Then both people prepare their bags.",
+              "Both people leave home."
+            ],
+            "senses": [
+              "ko.noun.achim.morning",
+              "ko.noun.mul.water",
+              "ko.verb.masida.drink",
+              "ko.noun.bap.cooked-rice-meal",
+              "ko.verb.meokda.eat",
+              "ko.conjunction.geurigo.and-then",
+              "ko.verb.ikda.read",
+              "ko.noun.keopi.coffee",
+              "ko.numeral.du.two",
+              "ko.noun.saram.person",
+              "ko.verb.junbihada.prepare",
+              "ko.noun.jip.home",
+              "ko.verb.nagada.leave"
+            ]
+          },
+          {
+            "chapter": 5,
+            "path": "units/korean-core/chapter-005-going-out-together/chapter.md",
+            "title": "Meeting at the Park",
+            "readingType": "dialogue",
+            "lines": [
+              "오늘 세 시에 만나요.",
+              "네, 좋아요.",
+              "공원은 집 근처예요.",
+              "공원에 같이 가요.",
+              "그다음에 카페에 가요.",
+              "좋아요. 세 시에 만나요."
+            ],
+            "translations": [
+              "Let us meet at three today.",
+              "Yes, that sounds good.",
+              "The park is near home.",
+              "Let us go to the park together.",
+              "After that, let us go to a café.",
+              "Sounds good. Let us meet at three."
+            ],
+            "senses": [
+              "ko.noun.oneul.today",
+              "ko.noun.gongwon.park",
+              "ko.adverb.gachi.together",
+              "ko.verb.gada.go",
+              "ko.descriptive-verb.jota.be-good-sound-good",
+              "ko.noun.geuncheo.near",
+              "ko.noun.kape.cafe",
+              "ko.adverb.geudaeume.after-that",
+              "ko.numeral.se.three",
+              "ko.noun.si.oclock",
+              "ko.verb.mannada.meet"
+            ]
+          }
+        ]
       }
     },
     "russian": {

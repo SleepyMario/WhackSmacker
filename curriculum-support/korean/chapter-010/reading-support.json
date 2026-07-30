@@ -1,27 +1,36 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-010"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:verb-았/었어요]] for a completed polite past action, choosing and contracting the ending according to the verb stem.",
-      "expert": "The polite past combines the stem with [[grammar:-았/었-]] and [[grammar:어요]], with regular phonological contractions in forms such as [[grammar:봤어요]]."
+      "normal": "Use [[grammar:verb-았/었어요]] for a completed polite past action.",
+      "expert": "The past marker [[grammar:-았/었-]] combines with the polite ending and undergoes regular stem-vowel contraction in forms such as [[grammar:갔어요]], [[grammar:봤어요]], and [[grammar:왔어요]]."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### polite past tense with ass/eosseoyo\n\nUse a past form ending in `-았어요` or `-었어요` for a completed action: `가요` becomes `갔어요`, and `봐요` becomes `봤어요`.\n\nExample: [[grammar:어제 민지는 시장에 갔어요]]\n\nWatch out: Learn the actual surface form together with the dictionary form; contractions such as `봤어요 ← 보다` are regular parts of the paradigm.",
-      "expert": "#### polite past tense with ass/eosseoyo\n\nThe polite past is formed by the lexical stem plus the past marker `-았/었-` and the polite ending `-어요`. Vowel contraction and stem alternations produce forms such as `갔어요`, `봤어요`, and `왔어요`.\n\nExample: [[grammar:어제 민지는 시장에 갔어요]]"
+      "normal": "Use the polite past for actions that are complete. The surface form depends on the stem: [[grammar:가다 → 갔어요]], [[grammar:보다 → 봤어요]], [[grammar:사다 → 샀어요]], and [[grammar:오다 → 왔어요]].\n\nExample: [[grammar:어제 민지는 시장에 갔어요.]]",
+      "expert": "The past marker [[grammar:-았/었-]] precedes the polite ending and undergoes regular contraction with vowel-final stems. The narrative shifts between topic and nominative marking to organize already-known and newly arriving participants.\n\nExample: [[grammar:어제 민지는 시장에 갔어요.]]"
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The narrative alternates nominative and topic marking as the participants enter the story, then omits them where the joint action remains clear. The bare compound `시장 사진` means photographs of the market, and `사진은` marks the photographs as the topic when the scene moves to the park.",
+      "expert": "The narrative alternates nominative and topic marking as the participants enter the story, then omits them where the joint action remains clear. The bare compound `시장 사진` means photographs of the market, and `사진은` marks the photographs as the topic when the scene moves to the park."
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Follow Minji and Junho from the market photo to their purchases, the park, and Minji’s return home.",
-      "expert": "Named participants establish the reference of `두 친구` and `두 사람`, while the past predicates form one completed sequence."
+      "normal": "Minji and Junho gather market photographs for a library display, buy food, and review the photographs in the park.",
+      "expert": "The narrative combines past morphology with participant introduction, topic continuity, and subject omission across a coherent completed sequence."
     }
   ],
   "breakdown": {
-    "normal": "- 어제 민지는 시장에 갔어요. — Yesterday, Minji went to the market.\n- 준호가 시장에 왔어요. — Junho came to the market.\n- 두 친구는 공원 사진을 봤어요. — The two friends looked at a photo of the park.\n- 민지는 사과를 샀어요. — Minji bought apples.\n- 준호는 빵을 샀어요. — Junho bought bread.\n- 그다음에 두 사람은 공원에 갔어요. — After that, the two of them went to the park.\n- 공원에서 사진을 찍었어요. — They took a photo in the park.\n- 저녁에 민지는 집에 왔어요. — In the evening, Minji came home.",
-    "expert": "- 어제 민지는 시장에 갔어요. — Natural translation: Yesterday, Minji went to the market.\n- 준호가 시장에 왔어요. — Natural translation: Junho came to the market.\n- 두 친구는 공원 사진을 봤어요. — Natural translation: The two friends looked at a photo of the park.\n- 민지는 사과를 샀어요. — Natural translation: Minji bought apples.\n- 준호는 빵을 샀어요. — Natural translation: Junho bought bread.\n- 그다음에 두 사람은 공원에 갔어요. — Natural translation: After that, the two of them went to the park.\n- 공원에서 사진을 찍었어요. — Natural translation: They took a photo in the park.\n- 저녁에 민지는 집에 왔어요. — Natural translation: In the evening, Minji came home."
+    "normal": "- 어제 민지는 시장에 갔어요. — Yesterday, Minji went to the market.\n- 준호가 시장에 왔어요. — Junho came to the market.\n- 두 친구는 시장 사진을 찍었어요. — The two friends took photographs of the market.\n- 시장에서 민지는 사과를 샀어요. — At the market, Minji bought apples.\n- 준호는 시장에서 빵을 샀어요. — Junho bought bread at the market.\n- 그다음에 두 사람은 공원에 갔어요. — After that, the two people went to the park.\n- 사진은 공원에서 봤어요. — They looked at the photographs in the park.\n- 저녁에 민지는 집에 왔어요. — In the evening, Minji came home.",
+    "expert": "- 어제 민지는 시장에 갔어요. — Natural translation: Yesterday, Minji went to the market.\n- 준호가 시장에 왔어요. — Natural translation: Junho came to the market.\n- 두 친구는 시장 사진을 찍었어요. — Natural translation: The two friends took photographs of the market.\n- 시장에서 민지는 사과를 샀어요. — Natural translation: At the market, Minji bought apples.\n- 준호는 시장에서 빵을 샀어요. — Natural translation: Junho bought bread at the market.\n- 그다음에 두 사람은 공원에 갔어요. — Natural translation: After that, the two people went to the park.\n- 사진은 공원에서 봤어요. — Natural translation: They looked at the photographs in the park.\n- 저녁에 민지는 집에 왔어요. — Natural translation: In the evening, Minji came home."
   },
   "readingItems": [
     {
@@ -41,42 +50,42 @@
     {
       "surface": "친구",
       "reading": "친구",
-      "evidence": "두 친구는 공원 사진을 봤어요.",
+      "evidence": "두 친구는 시장 사진을 찍었어요.",
       "lexicalEntryId": "ko.noun.chingu",
       "senseId": "ko.noun.chingu.friend"
     },
     {
       "surface": "사진",
       "reading": "사진",
-      "evidence": "두 친구는 공원 사진을 봤어요.",
+      "evidence": "두 친구는 시장 사진을 찍었어요.",
       "lexicalEntryId": "ko.noun.sajin",
       "senseId": "ko.noun.sajin.photo"
     },
     {
       "surface": "보다",
       "reading": "보다",
-      "evidence": "두 친구는 공원 사진을 봤어요.",
+      "evidence": "사진은 공원에서 봤어요.",
       "lexicalEntryId": "ko.verb.boda",
       "senseId": "ko.verb.boda.see"
     },
     {
       "surface": "사과",
       "reading": "사과",
-      "evidence": "민지는 사과를 샀어요.",
+      "evidence": "시장에서 민지는 사과를 샀어요.",
       "lexicalEntryId": "ko.noun.sagwa",
       "senseId": "ko.noun.sagwa.apple"
     },
     {
       "surface": "사다",
       "reading": "사다",
-      "evidence": "민지는 사과를 샀어요.",
+      "evidence": "시장에서 민지는 사과를 샀어요.",
       "lexicalEntryId": "ko.verb.sada",
       "senseId": "ko.verb.sada.buy"
     },
     {
       "surface": "찍다",
       "reading": "찍다",
-      "evidence": "공원에서 사진을 찍었어요.",
+      "evidence": "두 친구는 시장 사진을 찍었어요.",
       "lexicalEntryId": "ko.verb.jjikda",
       "senseId": "ko.verb.jjikda.take-photo"
     },

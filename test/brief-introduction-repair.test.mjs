@@ -6,16 +6,16 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 
-import { assertCanonicalSectionAndGrammarRules } from "../dist/packages/core/language-curriculum-policy.js";
+import {
+  assertCanonicalSectionAndGrammarRules,
+  assertGrammarOnlyBriefIntroduction
+} from "../dist/packages/core/language-curriculum-policy.js";
 
 const execFileAsync = promisify(execFile);
 const workspace = join(process.cwd(), "..");
 const correctionSpecPath = join(process.cwd(), "test", "fixtures", "brief-introduction-repair-corrections.json");
 const generatorLanguages = ["arabic", "french", "german", "hindi", "japanese", "korean", "russian", "spanish", "thai", "zulu"];
 const generatedOverrides = new Set(["arabic:3", "german:3", "hindi:5"]);
-const segmenter = new Intl.Segmenter(undefined, { granularity: "sentence" });
-const grammarIdentity = /(?:\b(?:grammar|grammatical|patterns?|constructions?|word order|pronouns?|verbs?|nouns?|adjectives?|adverbs?|prepositions?|particles?|clauses?|sentences?|tense|aspect|mood|agreement|plurals?|singulars?|determiners?|conjunctions?|case|register)\b|`[^`]+`|\[\[grammar:)/iu;
-const sceneOrPlot = /\b(?:is a \d{1,3}-year-old|lives? in|joins?|prepares?|look(?:s|ing)? for|helps? .* (?:arrange|prepare|find)|before an? (?:evening|afternoon|morning)|scene|setting|plot|biograph)/iu;
 
 test("the 38-finding repair keeps all 34 source and audience introductions concise, grammar-only, and identity-bound", async () => {
   const spec = JSON.parse(await readFile(correctionSpecPath, "utf8"));
@@ -292,13 +292,6 @@ function firstParagraph(value) {
   return value.split(/\n\s*\n/u).find((part) => part.trim() !== "")?.trim() ?? "";
 }
 
-function sentenceCount(value) {
-  return [...segmenter.segment(value.replace(/\n+/gu, " "))].filter((item) => item.segment.trim() !== "").length;
-}
-
 function validateGrammarOnly(label, value) {
-  const count = sentenceCount(value);
-  assert.ok(count >= 1 && count <= 3, `${label} contains one to three sentences; found ${count}`);
-  assert.match(value, grammarIdentity, `${label} names a grammar identity`);
-  assert.doesNotMatch(value, sceneOrPlot, `${label} contains no scene/profile/plot setup`);
+  assert.doesNotThrow(() => assertGrammarOnlyBriefIntroduction(value, label));
 }

@@ -9,22 +9,27 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:place + 에 + N + 이/가 있어요]] to say that something exists at a location. Put [[grammar:에]] after the place and [[grammar:이/가 있어요]] after the thing that is there.",
-      "expert": "In [[grammar:place + 에 + N + 이/가 있어요]], locative 에 marks the site, nominative 이/가 marks the theme, and informal-polite 있어요 forms the existential predicate."
+      "normal": "Use [[grammar:place + 에 + N + 이/가 있어요]] to say that something is present at a location.",
+      "expert": "Locative [[grammar:에]] marks the spatial setting, nominative [[grammar:이/가]] marks the existential theme, and [[grammar:있어요]] forms the polite predicate."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "Put [[grammar:에]] after the place and [[grammar:이/가 있어요]] after the thing that is there. 책상 옆에 의자가 있어요 means there is a chair beside the desk. Do not use this pattern to describe an action happening at a place.",
-      "expert": "Locative 에 marks the site, nominative 이/가 the theme, and informal-polite 있어요 the existential predicate. Particle selection follows the preceding coda."
+      "normal": "Put the location phrase first with [[grammar:에]], then mark the thing that exists with [[grammar:이/가]], and finish with [[grammar:있어요]], as in [[grammar:책상 옆에 의자가 있어요]]. Korean may also place the thing first, as in [[grammar:책상이 창문 옆에 있어요]]; the particles preserve the roles.\n\nExample: [[grammar:작은 방에 책상이 있어요.]]",
+      "expert": "Locative [[grammar:에]] marks the spatial setting, while nominative [[grammar:이/가]] marks the existential theme. Word order can vary for information structure, but the particles preserve the grammatical roles.\n\nExample: [[grammar:작은 방에 책상이 있어요.]]"
     },
     {
       "sourceHeading": "Language Notes",
-      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
-      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+      "normal": "Particles are written attached to the word before them. `있어요` is the informal-polite existential predicate; it does not require the copula `이에요/예요`.",
+      "expert": "Particles are written attached to the word before them. `있어요` is the informal-polite existential predicate; it does not require the copula `이에요/예요`."
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Build a mental map of a small study room prepared for reading.",
+      "expert": "The narrative varies location-first and theme-first existential clauses while particles preserve spatial and grammatical roles."
     }
   ],
   "breakdown": {
-    "normal": "- 방에 책상이 있어요. — There is a desk in the room.\n- 책상 위에 책이 있어요. — There is a book on the desk.\n- 책상 옆에 의자가 있어요. — There is a chair beside the desk.\n- 의자 위에 가방이 있어요. — There is a bag on the chair.\n- 방에 창문이 있어요. — There is a window in the room.\n- 창문 옆에 작은 책상이 있어요. — There is a small desk beside the window.",
-    "expert": "- 방에 책상이 있어요. — Natural translation: There is a desk in the room.\n- 책상 위에 책이 있어요. — Natural translation: There is a book on the desk.\n- 책상 옆에 의자가 있어요. — Natural translation: There is a chair beside the desk.\n- 의자 위에 가방이 있어요. — Natural translation: There is a bag on the chair.\n- 방에 창문이 있어요. — Natural translation: There is a window in the room.\n- 창문 옆에 작은 책상이 있어요. — Natural translation: There is a small desk beside the window."
+    "normal": "- 작은 방에 책상이 있어요. — There is a desk in the small room.\n- 책상이 창문 옆에 있어요. — The desk is beside the window.\n- 책상 옆에 의자가 있어요. — There is a chair beside the desk.\n- 의자 위에 가방이 있어요. — There is a bag on the chair.\n- 책상 위에 책이 있어요. — There is a book on the desk.\n- 방에 작은 창문이 있어요. — There is a small window in the room.",
+    "expert": "- 작은 방에 책상이 있어요. — Natural translation: There is a desk in the small room.\n- 책상이 창문 옆에 있어요. — Natural translation: The desk is beside the window.\n- 책상 옆에 의자가 있어요. — Natural translation: There is a chair beside the desk.\n- 의자 위에 가방이 있어요. — Natural translation: There is a bag on the chair.\n- 책상 위에 책이 있어요. — Natural translation: There is a book on the desk.\n- 방에 작은 창문이 있어요. — Natural translation: There is a small window in the room."
   }
 }

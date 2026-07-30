@@ -51,7 +51,7 @@ export function assertCanonicalSectionAndGrammarRules(input: CanonicalSectionAnd
   const participantLabels = chapterParticipantLabels(input.chapterParticipants);
   const introduction = markdownSection(input.markdown, "Brief Introduction");
   if (introduction === undefined) throw new Error(`${input.source}: Brief Introduction is required by WSM-BRIEF-GRAMMAR-001.`);
-  assertGrammarOnlyIntroduction(introduction, `${input.source}: Brief Introduction`);
+  assertGrammarOnlyBriefIntroduction(introduction, `${input.source}: Brief Introduction`);
   assertParticipantFreeBriefIntroduction(introduction, participantLabels, `${input.source}: Brief Introduction`);
   const dialogue = markdownSection(input.markdown, "Dialogue");
   const narrative = markdownSection(input.markdown, "Narrative");
@@ -98,7 +98,7 @@ function assertCanonicalReadingSupport(value: unknown, primarySetup: string, par
       if (typeof prose !== "string" || prose.trim() === "") throw new Error(`${source}: reading support audienceSections[${index}].${audience} must be authored prose.`);
       assertAuthoredGrammarProse(prose, `${source}: audienceSections[${index}].${audience}`);
       if (candidate.sourceHeading === "Brief Introduction") {
-        assertGrammarOnlyIntroduction(prose, `${source}: Brief Introduction ${audience}`);
+        assertGrammarOnlyBriefIntroduction(prose, `${source}: Brief Introduction ${audience}`);
         assertParticipantFreeBriefIntroduction(prose, participantLabels, `${source}: Brief Introduction ${audience}`);
         if (normalizedProse(prose).includes(normalizedProse(primarySetup))) throw new Error(`${source}: reading support projects primary setup beneath Brief Introduction.`);
       }
@@ -106,13 +106,26 @@ function assertCanonicalReadingSupport(value: unknown, primarySetup: string, par
   }
 }
 
-function assertGrammarOnlyIntroduction(value: string, source: string): void {
+const explicitSceneProfileOrPlotSetup = /\b(?:is a \d{1,3}-year-old|lives? in|joins?|prepar(?:es?|ing|ation)|look(?:s|ing)? for|helps? .* (?:arrange|prepare|find)|before an? (?:evening|afternoon|morning)|scene|plot|biograph)/iu;
+const narrativeSettingSetup = [
+  /\bthe setting\b/iu,
+  /\b(?:this|the)\s+(?:chapter|lesson|dialogue|narrative|reading|story)\s+(?:uses?|has|features?)\b[^.!?\n]{0,100}\bsetting\b/iu,
+  /\b(?:meet|meets|met|gather|gathers|gathered|arrive|arrives|arrived|visit|visits|visited)\b[^.!?\n]{0,100}\bsetting\b/iu,
+  /\b(?:school|classroom|library|market|home|office|café|cafe|restaurant|park|station|shop|hospital|local)\s+setting\b/iu
+] as const;
+
+export function containsSceneProfileOrPlotSetup(value: string): boolean {
+  if (explicitSceneProfileOrPlotSetup.test(value)) return true;
+  return narrativeSettingSetup.some((pattern) => pattern.test(value));
+}
+
+export function assertGrammarOnlyBriefIntroduction(value: string, source: string): void {
   const sentenceCount = countSentences(value);
   if (sentenceCount < 1 || sentenceCount > 3) throw new Error(`${source} must contain one to three concise grammar sentences; found ${sentenceCount}.`);
   if (!/(?:\b(?:grammar|grammatical|pattern|construction|word order|pronoun|verb|noun|adjective|adverb|preposition|particle|clause|sentence|tense|aspect|mood|agreement|plural|singular|determiner|conjunction|case|register)\b|`[^`]+`|\[\[grammar:)/iu.test(value)) {
     throw new Error(`${source} must name or clearly describe the chapter grammar.`);
   }
-  if (/\b(?:is a \d{1,3}-year-old|lives? in|joins?|prepares?|look(?:s|ing)? for|helps? .* (?:arrange|prepare|find)|before an? (?:evening|afternoon|morning)|scene|setting|plot|biograph)/iu.test(value)) {
+  if (containsSceneProfileOrPlotSetup(value)) {
     throw new Error(`${source} contains scene, profile, or plot setup.`);
   }
   assertAuthoredGrammarProse(value, source);

@@ -9,22 +9,27 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:같이 + place + 에 가요]] to suggest going somewhere together. [[grammar:같이]] marks the shared action, and [[grammar:에]] marks the destination.",
-      "expert": "In [[grammar:같이 + place + 에 가요]], adverb 같이 modifies the motion event and destination particle 에 marks the goal. The proposal reading is pragmatic rather than a separate imperative form."
+      "normal": "Use [[grammar:같이 + place + 에 가요]] to invite someone to go somewhere together.",
+      "expert": "Adverb [[grammar:같이]] scopes over a motion predicate, and destination [[grammar:에]] marks the goal; polite nonpast receives a shared-plan interpretation from discourse."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "Use [[grammar:같이]] with a destination marked by [[grammar:에 가요]] to suggest going together. 오늘 공원에 같이 가요 means ‘Let’s go to the park together today.’ Do not use 에 for the person accompanying you.",
-      "expert": "Adverb 같이 modifies the motion event, destination 에 marks 공원 or 카페, and informal-polite 가요 closes the clause. The proposal reading arises pragmatically without a separate imperative form."
+      "normal": "Place [[grammar:같이]] before the shared action and mark the destination with [[grammar:에]]. In friendly polite speech, [[grammar:가요]] and [[grammar:만나요]] can function as invitations or agreed plans when the context and intonation make the shared meaning clear.\n\nExample: [[grammar:공원에 같이 가요.]]",
+      "expert": "Adverb [[grammar:같이]] scopes over the motion predicate, while destination [[grammar:에]] marks the goal. The informal-polite nonpast form can receive a hortative interpretation from discourse without a separate proposal ending.\n\nExample: [[grammar:공원에 같이 가요.]]"
     },
     {
       "sourceHeading": "Language Notes",
-      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
-      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+      "normal": "Korean builds the plan through short proposals and confirmations. Once both speakers accept it, the subject “we” remains unspoken; the repeated meeting time closes the exchange by confirming the arrangement.",
+      "expert": "Korean builds the plan through short proposals and confirmations. Once both speakers accept it, the subject “we” remains unspoken; the repeated meeting time closes the exchange by confirming the arrangement."
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "Seoyeon and Doyun agree when to meet and where to go after the orientation.",
+      "expert": "The dialogue combines destination `에`, shared-action adverb `같이`, and discourse-supported omitted subjects in a negotiated plan."
     }
   ],
   "breakdown": {
-    "normal": "- 오늘 공원에 같이 가요. — Let's go to the park together today.\n- 좋아요. — Sounds good.\n- 공원은 집 근처예요. — The park is near home.\n- 그다음에 카페에 가요. — After that, let's go to a café.\n- 네, 같이 가요. — Yes, let's go together.\n- 세 시에 만나요. — Let's meet at three.",
-    "expert": "- 오늘 공원에 같이 가요. — Natural translation: Let's go to the park together today.\n- 좋아요. — Natural translation: Sounds good.\n- 공원은 집 근처예요. — Natural translation: The park is near home.\n- 그다음에 카페에 가요. — Natural translation: After that, let's go to a café.\n- 네, 같이 가요. — Natural translation: Yes, let's go together.\n- 세 시에 만나요. — Natural translation: Let's meet at three."
+    "normal": "- 오늘 세 시에 만나요. — Let us meet at three today.\n- 네, 좋아요. — Yes, that sounds good.\n- 공원은 집 근처예요. — The park is near home.\n- 공원에 같이 가요. — Let us go to the park together.\n- 그다음에 카페에 가요. — After that, let us go to a café.\n- 좋아요. 세 시에 만나요. — Sounds good. Let us meet at three.",
+    "expert": "- 오늘 세 시에 만나요. — Natural translation: Let us meet at three today.\n- 네, 좋아요. — Natural translation: Yes, that sounds good.\n- 공원은 집 근처예요. — Natural translation: The park is near home.\n- 공원에 같이 가요. — Natural translation: Let us go to the park together.\n- 그다음에 카페에 가요. — Natural translation: After that, let us go to a café.\n- 좋아요. 세 시에 만나요. — Natural translation: Sounds good. Let us meet at three."
   }
 }

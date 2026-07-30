@@ -343,8 +343,14 @@ function parseDeck(text) {
     assert.equal(fields.length, 18);
     const locator = /^(?:Dialogue|Narrative) > line (\d+)$/u.exec(fields[14]);
     assert.ok(locator);
-    return { cardId: fields[0], kind: fields[2], promptLanguage: fields[4], answerLanguage: fields[5], prompt: fields[6], acceptedAnswers: JSON.parse(fields[7]), distractors: JSON.parse(fields[8]), lexicalIds: JSON.parse(fields[10]), grammarIds: JSON.parse(fields[11]), provenancePath: fields[13], line: Number(locator[1]), provenanceEvidence: fields[15], examples: JSON.parse(fields[16]) };
+    return { cardId: fields[0], kind: fields[2], promptLanguage: fields[4], answerLanguage: fields[5], prompt: fields[6], acceptedAnswers: parseJsonTsvField(fields[7]), distractors: parseJsonTsvField(fields[8]), lexicalIds: parseJsonTsvField(fields[10]), grammarIds: parseJsonTsvField(fields[11]), provenancePath: fields[13], line: Number(locator[1]), provenanceEvidence: fields[15], examples: parseJsonTsvField(fields[16]) };
   });
+}
+
+function parseJsonTsvField(value) {
+  return JSON.parse(value.startsWith('"') && value.endsWith('"')
+    ? value.slice(1, -1).replaceAll('""', '"')
+    : value);
 }
 
 function primaryReading(markdown) {

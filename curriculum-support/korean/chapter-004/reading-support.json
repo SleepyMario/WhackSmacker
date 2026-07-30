@@ -9,22 +9,27 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:N + 을/를 + verb]] to mark the direct object of an action. Put [[grammar:을]] after a consonant-final object and [[grammar:를]] after a vowel-final object, then place the verb at the end.",
-      "expert": "[[grammar:을/를]] marks the direct object, with coda-conditioned allomorphy. The object precedes the clause-final informal-polite predicate."
+      "normal": "Use [[grammar:N + 을/를 + verb]] to mark the direct object before the clause-final action.",
+      "expert": "Accusative [[grammar:을/를]] marks the direct object with coda-conditioned allomorphy, while the lexical predicate remains clause-final."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "Put [[grammar:을]] after a consonant-ending object and [[grammar:를]] after a vowel-ending object, then put the verb at the end. 밥을 먹어요 means ‘eat a meal.’ Do not put the object particle on the person doing the action.",
-      "expert": "Object-particle allomorphy is coda-conditioned: 을 follows consonant-final 밥 and 책, while 를 follows vowel-final 커피 and 가방. Informal-polite predicates remain clause-final."
+      "normal": "Put [[grammar:을]] after a consonant-final object and [[grammar:를]] after a vowel-final object. The action verb comes at the end: [[grammar:물을 마셔요]], [[grammar:커피를 마셔요]], and [[grammar:가방을 준비해요]] all follow the same object–predicate order.\n\nExample: [[grammar:준호는 집에서 커피를 마셔요.]]",
+      "expert": "Accusative [[grammar:을/를]] marks the direct object and shows coda-conditioned allomorphy. The subjects remain explicit in this controlled reading, but Korean may omit them when discourse makes them recoverable.\n\nExample: [[grammar:준호는 집에서 커피를 마셔요.]]"
     },
     {
       "sourceHeading": "Language Notes",
-      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
-      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+      "normal": "`그리고` connects the shared preparation to the preceding individual actions. The narrative uses shortened given names after the scene introduction has established the full canonical identities, and `두 사람` groups parallel actions performed in separate homes.",
+      "expert": "`그리고` connects the shared preparation to the preceding individual actions. The narrative uses shortened given names after the scene introduction has established the full canonical identities, and `두 사람` groups parallel actions performed in separate homes."
+    },
+    {
+      "sourceHeading": "Narrative",
+      "normal": "Follow Minji and Junho through separate morning actions before both leave for the program.",
+      "expert": "The controlled narrative repeats accusative marking with different object shapes and then groups parallel participants with `두 사람`."
     }
   ],
   "breakdown": {
-    "normal": "- 아침에 민지는 물을 마셔요. — In the morning Minji drinks water.\n- 그리고 밥을 먹어요. — Then she eats a meal.\n- 책을 읽어요. — She reads a book.\n- 준호는 커피를 마셔요. — Junho drinks coffee.\n- 두 사람은 가방을 준비해요. — The two prepare their bags.\n- 그리고 집에서 나가요. — Then they leave home.",
-    "expert": "- 아침에 민지는 물을 마셔요. — Natural translation: In the morning Minji drinks water.\n- 그리고 밥을 먹어요. — Natural translation: Then she eats a meal.\n- 책을 읽어요. — Natural translation: She reads a book.\n- 준호는 커피를 마셔요. — Natural translation: Junho drinks coffee.\n- 두 사람은 가방을 준비해요. — Natural translation: The two prepare their bags.\n- 그리고 집에서 나가요. — Natural translation: Then they leave home."
+    "normal": "- 아침에 민지는 책을 읽어요. — In the morning, Minji reads a book.\n- 준호는 집에서 커피를 마셔요. — Junho drinks coffee at home.\n- 민지는 물을 마셔요. — Minji drinks water.\n- 준호는 밥을 먹어요. — Junho eats a meal.\n- 그리고 두 사람은 가방을 준비해요. — Then both people prepare their bags.\n- 두 사람은 집에서 나가요. — Both people leave home.",
+    "expert": "- 아침에 민지는 책을 읽어요. — Natural translation: In the morning, Minji reads a book.\n- 준호는 집에서 커피를 마셔요. — Natural translation: Junho drinks coffee at home.\n- 민지는 물을 마셔요. — Natural translation: Minji drinks water.\n- 준호는 밥을 먹어요. — Natural translation: Junho eats a meal.\n- 그리고 두 사람은 가방을 준비해요. — Natural translation: Then both people prepare their bags.\n- 두 사람은 집에서 나가요. — Natural translation: Both people leave home."
   }
 }

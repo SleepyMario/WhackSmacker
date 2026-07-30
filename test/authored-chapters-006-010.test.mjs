@@ -232,16 +232,16 @@ test("French, German, Japanese, and Korean Chapters 6–10 retain the approved c
     },
     korean: {
       7: {
-        includes: ["점원: 네."],
+        includes: ["점원: 네. 주스는요?", "우유는요?", "빵은요?"],
         excludes: ["점원이에요?"]
       },
       9: {
-        includes: ["아니요, 오늘은 안 운동해요."],
-        excludes: ["네, 주말에는 운동해요."]
+        includes: ["네, 주말에는 운동해요. 오늘은 운동 안 해요."],
+        excludes: ["아니요, 오늘은 안 운동해요."]
       },
       10: {
-        includes: ["준호가 시장에 왔어요.", "두 친구는 공원 사진을 봤어요.", "저녁에 민지는 집에 왔어요."],
-        excludes: ["친구가 시장에 왔어요.", "저녁에 집에 왔어요."]
+        includes: ["준호가 시장에 왔어요.", "두 친구는 시장 사진을 찍었어요.", "사진은 공원에서 봤어요.", "저녁에 민지는 집에 왔어요."],
+        excludes: ["친구가 시장에 왔어요.", "두 친구는 공원 사진을 봤어요.", "저녁에 집에 왔어요."]
       }
     }
   };
@@ -275,7 +275,8 @@ function primaryReadingLines(markdown, stripSpeakers = true, skipSceneIntroducti
 
 function learnerEvidenceForRow(row, rawLine, utterance) {
   const speaker = /^([^:]+):/u.exec(rawLine)?.[1]?.trim();
-  if (speaker && row[2].normalize("NFC").includes(speaker.normalize("NFC"))) return rawLine;
+  if (speaker && (row[2].normalize("NFC").includes(speaker.normalize("NFC"))
+    || speaker.normalize("NFC").includes(row[2].normalize("NFC")))) return rawLine;
   return utterance;
 }
 
@@ -311,10 +312,16 @@ function parseDeck(text) {
       chapter: Number(fields[3]),
       promptLanguage: fields[4],
       answerLanguage: fields[5],
-      senseId: JSON.parse(fields[10]).at(-1),
+      senseId: parseJsonTsvField(fields[10]).at(-1),
       locator: fields[14],
       evidence: fields[15],
-      examples: JSON.parse(fields[16])
+      examples: parseJsonTsvField(fields[16])
     };
   });
+}
+
+function parseJsonTsvField(value) {
+  return JSON.parse(value.startsWith('"') && value.endsWith('"')
+    ? value.slice(1, -1).replaceAll('""', '"')
+    : value);
 }

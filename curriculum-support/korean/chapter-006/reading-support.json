@@ -1,47 +1,56 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-006"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:N이/가 descriptive-아요/어요]] to describe a noun politely, marking the described noun with [[grammar:이/가]].",
-      "expert": "A descriptive verb forms the polite nonpast predicate directly, while the described noun is marked by nominative [[grammar:이/가]]."
+      "normal": "Use [[grammar:N이/가 descriptive-아요/어요]] to describe a noun politely without adding a copula.",
+      "expert": "A Korean descriptive verb inflects directly as the polite nonpast predicate, while nominative [[grammar:이/가]] marks the described nominal."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### polite descriptive-verb predicates\n\nKorean description words can end the sentence like verbs. Put `이/가` after the thing described, then use the polite form: `교실이 커요` means “The classroom is big.”\n\nExample: [[grammar:교실이 커요]]\n\nWatch out: Do not add `이에요/예요` after a descriptive verb. Say `커요`, not `커요예요`.",
-      "expert": "#### polite descriptive-verb predicates\n\nKorean descriptive verbs inflect as predicates rather than requiring a copula. The described nominal is marked here with nominative `이/가`, and the predicate carries the polite nonpast ending.\n\nExample: [[grammar:교실이 커요]]"
+      "normal": "Korean description words can end a sentence like verbs. Mark the noun being described with [[grammar:이/가]], then use the polite descriptive form: [[grammar:교실이 밝아요]], not [[grammar:교실이 밝아요예요]].\n\nExample: [[grammar:교실이 밝아요.]]",
+      "expert": "A Korean descriptive verb inflects as the clause predicate and therefore does not combine with the copula. Nominative [[grammar:이/가]] marks the described nominal in these focused clauses.\n\nExample: [[grammar:교실이 밝아요.]]"
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Topic-marked classroom phrases organize the comparison, while `교실이 밝아요` provides the chapter’s focused nominative description. The final sentence returns to an action verb and locative `에서`.",
+      "expert": "Topic-marked classroom phrases organize the comparison, while `교실이 밝아요` provides the chapter’s focused nominative description. The final sentence returns to an action verb and locative `에서`."
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Follow Seoyeon’s observations of the new classroom before she begins reading.",
-      "expert": "The descriptive predicates form complete clauses without a copula, and the final action locates Seoyeon in the same classroom."
+      "normal": "Seoyeon checks the size, light, furniture, and atmosphere of a new classroom before reading there.",
+      "expert": "Topic-marked descriptions establish contrast, while nominative `이/가` focuses the nominal whose property is asserted."
     }
   ],
   "breakdown": {
-    "normal": "- 오늘 서연은 학교에 있어요. — Today, Seoyeon is at school.\n- 교실이 새로워요. — The classroom is new.\n- 교실이 커요. — The classroom is big.\n- 교실이 밝아요. — The classroom is bright.\n- 창문 옆 책상이 길어요. — The desk beside the window is long.\n- 아침에는 교실이 조용해요. — In the morning, the classroom is quiet.\n- 서연은 오늘 바빠요. — Seoyeon is busy today.\n- 서연은 교실에서 책을 읽어요. — Seoyeon reads a book in the classroom.",
-    "expert": "- 오늘 서연은 학교에 있어요. — Natural translation: Today, Seoyeon is at school.\n- 교실이 새로워요. — Natural translation: The classroom is new.\n- 교실이 커요. — Natural translation: The classroom is big.\n- 교실이 밝아요. — Natural translation: The classroom is bright.\n- 창문 옆 책상이 길어요. — Natural translation: The desk beside the window is long.\n- 아침에는 교실이 조용해요. — Natural translation: In the morning, the classroom is quiet.\n- 서연은 오늘 바빠요. — Natural translation: Seoyeon is busy today.\n- 서연은 교실에서 책을 읽어요. — Natural translation: Seoyeon reads a book in the classroom."
+    "normal": "- 오늘 박서연은 학교에 있어요. — Today, Seoyeon is at school.\n- 교실은 새로워요. — The classroom is new.\n- 교실은 커요. — The classroom is large.\n- 교실이 밝아요. — The classroom is bright.\n- 창문 옆 책상은 길어요. — The desk beside the window is long.\n- 작은 교실은 조용해요. — The small classroom is quiet.\n- 박서연은 바빠요. — Seoyeon is busy.\n- 박서연은 교실에서 책을 읽어요. — Seoyeon reads a book in the classroom.",
+    "expert": "- 오늘 박서연은 학교에 있어요. — Natural translation: Today, Seoyeon is at school.\n- 교실은 새로워요. — Natural translation: The classroom is new.\n- 교실은 커요. — Natural translation: The classroom is large.\n- 교실이 밝아요. — Natural translation: The classroom is bright.\n- 창문 옆 책상은 길어요. — Natural translation: The desk beside the window is long.\n- 작은 교실은 조용해요. — Natural translation: The small classroom is quiet.\n- 박서연은 바빠요. — Natural translation: Seoyeon is busy.\n- 박서연은 교실에서 책을 읽어요. — Natural translation: Seoyeon reads a book in the classroom."
   },
   "readingItems": [
     {
       "surface": "학교",
       "reading": "학교",
-      "evidence": "오늘 서연은 학교에 있어요.",
+      "evidence": "오늘 박서연은 학교에 있어요.",
       "lexicalEntryId": "ko.noun.hakgyo",
       "senseId": "ko.noun.hakgyo.school"
     },
     {
       "surface": "교실",
       "reading": "교실",
-      "evidence": "교실이 새로워요.",
+      "evidence": "교실은 새로워요.",
       "lexicalEntryId": "ko.noun.gyosil",
       "senseId": "ko.noun.gyosil.classroom"
     },
     {
       "surface": "크다",
       "reading": "크다",
-      "evidence": "교실이 커요.",
+      "evidence": "교실은 커요.",
       "lexicalEntryId": "ko.descriptive-verb.keuda",
       "senseId": "ko.descriptive-verb.keuda.big"
     },
@@ -55,28 +64,28 @@
     {
       "surface": "길다",
       "reading": "길다",
-      "evidence": "창문 옆 책상이 길어요.",
+      "evidence": "창문 옆 책상은 길어요.",
       "lexicalEntryId": "ko.descriptive-verb.gilda",
       "senseId": "ko.descriptive-verb.gilda.long"
     },
     {
       "surface": "조용하다",
       "reading": "조용하다",
-      "evidence": "아침에는 교실이 조용해요.",
+      "evidence": "작은 교실은 조용해요.",
       "lexicalEntryId": "ko.descriptive-verb.joyonghada",
       "senseId": "ko.descriptive-verb.joyonghada.quiet"
     },
     {
       "surface": "바쁘다",
       "reading": "바쁘다",
-      "evidence": "서연은 오늘 바빠요.",
+      "evidence": "박서연은 바빠요.",
       "lexicalEntryId": "ko.descriptive-verb.bappeuda",
       "senseId": "ko.descriptive-verb.bappeuda.busy"
     },
     {
       "surface": "새롭다",
       "reading": "새롭다",
-      "evidence": "교실이 새로워요.",
+      "evidence": "교실은 새로워요.",
       "lexicalEntryId": "ko.descriptive-verb.saeropda",
       "senseId": "ko.descriptive-verb.saeropda.new"
     }

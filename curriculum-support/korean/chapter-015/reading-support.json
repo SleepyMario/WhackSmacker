@@ -9,78 +9,83 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:verb stem + (으)ㄹ까요?]] to suggest a shared action and ask for agreement. Use [[grammar:-ㄹ까요?]] after a vowel or [[grammar:ㄹ]], and [[grammar:-을까요?]] after another final consonant.",
-      "expert": "[[grammar:-(으)ㄹ까요?]] is an interrogative proposal ending that invites agreement on a shared future action. The allomorph follows the vowel/`ㄹ` versus other-consonant split."
+      "normal": "Use [[grammar:verb stem + (으)ㄹ까요]]? to propose a shared action.",
+      "expert": "Proposal ending [[grammar:-(으)ㄹ까요]]? invites agreement to a collective action in this block; it is not generalized here to every future or conjectural use."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### verb stem + (으)ㄹ까요?\n\nAttach `-ㄹ까요?` or `-을까요?` to a verb stem to suggest doing something together. `서점에 갈까요?` means “Shall we go to the bookstore?”\n\nExample: [[grammar:서점에 갈까요?]]\n\nWatch out: Keep the question intonation and question mark; a plain future statement is not the same construction.",
-      "expert": "#### verb stem + (으)ㄹ까요?\n\n`-(으)ㄹ까요?` is an interrogative proposal ending. In this block it invites the addressee to agree to a shared future action; the allomorph follows the usual vowel/`ㄹ` versus other-consonant split.\n\nExample: [[grammar:서점에 갈까요?]]"
+      "normal": "Attach [[grammar:-ㄹ까요?]] or [[grammar:-을까요?]] to propose a shared action: [[grammar:갈까요?]], [[grammar:살까요?]], [[grammar:걸을까요?]]. The question asks the others to accept, reject, or adjust the plan.\n\nExample: [[grammar:그다음에 서점에 갈까요?]]",
+      "expert": "[[grammar:-(으)ㄹ까요?]] is an interrogative proposal ending in this block. Its collaborative interpretation comes from speech-act context; it is not treated here as a general future or conjectural ending.\n\nExample: [[grammar:그다음에 서점에 갈까요?]]"
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The speakers omit “we” throughout because every proposal concerns the group. Time topics such as `오후에는` and `저녁에는` organize the plan without forcing English-style repeated subjects.",
+      "expert": "The speakers omit “we” throughout because every proposal concerns the group. Time topics such as `오후에는` and `저녁에는` organize the plan without forcing English-style repeated subjects."
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "While planning tomorrow, 김민지, 박서연, and 최도윤 decide where to meet and what to do.",
-      "expert": "The three-speaker dialogue uses proposal questions to negotiate a shared sequence of future activities."
+      "normal": "Minji, Seoyeon, and Doyun negotiate the next program day through a chain of shared proposals.",
+      "expert": "Proposal morphology combines with omitted “we,” place sequencing, and time-topic shifts to build a collaborative schedule."
     }
   ],
   "breakdown": {
-    "normal": "- 내일 아침에 어디에서 만날까요? — Where shall we meet tomorrow morning?\n- 지하철역에서 만날까요? — Shall we meet at the subway station?\n- 좋아요. 서점에 갈까요? — Good. Shall we go to the bookstore?\n- 네, 소설을 살까요? — Yes. Shall we buy a novel?\n- 그다음에 강가에서 걸을까요? — After that, shall we walk by the river?\n- 좋아요. 오후에는 영화관에 갈까요? — Good. Shall we go to the cinema in the afternoon?\n- 네, 영화를 볼까요? — Yes. Shall we watch a film?\n- 저녁에는 카페에서 이야기할까요? — Shall we talk at a café in the evening?",
-    "expert": "- 내일 아침에 어디에서 만날까요? — Natural translation: Where shall we meet tomorrow morning?\n- 지하철역에서 만날까요? — Natural translation: Shall we meet at the subway station?\n- 좋아요. 서점에 갈까요? — Natural translation: Good. Shall we go to the bookstore?\n- 네, 소설을 살까요? — Natural translation: Yes. Shall we buy a novel?\n- 그다음에 강가에서 걸을까요? — Natural translation: After that, shall we walk by the river?\n- 좋아요. 오후에는 영화관에 갈까요? — Natural translation: Good. Shall we go to the cinema in the afternoon?\n- 네, 영화를 볼까요? — Natural translation: Yes. Shall we watch a film?\n- 저녁에는 카페에서 이야기할까요? — Natural translation: Shall we talk at a café in the evening?"
+    "normal": "- 내일 어디에서 만날까요? — Where shall we meet tomorrow?\n- 아침에 지하철역에서 만날까요? — Shall we meet at the subway station in the morning?\n- 그다음에 서점에 갈까요? — After that, shall we go to the bookstore?\n- 좋아요. 소설을 살까요? — Sounds good. Shall we buy a novel?\n- 강가에서 같이 걸을까요? — Shall we walk together by the river?\n- 영화관에 같이 갈까요? — Shall we go to the cinema together?\n- 네, 오후에 영화를 볼까요? — Yes. Shall we watch a film in the afternoon?\n- 좋아요. 저녁에는 카페에서 이야기할까요? — Sounds good. Shall we talk at a café in the evening?",
+    "expert": "- 내일 어디에서 만날까요? — Natural translation: Where shall we meet tomorrow?\n- 아침에 지하철역에서 만날까요? — Natural translation: Shall we meet at the subway station in the morning?\n- 그다음에 서점에 갈까요? — Natural translation: After that, shall we go to the bookstore?\n- 좋아요. 소설을 살까요? — Natural translation: Sounds good. Shall we buy a novel?\n- 강가에서 같이 걸을까요? — Natural translation: Shall we walk together by the river?\n- 영화관에 같이 갈까요? — Natural translation: Shall we go to the cinema together?\n- 네, 오후에 영화를 볼까요? — Natural translation: Yes. Shall we watch a film in the afternoon?\n- 좋아요. 저녁에는 카페에서 이야기할까요? — Natural translation: Sounds good. Shall we talk at a café in the evening?"
   },
   "readingItems": [
     {
       "surface": "내일",
       "reading": "내일",
-      "evidence": "내일 아침에 어디에서 만날까요?",
+      "evidence": "내일 어디에서 만날까요?",
       "lexicalEntryId": "ko.noun-adverb.naeil",
       "senseId": "ko.noun-adverb.naeil.tomorrow"
     },
     {
       "surface": "지하철역",
       "reading": "지하철역",
-      "evidence": "지하철역에서 만날까요?",
+      "evidence": "아침에 지하철역에서 만날까요?",
       "lexicalEntryId": "ko.noun.jihacheolyeok",
       "senseId": "ko.noun.jihacheolyeok.subway-station"
     },
     {
       "surface": "서점",
       "reading": "서점",
-      "evidence": "좋아요. 서점에 갈까요?",
+      "evidence": "그다음에 서점에 갈까요?",
       "lexicalEntryId": "ko.noun.seojeom",
       "senseId": "ko.noun.seojeom.bookstore"
     },
     {
       "surface": "소설",
       "reading": "소설",
-      "evidence": "네, 소설을 살까요?",
+      "evidence": "좋아요. 소설을 살까요?",
       "lexicalEntryId": "ko.noun.soseol",
       "senseId": "ko.noun.soseol.novel"
     },
     {
       "surface": "강가",
       "reading": "강가",
-      "evidence": "그다음에 강가에서 걸을까요?",
+      "evidence": "강가에서 같이 걸을까요?",
       "lexicalEntryId": "ko.noun.gangga",
       "senseId": "ko.noun.gangga.riverside"
     },
     {
       "surface": "걷다",
       "reading": "걷다",
-      "evidence": "그다음에 강가에서 걸을까요?",
+      "evidence": "강가에서 같이 걸을까요?",
       "lexicalEntryId": "ko.verb.geotda",
       "senseId": "ko.verb.geotda.walk"
     },
     {
       "surface": "영화관",
       "reading": "영화관",
-      "evidence": "좋아요. 오후에는 영화관에 갈까요?",
+      "evidence": "영화관에 같이 갈까요?",
       "lexicalEntryId": "ko.noun.yeonghwagwan",
       "senseId": "ko.noun.yeonghwagwan.cinema"
     },
     {
       "surface": "영화",
       "reading": "영화",
-      "evidence": "네, 영화를 볼까요?",
+      "evidence": "네, 오후에 영화를 볼까요?",
       "lexicalEntryId": "ko.noun.yeonghwa",
       "senseId": "ko.noun.yeonghwa.movie"
     }

@@ -1,0 +1,504 @@
+{
+  "schemaVersion": 1,
+  "sourceState": "## korean-curriculum\nHEAD=6b471e077b31fcd062bc1f5ec219940903693a5f\nBRANCH=main\nUPSTREAM=origin/main\nDIVERGENCE=0\t0\n\n## language-learning-curriculum-builder\nHEAD=72ff85993aa5067251c6c6b9b0ac39999efc0a93\nBRANCH=main\nUPSTREAM=origin/main\nDIVERGENCE=0\t0\n\n## whacksmacker\nHEAD=e6775225b675c118d7549e390adb8e95f20da2cd\nBRANCH=main\nUPSTREAM=origin/main\nDIVERGENCE=0\t0\n\n## whacksmacker-packages\nHEAD=689ab633d23320c0a57961262fa79f51d5729d3c\nBRANCH=main\nUPSTREAM=origin/main\nDIVERGENCE=0\t0\n\n## whacksmacker-curricula\nHEAD=0205a76a5aef0bc96203c758439ebfc251889bba\nBRANCH=main\nUPSTREAM=origin/main\nDIVERGENCE=0\t0\n\n",
+  "curriculumId": "korean-core",
+  "packageIds": [
+    "com.sleepymario.language.korean",
+    "com.sleepymario.language.korean.reviews"
+  ],
+  "packageVersion": "0.1.0",
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "First Day at the Reading Program",
+      "type": "dialogue",
+      "path": "units/korean-core/chapter-001-a-polite-first-meeting/chapter.md",
+      "grammarId": "KOR-GRAMMAR-001",
+      "participants": [
+        "CAST-001",
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-001",
+        "CAST-002"
+      ],
+      "readingLines": [
+        "안녕하세요. 저는 김민지예요.",
+        "안녕하세요. 저는 이준호예요.",
+        "선생님이에요?",
+        "네, 선생님이에요.",
+        "학생이에요?",
+        "네, 저는 학생이에요."
+      ],
+      "translations": [
+        "Hello. I am Kim Minji.",
+        "Hello. I am Lee Junho.",
+        "Are you a teacher?",
+        "Yes, I am a teacher.",
+        "Are you a student?",
+        "Yes, I am a student."
+      ]
+    },
+    {
+      "chapter": 2,
+      "title": "A Quiet Study Room",
+      "type": "narrative",
+      "path": "units/korean-core/chapter-002-a-room-at-home/chapter.md",
+      "grammarId": "KOR-GRAMMAR-002",
+      "participants": [],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "작은 방에 책상이 있어요.",
+        "책상이 창문 옆에 있어요.",
+        "책상 옆에 의자가 있어요.",
+        "의자 위에 가방이 있어요.",
+        "책상 위에 책이 있어요.",
+        "방에 작은 창문이 있어요."
+      ],
+      "translations": [
+        "There is a desk in the small room.",
+        "The desk is beside the window.",
+        "There is a chair beside the desk.",
+        "There is a bag on the chair.",
+        "There is a book on the desk.",
+        "There is a small window in the room."
+      ]
+    },
+    {
+      "chapter": 3,
+      "title": "Sorting Program Supplies",
+      "type": "dialogue",
+      "path": "units/korean-core/chapter-003-what-is-this/chapter.md",
+      "grammarId": "KOR-GRAMMAR-003",
+      "participants": [
+        "CAST-003",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-003",
+        "CAST-004"
+      ],
+      "readingLines": [
+        "이게 뭐예요?",
+        "공책이에요.",
+        "이건 펜이에요?",
+        "네, 펜이에요.",
+        "열쇠가 어디에 있어요?",
+        "휴대폰 옆에 있어요."
+      ],
+      "translations": [
+        "What is this?",
+        "It is a notebook.",
+        "Is this a pen?",
+        "Yes, it is a pen.",
+        "Where is the key?",
+        "It is beside the mobile phone."
+      ]
+    },
+    {
+      "chapter": 4,
+      "title": "Getting Ready for the Program",
+      "type": "narrative",
+      "path": "units/korean-core/chapter-004-minji-s-morning/chapter.md",
+      "grammarId": "KOR-GRAMMAR-004",
+      "participants": [
+        "CAST-001",
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "아침에 민지는 책을 읽어요.",
+        "준호는 집에서 커피를 마셔요.",
+        "민지는 물을 마셔요.",
+        "준호는 밥을 먹어요.",
+        "그리고 두 사람은 가방을 준비해요.",
+        "두 사람은 집에서 나가요."
+      ],
+      "translations": [
+        "In the morning, Minji reads a book.",
+        "Junho drinks coffee at home.",
+        "Minji drinks water.",
+        "Junho eats a meal.",
+        "Then both people prepare their bags.",
+        "Both people leave home."
+      ]
+    },
+    {
+      "chapter": 5,
+      "title": "Meeting at the Park",
+      "type": "dialogue",
+      "path": "units/korean-core/chapter-005-going-out-together/chapter.md",
+      "grammarId": "KOR-GRAMMAR-005",
+      "participants": [
+        "CAST-003",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "오늘 세 시에 만나요.",
+        "네, 좋아요.",
+        "공원은 집 근처예요.",
+        "공원에 같이 가요.",
+        "그다음에 카페에 가요.",
+        "좋아요. 세 시에 만나요."
+      ],
+      "translations": [
+        "Let us meet at three today.",
+        "Yes, that sounds good.",
+        "The park is near home.",
+        "Let us go to the park together.",
+        "After that, let us go to a café.",
+        "Sounds good. Let us meet at three."
+      ]
+    },
+    {
+      "chapter": 6,
+      "title": "Checking a New Classroom",
+      "type": "narrative",
+      "path": "units/korean-core/chapter-006-a-new-classroom/chapter.md",
+      "grammarId": "KOR-GRAMMAR-006",
+      "participants": [
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "오늘 박서연은 학교에 있어요.",
+        "교실은 새로워요.",
+        "교실은 커요.",
+        "교실이 밝아요.",
+        "창문 옆 책상은 길어요.",
+        "작은 교실은 조용해요.",
+        "박서연은 바빠요.",
+        "박서연은 교실에서 책을 읽어요."
+      ],
+      "translations": [
+        "Today, Seoyeon is at school.",
+        "The classroom is new.",
+        "The classroom is large.",
+        "The classroom is bright.",
+        "The desk beside the window is long.",
+        "The small classroom is quiet.",
+        "Seoyeon is busy.",
+        "Seoyeon reads a book in the classroom."
+      ]
+    },
+    {
+      "chapter": 7,
+      "title": "Buying Snacks for the Group",
+      "type": "dialogue",
+      "path": "units/korean-core/chapter-007-ordering-a-snack/chapter.md",
+      "grammarId": "KOR-GRAMMAR-007",
+      "participants": [
+        "CAST-005"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-005"
+      ],
+      "readingLines": [
+        "샌드위치 주세요.",
+        "네. 주스는요?",
+        "주스 주세요.",
+        "우유는요?",
+        "우유 주세요.",
+        "빵은요?",
+        "빵 주세요. 얼마예요?",
+        "오천 원이에요."
+      ],
+      "translations": [
+        "Please give me a sandwich.",
+        "Certainly. How about juice?",
+        "Please give me juice.",
+        "How about milk?",
+        "Please give me milk.",
+        "How about bread?",
+        "Please give me bread. How much is it?",
+        "It is five thousand won."
+      ]
+    },
+    {
+      "chapter": 8,
+      "title": "Junho's School-Day Schedule",
+      "type": "narrative",
+      "path": "units/korean-core/chapter-008-a-simple-daily-schedule/chapter.md",
+      "grammarId": "KOR-GRAMMAR-008",
+      "participants": [
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "이준호는 일곱 시에 일어나요.",
+        "아침밥은 일곱 시에 먹어요.",
+        "학교에는 여덟 시에 가요.",
+        "여덟 시에 수업이 시작해요.",
+        "점심에는 밥을 먹어요.",
+        "오후에는 카페에 가요.",
+        "카페에서 책을 읽어요.",
+        "밤에는 집에 돌아와요."
+      ],
+      "translations": [
+        "Lee Junho gets up at seven.",
+        "He eats breakfast at seven.",
+        "He goes to school at eight.",
+        "Class starts at eight.",
+        "At lunchtime, he eats a meal.",
+        "In the afternoon, he goes to a café.",
+        "He reads a book at the café.",
+        "At night, he returns home."
+      ]
+    },
+    {
+      "chapter": 9,
+      "title": "Resting After a Busy Week",
+      "type": "dialogue",
+      "path": "units/korean-core/chapter-009-a-quiet-weekend/chapter.md",
+      "grammarId": "KOR-GRAMMAR-009",
+      "participants": [
+        "CAST-004",
+        "CAST-005"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "오늘 더워요?",
+        "아니요, 안 더워요.",
+        "오늘 추워요?",
+        "아니요, 안 추워요.",
+        "피곤해요?",
+        "네, 오늘은 조금 피곤해요.",
+        "주말에는 운동해요?",
+        "네, 주말에는 운동해요. 오늘은 운동 안 해요."
+      ],
+      "translations": [
+        "Is it hot today?",
+        "No, it is not hot.",
+        "Is it cold today?",
+        "No, it is not cold.",
+        "Are you tired?",
+        "Yes, I am a little tired today.",
+        "Do you exercise on weekends?",
+        "Yes, I exercise on weekends. I am not exercising today."
+      ]
+    },
+    {
+      "chapter": 10,
+      "title": "Photographs for the Library Display",
+      "type": "narrative",
+      "path": "units/korean-core/chapter-010-yesterday-at-the-market/chapter.md",
+      "grammarId": "KOR-GRAMMAR-010",
+      "participants": [
+        "CAST-001",
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "어제 민지는 시장에 갔어요.",
+        "준호가 시장에 왔어요.",
+        "두 친구는 시장 사진을 찍었어요.",
+        "시장에서 민지는 사과를 샀어요.",
+        "준호는 시장에서 빵을 샀어요.",
+        "그다음에 두 사람은 공원에 갔어요.",
+        "사진은 공원에서 봤어요.",
+        "저녁에 민지는 집에 왔어요."
+      ],
+      "translations": [
+        "Yesterday, Minji went to the market.",
+        "Junho came to the market.",
+        "The two friends took photographs of the market.",
+        "At the market, Minji bought apples.",
+        "Junho bought bread at the market.",
+        "After that, the two people went to the park.",
+        "They looked at the photographs in the park.",
+        "In the evening, Minji came home."
+      ]
+    },
+    {
+      "chapter": 11,
+      "title": "Choosing Library Materials",
+      "type": "dialogue",
+      "path": "units/korean-core/chapter-011-books-at-the-library/chapter.md",
+      "grammarId": "KOR-GRAMMAR-011",
+      "participants": [
+        "CAST-003",
+        "CAST-005"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "도서관에서 책하고 사전을 찾아요.",
+        "사전은 저기 선반에 있어요.",
+        "잡지하고 신문은 어디에 있어요?",
+        "창가 옆 선반에 있어요.",
+        "책은 어디에 있어요?",
+        "책은 저기 선반에 있어요.",
+        "좋아요. 책하고 사전을 같이 봐요.",
+        "네, 도서관에서 읽어요."
+      ],
+      "translations": [
+        "I am looking for books and a dictionary at the library.",
+        "The dictionary is on that shelf over there.",
+        "Where are the magazines and newspapers?",
+        "They are on the shelf by the window.",
+        "Where are the books?",
+        "The books are on that shelf over there.",
+        "Good. Let us look at the books and dictionary together.",
+        "Yes, let us read at the library."
+      ]
+    },
+    {
+      "chapter": 12,
+      "title": "Closing the Program Room",
+      "type": "narrative",
+      "path": "units/korean-core/chapter-012-after-class/chapter.md",
+      "grammarId": "KOR-GRAMMAR-012",
+      "participants": [
+        "CAST-001",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "오늘 수업이 끝나요.",
+        "박서연은 문을 닫고 책상을 정리해요.",
+        "김민지는 책을 정리하고 공책을 닫아요.",
+        "두 사람은 교실을 청소하고 나가요.",
+        "두 사람은 학교에서 이야기하고 집에 가요.",
+        "김민지는 물을 마시고 쉬어요.",
+        "박서연은 숙제를 하고 밥을 먹어요.",
+        "밤에는 두 사람이 책을 읽고 쉬어요."
+      ],
+      "translations": [
+        "Today the session ends.",
+        "Seoyeon closes the door and tidies the desk.",
+        "Minji organizes the books and closes her notebook.",
+        "The two people clean the classroom and leave.",
+        "The two people talk at school and go home.",
+        "Minji drinks water and rests.",
+        "Seoyeon does homework and eats a meal.",
+        "At night, both people read and rest."
+      ]
+    },
+    {
+      "chapter": 13,
+      "title": "Dinner After the Session",
+      "type": "dialogue",
+      "path": "units/korean-core/chapter-013-choosing-dinner/chapter.md",
+      "grammarId": "KOR-GRAMMAR-013",
+      "participants": [
+        "CAST-003",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "저녁에 김치찌개를 먹고 싶어요.",
+        "저는 비빔밥을 먹고 싶어요.",
+        "음료는 뭐 마시고 싶어요?",
+        "탄산수를 마시고 싶어요.",
+        "저는 따뜻한 차를 마시고 싶어요.",
+        "디저트는 뭐 먹고 싶어요?",
+        "아이스크림을 먹고 싶어요.",
+        "좋아요. 저녁에 같이 먹어요."
+      ],
+      "translations": [
+        "I want to eat kimchi stew for dinner.",
+        "I want to eat bibimbap.",
+        "What do you want to drink?",
+        "I want to drink sparkling water.",
+        "I want to drink warm tea.",
+        "What do you want for dessert?",
+        "I want to eat ice cream.",
+        "Sounds good. Let us eat together this evening."
+      ]
+    },
+    {
+      "chapter": 14,
+      "title": "Gathering Ideas at the Museum",
+      "type": "narrative",
+      "path": "units/korean-core/chapter-014-a-saturday-outing/chapter.md",
+      "grammarId": "KOR-GRAMMAR-014",
+      "participants": [
+        "CAST-002",
+        "CAST-005"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "토요일에 이준호는 박물관에 가요.",
+        "이준호는 지도를 보러 안내소에 가요.",
+        "박물관에는 사진을 보러 들어가요.",
+        "두 사람은 점심을 먹으러 카페에 가요.",
+        "오후에는 정수진이 선물을 사러 시장에 가요.",
+        "이준호는 사진을 찍으러 공원에 가요.",
+        "정수진은 엽서를 사러 가게에 가요.",
+        "저녁에는 두 사람이 집에 돌아와요."
+      ],
+      "translations": [
+        "On Saturday, Lee Junho goes to the museum.",
+        "Junho goes to the information desk to look at a map.",
+        "He enters the museum to look at photographs.",
+        "The two people go to a café to eat lunch.",
+        "In the afternoon, Jeong Sujin goes to the market to buy a gift.",
+        "Lee Junho goes to the park to take photographs.",
+        "Sujin goes to a shop to buy a postcard.",
+        "In the evening, the two people return home."
+      ]
+    },
+    {
+      "chapter": 15,
+      "title": "Planning the Next Program Day",
+      "type": "dialogue",
+      "path": "units/korean-core/chapter-015-planning-tomorrow/chapter.md",
+      "grammarId": "KOR-GRAMMAR-015",
+      "participants": [
+        "CAST-001",
+        "CAST-003",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "readingLines": [
+        "내일 어디에서 만날까요?",
+        "아침에 지하철역에서 만날까요?",
+        "그다음에 서점에 갈까요?",
+        "좋아요. 소설을 살까요?",
+        "강가에서 같이 걸을까요?",
+        "영화관에 같이 갈까요?",
+        "네, 오후에 영화를 볼까요?",
+        "좋아요. 저녁에는 카페에서 이야기할까요?"
+      ],
+      "translations": [
+        "Where shall we meet tomorrow?",
+        "Shall we meet at the subway station in the morning?",
+        "After that, shall we go to the bookstore?",
+        "Sounds good. Shall we buy a novel?",
+        "Shall we walk together by the river?",
+        "Shall we go to the cinema together?",
+        "Yes. Shall we watch a film in the afternoon?",
+        "Sounds good. Shall we talk at a café in the evening?"
+      ]
+    }
+  ],
+  "counts": {
+    "chapters": 15,
+    "grammarIds": 15,
+    "lexicalSenses": 132,
+    "reviewCards": 264
+  },
+  "identityPolicy": {
+    "chapterNumbersStable": true,
+    "sourcePathsStable": true,
+    "grammarIdsStable": true,
+    "lexicalIdsStable": true,
+    "senseIdsStable": true,
+    "reviewCardIdsStable": true,
+    "packageIdsStable": true,
+    "packageVersionStable": true
+  },
+  "firstProfiles": {
+    "1": [
+      "CAST-001",
+      "CAST-002"
+    ],
+    "3": [
+      "CAST-003",
+      "CAST-004"
+    ],
+    "7": [
+      "CAST-005"
+    ]
+  }
+}

@@ -1,27 +1,36 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-009"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:안 + verb / descriptive verb]] for short negation, placing [[grammar:안]] directly before the predicate.",
-      "expert": "The preverbal negative adverb [[grammar:안]] scopes over an action or descriptive predicate without changing the polite ending."
+      "normal": "Use [[grammar:안 + verb / descriptive verb]] for short negation. With noun-plus-하다 activities, ordinary Korean often uses [[grammar:N 안 해요]].",
+      "expert": "Negative adverb [[grammar:안]] precedes a simple predicate; in analyzable noun-plus-하다 predicates it commonly appears between the nominal element and 하다."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### short negation with an\n\nPut `안` directly before the action or description: `안 추워요` means “It is not cold,” and `안 운동해요` means “I do not exercise.”\n\nExample: [[grammar:아니요, 안 추워요]]\n\nWatch out: Put `안` before the predicate, not after it.",
-      "expert": "#### short negation with an\n\n`안` is a preverbal short-negation adverb. It precedes the lexical verb or descriptive verb and leaves the predicate’s politeness ending unchanged.\n\nExample: [[grammar:아니요, 안 추워요]]"
+      "normal": "Place [[grammar:안]] before a simple verb or descriptive verb: [[grammar:안 추워요]]. With a noun-plus-[[grammar:하다]] activity, ordinary speech often keeps the noun before the negative: [[grammar:운동 안 해요]].\n\nExample: [[grammar:아니요, 안 더워요.]]",
+      "expert": "Short negation uses the preverbal adverb [[grammar:안]]. In lexicalized noun-plus-[[grammar:하다]] predicates, [[grammar:안]] commonly appears between the nominal element and [[grammar:하다]], showing that the construction is internally analyzable.\n\nExample: [[grammar:아니요, 안 더워요.]]"
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The topic forms `주말에는` and `오늘은` create a useful contrast: Sujin generally exercises on weekends but not today. Korean does not need to repeat “I” in either answer.",
+      "expert": "The topic forms `주말에는` and `오늘은` create a useful contrast: Sujin generally exercises on weekends but not today. Korean does not need to repeat “I” in either answer."
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "Follow Doyun’s questions from the weather to Sujin’s tiredness and her decision not to exercise today.",
-      "expert": "The final answer extends short negation from descriptive predicates to an action predicate while retaining the weekend topic."
+      "normal": "Doyun checks the weather and Sujin’s energy before she decides to rest rather than exercise today.",
+      "expert": "The dialogue contrasts simple predicate negation with the ordinary noun-plus-하다 placement in `운동 안 해요`, while topic phrases organize time contrast."
     }
   ],
   "breakdown": {
-    "normal": "- 오늘 추워요? — Is it cold today?\n- 아니요, 안 추워요. — No, it is not cold.\n- 오늘 더워요? — Is it hot today?\n- 아니요, 안 더워요. — No, it is not hot.\n- 피곤해요? — Are you tired?\n- 네, 조금 피곤해요. — Yes, I am a little tired.\n- 주말에는 운동해요? — Do you exercise on weekends?\n- 아니요, 오늘은 안 운동해요. — No, I am not exercising today.",
-    "expert": "- 오늘 추워요? — Natural translation: Is it cold today?\n- 아니요, 안 추워요. — Natural translation: No, it is not cold.\n- 오늘 더워요? — Natural translation: Is it hot today?\n- 아니요, 안 더워요. — Natural translation: No, it is not hot.\n- 피곤해요? — Natural translation: Are you tired?\n- 네, 조금 피곤해요. — Natural translation: Yes, I am a little tired.\n- 주말에는 운동해요? — Natural translation: Do you exercise on weekends?\n- 아니요, 오늘은 안 운동해요. — Natural translation: No, I am not exercising today."
+    "normal": "- 오늘 더워요? — Is it hot today?\n- 아니요, 안 더워요. — No, it is not hot.\n- 오늘 추워요? — Is it cold today?\n- 아니요, 안 추워요. — No, it is not cold.\n- 피곤해요? — Are you tired?\n- 네, 오늘은 조금 피곤해요. — Yes, I am a little tired today.\n- 주말에는 운동해요? — Do you exercise on weekends?\n- 네, 주말에는 운동해요. 오늘은 운동 안 해요. — Yes, I exercise on weekends. I am not exercising today.",
+    "expert": "- 오늘 더워요? — Natural translation: Is it hot today?\n- 아니요, 안 더워요. — Natural translation: No, it is not hot.\n- 오늘 추워요? — Natural translation: Is it cold today?\n- 아니요, 안 추워요. — Natural translation: No, it is not cold.\n- 피곤해요? — Natural translation: Are you tired?\n- 네, 오늘은 조금 피곤해요. — Natural translation: Yes, I am a little tired today.\n- 주말에는 운동해요? — Natural translation: Do you exercise on weekends?\n- 네, 주말에는 운동해요. 오늘은 운동 안 해요. — Natural translation: Yes, I exercise on weekends. I am not exercising today."
   },
   "readingItems": [
     {
@@ -34,14 +43,14 @@
     {
       "surface": "아니요",
       "reading": "아니요",
-      "evidence": "아니요, 안 추워요.",
+      "evidence": "아니요, 안 더워요.",
       "lexicalEntryId": "ko.response.aniyo",
       "senseId": "ko.response.aniyo.no"
     },
     {
       "surface": "안",
       "reading": "안",
-      "evidence": "아니요, 안 추워요.",
+      "evidence": "아니요, 안 더워요.",
       "lexicalEntryId": "ko.adverb.an",
       "senseId": "ko.adverb.an.not"
     },
@@ -62,7 +71,7 @@
     {
       "surface": "조금",
       "reading": "조금",
-      "evidence": "네, 조금 피곤해요.",
+      "evidence": "네, 오늘은 조금 피곤해요.",
       "lexicalEntryId": "ko.adverb.jogeum",
       "senseId": "ko.adverb.jogeum.a-little"
     },

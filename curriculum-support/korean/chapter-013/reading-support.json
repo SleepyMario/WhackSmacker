@@ -9,23 +9,28 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:verb stem + 고 싶어요]] to say or ask what someone wants to do. Attach [[grammar:-고 싶어요]] to an action-verb stem and place the desired object before the verb.",
-      "expert": "[[grammar:-고 싶다]] is a desiderative construction attached to an action-verb stem. First-person statements and second-person questions identify the experiencer through discourse context."
+      "normal": "Use [[grammar:verb stem + 고 싶어요]] to state your own desire or ask the listener’s desire.",
+      "expert": "Desiderative [[grammar:-고 싶다]] attaches to an action-verb stem; first-person declaratives and second-person interrogatives receive their experiencer from speech-act context."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### verb stem + 고 싶어요\n\nRemove `다` from an action verb and add `고 싶어요`: `먹다` becomes `먹고 싶어요`. Use a question to ask the listener what they want, and a statement to say what you want.\n\nExample: [[grammar:저는 비빔밥을 먹고 싶어요.]]\n\nWatch out: Do not attach this pattern directly to a noun; use an action verb such as `먹다`, `마시다`, or `가다`.",
-      "expert": "#### verb stem + 고 싶어요\n\n`-고 싶다` is a desiderative construction attached to an action-verb stem. In ordinary first-person statements and second-person questions, the experiencer is interpreted from discourse context.\n\nExample: [[grammar:저는 비빔밥을 먹고 싶어요.]]"
+      "normal": "Attach [[grammar:-고 싶어요]] to an action-verb stem: [[grammar:먹다 → 먹고 싶어요]], [[grammar:마시다 → 마시고 싶어요]]. A statement normally expresses the speaker’s own desire; a polite question can ask the listener’s desire.\n\nExample: [[grammar:저는 비빔밥을 먹고 싶어요.]]",
+      "expert": "[[grammar:-고 싶다]] is a desiderative construction. In ordinary first-person declaratives and second-person interrogatives, the experiencer is licensed by speech-act context; third-person desire requires additional grammar not taught here.\n\nExample: [[grammar:저는 비빔밥을 먹고 싶어요.]]"
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "The topic phrases `음료는` and `디저트는` shift the category under discussion without repeating the whole dinner question. First-person statements and second-person questions make the experiencer clear; the final shared invitation returns to plain polite `먹어요`.",
+      "expert": "The topic phrases `음료는` and `디저트는` shift the category under discussion without repeating the whole dinner question. First-person statements and second-person questions make the experiencer clear; the final shared invitation returns to plain polite `먹어요`."
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "While choosing dinner, 박서연 and 최도윤 discuss food, drinks, and dessert.",
-      "expert": "The dialogue alternates second-person questions and first-person statements with the desiderative construction."
+      "normal": "Seoyeon and Doyun express what they want for dinner, drinks, and dessert, then agree to eat together.",
+      "expert": "The dialogue limits `-고 싶어요` to first-person statements and second-person questions while category topics and omitted subjects structure the negotiation."
     }
   ],
   "breakdown": {
-    "normal": "- 저녁에 뭐 먹고 싶어요? — What do you want to eat for dinner?\n- 저는 비빔밥을 먹고 싶어요. — I want to eat bibimbap.\n- 저는 김치찌개를 먹고 싶어요. — I want to eat kimchi stew.\n- 음료는 뭐 마시고 싶어요? — What do you want to drink?\n- 따뜻한 차를 마시고 싶어요. — I want to drink warm tea.\n- 저는 탄산수를 마시고 싶어요. — I want to drink sparkling water.\n- 디저트를 먹고 싶어요? — Do you want to eat dessert?\n- 네, 아이스크림을 먹고 싶어요. — Yes, I want to eat ice cream.",
-    "expert": "- 저녁에 뭐 먹고 싶어요? — Natural translation: What do you want to eat for dinner?\n- 저는 비빔밥을 먹고 싶어요. — Natural translation: I want to eat bibimbap.\n- 저는 김치찌개를 먹고 싶어요. — Natural translation: I want to eat kimchi stew.\n- 음료는 뭐 마시고 싶어요? — Natural translation: What do you want to drink?\n- 따뜻한 차를 마시고 싶어요. — Natural translation: I want to drink warm tea.\n- 저는 탄산수를 마시고 싶어요. — Natural translation: I want to drink sparkling water.\n- 디저트를 먹고 싶어요? — Natural translation: Do you want to eat dessert?\n- 네, 아이스크림을 먹고 싶어요. — Natural translation: Yes, I want to eat ice cream."
+    "normal": "- 저녁에 김치찌개를 먹고 싶어요. — I want to eat kimchi stew for dinner.\n- 저는 비빔밥을 먹고 싶어요. — I want to eat bibimbap.\n- 음료는 뭐 마시고 싶어요? — What do you want to drink?\n- 탄산수를 마시고 싶어요. — I want to drink sparkling water.\n- 저는 따뜻한 차를 마시고 싶어요. — I want to drink warm tea.\n- 디저트는 뭐 먹고 싶어요? — What do you want for dessert?\n- 아이스크림을 먹고 싶어요. — I want to eat ice cream.\n- 좋아요. 저녁에 같이 먹어요. — Sounds good. Let us eat together this evening.",
+    "expert": "- 저녁에 김치찌개를 먹고 싶어요. — Natural translation: I want to eat kimchi stew for dinner.\n- 저는 비빔밥을 먹고 싶어요. — Natural translation: I want to eat bibimbap.\n- 음료는 뭐 마시고 싶어요? — Natural translation: What do you want to drink?\n- 탄산수를 마시고 싶어요. — Natural translation: I want to drink sparkling water.\n- 저는 따뜻한 차를 마시고 싶어요. — Natural translation: I want to drink warm tea.\n- 디저트는 뭐 먹고 싶어요? — Natural translation: What do you want for dessert?\n- 아이스크림을 먹고 싶어요. — Natural translation: I want to eat ice cream.\n- 좋아요. 저녁에 같이 먹어요. — Natural translation: Sounds good. Let us eat together this evening."
   },
   "readingItems": [
     {
@@ -38,7 +43,7 @@
     {
       "surface": "김치찌개",
       "reading": "김치찌개",
-      "evidence": "저는 김치찌개를 먹고 싶어요.",
+      "evidence": "저녁에 김치찌개를 먹고 싶어요.",
       "lexicalEntryId": "ko.noun.gimchijjigae",
       "senseId": "ko.noun.gimchijjigae.kimchi-stew"
     },
@@ -52,35 +57,35 @@
     {
       "surface": "따뜻하다",
       "reading": "따뜻하다",
-      "evidence": "따뜻한 차를 마시고 싶어요.",
+      "evidence": "저는 따뜻한 차를 마시고 싶어요.",
       "lexicalEntryId": "ko.descriptive-verb.ttatteuthada",
       "senseId": "ko.descriptive-verb.ttatteuthada.warm"
     },
     {
       "surface": "차",
       "reading": "차",
-      "evidence": "따뜻한 차를 마시고 싶어요.",
+      "evidence": "저는 따뜻한 차를 마시고 싶어요.",
       "lexicalEntryId": "ko.noun.cha",
       "senseId": "ko.noun.cha.tea"
     },
     {
       "surface": "탄산수",
       "reading": "탄산수",
-      "evidence": "저는 탄산수를 마시고 싶어요.",
+      "evidence": "탄산수를 마시고 싶어요.",
       "lexicalEntryId": "ko.noun.tansansu",
       "senseId": "ko.noun.tansansu.sparkling-water"
     },
     {
       "surface": "디저트",
       "reading": "디저트",
-      "evidence": "디저트를 먹고 싶어요?",
+      "evidence": "디저트는 뭐 먹고 싶어요?",
       "lexicalEntryId": "ko.noun.dijeoteu",
       "senseId": "ko.noun.dijeoteu.dessert"
     },
     {
       "surface": "아이스크림",
       "reading": "아이스크림",
-      "evidence": "네, 아이스크림을 먹고 싶어요.",
+      "evidence": "아이스크림을 먹고 싶어요.",
       "lexicalEntryId": "ko.noun.aiseukeurim",
       "senseId": "ko.noun.aiseukeurim.ice-cream"
     }

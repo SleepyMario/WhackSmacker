@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "reviewCardCount": 264,
+  "stableCardIds": true,
+  "immutableFieldsChanged": 0,
+  "examplesAndProvenanceChanged": 222,
+  "allowedChangedColumns": [
+    "examples",
+    "provenance_evidence",
+    "provenance_locator",
+    "provenance_path"
+  ],
+  "expectedProgressBehavior": "preserve surviving scheduler state because card IDs and every pedagogically material field remain unchanged"
+}

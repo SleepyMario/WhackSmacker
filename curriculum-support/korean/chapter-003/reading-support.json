@@ -9,22 +9,27 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:이게 뭐예요]]? to ask politely what a nearby thing is. [[grammar:이게]] is the common spoken contraction of [[grammar:이것이]].",
-      "expert": "[[grammar:이게 뭐예요]]? combines contracted demonstrative subject [[grammar:이게]] with interrogative 뭐 and the polite copula 예요. The contraction belongs to the grammatical occurrence, not the lexical identity of 이것."
+      "normal": "Use [[grammar:이게 뭐예요]]? to ask what a nearby thing is. [[grammar:이게]] comes from 이것이, and [[grammar:이건]] comes from 이것은.",
+      "expert": "The canonical demonstrative 이것 contracts with nominative 이 to [[grammar:이게]] and with topic 은 to [[grammar:이건]]; the two surfaces retain one lexical identity."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "Use [[grammar:이게 뭐예요]]? to politely ask what a nearby thing is. 이게 is the spoken contraction of 이것이: [[grammar:이것이 → 이게]]. Keep the dictionary headword 이것; do not learn the subject particle as part of the noun.",
-      "expert": "The surface subject 이게 contracts from 이것이, combining demonstrative 이것 with nominative 이. Interrogative 뭐 precedes polite copula 예요; contraction belongs to the grammatical occurrence, not the lexical identity."
+      "normal": "[[grammar:이게]] comes from [[grammar:이것이]], and [[grammar:이건]] comes from [[grammar:이것은]]. Use [[grammar:이게 뭐예요?]] to identify a nearby item; use [[grammar:이건 N이에요/예요?]] to check a proposed identification.\n\nExample: [[grammar:이게 뭐예요?]]",
+      "expert": "The demonstrative pronoun [[grammar:이것]] combines with nominative [[grammar:이]] or topic [[grammar:은]], producing the spoken contractions [[grammar:이게]] and [[grammar:이건]]. These are grammatical surface forms of one lexical identity, not separate headwords.\n\nExample: [[grammar:이게 뭐예요?]]"
     },
     {
       "sourceHeading": "Language Notes",
-      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
-      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+      "normal": "Keep `이것` as the dictionary and Review form. The contractions show the attached particle in ordinary speech. In the final exchange, Korean omits the key because it is already the active topic.",
+      "expert": "Keep `이것` as the dictionary and Review form. The contractions show the attached particle in ordinary speech. In the final exchange, Korean omits the key because it is already the active topic."
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "Seoyeon and Doyun identify program supplies and then locate the key.",
+      "expert": "The dialogue contrasts nominative contraction `이게` with topic contraction `이건`, then relies on subject omission in the location answer."
     }
   ],
   "breakdown": {
-    "normal": "- 이게 뭐예요? — What is this?\n- 펜이에요. — It is a pen.\n- 이게 공책이에요? — Is this a notebook?\n- 네, 공책이에요. — Yes, it is a notebook.\n- 열쇠가 어디에 있어요? — Where is the key?\n- 휴대폰 옆에 있어요. — It is beside the mobile phone.",
-    "expert": "- 이게 뭐예요? — Natural translation: What is this?\n- 펜이에요. — Natural translation: It is a pen.\n- 이게 공책이에요? — Natural translation: Is this a notebook?\n- 네, 공책이에요. — Natural translation: Yes, it is a notebook.\n- 열쇠가 어디에 있어요? — Natural translation: Where is the key?\n- 휴대폰 옆에 있어요. — Natural translation: It is beside the mobile phone."
+    "normal": "- 이게 뭐예요? — What is this?\n- 공책이에요. — It is a notebook.\n- 이건 펜이에요? — Is this a pen?\n- 네, 펜이에요. — Yes, it is a pen.\n- 열쇠가 어디에 있어요? — Where is the key?\n- 휴대폰 옆에 있어요. — It is beside the mobile phone.",
+    "expert": "- 이게 뭐예요? — Natural translation: What is this?\n- 공책이에요. — Natural translation: It is a notebook.\n- 이건 펜이에요? — Natural translation: Is this a pen?\n- 네, 펜이에요. — Natural translation: Yes, it is a pen.\n- 열쇠가 어디에 있어요? — Natural translation: Where is the key?\n- 휴대폰 옆에 있어요. — Natural translation: It is beside the mobile phone."
   }
 }

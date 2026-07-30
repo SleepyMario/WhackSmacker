@@ -1,75 +1,84 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-007"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:N 주세요]] to request an item politely; the object particle is commonly omitted in this short pattern.",
-      "expert": "The item precedes the polite request form [[grammar:주세요]], with accusative [[grammar:을/를]] commonly omitted in this compact construction."
+      "normal": "Use [[grammar:N 주세요]] for a compact polite request. The object particle is commonly omitted.",
+      "expert": "The requested nominal precedes honorific request form [[grammar:주세요]]; service discourse licenses a bare noun, and [[grammar:N은/는요]]? forms an elliptical follow-up."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### polite item requests with juseyo\n\nPut the item before `주세요`: `주스 주세요` means “Juice, please.” The object particle is often left out in this short request pattern.\n\nExample: [[grammar:주스 주세요]]\n\nWatch out: Do not treat `주세요` as the dictionary form. The canonical verb is `주다`.",
-      "expert": "#### polite item requests with juseyo\n\nThe conventional request uses the honorific imperative form `주세요` of `주다`. In short service encounters, the requested noun may appear without an overt object particle.\n\nExample: [[grammar:주스 주세요]]"
+      "normal": "Put the requested item directly before [[grammar:주세요]]. The fuller object-marked form is possible, but short shop requests normally omit [[grammar:을/를]]. The clerk’s [[grammar:주스는요?]], [[grammar:우유는요?]], and [[grammar:빵은요?]] offer follow-up items without repeating a complete question.\n\nExample: [[grammar:샌드위치 주세요.]]",
+      "expert": "[[grammar:주세요]] is the honorific request form of [[grammar:주다]]. In a conventional service encounter, the requested nominal may be bare. The clerk’s [[grammar:N은/는요?]] is an elliptical topic follow-up recovered from the request frame.\n\nExample: [[grammar:샌드위치 주세요.]]"
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "`점원` is a chapter-local functional role, not a recurring cast member. The exchange stays polite and concise, as ordinary Korean service encounters often do.",
+      "expert": "`점원` is a chapter-local functional role, not a recurring cast member. The exchange stays polite and concise, as ordinary Korean service encounters often do."
     },
     {
       "sourceHeading": "Dialogue",
-      "normal": "Follow Sujin’s short item requests until the clerk gives the total price.",
-      "expert": "The dialogue uses bare noun phrases before `주세요`, a conventional service-request pattern in which the object particle is omitted."
+      "normal": "Librarian Sujin buys several snacks and drinks for the group while the clerk confirms each additional item.",
+      "expert": "Bare requested nouns precede honorific `주세요`, while the clerk’s `N은요?` turns are elliptical category prompts licensed by the service context."
     }
   ],
   "breakdown": {
-    "normal": "- 주스 주세요. — Juice, please.\n- 네. — Yes.\n- 우유 주세요. — Milk, please.\n- 네. — Yes.\n- 빵 주세요. — Bread, please.\n- 샌드위치는요? — What about a sandwich?\n- 샌드위치 주세요. 얼마예요? — A sandwich, please. How much is it?\n- 오천 원이에요. — It is five thousand won.",
-    "expert": "- 주스 주세요. — Natural translation: Juice, please.\n- 네. — Natural translation: Yes.\n- 우유 주세요. — Natural translation: Milk, please.\n- 네. — Natural translation: Yes.\n- 빵 주세요. — Natural translation: Bread, please.\n- 샌드위치는요? — Natural translation: What about a sandwich?\n- 샌드위치 주세요. 얼마예요? — Natural translation: A sandwich, please. How much is it?\n- 오천 원이에요. — Natural translation: It is five thousand won."
+    "normal": "- 샌드위치 주세요. — Please give me a sandwich.\n- 네. 주스는요? — Certainly. How about juice?\n- 주스 주세요. — Please give me juice.\n- 우유는요? — How about milk?\n- 우유 주세요. — Please give me milk.\n- 빵은요? — How about bread?\n- 빵 주세요. 얼마예요? — Please give me bread. How much is it?\n- 오천 원이에요. — It is five thousand won.",
+    "expert": "- 샌드위치 주세요. — Natural translation: Please give me a sandwich.\n- 네. 주스는요? — Natural translation: Certainly. How about juice?\n- 주스 주세요. — Natural translation: Please give me juice.\n- 우유는요? — Natural translation: How about milk?\n- 우유 주세요. — Natural translation: Please give me milk.\n- 빵은요? — Natural translation: How about bread?\n- 빵 주세요. 얼마예요? — Natural translation: Please give me bread. How much is it?\n- 오천 원이에요. — Natural translation: It is five thousand won."
   },
   "readingItems": [
     {
       "surface": "주다",
       "reading": "주다",
-      "evidence": "주스 주세요.",
+      "evidence": "샌드위치 주세요.",
       "lexicalEntryId": "ko.verb.juda",
       "senseId": "ko.verb.juda.give-request"
     },
     {
       "surface": "점원",
       "reading": "점원",
-      "evidence": "점원: 네.",
+      "evidence": "점원: 네. 주스는요?",
       "lexicalEntryId": "ko.noun.jeomwon",
       "senseId": "ko.noun.jeomwon.shop-clerk"
     },
     {
       "surface": "주스",
       "reading": "주스",
-      "evidence": "주스 주세요.",
+      "evidence": "네. 주스는요?",
       "lexicalEntryId": "ko.noun.juseu",
       "senseId": "ko.noun.juseu.juice"
     },
     {
       "surface": "우유",
       "reading": "우유",
-      "evidence": "우유 주세요.",
+      "evidence": "우유는요?",
       "lexicalEntryId": "ko.noun.uyu",
       "senseId": "ko.noun.uyu.milk"
     },
     {
       "surface": "빵",
       "reading": "빵",
-      "evidence": "빵 주세요.",
+      "evidence": "빵은요?",
       "lexicalEntryId": "ko.noun.ppang",
       "senseId": "ko.noun.ppang.bread"
     },
     {
       "surface": "샌드위치",
       "reading": "샌드위치",
-      "evidence": "샌드위치는요?",
+      "evidence": "샌드위치 주세요.",
       "lexicalEntryId": "ko.noun.saendeuwichi",
       "senseId": "ko.noun.saendeuwichi.sandwich"
     },
     {
       "surface": "얼마",
       "reading": "얼마",
-      "evidence": "샌드위치 주세요. 얼마예요?",
+      "evidence": "빵 주세요. 얼마예요?",
       "lexicalEntryId": "ko.question.eolma",
       "senseId": "ko.question.eolma.how-much"
     },
@@ -83,7 +92,7 @@
     {
       "surface": "원",
       "reading": "원",
-      "evidence": "오천 원이에요.",
+      "evidence": "점원: 오천 원이에요.",
       "lexicalEntryId": "ko.currency.won",
       "senseId": "ko.currency.won.won"
     }

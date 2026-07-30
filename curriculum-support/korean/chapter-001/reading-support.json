@@ -9,22 +9,27 @@
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:N은/는 — topic marking]] to mark the sentence topic. Put [[grammar:은]] after a consonant sound and [[grammar:는]] after a vowel sound; 저는 is 저 + 는.",
-      "expert": "[[grammar:은/는]] marks a discourse topic in topic–comment structure, with coda-conditioned allomorphy. 저는 decomposes as 저 + 는, while the copula separately alternates between 이에요 and 예요."
+      "normal": "Use [[grammar:N은/는 — topic marking]] to set the sentence topic. Put [[grammar:은]] after a consonant-final expression and [[grammar:는]] after a vowel-final one. In the role questions, Korean leaves the obvious subject unspoken.",
+      "expert": "[[grammar:은/는]] establishes a discourse topic with coda-conditioned allomorphy. The later role questions use zero anaphora, recovering the omitted subject from the speech situation."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "Put [[grammar:은]] after a consonant sound and [[grammar:는]] after a vowel sound to mark the topic. 저는 is 저 + 는. Structural gloss: ‘as for me.’ Natural English: ‘I.’ Do not translate 은/는 as a separate English word every time.",
-      "expert": "은/는 marks a discourse topic in topic–comment structure, with phonologically conditioned allomorphy. 저는 decomposes as 저 + 는; the copula separately alternates between 이에요 and 예요."
+      "normal": "Attach [[grammar:은/는]] to the noun phrase you want to make the topic. In [[grammar:저는]], [[grammar:저]] means “I; me” in polite or humble speech and [[grammar:는]] marks it as the topic. The questions [[grammar:선생님이에요?]] and [[grammar:학생이에요?]] omit an explicit subject because the two speakers already know whose role is being checked.\n\nExample: [[grammar:안녕하세요. 저는 김민지예요.]]",
+      "expert": "[[grammar:은/는]] establishes a discourse topic in a topic–comment structure, with its allomorph selected by the preceding phonological coda. The role questions then use zero anaphora: the omitted subject is recovered from the speech situation rather than repeated.\n\nExample: [[grammar:안녕하세요. 저는 김민지예요.]]"
     },
     {
       "sourceHeading": "Language Notes",
-      "normal": "Read each Hangul block as one syllable. Particles stay attached to the word before them, but the breakdown explains what each particle does.",
-      "expert": "The examples use standard Korean in the informal-polite 해요 style. Particle allomorphy and contractions are analyzed as grammar while lexical entries retain citation forms."
+      "normal": "The dialogue uses informal-polite `해요` style. Structural speaker labels use full names; inside the exchange, the questions omit an explicit subject because the two speakers and the role being checked are already clear.",
+      "expert": "The dialogue uses informal-polite `해요` style. Structural speaker labels use full names; inside the exchange, the questions omit an explicit subject because the two speakers and the role being checked are already clear."
+    },
+    {
+      "sourceHeading": "Dialogue",
+      "normal": "At the first program orientation, Minji and Junho greet each other, exchange names, and confirm that one is a student and the other a teacher.",
+      "expert": "The exchange combines polite topic marking, copular identification, and discourse-supported subject omission in a natural first meeting."
     }
   ],
   "breakdown": {
-    "normal": "- 안녕하세요. — Hello.\n- 안녕하세요. — Hello.\n- 저는 민지예요. — I am Minji.\n- 저는 준호예요. — I am Junho.\n- 학생이에요. — I am a student.\n- 네, 저는 선생님이에요. — Yes, I am a teacher.",
-    "expert": "- 안녕하세요. — Natural translation: Hello.\n- 안녕하세요. — Natural translation: Hello.\n- 저는 민지예요. — Natural translation: I am Minji.\n- 저는 준호예요. — Natural translation: I am Junho.\n- 학생이에요. — Natural translation: I am a student.\n- 네, 저는 선생님이에요. — Natural translation: Yes, I am a teacher."
+    "normal": "- 안녕하세요. 저는 김민지예요. — Hello. I am Kim Minji.\n- 안녕하세요. 저는 이준호예요. — Hello. I am Lee Junho.\n- 선생님이에요? — Are you a teacher?\n- 네, 선생님이에요. — Yes, I am a teacher.\n- 학생이에요? — Are you a student?\n- 네, 저는 학생이에요. — Yes, I am a student.",
+    "expert": "- 안녕하세요. 저는 김민지예요. — Natural translation: Hello. I am Kim Minji.\n- 안녕하세요. 저는 이준호예요. — Natural translation: Hello. I am Lee Junho.\n- 선생님이에요? — Natural translation: Are you a teacher?\n- 네, 선생님이에요. — Natural translation: Yes, I am a teacher.\n- 학생이에요? — Natural translation: Are you a student?\n- 네, 저는 학생이에요. — Natural translation: Yes, I am a student."
   }
 }

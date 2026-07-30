@@ -1,96 +1,105 @@
 {
   "schemaVersion": 1,
   "semanticRoleSyntaxVersion": 1,
+  "semanticSpanPolicyVersion": 1,
   "sourcePath": "chapter.md",
+  "canonicalGrammarIds": [
+    "KOR-GRAMMAR-008"
+  ],
   "audienceSections": [
     {
       "sourceHeading": "Brief Introduction",
-      "normal": "Use [[grammar:time + 에 + verb]] to state when an action happens at a specific time.",
-      "expert": "Temporal [[grammar:에]] marks the time at which the event denoted by the following predicate occurs."
+      "normal": "Use [[grammar:time + 에 + verb]] to state when an action happens.",
+      "expert": "Temporal [[grammar:에]] locates an event at a time point, while the same particle has directional and locative functions with place expressions."
     },
     {
       "sourceHeading": "Grammar",
-      "normal": "#### specific times marked with e\n\nPut `에` after a specific time: `일곱 시에 일어나요` means “I get up at seven.” The same particle can mark a destination, but here the time phrase tells you when.\n\nExample: [[grammar:준호는 일곱 시에 일어나요]]\n\nWatch out: Do not add `에` after every time word automatically; this chapter teaches clear schedule times and time periods.",
-      "expert": "#### specific times marked with e\n\nThe particle `에` marks a temporal point for the event. Its temporal function is distinguished from its locative/directional uses by the semantic type of the preceding phrase.\n\nExample: [[grammar:준호는 일곱 시에 일어나요]]"
+      "normal": "Put [[grammar:에]] after a specific clock time or time period to locate an action in time. [[grammar:일곱 시에 일어나요]] means “gets up at seven,” while [[grammar:학교에 가요]] uses the same particle for a destination.\n\nExample: [[grammar:이준호는 일곱 시에 일어나요.]]",
+      "expert": "Temporal [[grammar:에]] marks the event time; directional [[grammar:에]] marks the goal of motion. Native Korean numerals combine with [[grammar:시]] for clock hours in this chapter.\n\nExample: [[grammar:이준호는 일곱 시에 일어나요.]]"
+    },
+    {
+      "sourceHeading": "Language Notes",
+      "normal": "Time expressions organize the day. Topic-marked `학교에는`, `점심에는`, `오후에는`, and `밤에는` shift the schedule frame, while Korean omits the continuing subject after the first sentence.",
+      "expert": "Time expressions organize the day. Topic-marked `학교에는`, `점심에는`, `오후에는`, and `밤에는` shift the schedule frame, while Korean omits the continuing subject after the first sentence."
     },
     {
       "sourceHeading": "Narrative",
-      "normal": "Follow Junho’s schedule from the two clock times to lunch, the afternoon, and home at night.",
-      "expert": "The temporal phrases locate each event while the topic-marked class clause keeps the schedule’s reference time explicit."
+      "normal": "Follow teacher Junho from waking up through school, a café reading stop, and his return home.",
+      "expert": "Temporal and spatial `에` phrases organize the schedule, and repeated topic shifts allow the continuing human subject to remain omitted."
     }
   ],
   "breakdown": {
-    "normal": "- 준호는 일곱 시에 일어나요. — Junho gets up at seven.\n- 일곱 시에 아침밥을 먹어요. — Junho eats breakfast at seven.\n- 여덟 시에 학교에 가요. — Junho goes to school at eight.\n- 수업은 여덟 시에 시작해요. — Class starts at eight.\n- 점심에 밥을 먹어요. — Junho eats at lunchtime.\n- 오후에 책을 읽어요. — Junho reads a book in the afternoon.\n- 오후에 카페에 가요. — Junho goes to a café in the afternoon.\n- 밤에 집에 돌아와요. — Junho comes back home at night.",
-    "expert": "- 준호는 일곱 시에 일어나요. — Natural translation: Junho gets up at seven.\n- 일곱 시에 아침밥을 먹어요. — Natural translation: Junho eats breakfast at seven.\n- 여덟 시에 학교에 가요. — Natural translation: Junho goes to school at eight.\n- 수업은 여덟 시에 시작해요. — Natural translation: Class starts at eight.\n- 점심에 밥을 먹어요. — Natural translation: Junho eats at lunchtime.\n- 오후에 책을 읽어요. — Natural translation: Junho reads a book in the afternoon.\n- 오후에 카페에 가요. — Natural translation: Junho goes to a café in the afternoon.\n- 밤에 집에 돌아와요. — Natural translation: Junho comes back home at night."
+    "normal": "- 이준호는 일곱 시에 일어나요. — Lee Junho gets up at seven.\n- 아침밥은 일곱 시에 먹어요. — He eats breakfast at seven.\n- 학교에는 여덟 시에 가요. — He goes to school at eight.\n- 여덟 시에 수업이 시작해요. — Class starts at eight.\n- 점심에는 밥을 먹어요. — At lunchtime, he eats a meal.\n- 오후에는 카페에 가요. — In the afternoon, he goes to a café.\n- 카페에서 책을 읽어요. — He reads a book at the café.\n- 밤에는 집에 돌아와요. — At night, he returns home.",
+    "expert": "- 이준호는 일곱 시에 일어나요. — Natural translation: Lee Junho gets up at seven.\n- 아침밥은 일곱 시에 먹어요. — Natural translation: He eats breakfast at seven.\n- 학교에는 여덟 시에 가요. — Natural translation: He goes to school at eight.\n- 여덟 시에 수업이 시작해요. — Natural translation: Class starts at eight.\n- 점심에는 밥을 먹어요. — Natural translation: At lunchtime, he eats a meal.\n- 오후에는 카페에 가요. — Natural translation: In the afternoon, he goes to a café.\n- 카페에서 책을 읽어요. — Natural translation: He reads a book at the café.\n- 밤에는 집에 돌아와요. — Natural translation: At night, he returns home."
   },
   "readingItems": [
     {
       "surface": "일곱 시",
       "reading": "일곱 시",
-      "evidence": "준호는 일곱 시에 일어나요.",
+      "evidence": "이준호는 일곱 시에 일어나요.",
       "lexicalEntryId": "ko.time.ilgop-si",
       "senseId": "ko.time.ilgop-si.seven-oclock"
     },
     {
       "surface": "일어나다",
       "reading": "일어나다",
-      "evidence": "준호는 일곱 시에 일어나요.",
+      "evidence": "이준호는 일곱 시에 일어나요.",
       "lexicalEntryId": "ko.verb.ireonada",
       "senseId": "ko.verb.ireonada.get-up"
     },
     {
       "surface": "아침밥",
       "reading": "아침밥",
-      "evidence": "일곱 시에 아침밥을 먹어요.",
+      "evidence": "아침밥은 일곱 시에 먹어요.",
       "lexicalEntryId": "ko.noun.achimbap",
       "senseId": "ko.noun.achimbap.breakfast"
     },
     {
       "surface": "여덟 시",
       "reading": "여덟 시",
-      "evidence": "여덟 시에 학교에 가요.",
+      "evidence": "학교에는 여덟 시에 가요.",
       "lexicalEntryId": "ko.time.yeodeol-si",
       "senseId": "ko.time.yeodeol-si.eight-oclock"
     },
     {
       "surface": "수업",
       "reading": "수업",
-      "evidence": "수업은 여덟 시에 시작해요.",
+      "evidence": "여덟 시에 수업이 시작해요.",
       "lexicalEntryId": "ko.noun.sueop",
       "senseId": "ko.noun.sueop.class"
     },
     {
       "surface": "시작하다",
       "reading": "시작하다",
-      "evidence": "수업은 여덟 시에 시작해요.",
+      "evidence": "여덟 시에 수업이 시작해요.",
       "lexicalEntryId": "ko.verb.sijakhada",
       "senseId": "ko.verb.sijakhada.start"
     },
     {
       "surface": "점심",
       "reading": "점심",
-      "evidence": "점심에 밥을 먹어요.",
+      "evidence": "점심에는 밥을 먹어요.",
       "lexicalEntryId": "ko.noun.jeomsim",
       "senseId": "ko.noun.jeomsim.lunch"
     },
     {
       "surface": "오후",
       "reading": "오후",
-      "evidence": "오후에 책을 읽어요.",
+      "evidence": "오후에는 카페에 가요.",
       "lexicalEntryId": "ko.noun.ohu",
       "senseId": "ko.noun.ohu.afternoon"
     },
     {
       "surface": "밤",
       "reading": "밤",
-      "evidence": "밤에 집에 돌아와요.",
+      "evidence": "밤에는 집에 돌아와요.",
       "lexicalEntryId": "ko.noun.bam",
       "senseId": "ko.noun.bam.night"
     },
     {
       "surface": "돌아오다",
       "reading": "돌아오다",
-      "evidence": "밤에 집에 돌아와요.",
+      "evidence": "밤에는 집에 돌아와요.",
       "lexicalEntryId": "ko.verb.doraoda",
       "senseId": "ko.verb.doraoda.return"
     }
