@@ -37,17 +37,16 @@ const configs = [
     ]
   },
   {
-    language: "Vietnamese", code: "vi", slug: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 50,
+    language: "Vietnamese", code: "vi", slug: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 30,
     newlyRegisteredTopics: ["administration.documents", "animals.general", "communication.greetings", "communication.media", "daily.routines", "education.learning", "furniture.general", "geography.places", "leisure.culture", "numbers.cardinal", "work.projects"],
     corrections: [
       "Separated furniture.general from household.objects; bàn and ghế remain furniture senses rather than household catch-all entries.",
       "Corrected food.vegetables to begin with rau in Chapter 14 and restored omitted cà chua, khoai tây, hành, nông sản, bí đỏ, and dưa chuột memberships.",
       "Corrected measurement.containers to begin with cốc in Chapter 15, before hộp and giỏ.",
-      "Corrected measurement.quantity-expressions to begin with bao nhiêu in Chapter 27, before số lượng in Chapter 41.",
+      "Corrected measurement.quantity-expressions to begin with bao nhiêu in Chapter 27.",
       "Corrected health.general to begin with đau đầu in Chapter 30 rather than khỏe later in the same reading.",
-      "Corrected weather.general to begin with thời tiết in Chapter 38 rather than mưa later in the same reading.",
       "Added nhẹ as the same-chapter initial expansion for measurement.dimensions and reclassified historically later members as later-expansion.",
-      "Expanded existing topic membership to include all clearly applicable canonical senses found in Chapters 1-50."
+      "Expanded existing topic membership to include all clearly applicable canonical senses found in Chapters 1-30."
     ],
     variants: [
       { kind: "homonymy", finding: "vi.noun.cam.orange-fruit belongs to food.fruit; no orange-colour sense is present, so màu xanh remains the only colour sense and cam is not duplicated there." },
@@ -58,8 +57,7 @@ const configs = [
     recommendations: [
       { chapter_range: "1-15", topics: ["family.relationships", "digital.phones-and-devices", "food.drinks"], note: "Later family, communication, and café contexts can add useful senses individually." },
       { chapter_range: "16-30", topics: ["descriptive.colours", "clothing.general", "furniture.general", "health.general"], note: "The singleton colour topic is a clear opportunity, not an overdue requirement." },
-      { chapter_range: "31-40", topics: ["animals.general", "weather.general", "measurement.dimensions"], note: "Existing rescue, forecast, and route contexts can support gradual additions." },
-      { chapter_range: "41-50", topics: ["animals.pets", "measurement.containers", "time.calendar"], note: "Counting and inventory contexts may reinforce or naturally expand these topics without duplicating classifiers." }
+      { chapter_range: "future", topics: ["animals.general", "weather.general", "measurement.dimensions"], note: "Future authorized chapters may expand these topics naturally; removed Chapters 31–50 are not continuity context." }
     ],
     deferred: [
       { topic_id: "body.parts", reason: "No standalone canonical body-part noun occurs; đầu appears only within the canonical health phrase đau đầu and răng within đánh răng." },

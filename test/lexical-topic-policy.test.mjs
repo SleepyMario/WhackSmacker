@@ -12,7 +12,7 @@ const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_lan
 
 for (const config of [
   { language: "Dutch", code: "dutch", repository: "dutch-curriculum", maxChapter: 85, canonicalSenses: 861, topics: 38, forbidden: /^chapter-086-/u },
-  { language: "Vietnamese", code: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 50, canonicalSenses: 400, topics: 33, forbidden: /^chapter-051-/u }
+  { language: "Vietnamese", code: "vietnamese", repository: "vietnamese-curriculum", maxChapter: 30, canonicalSenses: 231, topics: 28, forbidden: /^chapter-031-/u }
 ]) {
   test(`${config.language} lexical-topic inventory resolves to reading and bidirectional review evidence`, async () => {
     const curriculumRoot = join(appRoot, "..", config.repository);
@@ -74,10 +74,10 @@ test("generated lexical-topic audit reports are current", async () => {
 test("lexical-topic validation rejects duplicate IDs, wrong first chapters, and chapter overflow", () => {
   const anchor = { lexical_id: "vi.noun.a", sense_id: "vi.noun.a.a", citation_form: "a", meaning: "a", topic_role: "anchor", topic_first_chapter: 2, topic_expansion_stage: 0, first_introduction_chapter: 2, chapter_attestations: [2] };
   const topic = { topic_id: "sample", display_name: "Sample", first_attested_chapter: 2, first_attested_sense: anchor.sense_id, status: "observed", chapter_attestations: [2], anchor_senses: [anchor], initial_expansion_senses: [], later_expansion_senses: [] };
-  assert.throws(() => assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 50, topics: [topic, topic] }), /Duplicate lexical topic ID/u);
-  assert.throws(() => assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 50, topics: [{ ...topic, status: "complete" }] }), /unsupported descriptive status/u);
-  assert.throws(() => assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 50, topics: [{ ...topic, first_attested_chapter: 3, chapter_attestations: [2, 3] }] }), /topic-first-chapter/u);
-  assert.throws(() => assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 50, topics: [{ ...topic, chapter_attestations: [2, 51] }] }), /exceeds maximum Chapter 50/u);
+  assert.throws(() => assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 30, topics: [topic, topic] }), /Duplicate lexical topic ID/u);
+  assert.throws(() => assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 30, topics: [{ ...topic, status: "complete" }] }), /unsupported descriptive status/u);
+  assert.throws(() => assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 30, topics: [{ ...topic, first_attested_chapter: 3, chapter_attestations: [2, 3] }] }), /topic-first-chapter/u);
+  assert.throws(() => assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 30, topics: [{ ...topic, chapter_attestations: [2, 31] }] }), /exceeds maximum Chapter 30/u);
   assert.equal(reviewBlockForChapter(13), "011-015");
 });
 
@@ -92,7 +92,7 @@ test("lexical-topic identity distinguishes homonymous senses while allowing vari
   const fruit = { ...makeAnchor("food.fruit", "vi.noun.cam", "vi.noun.cam.orange-fruit", "orange (fruit)"), regional_variants: ["trái cam"] };
   const colour = makeAnchor("descriptive.colours", "vi.adjective.cam", "vi.adjective.cam.orange-colour", "orange (colour)");
   const record = (topic_id, display_name, anchor) => ({ topic_id, display_name, first_attested_chapter: 8, first_attested_sense: anchor.sense_id, status: "observed", chapter_attestations: [8], anchor_senses: [anchor], initial_expansion_senses: [], later_expansion_senses: [] });
-  const result = assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 50, topics: [record("food.fruit", "Fruit", fruit), record("descriptive.colours", "Colours", colour)] });
+  const result = assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 30, topics: [record("food.fruit", "Fruit", fruit), record("descriptive.colours", "Colours", colour)] });
   assert.equal(result.topicCount, 2);
   assert.equal(result.introducedExpansionSenseCount, 0);
 });
@@ -101,7 +101,7 @@ test("one canonical sense may belong to multiple topics without duplicating lexi
   const shared = { lexical_id: "vi.noun.nha-hang", sense_id: "vi.noun.nha-hang.restaurant", citation_form: "nhà hàng", meaning: "restaurant", topic_role: "anchor", topic_first_chapter: 14, topic_expansion_stage: 0, first_introduction_chapter: 14, chapter_attestations: [14] };
   const record = (topic_id, display_name) => ({ topic_id, display_name, first_attested_chapter: 14, first_attested_sense: shared.sense_id, status: "observed", chapter_attestations: [14], anchor_senses: [{ ...shared, lexical_topic: topic_id }], initial_expansion_senses: [], later_expansion_senses: [] });
   const evidence = { canonicalSenseIds: new Set([shared.sense_id]), learnerFacingAttestations: new Map([[shared.sense_id, new Set([14])]]), reviewSenseIdsByBlock: new Map([["011-015", new Set([shared.sense_id])]]) };
-  const result = assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 50, topics: [record("food.meals", "Food and meals"), record("public.places", "Public places")] }, evidence);
+  const result = assertLexicalTopicInventory({ schema_version: 1, language: "vi", max_ordinary_chapter: 30, topics: [record("food.meals", "Food and meals"), record("public.places", "Public places")] }, evidence);
   assert.equal(result.topicCount, 2);
 });
 

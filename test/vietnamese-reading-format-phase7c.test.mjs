@@ -99,11 +99,11 @@ test("Phase 7C preserves vocabulary, grammar, participant, cast, and ledger iden
   assert.equal(digest(JSON.stringify(participants)), "def438a9a15ea67de80747384dd372442ca8c559441b663cd95b8d2ae2cd2d45");
 
   const protectedHashes = new Map([
-    ["vocabulary-forms.json", "01ebb37e7a4972b3b80cca2aed33f19b34dcadbc2cc4d0ce3e44b7a93e82e890"],
+    ["vocabulary-forms.json", "d020e561f911e1a00cf96f5dbba58b0e7b8ef64dbcf678adfcfb3420573a08dc"],
     ["geography-ledger.json", "9013de2b37448c8a9e87a6443a2d190062c6c44c5b95e6378b0d858b9d8e7717"],
     ["name-pools/canonical-cast.json", "03d692fc41ee30d156303ae30cdb81736d297917d50069d791accc63e34a5ab7"],
-    ["name-pools/personal-name-presentation.json", "3eddede6c90666bdaf79532c90b9d70640d8e689050c3458ac747d43f7f15149"],
-    ["units/vietnamese-core/cumulative-ledger.md", "d0227f9bf05b0dd4b72017fee1460c112ce64d4c4edf8b20b3d4665b4b49f13a"],
+    ["name-pools/personal-name-presentation.json", "558ee3e68eaca948fb27c204242e4cd768ab8cb2f0ed04804e944a5cd178c94a"],
+    ["units/vietnamese-core/cumulative-ledger.md", "e1d1d78c02f4bc27f29288e5815d01b704c1b5c429c23917f892db227923b0d2"],
     ["units/vietnamese-core/chapter-001-005-grammar-easy/chapter.md", "51eb95d90435ea547046c3f7f893b34b029294efa78ef53771dfe5e650393b10"],
     ["units/vietnamese-core/chapter-001-005-grammar-hard/chapter.md", "cb6be8fc50c6886d95db4617b6f6eb65497b582a267709db6a18fa31a83acc2a"],
     ["units/vietnamese-core/chapter-006-010-grammar-easy/chapter.md", "30d780cbe04d1429753a7eb6af8f6ba6b78943e659362dc8333c2076d5581561"],

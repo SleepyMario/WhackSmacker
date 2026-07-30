@@ -33,7 +33,7 @@ export interface SinoVietnameseLexicon {
   readonly schema_version: 1;
   readonly language: "Vietnamese";
   readonly language_code: "vi";
-  readonly audited_through_chapter: 50;
+  readonly audited_through_chapter: 30;
   readonly normalization: "NFC";
   readonly records: readonly SinoVietnameseLexicalRecord[];
   readonly constituent_morphemes: readonly SinoVietnameseMorphemeRecord[];
@@ -60,7 +60,7 @@ export function assertSinoVietnameseLexicon(
   evidence?: SinoVietnameseValidationEvidence
 ): SinoVietnameseValidationResult {
   if (lexicon.schema_version !== 1 || lexicon.language !== "Vietnamese" || lexicon.language_code !== "vi") throw new Error("Invalid Sino-Vietnamese lexicon identity or schema.");
-  if (lexicon.audited_through_chapter !== 50) throw new Error("Sino-Vietnamese lexicon must stop at Vietnamese Chapter 50.");
+  if (lexicon.audited_through_chapter !== 30) throw new Error("Sino-Vietnamese lexicon must stop at Vietnamese Chapter 30.");
   if (lexicon.normalization !== "NFC") throw new Error("Sino-Vietnamese lexicon normalization must be NFC.");
 
   const recordIds = new Set<string>();
@@ -73,7 +73,7 @@ export function assertSinoVietnameseLexicon(
     if (senseIds.has(record.canonical_sense_id)) throw new Error(`Duplicate Sino-Vietnamese canonical sense: ${record.canonical_sense_id}`);
     senseIds.add(record.canonical_sense_id);
     if (!record.canonical_sense_id.startsWith(`${record.canonical_lexical_id}.`)) throw new Error(`${record.canonical_sense_id}: does not resolve under ${record.canonical_lexical_id}.`);
-    if (!Number.isInteger(record.first_introduced_chapter) || record.first_introduced_chapter < 1 || record.first_introduced_chapter > 50) throw new Error(`${record.canonical_sense_id}: invalid first chapter.`);
+    if (!Number.isInteger(record.first_introduced_chapter) || record.first_introduced_chapter < 1 || record.first_introduced_chapter > 30) throw new Error(`${record.canonical_sense_id}: invalid first chapter.`);
     chapters.add(record.first_introduced_chapter);
     if (!record.chapter_attestations.includes(record.first_introduced_chapter)) throw new Error(`${record.canonical_sense_id}: chapter attestations omit the first chapter.`);
     if (record.literal_learner_facing_evidence.length === 0) throw new Error(`${record.canonical_sense_id}: literal learner-facing evidence is required.`);

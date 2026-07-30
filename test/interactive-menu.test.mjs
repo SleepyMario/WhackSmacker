@@ -951,7 +951,7 @@ test("Chapter 1 audience support, Breakdown, and Vietnamese Characters change vi
   }
 });
 
-test("Vietnamese Chapters 1–50 project beginner Language Notes without flattening Expert or Developer notes", async () => {
+test("Vietnamese Chapters 1–30 project beginner Language Notes without flattening Expert or Developer notes", async () => {
   const fixture = await createInstalledLanguageFixture(["vietnamese-curriculum"], ["com.sleepymario.language.vietnamese"]);
   const sourceHeadings = new Map([
     [1, ["Vietnamese Orthography and Word Boundaries", "Register Note"]],
@@ -962,7 +962,7 @@ test("Vietnamese Chapters 1–50 project beginner Language Notes without flatten
     [6, ["Vietnamese Orthography and Word Boundaries"]],
     [8, ["Vietnamese Orthography and Word Boundaries"]],
     [9, ["Vietnamese Orthography and Word Boundaries"]],
-    ...Array.from({ length: 40 }, (_, index) => [index + 11, ["Vietnamese Usage Notes"]])
+    ...Array.from({ length: 20 }, (_, index) => [index + 11, ["Vietnamese Usage Notes"]])
   ]);
   const prohibitedNormalPhrases = [
     "Vietnamese Usage Notes",
@@ -995,11 +995,11 @@ test("Vietnamese Chapters 1–50 project beginner Language Notes without flatten
     const vietnamese = tree.children.find((node) => node.label === "Vietnamese");
     const readContent = vietnamese.children.find((node) => node.label === "Read content");
     const chapters = readContent.children.filter((node) => /\/chapter-\d{3}-basic-sentences-\d+\/chapter\.md$/u.test(node.filePath ?? ""));
-    assert.equal(chapters.length, 50);
-    assert.ok(chapters.some((node) => node.filePath.includes("chapter-050-basic-sentences-50")));
-    assert.equal(chapters.some((node) => node.filePath.includes("chapter-051-")), false);
+    assert.equal(chapters.length, 30);
+    assert.ok(chapters.some((node) => node.filePath.includes("chapter-030-basic-sentences-30")));
+    assert.equal(chapters.some((node) => /chapter-(?:03[1-9]|0[4-9]\d|[1-9]\d{2,})-/u.test(node.filePath ?? "")), false);
 
-    for (let chapterNumber = 1; chapterNumber <= 50; chapterNumber += 1) {
+    for (let chapterNumber = 1; chapterNumber <= 30; chapterNumber += 1) {
       const padded = String(chapterNumber).padStart(3, "0");
       const chapter = chapters.find((node) => node.filePath.includes(`/chapter-${padded}-`));
       assert.ok(chapter, `Chapter ${chapterNumber} is projected`);
@@ -1045,10 +1045,10 @@ test("Vietnamese Chapters 1–50 project beginner Language Notes without flatten
 
     const chapter1 = chapters.find((node) => node.filePath.includes("chapter-001-"));
     const chapter26 = chapters.find((node) => node.filePath.includes("chapter-026-"));
-    const chapter40 = chapters.find((node) => node.filePath.includes("chapter-040-"));
+    const chapter30 = chapters.find((node) => node.filePath.includes("chapter-030-"));
     assert.match(await renderLanguageTreeRightPane(chapter1, { dataDir: fixture.dataDir, displayMode: "expert" }), /diacritic|relative age/u);
     assert.match(await renderLanguageTreeRightPane(chapter26, { dataDir: fixture.dataDir, displayMode: "expert" }), /time reference also depends on context/u);
-    assert.match(await renderLanguageTreeRightPane(chapter40, { dataDir: fixture.dataDir, displayMode: "expert" }), /beneficially affected subject|grammar IDs remain distinct/u);
+    assert.match(await renderLanguageTreeRightPane(chapter30, { dataDir: fixture.dataDir, displayMode: "expert" }), /unwanted condition|advice rather than a command/u);
   } finally {
     await fixture.cleanup();
   }
@@ -1068,9 +1068,8 @@ test("Vietnamese Characters views use reader-safe tables while retaining package
       [3, ["sách", "冊", "bút", "筆", "bàn", "盤"]],
       [5, ["phòng học", "房學", "điện thoại", "電話", "trà", "茶"]],
       [8, ["cam", "柑"]],
-      [40, ["miễn phí", "免費", "hướng dẫn", "向引"]],
-      [41, ["không", "空", "số lượng", "數量"]],
-      [50, ["xác nhận", "確認", "bảng tổng kết", "榜總結"]]
+      [29, ["kế hoạch", "計劃"]],
+      [30, ["bác sĩ", "博士"]]
     ]);
     for (const [chapter, values] of expected) {
       const node = vietnamese.children.find((candidate) => candidate.filePath?.includes(`units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-`));
@@ -1101,7 +1100,7 @@ test("Vietnamese Characters views use reader-safe tables while retaining package
         assert.equal(typeof entry.provenance.locator, "string");
       }
     }
-    for (const chapter of [4, 14, 15, 27, 45]) {
+    for (const chapter of [4, 14, 15, 27]) {
       const node = vietnamese.children.find((candidate) => candidate.filePath?.includes(`units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-`));
       assert.ok(node?.readingSupportPath, `Chapter ${chapter} support is installed`);
       for (const mode of ["normal", "expert", "developer"]) {
@@ -1306,21 +1305,17 @@ test("Vietnamese read content starts with five canonical Foundation labels befor
     ]);
     assert.equal(readContent.children[5]?.filePath, "units/vietnamese-core/chapter-001-basic-sentences-1/chapter.md");
     assert.equal(readContent.children.some((node) => node.filePath === "units/vietnamese-core/chapter-010-basic-sentences-10/chapter.md"), true);
-    assert.equal(readContent.children.some((node) => node.filePath === "units/vietnamese-core/chapter-050-basic-sentences-50/chapter.md"), true);
-    assert.equal(readContent.children.some((node) => /units\/vietnamese-core\/chapter-(?:0*(?:5[1-9]|[6-9]\d)|[1-9]\d{3,})/u.test(node.filePath ?? "")), false);
+    assert.equal(readContent.children.some((node) => node.filePath === "units/vietnamese-core/chapter-030-basic-sentences-30/chapter.md"), true);
+    assert.equal(readContent.children.some((node) => /units\/vietnamese-core\/chapter-(?:03[1-9]|0[4-9]\d|[1-9]\d{2,})/u.test(node.filePath ?? "")), false);
     const grammarNodes = readContent.children.filter((node) => /grammar-(?:easy|hard)\/chapter\.md$/u.test(node.filePath ?? ""));
-    assert.deepEqual(grammarNodes.map((node) => node.label), Array(10).fill("Grammar"));
+    assert.deepEqual(grammarNodes.map((node) => node.label), Array(6).fill("Grammar"));
     assert.deepEqual(grammarNodes.map((node) => node.filePath), [
       "units/vietnamese-core/chapter-001-005-grammar-easy/chapter.md",
       "units/vietnamese-core/chapter-006-010-grammar-easy/chapter.md",
       "units/vietnamese-core/chapter-011-015-grammar-easy/chapter.md",
       "units/vietnamese-core/chapter-016-020-grammar-easy/chapter.md",
       "units/vietnamese-core/chapter-021-025-grammar-easy/chapter.md",
-      "units/vietnamese-core/chapter-026-030-grammar-easy/chapter.md",
-      "units/vietnamese-core/chapter-031-035-grammar-easy/chapter.md",
-      "units/vietnamese-core/chapter-036-040-grammar-easy/chapter.md",
-      "units/vietnamese-core/chapter-041-045-grammar-easy/chapter.md",
-      "units/vietnamese-core/chapter-046-050-grammar-easy/chapter.md"
+      "units/vietnamese-core/chapter-026-030-grammar-easy/chapter.md"
     ]);
     assert.equal(readContent.children.some((node) => /^Ch (?:1|6) -- Grammar$/u.test(node.label)), false);
     assert.match(readContent.children.find((node) => node.filePath?.includes("chapter-001-basic-sentences-1"))?.label ?? "", /^Chapter 1\b/u);

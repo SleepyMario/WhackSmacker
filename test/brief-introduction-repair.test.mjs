@@ -17,10 +17,10 @@ const correctionSpecPath = join(process.cwd(), "test", "fixtures", "brief-introd
 const generatorLanguages = ["arabic", "french", "german", "hindi", "japanese", "korean", "russian", "spanish", "thai", "zulu"];
 const generatedOverrides = new Set(["arabic:3", "german:3", "hindi:5"]);
 
-test("the 38-finding repair keeps all 34 source and audience introductions concise, grammar-only, and identity-bound", async () => {
+test("the retained 37-finding repair keeps all 33 active source and audience introductions concise, grammar-only, and identity-bound", async () => {
   const spec = JSON.parse(await readFile(correctionSpecPath, "utf8"));
-  assert.equal(spec.finding_count, 38);
-  assert.equal(spec.records.length, 34);
+  assert.equal(spec.finding_count, 37);
+  assert.equal(spec.records.length, 33);
 
   for (const record of spec.records) {
     const chapterPath = join(workspace, record.repository, record.chapter_path);

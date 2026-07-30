@@ -770,7 +770,7 @@ function japaneseExpressionContainsKanjiForPackage(value: string): boolean {
 }
 
 const readingSupportPackages: Readonly<Record<string, readonly { readonly source: string; readonly destination: string }[]>> = {
-  "vietnamese-curriculum": Array.from({ length: 50 }, (_, index) => index + 1).map((chapter) => ({
+  "vietnamese-curriculum": Array.from({ length: 30 }, (_, index) => index + 1).map((chapter) => ({
     source: `curriculum-support/vietnamese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/reading-support.json`
   })),

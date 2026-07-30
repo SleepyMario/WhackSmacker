@@ -105,7 +105,7 @@ test("content package generator creates a valid Linguistic Terminology package",
   }
 });
 
-test("content package generator creates complete Vietnamese reading and review packages through Chapter 50", async () => {
+test("content package generator creates the authoritative Vietnamese reading and review packages through Chapter 30", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-vietnamese-package-"));
   try {
     const result = await generateContentPackage({ targetId: "vietnamese-curriculum", outputDirectory: directory, generatedAt: "2026-07-19T00:00:00Z" });
@@ -118,10 +118,11 @@ test("content package generator creates complete Vietnamese reading and review p
     assert.equal(reviewManifest.packageId, "com.sleepymario.language.vietnamese.reviews");
     assert.equal(reviewManifest.packageVersion, "0.1.0");
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
-    for (const chapter of [1, 10, 11, 25, 31, 41, 50]) {
+    for (const chapter of [1, 10, 11, 20, 29, 30]) {
       assert.ok(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-${String(chapter).padStart(3,"0")}-basic-sentences-${chapter}/chapter.md`));
       assert.ok(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-${String(chapter).padStart(3,"0")}-basic-sentences-${chapter}/reading-support.json`));
     }
+    assert.equal(readingContent.files.some((file) => /units\/vietnamese-core\/chapter-(?:03[1-9]|0[4-9]\d|[1-9]\d{2,})-/u.test(file.path)), false);
     for (let chapter = 1; chapter <= 10; chapter += 1) {
       const path = `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/chapter.md`;
       const source = await readFile(join(sourceRepositoryPath("vietnamese-curriculum"), path), "utf8");
@@ -135,7 +136,7 @@ test("content package generator creates complete Vietnamese reading and review p
       assert.ok(body, `Chapter ${chapter} packages one primary reading body`);
       assert.equal(packaged.split(body).length - 1, 1, `Chapter ${chapter} does not duplicate its primary reading`);
     }
-    for (let start = 1; start <= 46; start += 5) {
+    for (let start = 1; start <= 26; start += 5) {
       const end = start + 4;
       for (const level of ["easy", "hard"]) assert.ok(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-${String(start).padStart(3,"0")}-${String(end).padStart(3,"0")}-grammar-${level}/chapter.md`));
     }
@@ -147,10 +148,11 @@ test("content package generator creates complete Vietnamese reading and review p
     assert.ok(readingContent.files.some((file) => file.path === "sino-vietnamese-audit.json"));
     assert.ok(readingContent.files.some((file) => file.path === "sino-vietnamese-audit.md"));
     const sourcePaths = reviewContent.files.filter((file) => /review-decks\/chapter-\d{3}-\d{3}\/cards\.tsv$/u.test(file.path)).map((file) => file.path).sort();
-    assert.deepEqual(sourcePaths, Array.from({ length: 10 }, (_, i) => { const start = i * 5 + 1; return `review-decks/chapter-${String(start).padStart(3,"0")}-${String(start + 4).padStart(3,"0")}/cards.tsv`; }));
+    assert.deepEqual(sourcePaths, Array.from({ length: 6 }, (_, i) => { const start = i * 5 + 1; return `review-decks/chapter-${String(start).padStart(3,"0")}-${String(start + 4).padStart(3,"0")}/cards.tsv`; }));
     const itemPaths = [...reviewArchive.keys()].filter((path) => path.startsWith("content/memorization/review-decks/")).sort();
-    assert.deepEqual(itemPaths, Array.from({ length: 10 }, (_, i) => { const start = i * 5 + 1; return `content/memorization/review-decks/chapter-${String(start).padStart(3,"0")}-${String(start + 4).padStart(3,"0")}.json`; }));
+    assert.deepEqual(itemPaths, Array.from({ length: 6 }, (_, i) => { const start = i * 5 + 1; return `content/memorization/review-decks/chapter-${String(start).padStart(3,"0")}-${String(start + 4).padStart(3,"0")}.json`; }));
     const items = itemPaths.flatMap((path) => JSON.parse(reviewArchive.get(path).toString("utf8")).items);
+    assert.equal(items.length, 462);
     assert.equal(new Set(items.map((item) => item.cardId)).size, items.length);
     assert.equal(items.every((item) => item.kind === "vocabulary" && item.examples?.length >= 1 && item.examples.length <= 3), true);
     assert.deepEqual(new Set(items.map((item) => item.reviewDirection)), new Set(["vi-to-en", "en-to-vi"]));

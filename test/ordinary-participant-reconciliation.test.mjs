@@ -79,7 +79,7 @@ test("Phase 7A participant IDs do not enter canonical casts or learner-facing ch
 });
 
 test("Phase 7B Dutch and Vietnamese sidecars resolve inside active prefixes and preserve exact authored sets", async () => {
-  for (const [language, expectedCount, through] of [["dutch", 85, 85], ["vietnamese", 50, 50]]) {
+  for (const [language, expectedCount, through] of [["dutch", 85, 85], ["vietnamese", 30, 30]]) {
     const repository = join(modulesRoot, `${language}-curriculum`);
     const cast = JSON.parse(await readFile(join(repository, "name-pools/canonical-cast.json"), "utf8"));
     assert.equal(cast.schemaVersion, 2, language);
@@ -141,7 +141,8 @@ test("Phase 7B literal identity evidence and completed appearance coverage are c
   assert.match(chapter78Translation, /Fatima closes the cupboard, but she leaves/u);
   assert.match(chapter78Support, /Fatima \[\[grammar:sluit\]\] de kast, maar zij \[\[grammar:laat\]\]/u);
   const vietnameseAppearance = await readFile(join(modulesRoot, "vietnamese-curriculum/name-pools/appearance-ledger.md"), "utf8");
-  assert.match(vietnameseAppearance, /41–60 \| incomplete progress.*pending/u);
+  assert.match(vietnameseAppearance, /21–40 \| incomplete progress.*pending/u);
+  assert.doesNotMatch(vietnameseAppearance, /^\| (?:3[1-9]|[4-9]\d|\d{3,}) \|/mu);
 });
 
 test("all six removed Dutch pre-activation chapter-person pairs are blocking failures when reintroduced", async () => {

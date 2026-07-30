@@ -39,19 +39,19 @@ test("Vietnamese introductions retain full names and established prose uses stru
   assert.ok(sources.get(1).includes("Tôi là Nguyễn Minh Anh."));
   assert.ok(sources.get(2).includes("Tên tôi là Nguyễn Quốc Huy."));
   assert.ok(sources.get(10).includes("Minh Anh sống ở Hà Nội."));
-  assert.ok(sources.get(50).includes("Cuối cùng, Ngọc Linh mở bảng tổng kết."));
-  assert.equal(sources.get(50).includes("Cuối cùng, Phạm Ngọc Linh mở bảng tổng kết."), false);
+  assert.ok(sources.get(30).includes("Hoàng Nam nên nghỉ."));
+  assert.equal(sources.get(30).includes("Lê Hoàng Nam nên nghỉ."), false);
 });
 
 test("Vietnamese translations, Normal, Expert, and Review evidence use corrected source names", async () => {
   const sources = await chapters();
-  for (let chapter = 11; chapter <= 50; chapter += 1) {
+  for (let chapter = 11; chapter <= 30; chapter += 1) {
     const directory = (await readdir(coreRoot)).find((entry) => entry.startsWith(`chapter-${String(chapter).padStart(3, "0")}-`) && !entry.includes("grammar"));
     const translation = JSON.parse(await readFile(join(coreRoot, directory, "reading-translation.en.json"), "utf8"));
     const serialized = JSON.stringify(translation);
     for (const person of characters) assert.equal(serialized.includes(person.fullName), false, `Chapter ${chapter} translation retained ${person.fullName}`);
   }
-  for (let chapter = 1; chapter <= 50; chapter += 1) {
+  for (let chapter = 1; chapter <= 30; chapter += 1) {
     const supportPath = join(appRoot, "curriculum-support", "vietnamese", `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json");
     const support = await readFile(supportPath, "utf8");
     const source = sources.get(chapter);

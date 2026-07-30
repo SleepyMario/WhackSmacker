@@ -1,1 +1,854 @@
-{"schema_version":1,"finding_count":38,"chapter_count":34,"records":[{"language":"Arabic","repository":"arabic-curriculum","chapter":3,"title":"What Is This?","chapter_path":"units/arabic-core/chapter-003-what-is-this/chapter.md","support_path":"curriculum-support/arabic/chapter-003/reading-support.json","finding_ids":["BRIEF-001"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["ARA-GRAMMAR-003"],"grammar_patterns":["مَا هَذَا؟ / مَا هَذِهِ؟"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Layla asks about nearby objects, and Sami answers with the matching demonstrative.","source_brief_introduction":"`مَا هَذَا؟ / مَا هَذِهِ؟` asks what a nearby item is, using the masculine or feminine demonstrative to match the noun.","normal_brief_introduction":"Use [[grammar:مَا هَذَا]]؟ for a masculine item and [[grammar:مَا هَذِهِ]]؟ for a feminine item; match the demonstrative to the noun.","expert_brief_introduction":"The identification questions [[grammar:مَا هَذَا]]؟ and [[grammar:مَا هَذِهِ]]؟ combine interrogative مَا with a proximal demonstrative that agrees with the noun's grammatical gender."},{"language":"Dutch","repository":"dutch-curriculum","chapter":4,"title":"Asking What This Is","chapter_path":"units/dutch-core/chapter-004-basic-sentences-4/chapter.md","support_path":"curriculum-support/dutch/chapter-004/reading-support.json","finding_ids":["BRIEF-002"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["DUT-GRAMMAR-004"],"grammar_patterns":["Is dit N?"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Before a lesson, a pupil finds the classroom and checks a few object labels. The last label leads to the door.","source_brief_introduction":"Use `Is dit N?` to ask whether a nearby object is the named noun.","normal_brief_introduction":"Use [[grammar:Is dit N]]? to ask whether a nearby object is the named noun.","expert_brief_introduction":"The polar interrogative [[grammar:Is dit N]]? places the finite copula before the demonstrative subject."},{"language":"Dutch","repository":"dutch-curriculum","chapter":10,"title":"Living Here","chapter_path":"units/dutch-core/chapter-010-basic-sentences-10/chapter.md","support_path":"curriculum-support/dutch/chapter-010/reading-support.json","finding_ids":["BRIEF-003"],"finding_classes":["scene_profile_or_plot_in_brief_introduction"],"grammar_ids":["DUT-GRAMMAR-010"],"grammar_patterns":["Ik woon in N"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"At home in Utrecht, Mark reads a short first-person profile from a map exercise about someone living in Rotterdam.","source_brief_introduction":"The pattern `Ik woon in N` states a place of residence.","normal_brief_introduction":"Use [[grammar:Ik woon in N]] to state a place of residence.","expert_brief_introduction":"The residence pattern [[grammar:Ik woon in N]] combines finite [[grammar:wonen]] with an [[grammar:in]]-headed locative complement."},{"language":"Dutch","repository":"dutch-curriculum","chapter":12,"title":"A Simple Daily Routine","chapter_path":"units/dutch-core/chapter-012-a-simple-daily-routine/chapter.md","support_path":"curriculum-support/dutch/chapter-012/reading-support.json","finding_ids":["BRIEF-004"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["DUT-GRAMMAR-012"],"grammar_patterns":["Sophie + V stem-t"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Sophie is a student going through a simple day at home and school.","source_brief_introduction":"Use `Sophie + V stem-t` to describe a named third-person subject performing a present action.","normal_brief_introduction":"Use [[grammar:Sophie + V stem-t]] to describe a named third-person subject performing a present action.","expert_brief_introduction":"The pattern [[grammar:Sophie + V stem-t]] presents controlled third-person singular present predicates without generalizing the full conjugation system."},{"language":"Dutch","repository":"dutch-curriculum","chapter":21,"title":"Meeting the Family","chapter_path":"units/dutch-core/chapter-021-meeting-the-family/chapter.md","support_path":"curriculum-support/dutch/chapter-021/reading-support.json","finding_ids":["BRIEF-005"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["DUT-GRAMMAR-021"],"grammar_patterns":["Wie is dat?"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Alex visits Sophie at home and meets her grandmother, Oma Anja.","source_brief_introduction":"Use `Wie is dat?` to ask who someone is and answer with `Dat is` plus the person's name or role.","normal_brief_introduction":"Use [[grammar:Wie is dat]]? to ask who someone is and answer with [[grammar:Dat is]] plus the person's name or role.","expert_brief_introduction":"The person-identity interrogative [[grammar:Wie is dat]]? uses copular inversion, while the answer [[grammar:Dat is]] identifies the referent."},{"language":"Dutch","repository":"dutch-curriculum","chapter":29,"title":"Planning a Picnic","chapter_path":"units/dutch-core/chapter-029-planning-a-picnic/chapter.md","support_path":"curriculum-support/dutch/chapter-029/reading-support.json","finding_ids":["BRIEF-006"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["DUT-GRAMMAR-029A","DUT-GRAMMAR-029B"],"grammar_patterns":["Welke + noun + ...?","noun + van mij/jou/hem/haar"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Alex, Sophie, and Daan organize a picnic in the park and identify whose things are whose.","source_brief_introduction":"Use `Welke + noun` to ask which de-word item is meant, and use `noun + van mij/jou/hem/haar` to state who owns it.","normal_brief_introduction":"Use [[grammar:Welke + noun]] to ask which de-word item is meant, and use [[grammar:noun + van mij/jou/hem/haar]] to state who owns it.","expert_brief_introduction":"The first pattern uses [[grammar:welke]] as an interrogative determiner with a common-gender count noun; the second expresses the possessor in a postnominal [[grammar:van]] phrase."},{"language":"Dutch","repository":"dutch-curriculum","chapter":55,"title":"Organizing a Volunteer Event","chapter_path":"units/dutch-core/chapter-055-organizing-a-volunteer-event/chapter.md","support_path":"curriculum-support/dutch/chapter-055/reading-support.json","finding_ids":["BRIEF-007"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["DUT-GRAMMAR-055A","DUT-GRAMMAR-055B"],"grammar_patterns":["Zullen we + infinitive?","misschien + V2 clause"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Noor, Milan, and Sophie organize a volunteer information evening.","source_brief_introduction":"Use `Zullen we + infinitive?` to suggest a shared action and `misschien + V2 clause` to present an idea as possible.","normal_brief_introduction":"Use [[grammar:Zullen we + infinitive]]? to suggest a shared action and [[grammar:misschien + V2 clause]] to present an idea as possible.","expert_brief_introduction":"The proposal question uses finite [[grammar:zullen]] with a final lexical infinitive; fronted [[grammar:misschien]] occupies the first field and triggers ordinary V2 order."},{"language":"Dutch","repository":"dutch-curriculum","chapter":69,"title":"A Formal Information Request","chapter_path":"units/dutch-core/chapter-069-a-formal-information-request/chapter.md","support_path":"curriculum-support/dutch/chapter-069/reading-support.json","finding_ids":["BRIEF-008"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["DUT-GRAMMAR-069A","DUT-GRAMMAR-069B"],"grammar_patterns":["Zou u + infinitive + kunnen?","direct formal Kunt u mij zeggen of + embedded polar clause?"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Fatima volunteers for one afternoon at a municipal information desk, where Opa\nHenk and Yasmin make formal requests.","source_brief_introduction":"Use `Zou u + infinitive + kunnen?` for a highly polite request and `Kunt u mij zeggen of + embedded polar clause?` for a formal indirect yes-no question.","normal_brief_introduction":"Use [[grammar:Zou u + infinitive + kunnen]]? for a highly polite request and [[grammar:Kunt u mij zeggen of + embedded polar clause]]? for a formal indirect yes-no question.","expert_brief_introduction":"The first frame uses conditional [[grammar:zou]] to mitigate a formal request; the second combines a V1 matrix question with an [[grammar:of]]-introduced verb-final embedded polar clause."},{"language":"French","repository":"french-curriculum","chapter":6,"title":"A Saturday at the Library","chapter_path":"units/french-core/chapter-006-a-saturday-at-the-library/chapter.md","support_path":"curriculum-support/french/chapter-006/reading-support.json","finding_ids":["BRIEF-009","BRIEF-010"],"finding_classes":["missing_recognized_grammar_identity","scene_profile_or_plot_in_brief_introduction"],"grammar_ids":["FRA-GRAMMAR-006"],"grammar_patterns":["il / elle + regular -er verb"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Lina spends a quiet Saturday morning working at the library before going home at noon.","source_brief_introduction":"Use `il / elle + regular -er verb` to describe what he or she does; remove `-er` and add `-e` in the third-person singular.","normal_brief_introduction":"Use [[grammar:il / elle + regular -er verb]] to describe what he or she does; remove [[grammar:-er]] and add [[grammar:-e]] in the third-person singular.","expert_brief_introduction":"Regular first-conjugation verbs form the third-person singular present with the stem plus orthographic [[grammar:-e]], while the subject noun phrase or clitic precedes the finite verb."},{"language":"French","repository":"french-curriculum","chapter":7,"title":"Buying Bread","chapter_path":"units/french-core/chapter-007-buying-bread/chapter.md","support_path":"curriculum-support/french/chapter-007/reading-support.json","finding_ids":["BRIEF-011"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["FRA-GRAMMAR-007"],"grammar_patterns":["Je voudrais + noun"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Lina orders bread from the seller at a bakery in the morning.","source_brief_introduction":"Use `Je voudrais + noun` to request an item politely.","normal_brief_introduction":"Use [[grammar:Je voudrais + noun]] to request an item politely.","expert_brief_introduction":"The polite request frame [[grammar:je voudrais + noun]] uses the conditional form of [[grammar:vouloir]] to soften the speaker's wish."},{"language":"French","repository":"french-curriculum","chapter":8,"title":"A Rainy Saturday","chapter_path":"units/french-core/chapter-008-a-rainy-saturday/chapter.md","support_path":"curriculum-support/french/chapter-008/reading-support.json","finding_ids":["BRIEF-012"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["FRA-GRAMMAR-008"],"grammar_patterns":["ne + finite verb + pas"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Rain changes Lina’s and Marc’s Saturday plans, so they spend the morning apart.","source_brief_introduction":"Use `ne + finite verb + pas` for standard written negation, placing the finite verb between `ne` and `pas`.","normal_brief_introduction":"Use [[grammar:ne + finite verb + pas]] for standard written negation, placing the finite verb between [[grammar:ne]] and [[grammar:pas]].","expert_brief_introduction":"Standard bipartite negation places preverbal [[grammar:ne]] and postverbal [[grammar:pas]] around the finite verb, with [[grammar:n']] before a vowel sound."},{"language":"French","repository":"french-curriculum","chapter":9,"title":"Choosing Clothes","chapter_path":"units/french-core/chapter-009-choosing-clothes/chapter.md","support_path":"curriculum-support/french/chapter-009/reading-support.json","finding_ids":["BRIEF-013"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["FRA-GRAMMAR-009"],"grammar_patterns":["quel / quelle + noun"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Lina chooses clothes for an event while Marc helps her compare the options.","source_brief_introduction":"Use `quel / quelle + noun` to ask which item is meant, matching the determiner to the noun's gender.","normal_brief_introduction":"Use [[grammar:quel / quelle + noun]] to ask which item is meant, matching the determiner to the noun's gender.","expert_brief_introduction":"The interrogative determiner appears as [[grammar:quel]] before a masculine singular noun and [[grammar:quelle]] before a feminine singular noun."},{"language":"French","repository":"french-curriculum","chapter":10,"title":"A Family Visit","chapter_path":"units/french-core/chapter-010-a-family-visit/chapter.md","support_path":"curriculum-support/french/chapter-010/reading-support.json","finding_ids":["BRIEF-014"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["FRA-GRAMMAR-010"],"grammar_patterns":["son / sa / ses + noun"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Lina, her brother, and her sister spend a family visit together at home.","source_brief_introduction":"Use `son / sa / ses + noun` to express third-person possession, choosing the form from the following noun's gender and number.","normal_brief_introduction":"Use [[grammar:son / sa / ses + noun]] to express third-person possession, choosing the form from the following noun's gender and number.","expert_brief_introduction":"The possessive determiner agrees with the possessed noun: [[grammar:son]] is masculine singular, [[grammar:sa]] feminine singular, and [[grammar:ses]] plural."},{"language":"German","repository":"german-curriculum","chapter":3,"title":"Where Is the Key?","chapter_path":"units/german-core/chapter-003-where-is-the-key/chapter.md","support_path":"curriculum-support/german/chapter-003/reading-support.json","finding_ids":["BRIEF-015"],"finding_classes":["scene_profile_or_plot_in_brief_introduction"],"grammar_ids":["GER-GRAMMAR-003"],"grammar_patterns":["Wo ist + N?"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Mia asks first what an object is, and Jonas helps her locate two belongings.","source_brief_introduction":"Use `Wo ist + N?` to ask where one thing is.","normal_brief_introduction":"Use [[grammar:Wo ist + N]]? to ask where one thing is.","expert_brief_introduction":"The locative content question [[grammar:Wo ist + N]]? places interrogative [[grammar:wo]] in the first field and finite [[grammar:ist]] in the second."},{"language":"German","repository":"german-curriculum","chapter":6,"title":"A Small Shopping Trip","chapter_path":"units/german-core/chapter-006-a-small-shopping-trip/chapter.md","support_path":"curriculum-support/german/chapter-006/reading-support.json","finding_ids":["BRIEF-016"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["GER-GRAMMAR-006"],"grammar_patterns":["einen / eine / ein + direct object"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Hannah buys food and juice before taking one small carrier bag to the park.","source_brief_introduction":"Use `einen / eine / ein + direct object` to mark masculine, feminine, and neuter indefinite direct objects.","normal_brief_introduction":"Use [[grammar:einen / eine / ein + direct object]] to mark masculine, feminine, and neuter indefinite direct objects.","expert_brief_introduction":"The accusative indefinite article is [[grammar:einen]] for masculine nouns, [[grammar:eine]] for feminine nouns, and [[grammar:ein]] for neuter nouns."},{"language":"German","repository":"german-curriculum","chapter":7,"title":"Ordering at a Café","chapter_path":"units/german-core/chapter-007-ordering-at-a-cafe/chapter.md","support_path":"curriculum-support/german/chapter-007/reading-support.json","finding_ids":["BRIEF-017"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["GER-GRAMMAR-007"],"grammar_patterns":["ich möchte + noun / infinitive"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Mia and Jonas practise a café conversation while Jonas plays the waiter.","source_brief_introduction":"Use `ich möchte + noun / infinitive` to state politely what you would like, keeping the infinitive at the end when one is used.","normal_brief_introduction":"Use [[grammar:ich möchte + noun / infinitive]] to state politely what you would like, keeping the infinitive at the end when one is used.","expert_brief_introduction":"Finite [[grammar:möchte]] occupies the verbal position, while an accompanying lexical infinitive remains clause-final."},{"language":"German","repository":"german-curriculum","chapter":8,"title":"A Busy Evening","chapter_path":"units/german-core/chapter-008-a-busy-evening/chapter.md","support_path":"curriculum-support/german/chapter-008/reading-support.json","finding_ids":["BRIEF-018","BRIEF-019"],"finding_classes":["missing_recognized_grammar_identity","scene_profile_or_plot_in_brief_introduction"],"grammar_ids":["GER-GRAMMAR-008"],"grammar_patterns":["separable prefix + finite verb"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Leonie and Tobias prepare dinner for the friend who is coming in the evening.","source_brief_introduction":"Use `separable prefix + finite verb` in a main clause by placing the finite verb in second position and the separated prefix at the end.","normal_brief_introduction":"Use [[grammar:separable prefix + finite verb]] in a main clause by placing the finite verb in second position and the separated prefix at the end.","expert_brief_introduction":"A separable verb realizes its finite stem in [[grammar:V2]] position and its stressed prefix in the right clause bracket."},{"language":"German","repository":"german-curriculum","chapter":9,"title":"Repairing a Bicycle","chapter_path":"units/german-core/chapter-009-repairing-a-bicycle/chapter.md","support_path":"curriculum-support/german/chapter-009/reading-support.json","finding_ids":["BRIEF-020","BRIEF-021"],"finding_classes":["missing_recognized_grammar_identity","scene_profile_or_plot_in_brief_introduction"],"grammar_ids":["GER-GRAMMAR-009"],"grammar_patterns":["können + infinitive"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Leonie asks Tobias to help inspect and repair a bicycle.","source_brief_introduction":"Use `können + infinitive` to express ability or possibility, conjugating `können` and placing the action infinitive at the end.","normal_brief_introduction":"Use [[grammar:können + infinitive]] to express ability or possibility, conjugating [[grammar:können]] and placing the action infinitive at the end.","expert_brief_introduction":"The modal [[grammar:können]] is finite and the lexical verb remains a bare infinitive in the clause-final position."},{"language":"German","repository":"german-curriculum","chapter":10,"title":"A Rainy Bus Ride","chapter_path":"units/german-core/chapter-010-a-rainy-bus-ride/chapter.md","support_path":"curriculum-support/german/chapter-010/reading-support.json","finding_ids":["BRIEF-022"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["GER-GRAMMAR-010"],"grammar_patterns":["weil + subordinate clause"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Mia stays home sick while Jonas travels through the rain and later visits her for tea.","source_brief_introduction":"Use `weil + subordinate clause` to give a reason, placing the finite verb at the end of the `weil` clause.","normal_brief_introduction":"Use [[grammar:weil + subordinate clause]] to give a reason, placing the finite verb at the end of the [[grammar:weil]] clause.","expert_brief_introduction":"The subordinating conjunction [[grammar:weil]] introduces a causal clause whose finite verb occupies the final position."},{"language":"Hindi","repository":"hindi-curriculum","chapter":5,"title":"A Market Plan","chapter_path":"units/hindi-core/chapter-005-a-market-plan/chapter.md","support_path":"curriculum-support/hindi/chapter-005/reading-support.json","finding_ids":["BRIEF-023"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["HIN-GRAMMAR-005"],"grammar_patterns":["क्या आप + place + चलेंगे?"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Rina asks Amit politely, and they agree to buy fruit and leave at three.","source_brief_introduction":"Use `क्या आप + place + चलेंगे?` to ask politely whether someone will go somewhere.","normal_brief_introduction":"Use [[grammar:क्या आप + place + चलेंगे]]? to ask politely whether someone will go somewhere.","expert_brief_introduction":"Clause-initial [[grammar:क्या]] marks a polar question, while honorific [[grammar:आप]] selects plural-honorific agreement in [[grammar:चलेंगे]]."},{"language":"Japanese","repository":"japanese-curriculum","chapter":6,"title":"A Monday at School","chapter_path":"units/japanese-core/chapter-006-a-monday-at-school/chapter.md","support_path":"curriculum-support/japanese/chapter-006/reading-support.json","finding_ids":["BRIEF-024"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["JPN-GRAMMAR-006"],"grammar_patterns":["N は い-adjective です"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"佐藤あき (Aki) notices the classroom and begins reading during a busy Monday at school.","source_brief_introduction":"Use `N は い-adjective です` to describe a topic politely, keeping the adjective's final `い` before `です`.","normal_brief_introduction":"Use [[grammar:N は い-adjective です]] to describe a topic politely, keeping the adjective's final [[grammar:い]] before [[grammar:です]].","expert_brief_introduction":"An [[grammar:い-adjective]] functions directly as the predicate, while [[grammar:です]] adds politeness and the nonpast affirmative retains final [[grammar:-い]]."},{"language":"Japanese","repository":"japanese-curriculum","chapter":7,"title":"Talking About Likes","chapter_path":"units/japanese-core/chapter-007-talking-about-likes/chapter.md","support_path":"curriculum-support/japanese/chapter-007/reading-support.json","finding_ids":["BRIEF-025"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["JPN-GRAMMAR-007"],"grammar_patterns":["N が 好きです"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"佐藤あき (Aki) and 中村ゆき (Yuki) ask each other about everyday likes.","source_brief_introduction":"Use `N が 好きです` to say that someone likes something, marking the liked item with `が`.","normal_brief_introduction":"Use [[grammar:N が 好きです]] to say that someone likes something, marking the liked item with [[grammar:が]].","expert_brief_introduction":"The liked entity is marked by [[grammar:が]], and [[grammar:好きです]] forms an adjectival predicate rather than a transitive verb phrase."},{"language":"Japanese","repository":"japanese-curriculum","chapter":8,"title":"A Simple School Day","chapter_path":"units/japanese-core/chapter-008-a-simple-school-day/chapter.md","support_path":"curriculum-support/japanese/chapter-008/reading-support.json","finding_ids":["BRIEF-026"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["JPN-GRAMMAR-008"],"grammar_patterns":["time + に + verb"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"佐藤あき (Aki) follows her school-day schedule from morning until night.","source_brief_introduction":"Use `time + に + verb` to state when an action happens at a specific time.","normal_brief_introduction":"Use [[grammar:time + に + verb]] to state when an action happens at a specific time.","expert_brief_introduction":"Temporal [[grammar:に]] marks a specific clock time before the event predicate; broad periods may occur without it."},{"language":"Japanese","repository":"japanese-curriculum","chapter":9,"title":"Ordering at a Small Shop","chapter_path":"units/japanese-core/chapter-009-ordering-at-a-small-shop/chapter.md","support_path":"curriculum-support/japanese/chapter-009/reading-support.json","finding_ids":["BRIEF-027"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["JPN-GRAMMAR-009"],"grammar_patterns":["N を ください"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"中村ゆき (Yuki) asks 店員, an unnamed shop clerk, for three items and the total price.","source_brief_introduction":"Use `N を ください` to request an item politely, marking the requested item with `を`.","normal_brief_introduction":"Use [[grammar:N を ください]] to request an item politely, marking the requested item with [[grammar:を]].","expert_brief_introduction":"The requested noun phrase takes accusative [[grammar:を]] before the polite request predicate [[grammar:ください]]."},{"language":"Japanese","repository":"japanese-curriculum","chapter":10,"title":"Yesterday Near the Station","chapter_path":"units/japanese-core/chapter-010-yesterday-near-the-station/chapter.md","support_path":"curriculum-support/japanese/chapter-010/reading-support.json","finding_ids":["BRIEF-028"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["JPN-GRAMMAR-010"],"grammar_patterns":["verb stem + ました"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"佐藤あき (Aki) and 中村ゆき (Yuki) spend yesterday near the station, a shop, and the park.","source_brief_introduction":"Use `verb stem + ました` for a completed polite past action, replacing the `ます` ending with `ました`.","normal_brief_introduction":"Use [[grammar:verb stem + ました]] for a completed polite past action, replacing the [[grammar:ます]] ending with [[grammar:ました]].","expert_brief_introduction":"The polite past affirmative is formed by attaching [[grammar:ました]] to the continuative stem used before [[grammar:ます]]."},{"language":"Korean","repository":"korean-curriculum","chapter":6,"title":"Checking a New Classroom","chapter_path":"units/korean-core/chapter-006-a-new-classroom/chapter.md","support_path":"curriculum-support/korean/chapter-006/reading-support.json","finding_ids":["BRIEF-029"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["KOR-GRAMMAR-006"],"grammar_patterns":["N이/가 descriptive-아요/어요"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Before a joint school-library session, 박서연 checks a new school classroom, compares the spaces, and prepares to read there.","source_brief_introduction":"Use `N이/가 descriptive-아요/어요` to describe a noun politely. Korean descriptive verbs form the predicate directly; they do not take `이에요/예요` after them.","normal_brief_introduction":"Use [[grammar:N이/가 descriptive-아요/어요]] to describe a noun politely without adding a copula.","expert_brief_introduction":"A Korean descriptive verb inflects directly as the polite nonpast predicate, while nominative [[grammar:이/가]] marks the described nominal."},{"language":"Korean","repository":"korean-curriculum","chapter":7,"title":"Buying Snacks for the Group","chapter_path":"units/korean-core/chapter-007-ordering-a-snack/chapter.md","support_path":"curriculum-support/korean/chapter-007/reading-support.json","finding_ids":["BRIEF-030"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["KOR-GRAMMAR-007"],"grammar_patterns":["N 주세요"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Before the reading program, 45-year-old public librarian 정수진 orders food and drinks from 점원, an unnamed shop clerk.","source_brief_introduction":"Use `N 주세요` to request an item politely. In this compact service pattern, Korean commonly omits the object particle `을/를`.","normal_brief_introduction":"Use [[grammar:N 주세요]] for a compact polite request. The object particle is commonly omitted.","expert_brief_introduction":"The requested nominal precedes honorific request form [[grammar:주세요]]; service discourse licenses a bare noun, and [[grammar:N은/는요]]? forms an elliptical follow-up."},{"language":"Korean","repository":"korean-curriculum","chapter":8,"title":"Junho's School-Day Schedule","chapter_path":"units/korean-core/chapter-008-a-simple-daily-schedule/chapter.md","support_path":"curriculum-support/korean/chapter-008/reading-support.json","finding_ids":["BRIEF-031"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["KOR-GRAMMAR-008"],"grammar_patterns":["time + 에 + verb"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"On a school day that includes a library meeting, 이준호 follows a fixed schedule from waking up through returning home.","source_brief_introduction":"Use `time + 에 + verb` to say when an action happens at a specific time. The same particle can mark places or destinations, so interpret it from the kind of phrase before it.","normal_brief_introduction":"Use [[grammar:time + 에 + verb]] to state when an action happens.","expert_brief_introduction":"Temporal [[grammar:에]] locates an event at a time point, while the same particle has directional and locative functions with place expressions."},{"language":"Korean","repository":"korean-curriculum","chapter":9,"title":"Resting After a Busy Week","chapter_path":"units/korean-core/chapter-009-a-quiet-weekend/chapter.md","support_path":"curriculum-support/korean/chapter-009/reading-support.json","finding_ids":["BRIEF-032"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["KOR-GRAMMAR-009"],"grammar_patterns":["안 + verb / descriptive verb"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"After a long week, 최도윤 asks 정수진 about the weather, tiredness, and whether she will exercise or rest.","source_brief_introduction":"Use `안 + verb / descriptive verb` for short negation. Put `안` immediately before a simple predicate; with many noun-plus-`하다` expressions, place it between the noun and `해요`, as in `운동 안 해요`.","normal_brief_introduction":"Use [[grammar:안 + verb / descriptive verb]] for short negation. With noun-plus-하다 activities, ordinary Korean often uses [[grammar:N 안 해요]].","expert_brief_introduction":"Negative adverb [[grammar:안]] precedes a simple predicate; in analyzable noun-plus-하다 predicates it commonly appears between the nominal element and 하다."},{"language":"Korean","repository":"korean-curriculum","chapter":10,"title":"Photographs for the Library Display","chapter_path":"units/korean-core/chapter-010-yesterday-at-the-market/chapter.md","support_path":"curriculum-support/korean/chapter-010/reading-support.json","finding_ids":["BRIEF-033"],"finding_classes":["missing_recognized_grammar_identity"],"grammar_ids":["KOR-GRAMMAR-010"],"grammar_patterns":["verb-았/었어요"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"For a library display, 김민지 and 이준호 meet at a market, take photographs, buy food, and review the photographs in a nearby park.","source_brief_introduction":"Use `verb-았/었어요` for a completed action in polite past speech. The past marker combines and contracts with the verb stem, producing forms such as `갔어요`, `봤어요`, and `왔어요`.","normal_brief_introduction":"Use [[grammar:verb-았/었어요]] for a completed polite past action.","expert_brief_introduction":"The past marker [[grammar:-았/었-]] combines with the polite ending and undergoes regular stem-vowel contraction in forms such as [[grammar:갔어요]], [[grammar:봤어요]], and [[grammar:왔어요]]."},{"language":"Vietnamese","repository":"vietnamese-curriculum","chapter":7,"title":"Checking School Things","chapter_path":"units/vietnamese-core/chapter-007-basic-sentences-7/chapter.md","support_path":"curriculum-support/vietnamese/chapter-007/reading-support.json","finding_ids":["BRIEF-034","BRIEF-035"],"finding_classes":["introduction_over_three_sentences","scene_profile_or_plot_in_brief_introduction"],"grammar_ids":["VIE-GRAMMAR-007"],"grammar_patterns":["reference + có + N + không?"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Nguyễn Minh Anh is Nguyễn Gia Bảo’s older sister. They check their school things before leaving home.","source_brief_introduction":"Use `reference + có + N + không?` to ask whether someone has an item, choosing the reference word from the speakers' relationship.","normal_brief_introduction":"Use [[grammar:reference + có + N + không]]? to ask whether someone has an item, choosing the reference word from the speakers' relationship.","expert_brief_introduction":"The polar possession frame places a relationship-sensitive person reference before [[grammar:có + N + không]]?, with final [[grammar:không]] marking the question."},{"language":"Vietnamese","repository":"vietnamese-curriculum","chapter":27,"title":"Asking Prices at the Market","chapter_path":"units/vietnamese-core/chapter-027-basic-sentences-27/chapter.md","support_path":"curriculum-support/vietnamese/chapter-027/reading-support.json","finding_ids":["BRIEF-036"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["VIE-GRAMMAR-027A","VIE-GRAMMAR-027B"],"grammar_patterns":["N + giá bao nhiêu?","cho tôi + N"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Nguyễn Minh Anh asks Nguyễn Thị Lan about vegetables and prices at a market stall.","source_brief_introduction":"Use `N + giá bao nhiêu?` to ask an item's price and `cho tôi + N` to request it.","normal_brief_introduction":"Use [[grammar:N + giá bao nhiêu]]? to ask an item's price and [[grammar:cho tôi + N]] to request it.","expert_brief_introduction":"The price question places [[grammar:giá bao nhiêu]] after the item, while [[grammar:cho tôi + N]] forms a recipient-oriented request with a nominal complement."},{"language":"Vietnamese","repository":"vietnamese-curriculum","chapter":28,"title":"Preparing Dinner","chapter_path":"units/vietnamese-core/chapter-028-basic-sentences-28/chapter.md","support_path":"curriculum-support/vietnamese/chapter-028/reading-support.json","finding_ids":["BRIEF-037"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["VIE-GRAMMAR-028"],"grammar_patterns":["S + đã + V; S + đã + V + chưa?"],"primary_reading_type":"Narrative","primary_reading_opening_must_remain":"Lê Hoàng Nam and Nguyễn Gia Bảo prepare ingredients and check what is already complete.","source_brief_introduction":"Use `S + đã + V` to present a completed action and `S + đã + V + chưa?` to ask whether it is complete yet.","normal_brief_introduction":"Use [[grammar:S + đã + V]] to present a completed action and [[grammar:S + đã + V + chưa]]? to ask whether it is complete yet.","expert_brief_introduction":"The completive marker [[grammar:đã]] precedes the verb, while the polar frame [[grammar:đã + V + chưa]]? asks whether completion has occurred."},{"language":"Vietnamese","repository":"vietnamese-curriculum","chapter":47,"title":"Printing Meeting Materials","chapter_path":"units/vietnamese-core/chapter-047-basic-sentences-47/chapter.md","support_path":"curriculum-support/vietnamese/chapter-047/reading-support.json","finding_ids":["BRIEF-038"],"finding_classes":["introduction_over_three_sentences"],"grammar_ids":["VIE-GRAMMAR-047A","VIE-GRAMMAR-047B"],"grammar_patterns":["nếu + clause, thì + clause","bao nhiêu + classifier + N?"],"primary_reading_type":"Dialogue","primary_reading_opening_must_remain":"Phạm Ngọc Linh, Trần Thu Hà, and Nguyễn Thị Lan decide how many paper materials to print.","source_brief_introduction":"Use `nếu + clause, thì + clause` to connect a condition with its result and `bao nhiêu + classifier + N?` to ask for an unknown count.","normal_brief_introduction":"Use [[grammar:nếu + clause, thì + clause]] to connect a condition with its result and [[grammar:bao nhiêu + classifier + N]]? to ask for an unknown count.","expert_brief_introduction":"The conditional antecedent is introduced by [[grammar:nếu]] and the consequent may be marked by [[grammar:thì]], while quantity questions place [[grammar:bao nhiêu]] before the classifier-noun sequence."}],"scope_guards":["Do not rewrite Dialogue or Narrative bodies.","Do not alter translations, vocabulary, grammar identities, Review evidence, cast data, or progression.","Keep every primary-reading setup paragraph under Dialogue or Narrative.","Brief Introduction is grammar-only in source, Normal, and Expert projections."]}
+{
+  "schema_version": 1,
+  "finding_count": 37,
+  "chapter_count": 33,
+  "records": [
+    {
+      "language": "Arabic",
+      "repository": "arabic-curriculum",
+      "chapter": 3,
+      "title": "What Is This?",
+      "chapter_path": "units/arabic-core/chapter-003-what-is-this/chapter.md",
+      "support_path": "curriculum-support/arabic/chapter-003/reading-support.json",
+      "finding_ids": [
+        "BRIEF-001"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "ARA-GRAMMAR-003"
+      ],
+      "grammar_patterns": [
+        "مَا هَذَا؟ / مَا هَذِهِ؟"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Layla asks about nearby objects, and Sami answers with the matching demonstrative.",
+      "source_brief_introduction": "`مَا هَذَا؟ / مَا هَذِهِ؟` asks what a nearby item is, using the masculine or feminine demonstrative to match the noun.",
+      "normal_brief_introduction": "Use [[grammar:مَا هَذَا]]؟ for a masculine item and [[grammar:مَا هَذِهِ]]؟ for a feminine item; match the demonstrative to the noun.",
+      "expert_brief_introduction": "The identification questions [[grammar:مَا هَذَا]]؟ and [[grammar:مَا هَذِهِ]]؟ combine interrogative مَا with a proximal demonstrative that agrees with the noun's grammatical gender."
+    },
+    {
+      "language": "Dutch",
+      "repository": "dutch-curriculum",
+      "chapter": 4,
+      "title": "Asking What This Is",
+      "chapter_path": "units/dutch-core/chapter-004-basic-sentences-4/chapter.md",
+      "support_path": "curriculum-support/dutch/chapter-004/reading-support.json",
+      "finding_ids": [
+        "BRIEF-002"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "DUT-GRAMMAR-004"
+      ],
+      "grammar_patterns": [
+        "Is dit N?"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Before a lesson, a pupil finds the classroom and checks a few object labels. The last label leads to the door.",
+      "source_brief_introduction": "Use `Is dit N?` to ask whether a nearby object is the named noun.",
+      "normal_brief_introduction": "Use [[grammar:Is dit N]]? to ask whether a nearby object is the named noun.",
+      "expert_brief_introduction": "The polar interrogative [[grammar:Is dit N]]? places the finite copula before the demonstrative subject."
+    },
+    {
+      "language": "Dutch",
+      "repository": "dutch-curriculum",
+      "chapter": 10,
+      "title": "Living Here",
+      "chapter_path": "units/dutch-core/chapter-010-basic-sentences-10/chapter.md",
+      "support_path": "curriculum-support/dutch/chapter-010/reading-support.json",
+      "finding_ids": [
+        "BRIEF-003"
+      ],
+      "finding_classes": [
+        "scene_profile_or_plot_in_brief_introduction"
+      ],
+      "grammar_ids": [
+        "DUT-GRAMMAR-010"
+      ],
+      "grammar_patterns": [
+        "Ik woon in N"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "At home in Utrecht, Mark reads a short first-person profile from a map exercise about someone living in Rotterdam.",
+      "source_brief_introduction": "The pattern `Ik woon in N` states a place of residence.",
+      "normal_brief_introduction": "Use [[grammar:Ik woon in N]] to state a place of residence.",
+      "expert_brief_introduction": "The residence pattern [[grammar:Ik woon in N]] combines finite [[grammar:wonen]] with an [[grammar:in]]-headed locative complement."
+    },
+    {
+      "language": "Dutch",
+      "repository": "dutch-curriculum",
+      "chapter": 12,
+      "title": "A Simple Daily Routine",
+      "chapter_path": "units/dutch-core/chapter-012-a-simple-daily-routine/chapter.md",
+      "support_path": "curriculum-support/dutch/chapter-012/reading-support.json",
+      "finding_ids": [
+        "BRIEF-004"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "DUT-GRAMMAR-012"
+      ],
+      "grammar_patterns": [
+        "Sophie + V stem-t"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Sophie is a student going through a simple day at home and school.",
+      "source_brief_introduction": "Use `Sophie + V stem-t` to describe a named third-person subject performing a present action.",
+      "normal_brief_introduction": "Use [[grammar:Sophie + V stem-t]] to describe a named third-person subject performing a present action.",
+      "expert_brief_introduction": "The pattern [[grammar:Sophie + V stem-t]] presents controlled third-person singular present predicates without generalizing the full conjugation system."
+    },
+    {
+      "language": "Dutch",
+      "repository": "dutch-curriculum",
+      "chapter": 21,
+      "title": "Meeting the Family",
+      "chapter_path": "units/dutch-core/chapter-021-meeting-the-family/chapter.md",
+      "support_path": "curriculum-support/dutch/chapter-021/reading-support.json",
+      "finding_ids": [
+        "BRIEF-005"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "DUT-GRAMMAR-021"
+      ],
+      "grammar_patterns": [
+        "Wie is dat?"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Alex visits Sophie at home and meets her grandmother, Oma Anja.",
+      "source_brief_introduction": "Use `Wie is dat?` to ask who someone is and answer with `Dat is` plus the person's name or role.",
+      "normal_brief_introduction": "Use [[grammar:Wie is dat]]? to ask who someone is and answer with [[grammar:Dat is]] plus the person's name or role.",
+      "expert_brief_introduction": "The person-identity interrogative [[grammar:Wie is dat]]? uses copular inversion, while the answer [[grammar:Dat is]] identifies the referent."
+    },
+    {
+      "language": "Dutch",
+      "repository": "dutch-curriculum",
+      "chapter": 29,
+      "title": "Planning a Picnic",
+      "chapter_path": "units/dutch-core/chapter-029-planning-a-picnic/chapter.md",
+      "support_path": "curriculum-support/dutch/chapter-029/reading-support.json",
+      "finding_ids": [
+        "BRIEF-006"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "DUT-GRAMMAR-029A",
+        "DUT-GRAMMAR-029B"
+      ],
+      "grammar_patterns": [
+        "Welke + noun + ...?",
+        "noun + van mij/jou/hem/haar"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Alex, Sophie, and Daan organize a picnic in the park and identify whose things are whose.",
+      "source_brief_introduction": "Use `Welke + noun` to ask which de-word item is meant, and use `noun + van mij/jou/hem/haar` to state who owns it.",
+      "normal_brief_introduction": "Use [[grammar:Welke + noun]] to ask which de-word item is meant, and use [[grammar:noun + van mij/jou/hem/haar]] to state who owns it.",
+      "expert_brief_introduction": "The first pattern uses [[grammar:welke]] as an interrogative determiner with a common-gender count noun; the second expresses the possessor in a postnominal [[grammar:van]] phrase."
+    },
+    {
+      "language": "Dutch",
+      "repository": "dutch-curriculum",
+      "chapter": 55,
+      "title": "Organizing a Volunteer Event",
+      "chapter_path": "units/dutch-core/chapter-055-organizing-a-volunteer-event/chapter.md",
+      "support_path": "curriculum-support/dutch/chapter-055/reading-support.json",
+      "finding_ids": [
+        "BRIEF-007"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "DUT-GRAMMAR-055A",
+        "DUT-GRAMMAR-055B"
+      ],
+      "grammar_patterns": [
+        "Zullen we + infinitive?",
+        "misschien + V2 clause"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Noor, Milan, and Sophie organize a volunteer information evening.",
+      "source_brief_introduction": "Use `Zullen we + infinitive?` to suggest a shared action and `misschien + V2 clause` to present an idea as possible.",
+      "normal_brief_introduction": "Use [[grammar:Zullen we + infinitive]]? to suggest a shared action and [[grammar:misschien + V2 clause]] to present an idea as possible.",
+      "expert_brief_introduction": "The proposal question uses finite [[grammar:zullen]] with a final lexical infinitive; fronted [[grammar:misschien]] occupies the first field and triggers ordinary V2 order."
+    },
+    {
+      "language": "Dutch",
+      "repository": "dutch-curriculum",
+      "chapter": 69,
+      "title": "A Formal Information Request",
+      "chapter_path": "units/dutch-core/chapter-069-a-formal-information-request/chapter.md",
+      "support_path": "curriculum-support/dutch/chapter-069/reading-support.json",
+      "finding_ids": [
+        "BRIEF-008"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "DUT-GRAMMAR-069A",
+        "DUT-GRAMMAR-069B"
+      ],
+      "grammar_patterns": [
+        "Zou u + infinitive + kunnen?",
+        "direct formal Kunt u mij zeggen of + embedded polar clause?"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Fatima volunteers for one afternoon at a municipal information desk, where Opa\nHenk and Yasmin make formal requests.",
+      "source_brief_introduction": "Use `Zou u + infinitive + kunnen?` for a highly polite request and `Kunt u mij zeggen of + embedded polar clause?` for a formal indirect yes-no question.",
+      "normal_brief_introduction": "Use [[grammar:Zou u + infinitive + kunnen]]? for a highly polite request and [[grammar:Kunt u mij zeggen of + embedded polar clause]]? for a formal indirect yes-no question.",
+      "expert_brief_introduction": "The first frame uses conditional [[grammar:zou]] to mitigate a formal request; the second combines a V1 matrix question with an [[grammar:of]]-introduced verb-final embedded polar clause."
+    },
+    {
+      "language": "French",
+      "repository": "french-curriculum",
+      "chapter": 6,
+      "title": "A Saturday at the Library",
+      "chapter_path": "units/french-core/chapter-006-a-saturday-at-the-library/chapter.md",
+      "support_path": "curriculum-support/french/chapter-006/reading-support.json",
+      "finding_ids": [
+        "BRIEF-009",
+        "BRIEF-010"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity",
+        "scene_profile_or_plot_in_brief_introduction"
+      ],
+      "grammar_ids": [
+        "FRA-GRAMMAR-006"
+      ],
+      "grammar_patterns": [
+        "il / elle + regular -er verb"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Lina spends a quiet Saturday morning working at the library before going home at noon.",
+      "source_brief_introduction": "Use `il / elle + regular -er verb` to describe what he or she does; remove `-er` and add `-e` in the third-person singular.",
+      "normal_brief_introduction": "Use [[grammar:il / elle + regular -er verb]] to describe what he or she does; remove [[grammar:-er]] and add [[grammar:-e]] in the third-person singular.",
+      "expert_brief_introduction": "Regular first-conjugation verbs form the third-person singular present with the stem plus orthographic [[grammar:-e]], while the subject noun phrase or clitic precedes the finite verb."
+    },
+    {
+      "language": "French",
+      "repository": "french-curriculum",
+      "chapter": 7,
+      "title": "Buying Bread",
+      "chapter_path": "units/french-core/chapter-007-buying-bread/chapter.md",
+      "support_path": "curriculum-support/french/chapter-007/reading-support.json",
+      "finding_ids": [
+        "BRIEF-011"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "FRA-GRAMMAR-007"
+      ],
+      "grammar_patterns": [
+        "Je voudrais + noun"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Lina orders bread from the seller at a bakery in the morning.",
+      "source_brief_introduction": "Use `Je voudrais + noun` to request an item politely.",
+      "normal_brief_introduction": "Use [[grammar:Je voudrais + noun]] to request an item politely.",
+      "expert_brief_introduction": "The polite request frame [[grammar:je voudrais + noun]] uses the conditional form of [[grammar:vouloir]] to soften the speaker's wish."
+    },
+    {
+      "language": "French",
+      "repository": "french-curriculum",
+      "chapter": 8,
+      "title": "A Rainy Saturday",
+      "chapter_path": "units/french-core/chapter-008-a-rainy-saturday/chapter.md",
+      "support_path": "curriculum-support/french/chapter-008/reading-support.json",
+      "finding_ids": [
+        "BRIEF-012"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "FRA-GRAMMAR-008"
+      ],
+      "grammar_patterns": [
+        "ne + finite verb + pas"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Rain changes Lina’s and Marc’s Saturday plans, so they spend the morning apart.",
+      "source_brief_introduction": "Use `ne + finite verb + pas` for standard written negation, placing the finite verb between `ne` and `pas`.",
+      "normal_brief_introduction": "Use [[grammar:ne + finite verb + pas]] for standard written negation, placing the finite verb between [[grammar:ne]] and [[grammar:pas]].",
+      "expert_brief_introduction": "Standard bipartite negation places preverbal [[grammar:ne]] and postverbal [[grammar:pas]] around the finite verb, with [[grammar:n']] before a vowel sound."
+    },
+    {
+      "language": "French",
+      "repository": "french-curriculum",
+      "chapter": 9,
+      "title": "Choosing Clothes",
+      "chapter_path": "units/french-core/chapter-009-choosing-clothes/chapter.md",
+      "support_path": "curriculum-support/french/chapter-009/reading-support.json",
+      "finding_ids": [
+        "BRIEF-013"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "FRA-GRAMMAR-009"
+      ],
+      "grammar_patterns": [
+        "quel / quelle + noun"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Lina chooses clothes for an event while Marc helps her compare the options.",
+      "source_brief_introduction": "Use `quel / quelle + noun` to ask which item is meant, matching the determiner to the noun's gender.",
+      "normal_brief_introduction": "Use [[grammar:quel / quelle + noun]] to ask which item is meant, matching the determiner to the noun's gender.",
+      "expert_brief_introduction": "The interrogative determiner appears as [[grammar:quel]] before a masculine singular noun and [[grammar:quelle]] before a feminine singular noun."
+    },
+    {
+      "language": "French",
+      "repository": "french-curriculum",
+      "chapter": 10,
+      "title": "A Family Visit",
+      "chapter_path": "units/french-core/chapter-010-a-family-visit/chapter.md",
+      "support_path": "curriculum-support/french/chapter-010/reading-support.json",
+      "finding_ids": [
+        "BRIEF-014"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "FRA-GRAMMAR-010"
+      ],
+      "grammar_patterns": [
+        "son / sa / ses + noun"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Lina, her brother, and her sister spend a family visit together at home.",
+      "source_brief_introduction": "Use `son / sa / ses + noun` to express third-person possession, choosing the form from the following noun's gender and number.",
+      "normal_brief_introduction": "Use [[grammar:son / sa / ses + noun]] to express third-person possession, choosing the form from the following noun's gender and number.",
+      "expert_brief_introduction": "The possessive determiner agrees with the possessed noun: [[grammar:son]] is masculine singular, [[grammar:sa]] feminine singular, and [[grammar:ses]] plural."
+    },
+    {
+      "language": "German",
+      "repository": "german-curriculum",
+      "chapter": 3,
+      "title": "Where Is the Key?",
+      "chapter_path": "units/german-core/chapter-003-where-is-the-key/chapter.md",
+      "support_path": "curriculum-support/german/chapter-003/reading-support.json",
+      "finding_ids": [
+        "BRIEF-015"
+      ],
+      "finding_classes": [
+        "scene_profile_or_plot_in_brief_introduction"
+      ],
+      "grammar_ids": [
+        "GER-GRAMMAR-003"
+      ],
+      "grammar_patterns": [
+        "Wo ist + N?"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Mia asks first what an object is, and Jonas helps her locate two belongings.",
+      "source_brief_introduction": "Use `Wo ist + N?` to ask where one thing is.",
+      "normal_brief_introduction": "Use [[grammar:Wo ist + N]]? to ask where one thing is.",
+      "expert_brief_introduction": "The locative content question [[grammar:Wo ist + N]]? places interrogative [[grammar:wo]] in the first field and finite [[grammar:ist]] in the second."
+    },
+    {
+      "language": "German",
+      "repository": "german-curriculum",
+      "chapter": 6,
+      "title": "A Small Shopping Trip",
+      "chapter_path": "units/german-core/chapter-006-a-small-shopping-trip/chapter.md",
+      "support_path": "curriculum-support/german/chapter-006/reading-support.json",
+      "finding_ids": [
+        "BRIEF-016"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "GER-GRAMMAR-006"
+      ],
+      "grammar_patterns": [
+        "einen / eine / ein + direct object"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Hannah buys food and juice before taking one small carrier bag to the park.",
+      "source_brief_introduction": "Use `einen / eine / ein + direct object` to mark masculine, feminine, and neuter indefinite direct objects.",
+      "normal_brief_introduction": "Use [[grammar:einen / eine / ein + direct object]] to mark masculine, feminine, and neuter indefinite direct objects.",
+      "expert_brief_introduction": "The accusative indefinite article is [[grammar:einen]] for masculine nouns, [[grammar:eine]] for feminine nouns, and [[grammar:ein]] for neuter nouns."
+    },
+    {
+      "language": "German",
+      "repository": "german-curriculum",
+      "chapter": 7,
+      "title": "Ordering at a Café",
+      "chapter_path": "units/german-core/chapter-007-ordering-at-a-cafe/chapter.md",
+      "support_path": "curriculum-support/german/chapter-007/reading-support.json",
+      "finding_ids": [
+        "BRIEF-017"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "GER-GRAMMAR-007"
+      ],
+      "grammar_patterns": [
+        "ich möchte + noun / infinitive"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Mia and Jonas practise a café conversation while Jonas plays the waiter.",
+      "source_brief_introduction": "Use `ich möchte + noun / infinitive` to state politely what you would like, keeping the infinitive at the end when one is used.",
+      "normal_brief_introduction": "Use [[grammar:ich möchte + noun / infinitive]] to state politely what you would like, keeping the infinitive at the end when one is used.",
+      "expert_brief_introduction": "Finite [[grammar:möchte]] occupies the verbal position, while an accompanying lexical infinitive remains clause-final."
+    },
+    {
+      "language": "German",
+      "repository": "german-curriculum",
+      "chapter": 8,
+      "title": "A Busy Evening",
+      "chapter_path": "units/german-core/chapter-008-a-busy-evening/chapter.md",
+      "support_path": "curriculum-support/german/chapter-008/reading-support.json",
+      "finding_ids": [
+        "BRIEF-018",
+        "BRIEF-019"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity",
+        "scene_profile_or_plot_in_brief_introduction"
+      ],
+      "grammar_ids": [
+        "GER-GRAMMAR-008"
+      ],
+      "grammar_patterns": [
+        "separable prefix + finite verb"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Leonie and Tobias prepare dinner for the friend who is coming in the evening.",
+      "source_brief_introduction": "Use `separable prefix + finite verb` in a main clause by placing the finite verb in second position and the separated prefix at the end.",
+      "normal_brief_introduction": "Use [[grammar:separable prefix + finite verb]] in a main clause by placing the finite verb in second position and the separated prefix at the end.",
+      "expert_brief_introduction": "A separable verb realizes its finite stem in [[grammar:V2]] position and its stressed prefix in the right clause bracket."
+    },
+    {
+      "language": "German",
+      "repository": "german-curriculum",
+      "chapter": 9,
+      "title": "Repairing a Bicycle",
+      "chapter_path": "units/german-core/chapter-009-repairing-a-bicycle/chapter.md",
+      "support_path": "curriculum-support/german/chapter-009/reading-support.json",
+      "finding_ids": [
+        "BRIEF-020",
+        "BRIEF-021"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity",
+        "scene_profile_or_plot_in_brief_introduction"
+      ],
+      "grammar_ids": [
+        "GER-GRAMMAR-009"
+      ],
+      "grammar_patterns": [
+        "können + infinitive"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Leonie asks Tobias to help inspect and repair a bicycle.",
+      "source_brief_introduction": "Use `können + infinitive` to express ability or possibility, conjugating `können` and placing the action infinitive at the end.",
+      "normal_brief_introduction": "Use [[grammar:können + infinitive]] to express ability or possibility, conjugating [[grammar:können]] and placing the action infinitive at the end.",
+      "expert_brief_introduction": "The modal [[grammar:können]] is finite and the lexical verb remains a bare infinitive in the clause-final position."
+    },
+    {
+      "language": "German",
+      "repository": "german-curriculum",
+      "chapter": 10,
+      "title": "A Rainy Bus Ride",
+      "chapter_path": "units/german-core/chapter-010-a-rainy-bus-ride/chapter.md",
+      "support_path": "curriculum-support/german/chapter-010/reading-support.json",
+      "finding_ids": [
+        "BRIEF-022"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "GER-GRAMMAR-010"
+      ],
+      "grammar_patterns": [
+        "weil + subordinate clause"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Mia stays home sick while Jonas travels through the rain and later visits her for tea.",
+      "source_brief_introduction": "Use `weil + subordinate clause` to give a reason, placing the finite verb at the end of the `weil` clause.",
+      "normal_brief_introduction": "Use [[grammar:weil + subordinate clause]] to give a reason, placing the finite verb at the end of the [[grammar:weil]] clause.",
+      "expert_brief_introduction": "The subordinating conjunction [[grammar:weil]] introduces a causal clause whose finite verb occupies the final position."
+    },
+    {
+      "language": "Hindi",
+      "repository": "hindi-curriculum",
+      "chapter": 5,
+      "title": "A Market Plan",
+      "chapter_path": "units/hindi-core/chapter-005-a-market-plan/chapter.md",
+      "support_path": "curriculum-support/hindi/chapter-005/reading-support.json",
+      "finding_ids": [
+        "BRIEF-023"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "HIN-GRAMMAR-005"
+      ],
+      "grammar_patterns": [
+        "क्या आप + place + चलेंगे?"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Rina asks Amit politely, and they agree to buy fruit and leave at three.",
+      "source_brief_introduction": "Use `क्या आप + place + चलेंगे?` to ask politely whether someone will go somewhere.",
+      "normal_brief_introduction": "Use [[grammar:क्या आप + place + चलेंगे]]? to ask politely whether someone will go somewhere.",
+      "expert_brief_introduction": "Clause-initial [[grammar:क्या]] marks a polar question, while honorific [[grammar:आप]] selects plural-honorific agreement in [[grammar:चलेंगे]]."
+    },
+    {
+      "language": "Japanese",
+      "repository": "japanese-curriculum",
+      "chapter": 6,
+      "title": "A Monday at School",
+      "chapter_path": "units/japanese-core/chapter-006-a-monday-at-school/chapter.md",
+      "support_path": "curriculum-support/japanese/chapter-006/reading-support.json",
+      "finding_ids": [
+        "BRIEF-024"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "JPN-GRAMMAR-006"
+      ],
+      "grammar_patterns": [
+        "N は い-adjective です"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "佐藤あき (Aki) notices the classroom and begins reading during a busy Monday at school.",
+      "source_brief_introduction": "Use `N は い-adjective です` to describe a topic politely, keeping the adjective's final `い` before `です`.",
+      "normal_brief_introduction": "Use [[grammar:N は い-adjective です]] to describe a topic politely, keeping the adjective's final [[grammar:い]] before [[grammar:です]].",
+      "expert_brief_introduction": "An [[grammar:い-adjective]] functions directly as the predicate, while [[grammar:です]] adds politeness and the nonpast affirmative retains final [[grammar:-い]]."
+    },
+    {
+      "language": "Japanese",
+      "repository": "japanese-curriculum",
+      "chapter": 7,
+      "title": "Talking About Likes",
+      "chapter_path": "units/japanese-core/chapter-007-talking-about-likes/chapter.md",
+      "support_path": "curriculum-support/japanese/chapter-007/reading-support.json",
+      "finding_ids": [
+        "BRIEF-025"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "JPN-GRAMMAR-007"
+      ],
+      "grammar_patterns": [
+        "N が 好きです"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "佐藤あき (Aki) and 中村ゆき (Yuki) ask each other about everyday likes.",
+      "source_brief_introduction": "Use `N が 好きです` to say that someone likes something, marking the liked item with `が`.",
+      "normal_brief_introduction": "Use [[grammar:N が 好きです]] to say that someone likes something, marking the liked item with [[grammar:が]].",
+      "expert_brief_introduction": "The liked entity is marked by [[grammar:が]], and [[grammar:好きです]] forms an adjectival predicate rather than a transitive verb phrase."
+    },
+    {
+      "language": "Japanese",
+      "repository": "japanese-curriculum",
+      "chapter": 8,
+      "title": "A Simple School Day",
+      "chapter_path": "units/japanese-core/chapter-008-a-simple-school-day/chapter.md",
+      "support_path": "curriculum-support/japanese/chapter-008/reading-support.json",
+      "finding_ids": [
+        "BRIEF-026"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "JPN-GRAMMAR-008"
+      ],
+      "grammar_patterns": [
+        "time + に + verb"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "佐藤あき (Aki) follows her school-day schedule from morning until night.",
+      "source_brief_introduction": "Use `time + に + verb` to state when an action happens at a specific time.",
+      "normal_brief_introduction": "Use [[grammar:time + に + verb]] to state when an action happens at a specific time.",
+      "expert_brief_introduction": "Temporal [[grammar:に]] marks a specific clock time before the event predicate; broad periods may occur without it."
+    },
+    {
+      "language": "Japanese",
+      "repository": "japanese-curriculum",
+      "chapter": 9,
+      "title": "Ordering at a Small Shop",
+      "chapter_path": "units/japanese-core/chapter-009-ordering-at-a-small-shop/chapter.md",
+      "support_path": "curriculum-support/japanese/chapter-009/reading-support.json",
+      "finding_ids": [
+        "BRIEF-027"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "JPN-GRAMMAR-009"
+      ],
+      "grammar_patterns": [
+        "N を ください"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "中村ゆき (Yuki) asks 店員, an unnamed shop clerk, for three items and the total price.",
+      "source_brief_introduction": "Use `N を ください` to request an item politely, marking the requested item with `を`.",
+      "normal_brief_introduction": "Use [[grammar:N を ください]] to request an item politely, marking the requested item with [[grammar:を]].",
+      "expert_brief_introduction": "The requested noun phrase takes accusative [[grammar:を]] before the polite request predicate [[grammar:ください]]."
+    },
+    {
+      "language": "Japanese",
+      "repository": "japanese-curriculum",
+      "chapter": 10,
+      "title": "Yesterday Near the Station",
+      "chapter_path": "units/japanese-core/chapter-010-yesterday-near-the-station/chapter.md",
+      "support_path": "curriculum-support/japanese/chapter-010/reading-support.json",
+      "finding_ids": [
+        "BRIEF-028"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "JPN-GRAMMAR-010"
+      ],
+      "grammar_patterns": [
+        "verb stem + ました"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "佐藤あき (Aki) and 中村ゆき (Yuki) spend yesterday near the station, a shop, and the park.",
+      "source_brief_introduction": "Use `verb stem + ました` for a completed polite past action, replacing the `ます` ending with `ました`.",
+      "normal_brief_introduction": "Use [[grammar:verb stem + ました]] for a completed polite past action, replacing the [[grammar:ます]] ending with [[grammar:ました]].",
+      "expert_brief_introduction": "The polite past affirmative is formed by attaching [[grammar:ました]] to the continuative stem used before [[grammar:ます]]."
+    },
+    {
+      "language": "Korean",
+      "repository": "korean-curriculum",
+      "chapter": 6,
+      "title": "Checking a New Classroom",
+      "chapter_path": "units/korean-core/chapter-006-a-new-classroom/chapter.md",
+      "support_path": "curriculum-support/korean/chapter-006/reading-support.json",
+      "finding_ids": [
+        "BRIEF-029"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "KOR-GRAMMAR-006"
+      ],
+      "grammar_patterns": [
+        "N이/가 descriptive-아요/어요"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Before a joint school-library session, 박서연 checks a new school classroom, compares the spaces, and prepares to read there.",
+      "source_brief_introduction": "Use `N이/가 descriptive-아요/어요` to describe a noun politely. Korean descriptive verbs form the predicate directly; they do not take `이에요/예요` after them.",
+      "normal_brief_introduction": "Use [[grammar:N이/가 descriptive-아요/어요]] to describe a noun politely without adding a copula.",
+      "expert_brief_introduction": "A Korean descriptive verb inflects directly as the polite nonpast predicate, while nominative [[grammar:이/가]] marks the described nominal."
+    },
+    {
+      "language": "Korean",
+      "repository": "korean-curriculum",
+      "chapter": 7,
+      "title": "Buying Snacks for the Group",
+      "chapter_path": "units/korean-core/chapter-007-ordering-a-snack/chapter.md",
+      "support_path": "curriculum-support/korean/chapter-007/reading-support.json",
+      "finding_ids": [
+        "BRIEF-030"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "KOR-GRAMMAR-007"
+      ],
+      "grammar_patterns": [
+        "N 주세요"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Before the reading program, 45-year-old public librarian 정수진 orders food and drinks from 점원, an unnamed shop clerk.",
+      "source_brief_introduction": "Use `N 주세요` to request an item politely. In this compact service pattern, Korean commonly omits the object particle `을/를`.",
+      "normal_brief_introduction": "Use [[grammar:N 주세요]] for a compact polite request. The object particle is commonly omitted.",
+      "expert_brief_introduction": "The requested nominal precedes honorific request form [[grammar:주세요]]; service discourse licenses a bare noun, and [[grammar:N은/는요]]? forms an elliptical follow-up."
+    },
+    {
+      "language": "Korean",
+      "repository": "korean-curriculum",
+      "chapter": 8,
+      "title": "Junho's School-Day Schedule",
+      "chapter_path": "units/korean-core/chapter-008-a-simple-daily-schedule/chapter.md",
+      "support_path": "curriculum-support/korean/chapter-008/reading-support.json",
+      "finding_ids": [
+        "BRIEF-031"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "KOR-GRAMMAR-008"
+      ],
+      "grammar_patterns": [
+        "time + 에 + verb"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "On a school day that includes a library meeting, 이준호 follows a fixed schedule from waking up through returning home.",
+      "source_brief_introduction": "Use `time + 에 + verb` to say when an action happens at a specific time. The same particle can mark places or destinations, so interpret it from the kind of phrase before it.",
+      "normal_brief_introduction": "Use [[grammar:time + 에 + verb]] to state when an action happens.",
+      "expert_brief_introduction": "Temporal [[grammar:에]] locates an event at a time point, while the same particle has directional and locative functions with place expressions."
+    },
+    {
+      "language": "Korean",
+      "repository": "korean-curriculum",
+      "chapter": 9,
+      "title": "Resting After a Busy Week",
+      "chapter_path": "units/korean-core/chapter-009-a-quiet-weekend/chapter.md",
+      "support_path": "curriculum-support/korean/chapter-009/reading-support.json",
+      "finding_ids": [
+        "BRIEF-032"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "KOR-GRAMMAR-009"
+      ],
+      "grammar_patterns": [
+        "안 + verb / descriptive verb"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "After a long week, 최도윤 asks 정수진 about the weather, tiredness, and whether she will exercise or rest.",
+      "source_brief_introduction": "Use `안 + verb / descriptive verb` for short negation. Put `안` immediately before a simple predicate; with many noun-plus-`하다` expressions, place it between the noun and `해요`, as in `운동 안 해요`.",
+      "normal_brief_introduction": "Use [[grammar:안 + verb / descriptive verb]] for short negation. With noun-plus-하다 activities, ordinary Korean often uses [[grammar:N 안 해요]].",
+      "expert_brief_introduction": "Negative adverb [[grammar:안]] precedes a simple predicate; in analyzable noun-plus-하다 predicates it commonly appears between the nominal element and 하다."
+    },
+    {
+      "language": "Korean",
+      "repository": "korean-curriculum",
+      "chapter": 10,
+      "title": "Photographs for the Library Display",
+      "chapter_path": "units/korean-core/chapter-010-yesterday-at-the-market/chapter.md",
+      "support_path": "curriculum-support/korean/chapter-010/reading-support.json",
+      "finding_ids": [
+        "BRIEF-033"
+      ],
+      "finding_classes": [
+        "missing_recognized_grammar_identity"
+      ],
+      "grammar_ids": [
+        "KOR-GRAMMAR-010"
+      ],
+      "grammar_patterns": [
+        "verb-았/었어요"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "For a library display, 김민지 and 이준호 meet at a market, take photographs, buy food, and review the photographs in a nearby park.",
+      "source_brief_introduction": "Use `verb-았/었어요` for a completed action in polite past speech. The past marker combines and contracts with the verb stem, producing forms such as `갔어요`, `봤어요`, and `왔어요`.",
+      "normal_brief_introduction": "Use [[grammar:verb-았/었어요]] for a completed polite past action.",
+      "expert_brief_introduction": "The past marker [[grammar:-았/었-]] combines with the polite ending and undergoes regular stem-vowel contraction in forms such as [[grammar:갔어요]], [[grammar:봤어요]], and [[grammar:왔어요]]."
+    },
+    {
+      "language": "Vietnamese",
+      "repository": "vietnamese-curriculum",
+      "chapter": 7,
+      "title": "Checking School Things",
+      "chapter_path": "units/vietnamese-core/chapter-007-basic-sentences-7/chapter.md",
+      "support_path": "curriculum-support/vietnamese/chapter-007/reading-support.json",
+      "finding_ids": [
+        "BRIEF-034",
+        "BRIEF-035"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences",
+        "scene_profile_or_plot_in_brief_introduction"
+      ],
+      "grammar_ids": [
+        "VIE-GRAMMAR-007"
+      ],
+      "grammar_patterns": [
+        "reference + có + N + không?"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Nguyễn Minh Anh is Nguyễn Gia Bảo’s older sister. They check their school things before leaving home.",
+      "source_brief_introduction": "Use `reference + có + N + không?` to ask whether someone has an item, choosing the reference word from the speakers' relationship.",
+      "normal_brief_introduction": "Use [[grammar:reference + có + N + không]]? to ask whether someone has an item, choosing the reference word from the speakers' relationship.",
+      "expert_brief_introduction": "The polar possession frame places a relationship-sensitive person reference before [[grammar:có + N + không]]?, with final [[grammar:không]] marking the question."
+    },
+    {
+      "language": "Vietnamese",
+      "repository": "vietnamese-curriculum",
+      "chapter": 27,
+      "title": "Asking Prices at the Market",
+      "chapter_path": "units/vietnamese-core/chapter-027-basic-sentences-27/chapter.md",
+      "support_path": "curriculum-support/vietnamese/chapter-027/reading-support.json",
+      "finding_ids": [
+        "BRIEF-036"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "VIE-GRAMMAR-027A",
+        "VIE-GRAMMAR-027B"
+      ],
+      "grammar_patterns": [
+        "N + giá bao nhiêu?",
+        "cho tôi + N"
+      ],
+      "primary_reading_type": "Dialogue",
+      "primary_reading_opening_must_remain": "Nguyễn Minh Anh asks Nguyễn Thị Lan about vegetables and prices at a market stall.",
+      "source_brief_introduction": "Use `N + giá bao nhiêu?` to ask an item's price and `cho tôi + N` to request it.",
+      "normal_brief_introduction": "Use [[grammar:N + giá bao nhiêu]]? to ask an item's price and [[grammar:cho tôi + N]] to request it.",
+      "expert_brief_introduction": "The price question places [[grammar:giá bao nhiêu]] after the item, while [[grammar:cho tôi + N]] forms a recipient-oriented request with a nominal complement."
+    },
+    {
+      "language": "Vietnamese",
+      "repository": "vietnamese-curriculum",
+      "chapter": 28,
+      "title": "Preparing Dinner",
+      "chapter_path": "units/vietnamese-core/chapter-028-basic-sentences-28/chapter.md",
+      "support_path": "curriculum-support/vietnamese/chapter-028/reading-support.json",
+      "finding_ids": [
+        "BRIEF-037"
+      ],
+      "finding_classes": [
+        "introduction_over_three_sentences"
+      ],
+      "grammar_ids": [
+        "VIE-GRAMMAR-028"
+      ],
+      "grammar_patterns": [
+        "S + đã + V; S + đã + V + chưa?"
+      ],
+      "primary_reading_type": "Narrative",
+      "primary_reading_opening_must_remain": "Lê Hoàng Nam and Nguyễn Gia Bảo prepare ingredients and check what is already complete.",
+      "source_brief_introduction": "Use `S + đã + V` to present a completed action and `S + đã + V + chưa?` to ask whether it is complete yet.",
+      "normal_brief_introduction": "Use [[grammar:S + đã + V]] to present a completed action and [[grammar:S + đã + V + chưa]]? to ask whether it is complete yet.",
+      "expert_brief_introduction": "The completive marker [[grammar:đã]] precedes the verb, while the polar frame [[grammar:đã + V + chưa]]? asks whether completion has occurred."
+    }
+  ],
+  "scope_guards": [
+    "Do not rewrite Dialogue or Narrative bodies.",
+    "Do not alter translations, vocabulary, grammar identities, Review evidence, cast data, or progression.",
+    "Keep every primary-reading setup paragraph under Dialogue or Narrative.",
+    "Brief Introduction is grammar-only in source, Normal, and Expert projections."
+  ]
+}

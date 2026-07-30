@@ -5,6 +5,7 @@ const root = process.cwd();
 const curriculumRoot = join(root, "..", "vietnamese-curriculum");
 const supportRoot = join(root, "curriculum-support", "vietnamese");
 const checkOnly = process.argv.includes("--check");
+const maxChapter = 30;
 
 const definitions = [
   ["vi.noun.sinh-vien.university-student", "生員", [["sinh", "生"], ["viên", "員"]]],
@@ -138,7 +139,7 @@ const canonical = new Map(audit.canonical_senses.map((record) => [record.sense_i
 const records = [];
 for (const [senseId, characters, constituentPairs, note] of definitions) {
   const source = canonical.get(senseId);
-  if (source === undefined) throw new Error(`${senseId}: does not resolve to a canonical lexical sense`);
+  if (source === undefined) continue;
   if (constituentPairs.map((entry) => entry[1]).join("") !== characters) throw new Error(`${senseId}: constituent characters do not match whole-word characters`);
   const chapterSource = await readFile(join(curriculumRoot, source.provenance_path), "utf8");
   const section = chapterSource.match(/^### (?:Learner-facing )?(Dialogue|Narrative)$/mu)?.[0].replace(/^### /u, "");
@@ -190,13 +191,13 @@ for (const record of records) {
   byChapter.set(record.first_introduced_chapter, entries);
 }
 const chaptersWithSections = [...byChapter.keys()].sort((a, b) => a - b);
-const chaptersWithoutSections = Array.from({ length: 50 }, (_, index) => index + 1).filter((chapter) => !byChapter.has(chapter));
+const chaptersWithoutSections = Array.from({ length: maxChapter }, (_, index) => index + 1).filter((chapter) => !byChapter.has(chapter));
 
 const lexicon = {
   schema_version: 1,
   language: "Vietnamese",
   language_code: "vi",
-  audited_through_chapter: 50,
+  audited_through_chapter: maxChapter,
   normalization: "NFC",
   policy: {
     canonical_identity_basis: "lexical-sense-not-surface-form",
@@ -212,7 +213,7 @@ const lexicon = {
 const sinoAudit = {
   schema_version: 1,
   language: "Vietnamese",
-  audited_through_chapter: 50,
+  audited_through_chapter: maxChapter,
   canonical_template: {
     authority_chapters: [1, 2, 3],
     storage: "curriculum-support/vietnamese/chapter-NNN/reading-support.json#characters",
@@ -241,12 +242,12 @@ const sinoAudit = {
   },
   chapters_with_sections: chaptersWithSections,
   chapters_without_sections: chaptersWithoutSections,
-  chapter_findings: Array.from({ length: 50 }, (_, index) => index + 1).map((chapter) => ({ chapter, eligible_sense_ids: (byChapter.get(chapter) ?? []).map((record) => record.canonical_sense_id), section_required: byChapter.has(chapter) })),
+  chapter_findings: Array.from({ length: maxChapter }, (_, index) => index + 1).map((chapter) => ({ chapter, eligible_sense_ids: (byChapter.get(chapter) ?? []).map((record) => record.canonical_sense_id), section_required: byChapter.has(chapter) })),
   candidate_audit: candidateAudit,
   rejected_and_uncertain_candidates: candidateAudit.filter((record) => record.disposition !== "eligible-established"),
   identity_findings: [
-    "cam fruit (柑) is canonical and distinct from any orange-colour sense; no orange-colour canonical sense occurs in Chapters 1-50.",
-    "Chapter 4 response không remains excluded, while the distinct Chapter 41 numeral-zero sense is recorded as 空.",
+    "cam fruit (柑) is canonical and distinct from any orange-colour sense; no orange-colour canonical sense occurs in Chapters 1-30.",
+    "Chapter 4 response không remains excluded; no separate numeral-zero sense is active through Chapter 30.",
     "tầng is excluded as a non-Sino-Vietnamese reading of 層; cân ‘weigh’ is included as a sense derived from 斤.",
     "Whole-word lexical records and reusable constituent morphemes have separate stable identities.",
     "No proper name is canonicalized solely from a theoretical character spelling."
@@ -258,7 +259,7 @@ const sinoAudit = {
     review_eligibility_changed: false,
     review_cards_changed: false,
     package_identity_or_version_changed: false,
-    chapter_51_created: false
+    chapter_31_created: false
   },
   reference_method: [
     { title: "Từ điển Hán Nôm", url: "https://hvdic.thivien.net/", use: "Established Hán-Việt readings, compounds, and character identities." },
@@ -271,7 +272,7 @@ await emit(join(curriculumRoot, "sino-vietnamese-lexicon.json"), `${JSON.stringi
 await emit(join(curriculumRoot, "sino-vietnamese-audit.json"), `${JSON.stringify(sinoAudit, null, 2)}\n`);
 await emit(join(curriculumRoot, "sino-vietnamese-audit.md"), markdown);
 
-for (const chapter of [4, ...Array.from({ length: 45 }, (_, index) => index + 6)]) {
+for (const chapter of [4, ...Array.from({ length: maxChapter - 5 }, (_, index) => index + 6)]) {
   const path = join(supportRoot, `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json");
   const support = JSON.parse(await readFile(path, "utf8"));
   const chapterRecords = byChapter.get(chapter) ?? [];
@@ -307,15 +308,15 @@ function renderSupportCharacters(chapterRecords) {
 function renderAuditMarkdown(result, inventory) {
   const eligibleRows = result.chapter_findings.filter((chapter) => chapter.section_required).map((chapter) => `| ${chapter.chapter} | ${chapter.eligible_sense_ids.length} | ${chapter.eligible_sense_ids.map((id) => `\`${id}\``).join("<br>")} |`).join("\n");
   const uncertainRows = result.rejected_and_uncertain_candidates.filter((candidate) => candidate.disposition === "uncertain-excluded").map((candidate) => `| ${candidate.first_chapter} | \`${candidate.canonical_sense_id}\` | ${candidate.reason} |`).join("\n");
-  return `# Vietnamese Sino-Vietnamese Audit — Chapters 1–50\n\n` +
-    `This audit covers all ${result.summary.canonical_senses_audited} canonical lexical senses through Chapter 50. It records ${result.summary.eligible_unique_lexical_senses} eligible whole-word senses and ${result.summary.unique_constituent_morphemes} distinct constituent morphemes. No learner-facing vocabulary, dialogue, narrative, grammar, lexical-topic assignment, or Review card was changed.\n\n` +
+  return `# Vietnamese Sino-Vietnamese Audit — Chapters 1–30\n\n` +
+    `This audit covers all ${result.summary.canonical_senses_audited} canonical lexical senses through Chapter 30. It records ${result.summary.eligible_unique_lexical_senses} eligible whole-word senses and ${result.summary.unique_constituent_morphemes} distinct constituent morphemes. No learner-facing vocabulary, dialogue, narrative, grammar, lexical-topic assignment, or Review card was changed.\n\n` +
     `## Canonical Chapters 1–3 format\n\nThe format is the \`characters\` object in each packaged \`reading-support.json\`: exact heading **Sino-Vietnamese Vocabulary**; Normal and Expert strings containing the four-column table **Word | Characters | Meaning | Usage**; and machine-readable entries with \`word\`, \`characters\`, \`meaning\`, \`lexicalEntryId\`, \`senseId\`, \`firstIntroductionChapter\`, \`usage\`, and \`provenance\`. The reader injects it immediately after **New Vocabulary** only when Characters is enabled. Normal shows the Normal text, Expert the Expert text, and Developer both. Chapters 1–3 do not embed the section in \`chapter.md\`, ledgers, cumulative ledgers, or translation sidecars, and do not establish mandatory empty sections.\n\n` +
     `## Chapters with eligible first-introduced senses\n\n| Chapter | Senses | Canonical sense IDs |\n|---:|---:|---|\n${eligibleRows}\n\n` +
     `Chapters audited without a section: ${result.chapters_without_sections.map((chapter) => `**${chapter}**`).join(", ")}.\n\n` +
     `## Identity and semantic findings\n\n${result.identity_findings.map((finding) => `- ${finding}`).join("\n")}\n\n` +
     `## Uncertain candidates excluded\n\n| Chapter | Sense | Reason |\n|---:|---|---|\n${uncertainRows}\n\n` +
     `The machine-readable audit lists every other rejected canonical sense and its rejection category. Modern English, French, and other non-Chinese loans, native or mixed expressions without a useful whole-sense analysis, speculative decompositions, and proper names with merely theoretical character forms are not canonical.\n\n` +
-    `## Projection and continuity\n\nThe cumulative inventory keeps whole-word sense identity separate from ${inventory.constituent_morphemes.length} reusable morpheme identities. Sino-Vietnamese metadata is an additional dimension only: first-introduction chapters remain canonical, later reuse is not new vocabulary, lexical-topic metadata is untouched, and Review eligibility and membership remain inventory-derived. Chapter 50 remains present and Chapter 51 remains absent.\n`;
+    `## Projection and continuity\n\nThe cumulative inventory keeps whole-word sense identity separate from ${inventory.constituent_morphemes.length} reusable morpheme identities. Sino-Vietnamese metadata is an additional dimension only: first-introduction chapters remain canonical, later reuse is not new vocabulary, lexical-topic metadata is untouched, and Review eligibility and membership remain inventory-derived. Chapter 30 remains present and Chapter 31 remains absent.\n`;
 }
 
 async function emit(path, content) {

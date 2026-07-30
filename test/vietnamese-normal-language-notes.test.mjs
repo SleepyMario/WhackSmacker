@@ -23,14 +23,14 @@ const prohibitedNormalPhrases = [
   "morphosyntactic distribution"
 ];
 
-test("Vietnamese Normal Language Notes inventory covers every applicable Chapter 1-50 source section", async () => {
+test("Vietnamese Normal Language Notes inventory covers every applicable Chapter 1-30 source section", async () => {
   const audit = JSON.parse(await readFile(join(curriculumRoot, "normal-language-notes-audit.json"), "utf8"));
   const unitDirectories = await readdir(unitsRoot);
   const found = new Map();
   const chaptersWithNotes = [];
   let sourceSectionCount = 0;
 
-  for (let chapter = 1; chapter <= 50; chapter += 1) {
+  for (let chapter = 1; chapter <= 30; chapter += 1) {
     const padded = String(chapter).padStart(3, "0");
     const directory = unitDirectories.find((name) => name.startsWith(`chapter-${padded}-basic-sentences-`));
     assert.ok(directory, `Chapter ${chapter} exists`);
@@ -54,8 +54,8 @@ test("Vietnamese Normal Language Notes inventory covers every applicable Chapter
     }
   }
 
-  assert.equal(unitDirectories.some((name) => name.startsWith("chapter-051-")), false);
-  assert.equal(sourceSectionCount, 49);
+  assert.equal(unitDirectories.some((name) => /^chapter-(?:03[1-9]|0[4-9]\d|[1-9]\d{2,})-/u.test(name)), false);
+  assert.equal(sourceSectionCount, 29);
   assert.deepEqual(chaptersWithNotes, audit.chapters_affected);
   assert.deepEqual(audit.chapters_requiring_no_change, [7, 10]);
   assert.deepEqual(Object.fromEntries(audit.headings_found_before_normalization.map((entry) => [entry.heading, entry.chapters])), Object.fromEntries(found));

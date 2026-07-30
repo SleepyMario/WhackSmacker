@@ -49,13 +49,13 @@ test("complete Sino-Vietnamese inventory resolves to canonical senses and earlie
     const markdown = await readFile(join(curriculumRoot, sense.provenance_path), "utf8");
     canonicalBySenseId.set(sense.sense_id, { lexicalId: sense.lexical_id, firstChapter: sense.first_introduction_chapter, learnerFacingText: learnerFacingText(markdown) });
   }
-  assert.deepEqual(assertSinoVietnameseLexicon(lexicon, { canonicalBySenseId }), { lexicalSenseCount: 105, constituentMorphemeCount: 153, chapterCount: 44 });
+  assert.deepEqual(assertSinoVietnameseLexicon(lexicon, { canonicalBySenseId }), { lexicalSenseCount: 59, constituentMorphemeCount: 86, chapterCount: 26 });
   assert.equal(new Set(lexicon.records.map((record) => record.record_id)).size, lexicon.records.length);
   assert.equal(new Set(lexicon.records.map((record) => record.canonical_sense_id)).size, lexicon.records.length);
   assert.equal(lexicon.records.every((record) => record.characters.normalize("NFC") === record.characters && record.han_viet_reading_or_constituent_readings.every((reading) => reading.normalize("NFC") === reading)), true);
 });
 
-test("Chapters 4-50 use sections only for eligible newly introduced senses", async () => {
+test("Chapters 4-30 use sections only for eligible newly introduced senses", async () => {
   const audit = JSON.parse(await readFile(join(curriculumRoot, "sino-vietnamese-audit.json"), "utf8"));
   const lexicon = JSON.parse(await readFile(join(curriculumRoot, "sino-vietnamese-lexicon.json"), "utf8"));
   const expectedByChapter = new Map();
@@ -64,8 +64,8 @@ test("Chapters 4-50 use sections only for eligible newly introduced senses", asy
     list.push(record.canonical_sense_id);
     expectedByChapter.set(record.first_introduced_chapter, list);
   }
-  assert.deepEqual(audit.chapters_without_sections, [4, 14, 15, 27, 42, 45]);
-  for (let chapter = 4; chapter <= 50; chapter += 1) {
+  assert.deepEqual(audit.chapters_without_sections, [4, 14, 15, 27]);
+  for (let chapter = 4; chapter <= 30; chapter += 1) {
     const support = JSON.parse(await readFile(join(supportRoot, `chapter-${String(chapter).padStart(3, "0")}`, "reading-support.json"), "utf8"));
     const expected = expectedByChapter.get(chapter) ?? [];
     if (expected.length === 0) {
@@ -80,12 +80,10 @@ test("Chapters 4-50 use sections only for eligible newly introduced senses", asy
   }
 });
 
-test("sense identity separates homonyms and rejects speculative or duplicate canonical records", async () => {
+test("sense identity excludes grammar lookalikes and rejects speculative or duplicate canonical records", async () => {
   const lexicon = JSON.parse(await readFile(join(curriculumRoot, "sino-vietnamese-lexicon.json"), "utf8"));
   const fruit = lexicon.records.find((record) => record.canonical_sense_id === "vi.noun.cam.orange-fruit");
-  const zero = lexicon.records.find((record) => record.canonical_sense_id === "vi.numeral.khong.zero");
   assert.equal(fruit.characters, "柑");
-  assert.equal(zero.characters, "空");
   assert.equal(lexicon.records.some((record) => record.canonical_sense_id === "vi.particle.khong.polarity"), false);
 
   const duplicate = structuredClone(lexicon);
@@ -102,20 +100,20 @@ test("sense identity separates homonyms and rejects speculative or duplicate can
   assert.throws(() => assertSinoVietnameseLexicon(decomposed), /NFC/u);
 });
 
-test("Sino-Vietnamese metadata leaves lexical topics, reviews, and the Chapter 50 boundary unchanged", async () => {
+test("Sino-Vietnamese metadata leaves lexical topics, reviews, and the Chapter 30 boundary unchanged", async () => {
   const topics = JSON.parse(await readFile(join(curriculumRoot, "lexical-topics.json"), "utf8"));
   const lexicalAudit = JSON.parse(await readFile(join(curriculumRoot, "lexical-topic-audit.json"), "utf8"));
   const sinoAudit = JSON.parse(await readFile(join(curriculumRoot, "sino-vietnamese-audit.json"), "utf8"));
-  assert.equal(topics.max_ordinary_chapter, 50);
-  assert.equal(topics.topics.length, 33);
+  assert.equal(topics.max_ordinary_chapter, 30);
+  assert.equal(topics.topics.length, 28);
   assert.equal(JSON.stringify(topics).includes("sino-vietnamese"), false);
-  assert.deepEqual(lexicalAudit.review_findings.map((finding) => finding.card_count), [60, 72, 94, 86, 80, 70, 74, 84, 102, 78]);
+  assert.deepEqual(lexicalAudit.review_findings.map((finding) => finding.card_count), [60, 72, 94, 86, 80, 70]);
   assert.equal(lexicalAudit.review_findings.every((finding) => finding.mismatch_count === 0 && finding.card_count === finding.canonical_sense_count * 2), true);
   assert.equal(sinoAudit.preservation.lexical_topics_changed, false);
   assert.equal(sinoAudit.preservation.review_cards_changed, false);
   const units = await readdir(join(curriculumRoot, "units", "vietnamese-core"));
-  assert.equal(units.some((entry) => entry.startsWith("chapter-050-basic-sentences-50")), true);
-  assert.equal(units.some((entry) => entry.startsWith("chapter-051-")), false);
+  assert.equal(units.some((entry) => entry.startsWith("chapter-030-basic-sentences-30")), true);
+  assert.equal(units.some((entry) => /^chapter-(?:03[1-9]|0[4-9]\d|[1-9]\d{2,})-/u.test(entry)), false);
 });
 
 test("generated Sino-Vietnamese inventory, audit, and support files are current", async () => {

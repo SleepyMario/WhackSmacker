@@ -13,11 +13,7 @@ const deckPaths = [
   "review-content/vietnamese/review-decks/chapter-011-015/cards.tsv",
   "review-content/vietnamese/review-decks/chapter-016-020/cards.tsv",
   "review-content/vietnamese/review-decks/chapter-021-025/cards.tsv",
-  "review-content/vietnamese/review-decks/chapter-026-030/cards.tsv",
-  "review-content/vietnamese/review-decks/chapter-031-035/cards.tsv",
-  "review-content/vietnamese/review-decks/chapter-036-040/cards.tsv",
-  "review-content/vietnamese/review-decks/chapter-041-045/cards.tsv",
-  "review-content/vietnamese/review-decks/chapter-046-050/cards.tsv"
+  "review-content/vietnamese/review-decks/chapter-026-030/cards.tsv"
 ];
 const header = "card_id\tdeck\tkind\tsource_chapter\tprompt_language\tanswer_language\tprompt\taccepted_answers\tdistractors\texplanation\tlexical_ids\tgrammar_ids\tgeographic_ids\tprovenance_path\tprovenance_locator\tprovenance_evidence\texamples\ttags";
 
@@ -32,11 +28,7 @@ test("Vietnamese review decks exactly cover the canonical newly introduced lexic
     "chapter-011-015": { inventoryCount: 47, cardCount: 94 },
     "chapter-016-020": { inventoryCount: 43, cardCount: 86 },
     "chapter-021-025": { inventoryCount: 40, cardCount: 80 },
-    "chapter-026-030": { inventoryCount: 35, cardCount: 70 },
-    "chapter-031-035": { inventoryCount: 37, cardCount: 74 },
-    "chapter-036-040": { inventoryCount: 42, cardCount: 84 },
-    "chapter-041-045": { inventoryCount: 51, cardCount: 102 },
-    "chapter-046-050": { inventoryCount: 39, cardCount: 78 }
+    "chapter-026-030": { inventoryCount: 35, cardCount: 70 }
   });
 });
 
@@ -157,7 +149,7 @@ async function auditVietnameseReviewDecks(inventory, decks) {
     report[key] = { inventoryCount: expected.length, cardCount: deck.rows.length };
   }
 
-  assert.equal(allSenseIds.size, inventory.filter((item) => item.firstIntroductionChapter <= 50).length * 2);
+  assert.equal(allSenseIds.size, inventory.filter((item) => item.firstIntroductionChapter <= 30).length * 2);
   return report;
 }
 
