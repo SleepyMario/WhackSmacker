@@ -1,0 +1,1187 @@
+{
+  "schemaVersion": 1,
+  "manuscriptSha256": "1ebe8dd8d138c81d4a9c87936682579708f19e72ce4e98860078fd1deb55355f",
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Greetings and Identity",
+      "context": "At a school welcome activity, 22-year-old university student Maria Garcia meets 16-year-old high school student Nguyễn Minh Anh and Minh Anh's mother and teacher, 42-year-old Trần Thu Hà. They practise introductions.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Maria   : Xin chào.",
+        "Minh Anh: Xin chào.",
+        "Maria   : Tôi là Maria Garcia.",
+        "Minh Anh: Tôi là Nguyễn Minh Anh.",
+        "Maria   : Tôi là sinh viên.",
+        "Minh Anh: Tôi là học sinh.",
+        "Thu Hà  : Xin chào.",
+        "Thu Hà  : Tôi là Trần Thu Hà.",
+        "Thu Hà  : Tôi là giáo viên."
+      ],
+      "translations": [
+        "Hello.",
+        "Hello.",
+        "I am Maria Garcia.",
+        "I am Nguyễn Minh Anh.",
+        "I am a university student.",
+        "I am a student.",
+        "Hello.",
+        "I am Trần Thu Hà.",
+        "I am a teacher."
+      ],
+      "participantIds": [
+        "CAST-023",
+        "CAST-001",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-023",
+        "CAST-001",
+        "CAST-003"
+      ],
+      "grammarIds": [
+        "VIE-GRAMMAR-001"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 2,
+      "title": "Names and Profile Cards",
+      "context": "Maria Garcia, Trần Thu Hà, and 44-year-old office worker Nguyễn Quốc Huy prepare profile cards for a school welcome activity. Quốc Huy is Thu Hà's husband and the father of Minh Anh, Gia Bảo, and Mai Chi. Each paragraph is one person's card.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Tên tôi là Maria Garcia.",
+        "Tôi là sinh viên.",
+        "Tôi là người nước ngoài.",
+        "",
+        "Tên tôi là Trần Thu Hà.",
+        "Tôi là giáo viên.",
+        "Tôi là mẹ.",
+        "Tôi là người Việt Nam.",
+        "",
+        "Tên tôi là Nguyễn Quốc Huy.",
+        "Tôi là nhân viên văn phòng.",
+        "Tôi là bố.",
+        "Tôi là người Việt Nam."
+      ],
+      "translations": [
+        "My name is Maria Garcia.",
+        "I am a university student.",
+        "I am a foreigner.",
+        "",
+        "My name is Trần Thu Hà.",
+        "I am a teacher.",
+        "I am a mother.",
+        "I am Vietnamese.",
+        "",
+        "My name is Nguyễn Quốc Huy.",
+        "I am an office worker.",
+        "I am a father.",
+        "I am Vietnamese."
+      ],
+      "participantIds": [
+        "CAST-023",
+        "CAST-003",
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-002"
+      ],
+      "grammarIds": [
+        "VIE-GRAMMAR-002"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 3,
+      "title": "A Classroom Welcome",
+      "context": "Teacher Trần Thu Hà and student Nguyễn Minh Anh show Maria Garcia the classroom before the welcome activity.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Thu Hà  : Xin chào.",
+        "Maria   : Xin chào.",
+        "Thu Hà  : Đây là lớp học.",
+        "Minh Anh: Đây là bàn.",
+        "Maria   : Đây là ghế.",
+        "Minh Anh: Đây là sách.",
+        "Thu Hà  : Đây là vở.",
+        "Maria   : Đây là bút."
+      ],
+      "translations": [
+        "Hello.",
+        "Hello.",
+        "This is the classroom.",
+        "This is a desk.",
+        "This is a chair.",
+        "This is a book.",
+        "This is a notebook.",
+        "This is a pen."
+      ],
+      "participantIds": [
+        "CAST-023",
+        "CAST-003",
+        "CAST-001"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-003"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 4,
+      "title": "Checking Classroom Objects",
+      "context": "Trần Thu Hà writes a short classroom object check for the welcome activity.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Tên tôi là Thu Hà.",
+        "Tôi là giáo viên.",
+        "Đây là lớp học.",
+        "Đây có phải là cửa không?",
+        "Vâng, đây là cửa.",
+        "Đây có phải là bàn không?",
+        "Không, đây không phải là bàn.",
+        "Đây là cửa sổ."
+      ],
+      "translations": [
+        "My name is Thu Hà.",
+        "I am a teacher.",
+        "This is the classroom.",
+        "Is this a door?",
+        "Yes, this is a door.",
+        "Is this a desk?",
+        "No, this is not a desk.",
+        "This is a window."
+      ],
+      "participantIds": [
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-004"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 5,
+      "title": "What Is in the Classroom",
+      "context": "Before a school activity, 11-year-old middle school student Nguyễn Gia Bảo and his father Nguyễn Quốc Huy look around a classroom.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Gia Bảo : Đây có phải là phòng học không?",
+        "Quốc Huy: Vâng, đây là phòng học.",
+        "Gia Bảo : Có bàn.",
+        "Quốc Huy: Có ghế.",
+        "Gia Bảo : Có sách.",
+        "Quốc Huy: Có vở.",
+        "Gia Bảo : Có nước.",
+        "Quốc Huy: Có cà phê.",
+        "Gia Bảo : Có trà.",
+        "Quốc Huy: Có ba lô.",
+        "Gia Bảo : Có điện thoại."
+      ],
+      "translations": [
+        "Is this a classroom?",
+        "Yes, this is a classroom.",
+        "There is a desk.",
+        "There is a chair.",
+        "There is a book.",
+        "There is a notebook.",
+        "There is water.",
+        "There is coffee.",
+        "There is tea.",
+        "There is a backpack.",
+        "There is a phone."
+      ],
+      "participantIds": [
+        "CAST-004",
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-004"
+      ],
+      "grammarIds": [
+        "VIE-GRAMMAR-005"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 6,
+      "title": "What Quốc Huy Has",
+      "context": "Nguyễn Quốc Huy is an office worker. Before leaving home, he checks the everyday things he has with him.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Tên tôi là Quốc Huy.",
+        "Tôi là nhân viên văn phòng.",
+        "Tôi có điện thoại.",
+        "Tôi có chìa khóa.",
+        "Tôi có tiền.",
+        "Tôi có xe đạp.",
+        "Tôi có máy tính.",
+        "Tôi có thẻ.",
+        "Tôi có áo khoác."
+      ],
+      "translations": [
+        "My name is Quốc Huy.",
+        "I am an office worker.",
+        "I have a phone.",
+        "I have a key.",
+        "I have money.",
+        "I have a bicycle.",
+        "I have a computer.",
+        "I have a card.",
+        "I have a jacket."
+      ],
+      "participantIds": [
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-006"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 7,
+      "title": "Checking School Things",
+      "context": "Nguyễn Minh Anh is Nguyễn Gia Bảo’s older sister. They check their school things before leaving home.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Minh Anh: Em có điện thoại không?",
+        "Gia Bảo : Em có điện thoại.",
+        "Gia Bảo : Chị có máy tính không?",
+        "Minh Anh: Chị có máy tính.",
+        "Minh Anh: Em có máy ảnh không?",
+        "Gia Bảo : Em có máy ảnh.",
+        "Gia Bảo : Chị có bản đồ không?",
+        "Minh Anh: Chị có bản đồ.",
+        "Minh Anh: Em có ô không?",
+        "Gia Bảo : Em có ô.",
+        "Gia Bảo : Chị có mũ không?",
+        "Minh Anh: Chị có mũ."
+      ],
+      "translations": [
+        "Do you have a phone?",
+        "I have a phone.",
+        "Do you have a computer?",
+        "I have a computer.",
+        "Do you have a camera?",
+        "I have a camera.",
+        "Do you have a map?",
+        "I have a map.",
+        "Do you have an umbrella?",
+        "I have an umbrella.",
+        "Do you have a hat?",
+        "I have a hat."
+      ],
+      "participantIds": [
+        "CAST-001",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-007"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 8,
+      "title": "Choosing Lunch",
+      "context": "Trần Thu Hà and her son Nguyễn Gia Bảo choose familiar food and drinks for lunch.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Bữa trưa có đồ ăn.",
+        "Bữa trưa có cơm.",
+        "Bữa trưa có súp.",
+        "Bữa trưa có sữa.",
+        "Gia Bảo muốn cơm.",
+        "Thu Hà muốn súp.",
+        "Gia Bảo muốn sữa.",
+        "Thu Hà muốn trà.",
+        "Gia Bảo muốn nước.",
+        "Bữa trưa có chuối.",
+        "Bữa trưa có xoài.",
+        "Gia Bảo muốn cam.",
+        "Thu Hà muốn dưa hấu."
+      ],
+      "translations": [
+        "There is food for lunch.",
+        "There is cooked rice for lunch.",
+        "There is soup for lunch.",
+        "There is milk for lunch.",
+        "Gia Bảo wants rice.",
+        "Thu Hà wants soup.",
+        "Gia Bảo wants milk.",
+        "Thu Hà wants tea.",
+        "Gia Bảo wants water.",
+        "There are bananas for lunch.",
+        "There are mangoes for lunch.",
+        "Gia Bảo wants an orange.",
+        "Thu Hà wants watermelon."
+      ],
+      "participantIds": [
+        "CAST-003",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-008"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 9,
+      "title": "Plans on a Map",
+      "context": "Maria Garcia and Nguyễn Minh Anh are leaving. They look at a local map and say where they are going next.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Maria   : Tôi đi thư viện.",
+        "Minh Anh: Tôi đi chợ.",
+        "Maria   : Tôi đi công viên.",
+        "Minh Anh: Đây là trường.",
+        "Maria   : Đây là thư viện.",
+        "Minh Anh: Đây là chợ.",
+        "Maria   : Đây là công viên.",
+        "Minh Anh: Đây là ga."
+      ],
+      "translations": [
+        "I’m going to the library.",
+        "I’m going to the market.",
+        "I’m going to the park.",
+        "This is the school.",
+        "This is the library.",
+        "This is the market.",
+        "This is the park.",
+        "This is the station."
+      ],
+      "participantIds": [
+        "CAST-023",
+        "CAST-001"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-009"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 10,
+      "title": "Living in Việt Nam",
+      "context": "Maria Garcia, Nguyễn Minh Anh, and Trần Thu Hà have established Hanoi contexts. These short profiles state current residence only. They do not state Maria Garcia’s nationality or origin.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Maria là sinh viên.",
+        "Maria sống ở Hà Nội.",
+        "Maria sống ở Việt Nam.",
+        "Minh Anh là học sinh.",
+        "Minh Anh sống ở Hà Nội.",
+        "Thu Hà là giáo viên.",
+        "Thu Hà sống ở Hà Nội.",
+        "Hà Nội là một thành phố.",
+        "Việt Nam là một đất nước."
+      ],
+      "translations": [
+        "Maria is a university student.",
+        "Maria lives in Hanoi.",
+        "Maria lives in Vietnam.",
+        "Minh Anh is a student.",
+        "Minh Anh lives in Hanoi.",
+        "Thu Hà is a teacher.",
+        "Thu Hà lives in Hanoi.",
+        "Hanoi is a city.",
+        "Vietnam is a country."
+      ],
+      "participantIds": [
+        "CAST-023",
+        "CAST-001",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-010"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 11,
+      "title": "Food Preferences During a Break",
+      "context": "During a break in the reading program, Trần Thu Hà and Maria Garcia compare simple Vietnamese food preferences.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Thu Hà: Maria thích món ăn Việt Nam không?",
+        "Maria : Có. Tôi thích món ăn Việt Nam.",
+        "Thu Hà: Maria thích phở không?",
+        "Maria : Có. Tôi rất thích phở.",
+        "Thu Hà: Tôi thích bánh mì.",
+        "Maria : Tôi thích trái cây.",
+        "Thu Hà: Tôi thích bún chả.",
+        "Maria : Tôi thích gỏi cuốn.",
+        "Thu Hà: Phở và bánh mì ngon.",
+        "Maria : Bún chả và gỏi cuốn rất ngon."
+      ],
+      "translations": [
+        "Do you like Vietnamese food?",
+        "Yes. I like Vietnamese food.",
+        "Do you like phở?",
+        "Yes. I like phở very much.",
+        "I like bánh mì.",
+        "I like fruit.",
+        "I like bún chả.",
+        "I like fresh spring rolls.",
+        "Phở and bánh mì are tasty.",
+        "Bún chả and fresh spring rolls are very tasty."
+      ],
+      "participantIds": [
+        "CAST-003",
+        "CAST-023"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-011"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 12,
+      "title": "Preparing for Tomorrow's Trip",
+      "context": "Nguyễn Minh Anh is preparing for a school trip abroad the next day, and her mother Trần Thu Hà helps check the necessary items.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Ngày mai, Minh Anh đi.",
+        "Thu Hà chuẩn bị túi cho Minh Anh.",
+        "Minh Anh cần giấy.",
+        "Minh Anh cần hộ chiếu.",
+        "Minh Anh cần vé.",
+        "Minh Anh cần sạc điện thoại.",
+        "Thu Hà có hộ chiếu và vé.",
+        "Túi ở đây."
+      ],
+      "translations": [
+        "Tomorrow, Minh Anh is leaving.",
+        "Thu Hà prepares a bag for Minh Anh.",
+        "Minh Anh needs paper.",
+        "Minh Anh needs a passport.",
+        "Minh Anh needs a ticket.",
+        "Minh Anh needs a phone charger.",
+        "Thu Hà has the passport and ticket.",
+        "The bag is here."
+      ],
+      "participantIds": [
+        "CAST-001",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-012"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 13,
+      "title": "Finishing a Group Assignment",
+      "context": "At home after school, younger brother Nguyễn Gia Bảo and older sister Nguyễn Minh Anh finish parts of a group assignment together.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Gia Bảo : Đây là bài tập.",
+        "Minh Anh: Đây là báo cáo.",
+        "Gia Bảo : Em làm bài tập.",
+        "Minh Anh: Chị làm báo cáo.",
+        "Gia Bảo : Em trả lời câu hỏi.",
+        "Minh Anh: Chị và em cùng nhau làm báo cáo.",
+        "Gia Bảo : Nhóm hoàn thành bài tập.",
+        "Minh Anh: Chị hoàn thành báo cáo."
+      ],
+      "translations": [
+        "This is the homework.",
+        "This is the report.",
+        "I am doing the homework.",
+        "I am preparing the report.",
+        "I answer the questions.",
+        "You and I prepare the report together.",
+        "The group finishes the homework.",
+        "I finish the report."
+      ],
+      "participantIds": [
+        "CAST-004",
+        "CAST-001"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-013"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 14,
+      "title": "Dinner at a Restaurant",
+      "context": "After the reading-program session, Maria Garcia and Trần Thu Hà have dinner at a restaurant and choose familiar dishes.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Maria và Thu Hà ở nhà hàng.",
+        "Thu Hà gọi món.",
+        "Maria ăn bún bò.",
+        "Thu Hà ăn cơm tấm.",
+        "Maria ăn rau, không ăn thịt.",
+        "Thu Hà ăn thịt và cá.",
+        "Maria không ăn cá.",
+        "Bún bò có bún, thịt và rau.",
+        "Cơm tấm có cơm và thịt.",
+        "Bữa tối rất ngon."
+      ],
+      "translations": [
+        "Maria and Thu Hà are at a restaurant.",
+        "Thu Hà orders the food.",
+        "Maria eats beef rice-noodle soup.",
+        "Thu Hà eats broken rice.",
+        "Maria eats vegetables and does not eat meat.",
+        "Thu Hà eats meat and fish.",
+        "Maria does not eat fish.",
+        "Bún bò has rice noodles, meat, and vegetables.",
+        "Cơm tấm has rice and meat.",
+        "Dinner is very tasty."
+      ],
+      "participantIds": [
+        "CAST-023",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-014"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 15,
+      "title": "Choosing Drinks at a Café",
+      "context": "At a café after school, older sister Nguyễn Minh Anh and younger brother Nguyễn Gia Bảo choose cold drinks.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Minh Anh: Quán cà phê có nước cam không?",
+        "Gia Bảo : Có. Em chọn nước cam.",
+        "Minh Anh: Chị chọn nước chanh.",
+        "Gia Bảo : Nước cam lạnh.",
+        "Minh Anh: Nước chanh cũng lạnh.",
+        "Gia Bảo : Quán cà phê có nước dừa không?",
+        "Minh Anh: Có. Em uống nước dừa không?",
+        "Gia Bảo : Không. Em uống nước cam.",
+        "Minh Anh: Chị uống một cốc trà nóng.",
+        "Gia Bảo : Vâng."
+      ],
+      "translations": [
+        "Does the café have orange juice?",
+        "Yes. I choose orange juice.",
+        "I choose lemonade.",
+        "The orange juice is cold.",
+        "The lemonade is cold too.",
+        "Does the café have coconut water?",
+        "Yes. Do you drink coconut water?",
+        "No. I drink orange juice.",
+        "I drink a cup of hot tea.",
+        "Yes."
+      ],
+      "participantIds": [
+        "CAST-001",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-015"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 16,
+      "title": "Reading Together at the Library",
+      "context": "Trần Thu Hà and her husband Nguyễn Quốc Huy spend a quiet afternoon reading different materials at the library.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Thu Hà và Quốc Huy ở thư viện.",
+        "Thư viện yên tĩnh.",
+        "Thu Hà đọc báo và tin tức.",
+        "Quốc Huy đọc tạp chí.",
+        "Thu Hà đọc thư.",
+        "Quốc Huy đọc truyện.",
+        "Mỗi ngày, Quốc Huy đọc báo.",
+        "Thu Hà cũng đọc tạp chí."
+      ],
+      "translations": [
+        "Thu Hà and Quốc Huy are at the library.",
+        "The library is quiet.",
+        "Thu Hà reads the newspaper and the news.",
+        "Quốc Huy reads a magazine.",
+        "Thu Hà reads a letter.",
+        "Quốc Huy reads a story.",
+        "Every day, Quốc Huy reads a newspaper.",
+        "Thu Hà reads a magazine too."
+      ],
+      "participantIds": [
+        "CAST-003",
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-016"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 17,
+      "title": "Writing Contact Details for the Program",
+      "context": "Maria Garcia and Nguyễn Minh Anh prepare contact cards and messages for people joining the reading program.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Maria   : Chị viết email.",
+        "Minh Anh: Em viết ghi chú.",
+        "Maria   : Chị viết địa chỉ.",
+        "Minh Anh: Em viết số điện thoại.",
+        "Maria   : Đây là bưu thiếp.",
+        "Minh Anh: Em viết bưu thiếp.",
+        "Maria   : Chị gửi email.",
+        "Minh Anh: Em gửi bưu thiếp.",
+        "Maria   : Chị viết địa chỉ cẩn thận.",
+        "Minh Anh: Vâng."
+      ],
+      "translations": [
+        "I write an email.",
+        "I write a note.",
+        "I write the address.",
+        "I write the phone number.",
+        "This is a postcard.",
+        "I write a postcard.",
+        "I send an email.",
+        "I send a postcard.",
+        "I write the address carefully.",
+        "Yes."
+      ],
+      "participantIds": [
+        "CAST-023",
+        "CAST-001"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-017"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 18,
+      "title": "A Family Film Night",
+      "context": "At home in the evening, Nguyễn Minh Anh, her younger brother Nguyễn Gia Bảo, and their father Nguyễn Quốc Huy watch different things together.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Tối nay, Minh Anh, Gia Bảo và Quốc Huy ở nhà.",
+        "Trong phòng có màn hình.",
+        "Quốc Huy xem chương trình truyền hình.",
+        "Minh Anh muốn xem phim.",
+        "Gia Bảo xem ảnh.",
+        "Phim rất thú vị.",
+        "Quốc Huy cũng xem phim.",
+        "Gia Bảo cũng xem phim."
+      ],
+      "translations": [
+        "Tonight, Minh Anh, Gia Bảo, and Quốc Huy are at home.",
+        "There is a screen in the room.",
+        "Quốc Huy watches a television program.",
+        "Minh Anh wants to watch a film.",
+        "Gia Bảo looks at photos.",
+        "The film is very interesting.",
+        "Quốc Huy watches the film too.",
+        "Gia Bảo watches the film too."
+      ],
+      "participantIds": [
+        "CAST-001",
+        "CAST-004",
+        "CAST-002"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-018"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 19,
+      "title": "Listening to Music Together",
+      "context": "At home after dinner, older sister Nguyễn Minh Anh and younger brother Nguyễn Gia Bảo listen to music and compare what they hear.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Minh Anh: Chị nghe nhạc.",
+        "Gia Bảo : Em nghe radio.",
+        "Minh Anh: Đây là bài hát “Xin chào”.",
+        "Gia Bảo : Em nghe bài hát.",
+        "Minh Anh: Chị có tai nghe.",
+        "Gia Bảo : Âm thanh rõ không?",
+        "Minh Anh: Rất rõ.",
+        "Gia Bảo : Em cũng thích bài hát.",
+        "Minh Anh: Chị thích bài hát “Xin chào” nhất.",
+        "Gia Bảo : Em cũng nghe nhạc."
+      ],
+      "translations": [
+        "I listen to music.",
+        "I listen to the radio.",
+        "This is the song “Xin chào”.",
+        "I listen to the song.",
+        "I have headphones.",
+        "Is the sound clear?",
+        "Very clear.",
+        "I like the song too.",
+        "I like the song “Xin chào” best.",
+        "I listen to music too."
+      ],
+      "participantIds": [
+        "CAST-001",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-019"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 20,
+      "title": "Studying Vietnamese in Class",
+      "context": "In the reading-program classroom, Maria Garcia and Nguyễn Minh Anh study Vietnamese with their teacher Trần Thu Hà.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Maria và Minh Anh học tiếng Việt.",
+        "Thu Hà là giáo viên.",
+        "Lớp có giáo trình.",
+        "Maria học từ mới.",
+        "Minh Anh học phát âm.",
+        "Maria học ngữ pháp.",
+        "Thu Hà viết từ mới.",
+        "Maria và Minh Anh luyện tập.",
+        "Tiếng Việt rất thú vị."
+      ],
+      "translations": [
+        "Maria and Minh Anh study Vietnamese.",
+        "Thu Hà is the teacher.",
+        "The class has a coursebook.",
+        "Maria studies new vocabulary.",
+        "Minh Anh studies pronunciation.",
+        "Maria studies grammar.",
+        "Thu Hà writes new words.",
+        "Maria and Minh Anh practise.",
+        "Vietnamese is very interesting."
+      ],
+      "participantIds": [
+        "CAST-023",
+        "CAST-001",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-020"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 21,
+      "title": "Buying Clothes with an Older Sister",
+      "context": "At a clothing shop, 7-year-old elementary school student Nguyễn Mai Chi shops with her 16-year-old older sister Nguyễn Minh Anh.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Mai Chi : Em muốn mua áo sơ mi.",
+        "Minh Anh: Cửa hàng có áo sơ mi màu xanh.",
+        "Mai Chi : Em thích màu xanh.",
+        "Minh Anh: Em thử áo sơ mi.",
+        "Mai Chi : Áo sơ mi vừa.",
+        "Minh Anh: Em thử quần.",
+        "Mai Chi : Quần cũng vừa.",
+        "Minh Anh: Cửa hàng cũng có giày.",
+        "Mai Chi : Em không mua giày.",
+        "Mai Chi : Em mua áo sơ mi và quần."
+      ],
+      "translations": [
+        "I want to buy a shirt.",
+        "The shop has a blue shirt.",
+        "I like blue.",
+        "Try on the shirt.",
+        "The shirt fits.",
+        "Try on the trousers.",
+        "The trousers fit too.",
+        "The shop also has shoes.",
+        "I am not buying shoes.",
+        "I am buying the shirt and trousers."
+      ],
+      "participantIds": [
+        "CAST-005",
+        "CAST-001"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-005"
+      ],
+      "grammarIds": [
+        "VIE-GRAMMAR-021"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 22,
+      "title": "A School Charity Shop",
+      "context": "At a school charity shop, 70-year-old retired Nguyễn Thị Lan volunteers as the seller while teacher Trần Thu Hà shops.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Thị Lan bán áo sơ mi, quần và giày.",
+        "Thu Hà là khách hàng.",
+        "Thị Lan là người bán hàng.",
+        "Hàng hóa ở đây.",
+        "Giá áo sơ mi rẻ.",
+        "Giá giày đắt.",
+        "Thu Hà chọn quần.",
+        "Thu Hà thanh toán."
+      ],
+      "translations": [
+        "Thị Lan sells shirts, trousers, and shoes.",
+        "Thu Hà is a customer.",
+        "Thị Lan is the seller.",
+        "The goods are here.",
+        "The shirt price is low.",
+        "The shoe price is high.",
+        "Thu Hà chooses trousers.",
+        "Thu Hà pays."
+      ],
+      "participantIds": [
+        "CAST-006",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-006"
+      ],
+      "grammarIds": [
+        "VIE-GRAMMAR-022"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 23,
+      "title": "Opening a School Health Meeting",
+      "context": "At school, 47-year-old doctor Lê Hoàng Nam prepares to open a health meeting with 16-year-old student Nguyễn Minh Anh.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Hoàng Nam: Buổi họp bắt đầu đúng giờ.",
+        "Minh Anh : Em mở cửa phòng họp.",
+        "Hoàng Nam: Tài liệu ở đây.",
+        "Minh Anh : Lịch ở trong tài liệu.",
+        "Hoàng Nam: Máy chiếu ở trong phòng họp.",
+        "Minh Anh : Em mở tài liệu.",
+        "Hoàng Nam: Tôi bắt đầu buổi họp.",
+        "Minh Anh : Vâng."
+      ],
+      "translations": [
+        "The meeting begins on time.",
+        "I open the meeting-room door.",
+        "The materials are here.",
+        "The schedule is in the materials.",
+        "The projector is in the meeting room.",
+        "I open the materials.",
+        "I begin the meeting.",
+        "Yes."
+      ],
+      "participantIds": [
+        "CAST-007",
+        "CAST-001"
+      ],
+      "firstProfilePersonIds": [
+        "CAST-007"
+      ],
+      "grammarIds": [
+        "VIE-GRAMMAR-023"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 24,
+      "title": "Closing the Charity Shop",
+      "context": "At the end of the school charity-shop day, Nguyễn Thị Lan closes the shop with her grandchildren Nguyễn Mai Chi and Nguyễn Gia Bảo.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Cuối ngày, Thị Lan đóng cửa chính.",
+        "Gia Bảo đóng cửa sau.",
+        "Mai Chi tắt đèn.",
+        "Thị Lan kiểm tra cửa hàng.",
+        "Gia Bảo kiểm tra cửa chính.",
+        "Mai Chi kiểm tra đèn.",
+        "Cửa chính an toàn.",
+        "Cửa sau an toàn."
+      ],
+      "translations": [
+        "At the end of the day, Thị Lan closes the front door.",
+        "Gia Bảo closes the back door.",
+        "Mai Chi turns off the lights.",
+        "Thị Lan checks the shop.",
+        "Gia Bảo checks the front door.",
+        "Mai Chi checks the lights.",
+        "The front door is secure.",
+        "The back door is secure."
+      ],
+      "participantIds": [
+        "CAST-005",
+        "CAST-006",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-024"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 25,
+      "title": "Moving Supplies at School",
+      "context": "At the school health program, doctor Lê Hoàng Nam, Nguyễn Quốc Huy, and 11-year-old Nguyễn Gia Bảo move boxes and bags near the stairs.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Hoàng Nam: Hộp ở tầng một.",
+        "Quốc Huy : Hộp nặng.",
+        "Gia Bảo  : Túi nhẹ.",
+        "Hoàng Nam: Cầu thang ở đây.",
+        "Quốc Huy : Tôi giúp Hoàng Nam mang hộp.",
+        "Gia Bảo  : Em mang túi nhẹ.",
+        "Hoàng Nam: Cảm ơn.",
+        "Quốc Huy : Tôi mang hộp nặng.",
+        "Gia Bảo  : Vâng.",
+        "Hoàng Nam: Cảm ơn."
+      ],
+      "translations": [
+        "The box is on the first floor.",
+        "The box is heavy.",
+        "The bag is light.",
+        "The stairs are here.",
+        "I help Hoàng Nam carry the box.",
+        "I carry the light bag.",
+        "Thank you.",
+        "I carry the heavy box.",
+        "Yes.",
+        "Thank you."
+      ],
+      "participantIds": [
+        "CAST-007",
+        "CAST-002",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-025"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 26,
+      "title": "Borrowing a Reference Book",
+      "context": "At the library, Nguyễn Mai Chi returns one book and borrows a reference book while a librarian assists her and her mother Trần Thu Hà reads nearby.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Mai Chi đang ở thư viện.",
+        "Mai Chi đang tìm sách tham khảo.",
+        "Kệ sách ở đây.",
+        "Mai Chi có thẻ thư viện.",
+        "Thủ thư đang kiểm tra thẻ thư viện.",
+        "Mai Chi đang trả sách.",
+        "Thủ thư đang kiểm tra sách.",
+        "Mai Chi đang mượn sách tham khảo.",
+        "Thu Hà đang đọc báo.",
+        "Thu Hà đang tìm tạp chí."
+      ],
+      "translations": [
+        "Mai Chi is at the library.",
+        "Mai Chi is looking for a reference book.",
+        "The bookshelf is here.",
+        "Mai Chi has a library card.",
+        "The librarian is checking the library card.",
+        "Mai Chi is returning a book.",
+        "The librarian is checking the book.",
+        "Mai Chi is borrowing a reference book.",
+        "Thu Hà is reading a newspaper.",
+        "Thu Hà is looking for a magazine."
+      ],
+      "participantIds": [
+        "CAST-005",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-026"
+      ],
+      "unnamedRoles": [
+        {
+          "localId": "ROLE-LIBRARIAN",
+          "roleLabel": "Thủ thư"
+        }
+      ]
+    },
+    {
+      "chapter": 27,
+      "title": "Buying Vegetables at the Market",
+      "context": "At a market stall, Nguyễn Thị Lan and her granddaughter Nguyễn Minh Anh tell an unnamed seller how many bags of vegetables they want and make a simple purchase.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Người bán hàng: Cần bao nhiêu túi cà chua?",
+        "Thị Lan        : Cho tôi một túi cà chua.",
+        "Minh Anh       : Khoai tây tươi không?",
+        "Người bán hàng: Vâng, khoai tây tươi.",
+        "Thị Lan        : Hành tươi không?",
+        "Người bán hàng: Vâng, hành tươi.",
+        "Minh Anh       : Cho tôi một túi khoai tây.",
+        "Người bán hàng: Đây là túi giấy.",
+        "Thị Lan        : Tôi có tiền mặt.",
+        "Minh Anh       : Có trả giá không?",
+        "Thị Lan        : Không. Tôi không trả giá.",
+        "Người bán hàng: Cảm ơn."
+      ],
+      "translations": [
+        "How many bags of tomatoes do you need?",
+        "Give me one bag of tomatoes, please.",
+        "Are the potatoes fresh?",
+        "Yes, the potatoes are fresh.",
+        "Are the onions fresh?",
+        "Yes, the onions are fresh.",
+        "Give me one bag of potatoes, please.",
+        "Here is a paper bag.",
+        "I have cash.",
+        "Do you bargain?",
+        "No. I do not bargain.",
+        "Thank you."
+      ],
+      "participantIds": [
+        "CAST-006",
+        "CAST-001"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-027A",
+        "VIE-GRAMMAR-027B"
+      ],
+      "unnamedRoles": [
+        {
+          "localId": "ROLE-SELLER",
+          "roleLabel": "Người bán hàng"
+        }
+      ]
+    },
+    {
+      "chapter": 28,
+      "title": "Checking Dinner Preparation",
+      "context": "At home, Trần Thu Hà and her son Nguyễn Gia Bảo check what they have already prepared for dinner.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Thu Hà đã chuẩn bị bữa tối.",
+        "Gia Bảo đã rửa rau.",
+        "Thu Hà đã cắt thịt.",
+        "Gia Bảo đã nấu súp.",
+        "Bếp có nguyên liệu.",
+        "Nguyên liệu đã sẵn sàng.",
+        "Gia Bảo kiểm tra bếp.",
+        "“Mẹ đã nấu chưa?”",
+        "Thu Hà đã nấu.",
+        "Bữa tối đã sẵn sàng."
+      ],
+      "translations": [
+        "Thu Hà has prepared dinner.",
+        "Gia Bảo has washed the vegetables.",
+        "Thu Hà has cut the meat.",
+        "Gia Bảo has cooked the soup.",
+        "The kitchen has ingredients.",
+        "The ingredients are ready.",
+        "Gia Bảo checks the kitchen.",
+        "“Has Mom cooked yet?”",
+        "Thu Hà has cooked.",
+        "Dinner is ready."
+      ],
+      "participantIds": [
+        "CAST-003",
+        "CAST-004"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-028"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 29,
+      "title": "Planning a Weekend Trip",
+      "context": "On Friday evening at home, Nguyễn Mai Chi, her grandmother Nguyễn Thị Lan, and family friend Maria Garcia discuss the weekend trip that starts the next day.",
+      "readingType": "Dialogue",
+      "readingLines": [
+        "Mai Chi: Cuối tuần, em sẽ đi biển.",
+        "Thị Lan: Tôi cũng sẽ đi biển.",
+        "Maria  : Tôi sẽ đặt phòng.",
+        "Mai Chi: Maria sẽ thăm thành phố không?",
+        "Maria  : Có. Tôi sẽ thăm thành phố.",
+        "Thị Lan: Tôi sẽ mang ba lô.",
+        "Maria  : Tôi sẽ mang vé.",
+        "Mai Chi: Em sẽ nghỉ ngơi ở biển.",
+        "Thị Lan: Đây là kế hoạch.",
+        "Maria  : Kế hoạch đã sẵn sàng.",
+        "Mai Chi: Ngày mai, chuyến đi sẽ bắt đầu.",
+        "Thị Lan: Chuyến đi sẽ bắt đầu đúng giờ."
+      ],
+      "translations": [
+        "This weekend, I will go to the beach.",
+        "I will go to the beach too.",
+        "I will book a room.",
+        "Will Maria visit the city?",
+        "Yes. I will visit the city.",
+        "I will bring a backpack.",
+        "I will bring the ticket.",
+        "I will rest at the beach.",
+        "This is the plan.",
+        "The plan is ready.",
+        "Tomorrow, the trip will begin.",
+        "The trip will begin on time."
+      ],
+      "participantIds": [
+        "CAST-005",
+        "CAST-006",
+        "CAST-023"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-029"
+      ],
+      "unnamedRoles": []
+    },
+    {
+      "chapter": 30,
+      "title": "A Visit to the Doctor",
+      "context": "At a clinic, 47-year-old doctor Lê Hoàng Nam examines teacher Trần Thu Hà and gives simple advice for her symptoms.",
+      "readingType": "Narrative",
+      "readingLines": [
+        "Thu Hà bị đau đầu.",
+        "Thu Hà bị sốt.",
+        "Hoàng Nam là bác sĩ.",
+        "Thu Hà không khỏe.",
+        "Hoàng Nam kiểm tra Thu Hà.",
+        "Hoàng Nam cho Thu Hà thuốc.",
+        "Thu Hà nên nghỉ.",
+        "Thu Hà nên uống nước.",
+        "Thu Hà uống thuốc.",
+        "Thu Hà nghỉ ở nhà."
+      ],
+      "translations": [
+        "Thu Hà has a headache.",
+        "Thu Hà has a fever.",
+        "Hoàng Nam is a doctor.",
+        "Thu Hà is not well.",
+        "Hoàng Nam examines Thu Hà.",
+        "Hoàng Nam gives Thu Hà medicine.",
+        "Thu Hà should rest.",
+        "Thu Hà should drink water.",
+        "Thu Hà takes the medicine.",
+        "Thu Hà rests at home."
+      ],
+      "participantIds": [
+        "CAST-007",
+        "CAST-003"
+      ],
+      "firstProfilePersonIds": [],
+      "grammarIds": [
+        "VIE-GRAMMAR-030A",
+        "VIE-GRAMMAR-030B"
+      ],
+      "unnamedRoles": []
+    }
+  ]
+}

@@ -9,7 +9,7 @@
       "expert": "This chapter introduces [[grammar:S + đóng + N]]: Đóng is introduced as a transitive closing predicate, contrasting with the previously introduced mở."
     },
     {
-      "sourceHeading": "New Grammar / Pattern",
+      "sourceHeading": "Grammar",
       "normal": "#### S + đóng + N\n\nUse đóng before a door or place to say that someone closes it. Example: [[grammar:Mai Chi đóng cửa chính.]]",
       "expert": "#### S + đóng + N\n\nĐóng is introduced as a transitive closing predicate, contrasting with the previously introduced mở. Literal example: [[grammar:Mai Chi đóng cửa chính.]]"
     },
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Mai Chi đóng cửa chính.]] — Mai Chi closes the front door.\n- [[grammar:Thị Lan đóng cửa sau.]] — Thị Lan closes the back door.\n- [[grammar:Gia Bảo tắt đèn.]] — Gia Bảo turns off the lights.\n- [[grammar:Mai Chi kiểm tra cửa hàng.]] — Mai Chi checks the shop.\n- [[grammar:Cuối ngày, cửa hàng yên tĩnh.]] — At the end of the day, the shop is quiet.\n- [[grammar:Cửa chính an toàn.]] — The front door is secure.\n- [[grammar:Cửa sau an toàn.]] — The back door is secure.\n- [[grammar:Gia Bảo kiểm tra đèn.]] — Gia Bảo checks the lights.\n- [[grammar:Thị Lan kiểm tra cửa chính.]] — Thị Lan checks the front door.",
-    "expert": "- [[grammar:Mai Chi đóng cửa chính.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 1.\n- [[grammar:Thị Lan đóng cửa sau.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 2.\n- [[grammar:Gia Bảo tắt đèn.]] — Literal reading evidence at Narrative > paragraph 1 > sentence 3.\n- [[grammar:Mai Chi kiểm tra cửa hàng.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 1.\n- [[grammar:Cuối ngày, cửa hàng yên tĩnh.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 2.\n- [[grammar:Cửa chính an toàn.]] — Literal reading evidence at Narrative > paragraph 2 > sentence 3.\n- [[grammar:Cửa sau an toàn.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 1.\n- [[grammar:Gia Bảo kiểm tra đèn.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 2.\n- [[grammar:Thị Lan kiểm tra cửa chính.]] — Literal reading evidence at Narrative > paragraph 3 > sentence 3."
+    "normal": "- [[grammar:Cuối ngày, Thị Lan đóng cửa chính.]] — At the end of the day, Thị Lan closes the front door.\n- [[grammar:Gia Bảo đóng cửa sau.]] — Gia Bảo closes the back door.\n- [[grammar:Mai Chi tắt đèn.]] — Mai Chi turns off the lights.\n- [[grammar:Thị Lan kiểm tra cửa hàng.]] — Thị Lan checks the shop.\n- [[grammar:Gia Bảo kiểm tra cửa chính.]] — Gia Bảo checks the front door.\n- [[grammar:Mai Chi kiểm tra đèn.]] — Mai Chi checks the lights.\n- [[grammar:Cửa chính an toàn.]] — The front door is secure.\n- [[grammar:Cửa sau an toàn.]] — The back door is secure.",
+    "expert": "- [[grammar:Cuối ngày, Thị Lan đóng cửa chính.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Gia Bảo đóng cửa sau.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Mai Chi tắt đèn.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Thị Lan kiểm tra cửa hàng.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Gia Bảo kiểm tra cửa chính.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Mai Chi kiểm tra đèn.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Cửa chính an toàn.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Cửa sau an toàn.]] — Literal reading evidence at Narrative > line 8."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| an toàn | 安全 | safe; secure | `Cửa chính an toàn.` |\n| kiểm tra | 檢查 | check; inspect | `Mai Chi kiểm tra cửa hàng.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| an toàn | 安全 | safe; secure | `Cửa chính an toàn.` |\n| kiểm tra | 檢查 | check; inspect | `Mai Chi kiểm tra cửa hàng.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| an toàn | 安全 | safe; secure | `Cửa chính an toàn.` |\n| kiểm tra | 檢查 | check; inspect | `Thị Lan kiểm tra cửa hàng.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| an toàn | 安全 | safe; secure | `Cửa chính an toàn.` |\n| kiểm tra | 檢查 | check; inspect | `Thị Lan kiểm tra cửa hàng.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "an toàn",
@@ -50,11 +50,11 @@
         "lexicalEntryId": "vi.verb.kiem-tra",
         "senseId": "vi.verb.kiem-tra.check-inspect",
         "firstIntroductionChapter": 24,
-        "usage": "Mai Chi kiểm tra cửa hàng.",
+        "usage": "Thị Lan kiểm tra cửa hàng.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-024-basic-sentences-24/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Mai Chi kiểm tra cửa hàng."
+          "locator": "line containing: Thị Lan kiểm tra cửa hàng."
         }
       }
     ]

@@ -9,7 +9,7 @@
       "expert": "This chapter introduces [[grammar:S + thích + N]]: Thích is a transitive preference predicate followed directly by a nominal complement; Vietnamese does not require a copula in this frame."
     },
     {
-      "sourceHeading": "New Grammar / Pattern",
+      "sourceHeading": "Grammar",
       "normal": "#### S + thích + N\n\nPut thích after the person to say what that person likes. Example: [[grammar:Maria thích phở không?]]",
       "expert": "#### S + thích + N\n\nThích is a transitive preference predicate followed directly by a nominal complement; Vietnamese does not require a copula in this frame. Literal example: [[grammar:Maria thích phở không?]]"
     },
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Maria thích phở không?]] — Does Maria like phở?\n- [[grammar:Tôi thích phở.]] — I like phở.\n- [[grammar:Tôi thích bánh mì.]] — I like bánh mì.\n- [[grammar:Phở rất ngon.]] — Phở is very tasty.\n- [[grammar:Bánh mì cũng ngon.]] — Bánh mì is tasty too.\n- [[grammar:Tôi thích trái cây.]] — I like fruit.\n- [[grammar:Tôi thích món ăn Việt Nam.]] — I like Vietnamese food.\n- [[grammar:Tôi thích phở và bánh mì.]] — I like phở and bánh mì.\n- [[grammar:Tôi thích bánh mì và trái cây.]] — I like bánh mì and fruit.\n- [[grammar:Tôi thích phở và bún chả.]] — I like phở and bún chả.\n- [[grammar:Tôi thích bánh mì và gỏi cuốn.]] — I like bánh mì and fresh spring rolls.\n- [[grammar:Vâng.]] — Yes.",
-    "expert": "- [[grammar:Maria thích phở không?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi thích phở.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi thích bánh mì.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Phở rất ngon.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Bánh mì cũng ngon.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi thích trái cây.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi thích món ăn Việt Nam.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi thích phở và bánh mì.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi thích bánh mì và trái cây.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Tôi thích phở và bún chả.]] — Literal reading evidence at Dialogue > line 10.\n- [[grammar:Tôi thích bánh mì và gỏi cuốn.]] — Literal reading evidence at Dialogue > line 11.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 12."
+    "normal": "- [[grammar:Maria thích món ăn Việt Nam không?]] — Do you like Vietnamese food?\n- [[grammar:Có. Tôi thích món ăn Việt Nam.]] — Yes. I like Vietnamese food.\n- [[grammar:Maria thích phở không?]] — Do you like phở?\n- [[grammar:Có. Tôi rất thích phở.]] — Yes. I like phở very much.\n- [[grammar:Tôi thích bánh mì.]] — I like bánh mì.\n- [[grammar:Tôi thích trái cây.]] — I like fruit.\n- [[grammar:Tôi thích bún chả.]] — I like bún chả.\n- [[grammar:Tôi thích gỏi cuốn.]] — I like fresh spring rolls.\n- [[grammar:Phở và bánh mì ngon.]] — Phở and bánh mì are tasty.\n- [[grammar:Bún chả và gỏi cuốn rất ngon.]] — Bún chả and fresh spring rolls are very tasty.",
+    "expert": "- [[grammar:Maria thích món ăn Việt Nam không?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Có. Tôi thích món ăn Việt Nam.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Maria thích phở không?]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Có. Tôi rất thích phở.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Tôi thích bánh mì.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi thích trái cây.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi thích bún chả.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi thích gỏi cuốn.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Phở và bánh mì ngon.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Bún chả và gỏi cuốn rất ngon.]] — Literal reading evidence at Dialogue > line 10."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thích | 適 | like | `Maria thích phở không?` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thích | 適 | like | `Maria thích phở không?` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thích | 適 | like | `Maria thích món ăn Việt Nam không?` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thích | 適 | like | `Maria thích món ăn Việt Nam không?` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "thích",
@@ -36,11 +36,11 @@
         "lexicalEntryId": "vi.verb.thich",
         "senseId": "vi.verb.thich.like",
         "firstIntroductionChapter": 11,
-        "usage": "Maria thích phở không?",
+        "usage": "Maria thích món ăn Việt Nam không?",
         "provenance": {
           "path": "units/vietnamese-core/chapter-011-basic-sentences-11/chapter.md",
           "section": "Dialogue",
-          "locator": "line containing: Maria thích phở không?"
+          "locator": "line containing: Maria thích món ăn Việt Nam không?"
         }
       }
     ]

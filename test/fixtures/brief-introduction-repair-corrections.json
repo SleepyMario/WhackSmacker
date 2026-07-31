@@ -796,7 +796,7 @@
       "language": "Vietnamese",
       "repository": "vietnamese-curriculum",
       "chapter": 27,
-      "title": "Asking Prices at the Market",
+      "title": "Buying Vegetables at the Market",
       "chapter_path": "units/vietnamese-core/chapter-027-basic-sentences-27/chapter.md",
       "support_path": "curriculum-support/vietnamese/chapter-027/reading-support.json",
       "finding_ids": [
@@ -810,20 +810,20 @@
         "VIE-GRAMMAR-027B"
       ],
       "grammar_patterns": [
-        "N + giá bao nhiêu?",
+        "cần + bao nhiêu + N?",
         "cho tôi + N"
       ],
       "primary_reading_type": "Dialogue",
-      "primary_reading_opening_must_remain": "Nguyễn Minh Anh asks Nguyễn Thị Lan about vegetables and prices at a market stall.",
-      "source_brief_introduction": "Use `N + giá bao nhiêu?` to ask an item's price and `cho tôi + N` to request it.",
-      "normal_brief_introduction": "Use [[grammar:N + giá bao nhiêu]]? to ask an item's price and [[grammar:cho tôi + N]] to request it.",
-      "expert_brief_introduction": "The price question places [[grammar:giá bao nhiêu]] after the item, while [[grammar:cho tôi + N]] forms a recipient-oriented request with a nominal complement."
+      "primary_reading_opening_must_remain": "At a market stall, Nguyễn Thị Lan and her granddaughter Nguyễn Minh Anh tell an unnamed seller how many bags of vegetables they want and make a simple purchase.",
+      "source_brief_introduction": "Chapter 27 teaches a genuine quantity request with `cần + bao nhiêu + N?`, rather than pretending to ask prices without teaching numbers or currency.\n\nUse `cho tôi + N` before an item to ask for it in a shop or market.",
+      "normal_brief_introduction": "Chapter 27 teaches the quantity request [[grammar:cần + bao nhiêu + N?]] and uses [[grammar:cho tôi + N]] to request an item.",
+      "expert_brief_introduction": "The supplied quantity request is [[grammar:cần + bao nhiêu + N?]], while [[grammar:cho tôi + N]] forms a recipient-oriented request with a nominal complement."
     },
     {
       "language": "Vietnamese",
       "repository": "vietnamese-curriculum",
       "chapter": 28,
-      "title": "Preparing Dinner",
+      "title": "Checking Dinner Preparation",
       "chapter_path": "units/vietnamese-core/chapter-028-basic-sentences-28/chapter.md",
       "support_path": "curriculum-support/vietnamese/chapter-028/reading-support.json",
       "finding_ids": [
@@ -839,7 +839,7 @@
         "S + đã + V; S + đã + V + chưa?"
       ],
       "primary_reading_type": "Narrative",
-      "primary_reading_opening_must_remain": "Lê Hoàng Nam and Nguyễn Gia Bảo prepare ingredients and check what is already complete.",
+      "primary_reading_opening_must_remain": "At home, Trần Thu Hà and her son Nguyễn Gia Bảo check what they have already prepared for dinner.",
       "source_brief_introduction": "Use `S + đã + V` to present a completed action and `S + đã + V + chưa?` to ask whether it is complete yet.",
       "normal_brief_introduction": "Use [[grammar:S + đã + V]] to present a completed action and [[grammar:S + đã + V + chưa]]? to ask whether it is complete yet.",
       "expert_brief_introduction": "The completive marker [[grammar:đã]] precedes the verb, while the polar frame [[grammar:đã + V + chưa]]? asks whether completion has occurred."

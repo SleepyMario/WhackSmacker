@@ -28,7 +28,7 @@ const definitions = [
   ["vi.verb.thich.like", "適", [["thích", "適"]], "The modern everyday verb has broadened from the fitting or suitable sense of 適."],
   ["vi.noun.ho-chieu.passport", "護照", [["hộ", "護"], ["chiếu", "照"]]],
   ["vi.verb.chuan-bi.prepare", "準備", [["chuẩn", "準"], ["bị", "備"]]],
-  ["vi.adjective.hoan-thanh.complete-finished", "完成", [["hoàn", "完"], ["thành", "成"]]],
+  ["vi.verb.hoan-thanh.complete-finish", "完成", [["hoàn", "完"], ["thành", "成"]]],
   ["vi.noun.bai-tap.exercise-homework", "排習", [["bài", "排"], ["tập", "習"]], "The curriculum meaning is an exercise or homework task; the characters record the established Vietnamese constituent readings."],
   ["vi.noun.bao-cao.report", "報告", [["báo", "報"], ["cáo", "告"]]],
   ["vi.adjective.yen-tinh.quiet", "安靜", [["yên", "安"], ["tĩnh", "靜"]]],

@@ -9,7 +9,7 @@
       "expert": "This chapter introduces [[grammar:S + xem + N]]: Xem is introduced with visual-media and image complements; finer watch/look distinctions remain lexical and contextual."
     },
     {
-      "sourceHeading": "New Grammar / Pattern",
+      "sourceHeading": "Grammar",
       "normal": "#### S + xem + N\n\nUse xem before a film, picture, or program to say what someone watches or looks at. Example: [[grammar:Minh Anh và Gia Bảo ở nhà.]]",
       "expert": "#### S + xem + N\n\nXem is introduced with visual-media and image complements; finer watch/look distinctions remain lexical and contextual. Literal example: [[grammar:Minh Anh và Gia Bảo ở nhà.]]"
     },
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Minh Anh và Gia Bảo ở nhà.]] — Minh Anh and Gia Bảo are at home.\n- [[grammar:Tối nay, Minh Anh xem phim.]] — Tonight, Minh Anh watches a film.\n- [[grammar:Gia Bảo xem truyền hình.]] — Gia Bảo watches television.\n- [[grammar:Minh Anh xem ảnh.]] — Minh Anh looks at photos.\n- [[grammar:Gia Bảo xem chương trình.]] — Gia Bảo watches a program.\n- [[grammar:Phim rất thú vị.]] — The film is very interesting.\n- [[grammar:Màn hình ở trong phòng.]] — The screen is in the room: `ở` locates the screen, `trong` means “in; inside,” and `phòng` means “room.”\n- [[grammar:Minh Anh muốn xem phim.]] — Minh Anh wants to watch the film.\n- [[grammar:Gia Bảo cũng xem phim.]] — Gia Bảo watches the film too.",
-    "expert": "- [[grammar:Minh Anh và Gia Bảo ở nhà.]] — Literal reading evidence at Narrative > line 1; `nhà` is the noun location complement of `ở`.\n- [[grammar:Tối nay, Minh Anh xem phim.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Gia Bảo xem truyền hình.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Minh Anh xem ảnh.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Gia Bảo xem chương trình.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Phim rất thú vị.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Màn hình ở trong phòng.]] — Literal reading evidence at Narrative > line 7; `trong phòng` is the locative phrase “in the room.”\n- [[grammar:Minh Anh muốn xem phim.]] — Literal reading evidence at Narrative > line 8.\n- [[grammar:Gia Bảo cũng xem phim.]] — Literal reading evidence at Narrative > line 9."
+    "normal": "- [[grammar:Tối nay, Minh Anh, Gia Bảo và Quốc Huy ở nhà.]] — Tonight, Minh Anh, Gia Bảo, and Quốc Huy are at home.\n- [[grammar:Trong phòng có màn hình.]] — There is a screen in the room.\n- [[grammar:Quốc Huy xem chương trình truyền hình.]] — Quốc Huy watches a television program.\n- [[grammar:Minh Anh muốn xem phim.]] — Minh Anh wants to watch a film.\n- [[grammar:Gia Bảo xem ảnh.]] — Gia Bảo looks at photos.\n- [[grammar:Phim rất thú vị.]] — The film is very interesting.\n- [[grammar:Quốc Huy cũng xem phim.]] — Quốc Huy watches the film too.\n- [[grammar:Gia Bảo cũng xem phim.]] — Gia Bảo watches the film too.",
+    "expert": "- [[grammar:Tối nay, Minh Anh, Gia Bảo và Quốc Huy ở nhà.]] — Literal reading evidence at Narrative > line 1.\n- [[grammar:Trong phòng có màn hình.]] — Literal reading evidence at Narrative > line 2.\n- [[grammar:Quốc Huy xem chương trình truyền hình.]] — Literal reading evidence at Narrative > line 3.\n- [[grammar:Minh Anh muốn xem phim.]] — Literal reading evidence at Narrative > line 4.\n- [[grammar:Gia Bảo xem ảnh.]] — Literal reading evidence at Narrative > line 5.\n- [[grammar:Phim rất thú vị.]] — Literal reading evidence at Narrative > line 6.\n- [[grammar:Quốc Huy cũng xem phim.]] — Literal reading evidence at Narrative > line 7.\n- [[grammar:Gia Bảo cũng xem phim.]] — Literal reading evidence at Narrative > line 8."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thú vị | 趣味 | interesting | `Phim rất thú vị.` |\n| ảnh | 影 | photo; picture | `Minh Anh xem ảnh.` |\n| chương trình | 章程 | program; show | `Gia Bảo xem chương trình.` |\n| truyền hình | 傳形 | television | `Gia Bảo xem truyền hình.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thú vị | 趣味 | interesting | `Phim rất thú vị.` |\n| ảnh | 影 | photo; picture | `Minh Anh xem ảnh.` |\n| chương trình | 章程 | program; show | `Gia Bảo xem chương trình.` |\n| truyền hình | 傳形 | television | `Gia Bảo xem truyền hình.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thú vị | 趣味 | interesting | `Phim rất thú vị.` |\n| ảnh | 影 | photo; picture | `Gia Bảo xem ảnh.` |\n| chương trình | 章程 | program; show | `Quốc Huy xem chương trình truyền hình.` |\n| truyền hình | 傳形 | television | `Quốc Huy xem chương trình truyền hình.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| thú vị | 趣味 | interesting | `Phim rất thú vị.` |\n| ảnh | 影 | photo; picture | `Gia Bảo xem ảnh.` |\n| chương trình | 章程 | program; show | `Quốc Huy xem chương trình truyền hình.` |\n| truyền hình | 傳形 | television | `Quốc Huy xem chương trình truyền hình.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "thú vị",
@@ -50,11 +50,11 @@
         "lexicalEntryId": "vi.noun.anh",
         "senseId": "vi.noun.anh.photo-picture",
         "firstIntroductionChapter": 18,
-        "usage": "Minh Anh xem ảnh.",
+        "usage": "Gia Bảo xem ảnh.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-018-basic-sentences-18/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Minh Anh xem ảnh."
+          "locator": "line containing: Gia Bảo xem ảnh."
         }
       },
       {
@@ -64,11 +64,11 @@
         "lexicalEntryId": "vi.noun.chuong-trinh",
         "senseId": "vi.noun.chuong-trinh.program-show",
         "firstIntroductionChapter": 18,
-        "usage": "Gia Bảo xem chương trình.",
+        "usage": "Quốc Huy xem chương trình truyền hình.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-018-basic-sentences-18/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Gia Bảo xem chương trình."
+          "locator": "line containing: Quốc Huy xem chương trình truyền hình."
         }
       },
       {
@@ -78,11 +78,11 @@
         "lexicalEntryId": "vi.noun.truyen-hinh",
         "senseId": "vi.noun.truyen-hinh.television",
         "firstIntroductionChapter": 18,
-        "usage": "Gia Bảo xem truyền hình.",
+        "usage": "Quốc Huy xem chương trình truyền hình.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-018-basic-sentences-18/chapter.md",
           "section": "Narrative",
-          "locator": "line containing: Gia Bảo xem truyền hình."
+          "locator": "line containing: Quốc Huy xem chương trình truyền hình."
         }
       }
     ]

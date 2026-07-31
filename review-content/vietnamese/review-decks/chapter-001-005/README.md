@@ -3,7 +3,7 @@
 Deck ID: `vi-core-review-001-005`
 
 This is the one authoritative review deck for Vietnamese Core Chapters 1–5.
-Its 64 schema-v2 vocabulary cards provide two directions for each of the 32 canonical
+Its 60 schema-v2 vocabulary cards provide two directions for each of the 30 canonical
 lexical items or senses first introduced in Chapters 1–5. There is no fixed
 per-chapter or per-deck quota.
 

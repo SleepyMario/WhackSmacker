@@ -9,7 +9,7 @@
       "expert": "This chapter introduces [[grammar:S + uống + N]]: Uống is introduced as a transitive liquid-consumption predicate with a nominal complement."
     },
     {
-      "sourceHeading": "New Grammar / Pattern",
+      "sourceHeading": "Grammar",
       "normal": "#### S + uống + N\n\nUse uống before a drink to say what someone drinks. Example: [[grammar:Tôi uống nước cam.]]",
       "expert": "#### S + uống + N\n\nUống is introduced as a transitive liquid-consumption predicate with a nominal complement. Literal example: [[grammar:Tôi uống nước cam.]]"
     },
@@ -21,7 +21,7 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Tôi uống nước cam.]] — I drink orange juice.\n- [[grammar:Tôi uống nước chanh.]] — I drink lemonade.\n- [[grammar:Nước cam lạnh.]] — The orange juice is cold.\n- [[grammar:Nước chanh lạnh.]] — The lemonade is cold.\n- [[grammar:Tôi có một cốc.]] — I have a cup.\n- [[grammar:Tôi chọn nước dừa.]] — I choose coconut water.\n- [[grammar:Nước dừa không nóng.]] — The coconut water is not hot.\n- [[grammar:Quán cà phê có trà.]] — The café has tea.\n- [[grammar:Tôi cũng uống trà.]] — I also drink tea.\n- [[grammar:Vâng.]] — Yes.",
-    "expert": "- [[grammar:Tôi uống nước cam.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi uống nước chanh.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Nước cam lạnh.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Nước chanh lạnh.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Tôi có một cốc.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi chọn nước dừa.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Nước dừa không nóng.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Quán cà phê có trà.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Tôi cũng uống trà.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+    "normal": "- [[grammar:Quán cà phê có nước cam không?]] — Does the café have orange juice?\n- [[grammar:Có. Em chọn nước cam.]] — Yes. I choose orange juice.\n- [[grammar:Chị chọn nước chanh.]] — I choose lemonade.\n- [[grammar:Nước cam lạnh.]] — The orange juice is cold.\n- [[grammar:Nước chanh cũng lạnh.]] — The lemonade is cold too.\n- [[grammar:Quán cà phê có nước dừa không?]] — Does the café have coconut water?\n- [[grammar:Có. Em uống nước dừa không?]] — Yes. Do you drink coconut water?\n- [[grammar:Không. Em uống nước cam.]] — No. I drink orange juice.\n- [[grammar:Chị uống một cốc trà nóng.]] — I drink a cup of hot tea.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Quán cà phê có nước cam không?]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Có. Em chọn nước cam.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Chị chọn nước chanh.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Nước cam lạnh.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Nước chanh cũng lạnh.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Quán cà phê có nước dừa không?]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Có. Em uống nước dừa không?]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Không. Em uống nước cam.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Chị uống một cốc trà nóng.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
   }
 }

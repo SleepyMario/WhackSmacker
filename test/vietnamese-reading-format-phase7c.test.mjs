@@ -87,23 +87,23 @@ test("Vietnamese Chapters 1-10 have one exact canonical primary reading and alig
   }
 });
 
-test("Phase 7C preserves vocabulary, grammar, participant, cast, and ledger identities", async () => {
+test("Vietnamese contextual rewrite preserves protected identities and records the required lexical migration", async () => {
   const sources = await chapters();
   const vocabularyMetadata = sources.map(({ markdown }) => /^vocabulary_metadata:\s*$([\s\S]*?)(?=^new_writing_system_material:)/mu.exec(markdown)?.[0].trim());
   const grammarMetadata = sources.map(({ markdown }) => /^new_grammar_structure:\s*$([\s\S]*?)(?=^grammar_easy_reference:)/mu.exec(markdown)?.[0].trim());
   const participants = await Promise.all(sources.map(({ directory }) => readFile(join(unitsRoot, directory, "chapter-participants.json"), "utf8").then(JSON.parse)));
   assert.equal(vocabularyMetadata.reduce((count, value) => count + ((value.match(/^\s+- \{entryId:/gmu) ?? []).length), 0), 60);
-  assert.equal(digest(JSON.stringify(vocabularyMetadata)), "befac769d2960fea86d1cdd24c40d852cb8e1ceabbdde589c142c7458a3621de");
+  assert.equal(digest(JSON.stringify(vocabularyMetadata)), "d74387f290b5c8174c79824cf38ed799ae52c3bf47e08367da5380ec6079d5fb");
   assert.equal(digest(JSON.stringify(grammarMetadata)), "7db7541c7a27250187eb7eedf7d750bdd74b22aa7aa9f7370d336826f7353deb");
   assert.deepEqual(grammarMetadata.map((value) => /grammarId:\s*(VIE-GRAMMAR-\d+)/u.exec(value)?.[1]), Array.from({ length: 10 }, (_, index) => `VIE-GRAMMAR-${String(index + 1).padStart(3, "0")}`));
   assert.equal(digest(JSON.stringify(participants)), "def438a9a15ea67de80747384dd372442ca8c559441b663cd95b8d2ae2cd2d45");
 
   const protectedHashes = new Map([
-    ["vocabulary-forms.json", "d020e561f911e1a00cf96f5dbba58b0e7b8ef64dbcf678adfcfb3420573a08dc"],
+    ["vocabulary-forms.json", "b30577a838b5e76606ffc2546e668d16c00e687bc799fabfb40fe1314801451e"],
     ["geography-ledger.json", "9013de2b37448c8a9e87a6443a2d190062c6c44c5b95e6378b0d858b9d8e7717"],
     ["name-pools/canonical-cast.json", "03d692fc41ee30d156303ae30cdb81736d297917d50069d791accc63e34a5ab7"],
-    ["name-pools/personal-name-presentation.json", "558ee3e68eaca948fb27c204242e4cd768ab8cb2f0ed04804e944a5cd178c94a"],
-    ["units/vietnamese-core/cumulative-ledger.md", "e1d1d78c02f4bc27f29288e5815d01b704c1b5c429c23917f892db227923b0d2"],
+    ["name-pools/personal-name-presentation.json", "fe08763882d53527ae72571ac0a359c053a85da9d419b2c13f2692e3d5e015b3"],
+    ["units/vietnamese-core/cumulative-ledger.md", "4ffa1ce89da22f344d87bb1fa9b002fe1c2710ff408125b25d33a5e4f391069c"],
     ["units/vietnamese-core/chapter-001-005-grammar-easy/chapter.md", "51eb95d90435ea547046c3f7f893b34b029294efa78ef53771dfe5e650393b10"],
     ["units/vietnamese-core/chapter-001-005-grammar-hard/chapter.md", "cb6be8fc50c6886d95db4617b6f6eb65497b582a267709db6a18fa31a83acc2a"],
     ["units/vietnamese-core/chapter-006-010-grammar-easy/chapter.md", "30d780cbe04d1429753a7eb6af8f6ba6b78943e659362dc8333c2076d5581561"],
@@ -128,7 +128,7 @@ test("support and Review provenance resolve against canonical retained readings 
     supports.push(semantic);
   }
   assert.equal(characterEntries, 17);
-  assert.equal(digest(JSON.stringify(supports)), "5ba1ae27fe3aa27258460497eca5b37caa1d3a801702e5ba3da61c742b78b3c6");
+  assert.equal(digest(JSON.stringify(supports)), "56ba461b3776542a043167c5903b38b0a45c93c5ee359329d897268f6b874cf9");
 
   const paths = ["chapter-001-005", "chapter-006-010"].map((block) => join(process.cwd(), "review-content", "vietnamese", "review-decks", block, "cards.tsv"));
   const rows = [];

@@ -9,7 +9,7 @@
       "expert": "This chapter introduces [[grammar:S + viết + N]]: Viết is introduced as a transitive production verb whose complement denotes written content or a written object."
     },
     {
-      "sourceHeading": "New Grammar / Pattern",
+      "sourceHeading": "Grammar",
       "normal": "#### S + viết + N\n\nUse viết before written material to say what someone writes. Example: [[grammar:Tôi viết email.]]",
       "expert": "#### S + viết + N\n\nViết is introduced as a transitive production verb whose complement denotes written content or a written object. Literal example: [[grammar:Tôi viết email.]]"
     },
@@ -21,13 +21,13 @@
     }
   ],
   "breakdown": {
-    "normal": "- [[grammar:Tôi viết email.]] — I write an email.\n- [[grammar:Tôi viết ghi chú.]] — I write a note.\n- [[grammar:Tôi viết địa chỉ.]] — I write the address.\n- [[grammar:Tôi viết số điện thoại.]] — I write the phone number.\n- [[grammar:Đây là bưu thiếp.]] — This is a postcard.\n- [[grammar:Tôi viết bưu thiếp.]] — I write a postcard.\n- [[grammar:Tôi gửi email.]] — I send the email.\n- [[grammar:Tôi gửi bưu thiếp.]] — I send the postcard.\n- [[grammar:Viết cẩn thận.]] — Write carefully.\n- [[grammar:Vâng.]] — Yes.",
-    "expert": "- [[grammar:Tôi viết email.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Tôi viết ghi chú.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Tôi viết địa chỉ.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Tôi viết số điện thoại.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Đây là bưu thiếp.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Tôi viết bưu thiếp.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Tôi gửi email.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Tôi gửi bưu thiếp.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Viết cẩn thận.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
+    "normal": "- [[grammar:Chị viết email.]] — I write an email.\n- [[grammar:Em viết ghi chú.]] — I write a note.\n- [[grammar:Chị viết địa chỉ.]] — I write the address.\n- [[grammar:Em viết số điện thoại.]] — I write the phone number.\n- [[grammar:Đây là bưu thiếp.]] — This is a postcard.\n- [[grammar:Em viết bưu thiếp.]] — I write a postcard.\n- [[grammar:Chị gửi email.]] — I send an email.\n- [[grammar:Em gửi bưu thiếp.]] — I send a postcard.\n- [[grammar:Chị viết địa chỉ cẩn thận.]] — I write the address carefully.\n- [[grammar:Vâng.]] — Yes.",
+    "expert": "- [[grammar:Chị viết email.]] — Literal reading evidence at Dialogue > line 1.\n- [[grammar:Em viết ghi chú.]] — Literal reading evidence at Dialogue > line 2.\n- [[grammar:Chị viết địa chỉ.]] — Literal reading evidence at Dialogue > line 3.\n- [[grammar:Em viết số điện thoại.]] — Literal reading evidence at Dialogue > line 4.\n- [[grammar:Đây là bưu thiếp.]] — Literal reading evidence at Dialogue > line 5.\n- [[grammar:Em viết bưu thiếp.]] — Literal reading evidence at Dialogue > line 6.\n- [[grammar:Chị gửi email.]] — Literal reading evidence at Dialogue > line 7.\n- [[grammar:Em gửi bưu thiếp.]] — Literal reading evidence at Dialogue > line 8.\n- [[grammar:Chị viết địa chỉ cẩn thận.]] — Literal reading evidence at Dialogue > line 9.\n- [[grammar:Vâng.]] — Literal reading evidence at Dialogue > line 10."
   },
   "characters": {
     "heading": "Sino-Vietnamese Vocabulary",
-    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| cẩn thận | 謹慎 | carefully | `Viết cẩn thận.` |\n| bưu thiếp | 郵帖 | postcard | `Đây là bưu thiếp.` |\n| địa chỉ | 地址 | address | `Tôi viết địa chỉ.` |\n| số điện thoại | 數電話 | phone number | `Tôi viết số điện thoại.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
-    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| cẩn thận | 謹慎 | carefully | `Viết cẩn thận.` |\n| bưu thiếp | 郵帖 | postcard | `Đây là bưu thiếp.` |\n| địa chỉ | 地址 | address | `Tôi viết địa chỉ.` |\n| số điện thoại | 數電話 | phone number | `Tôi viết số điện thoại.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
+    "normal": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| cẩn thận | 謹慎 | carefully | `Chị viết địa chỉ cẩn thận.` |\n| bưu thiếp | 郵帖 | postcard | `Đây là bưu thiếp.` |\n| địa chỉ | 地址 | address | `Chị viết địa chỉ.` |\n| số điện thoại | 數電話 | phone number | `Em viết số điện thoại.` |\n\nThe characters show established Hán-Việt word parts for vocabulary first introduced in this chapter. Keep using the modern Vietnamese spellings from the reading.",
+    "expert": "| Word | Characters | Meaning | Usage |\n|---|---|---|---|\n| cẩn thận | 謹慎 | carefully | `Chị viết địa chỉ cẩn thận.` |\n| bưu thiếp | 郵帖 | postcard | `Đây là bưu thiếp.` |\n| địa chỉ | 地址 | address | `Chị viết địa chỉ.` |\n| số điện thoại | 數電話 | phone number | `Em viết số điện thoại.` |\n\nExpert context: the mappings record Vietnamese lexical history and constituent order, not a claim that modern Vietnamese writes these words in characters or that every sequence is a current Chinese lexical form.",
     "entries": [
       {
         "word": "cẩn thận",
@@ -36,11 +36,11 @@
         "lexicalEntryId": "vi.adverb.can-than",
         "senseId": "vi.adverb.can-than.carefully",
         "firstIntroductionChapter": 17,
-        "usage": "Viết cẩn thận.",
+        "usage": "Chị viết địa chỉ cẩn thận.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-017-basic-sentences-17/chapter.md",
           "section": "Dialogue",
-          "locator": "line containing: Viết cẩn thận."
+          "locator": "line containing: Chị viết địa chỉ cẩn thận."
         }
       },
       {
@@ -64,11 +64,11 @@
         "lexicalEntryId": "vi.noun.dia-chi",
         "senseId": "vi.noun.dia-chi.address",
         "firstIntroductionChapter": 17,
-        "usage": "Tôi viết địa chỉ.",
+        "usage": "Chị viết địa chỉ.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-017-basic-sentences-17/chapter.md",
           "section": "Dialogue",
-          "locator": "line containing: Tôi viết địa chỉ."
+          "locator": "line containing: Chị viết địa chỉ."
         }
       },
       {
@@ -78,11 +78,11 @@
         "lexicalEntryId": "vi.noun.so-dien-thoai",
         "senseId": "vi.noun.so-dien-thoai.phone-number",
         "firstIntroductionChapter": 17,
-        "usage": "Tôi viết số điện thoại.",
+        "usage": "Em viết số điện thoại.",
         "provenance": {
           "path": "units/vietnamese-core/chapter-017-basic-sentences-17/chapter.md",
           "section": "Dialogue",
-          "locator": "line containing: Tôi viết số điện thoại."
+          "locator": "line containing: Em viết số điện thoại."
         }
       }
     ]

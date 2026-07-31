@@ -244,7 +244,7 @@ test("Vietnamese omitted Chapter 12 and 18 senses have exact first introductions
 
   const chapter18 = await readFile(join(curriculumRoot, canonicalPath(18)), "utf8");
   assert.doesNotMatch(chapter18, /Màn hình ở phòng\./u);
-  assert.match(chapter18, /Màn hình ở trong phòng\./u);
+  assert.match(chapter18, /Trong phòng có màn hình\./u);
   const deck11 = parseDeck(await readFile(join(process.cwd(), deckPaths[2]), "utf8"), deckPaths[2]);
   const deck16 = parseDeck(await readFile(join(process.cwd(), deckPaths[3]), "utf8"), deckPaths[3]);
   assert.deepEqual(deck11.rows.filter((row) => row.lexicalIds[1] === "vi.preposition.cho.preparation-for").map((row) => `${row.promptLanguage}->${row.answerLanguage}`).sort(), ["en->vi", "vi->en"]);
