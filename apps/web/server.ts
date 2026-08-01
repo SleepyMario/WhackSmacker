@@ -16,8 +16,11 @@ import {
   projectReadingAudienceSection,
   listReadingReviewItems,
   listReadingReviewSources,
+  readingReviewSourcesFromItems,
   loadReviewProgressStore,
-  recordReadingReviewAnswer,
+  listDueReviewStates,
+  recordStoredReviewOutcome,
+  renderMemorizationExercise,
   removeContentPackage,
   removeReadingReviewProgressForPackage,
   syncReadingReviewItems,
@@ -28,12 +31,14 @@ import {
   type CurriculumDisplayMode,
   type ReadingAudienceSection,
   type ReadingReviewItem,
+  type InstalledPackageRecord,
   type ReviewItemIdentity,
+  type ReviewItemState,
   type ReviewRating
 } from "../../packages/core";
 import { defaultSettingsDirectoryForContentDataDirectory, loadSourceLanguageSettings, saveSourceLanguage } from "../../src/settings/source-language";
 import { type SourceLocale } from "../../src/i18n";
-import { assertDatabaseReady, authenticateUser, createDatabasePool, createSession, csrfMatches, databaseConfig, recordUserReview, resolveSession, revokeSession, selectedPackages, selectPackage, syncUserReviewStates, unselectPackage, updateUserSettings, userHasSelectedPackage, userSettings, type DatabaseSession } from "../../packages/storage/postgres";
+import { assertDatabaseReady, authenticateUser, createDatabasePool, createSession, csrfMatches, databaseConfig, recordUserReview, resolveSession, revokeSession, selectedPackages, selectPackage, StaleReviewStateError, syncUserReviewStates, unselectPackage, updateUserSettings, userHasSelectedPackage, userSettings, type DatabaseSession } from "../../packages/storage/postgres";
 
 export interface WebServerOptions { readonly host?: string; readonly port?: number; readonly dataDir?: string; readonly cataloguePath?: string; readonly password?: string; readonly databaseUrl?: string; readonly publicUrl?: string; readonly secureCookies?: boolean; readonly sessionTtl?: number; readonly trustProxy?: boolean; }
 interface WebContext { readonly pool?: Pool; readonly sessions: Set<string>; readonly attempts: Map<string,{count:number;until:number;seen:number}>; packageMutation:Promise<void>; }
@@ -96,7 +101,10 @@ async function handle(request: IncomingMessage, response: ServerResponse, option
     if (url.pathname === "/api/settings" && request.method === "PUT") return await updateSettings(request, response, options,context.pool,identity);
     if (url.pathname === "/api/packages/install" && request.method === "POST") return await install(request, response, options,context,identity);
     if (url.pathname === "/api/packages/remove" && request.method === "POST") return await remove(request, response, options,context.pool,identity);
-    if (url.pathname === "/api/review/answer" && request.method === "POST") return await answer(request, response, options,context.pool,identity);
+    if (url.pathname === "/api/review" && request.method === "GET") return await reviewDiscovery(response,options,context.pool,identity);
+    if (url.pathname === "/api/review/session" && request.method === "GET") return await reviewSession(url,response,options,context.pool,identity);
+    if (url.pathname === "/api/review/reveal" && request.method === "POST") return await revealReview(request,response,options,context.pool,identity);
+    if (url.pathname === "/api/review/answer" && request.method === "POST") return await answer(request, response, options,context,identity);
     if (url.pathname === "/api/review-items" && request.method === "GET") return await reviewItems(url, response, options,context.pool,identity);
     if (url.pathname === "/api/content" && request.method === "GET") return await content(url, response, options,context.pool,identity);
     if (url.pathname === "/api/content/entry" && request.method === "GET") return await contentEntry(url, response, options,context.pool,identity);
@@ -143,7 +151,7 @@ async function state(options: WebServerOptions) {
   return { locale, installed, available, decks, review: { total: progress.items.length, due: progress.items.filter(item => item.nextReviewAt <= now).length, reviewed: progress.items.filter(item => item.reviewCount > 0).length } };
 }
 
-async function databaseState(options:WebServerOptions,pool:Pool,user:DatabaseSession){const settings=await userSettings(pool,user.id),selected=await selectedPackages(pool,user.id),keys=new Set(selected.map(x=>x.package_id+"@"+x.package_version)),installed=(await listInstalledContentPackages(options.dataDir)).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)&&x.contentType!=="curriculum-source-language-pack"),available=options.cataloguePath?(await listAvailableContentPackages(options.cataloguePath)).filter(x=>x.contentType!=="curriculum-source-language-pack"):[],now=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z"),items=(await listReadingReviewItems({dataDir:options.dataDir,sourceLocale:settings.locale})).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)),identities=items.map(readingReviewIdentity),states=await syncUserReviewStates(pool,user.id,identities,now),byKey=new Map(states.map(x=>[reviewIdentityKey(x),x])),sources=(await listReadingReviewSources({dataDir:options.dataDir,sourceLocale:settings.locale})).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)),decks=sources.map(source=>{const deckItems=items.filter(x=>x.packageId===source.packageId&&x.packageVersion===source.packageVersion&&x.sourcePath===source.sourcePath),cardIdentities=deckItems.map(readingReviewIdentity),ss=cardIdentities.flatMap(identity=>{const saved=byKey.get(reviewIdentityKey(identity));return saved===undefined?[]:[saved]}),classification=classifyReviewDeckMenuStatus({deckId:`${source.packageId}@${source.packageVersion}#${source.sourcePath}`,cardIdentities,savedProgress:ss,now});return{...source,title:source.title??source.sourcePath,itemCount:deckItems.length,reviewed:ss.filter(x=>x.reviewCount>0).length,due:classification.dueCardCount,status:classification.status}}),activeStates=states.filter(x=>x.retiredAt===undefined);return{locale:settings.locale,theme:settings.theme,user:{username:user.username,role:user.role},csrfToken:undefined,installed,available,decks,review:{total:activeStates.length,due:activeStates.filter(x=>x.nextReviewAt<=now).length,reviewed:activeStates.filter(x=>x.reviewCount>0).length}}}
+async function databaseState(options:WebServerOptions,pool:Pool,user:DatabaseSession){const settings=await userSettings(pool,user.id),selected=await selectedPackages(pool,user.id),keys=new Set(selected.map(x=>x.package_id+"@"+x.package_version)),installed=(await listInstalledContentPackages(options.dataDir)).filter(x=>keys.has(x.packageId+"@"+x.packageVersion)&&x.contentType!=="curriculum-source-language-pack"),available=options.cataloguePath?(await listAvailableContentPackages(options.cataloguePath)).filter(x=>x.contentType!=="curriculum-source-language-pack"):[],now=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z"),items=(await listReadingReviewItems({dataDir:options.dataDir,sourceLocale:settings.locale})).filter(x=>keys.has(x.reviewPackageId+"@"+x.packageVersion)),identities=items.map(readingReviewIdentity),states=await syncUserReviewStates(pool,user.id,identities,now),byKey=new Map(states.map(x=>[reviewIdentityKey(x),x])),sources=readingReviewSourcesFromItems(items,settings.locale),decks=sources.map(source=>{const deckItems=items.filter(x=>x.packageId===source.packageId&&x.packageVersion===source.packageVersion&&x.sourcePath===source.sourcePath),cardIdentities=deckItems.map(readingReviewIdentity),ss=cardIdentities.flatMap(identity=>{const saved=byKey.get(reviewIdentityKey(identity));return saved===undefined?[]:[saved]}),classification=classifyReviewDeckMenuStatus({deckId:`${source.packageId}@${source.packageVersion}#${source.sourcePath}`,cardIdentities,savedProgress:ss,now});return{...source,title:source.title??source.sourcePath,itemCount:deckItems.length,reviewed:ss.filter(x=>x.reviewCount>0).length,due:listDueReviewStates(ss,now).length,status:classification.status}}),activeStates=states.filter(x=>x.retiredAt===undefined);return{locale:settings.locale,theme:settings.theme,user:{username:user.username,role:user.role},csrfToken:undefined,installed,available,decks,review:{total:activeStates.length,due:activeStates.filter(x=>x.nextReviewAt<=now).length,reviewed:activeStates.filter(x=>x.reviewCount>0).length}}}
 
 function readingReviewIdentity(item: ReadingReviewItem): ReviewItemIdentity {
   return {
@@ -159,9 +167,85 @@ async function updateSettings(req:IncomingMessage,res:ServerResponse,options:Web
 async function install(req:IncomingMessage,res:ServerResponse,options:WebServerOptions,context:WebContext,id:true|DatabaseSession){if(!options.cataloguePath)throw new HttpError(400,"Package catalogue is unavailable.");const body=await bodyJson(req);if("user_id"in body)throw new HttpError(400,"user_id is not accepted.");const result=await exclusivePackageMutation(context,()=>installContentPackage({cataloguePath:options.cataloguePath!,packageId:required(body.packageId),packageVersion:required(body.packageVersion),dataDir:options.dataDir}));if(context.pool)await selectPackage(context.pool,(id as DatabaseSession).id,result.record.packageId,result.record.packageVersion);json(res,200,result)}
 async function exclusivePackageMutation<T>(context:WebContext,operation:()=>Promise<T>){const previous=context.packageMutation;let release!:()=>void;context.packageMutation=new Promise<void>(resolve=>{release=resolve});await previous;try{return await operation()}finally{release()}}
 async function remove(req:IncomingMessage,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){const body=await bodyJson(req),packageId=required(body.packageId),version=required(body.packageVersion);if(pool){await unselectPackage(pool,(id as DatabaseSession).id,packageId,version,body.keepProgress!==true);return json(res,200,{removed:true})}const result=await removeContentPackage({dataDir:options.dataDir,packageId,packageVersion:version});if(body.keepProgress!==true)await removeReadingReviewProgressForPackage({dataDir:options.dataDir,packageId,packageVersion:version,removedAt:new Date().toISOString()});json(res,200,result)}
-async function answer(req:IncomingMessage,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){const b=await bodyJson(req),rating=String(b.rating) as ReviewRating;if(!["again","hard","good","easy"].includes(rating))throw new HttpError(400,"Invalid rating.");const identity={packageId:required(b.packageId),packageVersion:required(b.packageVersion),sourcePath:required(b.sourcePath),itemId:required(b.itemId)},at=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z");if(pool){const user=id as DatabaseSession;if(!await allowedPackage(pool,user.id,identity.packageId,identity.packageVersion))throw new HttpError(403,"This package version is not selected for your account.");const locale=(await userSettings(pool,user.id)).locale,items=await listReadingReviewItems({dataDir:options.dataDir,packageId:identity.packageId,sourceLocale:locale}),item=items.find(x=>x.packageVersion===identity.packageVersion&&x.sourcePath===identity.sourcePath&&x.item.id===identity.itemId);if(!item)throw new HttpError(404,"Review item not found.");return json(res,200,await recordUserReview(pool,user.id,{...identity,...(item.item.schemaVersion===2?{pedagogicalFingerprint:item.item.pedagogicalFingerprint}:{})},rating,at))}json(res,200,await recordReadingReviewAnswer({dataDir:options.dataDir,...identity,rating,reviewedAt:at}))}
+interface ReviewPackageBundle {
+  readonly record: InstalledPackageRecord;
+  readonly items: readonly ReadingReviewItem[];
+  readonly scope: "ordinary" | "specialized";
+}
+
+function isReviewPackage(record:InstalledPackageRecord){return record.capabilities?.includes("core-review")===true||record.capabilities?.includes("specialized-review")===true||(record.capabilities===undefined&&record.contentType==="language-curriculum")}
+function reviewScope(record:InstalledPackageRecord):"ordinary"|"specialized"{return record.capabilities?.includes("specialized-review")===true||record.contentType==="specialized-review"?"specialized":"ordinary"}
+function reviewStablePackageId(record:InstalledPackageRecord){return record.capabilities?.includes("core-review")===true?(record.relatedPackageIds?.[0]??record.packageId):record.packageId}
+function localizedName(value:unknown,locale:string){if(typeof value==="string")return value;if(value&&typeof value==="object"){const names=value as Record<string,unknown>;for(const key of [locale,locale==="zh-TW"?"zh-Hant-TW":"en-US","en","default"])if(typeof names[key]==="string")return names[key] as string}return "Review package"}
+
+async function exactReviewPackage(options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession,packageId:string,version:string):Promise<ReviewPackageBundle>{
+  if(pool&&!await allowedPackage(pool,(id as DatabaseSession).id,packageId,version))throw new HttpError(403,"This exact Review package version is not selected for your account.");
+  const record=(await listInstalledContentPackages(options.dataDir)).find(item=>item.packageId===packageId&&item.packageVersion===version);
+  if(!record)throw new HttpError(pool?409:404,"The exact Review package version is unavailable.");
+  if(!isReviewPackage(record))throw new HttpError(404,"The exact package version does not provide Review cards.");
+  try{
+    const items=(await listReadingReviewItems({dataDir:options.dataDir,packageId:record.packageId,packageVersion:record.packageVersion,sourceLocale:await requestLocale(pool,id,options)})).filter(item=>item.reviewPackageId===record.packageId&&item.packageVersion===record.packageVersion);
+    return{record,items,scope:reviewScope(record)};
+  }catch{throw new HttpError(500,"Review package content could not be read.")}
+}
+
+async function reviewStates(options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession,items:readonly ReadingReviewItem[],now:string):Promise<readonly ReviewItemState[]>{
+  const identities=items.map(readingReviewIdentity);
+  if(pool)return syncUserReviewStates(pool,(id as DatabaseSession).id,identities,now);
+  return(await syncReadingReviewItems({dataDir:options.dataDir,now,reviewItems:items})).store.items;
+}
+
+async function reviewDiscovery(res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){
+  const locale=await requestLocale(pool,id,options),installed=await listInstalledContentPackages(options.dataDir),selected=pool?await selectedPackages(pool,(id as DatabaseSession).id):undefined,allowed=selected?new Set(selected.map(item=>`${item.package_id}@${item.package_version}`)):undefined;
+  const records=installed.filter(isReviewPackage).filter(record=>allowed===undefined||allowed.has(`${record.packageId}@${record.packageVersion}`)).sort((left,right)=>left.packageId.localeCompare(right.packageId)||left.packageVersion.localeCompare(right.packageVersion));
+  const bundles:ReviewPackageBundle[]=[],unavailable:{packageId:string;packageVersion:string}[]=[];
+  for(const record of records){try{const bundle=await exactReviewPackage(options,pool,id,record.packageId,record.packageVersion);if(record.capabilities?.some(capability=>capability==="core-review"||capability==="specialized-review")||bundle.items.length>0)bundles.push(bundle)}catch{unavailable.push({packageId:record.packageId,packageVersion:record.packageVersion})}}
+  const now=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z"),items=bundles.flatMap(bundle=>bundle.items),states=await reviewStates(options,pool,id,items,now),byKey=new Map(states.map(state=>[reviewIdentityKey(state),state]));
+  const packages=bundles.map(bundle=>{
+    const sources=readingReviewSourcesFromItems(bundle.items,locale).map(source=>{
+      const sourceItems=bundle.items.filter(item=>item.sourcePath===source.sourcePath),identities=sourceItems.map(readingReviewIdentity),saved=identities.flatMap(identity=>{const state=byKey.get(reviewIdentityKey(identity));return state===undefined?[]:[state]}),classification=classifyReviewDeckMenuStatus({deckId:`${bundle.record.packageId}@${bundle.record.packageVersion}#${source.sourcePath}`,cardIdentities:identities,savedProgress:saved,now});
+      return{sourcePath:source.sourcePath,title:source.title??source.sourcePath,sourceExists:source.sourceExists,itemCount:source.itemCount,due:listDueReviewStates(saved,now).length,reviewed:saved.filter(state=>state.reviewCount>0).length,status:classification.status};
+    });
+    return{packageId:bundle.record.packageId,packageVersion:bundle.record.packageVersion,stablePackageId:reviewStablePackageId(bundle.record),name:localizedName(bundle.record.displayName,locale),scope:bundle.scope,relatedPackageIds:bundle.record.relatedPackageIds??[],sources};
+  });
+  json(res,200,{packages,unavailable});
+}
+
+function reviewItemFor(bundle:ReviewPackageBundle,sourcePath:string,itemId:string){return bundle.items.find(item=>item.sourcePath===sourcePath&&item.item.id===itemId)}
+function activeStateFor(item:ReadingReviewItem,states:readonly ReviewItemState[]){return states.find(state=>reviewIdentityKey(state)===reviewIdentityKey(readingReviewIdentity(item)))}
+function retiredStateFor(bundle:ReviewPackageBundle,sourcePath:string,itemId:string,states:readonly ReviewItemState[]){const stablePackageId=reviewStablePackageId(bundle.record);return states.find(state=>state.packageId===stablePackageId&&state.packageVersion===bundle.record.packageVersion&&state.sourcePath===sourcePath&&state.itemId===itemId&&state.retiredAt!==undefined)}
+function reviewCard(item:ReadingReviewItem,state:ReviewItemState,locale:string){const rendered=renderMemorizationExercise({packageId:item.packageId,packageVersion:item.packageVersion,itemId:item.item.id,item:item.item,sourceLocale:locale});return{itemId:item.item.id,title:rendered.title,kind:rendered.kind,promptLanguage:rendered.promptLanguage,promptLines:rendered.promptLines,hintLines:rendered.hintLines,reviewCount:state.reviewCount}}
+
+async function reviewSession(url:URL,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){
+  const packageId=query(url,"packageId"),version=query(url,"version"),sourcePath=query(url,"sourcePath"),bundle=await exactReviewPackage(options,pool,id,packageId,version);
+  const sourceItems=bundle.items.filter(item=>item.sourcePath===sourcePath);
+  if(sourceItems.length===0)throw new HttpError(404,"Review source not found in this exact package version.");
+  const now=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z"),states=await reviewStates(options,pool,id,bundle.items,now),keys=new Set(sourceItems.map(item=>reviewIdentityKey(readingReviewIdentity(item)))),due=listDueReviewStates(states,now).filter(state=>keys.has(reviewIdentityKey(state))),state=due[0],item=state===undefined?undefined:sourceItems.find(candidate=>reviewIdentityKey(readingReviewIdentity(candidate))===reviewIdentityKey(state));
+  if(state!==undefined&&!item)throw new HttpError(409,"A due Review card is no longer available. Refresh the source.");
+  json(res,200,{packageId,packageVersion:version,stablePackageId:reviewStablePackageId(bundle.record),sourcePath,scope:bundle.scope,total:sourceItems.length,due:due.length,complete:item===undefined,card:item&&state?reviewCard(item,state,await requestLocale(pool,id,options)):undefined});
+}
+
+async function revealReview(req:IncomingMessage,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){
+  const body=await bodyJson(req),packageId=required(body.packageId),version=required(body.packageVersion),sourcePath=required(body.sourcePath),itemId=required(body.itemId),bundle=await exactReviewPackage(options,pool,id,packageId,version),item=reviewItemFor(bundle,sourcePath,itemId),now=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z"),states=await reviewStates(options,pool,id,bundle.items,now);
+  if(!item){if(retiredStateFor(bundle,sourcePath,itemId,states))throw new HttpError(409,"This Review card is retired or inactive.");throw new HttpError(404,"Review card not found in this exact package version and source.")}
+  const state=activeStateFor(item,states);
+  if(!state||state.retiredAt!==undefined||state.status==="suspended")throw new HttpError(409,"This Review card is retired or inactive.");
+  const rendered=renderMemorizationExercise({packageId:item.packageId,packageVersion:item.packageVersion,itemId:item.item.id,item:item.item,sourceLocale:await requestLocale(pool,id,options)});
+  json(res,200,{itemId,answerLanguage:rendered.answerLanguage,answerLines:rendered.answerLines,noteLines:rendered.noteLines,exampleLines:rendered.exampleLines,evidence:item.item.schemaVersion===2?item.item.provenance.evidence:undefined,sourceAvailable:item.sourceExists!==false});
+}
+
+async function answer(req:IncomingMessage,res:ServerResponse,options:WebServerOptions,context:WebContext,id:true|DatabaseSession){
+  const body=await bodyJson(req),rating=String(body.rating) as ReviewRating;if(!["again","hard","good","easy"].includes(rating))throw new HttpError(400,"Invalid rating.");
+  const expectedReviewCount=body.expectedReviewCount;if(!Number.isInteger(expectedReviewCount)||Number(expectedReviewCount)<0)throw new HttpError(400,"expectedReviewCount must be a non-negative integer.");
+  const packageId=required(body.packageId),version=required(body.packageVersion),sourcePath=required(body.sourcePath),itemId=required(body.itemId);
+  try{return await exclusivePackageMutation(context,async()=>{
+    const bundle=await exactReviewPackage(options,context.pool,id,packageId,version),item=reviewItemFor(bundle,sourcePath,itemId),at=new Date().toISOString().replace(/\.\d{3}Z$/u,"Z"),states=await reviewStates(options,context.pool,id,bundle.items,at);if(!item){if(retiredStateFor(bundle,sourcePath,itemId,states))throw new HttpError(409,"This Review card is retired or inactive.");throw new HttpError(404,"Review card not found in this exact package version and source.")}const state=activeStateFor(item,states);if(!state||state.retiredAt!==undefined||state.status==="suspended")throw new HttpError(409,"This Review card is retired or inactive.");if(state.reviewCount!==expectedReviewCount)throw new HttpError(409,"Review state changed before this rating was accepted.");if(state.nextReviewAt>at)throw new HttpError(409,"This Review card is no longer due.");
+    const identity=readingReviewIdentity(item),outcome=context.pool?await recordUserReview(context.pool,(id as DatabaseSession).id,identity,rating,at,Number(expectedReviewCount)):await recordStoredReviewOutcome({progressDir:progressDir(options),...identity,rating,reviewedAt:at});
+    return json(res,200,outcome);
+  })}catch(error){if(error instanceof StaleReviewStateError)throw new HttpError(409,error.message);throw error}
+}
 async function allowedPackage(pool:Pool,userId:string,packageId:string,packageVersion:string){return userHasSelectedPackage(pool,userId,packageId,packageVersion)}
-async function reviewItems(url:URL,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){const packageId=query(url,"packageId"),version=query(url,"version");if(pool&&!await allowedPackage(pool,(id as DatabaseSession).id,packageId,version))throw new HttpError(403,"This package version is not selected for your account.");const locale=pool?(await userSettings(pool,(id as DatabaseSession).id)).locale:(await loadSourceLanguageSettings(settingsDir(options))).sourceLanguage;json(res,200,{items:(await listReadingReviewItems({dataDir:options.dataDir,packageId,sourceLocale:locale})).filter(x=>x.packageVersion===version)})}
+async function reviewItems(url:URL,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){const packageId=query(url,"packageId"),version=query(url,"version");if(pool&&!await allowedPackage(pool,(id as DatabaseSession).id,packageId,version))throw new HttpError(403,"This package version is not selected for your account.");const record=(await listInstalledContentPackages(options.dataDir)).find(item=>item.packageId===packageId&&item.packageVersion===version);if(!record||!isReviewPackage(record))return json(res,200,{items:[]});const bundle=await exactReviewPackage(options,pool,id,packageId,version);json(res,200,{items:bundle.items})}
 async function content(url:URL,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){const selected=url.searchParams.get("packageId"),allowed=pool?new Set((await selectedPackages(pool,(id as DatabaseSession).id)).map(x=>x.package_id+"@"+x.package_version)):undefined;if(selected){const version=query(url,"version");if(allowed&&!allowed.has(selected+"@"+version))throw new HttpError(403,"This package version is not selected for your account.");const locale=pool?(await userSettings(pool,(id as DatabaseSession).id)).locale:(await loadSourceLanguageSettings(settingsDir(options))).sourceLanguage,all=await listInstalledReadablePackages(options.dataDir,locale),packages=allowed?all.filter(x=>allowed.has(x.packageId+"@"+x.packageVersion)):all;return json(res,200,{packages,entries:await listReadableContentEntries(selected,options.dataDir,version)})}const locale=pool?(await userSettings(pool,(id as DatabaseSession).id)).locale:(await loadSourceLanguageSettings(settingsDir(options))).sourceLanguage,all=await listInstalledReadablePackages(options.dataDir,locale),packages=allowed?all.filter(x=>allowed.has(x.packageId+"@"+x.packageVersion)):all;json(res,200,{packages,entries:[]})}
 async function contentEntry(url:URL,res:ServerResponse,options:WebServerOptions,pool:Pool|undefined,id:true|DatabaseSession){const packageId=query(url,"packageId"),version=query(url,"version");if(pool&&!await allowedPackage(pool,(id as DatabaseSession).id,packageId,version))throw new HttpError(403,"This package version is not selected for your account.");const locale=pool?(await userSettings(pool,(id as DatabaseSession).id)).locale:(await loadSourceLanguageSettings(settingsDir(options))).sourceLanguage;json(res,200,await readInstalledContentEntry({dataDir:options.dataDir,packageId,packageVersion:version,path:query(url,"path"),locale}))}
 

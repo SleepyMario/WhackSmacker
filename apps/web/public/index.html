@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body data-title-key="page.app.title">
-  <a class="skip-link" href="#reader">Skip to reader</a>
+  <a id="skip-link" class="skip-link" href="#reader">Skip to current study view</a>
   <div class="app-shell">
     <header class="app-header">
       <button id="menu-toggle" class="icon-button menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false" data-i18n-attr="aria-label:app.menu" data-busy-control>☰</button>
@@ -36,14 +36,14 @@
       <nav class="primary-nav" aria-label="Application navigation" data-i18n-attr="aria-label:app.navigation">
         <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">⌂</span><b data-i18n="app.nav.dashboard">Dashboard</b><small data-i18n="app.planned">Planned</small></button>
         <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">✚</span><b data-i18n="app.nav.modules">Modules</b><small data-i18n="app.planned">Planned</small></button>
-        <a href="/app" class="active" aria-current="page"><span aria-hidden="true">▰</span><b data-i18n="app.nav.reader">Reader</b></a>
-        <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">◷</span><b data-i18n="app.nav.review">Review</b><small data-i18n="app.planned">Planned</small></button>
+        <a id="nav-reader" href="/app?view=reader" class="active" aria-current="page"><span aria-hidden="true">▰</span><b data-i18n="app.nav.reader">Reader</b></a>
+        <a id="nav-review" href="/app?view=review"><span aria-hidden="true">◷</span><b data-i18n="app.nav.review">Review</b></a>
         <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">☷</span><b data-i18n="app.nav.content">Content</b><small data-i18n="app.planned">Planned</small></button>
         <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">⬡</span><b data-i18n="app.nav.packages">Packages</b><small data-i18n="app.planned">Planned</small></button>
         <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">⌁</span><b data-i18n="app.nav.progress">Progress</b><small data-i18n="app.planned">Planned</small></button>
         <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">⚙</span><b data-i18n="app.nav.settings">Settings</b><small data-i18n="app.planned">Planned</small></button>
       </nav>
-      <div class="sidebar-footer"><span class="slice-dot" aria-hidden="true"></span><div><strong data-i18n="app.slice.title">Reader slice 1</strong><small data-i18n="app.slice.note">Shell and curriculum reading</small></div></div>
+      <div class="sidebar-footer"><span class="slice-dot" aria-hidden="true"></span><div><strong data-i18n="app.slice.title">Reader + Review</strong><small data-i18n="app.slice.note">Preferred Web slices 1–2</small></div></div>
     </aside>
     <button id="sidebar-backdrop" class="sidebar-backdrop" type="button" aria-label="Close navigation" hidden tabindex="-1"></button>
 
@@ -84,6 +84,27 @@
               <button id="next" class="button" type="button" disabled data-busy-control><span data-i18n="app.next">Next</span> <span aria-hidden="true">→</span></button>
             </nav>
           </article>
+        </div>
+      </section>
+
+      <section id="view-review" class="view" aria-labelledby="review-view-title" hidden>
+        <h1 id="review-view-title" class="sr-only" data-i18n="app.review.title">Review</h1>
+        <div class="review-layout">
+          <aside class="panel deck-panel" aria-labelledby="review-sources-title">
+            <header><p class="eyebrow" data-i18n="app.review.sources">Review sources</p><h2 id="review-sources-title" data-i18n="app.review.decks">Decks</h2></header>
+            <div id="review-packages" class="review-package-controls" hidden>
+              <label><span data-i18n="app.review.package">Review package</span><select id="review-package" data-busy-control></select></label>
+              <label><span data-i18n="app.version">Exact version</span><select id="review-version" data-busy-control></select></label>
+            </div>
+            <div id="deck-list" class="deck-list" aria-live="polite"></div>
+          </aside>
+          <section id="review-session" class="panel review-session" tabindex="-1" aria-busy="false" aria-labelledby="review-session-title">
+            <div class="empty-state review-empty">
+              <p class="eyebrow" data-i18n="app.review.session">Review session</p>
+              <h2 id="review-session-title" data-i18n="app.review.choose">Choose a Review source</h2>
+              <p data-i18n="app.review.choosePrompt">Select an exact package version and source to see due cards.</p>
+            </div>
+          </section>
         </div>
       </section>
     </main>

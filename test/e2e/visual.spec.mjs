@@ -91,6 +91,53 @@ test("preferred reader states remain visually and structurally stable", async ({
   await expect(page.locator("#chapter-content")).toContainText("no readable content");
   await capture("reader-empty-chapter-dark-en");
 
+  await page.goto(`${baseUrl()}/app?view=review`);
+  await expect(page.locator(".review-card")).toBeVisible();
+  await capture("review-package-source-selection-dark-en");
+  await capture("review-hidden-answer-dark-en");
+  await page.locator("#review-session").focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".review-answer")).toBeVisible();
+  await capture("review-revealed-answer-dark-en");
+  for (const rating of ["again", "hard", "good", "easy"]) {
+    await page.locator(`.rating-button[data-rating="${rating}"]`).focus();
+    await capture(`review-rating-${rating}-focus-dark-en`);
+  }
+  await page.locator('.rating-button[data-rating="good"]').click();
+  await expect(page.locator(".review-card")).toBeVisible();
+  await expect(page.locator(".review-answer")).toHaveCount(0);
+  await expect(page.locator(".review-prompt")).toContainText("<img src=x onerror=alert(1)> remains text");
+  await page.locator("#review-session").focus();
+  await page.keyboard.press("Space");
+  await expect(page.locator(".review-answer")).toBeVisible();
+  await expect(page.locator("#status")).toContainText("Answer revealed");
+  await expect(page.locator("#review-session")).toHaveAttribute("aria-busy", "false");
+  await page.locator('.rating-button[data-rating="easy"]').click();
+  await expect(page.locator("#review-session")).toContainText("Session complete");
+  await capture("review-session-completion-dark-en");
+  await capture("review-no-cards-due-dark-en");
+
+  await page.route("**/api/review", route => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ packages: [], unavailable: [] }) }), { times: 1 });
+  await page.goto(`${baseUrl()}/app?view=review`);
+  await expect(page.locator("#review-session")).toContainText("No Review packages");
+  await capture("review-empty-packages-dark-en");
+
+  await page.route("**/api/review/session?**", route => route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: "synthetic Review failure", requestId: "review-visual-fixture" }) }), { times: 1 });
+  await page.goto(`${baseUrl()}/app?view=review`);
+  await expect(page.locator("#review-session")).toContainText("Could not load this session");
+  await capture("review-error-dark-en");
+
+  await page.locator("#source-locale").selectOption("zh-TW", { force: true });
+  await expect(page.locator("#status")).toContainText("Source language saved");
+  await expect(page.locator("#review-session")).toHaveAttribute("aria-busy", "false");
+  await page.evaluate(() => localStorage.setItem("whacksmacker.ui-locale", "zh-TW"));
+  await page.reload();
+  await expect(page.locator("#review-sources-title")).toContainText("牌組");
+  await capture("review-no-cards-due-dark-zh");
+  await page.locator("#theme-toggle").click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await capture("review-no-cards-due-light-zh");
+
   await page.goto(`${baseUrl()}${deepLink({ chapterId: chapter(10) })}`);
   await expect(page.locator("#chapter-title")).toContainText("Chapter 10");
   await revokeUserA();
@@ -127,13 +174,16 @@ test("preferred reader states remain visually and structurally stable", async ({
     const metrics = await page.evaluate(() => {
       const root = getComputedStyle(document.documentElement);
       const shellElement = document.querySelector(".app-shell");
+      const reviewVisible = !document.querySelector("#view-review")?.hidden;
       const header = document.querySelector(".app-header")?.getBoundingClientRect();
       const reader = document.querySelector("#reader")?.getBoundingClientRect();
       const readerElement = document.querySelector("#reader");
       const contentElement = document.querySelector("#chapter-content");
       const sidebar = document.querySelector("#sidebar")?.getBoundingClientRect();
+      const review = document.querySelector("#review-session")?.getBoundingClientRect();
+      const reviewElement = document.querySelector("#review-session");
       return {
-        surface: shellElement ? "reader" : "login",
+        surface: shellElement ? (reviewVisible ? "review" : "reader") : "login",
         theme: document.documentElement.dataset.theme,
         pageWidth: document.documentElement.scrollWidth,
         viewportWidth: window.innerWidth,
@@ -144,6 +194,9 @@ test("preferred reader states remain visually and structurally stable", async ({
         readerScrollWidth: readerElement?.scrollWidth ?? 0,
         contentClientWidth: contentElement?.clientWidth ?? 0,
         contentScrollWidth: contentElement?.scrollWidth ?? 0,
+        reviewWidth: Math.round(review?.width ?? 0),
+        reviewClientWidth: reviewElement?.clientWidth ?? 0,
+        reviewScrollWidth: reviewElement?.scrollWidth ?? 0,
         gridColumns: shellElement ? getComputedStyle(shellElement).gridTemplateColumns : "",
         colors: { background: root.getPropertyValue("--bg").trim(), panel: root.getPropertyValue("--panel").trim(), ink: root.getPropertyValue("--ink").trim() }
       };
@@ -153,6 +206,11 @@ test("preferred reader states remain visually and structurally stable", async ({
       expect(metrics.headerHeight).toBe(68);
       expect(metrics.readerScrollWidth).toBeLessThanOrEqual(metrics.readerClientWidth + 1);
       expect(metrics.contentScrollWidth).toBeLessThanOrEqual(metrics.contentClientWidth + 1);
+      if (viewport.width > 800) expect(metrics.sidebarWidth).toBeGreaterThanOrEqual(190);
+    }
+    if (metrics.surface === "review") {
+      expect(metrics.headerHeight).toBe(68);
+      expect(metrics.reviewScrollWidth).toBeLessThanOrEqual(metrics.reviewClientWidth + 1);
       if (viewport.width > 800) expect(metrics.sidebarWidth).toBeGreaterThanOrEqual(190);
     }
     if (outputRoot) {

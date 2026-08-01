@@ -47,6 +47,8 @@ test("web server serves a data-free public landing page, logo, health, and priva
     const initial = await (await fetch(`${base}/api/state`)).json();
     assert.equal(initial.locale, "en-US");
     assert.deepEqual(initial.installed, []);
+    assert.deepEqual(await (await fetch(`${base}/api/review`)).json(),{packages:[],unavailable:[]});
+    assert.equal((await fetch(`${base}/api/review/session?packageId=com.example.missing`)).status,400);
     const saved = await (await fetch(`${base}/api/settings`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ locale: "zh-Hant-TW" }) })).json();
     assert.equal(saved.locale, "zh-TW");
     assert.equal((await (await fetch(`${base}/api/state`)).json()).locale, "zh-Hant-TW");
@@ -148,16 +150,46 @@ test("private reader refuses an unavailable exact-version deep link instead of s
   assert.equal(dom.window.location.search.includes("version=forged"),true);
 });
 
-test("preferred shell exposes only the reader and keeps later navigation inert",async()=>{
+test("preferred shell exposes only Reader and Review while keeping later navigation inert",async()=>{
   const html=await readFile("apps/web/public/index.html","utf8");
   const dom=new JSDOM(html);
   const nav=dom.window.document.querySelector(".primary-nav");
-  assert.equal(nav.querySelectorAll("a").length,1);
-  assert.equal(nav.querySelector("a b")?.textContent.trim(),"Reader");
+  assert.deepEqual([...nav.querySelectorAll("a b")].map(item=>item.textContent.trim()),["Reader","Review"]);
   const planned=[...nav.querySelectorAll("button")];
   assert.ok(planned.length>=1);
   assert.ok(planned.every(button=>button.disabled&&button.getAttribute("aria-disabled")==="true"));
   assert.doesNotMatch(html,/CLI parity/iu);
+});
+
+test("preferred Review client keeps answers hidden, requires reveal, and suppresses duplicate grading",async()=>{
+  const html=await readFile("apps/web/public/index.html","utf8"),appScript=await readFile("apps/web/public/app.js","utf8");
+  const dom=new JSDOM(html,{url:"http://127.0.0.1:8787/app?view=review",runScripts:"outside-only"});
+  dom.window.document.cookie="wsm_csrf=review-csrf; Path=/";
+  let reveals=0,answers=0,complete=false;
+  const reviewPackage={packageId:"com.example.reviews",packageVersion:"1.0.0",stablePackageId:"com.example.reading",name:"Example Review",scope:"ordinary",sources:[{sourcePath:"units/chapter.md",title:"Chapter",sourceExists:true,itemCount:1,due:complete?0:1,reviewed:complete?1:0,status:complete?"complete":"due"}]};
+  dom.window.fetch=async(path,options={})=>{
+    if(path==="/api/state")return Response.json({locale:"en",theme:"dark",user:{username:"learner"}});
+    if(path==="/api/review")return Response.json({packages:[reviewPackage],unavailable:[]});
+    if(String(path).startsWith("/api/review/session?"))return Response.json(complete?{packageId:reviewPackage.packageId,packageVersion:"1.0.0",sourcePath:"units/chapter.md",total:1,due:0,complete:true}:{packageId:reviewPackage.packageId,packageVersion:"1.0.0",sourcePath:"units/chapter.md",total:1,due:1,complete:false,card:{itemId:"stable-card",title:"Unsafe <title>",kind:"basic-card",promptLines:["<img src=x onerror=alert(1)>"],hintLines:[],reviewCount:0}});
+    if(path==="/api/review/reveal"){reveals+=1;assert.equal(options.headers["X-CSRF-Token"],"review-csrf");return Response.json({itemId:"stable-card",answerLines:["<script>inert()</script>"],noteLines:[],exampleLines:["safe example"],sourceAvailable:true})}
+    if(path==="/api/review/answer"){answers+=1;await new Promise(resolve=>setTimeout(resolve,15));complete=true;return Response.json({state:{reviewCount:1}})}
+    throw new Error(`Unexpected request ${path}`);
+  };
+  dom.window.eval(appScript);
+  await waitFor(()=>dom.window.document.querySelector(".review-card")!==null);
+  assert.equal(dom.window.document.querySelector(".review-answer"),null);
+  dom.window.document.querySelector("#review-session").dispatchEvent(new dom.window.KeyboardEvent("keydown",{key:"Enter",bubbles:true}));
+  await waitFor(()=>dom.window.document.querySelector(".review-answer")!==null);
+  assert.equal(reveals,1);
+  assert.equal(dom.window.document.querySelector(".review-answer script"),null);
+  assert.match(dom.window.document.querySelector(".review-answer").textContent,/<script>inert\(\)<\/script>/u);
+  dom.window.document.dispatchEvent(new dom.window.KeyboardEvent("keydown",{key:"Enter",bubbles:true}));
+  await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(answers,0);
+  dom.window.document.dispatchEvent(new dom.window.KeyboardEvent("keydown",{key:"1",bubbles:true}));
+  dom.window.document.dispatchEvent(new dom.window.KeyboardEvent("keydown",{key:"1",bubbles:true}));
+  await waitFor(()=>answers===1&&/Session complete/.test(dom.window.document.querySelector("#review-session").textContent));
+  assert.equal(answers,1);
 });
 
 test("private reader rejects a package-only deep link without silently choosing a version",async()=>{

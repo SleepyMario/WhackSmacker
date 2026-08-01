@@ -2,7 +2,7 @@ import { execFile } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { promisify } from "node:util";
 import { startWebServer } from "../../dist/apps/web/server.js";
 import { assertDatabaseReady, createDatabasePool, createUser, databaseConfig, migrateDatabase, recordUserReview, selectPackage, updateUserSettings } from "../../dist/packages/storage/postgres.js";
@@ -11,6 +11,8 @@ import { canonicalCastFixture, chapterParticipantFixture, dialogueChapterFixture
 const run = promisify(execFile);
 const alpha = "com.example.playwright.alpha";
 const beta = "com.example.playwright.beta";
+const review = `${alpha}.reviews`;
+const specialized = `${alpha}.specialized-reviews`;
 const password = "Browser-test-password-47!";
 
 export default async function globalSetup() {
@@ -44,7 +46,11 @@ export default async function globalSetup() {
     const userB = await createUser(pool, "browser-reader-b", password);
     await selectPackage(pool, userA.id, alpha, "1.0.0");
     await selectPackage(pool, userA.id, beta, "2.0.0");
+    await selectPackage(pool, userA.id, review, "1.0.0");
+    await selectPackage(pool, userA.id, review, "2.0.0");
+    await selectPackage(pool, userA.id, specialized, "1.0.0");
     await selectPackage(pool, userB.id, alpha, "1.0.0");
+    await selectPackage(pool, userB.id, review, "1.0.0");
     await updateUserSettings(pool, userA.id, "en");
     await updateUserSettings(pool, userB.id, "en");
     await recordUserReview(pool, userA.id, { packageId: alpha, packageVersion: "1.0.0", sourcePath: "review/cards.tsv", itemId: "stable-browser-card" }, "good", "2026-07-12T00:00:00Z");
@@ -64,7 +70,9 @@ export default async function globalSetup() {
       WSM_E2E_USER_A_ID: userA.id,
       WSM_E2E_USER_B_ID: userB.id,
       WSM_E2E_ALPHA_PACKAGE: alpha,
-      WSM_E2E_BETA_PACKAGE: beta
+      WSM_E2E_BETA_PACKAGE: beta,
+      WSM_E2E_REVIEW_PACKAGE: review,
+      WSM_E2E_SPECIALIZED_PACKAGE: specialized
     });
     return cleanup;
   } catch (error) {
@@ -101,6 +109,28 @@ async function createPackages(dataDir) {
       file("metadata.json", "{}", "application/json"),
       file("review/cards.tsv", "prompt\tanswer", "text/tab-separated-values")
     ]
+  }));
+  records.push(await writePackage(dataDir, {
+    packageId: review, version: "2.0.0", displayName: "Portable Browser Review", contentType: "core-review", capabilities: ["core-review"], relatedPackageIds: [alpha],
+    files: [],
+    memorizationFiles: [file("content/memorization/cards.json", JSON.stringify({ schemaVersion: 1, items: [
+      { schemaVersion: 1, id: "stable-browser-card", kind: "basic-card", prompt: { text: "Version two prompt" }, answer: { text: "Version two answer" }, source: { path: "units/core/chapter-010-ten/chapter.md", title: "Chapter 10 — Greetings" } }
+    ] }), "application/vnd.whacksmacker.memorization-items+json")]
+  }));
+  records.push(await writePackage(dataDir, {
+    packageId: review, version: "1.0.0", displayName: "Portable Browser Review", contentType: "core-review", capabilities: ["core-review"], relatedPackageIds: [alpha],
+    files: [],
+    memorizationFiles: [file("content/memorization/cards.json", JSON.stringify({ schemaVersion: 1, items: [
+      { schemaVersion: 1, id: "stable-browser-card", kind: "basic-card", prompt: { text: "What does goedemorgen mean?", language: "en" }, answer: { text: "Good morning.", language: "en" }, notes: "A common morning greeting.", examples: ["Goedemorgen, Alex!", "Goedemorgen allemaal."], source: { path: "units/core/chapter-010-ten/chapter.md", title: "Chapter 10 — Greetings" } },
+      { schemaVersion: 1, id: "unsafe-browser-card", kind: "basic-card", prompt: { text: "<img src=x onerror=alert(1)> remains text" }, answer: { text: "<script>never runs</script>" }, examples: ["[unsafe](javascript:alert(1))"], source: { path: "units/core/chapter-010-ten/chapter.md", title: "Chapter 10 — Greetings" } }
+    ] }), "application/vnd.whacksmacker.memorization-items+json")]
+  }));
+  records.push(await writePackage(dataDir, {
+    packageId: specialized, version: "1.0.0", displayName: "Portable Specialized Review", contentType: "specialized-review", capabilities: ["specialized-review"], relatedPackageIds: [alpha],
+    files: [],
+    memorizationFiles: [file("content/memorization/specialized.json", JSON.stringify({ schemaVersion: 1, items: [
+      { schemaVersion: 1, id: "specialized-browser-card", kind: "concept", prompt: { text: "Specialized prompt" }, answer: { text: "Specialized answer" }, source: { path: "subjects/linguistics/topic.md", title: "Linguistics" } }
+    ] }), "application/vnd.whacksmacker.memorization-items+json")]
   }));
   records.push(await writePackage(dataDir, {
     packageId: beta, version: "2.0.0", displayName: "Second Browser Curriculum", contentType: "language-curriculum",
@@ -141,7 +171,9 @@ async function writePackage(dataDir, options) {
   await mkdir(join(root, "content"), { recursive: true });
   await writeFile(join(root, "content", "content.json"), JSON.stringify(snapshot));
   const source = { repository: "https://example.invalid/playwright-fixture", commit: "0".repeat(40) };
-  const manifest = { packageFormatVersion: 1, packageId: options.packageId, packageVersion: options.version, displayName: options.displayName, description: "Playwright fixture", contentType: options.contentType, contentSchemaVersion: "1.0.0", minimumWhackSmackerVersion: "0.0.1", source, generatedAt: "2026-07-12T00:00:00Z", generator: { name: "playwright-test", version: "1.0.0" }, entryPoints: [{ id: "primary", mediaType: "application/json", path: "content/content.json", role: "primary" }], files: [{ path: "content/content.json", mediaType: "application/json", size: 1, sha256: "0".repeat(64) }], localization: options.localization };
+  for (const item of options.memorizationFiles || []) { const destination=join(root,item.path);await mkdir(dirname(destination),{recursive:true});await writeFile(destination,item.text); }
+  const manifestFiles=[{ path: "content/content.json", mediaType: "application/json", size: 1, sha256: "0".repeat(64) },...(options.memorizationFiles||[]).map(item=>({path:item.path,mediaType:item.mediaType,size:Buffer.byteLength(item.text),sha256:"2".repeat(64)}))];
+  const manifest = { packageFormatVersion: 1, packageId: options.packageId, packageVersion: options.version, displayName: options.displayName, description: "Playwright fixture", contentType: options.contentType, ...(options.capabilities?{capabilities:options.capabilities}:{}), ...(options.relatedPackageIds?{relatedPackageIds:options.relatedPackageIds}:{}), contentSchemaVersion: "1.0.0", minimumWhackSmackerVersion: "0.0.1", source, generatedAt: "2026-07-12T00:00:00Z", generator: { name: "playwright-test", version: "1.0.0" }, entryPoints: [{ id: "primary", mediaType: "application/json", path: "content/content.json", role: "primary" }], files: manifestFiles, localization: options.localization };
   await writeFile(join(root, "manifest.json"), JSON.stringify(manifest));
-  return { packageId: options.packageId, packageVersion: options.version, displayName: options.displayName, contentType: options.contentType, contentSchemaVersion: "1.0.0", minimumWhackSmackerVersion: "0.0.1", source, installedAt: "2026-07-12T00:00:00Z", installPath, manifestSha256: "0".repeat(64), archiveSha256: "1".repeat(64), archiveSize: 1, catalogueId: "playwright-test" };
+  return { packageId: options.packageId, packageVersion: options.version, displayName: options.displayName, contentType: options.contentType, ...(options.capabilities?{capabilities:options.capabilities}:{}), ...(options.relatedPackageIds?{relatedPackageIds:options.relatedPackageIds}:{}), contentSchemaVersion: "1.0.0", minimumWhackSmackerVersion: "0.0.1", source, installedAt: "2026-07-12T00:00:00Z", installPath, manifestSha256: "0".repeat(64), archiveSha256: "1".repeat(64), archiveSize: 1, catalogueId: "playwright-test" };
 }

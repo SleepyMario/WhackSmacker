@@ -72,6 +72,12 @@ Small review decks should remain stable package sources. Progressive review flow
 
 The removed legacy command shape `whacksmacker review <deck-name>` no longer routes. Use the native package review subcommands listed above.
 
+## Web workflow
+
+The authenticated Web Review surface discovers separately installed reading and Review packages but authorizes every request against the exact physical Review package ID and version selected for the user. Stable card progress continues to use the shared reading/Review identity supplied by the package layer. The browser never schedules cards or stores Review progress locally: the server uses the shared scheduler and local or PostgreSQL progress store.
+
+Each card starts with its answer hidden. Enter or Space reveals it once; after reveal, keys 1–4 or the named buttons submit Again, Hard, Good, or Easy. The client sends the card's expected review count so a repeated or retried submission is rejected without appending another event.
+
 ## Progress Separation
 
 Reading-to-review sync writes scheduler state only to the native review progress store. It does not mutate installed packages, package archives, source repositories, reading files, or memorization item files.
@@ -85,5 +91,4 @@ This point did not implement:
 - backup or migration behavior;
 - Anki parity tests;
 - Anki removal;
-- web UI;
 - fuzzy answer grading.

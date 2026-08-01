@@ -17,6 +17,7 @@ import {
   revokeSession,
   selectedPackages,
   selectPackage,
+  StaleReviewStateError,
   unselectPackage,
   updateUserSettings,
   userSettings,
@@ -89,6 +90,8 @@ test("real PostgreSQL migrations, sessions, and two-user state are isolated", { 
     await recordUserReview(pool, a.id, identity, "good", "2026-07-11T00:00:00Z");
     assert.equal(Number((await pool.query("SELECT count(*) count FROM review_history WHERE user_id=$1", [a.id])).rows[0].count), 1);
     assert.equal(Number((await pool.query("SELECT count(*) count FROM review_history WHERE user_id=$1", [b.id])).rows[0].count), 0);
+    await assert.rejects(recordUserReview(pool,a.id,identity,"easy","2026-07-11T00:01:00Z",0),StaleReviewStateError);
+    assert.equal(Number((await pool.query("SELECT count(*) count FROM review_history WHERE user_id=$1", [a.id])).rows[0].count),1,"a stale retry must not append a second event");
 
     server = await startWebServer({ host: "127.0.0.1", port: 0, databaseUrl: process.env.TEST_DATABASE_URL, secureCookies:true });
     const address = server.address(); assert.ok(address && typeof address === "object");

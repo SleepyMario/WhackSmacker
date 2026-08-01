@@ -91,6 +91,8 @@ export interface ReadingReviewSource {
 }
 
 export interface ReadingReviewItem {
+  /** Installed package that supplied this card; authorization uses this exact identity. */
+  readonly reviewPackageId: string;
   readonly packageId: string;
   readonly packageVersion: string;
   readonly item: MemorizationItem;
@@ -176,6 +178,7 @@ export async function listReadingReviewItems(options: ListReadingReviewItemsOpti
           continue;
         }
         results.push({
+          reviewPackageId: contentPackage.packageId,
           packageId: identityPackageId,
           packageVersion: contentPackage.packageVersion,
           item,

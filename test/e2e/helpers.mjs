@@ -12,6 +12,8 @@ export async function resetUsers() {
     await pool.query("UPDATE users SET enabled=true WHERE id=ANY($1::uuid[])", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
     await pool.query("UPDATE user_settings SET source_locale='en',theme='dark' WHERE user_id=ANY($1::uuid[])", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
     await pool.query("UPDATE sessions SET revoked_at=now() WHERE user_id=ANY($1::uuid[]) AND revoked_at IS NULL", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
+    await pool.query("DELETE FROM review_history WHERE user_id=ANY($1::uuid[])", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
+    await pool.query("DELETE FROM review_progress WHERE user_id=ANY($1::uuid[])", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
   } finally { await pool.end(); }
 }
 
@@ -43,8 +45,14 @@ export async function login(page, user = "A", returnTo = "/app") {
   await page.keyboard.type(required("WSM_E2E_PASSWORD"));
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/app(?:\?|$)/u);
-  await expect(page.locator("#controls")).toBeVisible();
-  await expect(page.locator("#curriculum")).toBeEnabled();
+  const review = new URL(`${baseUrl()}${returnTo.startsWith("/") ? returnTo : `/${returnTo}`}`).searchParams.get("view") === "review";
+  if (review) {
+    await expect(page.locator("#view-review")).toBeVisible();
+    await expect(page.locator("#review-package")).toBeEnabled();
+  } else {
+    await expect(page.locator("#controls")).toBeVisible();
+    await expect(page.locator("#curriculum")).toBeEnabled();
+  }
   if (new URL(`${baseUrl()}${returnTo.startsWith("/") ? returnTo : `/${returnTo}`}`).searchParams.has("chapter")) {
     await expect(page.locator("#reader")).toBeVisible();
     await expect(page.locator("#status")).toContainText("loaded");
