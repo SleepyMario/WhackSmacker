@@ -288,6 +288,22 @@ test("light sidebar uses neutral accessible tokens while approved dark token val
   assert.ok(contrast("#c074ff",light["sidebar-bg"])>=3);
 });
 
+test("Reader selected states share the approved Review palette without dark-purple slabs",async()=>{
+  const css=await readFile("apps/web/public/styles.css","utf8");
+  const rootBlock=/:root\s*\{([\s\S]*?)\n\}/u.exec(css)?.[1]??"";
+  assert.match(rootBlock,/--selection-bg:\s*var\(--panel-2\)/u);
+  assert.match(rootBlock,/--selection-border:\s*var\(--purple-bright\)/u);
+  assert.match(rootBlock,/--selection-text:\s*var\(--ink\)/u);
+  assert.match(rootBlock,/--selection-indicator:\s*var\(--purple\)/u);
+  assert.match(rootBlock,/--selection-focus-ring:\s*#c074ff/u);
+  assert.doesNotMatch(css,/#321761|#451886|#2a1645/iu);
+  assert.match(css,/\.mode-control button\.active\s*\{[^}]*background:\s*var\(--selection-bg\)[^}]*box-shadow:\s*inset 0 -3px var\(--selection-indicator\)/u);
+  assert.match(css,/\.switch input:checked \+ span\s*\{[^}]*background:\s*var\(--selection-bg\)/u);
+  assert.match(css,/\.chapters button\[aria-current="true"\]\s*\{[^}]*background:\s*var\(--selection-bg\)/u);
+  assert.match(css,/\.chapter-navigation \.button\s*\{[^}]*background:\s*var\(--selection-bg\)/u);
+  assert.match(css,/\.deck-item\[aria-current="true"\]\s*\{[^}]*border-color:\s*var\(--selection-border\)[^}]*box-shadow:\s*inset 3px 0 var\(--selection-indicator\)/u);
+});
+
 async function waitFor(predicate, detail = () => "") {
   for (let attempt = 0; attempt < 100; attempt++) {
     if (predicate()) return;

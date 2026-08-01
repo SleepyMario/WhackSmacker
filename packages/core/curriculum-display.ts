@@ -1,3 +1,5 @@
+import { unicodeTerminalDisplayWidth } from "./unicode-display-width";
+
 export type CurriculumDisplayMode = "normal" | "expert" | "developer";
 export type CurriculumContentRole = "reading" | "grammar-easy" | "grammar-hard";
 
@@ -13,6 +15,38 @@ export interface ReadingAudienceSection {
   readonly expertHeading?: string;
   readonly normal: string;
   readonly expert: string;
+}
+
+export interface ReadingSupport {
+  readonly schemaVersion: 1;
+  readonly semanticRoleSyntaxVersion?: 1;
+  readonly sourcePath: "chapter.md";
+  readonly audienceSections: readonly ReadingAudienceSection[];
+  readonly breakdown?: { readonly normal: string; readonly expert: string };
+  readonly characters?: { readonly heading: string; readonly normal: string; readonly expert: string };
+}
+
+export interface StructuredReadingTranslation {
+  readonly schemaVersion: 1;
+  readonly id: string;
+  readonly language: "en";
+  readonly sourceLanguage: string;
+  readonly sourcePath: "chapter.md";
+  readonly sourceSection: string;
+  readonly readingType: "dialogue" | "narrative";
+  readonly turns?: readonly { readonly speaker: string; readonly text: string }[];
+  readonly sentences?: readonly string[];
+  readonly paragraphs?: readonly string[];
+}
+
+export interface ReadingChapterProjectionOptions {
+  readonly mode?: CurriculumDisplayMode;
+  readonly translationsEnabled?: boolean;
+  readonly charactersEnabled?: boolean;
+  readonly breakdownEnabled?: boolean;
+  readonly notesEnabled?: boolean;
+  readonly support?: ReadingSupport;
+  readonly translation?: StructuredReadingTranslation;
 }
 
 export const defaultCurriculumDisplayMode: CurriculumDisplayMode = "normal";
@@ -42,6 +76,262 @@ export function projectReadingAudienceSection(
       : section.normalHeading;
   if (audienceHeading === null) return content;
   return `### ${grammarSection ? "Grammar" : audienceHeading}\n\n${content}`;
+}
+
+/**
+ * Applies the same additive learner-support projection for every Reader
+ * surface. The primary chapter remains authoritative; sidecars can replace
+ * only their named support sections and can never replace the reading body.
+ */
+export function projectReadingChapterMarkdown(
+  markdown: string,
+  options: ReadingChapterProjectionOptions = {}
+): string {
+  const mode = options.mode ?? defaultCurriculumDisplayMode;
+  let output = markdown;
+  if (options.charactersEnabled !== true) {
+    output = removeNamedSectionFromMarkdown(output, "Sino-Vietnamese Vocabulary");
+    output = removeNamedSectionFromMarkdown(output, "Sino-Korean Vocabulary");
+    output = removeNamedSectionFromMarkdown(output, "Hanja");
+    output = removeNamedSectionFromMarkdown(output, "Character Notes");
+  }
+  if (options.support !== undefined) {
+    output = applyReadingSupport(output, options.support, {
+      mode,
+      charactersEnabled: options.charactersEnabled === true,
+      breakdownEnabled: options.breakdownEnabled === true
+    });
+  } else if (options.breakdownEnabled === true) {
+    output = insertBeforeExercises(output, "### Line-by-line Breakdown\n\nBreakdown unavailable for this chapter.\n");
+  }
+  let translationAvailable = hasNaturalEnglishTranslation(output);
+  if (options.translationsEnabled === true && options.translation !== undefined) {
+    output = insertStructuredReadingTranslation(output, options.translation);
+    translationAvailable = true;
+  }
+  if (options.translationsEnabled === true) {
+    output = addSpeakerLabelsToEmbeddedDialogueTranslation(output);
+    if (!translationAvailable) {
+      output = `${output.trimEnd()}\n\n### Natural English Translation\n\nTranslation unavailable for this chapter.\n`;
+    }
+  }
+  return projectCurriculumMarkdown(output, mode, {
+    contentRole: "reading",
+    translationsEnabled: options.translationsEnabled === true,
+    notesEnabled: options.notesEnabled !== false
+  });
+}
+
+export function parseReadingSupport(text: string): ReadingSupport | undefined {
+  try {
+    const value = JSON.parse(text) as ReadingSupport;
+    if (value.schemaVersion !== 1 || value.sourcePath !== "chapter.md" || !Array.isArray(value.audienceSections)) return undefined;
+    if (value.semanticRoleSyntaxVersion !== undefined && value.semanticRoleSyntaxVersion !== 1) return undefined;
+    if (!value.audienceSections.every((section) => typeof section.sourceHeading === "string"
+      && (section.normalHeading === undefined || section.normalHeading === null || typeof section.normalHeading === "string")
+      && (section.expertHeading === undefined || typeof section.expertHeading === "string")
+      && typeof section.normal === "string"
+      && typeof section.expert === "string")) return undefined;
+    return value;
+  } catch {
+    return undefined;
+  }
+}
+
+export function parseStructuredReadingTranslation(text: string): StructuredReadingTranslation | undefined {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+  if (!isObjectRecord(value)
+    || value.schemaVersion !== 1
+    || typeof value.id !== "string"
+    || value.id.trim().length === 0
+    || value.language !== "en"
+    || typeof value.sourceLanguage !== "string"
+    || value.sourceLanguage.trim().length === 0
+    || value.sourcePath !== "chapter.md"
+    || typeof value.sourceSection !== "string"
+    || value.sourceSection.trim().length === 0
+    || (value.readingType !== "dialogue" && value.readingType !== "narrative")
+    || ["introduction", "context", "setting", "participants", "sceneIntroduction"].some((key) => key in value)) {
+    return undefined;
+  }
+  const dialogueIsValid = value.readingType === "dialogue"
+    && Array.isArray(value.turns)
+    && value.turns.length > 0
+    && value.turns.every((turn) => isObjectRecord(turn)
+      && typeof turn.speaker === "string"
+      && turn.speaker.trim().length > 0
+      && typeof turn.text === "string"
+      && turn.text.trim().length > 0);
+  const narrativeIsValid = value.readingType === "narrative"
+    && ((Array.isArray(value.sentences)
+      && value.sentences.length > 0
+      && value.sentences.every((sentence) => typeof sentence === "string" && sentence.trim().length > 0))
+      || (Array.isArray(value.paragraphs)
+        && value.paragraphs.length > 0
+        && value.paragraphs.every((paragraph) => typeof paragraph === "string" && paragraph.trim().length > 0)));
+  return dialogueIsValid || narrativeIsValid ? value as unknown as StructuredReadingTranslation : undefined;
+}
+
+function applyReadingSupport(
+  markdown: string,
+  support: ReadingSupport,
+  options: { readonly mode: CurriculumDisplayMode; readonly charactersEnabled: boolean; readonly breakdownEnabled: boolean }
+): string {
+  let output = markdown;
+  const primarySetup = primaryReadingSetup(markdown);
+  for (const section of support.audienceSections) {
+    if (isPrimaryReadingHeading(section.sourceHeading)) continue;
+    if (section.sourceHeading === "Brief Introduction"
+      && primarySetup !== undefined
+      && [section.normal, section.expert].some((value) => normalizedSetup(value).includes(normalizedSetup(primarySetup)))) continue;
+    output = replaceNamedSection(output, section.sourceHeading, projectReadingAudienceSection(section, options.mode));
+  }
+  const embeddedBreakdown = markdownSectionBody(output, "Line-by-Line Breakdown")
+    ?? markdownSectionBody(output, "Line-by-line Breakdown");
+  output = removeNamedSectionFromMarkdown(output, "Line-by-Line Breakdown");
+  output = removeNamedSectionFromMarkdown(output, "Line-by-line Breakdown");
+  output = removeNamedSectionFromMarkdown(output, "Sino-Vietnamese Vocabulary");
+  output = removeNamedSectionFromMarkdown(output, "Sino-Korean Vocabulary");
+  output = removeNamedSectionFromMarkdown(output, "Hanja");
+  output = removeNamedSectionFromMarkdown(output, "Character Notes");
+  if (options.charactersEnabled && support.characters !== undefined) {
+    const body = options.mode === "developer"
+      ? `### ${support.characters.heading}\n\n#### Normal\n\n${support.characters.normal}\n\n#### Expert\n\n${support.characters.expert}`
+      : `### ${support.characters.heading}\n\n${options.mode === "expert" ? support.characters.expert : support.characters.normal}`;
+    output = insertAfterNamedSection(output, "New Vocabulary", body);
+  }
+  if (options.breakdownEnabled) {
+    const body = support.breakdown === undefined
+      ? embeddedBreakdown === undefined
+        ? "### Line-by-line Breakdown\n\nBreakdown unavailable for this chapter."
+        : `### Line-by-line Breakdown\n\n${embeddedBreakdown}`
+      : options.mode === "developer"
+        ? `### Line-by-line Breakdown: Normal\n\n${support.breakdown.normal}\n\n### Line-by-line Breakdown: Expert\n\n${support.breakdown.expert}`
+        : `### Line-by-line Breakdown\n\n${options.mode === "expert" ? support.breakdown.expert : support.breakdown.normal}`;
+    output = insertBeforeExercises(output, body);
+  }
+  return output;
+}
+
+function primaryReadingSetup(markdown: string): string | undefined {
+  for (const heading of ["Dialogue", "Narrative"]) {
+    const body = markdownSectionBody(markdown, heading);
+    if (body === undefined) continue;
+    return body.split(/\n\s*\n/u).find((part) => part.trim() !== "")?.trim();
+  }
+  return undefined;
+}
+
+function normalizedSetup(value: string): string {
+  return value.normalize("NFKC").replace(/\s+/gu, " ").trim();
+}
+
+function isPrimaryReadingHeading(title: string): boolean {
+  return /^(?:Dialogue|Narrative|Learner-facing (?:Dialogue|Narrative|Controlled Reading|Read Content)|Controlled Reading|Read Content|Model Dialogue|Model Mini Dialogue|Model Mini Text)$/iu.test(title.trim());
+}
+
+function markdownSectionBody(markdown: string, title: string): string | undefined {
+  const range = markdownSectionRange(markdown, title);
+  if (range === undefined) return undefined;
+  const body = range.lines.slice(range.start + 1, range.end).join("\n").trim();
+  return body.length === 0 ? undefined : body;
+}
+
+function markdownSectionRange(markdown: string, title: string): { readonly lines: string[]; readonly start: number; readonly end: number } | undefined {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const escapedTitle = title.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  const start = lines.findIndex((line) => new RegExp(`^#{1,6}\\s+${escapedTitle}\\s*$`, "u").test(line.trim()));
+  if (start < 0) return undefined;
+  const level = /^(#{1,6})/u.exec(lines[start] ?? "")?.[1]?.length ?? 1;
+  const next = lines.findIndex((line, index) => index > start && (() => {
+    const nextLevel = /^(#{1,6})\s+/u.exec(line.trim())?.[1]?.length;
+    return nextLevel !== undefined && (title === "Brief Introduction" || nextLevel <= level);
+  })());
+  return { lines, start, end: next < 0 ? lines.length : next };
+}
+
+function replaceNamedSection(markdown: string, title: string, replacement: string): string {
+  const range = markdownSectionRange(markdown, title);
+  return range === undefined ? markdown : [...range.lines.slice(0, range.start), ...replacement.split("\n"), ...range.lines.slice(range.end)].join("\n");
+}
+
+function removeNamedSectionFromMarkdown(markdown: string, title: string): string {
+  const range = markdownSectionRange(markdown, title);
+  return range === undefined ? markdown : [...range.lines.slice(0, range.start), ...range.lines.slice(range.end)].join("\n");
+}
+
+function insertAfterNamedSection(markdown: string, title: string, addition: string): string {
+  const range = markdownSectionRange(markdown, title);
+  if (range === undefined) return markdown;
+  const developerOnlyStart = range.lines.findIndex((line, index) => index > range.start && index < range.end && line.trim() === developerOnlyStartMarker);
+  const insertionIndex = developerOnlyStart < 0 ? range.end : developerOnlyStart;
+  return [...range.lines.slice(0, insertionIndex), "", ...addition.split("\n"), ...range.lines.slice(insertionIndex)].join("\n");
+}
+
+function insertBeforeExercises(markdown: string, addition: string): string {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const index = lines.findIndex((line) => /^##\s+Simple Exercises\s*$/iu.test(line.trim()));
+  const at = index < 0 ? lines.length : index;
+  return [...lines.slice(0, at), "", ...addition.split("\n"), "", ...lines.slice(at)].join("\n");
+}
+
+function insertStructuredReadingTranslation(markdown: string, translation: StructuredReadingTranslation): string {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const escapedSourceSection = translation.sourceSection.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+  const sourceHeading = new RegExp(`^#{2,3}\\s+${escapedSourceSection}$`, "u");
+  const sourceHeadingIndex = lines.findIndex((line) => sourceHeading.test(line.trim()));
+  if (sourceHeadingIndex < 0) return markdown;
+  const nextSectionIndex = lines.findIndex((line, index) => index > sourceHeadingIndex && /^###\s+/u.test(line));
+  if (nextSectionIndex < 0) return markdown;
+  const translationBody = translation.readingType === "dialogue"
+    ? formatStructuredTranslationTurns(translation.turns ?? [])
+    : translation.sentences ?? translation.paragraphs ?? [];
+  return [...lines.slice(0, nextSectionIndex), "### Natural English Translation", "", ...translationBody, "", ...lines.slice(nextSectionIndex)].join("\n");
+}
+
+function formatStructuredTranslationTurns(turns: readonly { readonly speaker: string; readonly text: string }[]): readonly string[] {
+  const speakerWidth = Math.max(...turns.map((turn) => unicodeTerminalDisplayWidth(turn.speaker)));
+  return turns.map((turn) => `${turn.speaker}${" ".repeat(Math.max(0, speakerWidth - unicodeTerminalDisplayWidth(turn.speaker)))}: ${turn.text}`);
+}
+
+function hasNaturalEnglishTranslation(markdown: string): boolean {
+  return /^#{1,6}\s+(?:Natural English Translation|English translation)\s*$/imu.test(markdown);
+}
+
+function addSpeakerLabelsToEmbeddedDialogueTranslation(markdown: string): string {
+  const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
+  const dialogueHeading = lines.findIndex((line) => /^###\s+(?:Learner-facing )?Dialogue\s*$/iu.test(line.trim()));
+  const translationHeading = lines.findIndex((line) => /^###\s+(?:Natural English Translation|English translation)\s*$/iu.test(line.trim()));
+  if (dialogueHeading < 0 || translationHeading < 0 || translationHeading <= dialogueHeading) return markdown;
+  const sourceEnd = lines.findIndex((line, index) => index > dialogueHeading && /^###\s+/u.test(line.trim()));
+  const translationEnd = lines.findIndex((line, index) => index > translationHeading && /^###\s+/u.test(line.trim()));
+  const sourceLines = lines.slice(dialogueHeading + 1, sourceEnd < 0 ? lines.length : sourceEnd)
+    .map((line) => /^\s*(\S(?:.*?\S)?)\s*[:：]\s*\S/u.exec(line)?.[1])
+    .filter((speaker): speaker is string => speaker !== undefined);
+  const end = translationEnd < 0 ? lines.length : translationEnd;
+  const translatedIndexes = lines.slice(translationHeading + 1, end)
+    .map((line, offset) => ({ index: translationHeading + 1 + offset, line }))
+    .filter(({ line }) => line.trim().length > 0 && !/^```/u.test(line.trim()));
+  if (sourceLines.length === 0 || translatedIndexes.length !== sourceLines.length || translatedIndexes.some(({ line }) => isDialogueSpeakerLine(line))) return markdown;
+  const speakerWidth = Math.max(...sourceLines.map(unicodeTerminalDisplayWidth));
+  for (const [index, translated] of translatedIndexes.entries()) {
+    const speaker = sourceLines[index] ?? "";
+    lines[translated.index] = `${speaker}${" ".repeat(Math.max(0, speakerWidth - unicodeTerminalDisplayWidth(speaker)))}: ${translated.line.trim()}`;
+  }
+  return lines.join("\n");
+}
+
+function isDialogueSpeakerLine(line: string): boolean {
+  return /^\s*\S(?:.*?\S)?\s*[:：]\s*\S/u.test(line);
+}
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export interface NormalViewVoiceViolation {

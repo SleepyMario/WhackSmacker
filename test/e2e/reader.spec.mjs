@@ -154,6 +154,44 @@ test("reader modes and support toggles use the exact current package projection"
   await expect(page.locator("#translation-toggle")).toBeChecked();
   await expect(page.locator("#characters-toggle")).toBeChecked();
   await expect(page.locator("#breakdown-toggle")).toBeChecked();
+
+  for (const theme of ["dark", "light"]) {
+    if (await page.locator("html").getAttribute("data-theme") !== theme) await page.locator("#theme-toggle").click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+    await page.evaluate(() => document.activeElement?.blur());
+    for (let attempt = 0; attempt < 20 && await page.evaluate(() => document.activeElement?.id !== "curriculum"); attempt += 1) {
+      await page.keyboard.press("Tab");
+    }
+    await expect(page.locator("#curriculum")).toBeFocused();
+    const colors = await page.evaluate(() => {
+      const root = getComputedStyle(document.documentElement);
+      const selectedChapter = document.querySelector('#chapters button[aria-current="true"]');
+      const selectedMode = document.querySelector('.mode-control button[aria-pressed="true"]');
+      const checkedTrack = document.querySelector('.switch input:checked + span');
+      const next = document.querySelector("#next");
+      const curriculum = document.querySelector("#curriculum");
+      return {
+        selectionBackground: root.getPropertyValue("--selection-bg").trim(),
+        selectionBorder: root.getPropertyValue("--selection-border").trim(),
+        selectionText: root.getPropertyValue("--selection-text").trim(),
+        chapterBackground: getComputedStyle(selectedChapter).backgroundColor,
+        modeBackground: getComputedStyle(selectedMode).backgroundColor,
+        toggleBackground: getComputedStyle(checkedTrack).backgroundColor,
+        navigationBackground: getComputedStyle(next).backgroundColor,
+        focusOutline: getComputedStyle(curriculum).outlineColor,
+        resolvedBackground: root.getPropertyValue("--panel-2").trim(),
+        resolvedBorder: root.getPropertyValue("--purple-bright").trim(),
+        resolvedText: root.getPropertyValue("--ink").trim()
+      };
+    });
+    expect(colors.selectionBackground).toBe(colors.resolvedBackground);
+    expect(colors.selectionBorder).toBe(colors.resolvedBorder);
+    expect(colors.selectionText).toBe(colors.resolvedText);
+    expect(new Set([colors.chapterBackground, colors.modeBackground, colors.toggleBackground, colors.navigationBackground]).size).toBe(1);
+    expect(colors.chapterBackground).not.toBe("rgb(50, 23, 97)");
+    expect(colors.toggleBackground).not.toBe("rgb(69, 24, 134)");
+    expect(colors.focusOutline).toBe("rgb(192, 116, 255)");
+  }
 });
 
 test("history and generation tracking prevent stale chapter replacement", async ({ page }) => {

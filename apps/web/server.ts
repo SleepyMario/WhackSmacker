@@ -12,8 +12,11 @@ import {
   readInstalledContentEntry,
   getInstalledLanguageCurriculum,
   readInstalledLanguageCurriculumChapter,
+  combineDeveloperGrammarMarkdown,
+  parseReadingSupport as parseSharedReadingSupport,
+  parseStructuredReadingTranslation as parseSharedStructuredReadingTranslation,
   projectCurriculumMarkdown,
-  projectReadingAudienceSection,
+  projectReadingChapterMarkdown,
   listReadingReviewItems,
   listReadingReviewSources,
   readingReviewSourcesFromItems,
@@ -31,7 +34,8 @@ import {
   InstalledCurriculumUnavailableError,
   type CurriculumContentRole,
   type CurriculumDisplayMode,
-  type ReadingAudienceSection,
+  type ReadingSupport,
+  type StructuredReadingTranslation,
   type ReadingReviewItem,
   type InstalledPackageRecord,
   type ReviewItemIdentity,
@@ -310,24 +314,6 @@ interface WebChapterProjectionOptions {
   readonly breakdown:boolean;
 }
 
-interface WebReadingSupport {
-  readonly schemaVersion:1;
-  readonly sourcePath:"chapter.md";
-  readonly audienceSections:readonly ReadingAudienceSection[];
-  readonly breakdown?:{readonly normal:string;readonly expert:string};
-  readonly characters?:{readonly heading:string;readonly normal:string;readonly expert:string};
-}
-
-interface WebReadingTranslation {
-  readonly schemaVersion:1;
-  readonly language:"en";
-  readonly sourcePath:"chapter.md";
-  readonly sourceSection:string;
-  readonly readingType:"dialogue"|"narrative";
-  readonly turns?:readonly {readonly speaker:string;readonly text:string}[];
-  readonly paragraphs?:readonly string[];
-}
-
 async function projectWebCurriculumChapter(raw:string,chapterPath:string,options:WebChapterProjectionOptions):Promise<string>{
   const entries=await listReadableContentEntries(options.packageId,options.dataDir,options.packageVersion,options.locale);
   const paths=new Set(entries.map(entry=>entry.path));
@@ -339,7 +325,7 @@ async function projectWebCurriculumChapter(raw:string,chapterPath:string,options
     if(paths.has(expertPath)){
       try{
         const expert=await readInstalledContentEntry({dataDir:options.dataDir,packageId:options.packageId,packageVersion:options.packageVersion,path:expertPath,locale:options.locale});
-        markdown=combineDeveloperGrammar(raw,expert.text);
+        markdown=combineDeveloperGrammarMarkdown(raw,expert.text);
       }catch{/* A damaged optional pair must not hide the selected exact chapter. */}
     }
   }
@@ -347,70 +333,48 @@ async function projectWebCurriculumChapter(raw:string,chapterPath:string,options
   if(role==="reading"){
     const supportPath=chapterPath.replace(/chapter\.md$/u,"reading-support.json");
     const support=paths.has(supportPath)?await readOptionalSupport(supportPath,options):undefined;
-    markdown=projectReadingSupport(markdown,support,options);
+    let translation:StructuredReadingTranslation|undefined;
     if(options.translations){
       const translationPath=chapterPath.replace(/chapter\.md$/u,"reading-translation.en.json");
-      const translation=paths.has(translationPath)?await readOptionalTranslation(translationPath,options):undefined;
-      if(translation!==undefined)markdown=insertReadingTranslation(markdown,translation);
-      if(!hasEnglishTranslation(markdown))markdown=`${markdown.trimEnd()}\n\n### Natural English Translation\n\nTranslation unavailable for this chapter.\n`;
+      translation=paths.has(translationPath)?await readOptionalTranslation(translationPath,options):undefined;
+      if(translation!==undefined){
+        const legacy=insertExistingWebOverlayTranslation(markdown,translation);
+        if(legacy!==markdown){markdown=legacy;translation=undefined}
+      }
     }
+    return projectReadingChapterMarkdown(markdown,{mode:options.mode,translationsEnabled:options.translations,charactersEnabled:options.characters,breakdownEnabled:options.breakdown,support,translation});
   }
 
   return projectCurriculumMarkdown(markdown,options.mode,{contentRole:options.mode==="developer"&&role==="grammar-easy"?"reading":role,translationsEnabled:options.translations});
 }
 
-async function readOptionalSupport(path:string,options:WebChapterProjectionOptions):Promise<WebReadingSupport|undefined>{
+async function readOptionalSupport(path:string,options:WebChapterProjectionOptions):Promise<ReadingSupport|undefined>{
   try{
     const result=await readInstalledContentEntry({dataDir:options.dataDir,packageId:options.packageId,packageVersion:options.packageVersion,path,locale:options.locale});
-    const value=JSON.parse(result.text) as Partial<WebReadingSupport>;
-    if(value.schemaVersion!==1||value.sourcePath!=="chapter.md"||!Array.isArray(value.audienceSections))return undefined;
-    if(!value.audienceSections.every(section=>section!==null&&typeof section==="object"&&typeof section.sourceHeading==="string"&&typeof section.normal==="string"&&typeof section.expert==="string"))return undefined;
-    return value as WebReadingSupport;
+    return parseSharedReadingSupport(result.text);
   }catch{return undefined}
 }
 
-async function readOptionalTranslation(path:string,options:WebChapterProjectionOptions):Promise<WebReadingTranslation|undefined>{
+async function readOptionalTranslation(path:string,options:WebChapterProjectionOptions):Promise<StructuredReadingTranslation|undefined>{
   try{
     const result=await readInstalledContentEntry({dataDir:options.dataDir,packageId:options.packageId,packageVersion:options.packageVersion,path,locale:options.locale});
-    const value=JSON.parse(result.text) as Partial<WebReadingTranslation>;
-    if(value.schemaVersion!==1||value.language!=="en"||value.sourcePath!=="chapter.md"||typeof value.sourceSection!=="string")return undefined;
-    if(value.readingType==="dialogue"&&Array.isArray(value.turns)&&value.turns.every(turn=>typeof turn.speaker==="string"&&typeof turn.text==="string"))return value as WebReadingTranslation;
-    if(value.readingType==="narrative"&&Array.isArray(value.paragraphs)&&value.paragraphs.every(paragraph=>typeof paragraph==="string"))return value as WebReadingTranslation;
-    return undefined;
+    return parseSharedStructuredReadingTranslation(result.text);
   }catch{return undefined}
 }
 
-function projectReadingSupport(markdown:string,support:WebReadingSupport|undefined,options:WebChapterProjectionOptions):string{
-  const charactersHeadings=["Sino-Vietnamese Vocabulary","Sino-Korean Vocabulary","Hanja","Character Notes"];
-  let output=markdown;
-  const embeddedBreakdown=sectionBody(output,"Line-by-Line Breakdown")??sectionBody(output,"Line-by-line Breakdown");
-  output=removeSection(output,"Line-by-Line Breakdown");
-  output=removeSection(output,"Line-by-line Breakdown");
-  if(!options.characters)for(const heading of charactersHeadings)output=removeSection(output,heading);
-  if(support===undefined){
-    if(options.breakdown)output=insertBeforeExercises(output,`### Line-by-line Breakdown\n\n${embeddedBreakdown??"Breakdown unavailable for this chapter."}`);
-    return output;
-  }
-  for(const section of support.audienceSections){
-    if(/^(?:Dialogue|Narrative|Controlled Reading|Read Content)$/iu.test(section.sourceHeading.trim()))continue;
-    output=replaceSection(output,section.sourceHeading,projectReadingAudienceSection(section,options.mode));
-  }
-  for(const heading of charactersHeadings)output=removeSection(output,heading);
-  if(options.characters&&support.characters!==undefined){
-    const content=options.mode==="developer"
-      ?`### ${support.characters.heading}\n\n#### Normal\n\n${support.characters.normal}\n\n#### Expert\n\n${support.characters.expert}`
-      :`### ${support.characters.heading}\n\n${options.mode==="expert"?support.characters.expert:support.characters.normal}`;
-    output=insertAfterSection(output,"New Vocabulary",content);
-  }
-  if(options.breakdown){
-    const body=support.breakdown===undefined
-      ?embeddedBreakdown??"Breakdown unavailable for this chapter."
-      :options.mode==="developer"
-        ?`#### Normal\n\n${support.breakdown.normal}\n\n#### Expert\n\n${support.breakdown.expert}`
-        :options.mode==="expert"?support.breakdown.expert:support.breakdown.normal;
-    output=insertBeforeExercises(output,`### Line-by-line Breakdown\n\n${body}`);
-  }
-  return output;
+// Preserve the established Web overlay projection for the legacy heading
+// shape that the CLI intentionally does not reinterpret in this Reader task.
+function insertExistingWebOverlayTranslation(markdown:string,translation:StructuredReadingTranslation):string{
+  const lines=markdown.replace(/\r\n?/gu,"\n").split("\n");
+  const escaped=translation.sourceSection.replace(/[.*+?^${}()|[\]\\]/gu,"\\$&");
+  const start=lines.findIndex(line=>new RegExp(`^##\\s+${escaped}\\s*$`,"u").test(line.trim()));
+  if(start<0)return markdown;
+  const end=lines.findIndex((line,index)=>index>start&&/^#{1,2}\s+/u.test(line.trim()));
+  if(end<0||lines.slice(start+1,end).some(line=>/^###\s+/u.test(line.trim())))return markdown;
+  const body=translation.readingType==="dialogue"
+    ?(translation.turns??[]).map(turn=>`${turn.speaker}: ${turn.text}`)
+    :translation.sentences??translation.paragraphs??[];
+  return[...lines.slice(0,end),"### Natural English Translation","",...body,"",...lines.slice(end)].join("\n");
 }
 
 function curriculumContentRole(path:string):CurriculumContentRole{
@@ -431,69 +395,6 @@ function booleanQuery(url:URL,name:string):boolean{
   if(value==="true")return true;
   throw new HttpError(400,`${name} must be true or false.`);
 }
-
-function combineDeveloperGrammar(normal:string,expert:string):string{
-  const stripTitle=(value:string)=>value.replace(/^#\s+Grammar\s*-\s*(?:Easy|Hard)\s*$/imu,"").trim();
-  return`# Grammar\n\n## Normal\n\n${stripTitle(normal)}\n\n## Expert\n\n${stripTitle(expert)}\n`;
-}
-
-function sectionRange(markdown:string,title:string):{start:number;end:number;level:number}|undefined{
-  const lines=markdown.replace(/\r\n?/gu,"\n").split("\n");
-  for(let index=0;index<lines.length;index+=1){
-    const heading=/^(#{1,6})\s+(.+?)\s*$/u.exec(lines[index]?.trim()??"");
-    if(heading?.[2]?.trim().toLowerCase()!==title.trim().toLowerCase())continue;
-    const level=heading[1]?.length??1;
-    let end=lines.length;
-    for(let next=index+1;next<lines.length;next+=1){
-      const candidate=/^(#{1,6})\s+/u.exec(lines[next]?.trim()??"");
-      if(candidate&&(candidate[1]?.length??7)<=level){end=next;break}
-    }
-    return{start:index,end,level};
-  }
-  return undefined;
-}
-
-function sectionBody(markdown:string,title:string):string|undefined{
-  const lines=markdown.replace(/\r\n?/gu,"\n").split("\n"),range=sectionRange(markdown,title);
-  return range===undefined?undefined:lines.slice(range.start+1,range.end).join("\n").trim();
-}
-
-function removeSection(markdown:string,title:string):string{
-  const lines=markdown.replace(/\r\n?/gu,"\n").split("\n"),range=sectionRange(markdown,title);
-  return range===undefined?markdown:[...lines.slice(0,range.start),...lines.slice(range.end)].join("\n");
-}
-
-function replaceSection(markdown:string,title:string,replacement:string):string{
-  const lines=markdown.replace(/\r\n?/gu,"\n").split("\n"),range=sectionRange(markdown,title);
-  return range===undefined?markdown:[...lines.slice(0,range.start),replacement,...lines.slice(range.end)].join("\n");
-}
-
-function insertAfterSection(markdown:string,title:string,addition:string):string{
-  const lines=markdown.replace(/\r\n?/gu,"\n").split("\n"),range=sectionRange(markdown,title);
-  if(range===undefined)return`${markdown.trimEnd()}\n\n${addition}\n`;
-  return[...lines.slice(0,range.end),"",addition,"",...lines.slice(range.end)].join("\n");
-}
-
-function insertBeforeExercises(markdown:string,addition:string):string{
-  const lines=markdown.replace(/\r\n?/gu,"\n").split("\n");
-  const index=lines.findIndex(line=>/^#{1,6}\s+Exercises?\s*$/iu.test(line.trim()));
-  if(index<0)return`${markdown.trimEnd()}\n\n${addition}\n`;
-  return[...lines.slice(0,index),addition,"",...lines.slice(index)].join("\n");
-}
-
-function insertReadingTranslation(markdown:string,translation:WebReadingTranslation):string{
-  if(hasEnglishTranslation(markdown))return markdown;
-  const range=sectionRange(markdown,translation.sourceSection);
-  const lines=markdown.replace(/\r\n?/gu,"\n").split("\n");
-  const body=translation.readingType==="dialogue"
-    ?(translation.turns??[]).map(turn=>`${turn.speaker}: ${turn.text}`)
-    :translation.paragraphs??[];
-  const addition=["### Natural English Translation","",...body,""];
-  const index=range?.end??lines.length;
-  return[...lines.slice(0,index),...addition,...lines.slice(index)].join("\n");
-}
-
-function hasEnglishTranslation(markdown:string):boolean{return/^#{1,6}\s+(?:Natural English Translation|English translation)\s*$/imu.test(markdown)}
 
 function settingsDir(options: WebServerOptions) { return options.dataDir ? defaultSettingsDirectoryForContentDataDirectory(options.dataDir) : undefined; }
 function progressDir(options: WebServerOptions) { return options.dataDir ? defaultReviewProgressDirectoryForContentDataDirectory(options.dataDir) : undefined; }

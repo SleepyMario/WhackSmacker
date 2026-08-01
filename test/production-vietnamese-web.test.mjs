@@ -4,6 +4,7 @@ import { access, chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promise
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
+import { JSDOM } from "jsdom";
 
 import {
   getInstalledLanguageCurriculum,
@@ -13,6 +14,7 @@ import {
   orderReadingReviewItemsForSession,
   readInstalledLanguageCurriculumChapter
 } from "../dist/packages/core/index.js";
+import { buildLanguageTree, renderLanguageTreeRightPane } from "../dist/apps/cli/interactive-menu.js";
 import { startWebServer } from "../dist/apps/web/server.js";
 
 const feedRoot = process.env.WSM_PRODUCTION_PACKAGE_FEED ?? "/home/ashwin/Projects/whacksmacker-modules/whacksmacker-packages";
@@ -85,18 +87,63 @@ test("current production Vietnamese reading and Review packages work in a fresh 
     assert.equal(discovery.curricula.some(item => item.packageId === readingId && item.packageVersion === version), true);
     assert.deepEqual(discovery.unavailable, []);
 
-    for (const chapterNumber of [1, 10, 11, 30]) {
-      const chapter = ordinary.find(candidate => candidate.number === chapterNumber);
-      for (const mode of ["normal", "expert", "developer"]) {
-        const params = new URLSearchParams({ packageId: readingId, version, chapter: chapter.id, mode, translations: "true", breakdown: "true" });
-        const response = await fetch(`${base}/api/curriculum/chapter?${params}`);
-        assert.equal(response.status, 200, `chapter ${chapterNumber} ${mode}`);
-        const body = await response.json();
-        assert.ok(body.text.length > 500);
-        assert.match(body.text, /Natural English Translation/u);
-        assert.match(body.text, /Line-by-line Breakdown/u);
+    const toggleCases = [
+      { translations: false, characters: false, breakdown: false },
+      { translations: true, characters: false, breakdown: false },
+      { translations: false, characters: true, breakdown: false },
+      { translations: false, characters: false, breakdown: true },
+      { translations: true, characters: true, breakdown: false },
+      { translations: true, characters: false, breakdown: true },
+      { translations: false, characters: true, breakdown: true },
+      { translations: true, characters: true, breakdown: true }
+    ];
+    for (const mode of ["normal", "expert", "developer"]) {
+      const tree = await buildLanguageTree(dataDir, mode);
+      for (const chapterNumber of [1, 10, 11, 30]) {
+        const chapter = ordinary.find(candidate => candidate.number === chapterNumber);
+        const node = findNode(tree, candidate => candidate.kind === "content" && candidate.filePath === chapter.path);
+        assert.ok(node, `CLI node for Chapter ${chapterNumber} ${mode}`);
+        for (const toggles of toggleCases) {
+          const cli = await renderLanguageTreeRightPane(node, {
+            dataDir,
+            locale: "en-US",
+            displayMode: mode,
+            translationsEnabled: toggles.translations,
+            charactersEnabled: toggles.characters,
+            breakdownEnabled: toggles.breakdown,
+            notesEnabled: true
+          });
+          const params = new URLSearchParams({ packageId: readingId, version, chapter: chapter.id, mode });
+          for (const [name, value] of Object.entries(toggles)) params.set(name, String(value));
+          const response = await fetch(`${base}/api/curriculum/chapter?${params}`);
+          assert.equal(response.status, 200, `chapter ${chapterNumber} ${mode} ${JSON.stringify(toggles)}`);
+          const body = await response.json();
+          assert.equal(body.text, cli, `Web/CLI parity for Chapter ${chapterNumber} ${mode} ${JSON.stringify(toggles)}`);
+          assertCompleteProjection(body.text, { chapterNumber, mode, toggles });
+        }
       }
     }
+
+    const browserChapter = ordinary.find(candidate => candidate.number === 11);
+    const browserParams = new URLSearchParams({ packageId: readingId, version, chapter: browserChapter.id, mode: "normal" });
+    const browserBody = await jsonFetch(`${base}/api/curriculum/chapter?${browserParams}`);
+    const html = await readFile("apps/web/public/index.html", "utf8");
+    const appScript = await readFile("apps/web/public/app.js", "utf8");
+    const route = `/app?package=${readingId}&version=${version}&locale=en&chapter=${encodeURIComponent(browserChapter.id)}`;
+    const dom = new JSDOM(html, { url: `http://127.0.0.1${route}`, runScripts: "outside-only" });
+    dom.window.fetch = async path => {
+      if (path === "/api/state") return Response.json({ locale: "en", theme: "dark", user: { username: "production-package-test" } });
+      if (path === "/api/curricula") return Response.json({ requestedSourceLocale: "en", curricula: [curriculum], unavailable: [] });
+      if (String(path).startsWith("/api/curriculum/chapter?")) return Response.json(browserBody);
+      throw new Error(`Unexpected production browser request ${path}`);
+    };
+    dom.window.eval(appScript);
+    await waitFor(() => /Dialogue/u.test(dom.window.document.querySelector("#chapter-content")?.textContent ?? ""));
+    const rendered = dom.window.document.querySelector("#chapter-content");
+    assert.match(rendered.textContent, /New Vocabulary[\s\S]*Grammar[\s\S]*Simple Exercises/u);
+    assert.equal(rendered.querySelector("script,style,iframe,object,embed"), null);
+    assert.equal(rendered.querySelectorAll("h1,h2,h3,h4").length >= 6, true);
+    assert.doesNotMatch(rendered.textContent, /Exercise Metadata|Original Vocabulary Source Notes|^Ledger$/imu);
 
     const reviewDiscovery = await jsonFetch(`${base}/api/review`);
     const reviewPackage = reviewDiscovery.packages.find(item => item.packageId === reviewId && item.packageVersion === version);
@@ -168,9 +215,50 @@ function sequenceRandom(values) {
   return () => values[index++ % values.length];
 }
 
+function findNode(node, predicate) {
+  if (predicate(node)) return node;
+  for (const child of node.children ?? []) {
+    const found = findNode(child, predicate);
+    if (found) return found;
+  }
+}
+
+function assertCompleteProjection(text, { chapterNumber, mode, toggles }) {
+  const context = `Chapter ${chapterNumber} ${mode} ${JSON.stringify(toggles)}`;
+  assert.match(text, /^# Chapter/imu, `${context}: title`);
+  assert.match(text, /^### (?:Dialogue|Narrative)$/mu, `${context}: primary reading`);
+  assert.match(text, /^### New Vocabulary$/mu, `${context}: vocabulary`);
+  assert.match(text, /^### Grammar$/mu, `${context}: grammar`);
+  assert.match(text, /^#{2,3} (?:Simple )?Exercises$/mu, `${context}: exercises`);
+  assert.equal((text.match(/^### (?:Dialogue|Narrative)$/gmu) ?? []).length, 1, `${context}: one primary reading`);
+  assert.equal((text.match(/^### New Vocabulary$/gmu) ?? []).length, 1, `${context}: one vocabulary section`);
+  assert.equal((text.match(/^#{2,3} (?:Simple )?Exercises$/gmu) ?? []).length, 1, `${context}: one exercise section`);
+  assert.equal(Buffer.from(text, "utf8").toString("utf8"), text, `${context}: UTF-8 round trip`);
+  assert.match(text, /[À-ỹ]/u, `${context}: Vietnamese Unicode retained`);
+  assert.ok(new Set(text.match(/^#{1,6}\s+.+$/gmu) ?? []).size >= 6, `${context}: section diversity exceeds support-only regression`);
+  if (!toggles.characters) assert.doesNotMatch(text, /Sino-Vietnamese Vocabulary|Character Notes/u, `${context}: Characters off`);
+  if (toggles.characters && chapterNumber === 1) assert.match(text, /Sino-Vietnamese Vocabulary/u, `${context}: packaged Characters support is additive`);
+  if (mode === "normal" || mode === "expert") {
+    assert.doesNotMatch(text, /Exercise Metadata|Original Vocabulary Source Notes|^## Ledger$|whacksmacker:developer-only|^---$|\b(?:answer_token_audit|answer_structure_audit|sourcePath|schemaVersion|validatorShape|pedagogicalFingerprint)\s*:/imu, `${context}: no machine metadata`);
+  } else {
+    assert.match(text, /^### (?:Brief Introduction: Normal|Brief Introduction)$/mu, `${context}: Developer retains learner setup`);
+    if ([1, 11, 30].includes(chapterNumber)) assert.match(text, /Exercise Metadata/u, `${context}: Developer metadata retained`);
+  }
+  assert.equal(/Natural English Translation/u.test(text), toggles.translations, `${context}: Translation is additive`);
+  assert.equal(/Line-by-line Breakdown/u.test(text), toggles.breakdown, `${context}: Breakdown is additive`);
+}
+
 async function assertReason(dataDir, reason) {
   await assert.rejects(
     getInstalledLanguageCurriculum(readingId, version, "en", dataDir),
     error => error instanceof InstalledCurriculumUnavailableError && error.reason === reason
   );
+}
+
+async function waitFor(predicate) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    if (predicate()) return;
+    await new Promise(resolve => setTimeout(resolve, 5));
+  }
+  assert.fail("Timed out rendering the production Vietnamese chapter in the browser DOM");
 }

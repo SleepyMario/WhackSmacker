@@ -8,6 +8,7 @@ import {
   developerOnlyStartMarker,
   normalViewVoiceViolations,
   projectCurriculumMarkdown,
+  projectReadingChapterMarkdown,
   projectReadingAudienceSection,
   projectReviewTextForMode
 } from "../dist/packages/core/index.js";
@@ -313,6 +314,69 @@ test("Normal review removes only terminal technical qualifications", () => {
 test("projection uses structural markers rather than phrase matching", () => {
   const learnerSentence = "It does not introduce every possible answer, so choose carefully.";
   assert.match(projectCurriculumMarkdown(`# Lesson\n\n${learnerSentence}`), new RegExp(learnerSentence.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+});
+
+test("shared Reader projection preserves the complete primary chapter and filters arbitrary exercise metadata structurally", () => {
+  const chapter = [
+    "---", "chapter: 7", "---", "", "# Chapter", "", "## Brief Introduction", "", "Authored setup.", "",
+    "### Dialogue", "", "Lan: Xin chào.", "", "### New Vocabulary", "", "| Word | Meaning |", "|---|---|", "| xin chào | hello |", "",
+    "### Grammar", "", "Use the greeting.", "", "### Simple Exercises", "", "Say hello to a classmate.", "",
+    developerOnlyStartMarker, "## Exercise Metadata", "", "arbitraryMachineField: hidden-value", "validatorShape: internal", developerOnlyEndMarker
+  ].join("\n");
+  const support = {
+    schemaVersion: 1,
+    sourcePath: "chapter.md",
+    audienceSections: [{ sourceHeading: "Brief Introduction", normal: "Normal setup.", expert: "Expert setup." }],
+    breakdown: { normal: "Normal breakdown.", expert: "Expert breakdown." },
+    characters: { heading: "Character Notes", normal: "Normal characters.", expert: "Expert characters." }
+  };
+  for (const mode of ["normal", "expert"]) {
+    const projected = projectReadingChapterMarkdown(chapter, { mode, support });
+    assert.match(projected, /Dialogue[\s\S]*Lan: Xin chào\./u);
+    assert.match(projected, /New Vocabulary[\s\S]*xin chào/u);
+    assert.match(projected, /Grammar[\s\S]*Use the greeting\./u);
+    assert.match(projected, /Simple Exercises[\s\S]*Say hello to a classmate\./u);
+    assert.doesNotMatch(projected, /Exercise Metadata|arbitraryMachineField|validatorShape|hidden-value|internal/u);
+  }
+  const developer = projectReadingChapterMarkdown(chapter, { mode: "developer", support });
+  assert.match(developer, /Dialogue[\s\S]*New Vocabulary[\s\S]*Grammar[\s\S]*Simple Exercises/u);
+  assert.match(developer, /Exercise Metadata[\s\S]*arbitraryMachineField: hidden-value[\s\S]*validatorShape: internal/u);
+});
+
+test("Reader support toggles are additive and do not duplicate the primary chapter", () => {
+  const chapter = "# Chapter\n\n## Brief Introduction\n\nSetup.\n\n### Narrative\n\nPrimary learner text.\n\n### New Vocabulary\n\nWords.\n\n## Simple Exercises\n\nPrompt.";
+  const support = {
+    schemaVersion: 1,
+    sourcePath: "chapter.md",
+    audienceSections: [{ sourceHeading: "Brief Introduction", normal: "Normal setup.", expert: "Expert setup." }],
+    breakdown: { normal: "Normal breakdown.", expert: "Expert breakdown." },
+    characters: { heading: "Character Notes", normal: "Normal characters.", expert: "Expert characters." }
+  };
+  const translation = {
+    schemaVersion: 1,
+    id: "translation-1",
+    language: "en",
+    sourceLanguage: "vi",
+    sourcePath: "chapter.md",
+    sourceSection: "Narrative",
+    readingType: "narrative",
+    paragraphs: ["English reading."]
+  };
+  for (const toggles of [
+    {},
+    { translationsEnabled: true },
+    { charactersEnabled: true },
+    { breakdownEnabled: true },
+    { translationsEnabled: true, charactersEnabled: true, breakdownEnabled: true }
+  ]) {
+    const projected = projectReadingChapterMarkdown(chapter, { mode: "normal", support, translation, ...toggles });
+    assert.equal((projected.match(/Primary learner text\./gu) ?? []).length, 1);
+    assert.equal((projected.match(/Prompt\./gu) ?? []).length, 1);
+    assert.equal((projected.match(/^### Narrative$/gmu) ?? []).length, 1);
+    assert.equal(/Natural English Translation/u.test(projected), toggles.translationsEnabled === true);
+    assert.equal(/Character Notes/u.test(projected), toggles.charactersEnabled === true);
+    assert.equal(/Line-by-line Breakdown/u.test(projected), toggles.breakdownEnabled === true);
+  }
 });
 
 test("Normal-view voice flags detached reader labels in instructional prose", () => {
