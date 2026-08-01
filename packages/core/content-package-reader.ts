@@ -6,6 +6,7 @@ import {
 import {
   assertValidContentPackageManifest,
   isSafeContentPackagePath,
+  type ContentPackageLocalizationMetadata,
   type ContentPackageManifest
 } from "./content-package-spec";
 import { isLocalizedContentValue, localized, type LocalizedContentValue } from "./localized-content";
@@ -97,6 +98,15 @@ export interface ReadLanguageCurriculumChapterResult {
   readonly text: string;
 }
 
+export type InstalledCurriculumUnavailableReason = "incompatible-legacy" | "corrupt" | "unreadable-current";
+
+export class InstalledCurriculumUnavailableError extends Error {
+  constructor(readonly reason: InstalledCurriculumUnavailableReason, message: string) {
+    super(message);
+    this.name = "InstalledCurriculumUnavailableError";
+  }
+}
+
 export async function getInstalledLanguageCurriculum(
   packageId: string,
   packageVersion: string,
@@ -105,25 +115,27 @@ export async function getInstalledLanguageCurriculum(
 ): Promise<LanguageCurriculumView> {
   const selected = await selectInstalledPackage(packageId, dataDir, packageVersion);
   const root = installedPackageRoot(selected, dataDir);
-  const manifest = await readInstalledManifest(root);
-  if (manifest.contentType !== "language-curriculum" || manifest.localization?.role !== "base-curriculum") {
-    throw new Error("Installed package is not a language curriculum.");
-  }
+  const manifest = await readCurriculumManifest(root);
   const snapshot = await readSnapshot(root);
-  if (snapshot === null) throw new Error("Curriculum content is corrupt or unreadable.");
-  assertInstalledCurriculumParticipants(snapshot, packageId);
+  if (snapshot === null) throw new InstalledCurriculumUnavailableError("corrupt", "Installed curriculum snapshot is corrupt.");
+  const effectiveManifest = withSupportedCurriculumLocalization(manifest, snapshot);
+  try {
+    assertInstalledCurriculumParticipants(snapshot, packageId);
+  } catch {
+    throw new InstalledCurriculumUnavailableError("unreadable-current", "Installed current curriculum failed learner-reading validation.");
+  }
   const locale = canonicalSourceLocale(requestedSourceLocale);
-  const overlay = await resolveSourceOverlay(manifest, selected, locale, dataDir);
-  const chapters = snapshot.files
+  const overlay = await resolveSourceOverlay(effectiveManifest, selected, locale, dataDir);
+  const chapters = deduplicateChapterEntries(snapshot.files
     .map(file => chapterFromFile(file, selected.packageVersion, locale))
-    .filter((chapter): chapter is LearnerChapter => chapter !== undefined)
-    .sort((left, right) => chapterGroup(left.path).localeCompare(chapterGroup(right.path)) || left.number - right.number || left.path.localeCompare(right.path));
+    .filter((chapter): chapter is LearnerChapter => chapter !== undefined))
+    .sort((left, right) => chapterGroup(left.path).localeCompare(chapterGroup(right.path)) || chapterSortPosition(left) - chapterSortPosition(right) || left.path.localeCompare(right.path));
   return {
     moduleType: "language",
     packageId,
     packageVersion,
-    name: localized(manifest.displayName, locale),
-    targetLanguage: manifest.localization.targetLanguage,
+    name: localized(effectiveManifest.displayName, locale),
+    targetLanguage: effectiveManifest.localization!.targetLanguage,
     requestedSourceLocale: locale,
     ...(overlay.effectiveLocale ? { effectiveSourceLocale: overlay.effectiveLocale } : {}),
     overlayStatus: overlay.status,
@@ -143,15 +155,16 @@ export async function readInstalledLanguageCurriculumChapter(options: {
   if (!chapter) throw new Error("Learner chapter not found.");
   const selected = await selectInstalledPackage(options.packageId, options.dataDir, options.packageVersion);
   const root = installedPackageRoot(selected, options.dataDir);
-  const manifest = await readInstalledManifest(root);
+  const manifest = await readCurriculumManifest(root);
   const snapshot = await readSnapshot(root);
-  if (snapshot !== null && manifest.contentType === "language-curriculum") {
-    assertInstalledCurriculumParticipants(snapshot, selected.packageId);
-  }
+  if (snapshot === null) throw new InstalledCurriculumUnavailableError("corrupt", "Installed curriculum snapshot is corrupt.");
+  const effectiveManifest = withSupportedCurriculumLocalization(manifest, snapshot);
+  try { assertInstalledCurriculumParticipants(snapshot, selected.packageId); }
+  catch { throw new InstalledCurriculumUnavailableError("unreadable-current", "Installed current curriculum failed learner-reading validation."); }
   const file = snapshot?.files.find(candidate => candidate.path === chapter.path);
   if (!file) throw new Error("Learner chapter content is corrupt or unreadable.");
   const locale = canonicalSourceLocale(options.requestedSourceLocale);
-  const resolved = await resolveChapterOverlay(manifest, selected, chapter.path, locale, options.dataDir);
+  const resolved = await resolveChapterOverlay(effectiveManifest, selected, chapter.path, locale, options.dataDir);
   const adjusted = {
     ...curriculum,
     overlayStatus: resolved.status,
@@ -181,7 +194,8 @@ export async function listReadableContentEntries(
   const root = installedPackageRoot(selected, dataDir);
   const snapshot = await readSnapshot(root);
   if (snapshot !== null) {
-    const overlay = await readSelectedSourceOverlayMap(await readInstalledManifest(root), selected, locale, dataDir);
+    const manifest = await readInstalledManifest(root);
+    const overlay = await readSelectedSourceOverlayMap(withOptionalProductionLocalization(manifest, snapshot), selected, locale, dataDir);
     return snapshot.files
       .filter((file) => isReadableMediaType(file.mediaType))
       .filter((file) => snapshot.localizedPaths === undefined || snapshot.localizedPaths.includes(file.path))
@@ -275,6 +289,7 @@ async function readInstalledContentEntryUncached(options: ReadInstalledContentEn
   const snapshot = await readSnapshot(root);
 
   if (snapshot !== null) {
+    const effectiveManifest = withOptionalProductionLocalization(manifest, snapshot);
     if (manifest.contentType === "language-curriculum") {
       assertInstalledCurriculumParticipants(snapshot, selected.packageId);
     }
@@ -282,7 +297,7 @@ async function readInstalledContentEntryUncached(options: ReadInstalledContentEn
     if (file === undefined || !isReadableMediaType(file.mediaType)) {
       throw new Error(`Readable content entry not found: ${options.path}`);
     }
-    const overlayText = await readSelectedSourceOverlayText(manifest, selected, file.path, options.locale, options.dataDir);
+    const overlayText = await readSelectedSourceOverlayText(effectiveManifest, selected, file.path, options.locale, options.dataDir);
     return {
       package: readablePackage,
       entry: { path: file.path, mediaType: file.mediaType, title: file.path, source: "snapshot" },
@@ -408,6 +423,21 @@ function chapterFromFile(file: SourceMarkdownFile, packageVersion: string, local
 
 function chapterGroup(path: string): string {
   return /^units\/(.+)\/chapter-0*\d+/iu.exec(path)?.[1] ?? path;
+}
+
+function deduplicateChapterEntries(chapters: readonly LearnerChapter[]): LearnerChapter[] {
+  const chosen = new Map<string, LearnerChapter>();
+  for (const chapter of chapters) {
+    const directory = chapter.path.replace(/\/(?:chapter|README)\.md$/iu, "");
+    const existing = chosen.get(directory);
+    if (existing === undefined || (/\/README\.md$/iu.test(existing.path) && /\/chapter\.md$/iu.test(chapter.path))) chosen.set(directory, chapter);
+  }
+  return [...chosen.values()];
+}
+
+function chapterSortPosition(chapter: LearnerChapter): number {
+  const grammar = /\/chapter-0*\d+-0*(\d+)-grammar-(?:easy|hard)\//iu.exec(chapter.path);
+  return grammar === null ? chapter.number : Number(grammar[1]) + 0.5;
 }
 
 function canonicalSourceLocale(locale: string): string {
@@ -551,6 +581,58 @@ async function readInstalledManifest(root: string): Promise<ContentPackageManife
     });
     return manifest as ContentPackageManifest;
   });
+}
+
+async function readCurriculumManifest(root: string): Promise<ContentPackageManifest> {
+  try {
+    return await readInstalledManifest(root);
+  } catch {
+    throw new InstalledCurriculumUnavailableError("corrupt", "Installed curriculum manifest is corrupt.");
+  }
+}
+
+function withSupportedCurriculumLocalization(manifest: ContentPackageManifest, snapshot: SourceMarkdownSnapshot): ContentPackageManifest {
+  if (manifest.contentType !== "language-curriculum") {
+    throw new InstalledCurriculumUnavailableError("incompatible-legacy", "Installed package is not a language curriculum.");
+  }
+  if (manifest.localization?.role === "base-curriculum") return manifest;
+  if (manifest.localization !== undefined) {
+    throw new InstalledCurriculumUnavailableError("incompatible-legacy", "Installed package uses incompatible curriculum localization metadata.");
+  }
+  const localization = supportedProductionLegacyLocalization(manifest, snapshot);
+  if (localization === undefined) {
+    throw new InstalledCurriculumUnavailableError("incompatible-legacy", "Installed legacy curriculum package is incompatible with this reader.");
+  }
+  return { ...manifest, localization };
+}
+
+function withOptionalProductionLocalization(manifest: ContentPackageManifest, snapshot: SourceMarkdownSnapshot): ContentPackageManifest {
+  if (manifest.localization !== undefined || manifest.contentType !== "language-curriculum") return manifest;
+  const localization = supportedProductionLegacyLocalization(manifest, snapshot);
+  return localization === undefined ? manifest : { ...manifest, localization };
+}
+
+function supportedProductionLegacyLocalization(
+  manifest: ContentPackageManifest,
+  snapshot: SourceMarkdownSnapshot
+): Extract<ContentPackageLocalizationMetadata, { readonly role: "base-curriculum" }> | undefined {
+  const languages = manifest.languages ?? [];
+  const targets = languages.filter(language => !/^(?:en|en-US)$/iu.test(language));
+  const currentProductionShape = manifest.capabilities?.includes("reading-curriculum") === true
+    && manifest.contentSchemaVersion === "1.0.0"
+    && snapshot.contentSchema === "whacksmacker-source-markdown-snapshot-v1"
+    && manifest.subjects?.includes("language") === true
+    && manifest.relatedPackageIds?.includes(`${manifest.packageId}.reviews`) === true
+    && languages.some(language => /^(?:en|en-US)$/iu.test(language))
+    && targets.length === 1;
+  if (!currentProductionShape) return undefined;
+  return {
+    role: "base-curriculum",
+    schemaVersion: "1.0.0",
+    targetLanguage: targets[0],
+    defaultSourceLocale: "en",
+    defaultSourcePackageId: `${manifest.packageId}.source.en`
+  };
 }
 
 async function readSnapshot(root: string): Promise<SourceMarkdownSnapshot | null> {

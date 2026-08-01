@@ -78,6 +78,10 @@ The authenticated Web Review surface discovers separately installed reading and 
 
 Each card starts with its answer hidden. Enter or Space reveals it once; after reveal, keys 1–4 or the named buttons submit Again, Hard, Good, or Easy. The client sends the card's expected review count so a repeated or retried submission is rejected without appending another event.
 
+The Web server snapshots the cards that are already due when a source session begins and applies an injectable Fisher–Yates shuffle. Schema-v2 inverse siblings are recognized from their canonical tested lexical, grammar, geographic, cast, and skill identities within the exact physical Review package/version/source boundary. A spacing pass keeps inverse directions non-adjacent whenever unrelated due cards make that possible. Eligibility, next-review times, card IDs, package boundaries, ordinary/specialized scope, and scheduler identities are unchanged; a grade removes exactly the accepted current card from the ephemeral session.
+
+After reveal, the learner-facing card contains Answer, up to three unique structured Examples in package order, and the rating controls. Internal notes/explanations, cue descriptions, pedagogical fingerprints, and provenance locators are never projected as examples. Literal structured examples and literal schema-v2 evidence are de-duplicated, kept inert, and capped at three; no Examples heading is shown when no valid example exists.
+
 ## Progress Separation
 
 Reading-to-review sync writes scheduler state only to the native review progress store. It does not mutate installed packages, package archives, source repositories, reading files, or memorization item files.

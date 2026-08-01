@@ -170,9 +170,9 @@ test("preferred Review client keeps answers hidden, requires reveal, and suppres
   dom.window.fetch=async(path,options={})=>{
     if(path==="/api/state")return Response.json({locale:"en",theme:"dark",user:{username:"learner"}});
     if(path==="/api/review")return Response.json({packages:[reviewPackage],unavailable:[]});
-    if(String(path).startsWith("/api/review/session?"))return Response.json(complete?{packageId:reviewPackage.packageId,packageVersion:"1.0.0",sourcePath:"units/chapter.md",total:1,due:0,complete:true}:{packageId:reviewPackage.packageId,packageVersion:"1.0.0",sourcePath:"units/chapter.md",total:1,due:1,complete:false,card:{itemId:"stable-card",title:"Unsafe <title>",kind:"basic-card",promptLines:["<img src=x onerror=alert(1)>"],hintLines:[],reviewCount:0}});
-    if(path==="/api/review/reveal"){reveals+=1;assert.equal(options.headers["X-CSRF-Token"],"review-csrf");return Response.json({itemId:"stable-card",answerLines:["<script>inert()</script>"],noteLines:[],exampleLines:["safe example"],sourceAvailable:true})}
-    if(path==="/api/review/answer"){answers+=1;await new Promise(resolve=>setTimeout(resolve,15));complete=true;return Response.json({state:{reviewCount:1}})}
+    if(String(path).startsWith("/api/review/session?"))return Response.json(complete?{packageId:reviewPackage.packageId,packageVersion:"1.0.0",sourcePath:"units/chapter.md",total:1,due:0,complete:true,sessionId:"session-one"}:{packageId:reviewPackage.packageId,packageVersion:"1.0.0",sourcePath:"units/chapter.md",total:1,due:1,complete:false,sessionId:"session-one",card:{itemId:"stable-card",title:"Unsafe <title>",kind:"basic-card",promptLines:["<img src=x onerror=alert(1)>"],hintLines:[],reviewCount:0}});
+    if(path==="/api/review/reveal"){reveals+=1;assert.equal(options.headers["X-CSRF-Token"],"review-csrf");return Response.json({itemId:"stable-card",answerLines:["<script>inert()</script>"],noteLines:["This card prompts recall of internal metadata."],exampleLines:["Tôi là sinh viên.","Tôi là Maria Garcia.","Tôi là Nguyễn Minh Anh."],evidenceLines:["review-decks/cards.tsv:4"],sourceAvailable:true})}
+    if(path==="/api/review/answer"){answers+=1;assert.equal(JSON.parse(options.body).sessionId,"session-one");await new Promise(resolve=>setTimeout(resolve,15));complete=true;return Response.json({state:{reviewCount:1}})}
     throw new Error(`Unexpected request ${path}`);
   };
   dom.window.eval(appScript);
@@ -183,6 +183,9 @@ test("preferred Review client keeps answers hidden, requires reveal, and suppres
   assert.equal(reveals,1);
   assert.equal(dom.window.document.querySelector(".review-answer script"),null);
   assert.match(dom.window.document.querySelector(".review-answer").textContent,/<script>inert\(\)<\/script>/u);
+  assert.match(dom.window.document.querySelector(".review-answer").textContent,/Examples/u);
+  assert.deepEqual([...dom.window.document.querySelectorAll(".review-example")].map(item=>item.textContent),["Tôi là sinh viên.","Tôi là Maria Garcia.","Tôi là Nguyễn Minh Anh."]);
+  assert.doesNotMatch(dom.window.document.querySelector(".review-answer").textContent,/prompts recall|cards\.tsv/iu);
   dom.window.document.dispatchEvent(new dom.window.KeyboardEvent("keydown",{key:"Enter",bubbles:true}));
   await new Promise(resolve=>setTimeout(resolve,10));
   assert.equal(answers,0);
@@ -230,10 +233,74 @@ test("private reader renders explicit no-curriculum and empty-chapter states",as
   }
 });
 
+test("reader distinguishes unavailable curriculum reasons and keeps a valid curriculum usable beside an invalid one",async()=>{
+  const html=await readFile("apps/web/public/index.html","utf8"),appScript=await readFile("apps/web/public/app.js","utf8");
+  const messages={
+    "not-installed":/not installed/iu,
+    "incompatible-legacy":/incompatible legacy package format/iu,
+    corrupt:/package is corrupt/iu,
+    "unreadable-current":/failed learner-reading validation/iu
+  };
+  for(const [reason,expected] of Object.entries(messages)){
+    const dom=new JSDOM(html,{url:"http://127.0.0.1:8787/app",runScripts:"outside-only"});
+    dom.window.fetch=async path=>{
+      if(path==="/api/state")return Response.json({locale:"en",user:{username:"account-a"}});
+      if(path==="/api/curricula")return Response.json({requestedSourceLocale:"en",curricula:[],unavailable:[{packageId:"com.example.invalid",packageVersion:"1.0.0",reason}]});
+      throw new Error(`Unexpected request ${path}`);
+    };
+    dom.window.eval(appScript);
+    await waitFor(()=>expected.test(dom.window.document.querySelector("#status")?.textContent??""));
+  }
+
+  const valid={moduleType:"language",packageId:"com.example.valid",packageVersion:"1.0.0",name:"Valid",targetLanguage:"vi",requestedSourceLocale:"en",overlayStatus:"missing",chapters:[]};
+  const dom=new JSDOM(html,{url:"http://127.0.0.1:8787/app",runScripts:"outside-only"});
+  dom.window.fetch=async path=>{
+    if(path==="/api/state")return Response.json({locale:"en",user:{username:"account-a"}});
+    if(path==="/api/curricula")return Response.json({requestedSourceLocale:"en",curricula:[valid],unavailable:[{packageId:"com.example.invalid",packageVersion:"0.9.0",reason:"corrupt"}]});
+    throw new Error(`Unexpected request ${path}`);
+  };
+  dom.window.eval(appScript);
+  await waitFor(()=>dom.window.document.querySelector("#curriculum-availability")?.hidden===false);
+  assert.match(dom.window.document.querySelector("#curriculum-availability").textContent,/valid curriculum is available.*package is corrupt/iu);
+  assert.equal(dom.window.document.querySelector("#curriculum").value,valid.packageId);
+});
+
+test("light sidebar uses neutral accessible tokens while approved dark token values stay exact",async()=>{
+  const css=await readFile("apps/web/public/styles.css","utf8");
+  const dark={
+    "sidebar-bg":"#07101b","sidebar-border":"#24324a","sidebar-text":"#aeb8c8","sidebar-muted":"#7f8a9b","sidebar-icon":"#9150dc",
+    "sidebar-hover-border":"#263750","sidebar-hover-bg":"#0c1828","sidebar-active-border":"#6930ad","sidebar-active-from":"#28134f","sidebar-active-to":"#16152c",
+    "sidebar-footer-bg":"#0a1422","sidebar-footer-border":"#263750","sidebar-footer-muted":"#9faabb"
+  };
+  const light={
+    "sidebar-bg":"#3f464d","sidebar-border":"#59636d","sidebar-text":"#f2f4f6","sidebar-muted":"#d1d6db","sidebar-icon":"#d6b4ff",
+    "sidebar-hover-border":"#77818b","sidebar-hover-bg":"#49515a","sidebar-active-border":"#c98cff","sidebar-active-from":"#515a63","sidebar-active-to":"#474f57",
+    "sidebar-footer-bg":"#454d55","sidebar-footer-border":"#707a84","sidebar-footer-muted":"#d1d6db"
+  };
+  const rootBlock=/:root\s*\{([\s\S]*?)\n\}/u.exec(css)?.[1]??"";
+  const lightBlock=/html\[data-theme="light"\]\s*\{([\s\S]*?)\n\}/u.exec(css)?.[1]??"";
+  for(const [name,value] of Object.entries(dark))assert.match(rootBlock,new RegExp(`--${name}:\\s*${value}`,"u"));
+  for(const [name,value] of Object.entries(light))assert.match(lightBlock,new RegExp(`--${name}:\\s*${value}`,"u"));
+  assert.ok(contrast(light["sidebar-text"],light["sidebar-bg"])>=4.5);
+  assert.ok(contrast(light["sidebar-muted"],light["sidebar-bg"])>=4.5);
+  assert.ok(contrast("#ffffff",light["sidebar-active-from"])>=4.5);
+  assert.ok(contrast("#ffffff",light["sidebar-active-to"])>=4.5);
+  assert.ok(contrast("#c074ff",light["sidebar-bg"])>=3);
+});
+
 async function waitFor(predicate, detail = () => "") {
   for (let attempt = 0; attempt < 100; attempt++) {
     if (predicate()) return;
     await new Promise(resolve => setTimeout(resolve, 10));
   }
   assert.fail(`Timed out waiting for browser state: ${detail()}`);
+}
+
+function contrast(foreground,background){
+  const luminance=value=>{
+    const components=value.slice(1).match(/../gu).map(part=>Number.parseInt(part,16)/255).map(part=>part<=0.04045?part/12.92:((part+0.055)/1.055)**2.4);
+    return 0.2126*components[0]+0.7152*components[1]+0.0722*components[2];
+  };
+  const left=luminance(foreground),right=luminance(background);
+  return (Math.max(left,right)+0.05)/(Math.min(left,right)+0.05);
 }

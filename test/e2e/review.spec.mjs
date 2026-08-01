@@ -53,6 +53,10 @@ test("keyboard reveal and grades commit once, advance, and persist without accid
   await expect(page.locator(".review-answer")).toBeVisible();
   await expect(page.locator(".review-answer")).toBeFocused();
   await expect(page.locator(".rating-button")).toHaveCount(4);
+  await expect(page.locator(".review-answer")).toContainText("Examples");
+  await expect(page.locator(".review-example")).toHaveText(["Goedemorgen, Alex!", "Goedemorgen allemaal."]);
+  await expect(page.locator(".review-answer")).not.toContainText("A common morning greeting.");
+  await expect(page.locator(".review-answer")).not.toContainText("Source example / evidence");
   await page.keyboard.press("Enter");
   expect((await userState("A")).historyCount).toBe(before.historyCount);
   await page.keyboard.press("3");

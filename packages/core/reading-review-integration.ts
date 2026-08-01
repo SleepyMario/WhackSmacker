@@ -336,6 +336,90 @@ export function shuffleReviewItemsForSession<T>(items: readonly T[], random: () 
   return shuffled;
 }
 
+export function orderReadingReviewItemsForSession(
+  items: readonly ReadingReviewItem[],
+  options: OrderReviewItemsForSessionOptions = {}
+): readonly ReadingReviewItem[] {
+  const randomized = options.shuffle === false ? [...items] : [...shuffleReviewItemsForSession(items, options.random ?? Math.random)];
+  if (randomized.length < 3) return randomized;
+  const siblingKeys = inverseReviewSiblingKeys(randomized);
+  if (siblingKeys.size === 0) return randomized;
+  return spreadInverseReviewSiblings(randomized, siblingKeys);
+}
+
+export function inverseReviewSiblingIdentity(item: ReadingReviewItem): string | undefined {
+  if (item.item.schemaVersion !== 2) return undefined;
+  const identityGroups = [
+    ["lexical", item.item.testedLexicalIds],
+    ["grammar", item.item.testedGrammarIds],
+    ["geographic", item.item.testedGeographicIds],
+    ["cast", item.item.testedCastIds],
+    ["skill", item.item.testedSkillIds]
+  ] as const;
+  const canonical = identityGroups
+    .filter(([, identities]) => identities.length > 0)
+    .map(([kind, identities]) => `${kind}:${[...identities].sort().join("\u001f")}`)
+    .join("\u001e");
+  if (!canonical) return undefined;
+  return [item.reviewPackageId, item.packageVersion, item.sourcePath ?? "", canonical].join("\u0000");
+}
+
+function inverseReviewSiblingKeys(items: readonly ReadingReviewItem[]): ReadonlyMap<ReadingReviewItem, string> {
+  const groups = new Map<string, ReadingReviewItem[]>();
+  for (const item of items) {
+    const identity = inverseReviewSiblingIdentity(item);
+    if (identity === undefined) continue;
+    groups.set(identity, [...(groups.get(identity) ?? []), item]);
+  }
+  const result = new Map<ReadingReviewItem, string>();
+  for (const [identity, candidates] of groups) {
+    const hasInversePair = candidates.some((left, index) => candidates.slice(index + 1).some(right => {
+      const leftDirection = left.item.schemaVersion === 2 ? left.item.reviewDirection : "";
+      const rightDirection = right.item.schemaVersion === 2 ? right.item.reviewDirection : "";
+      return areInverseReviewDirections(leftDirection, rightDirection);
+    }));
+    if (!hasInversePair) continue;
+    for (const candidate of candidates) result.set(candidate, identity);
+  }
+  return result;
+}
+
+function areInverseReviewDirections(left: string, right: string): boolean {
+  const leftParts = /^(.+)-to-(.+)$/u.exec(left);
+  const rightParts = /^(.+)-to-(.+)$/u.exec(right);
+  return leftParts !== null && rightParts !== null && leftParts[1] === rightParts[2] && leftParts[2] === rightParts[1];
+}
+
+function spreadInverseReviewSiblings(
+  randomized: readonly ReadingReviewItem[],
+  siblingKeys: ReadonlyMap<ReadingReviewItem, string>
+): readonly ReadingReviewItem[] {
+  const remaining = randomized.map((item, priority) => ({ item, priority, key: siblingKeys.get(item) ?? `unique:${priority}` }));
+  const ordered: ReadingReviewItem[] = [];
+  const lastPosition = new Map<string, number>();
+  while (remaining.length > 0) {
+    const previousKey = ordered.length === 0 ? undefined : siblingKeys.get(ordered[ordered.length - 1]);
+    const separable = remaining.some(candidate => siblingKeys.get(candidate.item) !== previousKey);
+    let chosenIndex = -1;
+    let chosenDistance = -1;
+    let chosenPriority = Number.POSITIVE_INFINITY;
+    for (const [index, candidate] of remaining.entries()) {
+      if (separable && siblingKeys.get(candidate.item) === previousKey) continue;
+      const previousPosition = lastPosition.get(candidate.key);
+      const distance = previousPosition === undefined ? Number.POSITIVE_INFINITY : ordered.length - previousPosition;
+      if (distance > chosenDistance || (distance === chosenDistance && candidate.priority < chosenPriority)) {
+        chosenIndex = index;
+        chosenDistance = distance;
+        chosenPriority = candidate.priority;
+      }
+    }
+    const [chosen] = remaining.splice(chosenIndex, 1);
+    ordered.push(chosen.item);
+    lastPosition.set(chosen.key, ordered.length - 1);
+  }
+  return ordered;
+}
+
 function resolveIntegrationProgressDir(dataDir?: string, progressDir?: string): string | undefined {
   return progressDir ?? (dataDir === undefined ? undefined : defaultReviewProgressDirectoryForContentDataDirectory(dataDir));
 }

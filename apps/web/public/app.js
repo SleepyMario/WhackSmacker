@@ -4,7 +4,7 @@
   const byId = id => document.getElementById(id);
   const all = selector => [...document.querySelectorAll(selector)];
   const elements = {
-    status: byId("status"), controls: byId("controls"), curriculum: byId("curriculum"), version: byId("version"),
+    status: byId("status"), availability: byId("curriculum-availability"), controls: byId("controls"), curriculum: byId("curriculum"), version: byId("version"),
     source: byId("source-locale"), theme: byId("theme-toggle"), username: byId("username"), logout: byId("logout"),
     menu: byId("menu-toggle"), sidebar: byId("sidebar"), backdrop: byId("sidebar-backdrop"), overlay: byId("overlay"),
     panel: byId("chapters-panel"), chapters: byId("chapters"), reader: byId("reader"), title: byId("chapter-title"),
@@ -19,7 +19,7 @@
   const state = {
     curricula: [], curriculum: null, chapter: null, locale: "en", mode: "normal", translation: false,
     characters: false, breakdown: false, busy: false, generation: 0, unavailable: [], view: "reader",
-    review: { packages: [], package: null, source: null, card: null, revealed: false, submitting: false, completedCount: 0 }
+    review: { packages: [], package: null, source: null, card: null, revealed: false, submitting: false, completedCount: 0, sessionId: null }
   };
 
   class ApiError extends Error {
@@ -232,6 +232,7 @@
       if (generation !== state.generation) return;
       state.curricula = data.curricula || [];
       state.unavailable = data.unavailable || [];
+      renderCurriculumAvailability();
       elements.controls.hidden = false;
       if (!state.curricula.length) {
         showNoCurricula();
@@ -243,7 +244,8 @@
         return;
       }
       if (route.packageId && route.version && !findCurriculum(route.packageId, route.version)) {
-        showUnavailableExactVersion(t("app.error.unavailableVersion", "The curriculum version in this link is unavailable or not authorized for your account."));
+        const unavailable = findUnavailableCurriculum(route.packageId, route.version);
+        showUnavailableExactVersion(unavailable ? curriculumUnavailableMessage(unavailable.reason) : t("app.error.unavailableVersion", "The curriculum version in this link is unavailable or not authorized for your account."));
         return;
       }
       const chosen = findCurriculum(route.packageId, route.version) || state.curricula[0];
@@ -267,6 +269,30 @@
 
   function findCurriculum(packageId, version) {
     return state.curricula.find(item => item.packageId === packageId && item.packageVersion === version);
+  }
+
+  function findUnavailableCurriculum(packageId, version) {
+    return state.unavailable.find(item => item.packageId === packageId && item.packageVersion === version);
+  }
+
+  function curriculumUnavailableMessage(reason) {
+    const messages = {
+      "not-installed": t("app.curriculum.notInstalled", "A selected curriculum package is not installed."),
+      "incompatible-legacy": t("app.curriculum.legacy", "An installed curriculum uses an incompatible legacy package format."),
+      corrupt: t("app.curriculum.corrupt", "An installed curriculum package is corrupt."),
+      "unreadable-current": t("app.curriculum.unreadable", "A current installed curriculum failed learner-reading validation.")
+    };
+    return messages[reason] || t("app.unavailableSelection", "A selected curriculum version is installed but unavailable or unreadable. Ask an administrator to repair or reselect it.");
+  }
+
+  function renderCurriculumAvailability() {
+    if (!elements.availability || state.curricula.length === 0 || state.unavailable.length === 0) {
+      if (elements.availability) elements.availability.hidden = true;
+      return;
+    }
+    const reasons = [...new Set(state.unavailable.map(item => curriculumUnavailableMessage(item.reason)))];
+    elements.availability.textContent = `${t("app.curriculum.partial", "A valid curriculum is available, but another selected curriculum needs attention.")} ${reasons.join(" ")}`;
+    elements.availability.hidden = false;
   }
 
   function populateCurriculumControls(chosen) {
@@ -351,9 +377,9 @@
     elements.panel.hidden = false;
     elements.reader.hidden = false;
     elements.chapters.replaceChildren();
-    const unavailable = state.unavailable.length > 0;
+    const unavailable = state.unavailable[0];
     const message = unavailable
-      ? t("app.unavailableSelection", "A selected curriculum version is installed but unavailable or unreadable. Ask an administrator to repair or reselect it.")
+      ? curriculumUnavailableMessage(unavailable.reason)
       : t("app.noCurricula", "No language curricula are selected. Ask an administrator to select an installed curriculum version for your account.");
     showChooseChapter(message);
     setStatus("empty", message);
@@ -566,6 +592,7 @@
     const data = await api("/api/review");
     state.review.packages = data.packages || [];
     state.review.completedCount = 0;
+    state.review.sessionId = null;
     if (!state.review.packages.length) {
       elements.reviewPackages.hidden = true;
       elements.decks.replaceChildren();
@@ -594,6 +621,7 @@
     state.review.source = null;
     state.review.card = null;
     state.review.completedCount = 0;
+    state.review.sessionId = null;
     populateReviewPackageControls(chosen);
     elements.decks.replaceChildren();
     if (!chosen.sources.length) {
@@ -627,6 +655,7 @@
     state.review.card = null;
     state.review.revealed = false;
     state.review.completedCount = 0;
+    state.review.sessionId = null;
     all("#deck-list .deck-item").forEach(button => {
       if (button.dataset.source === source.sourcePath) button.setAttribute("aria-current", "true"); else button.removeAttribute("aria-current");
     });
@@ -641,7 +670,9 @@
     setStatus("loading", t("app.review.loadingSession", "Loading due cards…"));
     try {
       const query = new URLSearchParams({ packageId: selected.packageId, version: selected.packageVersion, sourcePath: source.sourcePath });
+      if (state.review.sessionId) query.set("session", state.review.sessionId);
       const result = await api(`/api/review/session?${query}`);
+      state.review.sessionId = result.sessionId || null;
       if (result.complete) {
         const reviewed = preserveCompleted ? state.review.completedCount : 0;
         showReviewEmpty(reviewed ? t("app.review.complete", "Session complete") : t("app.review.noneDue", "No cards due"), reviewed ? `${t("app.review.completePrompt", "You reviewed")} ${reviewed} ${reviewed === 1 ? t("app.review.card", "card") : t("app.review.cards", "cards")}.` : t("app.review.noneDuePrompt", "This source has no active cards due right now."), "success");
@@ -697,12 +728,11 @@
       answer.setAttribute("aria-label", t("app.review.answer", "Answer"));
       answer.append(node("h3", "", t("app.review.answer", "Answer")));
       for (const line of result.answerLines || []) answer.append(node("p", "", line));
-      const evidenceLines = [...(result.noteLines || []), ...(result.exampleLines || []), ...(result.evidence ? [result.evidence] : [])];
-      if (evidenceLines.length || result.sourceAvailable === false) {
+      const exampleLines = result.exampleLines || [];
+      if (exampleLines.length) {
         const evidence = node("div", "review-evidence");
-        evidence.append(node("h3", "", t("app.review.evidence", "Source example / evidence")));
-        for (const line of evidenceLines) evidence.append(node("p", "", line));
-        if (result.sourceAvailable === false) evidence.append(node("p", "", t("app.review.sourceUnavailable", "The linked reading source is unavailable; the packaged card remains reviewable.")));
+        evidence.append(node("h3", "", t("app.review.examples", "Examples")));
+        for (const line of exampleLines) evidence.append(node("p", "review-example", line));
         answer.append(evidence);
       }
       const ratings = node("div", "rating-bar");
@@ -735,7 +765,7 @@
     all(".rating-button").forEach(button => { button.disabled = true; });
     setBusy(true);
     try {
-      await api("/api/review/answer", { method: "POST", body: JSON.stringify({ packageId: state.review.package.packageId, packageVersion: state.review.package.packageVersion, sourcePath: state.review.source.sourcePath, itemId: state.review.card.itemId, expectedReviewCount: state.review.card.reviewCount, rating }) });
+      await api("/api/review/answer", { method: "POST", body: JSON.stringify({ packageId: state.review.package.packageId, packageVersion: state.review.package.packageVersion, sourcePath: state.review.source.sourcePath, itemId: state.review.card.itemId, expectedReviewCount: state.review.card.reviewCount, sessionId: state.review.sessionId, rating }) });
       state.review.completedCount += 1;
       state.review.source.due = Math.max(0, state.review.source.due - 1);
       const badge = all("#deck-list .deck-item").find(button => button.dataset.source === state.review.source.sourcePath)?.querySelector(".due-badge");
@@ -817,6 +847,7 @@
       if (generation !== state.generation) return;
       state.curricula = data.curricula || [];
       state.unavailable = data.unavailable || [];
+      renderCurriculumAvailability();
       const selected = findCurriculum(state.curriculum?.packageId, state.curriculum?.packageVersion);
       if (!selected) {
         showNoCurricula();

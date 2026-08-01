@@ -53,6 +53,33 @@ test("preferred reader states remain visually and structurally stable", async ({
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   await expect(page.locator("#status")).toContainText("Theme saved");
   await capture("reader-normal-light-en");
+  if (viewport.width <= 800) {
+    await page.locator("#menu-toggle").click();
+    await expect(page.locator("#sidebar")).toHaveClass(/open/u);
+  }
+  await page.evaluate(() => {
+    const rule = [...document.styleSheets].flatMap(sheet => [...sheet.cssRules]).find(candidate => candidate.selectorText === 'html[data-theme="light"]');
+    const values = {
+      "--sidebar-bg": "#081321", "--sidebar-border": "#d5dce8", "--sidebar-text": "#aeb8c8", "--sidebar-muted": "#7f8a9b",
+      "--sidebar-icon": "#9150dc", "--sidebar-hover-border": "#263750", "--sidebar-hover-bg": "#0c1828",
+      "--sidebar-active-border": "#6930ad", "--sidebar-active-from": "#28134f", "--sidebar-active-to": "#16152c",
+      "--sidebar-footer-bg": "#0a1422", "--sidebar-footer-border": "#263750", "--sidebar-footer-muted": "#5f6978"
+    };
+    window.__wsmLightSidebarRule = rule;
+    window.__wsmLightSidebarValues = Object.fromEntries(Object.keys(values).map(name => [name, rule.style.getPropertyValue(name)]));
+    for (const [name, value] of Object.entries(values)) rule.style.setProperty(name, value);
+  });
+  await capture("reader-sidebar-light-before-en");
+  await page.evaluate(() => {
+    for (const [name, value] of Object.entries(window.__wsmLightSidebarValues)) window.__wsmLightSidebarRule.style.setProperty(name, value);
+    delete window.__wsmLightSidebarRule;
+    delete window.__wsmLightSidebarValues;
+  });
+  await capture("reader-sidebar-light-after-en");
+  if (viewport.width <= 800) {
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#sidebar")).not.toHaveClass(/open/u);
+  }
 
   await page.locator("#theme-toggle").click();
   await page.goto(`${baseUrl()}${deepLink({ version: "9.9.9" })}`);

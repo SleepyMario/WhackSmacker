@@ -30,6 +30,8 @@ whacksmacker content read <package-id> --file <path> [--version <version>] [--da
 
 For the current source-Markdown snapshot packages, WhackSmacker lists and renders the Markdown source files captured inside `content/content.json`.
 
+Current production `language-curriculum` archives generated before localization metadata was added remain readable only when they match the complete supported production shape: `reading-curriculum` capability, schema-v1 source snapshot, language subject, English plus exactly one target language, and the canonical related Review-package identity. The reader derives only the missing base-localization relationship for that shape. Other legacy, malformed, corrupt, or semantically unreadable packages remain rejected, and an explicit exact-version request is never substituted.
+
 For future package shapes, readable package files are limited to declared text-like files such as Markdown, plain text, and JSON.
 
 The reader validates requested paths as safe package-relative paths and never executes package content.

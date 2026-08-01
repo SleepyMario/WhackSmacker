@@ -12,6 +12,7 @@ import {
   listReadingReviewItems,
   listReadingReviewSources,
   loadReviewProgressStore,
+  orderReadingReviewItemsForSession,
   orderReviewItemsForSession,
   pedagogicalContentForMemorizationItem,
   pedagogicalFingerprint,
@@ -126,6 +127,45 @@ test("review session ordering shuffles without dropping or duplicating items", (
   assert.deepEqual([...shuffled].sort(), [...items].sort());
   assert.equal(new Set(shuffled).size, items.length);
   assert.deepEqual(orderReviewItemsForSession(items, { shuffle: false }), items);
+});
+
+test("bidirectional session ordering varies by seed and separates canonical inverse siblings", () => {
+  const items = ["alpha", "beta", "gamma", "delta"].flatMap(concept => [
+    directionalReviewItem(concept, "vi-to-en"),
+    directionalReviewItem(concept, "en-to-vi")
+  ]);
+  const first = orderReadingReviewItemsForSession(items, { random: sequenceRandom([0.01, 0.23, 0.45, 0.67, 0.89]) });
+  const second = orderReadingReviewItemsForSession(items, { random: sequenceRandom([0.91, 0.73, 0.55, 0.37, 0.19]) });
+  const ids = value => value.map(item => item.item.id);
+  assert.notDeepEqual(ids(first), ids(second));
+  assert.deepEqual([...ids(first)].sort(), [...ids(items)].sort());
+  assert.equal(new Set(ids(first)).size, items.length);
+  for (const ordered of [first, second]) {
+    for (let index = 1; index < ordered.length; index += 1) {
+      assert.notEqual(ordered[index - 1].item.testedLexicalIds[0], ordered[index].item.testedLexicalIds[0]);
+    }
+  }
+});
+
+test("inverse-only two-card sessions remain complete when adjacency is unavoidable", () => {
+  const items = [directionalReviewItem("only", "vi-to-en"), directionalReviewItem("only", "en-to-vi")];
+  const ordered = orderReadingReviewItemsForSession(items, { random: () => 0 });
+  assert.equal(ordered.length, 2);
+  assert.deepEqual(new Set(ordered.map(item => item.item.id)), new Set(items.map(item => item.item.id)));
+});
+
+test("multiple inverse pairs are distributed without grouping all Review directions", () => {
+  const items = ["one", "two", "three"].flatMap(concept => [
+    directionalReviewItem(concept, "target-to-source"),
+    directionalReviewItem(concept, "source-to-target")
+  ]);
+  const ordered = orderReadingReviewItemsForSession(items, { random: sequenceRandom([0.2, 0.8, 0.4, 0.6]) });
+  const directions = ordered.map(item => item.item.reviewDirection);
+  assert.ok(directions.some((direction, index) => index > 0 && direction !== directions[index - 1]));
+  assert.notDeepEqual(directions, [...directions].sort());
+  for (let index = 1; index < ordered.length; index += 1) {
+    assert.notEqual(ordered[index - 1].item.testedLexicalIds[0], ordered[index].item.testedLexicalIds[0]);
+  }
 });
 
 test("renderer output works for integrated items and preserves identity", async () => {
@@ -920,6 +960,39 @@ async function createShuffleReviewFixture() {
     dataDir,
     packageRoot,
     cleanup: () => rm(root, { recursive: true, force: true })
+  };
+}
+
+function directionalReviewItem(concept, direction, overrides = {}) {
+  const id = `${concept}/${direction}`;
+  return {
+    reviewPackageId: overrides.reviewPackageId ?? "com.example.reviews",
+    packageId: overrides.packageId ?? "com.example",
+    packageVersion: overrides.packageVersion ?? "1.0.0",
+    sourcePath: overrides.sourcePath ?? "review/cards.tsv",
+    sourceExists: true,
+    item: {
+      schemaVersion: 2,
+      id,
+      cardId: id,
+      pedagogicalFingerprint: "0".repeat(64),
+      kind: "vocabulary",
+      prompt: { text: id },
+      answer: { text: concept },
+      deck: { id: "deck", title: "Deck", chapterStart: 1, chapterEnd: 5 },
+      sourceChapters: [1],
+      reviewDirection: direction,
+      acceptedAnswers: [concept],
+      distractors: [],
+      explanation: "Internal.",
+      testedMeaning: concept,
+      testedLexicalIds: [`lex.${concept}`],
+      testedGrammarIds: [],
+      testedGeographicIds: [],
+      testedCastIds: [],
+      testedSkillIds: [],
+      provenance: { path: "units/core/chapter-001/chapter.md", locator: "Dialogue", evidence: `${concept}.` }
+    }
   };
 }
 

@@ -58,7 +58,7 @@ export default async function globalSetup() {
     fixtureRoot = await mkdtemp(join(tmpdir(), "wsm-playwright-fixtures-"));
     const dataDir = join(fixtureRoot, "content");
     await createPackages(dataDir);
-    server = await startWebServer({ host: "127.0.0.1", port: 0, databaseUrl, dataDir, secureCookies: false, sessionTtl: 3600 });
+    server = await startWebServer({ host: "127.0.0.1", port: 0, databaseUrl, dataDir, secureCookies: false, sessionTtl: 3600, reviewRandom: () => 0.99 });
     const address = server.address();
     if (!address || typeof address === "string") throw new Error("The isolated web server did not expose a TCP address.");
     Object.assign(process.env, {
