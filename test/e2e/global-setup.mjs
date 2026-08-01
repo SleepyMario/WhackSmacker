@@ -84,6 +84,16 @@ async function createPackages(dataDir) {
       file("units/core/chapter-009-nine/chapter-participants.json", JSON.stringify(chapterParticipantFixture(9)), "application/json"),
       file("units/core/chapter-010-ten/chapter.md", dialogueChapterFixture(10, "Chapter 10 — Safe reading", "Base chapter ten.")),
       file("units/core/chapter-010-ten/chapter-participants.json", JSON.stringify(chapterParticipantFixture(10)), "application/json"),
+      file("units/core/chapter-010-ten/reading-support.json", JSON.stringify({
+        schemaVersion: 1, sourcePath: "chapter.md",
+        audienceSections: [{ sourceHeading: "Brief Introduction", normal: "Normal reader guidance.", expert: "Expert linguistic guidance." }],
+        characters: { heading: "Character Notes", normal: "Normal character support.", expert: "Expert character support." },
+        breakdown: { normal: "Normal line breakdown.", expert: "Expert line breakdown." }
+      }), "application/json"),
+      file("units/core/chapter-010-ten/reading-translation.en.json", JSON.stringify({
+        schemaVersion: 1, id: "browser-translation", language: "en", sourceLanguage: "nl", sourcePath: "chapter.md", sourceSection: "Dialogue", readingType: "dialogue",
+        turns: [{ speaker: "Alex", text: "Good morning." }]
+      }), "application/json"),
       file("units/core/chapter-011-eleven/chapter.md", dialogueChapterFixture(11, "Chapter 11 — Een zeer lange meertalige titel 第十一章 한국어 제목", "Base chapter eleven.")),
       file("units/core/chapter-011-eleven/chapter-participants.json", JSON.stringify(chapterParticipantFixture(11)), "application/json"),
       file("units/core/chapter-012-summary/summary.md", "# Summary\n\nNot a chapter."),
@@ -106,7 +116,7 @@ async function createPackages(dataDir) {
     localization: { role: "source-language-pack", schemaVersion: "1.0.0", basePackageId: alpha, sourceLocale: "en", targetLanguage: "nl", compatibleBaseVersion: ">=1.0.0 <2.0.0" },
     files: [
       file("units/core/chapter-009-nine/chapter.md", "# Chapter 9 — Foundations\n\nEnglish source paragraph."),
-      file("units/core/chapter-010-ten/chapter.md", "# Chapter 10 — Safe reading\n\nEnglish source paragraph. Target reading: Goedemorgen.\n\n<img src=x onerror=alert(1)> stays text. [unsafe](JaVaScRiPt%3Aalert(1))\n\n| Term | Meaning |\n| --- | --- |\n| safe | rendered |"),
+      file("units/core/chapter-010-ten/chapter.md", "# Chapter 10 — Safe reading\n\n## Brief Introduction\n\nBase reader guidance.\n\n## New Vocabulary\n\n| Term | Meaning |\n| --- | --- |\n| safe | rendered |\n\n## Dialogue\n\nEnglish source paragraph. Target reading: Goedemorgen.\n\n<img src=x onerror=alert(1)> stays text. [unsafe](JaVaScRiPt%3Aalert(1))\n\n## Exercises\n\nRead again."),
       file("units/core/chapter-011-eleven/chapter.md", "# Chapter 11 — Een zeer lange meertalige titel 第十一章 한국어 제목\n\nEnglish fallback paragraph.\n\nTarget reading: Goedemorgen.")
     ]
   }));

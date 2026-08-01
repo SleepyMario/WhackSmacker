@@ -10,7 +10,7 @@ export async function resetUsers() {
   const pool = new pg.Pool({ connectionString: required("WSM_E2E_DATABASE_URL") });
   try {
     await pool.query("UPDATE users SET enabled=true WHERE id=ANY($1::uuid[])", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
-    await pool.query("UPDATE user_settings SET source_locale='en' WHERE user_id=ANY($1::uuid[])", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
+    await pool.query("UPDATE user_settings SET source_locale='en',theme='dark' WHERE user_id=ANY($1::uuid[])", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
     await pool.query("UPDATE sessions SET revoked_at=now() WHERE user_id=ANY($1::uuid[]) AND revoked_at IS NULL", [[required("WSM_E2E_USER_A_ID"), required("WSM_E2E_USER_B_ID")]]);
   } finally { await pool.end(); }
 }

@@ -127,9 +127,9 @@ The server exposes a public, data-free landing page at `/`, a login page at `/lo
 
 The public pages include a working browser UI-language selector for English and 中文（臺灣）. Its `whacksmacker.ui-locale` browser-local-storage value is used first; otherwise the public pages select 中文（臺灣） for Traditional Chinese/Taiwan browser preferences and English by default. The selector changes public-page copy immediately. The UI preference contains no authentication or private application data.
 
-The public alpha provides a dashboard, PostgreSQL-backed user accounts and isolated learning state, package install/uninstall (including keep/delete progress), review decks and live ratings with 1–4 shortcuts, persisted per-user source-language settings and source-package isolation through the API, progress summaries, readable content browsing, responsive navigation, and light/dark themes. Package updates, browser auto-opening, and rich Markdown rendering are deferred.
+The private application currently exposes the preferred responsive shell and curriculum reader. It supports exact authorized package/version selection, numerically ordered chapters, stable deep links and browser history, Normal/Expert/Developer projections, Translation/Characters/Breakdown controls, English and Traditional Chinese source overlays, and light/dark themes. Later navigation areas are visibly disabled: Review sessions, package management, progress, backup/restore, and subject workbenches are not part of this reader slice.
 
-The logged-in private reader applies source-language changes immediately, persists them per user through reload and login, preserves keyboard focus on the selected control, and keeps source-package resolution isolated from target curricula and Review progress.
+Source-language changes apply immediately, persist per user through reload and login, preserve keyboard focus on the selected control, and keep source-package resolution isolated from target curricula and Review progress. Reader Markdown is rendered with inert DOM construction; package content cannot inject scripts, event handlers, or unsafe links.
 
 Installed language terminology is available through domain-prefixed commands:
 

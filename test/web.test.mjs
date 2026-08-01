@@ -40,7 +40,7 @@ test("web server serves a data-free public landing page, logo, health, and priva
     assert.equal(logo.headers.get("content-type"), "image/png");
     assert.ok((await logo.arrayBuffer()).byteLength > 100_000);
     assert.deepEqual(await (await fetch(`${base}/api/health`)).json(), { ok: true, service: "whacksmacker-web" });
-    assert.match(await (await fetch(`${base}/app`)).text(), /Curriculum reader/);
+    assert.match(await (await fetch(`${base}/app`)).text(), /Curriculum Reader/i);
     assert.match(await (await fetch(`${base}/login`)).text(), /id="ui-locale"/);
     assert.match(await (await fetch(`${base}/ui-locale.js`)).text(), /whacksmacker\.ui-locale/);
     assert.equal((await fetch(`${base}/landing.js`)).status, 200);
@@ -50,6 +50,9 @@ test("web server serves a data-free public landing page, logo, health, and priva
     const saved = await (await fetch(`${base}/api/settings`, { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ locale: "zh-Hant-TW" }) })).json();
     assert.equal(saved.locale, "zh-TW");
     assert.equal((await (await fetch(`${base}/api/state`)).json()).locale, "zh-Hant-TW");
+    assert.equal((await fetch(`${base}/api/curriculum?packageId=com.example.missing`)).status, 400);
+    assert.equal((await fetch(`${base}/api/curriculum/chapter?packageId=com.example.missing&chapter=chapter.md`)).status, 400);
+    assert.equal((await fetch(`${base}/api/curriculum/chapter?packageId=com.example.missing&version=1.0.0&chapter=chapter.md&mode=forged`)).status, 400);
   } finally {
     await new Promise(resolve => server.close(resolve));
     await rm(root, { recursive: true, force: true });
@@ -124,11 +127,14 @@ test("private reader restores URL state, persists locale, and renders unsafe Mar
   assert.equal(dom.window.document.querySelector("#chapter-content a"),null);
   assert.match(dom.window.document.querySelector("#chapter-content").textContent,/<script>bad\(\)<\/script> bad/);
   assert.ok(dom.window.document.querySelector("#chapter-content table"));
-  assert.equal(dom.window.document.activeElement.id,"reader");
+  assert.equal(dom.window.document.activeElement,dom.window.document.body,"URL restoration must not steal focus or scroll the reader into view");
+  dom.window.document.querySelector("#chapters button").click();
+  await waitFor(()=>dom.window.document.activeElement.id==="reader");
   assert.match(dom.window.document.querySelector("#overlay").textContent,/No compatible English overlay/);
-  const selector=dom.window.document.querySelector('input[name="source-locale"][value="zh-TW"]');selector.checked=true;selector.dispatchEvent(new dom.window.Event("change",{bubbles:true}));
+  const selector=dom.window.document.querySelector("#source-locale");selector.value="zh-TW";selector.dispatchEvent(new dom.window.Event("change",{bubbles:true}));
   await waitFor(()=>requests.some(request=>request.path==="/api/settings"));
-  assert.deepEqual(JSON.parse(requests.find(request=>request.path==="/api/settings").options.body),{locale:"zh-TW"});
+  assert.deepEqual(JSON.parse(requests.find(request=>request.path==="/api/settings").options.body),{locale:"zh-TW",theme:"dark"});
+  await waitFor(()=>dom.window.document.activeElement.id==="source-locale");
 });
 
 test("private reader refuses an unavailable exact-version deep link instead of substituting another version",async()=>{
@@ -140,6 +146,56 @@ test("private reader refuses an unavailable exact-version deep link instead of s
   await waitFor(()=>/not authorized/.test(dom.window.document.querySelector("#status")?.textContent??""),()=>dom.window.document.body.textContent);
   assert.equal(requests.some(path=>String(path).startsWith("/api/curriculum/chapter")),false);
   assert.equal(dom.window.location.search.includes("version=forged"),true);
+});
+
+test("preferred shell exposes only the reader and keeps later navigation inert",async()=>{
+  const html=await readFile("apps/web/public/index.html","utf8");
+  const dom=new JSDOM(html);
+  const nav=dom.window.document.querySelector(".primary-nav");
+  assert.equal(nav.querySelectorAll("a").length,1);
+  assert.equal(nav.querySelector("a b")?.textContent.trim(),"Reader");
+  const planned=[...nav.querySelectorAll("button")];
+  assert.ok(planned.length>=1);
+  assert.ok(planned.every(button=>button.disabled&&button.getAttribute("aria-disabled")==="true"));
+  assert.doesNotMatch(html,/CLI parity/iu);
+});
+
+test("private reader rejects a package-only deep link without silently choosing a version",async()=>{
+  const html=await readFile("apps/web/public/index.html","utf8"),appScript=await readFile("apps/web/public/app.js","utf8");
+  const dom=new JSDOM(html,{url:"http://127.0.0.1:8787/app?package=com.example.language&locale=en",runScripts:"outside-only"});
+  const curriculum={moduleType:"language",packageId:"com.example.language",packageVersion:"1.0.0",name:"Example",targetLanguage:"nl",requestedSourceLocale:"en",effectiveSourceLocale:"en",overlayStatus:"active",chapters:[]};
+  const requests=[];
+  dom.window.fetch=async path=>{requests.push(path);if(path==="/api/state")return Response.json({locale:"en",user:{username:"account-a"}});if(path==="/api/curricula")return Response.json({requestedSourceLocale:"en",curricula:[curriculum],unavailable:[]});throw new Error(`Unexpected request ${path}`)};
+  dom.window.eval(appScript);
+  await waitFor(()=>/both package and exact version/.test(dom.window.document.querySelector("#status")?.textContent??""));
+  assert.equal(requests.some(path=>String(path).startsWith("/api/curriculum/chapter")),false);
+  assert.equal(dom.window.location.search.includes("package=com.example.language"),true);
+});
+
+test("private reader renders explicit no-curriculum and empty-chapter states",async()=>{
+  const html=await readFile("apps/web/public/index.html","utf8"),appScript=await readFile("apps/web/public/app.js","utf8");
+  {
+    const dom=new JSDOM(html,{url:"http://127.0.0.1:8787/app",runScripts:"outside-only"});
+    const requests=[];
+    dom.window.fetch=async path=>{requests.push(path);if(path==="/api/state")return Response.json({locale:"en",user:{username:"account-a"}});if(path==="/api/curricula")return Response.json({requestedSourceLocale:"en",curricula:[],unavailable:[]});throw new Error(`Unexpected request ${path}`)};
+    dom.window.eval(appScript);
+    await waitFor(()=>/No language curricula are selected/.test(dom.window.document.querySelector("#status")?.textContent??""));
+    assert.equal(dom.window.document.querySelector("#controls").hidden,false);
+    assert.equal(dom.window.document.querySelector("#curriculum").disabled,true);
+    assert.equal(dom.window.document.querySelector("#reader").hidden,false);
+    assert.match(dom.window.document.querySelector("#chapter-content").textContent,/No language curricula are selected/);
+    assert.equal(requests.some(path=>String(path).startsWith("/api/curriculum/chapter")),false);
+  }
+  {
+    const chapter={id:"units/core/chapter-001-empty/chapter.md",path:"units/core/chapter-001-empty/chapter.md",number:1,title:"Empty chapter",packageVersion:"1.0.0"};
+    const curriculum={moduleType:"language",packageId:"com.example.empty",packageVersion:"1.0.0",name:"Empty",targetLanguage:"nl",requestedSourceLocale:"en",effectiveSourceLocale:"en",overlayStatus:"active",chapters:[chapter]};
+    const dom=new JSDOM(html,{url:`http://127.0.0.1:8787/app?package=${curriculum.packageId}&version=1.0.0&locale=en&chapter=${encodeURIComponent(chapter.id)}`,runScripts:"outside-only"});
+    dom.window.fetch=async path=>{if(path==="/api/state")return Response.json({locale:"en",user:{username:"account-a"}});if(path==="/api/curricula")return Response.json({requestedSourceLocale:"en",curricula:[curriculum],unavailable:[]});if(String(path).startsWith("/api/curriculum/chapter?"))return Response.json({curriculum,chapter,text:" \n"});throw new Error(`Unexpected request ${path}`)};
+    dom.window.eval(appScript);
+    await waitFor(()=>/no readable content/.test(dom.window.document.querySelector("#chapter-content")?.textContent??""));
+    assert.match(dom.window.document.querySelector("#status").textContent,/no readable content/);
+    assert.equal(dom.window.document.querySelector("#reader").hidden,false);
+  }
 });
 
 async function waitFor(predicate, detail = () => "") {

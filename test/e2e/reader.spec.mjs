@@ -49,7 +49,8 @@ test("chapter discovery, safe rendering, exact-version URLs, navigation, and cur
   await page.locator("#curriculum").focus();
   await page.locator("#curriculum").selectOption(alphaPackage().replace("alpha", "beta"));
   await expect(page.locator("#version")).toHaveValue("2.0.0");
-  await expect(page.locator("#reader")).toBeHidden();
+  await expect(page.locator("#reader")).toBeVisible();
+  await expect(page.locator("#chapter-title")).toContainText("Choose a chapter");
   await expect(page).not.toHaveURL(/chapter=/u);
   await expect(page.locator("#chapters")).not.toContainText("Chapter 11");
 
@@ -65,18 +66,18 @@ test("source locale rerenders immediately, preserves focus and learning identity
   page.on("request", request => {
     if (/\/api\/(?:settings|curricula|curriculum\/chapter)(?:\?|$)/u.test(request.url())) toggleRequests.push(`${request.method()} ${new URL(request.url()).pathname}`);
   });
-  const chinese = page.locator('input[name="source-locale"][value="zh-TW"]');
-  await expect(chinese).toHaveRole("radio");
-  await expect(chinese).toHaveAccessibleName("中文（臺灣）");
+  const chinese = page.locator("#source-locale");
+  await expect(chinese).toHaveRole("combobox");
+  await expect(chinese).toHaveAccessibleName("Source");
   await chinese.focus();
   const startedAt = Date.now();
-  await page.keyboard.press("Space");
+  await chinese.selectOption("zh-TW");
   await expect(page).toHaveURL(/locale=zh-TW/u);
   await expect(page.locator("#overlay")).toContainText(/Traditional Chinese.*active/iu);
   await expect(page.locator("#chapter-content")).toContainText("繁體中文第十章");
   await expect(page.locator("#chapter-content")).toContainText("Target reading: Goedemorgen.");
   await expect(chinese).toBeFocused();
-  await expect(chinese).toBeChecked();
+  await expect(chinese).toHaveValue("zh-TW");
   await expect(page.locator("#curriculum")).toHaveValue(alphaPackage());
   await expect(page.locator("#version")).toHaveValue("1.0.0");
   const toggleDurationMs = Date.now() - startedAt;
@@ -94,33 +95,65 @@ test("source locale rerenders immediately, preserves focus and learning identity
   await expect(page.locator("#chapter-content")).toContainText("Target reading: Goedemorgen.");
   expect((await userState("A")).locale).toBe("zh-TW");
   await page.reload();
-  await expect(chinese).toBeChecked();
+  await expect(chinese).toHaveValue("zh-TW");
   await expect(page).toHaveURL(/locale=zh-TW/u);
 
   await page.locator("#logout").click();
   await expect(page).toHaveURL(/\/login/u);
   await login(page, "A", deepLink({ locale: null, chapterId: chapter(10) }));
-  await expect(chinese).toBeChecked();
+  await expect(chinese).toHaveValue("zh-TW");
   await expect(page.locator("#chapter-content")).toContainText("繁體中文第十章");
 
   const contextB = await browser.newContext();
   const pageB = await contextB.newPage();
   const otherDiagnostics = captureDiagnostics(pageB);
   await login(pageB, "B", deepLink({ locale: "en" }));
-  await expect(pageB.locator('input[value="en"]')).toBeChecked();
+  await expect(pageB.locator("#source-locale")).toHaveValue("en");
   await expect(pageB.locator("#overlay")).toContainText(/English source overlay is active/iu);
   await page.reload();
-  await expect(chinese).toBeChecked();
+  await expect(chinese).toHaveValue("zh-TW");
   expect(otherDiagnostics.issues).toEqual([]);
   await contextB.close();
 
-  const english = page.locator('input[name="source-locale"][value="en"]');
+  const english = page.locator("#source-locale");
   await english.focus();
-  await page.keyboard.press("Space");
-  await expect(english).toBeChecked();
+  await english.selectOption("en");
+  await expect(english).toHaveValue("en");
   await expect(english).toBeFocused();
   await expect(page.locator("#chapter-content")).toContainText("English source paragraph");
   expect((await userState("A")).locale).toBe("en");
+});
+
+test("reader modes and support toggles use the exact current package projection", async ({ page }) => {
+  await login(page, "A", deepLink({ chapterId: chapter(10) }));
+  await expect(page.locator("#chapter-content")).toContainText("Normal reader guidance.");
+  await expect(page.locator("#chapter-content")).not.toContainText("Expert linguistic guidance.");
+
+  await page.getByRole("button", { name: "Expert" }).click();
+  await expect(page.locator("#chapter-content")).toContainText("Expert linguistic guidance.");
+  await expect(page).toHaveURL(/mode=expert/u);
+
+  await page.locator("#translation-toggle").focus();
+  await page.keyboard.press("Space");
+  await expect(page.locator("#chapter-content")).toContainText("Natural English Translation");
+  await expect(page.locator("#chapter-content")).toContainText("Alex: Good morning.");
+
+  await page.locator("#characters-toggle").focus();
+  await page.keyboard.press("Space");
+  await expect(page.locator("#chapter-content")).toContainText("Expert character support.");
+
+  await page.locator("#breakdown-toggle").focus();
+  await page.keyboard.press("Space");
+  await expect(page.locator("#chapter-content")).toContainText("Expert line breakdown.");
+
+  await page.getByRole("button", { name: "Developer" }).click();
+  await expect(page.locator("#chapter-content")).toContainText("Normal reader guidance.");
+  await expect(page.locator("#chapter-content")).toContainText("Expert linguistic guidance.");
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Developer" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#translation-toggle")).toBeChecked();
+  await expect(page.locator("#characters-toggle")).toBeChecked();
+  await expect(page.locator("#breakdown-toggle")).toBeChecked();
 });
 
 test("history and generation tracking prevent stale chapter replacement", async ({ page }) => {
@@ -159,7 +192,7 @@ test("revoked API session returns cleanly to login", async ({ page }) => {
   diagnostics.allowExpectedNetworkErrors();
   diagnostics.expectRequestFailure("/api/settings");
   await revokeUserA();
-  await page.locator('input[name="source-locale"][value="zh-TW"]').click();
+  await page.locator("#source-locale").selectOption("zh-TW");
   await expect(page).toHaveURL(/\/login\?returnTo=/u);
   await expect(page.locator("#login-form")).toBeVisible();
 });

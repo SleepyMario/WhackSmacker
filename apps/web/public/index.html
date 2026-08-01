@@ -1,52 +1,94 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WhackSmacker Reader</title>
+  <meta name="color-scheme" content="dark light">
+  <title>WhackSmacker</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="/app">WhackSmacker</a>
-    <span id="username" class="username"></span>
-    <button id="logout" type="button">Log out</button>
-  </header>
-  <main>
-    <h1>Curriculum reader</h1>
-    <div id="status" class="status" role="status" aria-live="polite">Loading your curricula…</div>
-    <section id="controls" class="controls" aria-label="Reading choices" hidden>
-      <label>Curriculum
-        <select id="curriculum"></select>
-      </label>
-      <label>Exact version
-        <select id="version"></select>
-      </label>
-      <fieldset>
-        <legend>Source-content language</legend>
-        <label><input type="radio" name="source-locale" value="en"> English</label>
-        <label><input type="radio" name="source-locale" value="zh-TW"> 中文（臺灣）</label>
-      </fieldset>
-    </section>
-    <aside id="overlay" class="overlay" aria-live="polite" hidden></aside>
-    <div class="reader-layout">
-      <nav id="chapters-panel" aria-label="Chapters" hidden>
-        <h2>Chapters</h2>
-        <ol id="chapters" class="chapters"></ol>
+<body data-title-key="page.app.title">
+  <a class="skip-link" href="#reader">Skip to reader</a>
+  <div class="app-shell">
+    <header class="app-header">
+      <button id="menu-toggle" class="icon-button menu-toggle" type="button" aria-label="Toggle navigation" aria-controls="sidebar" aria-expanded="false" data-i18n-attr="aria-label:app.menu" data-busy-control>☰</button>
+      <a class="app-brand" href="/app" aria-label="WhackSmacker reader home">
+        <span aria-hidden="true">W</span><strong>WhackSmacker</strong>
+      </a>
+      <div class="header-context">
+        <span data-i18n="app.reader.eyebrow">Languages</span>
+        <strong data-i18n="app.reader.title">Curriculum Reader</strong>
+      </div>
+      <div class="header-actions">
+        <label class="compact-select" for="source-locale"><span data-i18n="app.source.short">Source</span>
+          <select id="source-locale" data-busy-control>
+            <option value="en">English</option>
+            <option value="zh-TW">中文（臺灣）</option>
+          </select>
+        </label>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle theme" title="Toggle theme" data-i18n-attr="aria-label:app.theme" data-busy-control>☀</button>
+        <span id="username" class="username"></span>
+        <button id="logout" class="button button-quiet button-small" type="button" data-i18n="app.logout" data-busy-control>Log out</button>
+      </div>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+      <nav class="primary-nav" aria-label="Application navigation" data-i18n-attr="aria-label:app.navigation">
+        <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">⌂</span><b data-i18n="app.nav.dashboard">Dashboard</b><small data-i18n="app.planned">Planned</small></button>
+        <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">✚</span><b data-i18n="app.nav.modules">Modules</b><small data-i18n="app.planned">Planned</small></button>
+        <a href="/app" class="active" aria-current="page"><span aria-hidden="true">▰</span><b data-i18n="app.nav.reader">Reader</b></a>
+        <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">◷</span><b data-i18n="app.nav.review">Review</b><small data-i18n="app.planned">Planned</small></button>
+        <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">☷</span><b data-i18n="app.nav.content">Content</b><small data-i18n="app.planned">Planned</small></button>
+        <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">⬡</span><b data-i18n="app.nav.packages">Packages</b><small data-i18n="app.planned">Planned</small></button>
+        <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">⌁</span><b data-i18n="app.nav.progress">Progress</b><small data-i18n="app.planned">Planned</small></button>
+        <button type="button" disabled aria-disabled="true" title="Not available in Reader slice 1"><span aria-hidden="true">⚙</span><b data-i18n="app.nav.settings">Settings</b><small data-i18n="app.planned">Planned</small></button>
       </nav>
-      <article id="reader" tabindex="-1" hidden>
-        <header class="reader-header">
-          <p id="chapter-position"></p>
-          <h2 id="chapter-title"></h2>
-        </header>
-        <div id="chapter-content" class="chapter-content"></div>
-        <nav class="chapter-navigation" aria-label="Chapter navigation">
-          <button id="previous" type="button" aria-label="Previous chapter">Previous chapter</button>
-          <button id="next" type="button" aria-label="Next chapter">Next chapter</button>
-        </nav>
-      </article>
-    </div>
-  </main>
+      <div class="sidebar-footer"><span class="slice-dot" aria-hidden="true"></span><div><strong data-i18n="app.slice.title">Reader slice 1</strong><small data-i18n="app.slice.note">Shell and curriculum reading</small></div></div>
+    </aside>
+    <button id="sidebar-backdrop" class="sidebar-backdrop" type="button" aria-label="Close navigation" hidden tabindex="-1"></button>
+
+    <main class="workspace">
+      <div id="status" class="status loading" role="status" aria-live="polite" data-i18n="app.loading.curricula">Loading your curricula…</div>
+
+      <section id="view-reader" class="view active" aria-labelledby="reader-view-title">
+        <h1 id="reader-view-title" class="sr-only" data-i18n="app.reader.title">Curriculum Reader</h1>
+        <section id="controls" class="reader-toolbar panel" aria-label="Reading choices" data-i18n-attr="aria-label:app.reader.choices" hidden>
+          <label><span data-i18n="app.curriculum">Curriculum</span><select id="curriculum" data-busy-control></select></label>
+          <label><span data-i18n="app.version">Exact version</span><select id="version" data-busy-control></select></label>
+          <div class="mode-control" role="group" aria-label="Reading mode" data-i18n-attr="aria-label:app.mode">
+            <span data-i18n="app.view">View</span>
+            <button type="button" data-mode="normal" aria-pressed="true" class="active" data-i18n="app.mode.normal" data-busy-control>Normal</button>
+            <button type="button" data-mode="expert" aria-pressed="false" data-i18n="app.mode.expert" data-busy-control>Expert</button>
+            <button type="button" data-mode="developer" aria-pressed="false" data-i18n="app.mode.developer" data-busy-control>Developer</button>
+          </div>
+          <label class="switch"><input id="translation-toggle" type="checkbox" data-busy-control><span aria-hidden="true"></span><b data-i18n="app.translation">Translation</b></label>
+          <label class="switch"><input id="characters-toggle" type="checkbox" data-busy-control><span aria-hidden="true"></span><b data-i18n="app.characters">Characters</b></label>
+          <label class="switch"><input id="breakdown-toggle" type="checkbox" data-busy-control><span aria-hidden="true"></span><b data-i18n="app.breakdown">Breakdown</b></label>
+        </section>
+
+        <aside id="overlay" class="overlay" aria-live="polite" hidden></aside>
+
+        <div class="reader-layout">
+          <nav id="chapters-panel" class="panel chapters-panel" aria-label="Chapters" data-i18n-attr="aria-label:app.chapters" hidden>
+            <header><p class="eyebrow" data-i18n="app.contents">Contents</p><h2 data-i18n="app.chapters">Chapters</h2></header>
+            <ol id="chapters" class="chapters"></ol>
+          </nav>
+          <article id="reader" class="panel reader" tabindex="-1" aria-busy="true" hidden>
+            <header class="reader-header">
+              <p id="chapter-position"></p>
+              <h2 id="chapter-title" data-i18n="app.chooseChapter">Choose a chapter</h2>
+            </header>
+            <div id="chapter-content" class="chapter-content empty-state" data-i18n="app.chooseChapterPrompt">Select a curriculum and chapter to begin.</div>
+            <nav class="chapter-navigation" aria-label="Chapter navigation" data-i18n-attr="aria-label:app.chapterNavigation">
+              <button id="previous" class="button button-quiet" type="button" disabled data-busy-control><span aria-hidden="true">←</span> <span data-i18n="app.previous">Previous</span></button>
+              <button id="next" class="button" type="button" disabled data-busy-control><span data-i18n="app.next">Next</span> <span aria-hidden="true">→</span></button>
+            </nav>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="/ui-locale.js"></script>
   <script src="/app.js" defer></script>
 </body>
 </html>
