@@ -18,6 +18,7 @@ export * from "./lexical-topic-policy";
 export * from "./logging";
 export * from "./localized-content";
 export * from "./memorization-item";
+export * from "./package-media";
 export * from "./pedagogical-fingerprint";
 export * from "./modules";
 export * from "./paths";

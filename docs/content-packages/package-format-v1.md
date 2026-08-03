@@ -241,6 +241,8 @@ Paths are relative and normalized. Every entry point must reference a declared f
 
 `manifest.json` itself does not need to appear in its own `files` list.
 
+Memorization-card raster images use package-root `media/` paths and ordinary file records; no new manifest field or package-format version is required. See [Package-relative images in memorization cards](package-media.md).
+
 The downloadable archive checksum belongs to the future package catalogue, not inside the archive manifest.
 
 ## Dependencies

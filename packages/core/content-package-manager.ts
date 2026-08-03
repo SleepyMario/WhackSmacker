@@ -15,6 +15,10 @@ import { perfCount, perfSpan, perfSpanSync } from "./performance";
 import { invalidateInstalledContent } from "./installed-content-cache";
 import { assertCanonicalCastBootstrapSnapshot } from "./language-curriculum-bootstrap";
 import { localized } from "./localized-content";
+import {
+  assertMemorizationMediaManifestReferences,
+  packageImageMediaTypeForPath
+} from "./package-media";
 
 type BufferValue = {
   readonly length: number;
@@ -263,6 +267,7 @@ export async function installContentPackage(options: InstallContentPackageOption
   assertValidContentPackageManifest(manifest);
   validateManifestMatchesCatalogue(manifest, entry);
   validateDeclaredFiles(manifest, zip.entries);
+  validateMemorizationPackageMedia(manifest, zip.entries);
   if (manifest.contentType === "language-curriculum") {
     const primaryPath = manifest.entryPoints.find(candidate => candidate.role === "primary")?.path;
     const primaryEntry = zip.entries.find(candidate => candidate.path === primaryPath);
@@ -597,6 +602,31 @@ function validateDeclaredFiles(manifest: ContentPackageManifest, entries: readon
     if (sha256Hex(entry.data) !== file.sha256) {
       throw new Error(`Declared file SHA-256 mismatch for ${file.path}.`);
     }
+  }
+}
+
+function validateMemorizationPackageMedia(manifest: ContentPackageManifest, entries: readonly ZipEntry[]): void {
+  const referencedPaths = new Set<string>();
+  for (const file of manifest.files) {
+    if (!file.path.startsWith("content/memorization/")
+      || !file.path.endsWith(".json")
+      || (file.mediaType !== "application/json" && file.mediaType !== "application/vnd.whacksmacker.memorization-items+json")) continue;
+    const entry = entries.find((candidate) => candidate.path === file.path);
+    if (entry === undefined) continue;
+    let value: unknown;
+    try {
+      value = JSON.parse(entry.data.toString("utf8"));
+    } catch (error) {
+      throw new Error(`Memorization item file is invalid JSON: ${file.path}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    for (const reference of assertMemorizationMediaManifestReferences(value, manifest.files)) referencedPaths.add(reference.path);
+  }
+  for (const file of manifest.files.filter((candidate) => candidate.path.startsWith("media/"))) {
+    const expectedMediaType = packageImageMediaTypeForPath(file.path);
+    if (expectedMediaType === undefined || file.mediaType !== expectedMediaType) {
+      throw new Error(`Package media record has an unsupported path or MIME type: ${file.path}`);
+    }
+    if (!referencedPaths.has(file.path)) throw new Error(`Package media asset is not referenced by a memorization Markdown block: ${file.path}`);
   }
 }
 

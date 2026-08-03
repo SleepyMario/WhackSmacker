@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { JSDOM } from "jsdom";
@@ -96,6 +97,67 @@ test("package includes public UI locale assets", async () => {
   assert.ok(packageJson.files.includes("dist/apps/web"));
   assert.match(await readFile("apps/web/public/ui-locale.js", "utf8"), /zh-TW/);
   assert.match(await readFile("apps/web/public/landing.js", "utf8"), /installSelector/);
+});
+
+test("web review media uses validated same-origin package asset URLs with exact MIME and binary bytes", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-web-package-media-"));
+  const dataDir = join(root, "content");
+  const packageId = "com.sleepymario.language.media-web";
+  const version = "0.1.0";
+  const installPath = `packages/${packageId}/${version}`;
+  const packageRoot = join(dataDir, installPath);
+  const itemPath = "content/memorization/animals.json";
+  const mediaPath = "media/dog.png";
+  const mediaBytes = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0xff, 0x80]);
+  const markdown = `![Animal illustration](${mediaPath})\n\ndog\n\nThe dog is running in the garden.`;
+  const items = { schemaVersion: 1, items: [{
+    schemaVersion: 1, id: "animals/dog", kind: "vocabulary",
+    prompt: { text: markdown, plainText: "[Image: Animal illustration]\n\ndog\n\nThe dog is running in the garden.", mediaType: "text/markdown" },
+    answer: { text: "dog", plainText: "dog", mediaType: "text/plain" }
+  }] };
+  const itemBytes = Buffer.from(`${JSON.stringify(items, null, 2)}\n`);
+  const manifest = {
+    packageFormatVersion: 1, packageId, packageVersion: version, displayName: "Media", description: "Media fixture.",
+    contentType: "core-review", capabilities: ["core-review"], contentSchemaVersion: "1.0.0", minimumWhackSmackerVersion: "0.1.0",
+    source: { repository: "https://example.invalid/media", commit: "0".repeat(40) }, generatedAt: "2026-08-03T00:00:00Z",
+    generator: { name: "test", version: "0.1.0" },
+    entryPoints: [{ id: "primary", mediaType: "application/vnd.whacksmacker.memorization-items+json", path: itemPath, role: "primary" }], dependencies: [],
+    files: [
+      { path: itemPath, mediaType: "application/vnd.whacksmacker.memorization-items+json", size: itemBytes.length, sha256: sha256(itemBytes) },
+      { path: mediaPath, mediaType: "image/png", size: mediaBytes.length, sha256: sha256(mediaBytes) }
+    ]
+  };
+  const registry = { registryFormatVersion: 1, updatedAt: "2026-08-03T00:00:00Z", packages: [{
+    packageId, packageVersion: version, displayName: "Media", contentType: "core-review", capabilities: ["core-review"],
+    contentSchemaVersion: "1.0.0", minimumWhackSmackerVersion: "0.1.0", source: manifest.source, installedAt: "2026-08-03T00:00:00Z",
+    installPath, manifestSha256: "0".repeat(64), archiveSha256: "1".repeat(64), archiveSize: 1, catalogueId: "com.sleepymario.local"
+  }] };
+  let server;
+  try {
+    await writeJson(join(dataDir, "registry.json"), registry);
+    await writeJson(join(packageRoot, "manifest.json"), manifest);
+    await writeBytes(join(packageRoot, itemPath), itemBytes);
+    await writeBytes(join(packageRoot, mediaPath), mediaBytes);
+    server = await startWebServer({ host: "127.0.0.1", port: 0, dataDir });
+    const address = server.address(); assert.ok(address && typeof address === "object");
+    const base = `http://127.0.0.1:${address.port}`;
+    const response = await fetch(`${base}/api/review-items?packageId=${packageId}&version=${version}`);
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.equal(body.items[0].media[0].path, mediaPath);
+    assert.match(body.items[0].media[0].url, /^\/api\/package-media\?/u);
+    assert.doesNotMatch(body.items[0].media[0].url, /\/home\/|checksum|sha256/iu);
+    const image = await fetch(new URL(body.items[0].media[0].url, base));
+    assert.equal(image.status, 200);
+    assert.equal(image.headers.get("content-type"), "image/png");
+    assert.equal(image.headers.get("x-content-type-options"), "nosniff");
+    assert.deepEqual(Buffer.from(await image.arrayBuffer()), mediaBytes);
+    assert.equal((await fetch(`${base}/api/package-media?packageId=${packageId}&version=${version}&path=${encodeURIComponent("https://evil.example/dog.png")}`)).status, 404);
+    assert.equal((await fetch(`${base}/memorization-media.js`)).status, 200);
+  } finally {
+    if (server) await new Promise(resolve => server.close(resolve));
+    await rm(root, { recursive: true, force: true });
+  }
 });
 
 test("private reader restores URL state, persists locale, and renders unsafe Markdown as inert text", async () => {
@@ -204,4 +266,17 @@ async function waitFor(predicate, detail = () => "") {
     await new Promise(resolve => setTimeout(resolve, 10));
   }
   assert.fail(`Timed out waiting for browser state: ${detail()}`);
+}
+
+async function writeJson(path, value) {
+  await writeBytes(path, Buffer.from(`${JSON.stringify(value, null, 2)}\n`));
+}
+
+async function writeBytes(path, value) {
+  await mkdir(join(path, ".."), { recursive: true });
+  await writeFile(path, value);
+}
+
+function sha256(value) {
+  return createHash("sha256").update(value).digest("hex");
 }

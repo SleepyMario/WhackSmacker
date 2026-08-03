@@ -15,8 +15,17 @@ import {
   assertValidJapaneseStructuredReviewItems,
   type JapaneseContextualReadingDocument
 } from "./japanese-vocabulary";
+import {
+  assertMemorizationMediaManifestReferences,
+  markdownForPedagogicalFingerprint,
+  markdownWithImagePlaceholders,
+  packageImageMediaTypeForPath,
+  parseMemorizationMarkdownImages
+} from "./package-media";
 
 type BufferValue = {
+  readonly length: number;
+  [Symbol.iterator](): IterableIterator<number>;
   toString(encoding: "utf8"): string;
 };
 
@@ -27,9 +36,13 @@ declare function require(name: "node:path"): {
   join(...paths: string[]): string;
   relative(from: string, to: string): string;
 };
+declare function require(name: "node:crypto"): {
+  createHash(algorithm: "sha256"): { update(data: BufferValue): { digest(encoding: "hex"): string } };
+};
 
 const { readFile } = require("node:fs/promises");
 const { join, relative } = require("node:path");
+const { createHash } = require("node:crypto");
 
 export const memorizationItemSchemaVersion = 1;
 export const memorizationItemSchemaVersionV2 = 2;
@@ -133,6 +146,13 @@ export interface InstalledMemorizationItems {
   readonly items: readonly MemorizationItem[];
 }
 
+export interface InstalledPackageImageAsset {
+  readonly path: string;
+  readonly mediaType: "image/webp" | "image/png" | "image/jpeg";
+  readonly size: number;
+  readonly data: Uint8Array;
+}
+
 export function validateMemorizationItem(item: unknown): MemorizationItemValidationResult {
   const errors: string[] = [];
   validateItem(item, "item", errors);
@@ -231,6 +251,10 @@ export async function readInstalledMemorizationItems(
   const destination = join(root, path);
   ensureInside(root, destination);
   const collection = normalizeMemorizationItemCollection(JSON.parse((await readFile(destination)).toString("utf8")) as unknown);
+  const mediaReferences = assertMemorizationMediaManifestReferences(collection, manifest.files);
+  for (const mediaPath of new Set(mediaReferences.map((reference) => reference.path))) {
+    await readVerifiedInstalledPackageImage(root, manifest, mediaPath);
+  }
   const items = await applySourceReviewOverlay(collection.items, selected, sourceLocale, dataDir);
   if (collection.schemaVersion === 2 && items.every((item) => item.schemaVersion === 2 && item.language?.target === "ja")) {
     const contextualReadings = await installedJapaneseContextualReadings(manifest, dataDir, items as readonly MemorizationItemV2[]);
@@ -252,6 +276,42 @@ export async function readInstalledMemorizationItems(
     path,
     items
   };
+}
+
+export async function readInstalledPackageImageAsset(
+  packageId: string,
+  packageVersion: string,
+  path: string,
+  dataDir?: string
+): Promise<InstalledPackageImageAsset> {
+  const selected = await selectInstalledPackage(packageId, dataDir, packageVersion);
+  const root = installedPackageRoot(selected, dataDir);
+  const manifest = await readInstalledManifest(root);
+  return readVerifiedInstalledPackageImage(root, manifest, path);
+}
+
+async function readVerifiedInstalledPackageImage(
+  root: string,
+  manifest: ContentPackageManifest,
+  path: string
+): Promise<InstalledPackageImageAsset> {
+  const expectedMediaType = packageImageMediaTypeForPath(path);
+  const record = manifest.files.find((file) => file.path === path);
+  if (expectedMediaType === undefined || record === undefined || record.mediaType !== expectedMediaType) {
+    throw new Error(`Package image is not a declared supported asset: ${path}`);
+  }
+  const destination = join(root, path);
+  ensureInside(root, destination);
+  let data: BufferValue;
+  try {
+    data = await readFile(destination);
+  } catch {
+    throw new Error(`Declared package image is missing: ${path}`);
+  }
+  if (data.length !== record.size) throw new Error(`Declared package image size mismatch: ${path}`);
+  const actualSha256 = createHash("sha256").update(data).digest("hex");
+  if (actualSha256 !== record.sha256) throw new Error(`Declared package image SHA-256 mismatch: ${path}`);
+  return { path, mediaType: expectedMediaType, size: data.length, data: data as unknown as Uint8Array };
 }
 
 async function installedJapaneseContextualReadings(
@@ -434,15 +494,24 @@ export function pedagogicalContentForMemorizationItem(item: MemorizationItemV2):
     ...item.testedCastIds, ...item.testedSkillIds
   ];
   return {
-    prompt: item.prompt.text,
-    acceptedAnswers: item.acceptedAnswers,
-    testedMeaning: item.testedMeaning,
+    prompt: fingerprintLocalizedContent(item.prompt.text),
+    acceptedAnswers: item.acceptedAnswers.map(fingerprintMarkdownText),
+    testedMeaning: fingerprintMarkdownText(item.testedMeaning),
     direction: item.reviewDirection,
     cardType: item.kind,
     requiredCanonicalIds,
     distractors: item.distractors,
-    expectedInterpretation: item.explanation
+    expectedInterpretation: fingerprintMarkdownText(item.explanation)
   };
+}
+
+function fingerprintLocalizedContent(value: LocalizedContentValue): LocalizedContentValue {
+  if (typeof value === "string") return fingerprintMarkdownText(value);
+  return Object.fromEntries(Object.entries(value).map(([locale, text]) => [locale, fingerprintMarkdownText(text)]));
+}
+
+function fingerprintMarkdownText(value: string): string {
+  return value.includes("![") ? markdownForPedagogicalFingerprint(value) : value;
 }
 
 function isV2Shape(value: Record<string, unknown>): value is Record<string, unknown> & MemorizationItemV2 {
@@ -516,6 +585,30 @@ function validateContentBlock(value: unknown, field: string, errors: string[]): 
   if (value.mediaType !== undefined && value.mediaType !== "text/plain" && value.mediaType !== "text/markdown") {
     errors.push(`${field}.mediaType must be text/plain or text/markdown.`);
   }
+  if (value.mediaType === "text/markdown") validateMarkdownContentBlock(value, field, errors);
+}
+
+function validateMarkdownContentBlock(value: Record<string, unknown>, field: string, errors: string[]): void {
+  const textValues = localizedStringEntries(value.text);
+  const plainValues = new Map(localizedStringEntries(value.plainText));
+  for (const [locale, text] of textValues) {
+    try {
+      const images = parseMemorizationMarkdownImages(text);
+      if (images.length === 0) continue;
+      const plainText = plainValues.get(locale);
+      if (plainText !== markdownWithImagePlaceholders(text)) {
+        errors.push(`${field}.plainText must use safe [Image: alt text] placeholders for every Markdown package image.`);
+      }
+    } catch (error) {
+      errors.push(`${field}.text contains an invalid Markdown package image: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+}
+
+function localizedStringEntries(value: unknown): readonly (readonly [string, string])[] {
+  if (typeof value === "string") return [["", value]];
+  if (!isRecord(value)) return [];
+  return Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === "string");
 }
 
 function validateSource(value: unknown, field: string, errors: string[]): void {

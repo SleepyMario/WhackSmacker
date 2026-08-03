@@ -92,6 +92,8 @@ export interface ReadingReviewSource {
 
 export interface ReadingReviewItem {
   readonly packageId: string;
+  /** Physical package containing the item and any media; scheduler identity remains packageId. */
+  readonly contentPackageId?: string;
   readonly packageVersion: string;
   readonly item: MemorizationItem;
   readonly sourcePath?: string;
@@ -177,6 +179,7 @@ export async function listReadingReviewItems(options: ListReadingReviewItemsOpti
         }
         results.push({
           packageId: identityPackageId,
+          ...(contentPackage.packageId === identityPackageId ? {} : { contentPackageId: contentPackage.packageId }),
           packageVersion: contentPackage.packageVersion,
           item,
           sourcePath,

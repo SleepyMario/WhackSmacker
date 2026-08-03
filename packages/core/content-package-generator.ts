@@ -41,6 +41,12 @@ import {
 } from "./language-curriculum-policy";
 import { removeCompleteRereadingSection, removeContentWrapperHeading } from "./curriculum-display";
 import { specializedReviewPackageDefinitions } from "./specialized-review";
+import {
+  markdownWithImagePlaceholders,
+  memorizationMediaReferences,
+  packageImageMediaTypeForPath,
+  parseMemorizationMarkdownImages
+} from "./package-media";
 
 type BufferValue = {
   readonly length: number;
@@ -71,6 +77,7 @@ declare function require(name: "node:fs/promises"): {
   mkdir(path: string, options: { recursive: boolean }): Promise<void>;
   readdir(path: string): Promise<string[]>;
   readFile(path: string): Promise<BufferValue>;
+  lstat(path: string): Promise<{ isFile(): boolean; isSymbolicLink(): boolean }>;
   stat(path: string): Promise<{ isDirectory(): boolean; isFile(): boolean }>;
   writeFile(path: string, data: BufferValue): Promise<void>;
 };
@@ -92,7 +99,7 @@ const whackSmackerApplicationVersion = packageMetadata.version;
 const { Buffer } = require("node:buffer");
 const { createHash } = require("node:crypto");
 const { execFileSync } = require("node:child_process");
-const { access, mkdir, readdir, readFile, stat, writeFile } = require("node:fs/promises");
+const { access, mkdir, readdir, readFile, lstat, stat, writeFile } = require("node:fs/promises");
 const { dirname, isAbsolute, join, relative, resolve, sep } = require("node:path");
 
 export interface ContentPackageGeneratorTarget {
@@ -578,6 +585,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     ? await collectReviewEvidenceFiles(target, options.env)
     : [];
   const memorizationFiles = isReviewPackageTarget(target) ? buildMemorizationFiles(target, sourceFiles, reviewEvidenceFiles, options.generatedAt) : [];
+  const packagedMediaFiles = await collectReferencedPackageMedia(sourceRoot, memorizationFiles);
   const packagedSourceFiles = sourceFiles
     .filter((file) => packagedCurriculumMetadataPaths.has(file.path) || file.path === target.license?.path || file.path === "NOTICE")
     .map((file) => ({ record: createFileRecord(file.path, file.mediaType, file.buffer), buffer: file.buffer }));
@@ -615,7 +623,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
       }
     ],
     ...(target.dependencies === undefined ? { dependencies: [] } : { dependencies: [...target.dependencies] }),
-    files: [contentFile, ...packagedSourceFiles.map((file) => file.record), ...memorizationFiles.map((file) => file.record)],
+    files: [contentFile, ...packagedSourceFiles.map((file) => file.record), ...memorizationFiles.map((file) => file.record), ...packagedMediaFiles.map((file) => file.record)],
     ...(target.license === undefined ? {} : { license: target.license })
     ,...(target.localization === undefined ? {} : { localization: target.localization })
   };
@@ -627,7 +635,8 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     { path: "manifest.json", data: manifestBuffer },
     { path: contentFile.path, data: contentBuffer },
     ...packagedSourceFiles.map((file) => ({ path: file.record.path, data: file.buffer })),
-    ...memorizationFiles.map((file) => ({ path: file.record.path, data: file.buffer }))
+    ...memorizationFiles.map((file) => ({ path: file.record.path, data: file.buffer })),
+    ...packagedMediaFiles.map((file) => ({ path: file.record.path, data: file.buffer }))
   ]);
   const filePath = join(options.outputDirectory, `${target.packageId}-${target.packageVersion}${whackSmackerPackageExtension}`);
 
@@ -1144,6 +1153,33 @@ interface GeneratedMemorizationFile {
   readonly buffer: BufferValue;
 }
 
+async function collectReferencedPackageMedia(
+  sourceRoot: string,
+  memorizationFiles: readonly GeneratedMemorizationFile[]
+): Promise<readonly GeneratedMemorizationFile[]> {
+  const paths = new Set<string>();
+  for (const file of memorizationFiles) {
+    const value = JSON.parse(file.buffer.toString("utf8")) as unknown;
+    for (const reference of memorizationMediaReferences(value)) paths.add(reference.path);
+  }
+  return Promise.all([...paths].sort().map(async (path) => {
+    const mediaType = packageImageMediaTypeForPath(path);
+    if (mediaType === undefined) throw new Error(`Unsupported package image path: ${path}`);
+    const absolute = resolve(sourceRoot, path);
+    const rootPrefix = sourceRoot.endsWith(sep) ? sourceRoot : `${sourceRoot}${sep}`;
+    if (!absolute.startsWith(rootPrefix)) throw new Error(`Package image escapes source root: ${path}`);
+    let fileStats: { isFile(): boolean; isSymbolicLink(): boolean };
+    try {
+      fileStats = await lstat(absolute);
+    } catch {
+      throw new Error(`Referenced package image is missing: ${path}`);
+    }
+    if (!fileStats.isFile() || fileStats.isSymbolicLink()) throw new Error(`Referenced package image must be a regular file: ${path}`);
+    const buffer = await readFile(absolute);
+    return { record: createFileRecord(path, mediaType, buffer), buffer };
+  }));
+}
+
 const repositoryRoot = process.cwd();
 const canonicalCastPath = "name-pools/canonical-cast.json";
 const geographyLedgerPath = "geography-ledger.json";
@@ -1559,12 +1595,13 @@ function reviewDeckV2RowToItem(
   includesExamples: boolean
 ): MemorizationItemV2 {
   if (row.length !== (includesExamples ? 18 : 17)) throw new Error(`Review deck v2 row ${rowNumber + 1} has the wrong number of tab-separated fields in ${sourcePath}`);
-  const [cardId, deckTitle, kind, chapterText, promptLanguage, answerLanguage, prompt, acceptedJson, distractorsJson,
+  const [cardId, deckTitle, kind, chapterText, promptLanguage, answerLanguage, promptField, acceptedJson, distractorsJson,
     explanation, lexicalJson, grammarJson, geographicJson, provenancePath, provenanceLocator, provenanceEvidence] = row;
   const examples = includesExamples
     ? parseV2StringArray(row[16] ?? "", "examples", sourcePath, rowNumber)
     : [provenanceEvidence];
   const tagsJson = row[includesExamples ? 17 : 16] ?? "";
+  const prompt = decodeReviewDeckField(promptField);
   const specialized = target.capabilities?.includes("specialized-review") === true;
   const range = deckTitle.match(/^Chapter (\d+)-(\d+)$/u);
   if (!specialized && range === null) throw new Error(`Review deck v2 row ${rowNumber + 1} has an invalid five-chapter deck title: ${deckTitle}`);
@@ -1609,8 +1646,8 @@ function reviewDeckV2RowToItem(
     deck: { id: deckId, title: learnerDeckTitle, chapterStart, chapterEnd, ...(specialized ? { scope: "specialized" as const } : {}) },
     sourceChapters: [sourceChapter],
     reviewDirection,
-    prompt: { text: prompt, plainText: prompt, language: promptLanguage, mediaType: "text/plain" },
-    answer: { text: acceptedAnswers[0] ?? "", plainText: acceptedAnswers[0] ?? "", language: answerLanguage, mediaType: "text/plain" },
+    prompt: memorizationBlockFromTsv(prompt, promptLanguage),
+    answer: memorizationBlockFromTsv(acceptedAnswers[0] ?? "", answerLanguage),
     acceptedAnswers,
     distractors,
     explanation: resolvedExplanation,
@@ -1630,6 +1667,13 @@ function reviewDeckV2RowToItem(
     updatedAt: generatedAt
   };
   return { ...item, pedagogicalFingerprint: pedagogicalFingerprint(pedagogicalContentForMemorizationItem(item)) };
+}
+
+function memorizationBlockFromTsv(text: string, language: string): MemorizationItemV2["prompt"] {
+  const images = parseMemorizationMarkdownImages(text);
+  return images.length === 0
+    ? { text, plainText: text, language, mediaType: "text/plain" }
+    : { text, plainText: markdownWithImagePlaceholders(text), language, mediaType: "text/markdown" };
 }
 
 function parseV2StringArray(value: string, field: string, sourcePath: string, rowNumber: number): string[] {
@@ -2186,11 +2230,44 @@ function curriculumIdentityTargetId(target: ContentPackageGeneratorTarget): stri
 }
 
 function parseTabSeparatedRows(text: string): readonly (readonly string[])[] {
-  return text
-    .trimEnd()
-    .split(/\r?\n/u)
-    .filter((line) => line.trim().length > 0)
-    .map((line) => line.split("\t"));
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let field = "";
+  let quoted = false;
+  const normalized = text.replace(/\r\n?/gu, "\n");
+  for (let index = 0; index < normalized.length; index += 1) {
+    const character = normalized[index];
+    if (quoted) {
+      if (character === '"' && normalized[index + 1] === '"') {
+        field += '"';
+        index += 1;
+      } else if (character === '"') {
+        quoted = false;
+      } else {
+        field += character;
+      }
+      continue;
+    }
+    if (character === '"' && field.length === 0) {
+      quoted = true;
+    } else if (character === "\t") {
+      row.push(field);
+      field = "";
+    } else if (character === "\n") {
+      row.push(field);
+      if (row.some((value) => value.trim().length > 0)) rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += character;
+    }
+  }
+  if (quoted) throw new Error("Review deck TSV contains an unterminated quoted field.");
+  if (field.length > 0 || row.length > 0) {
+    row.push(field);
+    if (row.some((value) => value.trim().length > 0)) rows.push(row);
+  }
+  return rows;
 }
 
 function isReviewDeckCardsPath(path: string): boolean {

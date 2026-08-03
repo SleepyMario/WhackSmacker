@@ -98,6 +98,44 @@ test("sentence renders deterministically", () => {
   assert.deepEqual(rendered.warnings, []);
 });
 
+test("Markdown package images render as stable safe-alt CLI placeholders with surrounding text", () => {
+  const rendered = renderMemorizationExercise({
+    ...identity,
+    item: {
+      ...item("vocabulary"),
+      prompt: {
+        text: "![Animal illustration](media/dog.webp)\n\ndog\n\nThe dog is running in the garden.",
+        plainText: "[Image: Animal illustration]\n\ndog\n\nThe dog is running in the garden.",
+        language: "en",
+        mediaType: "text/markdown"
+      },
+      answer: {
+        text: "![Wildlife image of a dog](media/dog-wildlife.jpeg)\n\nde hond\n\nDe hond rent in de tuin.",
+        plainText: "[Image: Wildlife image of a dog]\n\nde hond\n\nDe hond rent in de tuin.",
+        language: "nl",
+        mediaType: "text/markdown"
+      }
+    }
+  });
+  assert.deepEqual(rendered.promptLines, ["[Image: Animal illustration]", "dog", "The dog is running in the garden."]);
+  assert.deepEqual(rendered.answerLines, ["[Image: Wildlife image of a dog]", "de hond", "De hond rent in de tuin."]);
+  const output = formatRenderedExercise(rendered);
+  assert.doesNotMatch(output, /!\[/u);
+  assert.doesNotMatch(output, /media\/|checksum|packages\//u);
+});
+
+test("unsafe Markdown images and mismatched CLI fallbacks are rejected before rendering", () => {
+  const base = item("vocabulary");
+  assert.throws(() => renderMemorizationExercise({
+    ...identity,
+    item: { ...base, prompt: { text: "![Animal](https://example.com/dog.webp)", plainText: "[Image: Animal]", mediaType: "text/markdown" } }
+  }), /invalid Markdown package image/u);
+  assert.throws(() => renderMemorizationExercise({
+    ...identity,
+    item: { ...base, prompt: { text: "![Animal](media/dog.webp)", plainText: "dog", mediaType: "text/markdown" } }
+  }), /safe \[Image: alt text\] placeholders/u);
+});
+
 test("concept renders without optional fields", () => {
   const rendered = renderMemorizationExercise({
     ...identity,

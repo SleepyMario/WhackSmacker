@@ -103,3 +103,5 @@ The schema is:
 ```text
 schemas/memorization-item-v1.schema.json
 ```
+
+Memorization `text/markdown` blocks may also use the narrowly validated package-relative raster-image contract documented in [Package-relative images in memorization cards](package-media.md). The TSV schemas and content-block fields are unchanged.

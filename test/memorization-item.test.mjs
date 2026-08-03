@@ -14,6 +14,7 @@ import {
   pedagogicalContentForMemorizationItem,
   pedagogicalFingerprint,
   readInstalledMemorizationItems,
+  readInstalledPackageImageAsset,
   validateMemorizationItem,
   validateMemorizationItemCollection
 } from "../dist/packages/core/index.js";
@@ -217,6 +218,36 @@ test("installed memorization item reader rejects unsafe paths", async () => {
   }
 });
 
+test("installed memorization media is checksum-verified binary and missing assets fail item reads", async () => {
+  const fixture = await createInstalledMediaFixture();
+  try {
+    const collection = await readInstalledMemorizationItems(fixture.packageId, fixture.itemPath, fixture.dataDir, "0.1.0");
+    const asset = await readInstalledPackageImageAsset(fixture.packageId, "0.1.0", fixture.mediaPath, fixture.dataDir);
+    assert.equal(collection.items[0].prompt.mediaType, "text/markdown");
+    assert.equal(asset.mediaType, "image/jpeg");
+    assert.deepEqual(Buffer.from(asset.data), fixture.mediaBytes);
+
+    await writeFile(fixture.absoluteMediaPath, Buffer.from(fixture.mediaBytes.map(byte => byte ^ 0xff)));
+    await assert.rejects(
+      () => readInstalledMemorizationItems(fixture.packageId, fixture.itemPath, fixture.dataDir, "0.1.0"),
+      /image SHA-256 mismatch/u
+    );
+  } finally {
+    await fixture.cleanup();
+  }
+
+  const missing = await createInstalledMediaFixture();
+  try {
+    await rm(missing.absoluteMediaPath);
+    await assert.rejects(
+      () => readInstalledMemorizationItems(missing.packageId, missing.itemPath, missing.dataDir, "0.1.0"),
+      /image is missing/u
+    );
+  } finally {
+    await missing.cleanup();
+  }
+});
+
 function validItem(id = "hangul/vowels/a") {
   return {
     schemaVersion: 1,
@@ -346,6 +377,46 @@ async function createInstalledMemoryFixture() {
     dataDir,
     cleanup: () => rm(root, { recursive: true, force: true })
   };
+}
+
+async function createInstalledMediaFixture() {
+  const root = await mkdtemp(join(tmpdir(), "wsm-memory-media-"));
+  const dataDir = join(root, "data");
+  const packageId = "com.sleepymario.language.media";
+  const installPath = `packages/${packageId}/0.1.0`;
+  const packageRoot = join(dataDir, installPath);
+  const itemPath = "content/memorization/animals.json";
+  const mediaPath = "media/dog.jpeg";
+  const mediaBytes = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0, 0x10, 0x4a, 0x46, 0x49, 0x46, 0, 0xff, 0xd9]);
+  const text = "![Animal illustration](media/dog.jpeg)\n\ndog\n\nThe dog is running in the garden.";
+  const items = { schemaVersion: 1, items: [{
+    schemaVersion: 1, id: "animals/dog", kind: "vocabulary",
+    prompt: { text, plainText: "[Image: Animal illustration]\n\ndog\n\nThe dog is running in the garden.", mediaType: "text/markdown" },
+    answer: { text: "dog", plainText: "dog", mediaType: "text/plain" }
+  }] };
+  const itemBuffer = Buffer.from(`${JSON.stringify(items, null, 2)}\n`, "utf8");
+  const manifest = {
+    packageFormatVersion: 1, packageId, packageVersion: "0.1.0", displayName: "Media", description: "Media fixture.",
+    contentType: "demonstration", contentSchemaVersion: "1.0.0", minimumWhackSmackerVersion: "0.1.0",
+    source: { repository: "https://example.invalid/media", commit: "0".repeat(40) }, generatedAt: "2026-08-03T00:00:00Z",
+    generator: { name: "test", version: "0.1.0" },
+    entryPoints: [{ id: "primary", mediaType: memorizationItemFileMediaType, path: itemPath, role: "primary" }], dependencies: [],
+    files: [
+      { path: itemPath, mediaType: memorizationItemFileMediaType, size: itemBuffer.length, sha256: sha256(itemBuffer) },
+      { path: mediaPath, mediaType: "image/jpeg", size: mediaBytes.length, sha256: sha256(mediaBytes) }
+    ]
+  };
+  const registry = { registryFormatVersion: 1, updatedAt: "2026-08-03T00:00:00Z", packages: [{
+    packageId, packageVersion: "0.1.0", displayName: "Media", contentType: "demonstration", contentSchemaVersion: "1.0.0",
+    minimumWhackSmackerVersion: "0.1.0", source: manifest.source, installedAt: "2026-08-03T00:00:00Z", installPath,
+    manifestSha256: "0".repeat(64), archiveSha256: "1".repeat(64), archiveSize: 1, catalogueId: "com.sleepymario.local"
+  }] };
+  const absoluteMediaPath = join(packageRoot, mediaPath);
+  await writeJson(join(dataDir, "registry.json"), registry);
+  await writeJson(join(packageRoot, "manifest.json"), manifest);
+  await writeFileEnsured(join(packageRoot, itemPath), itemBuffer);
+  await writeFileEnsured(absoluteMediaPath, mediaBytes);
+  return { root, dataDir, packageId, itemPath, mediaPath, mediaBytes, absoluteMediaPath, cleanup: () => rm(root, { recursive: true, force: true }) };
 }
 
 function assertValidItem(item) {

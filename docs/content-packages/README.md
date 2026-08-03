@@ -152,6 +152,7 @@ Point 12 removes the old Anki-backed review path. `whacksmacker review` now refe
 - [Package Management](package-management.md)
 - [Reading Interface](reading-interface.md)
 - [Memorization Items](memorization-items.md)
+- [Package-relative memorization images](package-media.md)
 - [Native Review Scheduler](../review-scheduler.md)
 - [Exercise Renderers](../exercise-renderers.md)
 - [Reading to Review](../reading-to-review.md)

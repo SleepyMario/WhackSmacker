@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { spawn } from "node:child_process";
@@ -50,6 +50,66 @@ test("content package generator exposes the supported local package targets", ()
     ]
   );
 });
+
+test("content package generator preserves explicitly referenced image binaries with deterministic metadata and ordering", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-package-media-generator-"));
+  const sourceBase = join(root, "source");
+  const repository = join(sourceBase, "language-curriculum-specialized");
+  const deck = join(repository, "specialized-content", "medical", "dutch-english");
+  const firstOutput = join(root, "first");
+  const secondOutput = join(root, "second");
+  const header = ["card_id", "deck", "kind", "source_chapter", "prompt_language", "answer_language", "prompt", "accepted_answers", "distractors", "explanation", "lexical_ids", "grammar_ids", "geographic_ids", "provenance_path", "provenance_locator", "provenance_evidence", "examples", "tags"];
+  const prompt = "![Animal illustration](media/dog.webp)\n\ndog\n\nThe dog is running in the garden.";
+  const answer = "![Wildlife image of a dog](media/dog.png)\n\n![Second wildlife image](media/dog.jpeg)\n\nde hond\n\nDe hond rent in de tuin.";
+  const row = [
+    "medical-nl-en/dog/source-to-target", "Medical I", "vocabulary", "1", "en", "nl", quoteTsv(prompt),
+    JSON.stringify([answer]), "[]", "A dog vocabulary card.", JSON.stringify(["nl.animal.dog"]), "[]", "[]",
+    "source/dog.md", "dog", "dog evidence", "[]", JSON.stringify(["medical", "animal"])
+  ];
+  const bytes = new Map([
+    ["dog.webp", Buffer.from([0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50, 0, 0xff, 0x80])],
+    ["dog.png", Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0xff, 0x81])],
+    ["dog.jpeg", Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0, 0x10, 0x4a, 0x46, 0x49, 0x46, 0, 0xff, 0xd9])]
+  ]);
+  try {
+    await mkdir(join(deck, "media"), { recursive: true });
+    await writeFile(join(deck, "README.md"), "# Fixture\n");
+    await writeFile(join(deck, "deck.json"), "{}\n");
+    await writeFile(join(deck, "cards.tsv"), `${header.join("\t")}\n${row.join("\t")}\n`);
+    await writeFile(join(repository, "LICENSE-CONTENT"), "fixture license\n");
+    await writeFile(join(repository, "NOTICE"), "fixture notice\n");
+    for (const [name, data] of bytes) await writeFile(join(deck, "media", name), data);
+
+    const options = { targetId: "dutch-specialized-medical-1", generatedAt: "2026-08-03T00:00:00Z", sourceRoot: sourceBase };
+    const first = await generateContentPackage({ ...options, outputDirectory: firstOutput });
+    const second = await generateContentPackage({ ...options, outputDirectory: secondOutput });
+    const archive = await readZip(first.filePath);
+    const mediaRecords = first.manifest.files.filter(file => file.path.startsWith("media/"));
+
+    assert.deepEqual(mediaRecords.map(file => [file.path, file.mediaType]), [
+      ["media/dog.jpeg", "image/jpeg"], ["media/dog.png", "image/png"], ["media/dog.webp", "image/webp"]
+    ]);
+    for (const record of mediaRecords) {
+      const expected = bytes.get(record.path.slice("media/".length));
+      assert.deepEqual(archive.get(record.path), expected);
+      assert.equal(record.size, expected.length);
+      assert.equal(record.sha256, createHash("sha256").update(expected).digest("hex"));
+      assert.notEqual(record.mediaType, "text/plain");
+    }
+    const collection = JSON.parse(archive.get("content/memorization/medical-i.json").toString("utf8"));
+    assert.equal(collection.items[0].prompt.mediaType, "text/markdown");
+    assert.equal(collection.items[0].answer.mediaType, "text/markdown");
+    assert.deepEqual(collection.items[0].prompt.plainText.split("\n").filter(Boolean), ["[Image: Animal illustration]", "dog", "The dog is running in the garden."]);
+    assert.equal(await fileSha256(first.filePath), await fileSha256(second.filePath));
+    assert.equal(first.archiveSha256, second.archiveSha256);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+function quoteTsv(value) {
+  return `"${value.replaceAll('"', '""')}"`;
+}
 
 test("Vietnamese reading and Review package targets both remain normalized at version 0.1.0", () => {
   const targets = new Map(contentPackageGeneratorTargets.map((target) => [target.id, target]));

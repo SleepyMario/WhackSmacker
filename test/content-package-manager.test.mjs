@@ -20,6 +20,7 @@ import {
   removeContentPackage,
   readInstalledContentEntry,
   readInstalledMemorizationItems,
+  readInstalledPackageImageAsset,
   pedagogicalContentForMemorizationItem,
   pedagogicalFingerprint,
   updateContentPackage,
@@ -119,6 +120,33 @@ test("installing from a file package succeeds and updates the registry", async (
     assert.equal((await stat(contentPath)).size > 0, true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
     assert.deepEqual(validateInstalledPackageRegistry(registry).errors, []);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("install validates package-relative memorization images and preserves binary bytes", async () => {
+  const fixture = await createPackageFixture();
+  const packageId = "com.sleepymario.language.media-install";
+  const mediaBytes = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0xff, 0x80]);
+  try {
+    const archivePath = await createMediaPackage(fixture, { packageId, mediaBytes });
+    const cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId, "demonstration");
+    await installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId });
+    const asset = await readInstalledPackageImageAsset(packageId, "0.1.0", "media/dog.png", fixture.dataDir);
+    assert.equal(asset.mediaType, "image/png");
+    assert.deepEqual(Buffer.from(asset.data), mediaBytes);
+
+    for (const [suffix, markdown, expected] of [
+      ["remote", "![Animal](https://example.com/dog.png)", /Unsafe or unsupported/u],
+      ["data", "![Animal](data:image/png;base64,AAAA)", /Unsafe or unsupported/u],
+      ["missing-metadata", "![Animal](media/missing.png)", /missing from package metadata/u]
+    ]) {
+      const rejectedId = `${packageId}-${suffix}`;
+      const rejectedArchive = await createMediaPackage(fixture, { packageId: rejectedId, markdown, includeMedia: false });
+      const rejectedCatalogue = await writeSinglePackageCatalogue(fixture, rejectedArchive, rejectedId, "demonstration");
+      await assert.rejects(() => installContentPackage({ cataloguePath: rejectedCatalogue, dataDir: fixture.dataDir, packageId: rejectedId }), expected);
+    }
   } finally {
     await fixture.cleanup();
   }
@@ -742,6 +770,37 @@ async function createCustomPackage(fixture, options) {
     { path: options.filePath, data: content, compressionMethod: options.contentCompressionMethod }
   ]);
   const archivePath = join(fixture.root, `${options.packageId}-${options.packageVersion}.wspkg`);
+  await writeFile(archivePath, archive);
+  return archivePath;
+}
+
+async function createMediaPackage(fixture, options) {
+  const packageId = options.packageId;
+  const itemPath = "content/memorization/animals.json";
+  const mediaPath = "media/dog.png";
+  const markdown = options.markdown ?? `![Animal illustration](${mediaPath})\n\ndog`;
+  const placeholder = markdown.startsWith("![Animal illustration]") ? "[Image: Animal illustration]\n\ndog" : "[Image: Animal]";
+  const itemDocument = { schemaVersion: 1, items: [{
+    schemaVersion: 1, id: "animals/dog", kind: "vocabulary",
+    prompt: { text: markdown, plainText: placeholder, mediaType: "text/markdown" }, answer: { text: "dog", mediaType: "text/plain" }
+  }] };
+  const itemBytes = Buffer.from(`${JSON.stringify(itemDocument, null, 2)}\n`, "utf8");
+  const mediaBytes = options.mediaBytes ?? Buffer.from([0x89, 0x50, 0x4e, 0x47]);
+  const files = [{ path: itemPath, mediaType: "application/vnd.whacksmacker.memorization-items+json", size: itemBytes.length, sha256: sha256(itemBytes) }];
+  if (options.includeMedia !== false) files.push({ path: mediaPath, mediaType: "image/png", size: mediaBytes.length, sha256: sha256(mediaBytes) });
+  const manifest = {
+    packageFormatVersion: 1, packageId, packageVersion: "0.1.0", displayName: "Media", description: "Media package.",
+    contentType: "demonstration", contentSchemaVersion: "1.0.0", minimumWhackSmackerVersion: "0.1.0",
+    source: { repository: "https://example.invalid/media", commit: "0".repeat(40) }, generatedAt: "2026-08-03T00:00:00Z",
+    generator: { name: "test", version: "0.1.0" }, entryPoints: [{ id: "primary", mediaType: files[0].mediaType, path: itemPath, role: "primary" }],
+    dependencies: [], files
+  };
+  const archive = createStoreZip([
+    { path: "manifest.json", data: Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`) },
+    { path: itemPath, data: itemBytes },
+    ...(options.includeMedia === false ? [] : [{ path: mediaPath, data: mediaBytes }])
+  ]);
+  const archivePath = join(fixture.root, `${packageId}-0.1.0.wspkg`);
   await writeFile(archivePath, archive);
   return archivePath;
 }
