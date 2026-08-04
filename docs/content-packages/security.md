@@ -31,4 +31,4 @@ WhackSmacker must sanitize rendered content and must not execute embedded script
 
 Files in `assets/` are static media only. WhackSmacker must never execute package assets. Memorization-card images are limited to declared `.webp`, `.png`, `.jpg`, and `.jpeg` files under package-root `media/`; remote URLs, active schemes, encoded paths, and raw HTML images are rejected or remain inert.
 
-See [Package-relative images in memorization cards](package-media.md) for the exact path, checksum, browser-resolution, and CLI-placeholder rules.
+See [Package-relative images in memorization cards](package-media.md) for the exact path, checksum, browser-resolution, and CLI rules, and [Terminal artwork in interactive Review](../terminal-artwork.md) for terminal backend isolation and lifecycle.

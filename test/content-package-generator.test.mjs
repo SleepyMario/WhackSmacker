@@ -137,6 +137,24 @@ test("Vietnamese reading and Review package targets both remain normalized at ve
   assert.equal(isContentPackageSourceFileAllowed("sino-vietnamese-audit.json"), true);
 });
 
+test("Medical I generator targets retain exact specialized family and language package associations", () => {
+  const targets = new Map(contentPackageGeneratorTargets.map((target) => [target.id, target]));
+  const expected = [
+    ["dutch-specialized-medical-1", "com.sleepymario.language.dutch.specialized.medical-1", "com.sleepymario.language.dutch"],
+    ["chinese-traditional-specialized-medical-1", "com.sleepymario.language.chinese-traditional.specialized.medical-1", "com.sleepymario.language.chinese-traditional"]
+  ];
+
+  for (const [targetId, packageId, languagePackageId] of expected) {
+    const target = targets.get(targetId);
+    assert.equal(target?.packageId, packageId);
+    assert.equal(target?.packageVersion, "0.1.0");
+    assert.equal(target?.contentType, "specialized-review");
+    assert.deepEqual(target?.capabilities, ["specialized-review"]);
+    assert.equal(target?.deckFamily, "specialized");
+    assert.deepEqual(target?.relatedPackageIds, [languagePackageId]);
+  }
+});
+
 test("content package generator creates a valid Linguistic Terminology package", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-terminology-package-"));
 

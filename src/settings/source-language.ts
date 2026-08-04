@@ -5,6 +5,7 @@ import {
   type NewVocabularyDisplayPreferences
 } from "../../packages/core/vocabulary-rendering";
 import { perfCount, perfSpan, perfSpanSync } from "../../packages/core/performance";
+import { isTerminalArtworkBackend, type TerminalArtworkBackend } from "../../packages/core/terminal-artwork-settings";
 
 declare function require(name: "node:fs/promises"): {
   mkdir(path: string, options: { recursive: boolean }): Promise<void>;
@@ -28,13 +29,15 @@ export interface SourceLanguageSettings {
   readonly settingsFormatVersion: 2;
   readonly sourceLanguage: SourceLocale;
   readonly newVocabulary: NewVocabularyDisplayPreferences;
+  readonly terminalArtworkBackend: TerminalArtworkBackend;
 }
 
 export function defaultSourceLanguageSettings(): SourceLanguageSettings {
   return {
     settingsFormatVersion: sourceLanguageSettingsFormatVersion,
     sourceLanguage: "en-US",
-    newVocabulary: defaultNewVocabularyDisplayPreferences
+    newVocabulary: defaultNewVocabularyDisplayPreferences,
+    terminalArtworkBackend: "auto"
   };
 }
 
@@ -91,6 +94,17 @@ export async function saveNewVocabularyDisplayPreferences(
   return writeSourceLanguageSettings({ ...current, newVocabulary }, settingsDir);
 }
 
+export async function saveTerminalArtworkBackend(
+  terminalArtworkBackend: TerminalArtworkBackend,
+  settingsDir?: string
+): Promise<string> {
+  if (!isTerminalArtworkBackend(terminalArtworkBackend)) {
+    throw new Error("Invalid terminal artwork backend setting.");
+  }
+  const current = await loadSourceLanguageSettings(settingsDir);
+  return writeSourceLanguageSettings({ ...current, terminalArtworkBackend }, settingsDir);
+}
+
 async function writeSourceLanguageSettings(settings: SourceLanguageSettings, settingsDir?: string): Promise<string> {
   const directory = resolveSettingsDirectory(settingsDir);
   const path = join(directory, "settings.json");
@@ -117,10 +131,14 @@ function normalizeSourceLanguageSettings(value: unknown): SourceLanguageSettings
   const entrySpacing = isVocabularyEntrySpacing(nested.entrySpacing)
     ? nested.entrySpacing
     : defaults.newVocabulary.entrySpacing;
+  const terminalArtworkBackend = isTerminalArtworkBackend(record.terminalArtworkBackend)
+    ? record.terminalArtworkBackend
+    : defaults.terminalArtworkBackend;
   return {
     settingsFormatVersion: sourceLanguageSettingsFormatVersion,
     sourceLanguage,
-    newVocabulary: { notesVisible, entrySpacing }
+    newVocabulary: { notesVisible, entrySpacing },
+    terminalArtworkBackend
   };
 }
 

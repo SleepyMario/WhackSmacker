@@ -30,7 +30,9 @@ type BufferValue = {
 };
 
 declare function require(name: "node:fs/promises"): {
+  lstat(path: string): Promise<{ isFile(): boolean; isSymbolicLink(): boolean }>;
   readFile(path: string): Promise<BufferValue>;
+  realpath(path: string): Promise<string>;
 };
 declare function require(name: "node:path"): {
   join(...paths: string[]): string;
@@ -40,7 +42,7 @@ declare function require(name: "node:crypto"): {
   createHash(algorithm: "sha256"): { update(data: BufferValue): { digest(encoding: "hex"): string } };
 };
 
-const { readFile } = require("node:fs/promises");
+const { lstat, readFile, realpath } = require("node:fs/promises");
 const { join, relative } = require("node:path");
 const { createHash } = require("node:crypto");
 
@@ -148,6 +150,8 @@ export interface InstalledMemorizationItems {
 
 export interface InstalledPackageImageAsset {
   readonly path: string;
+  /** Trusted canonical local path; never expose this value in learner-facing output. */
+  readonly assetPath: string;
   readonly mediaType: "image/webp" | "image/png" | "image/jpeg";
   readonly size: number;
   readonly data: Uint8Array;
@@ -236,7 +240,8 @@ export async function readInstalledMemorizationItems(
   path: string,
   dataDir?: string,
   packageVersion?: string,
-  sourceLocale?: string
+  sourceLocale?: string,
+  verifyMediaAssets = true
 ): Promise<InstalledMemorizationItems> {
   if (!isMemorizationItemPath(path)) {
     throw new Error(`Memorization item path must be under content/memorization and safe: ${path}`);
@@ -252,8 +257,10 @@ export async function readInstalledMemorizationItems(
   ensureInside(root, destination);
   const collection = normalizeMemorizationItemCollection(JSON.parse((await readFile(destination)).toString("utf8")) as unknown);
   const mediaReferences = assertMemorizationMediaManifestReferences(collection, manifest.files);
-  for (const mediaPath of new Set(mediaReferences.map((reference) => reference.path))) {
-    await readVerifiedInstalledPackageImage(root, manifest, mediaPath);
+  if (verifyMediaAssets) {
+    for (const mediaPath of new Set(mediaReferences.map((reference) => reference.path))) {
+      await readVerifiedInstalledPackageImage(root, manifest, mediaPath);
+    }
   }
   const items = await applySourceReviewOverlay(collection.items, selected, sourceLocale, dataDir);
   if (collection.schemaVersion === 2 && items.every((item) => item.schemaVersion === 2 && item.language?.target === "ja")) {
@@ -302,6 +309,15 @@ async function readVerifiedInstalledPackageImage(
   }
   const destination = join(root, path);
   ensureInside(root, destination);
+  const fileStatus = await lstat(destination).catch(() => undefined);
+  if (fileStatus === undefined || !fileStatus.isFile() || fileStatus.isSymbolicLink()) {
+    throw new Error(`Declared package image is missing or is not a regular installed file: ${path}`);
+  }
+  const [canonicalRoot, canonicalDestination] = await Promise.all([realpath(root), realpath(destination)]);
+  if (canonicalRoot !== root || canonicalDestination !== destination) {
+    throw new Error(`Declared package image traverses a symbolic link: ${path}`);
+  }
+  ensureInside(canonicalRoot, canonicalDestination);
   let data: BufferValue;
   try {
     data = await readFile(destination);
@@ -311,7 +327,7 @@ async function readVerifiedInstalledPackageImage(
   if (data.length !== record.size) throw new Error(`Declared package image size mismatch: ${path}`);
   const actualSha256 = createHash("sha256").update(data).digest("hex");
   if (actualSha256 !== record.sha256) throw new Error(`Declared package image SHA-256 mismatch: ${path}`);
-  return { path, mediaType: expectedMediaType, size: data.length, data: data as unknown as Uint8Array };
+  return { path, assetPath: canonicalDestination, mediaType: expectedMediaType, size: data.length, data: data as unknown as Uint8Array };
 }
 
 async function installedJapaneseContextualReadings(

@@ -21,6 +21,7 @@ test("content package catalogue JSON Schema parses as Draft 2020-12", async () =
 
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
   assert.equal(schema.properties.catalogueFormatVersion.const, contentPackageCatalogueFormatVersion);
+  assert.deepEqual(schema.properties.packages.items.properties.deckFamily.enum, ["general", "specialized"]);
 });
 
 test("example catalogue validates", async () => {
@@ -128,6 +129,44 @@ test("duplicate dependencies fail", () => {
   ];
 
   assertInvalid(catalogue, /Duplicate dependency: com\.sleepymario\.language\.linguistic-terminology/);
+});
+
+test("catalogue deck family metadata is optional and rejects unknown values", () => {
+  const catalogue = validCatalogue();
+  catalogue.packages[0].deckFamily = "general";
+  catalogue.packages[1].deckFamily = "specialized";
+  assertValid(catalogue);
+  catalogue.packages[0].deckFamily = "optional";
+  assertInvalid(catalogue, /deckFamily must be general or specialized/);
+});
+
+test("generated specialized package metadata reaches the catalogue without changing package identity", async () => {
+  const packageDirectory = await mkdtemp(join(tmpdir(), "wsm-family-package-"));
+  const outputPath = join(await mkdtemp(join(tmpdir(), "wsm-family-catalogue-")), "catalogue.json");
+  try {
+    const generated = await generateContentPackage({
+      targetId: "dutch-specialized-medical-1",
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-08-04T00:00:00Z"
+    });
+    const result = await generateLocalContentPackageCatalogue({
+      packagesDirectory: packageDirectory,
+      outputPath,
+      generatedAt: "2026-08-04T00:00:00Z"
+    });
+    const [entry] = result.catalogue.packages;
+    assert.equal(generated.packageId, "com.sleepymario.language.dutch.specialized.medical-1");
+    assert.equal(generated.packageVersion, "0.1.0");
+    assert.equal(generated.manifest.deckFamily, "specialized");
+    assert.deepEqual(generated.manifest.relatedPackageIds, ["com.sleepymario.language.dutch"]);
+    assert.equal(entry.packageId, generated.packageId);
+    assert.equal(entry.packageVersion, generated.packageVersion);
+    assert.equal(entry.deckFamily, "specialized");
+    assert.deepEqual(entry.relatedPackageIds, ["com.sleepymario.language.dutch"]);
+  } finally {
+    await rm(packageDirectory, { recursive: true, force: true });
+    await rm(dirname(outputPath), { recursive: true, force: true });
+  }
 });
 
 test("generated catalogue from validation packages contains expected local packages", async () => {

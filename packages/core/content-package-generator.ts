@@ -109,6 +109,7 @@ export interface ContentPackageGeneratorTarget {
   readonly description: LocalizedContentValue;
   readonly contentType: ContentPackageManifest["contentType"];
   readonly capabilities?: ContentPackageManifest["capabilities"];
+  readonly deckFamily?: ContentPackageManifest["deckFamily"];
   readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly packageVersion: string;
@@ -519,6 +520,8 @@ const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = speci
     : "Private specialized English and Traditional Chinese medical terminology deck; no ordinary Traditional Chinese curriculum is included.",
   contentType: "specialized-review",
   capabilities: ["specialized-review"],
+  deckFamily: "specialized",
+  relatedPackageIds: [definition.languagePackageId],
   contentSchemaVersion: "2.0.0",
   packageVersion: "0.1.0",
   sourcePath: definition.sourcePath,
@@ -598,6 +601,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     description: target.description,
     contentType: target.contentType,
     ...(target.capabilities === undefined ? {} : { capabilities: target.capabilities }),
+    ...(target.deckFamily === undefined ? {} : { deckFamily: target.deckFamily }),
     ...(target.relatedPackageIds === undefined ? {} : { relatedPackageIds: target.relatedPackageIds }),
     contentSchemaVersion: target.contentSchemaVersion,
     minimumWhackSmackerVersion: whackSmackerApplicationVersion,

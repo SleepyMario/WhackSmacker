@@ -20,9 +20,12 @@ import {
   defaultNewVocabularyDisplayPreferences,
   classifyReviewDeckMenuStatus,
   combineDeveloperGrammarMarkdown,
+  contentPackageGeneratorTargets,
+  deckFamilyPackageMenuPresentation,
   grammarEasyMenuLabel,
   grammarHardMenuLabel,
   orderReviewItemsForSession,
+  packagesForLanguageAndDeckFamily,
   perfCount,
   perfMark,
   perfSpan,
@@ -31,9 +34,11 @@ import {
   projectCurriculumMarkdown,
   projectReadingAudienceSection,
   projectReviewTextForMode,
+  reconcileInstalledDeckFamilyMetadata,
   readInstalledContentEntry,
   readingReviewSourcesFromItems,
   recordReadingReviewAnswer,
+  resolveReadingReviewArtwork,
   removeContentPackage,
   removeReadingReviewProgressForPackage,
   renderReadingReviewItem,
@@ -50,6 +55,8 @@ import {
   shouldInsertVocabularyEntrySeparator,
   vocabularyNoteColumn,
   type ContentPackageCatalogueEntry,
+  type DeckFamily,
+  type DeckFamilyPackageMetadata,
   type CurriculumDisplayMode,
   type FirstClassModuleDescriptor,
   type ReadableContentEntry,
@@ -62,6 +69,7 @@ import {
   type ReviewItemState,
   type ReviewRating,
   type ReadingReviewSource,
+  type ResolvedReadingReviewArtwork,
   type InstalledReadablePackage,
   type InstalledPackageRecord,
   type VocabularyEntrySpacing
@@ -78,8 +86,18 @@ import {
   defaultSettingsDirectoryForContentDataDirectory,
   loadSourceLanguageSettings,
   saveNewVocabularyDisplayPreferences,
-  saveSourceLanguage
+  saveSourceLanguage,
+  saveTerminalArtworkBackend
 } from "../../src/settings/source-language";
+import {
+  createTerminalArtworkController,
+  nextTerminalArtworkBackend,
+  terminalArtworkBackendLabels,
+  type TerminalArtworkBackend,
+  type TerminalArtworkController,
+  type TerminalArtworkRectangle
+} from "./terminal-artwork";
+import { setActiveTerminalArtworkRectangle } from "./terminal-artwork-command";
 
 declare function require(name: "node:fs/promises"): {
   stat(path: string): Promise<unknown>;
@@ -99,7 +117,9 @@ declare const process: {
   env: Record<string, string | undefined>;
   exitCode?: number;
   on(event: "SIGINT", listener: () => void): void;
+  on(event: "SIGTERM", listener: () => void): void;
   off(event: "SIGINT", listener: () => void): void;
+  off(event: "SIGTERM", listener: () => void): void;
 };
 
 interface NodeInput {
@@ -114,7 +134,10 @@ interface NodeInput {
 interface NodeOutput {
   isTTY?: boolean;
   columns?: number;
-  write(text: string): void;
+  rows?: number;
+  write(text: string | Uint8Array): void;
+  on?(event: "resize", listener: () => void): void;
+  off?(event: "resize", listener: () => void): void;
 }
 
 export interface KeyPress {
@@ -127,8 +150,11 @@ export interface Terminal {
   readonly isInteractive: boolean;
   readonly colorsEnabled: boolean;
   readonly width?: number;
+  readonly height?: number;
   write(text: string): void;
+  writeControl?(data: string | Uint8Array): void;
   readKey(): Promise<KeyPress>;
+  cancelRead?(): void;
   enter(): void;
   restore(): void;
 }
@@ -239,7 +265,7 @@ interface ReadingSupport {
   readonly characters?: { readonly heading: string; readonly normal: string; readonly expert: string };
 }
 
-interface EmbeddedReviewSession {
+export interface EmbeddedReviewSession {
   readonly nodeId: string;
   readonly node: LanguageTreeNode;
   readonly items: readonly ReviewItemState[];
@@ -248,6 +274,10 @@ interface EmbeddedReviewSession {
   readonly developerItems?: readonly ReadingReviewItem[];
   readonly promptRendered?: RenderedExercise;
   readonly answerRendered?: RenderedExercise;
+  readonly artwork?: ResolvedReadingReviewArtwork;
+  readonly promptArtworkHadMedia?: boolean;
+  readonly artworkResolutionFailed?: boolean;
+  readonly artworkNotice?: string;
   readonly message?: string;
 }
 
@@ -558,6 +588,7 @@ export function createNodeTerminal(): Terminal {
   const readline = require("node:readline");
   let rawModeWasEnabled = false;
   let active = false;
+  let cancelCurrentRead: (() => void) | undefined;
 
   return {
     get isInteractive() {
@@ -569,21 +600,43 @@ export function createNodeTerminal(): Terminal {
     get width() {
       return process.stdout.columns;
     },
+    get height() {
+      return process.stdout.rows;
+    },
     write(text) {
       process.stdout.write(text);
+    },
+    writeControl(data) {
+      process.stdout.write(data);
     },
     readKey() {
       readline.emitKeypressEvents(process.stdin);
       process.stdin.resume();
 
       return new Promise((resolve) => {
-        const onKey = (_text: string, key: KeyPress): void => {
+        const cleanup = (): void => {
           process.stdin.off("keypress", onKey);
+          process.stdout.off?.("resize", onResize);
+          if (cancelCurrentRead === cleanup) cancelCurrentRead = undefined;
+        };
+        const onKey = (_text: string, key: KeyPress): void => {
+          cleanup();
           resolve(key);
         };
 
+        const onResize = (): void => {
+          cleanup();
+          resolve({ name: "resize" });
+        };
+
+        cancelCurrentRead?.();
+        cancelCurrentRead = cleanup;
         process.stdin.on("keypress", onKey);
+        process.stdout.on?.("resize", onResize);
       });
+    },
+    cancelRead() {
+      cancelCurrentRead?.();
     },
     enter() {
       active = true;
@@ -616,6 +669,8 @@ export interface InteractiveMenuOptions {
   readonly charactersEnabled?: boolean;
   readonly notesEnabled?: boolean;
   readonly vocabularyEntrySpacing?: VocabularyEntrySpacing;
+  readonly terminalArtworkBackend?: TerminalArtworkBackend;
+  readonly terminalArtworkControllerFactory?: typeof createTerminalArtworkController;
 }
 
 export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, terminal = createNodeTerminal(), options: InteractiveMenuOptions = {}): Promise<void> {
@@ -626,25 +681,53 @@ export async function runInteractiveMenu(registry: InMemoryCliCommandRegistry, t
   }
 
   let interrupted = false;
+  let terminated = false;
+  let resolveSignal: ((key: KeyPress) => void) | undefined;
+  const signalKey = new Promise<KeyPress>((resolve) => { resolveSignal = resolve; });
   const onSigint = (): void => {
     interrupted = true;
+    terminal.cancelRead?.();
+    resolveSignal?.({ name: "c", ctrl: true });
+  };
+  const onSigterm = (): void => {
+    terminated = true;
+    terminal.cancelRead?.();
+    resolveSignal?.({ name: "terminate" });
   };
 
   process.on("SIGINT", onSigint);
+  process.on("SIGTERM", onSigterm);
   terminal.enter();
 
   try {
-    const quit = await runModuleTreeMenu(registry, terminal, options);
+    const quit = await runModuleTreeMenu(registry, terminalWithSignal(terminal, signalKey), options);
     if (quit) {
       return;
     }
   } finally {
     process.off("SIGINT", onSigint);
+    process.off("SIGTERM", onSigterm);
     terminal.restore();
     if (interrupted) {
       process.exitCode = 130;
     }
+    if (terminated) process.exitCode = 143;
   }
+}
+
+function terminalWithSignal(terminal: Terminal, signalKey: Promise<KeyPress>): Terminal {
+  return {
+    get isInteractive() { return terminal.isInteractive; },
+    get colorsEnabled() { return terminal.colorsEnabled; },
+    get width() { return terminal.width; },
+    get height() { return terminal.height; },
+    write: (text) => terminal.write(text),
+    writeControl: (data) => terminal.writeControl?.(data),
+    readKey: () => Promise.race([terminal.readKey(), signalKey]),
+    cancelRead: () => terminal.cancelRead?.(),
+    enter: () => terminal.enter(),
+    restore: () => terminal.restore()
+  };
 }
 
 async function runChessAction(registry: InMemoryCliCommandRegistry, terminal: Terminal): Promise<boolean> {
@@ -665,6 +748,8 @@ async function runMathematicsMenu(registry: InMemoryCliCommandRegistry, terminal
   while (true) {
     renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nMathematics\n`, mathematicsMenuItems, selection);
     const key = await terminal.readKey();
+
+    if (key.name === "terminate") return true;
 
     if (isCtrlC(key)) {
       process.exitCode = 130;
@@ -934,6 +1019,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     , charactersEnabled: options.charactersEnabled ?? false
     , notesEnabled: options.notesEnabled ?? savedSettings.newVocabulary.notesVisible
     , vocabularyEntrySpacing: options.vocabularyEntrySpacing ?? savedSettings.newVocabulary.entrySpacing
+    , terminalArtworkBackend: options.terminalArtworkBackend ?? savedSettings.terminalArtworkBackend
   };
   let tree = await buildModuleTree(options);
   let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
@@ -945,15 +1031,24 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   let focusedPane: FocusablePane = "navigation";
   let toggleSelection = 0;
   let firstFrame = true;
+  const artworkManager = new EmbeddedReviewArtworkManager(terminal, options);
 
+  try {
   while (true) {
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
     selection = Math.min(selection, visible.length - 1);
     const selectedNode = visible[selection]?.node ?? tree;
     const charactersApplicable = charactersToggleAppliesToNode(selectedNode);
-    const toggleCount = charactersApplicable ? 7 : 6;
+    const toggleCount = charactersApplicable ? 8 : 7;
     toggleSelection = Math.min(toggleSelection, toggleCount - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
+    const artworkNotice = await artworkManager.sync(embeddedReview, rightPaneText);
+    const currentEmbeddedReview = embeddedReview as EmbeddedReviewSession | null;
+    if (currentEmbeddedReview !== null && artworkNotice !== currentEmbeddedReview.artworkNotice) {
+      embeddedReview = { ...currentEmbeddedReview, artworkNotice };
+      rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+      renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
+    }
     if (firstFrame) {
       firstFrame = false;
       perfMark("terminal.ready");
@@ -971,6 +1066,13 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     if (isCtrlC(key)) {
       process.exitCode = 130;
       return true;
+    }
+
+    if (isResize(key)) {
+      await artworkManager.resize();
+      await waitForResizeStabilization();
+      rightPaneOffset = 0;
+      continue;
     }
 
     if (isEscape(key)) {
@@ -1078,6 +1180,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         const sourceChanged = toggleSelection === 0;
         const notesIndex = charactersApplicable ? 5 : 4;
         const spacesIndex = charactersApplicable ? 6 : 5;
+        const artworkIndex = charactersApplicable ? 7 : 6;
         if (sourceChanged) options = await persistInteractiveSourceLocale(options, nextSourceLocale(options.locale));
         else if (toggleSelection === 1) options = { ...options, displayMode: nextCurriculumDisplayMode(options.displayMode ?? defaultCurriculumDisplayMode) };
         else if (toggleSelection === 2) options = { ...options, translationsEnabled: options.translationsEnabled !== true };
@@ -1094,6 +1197,11 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
               : "separated"
           };
           await persistInteractiveNewVocabularyPreferences(options);
+        } else if (toggleSelection === artworkIndex) {
+          const terminalArtworkBackend = nextTerminalArtworkBackend(options.terminalArtworkBackend ?? "auto");
+          options = { ...options, terminalArtworkBackend };
+          await saveTerminalArtworkBackend(terminalArtworkBackend, options.settingsDir);
+          await artworkManager.configure(terminalArtworkBackend);
         }
         if (sourceChanged && embeddedReview !== null) {
           embeddedReview = await reprojectEmbeddedReviewSession(embeddedReview, options);
@@ -1302,6 +1410,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     } finally {
       finishDispatch();
     }
+  }
+  } finally {
+    await artworkManager.shutdown();
   }
 }
 
@@ -1565,9 +1676,13 @@ function renderUninstallCancelled(node: LanguageTreeNode, locale: SourceLocale =
   ].join("\n");
 }
 
-export async function buildLanguageTree(dataDir?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): Promise<LanguageTreeNode> {
+export async function buildLanguageTree(
+  dataDir?: string,
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode,
+  currentPackageMetadata: readonly DeckFamilyPackageMetadata[] = contentPackageGeneratorTargets
+): Promise<LanguageTreeNode> {
   const descriptors = (await listFirstClassModuleDescriptors(dataDir)).filter((descriptor) => descriptor.category === "Languages");
-  return buildLanguageTreeFromDescriptors(descriptors, dataDir, "en-US", displayMode);
+  return buildLanguageTreeFromDescriptors(descriptors, dataDir, "en-US", displayMode, currentPackageMetadata);
 }
 
 export async function listFirstClassModuleDescriptors(dataDir?: string, locale: SourceLocale = "en-US"): Promise<readonly FirstClassModuleDescriptor[]> {
@@ -1779,7 +1894,8 @@ async function buildLanguageTreeFromDescriptors(
   descriptors: readonly FirstClassModuleDescriptor[],
   dataDir: string | undefined,
   locale: SourceLocale,
-  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode,
+  currentPackageMetadata: readonly DeckFamilyPackageMetadata[] = contentPackageGeneratorTargets
 ): Promise<LanguageTreeNode> {
   return perfSpan("module-tree.languages", { locale, displayMode, packageCount: descriptors.length }, async () => {
   const packageNodes: LanguageTreeNode[] = [];
@@ -1953,7 +2069,12 @@ async function buildLanguageTreeFromDescriptors(
     });
   }
 
-  await addInstalledSpecializedReviewBranches(packageNodes, dataDir, locale);
+  const installed = reconcileInstalledDeckFamilyMetadata(
+    await listInstalledContentPackages(dataDir),
+    currentPackageMetadata
+  );
+  await addInstalledSpecializedReviewBranches(packageNodes, dataDir, locale, installed);
+  await addInstalledDeckFamilyBranches(packageNodes, dataDir, locale, progressItems, installed);
 
   return {
     id: "languages",
@@ -1977,13 +2098,20 @@ async function buildLanguageTreeFromDescriptors(
 async function addInstalledSpecializedReviewBranches(
   packageNodes: LanguageTreeNode[],
   dataDir: string | undefined,
-  locale: SourceLocale
+  locale: SourceLocale,
+  installedPackages: readonly InstalledPackageRecord[]
 ): Promise<void> {
-  const installed = (await listInstalledContentPackages(dataDir))
+  const installed = installedPackages
     .filter((record) => record.capabilities?.includes("specialized-review"));
   for (const definition of specializedReviewPackageDefinitions) {
     const record = newestInstalledPackage(installed.filter((candidate) => candidate.packageId === definition.packageId));
     if (record === undefined) continue;
+    const ordinaryIndex = packageNodes.findIndex((node) => node.packageId === definition.languagePackageId);
+    if (record.deckFamily !== undefined) {
+      if (ordinaryIndex < 0) packageNodes.push(emptyClassifiedLanguagePackageNode(definition, record, locale));
+      packageNodes.sort((left, right) => left.label.localeCompare(right.label));
+      continue;
+    }
     const sources = await listReadingReviewSources({
       dataDir,
       sourceLocale: locale,
@@ -2020,7 +2148,6 @@ async function addInstalledSpecializedReviewBranches(
         previewText: "No specialized decks are available."
       }]
     };
-    const ordinaryIndex = packageNodes.findIndex((node) => node.packageId === definition.languagePackageId);
     if (ordinaryIndex >= 0) {
       const ordinary = packageNodes[ordinaryIndex];
       const children = [...(ordinary.children ?? [])];
@@ -2032,6 +2159,172 @@ async function addInstalledSpecializedReviewBranches(
     packageNodes.push(emptyLanguagePackageNode(definition, record, specializedBranch, locale));
     packageNodes.sort((left, right) => left.label.localeCompare(right.label));
   }
+}
+
+function emptyClassifiedLanguagePackageNode(
+  definition: (typeof specializedReviewPackageDefinitions)[number],
+  record: InstalledPackageRecord,
+  locale: SourceLocale
+): LanguageTreeNode {
+  const noCurriculum = "No ordinary curriculum is available for this language yet. Installed deck-family packages remain fully usable.";
+  return {
+    id: definition.languagePackageId,
+    label: definition.languageDisplayName,
+    kind: "package",
+    moduleId: definition.languagePackageId,
+    moduleVersion: record.packageVersion,
+    sourceKind: "content-package",
+    packageId: definition.languagePackageId,
+    packageVersion: record.packageVersion,
+    packageLabel: definition.languageDisplayName,
+    previewText: noCurriculum,
+    children: [
+      {
+        id: `${definition.languagePackageId}:read`,
+        label: translate(locale, "menu.readContent"),
+        kind: "read-section",
+        children: [{ id: `${definition.languagePackageId}:read:none`, label: "No ordinary curriculum", kind: "message", previewText: noCurriculum }]
+      },
+      {
+        id: `${definition.languagePackageId}:review`,
+        label: translate(locale, "menu.reviewDecks"),
+        kind: "review-section",
+        children: [{ id: `${definition.languagePackageId}:review:none`, label: "No ordinary review decks", kind: "message", previewText: noCurriculum }]
+      },
+      {
+        id: `${definition.languagePackageId}:info`,
+        label: translate(locale, "menu.packageInfo"),
+        kind: "package-info",
+        sourceKind: "content-package",
+        packageId: record.packageId,
+        packageVersion: record.packageVersion,
+        packageLabel: record.displayName,
+        previewText: `${definition.languageDisplayName}\n\n${noCurriculum}\n\nInstalled deck package: ${record.packageId}\nVersion: ${record.packageVersion}`
+      },
+      {
+        id: `${definition.languagePackageId}:uninstall`,
+        label: translate(locale, "menu.uninstall"),
+        kind: "uninstall",
+        sourceKind: "content-package",
+        packageId: record.packageId,
+        packageVersion: record.packageVersion,
+        packageLabel: record.displayName,
+        previewText: renderUninstallPreview(record.displayName, locale)
+      }
+    ]
+  };
+}
+
+async function addInstalledDeckFamilyBranches(
+  packageNodes: LanguageTreeNode[],
+  dataDir: string | undefined,
+  locale: SourceLocale,
+  progressItems: readonly ReviewItemState[],
+  installed: readonly InstalledPackageRecord[]
+): Promise<void> {
+  for (let index = 0; index < packageNodes.length; index += 1) {
+    const languageNode = packageNodes[index];
+    const languagePackageId = languageNode.packageId ?? languageNode.moduleId;
+    if (languagePackageId === undefined) continue;
+
+    const branches = await Promise.all((["general", "specialized"] as const).map((family) =>
+      buildDeckFamilyBranch(languagePackageId, family, installed, dataDir, locale, progressItems)
+    ));
+    const familyBranchIds = new Set(branches.map((branch) => branch.id));
+    const children = (languageNode.children ?? []).filter((child) => !familyBranchIds.has(child.id));
+    const packageInfoIndex = children.findIndex((child) => child.kind === "package-info");
+    children.splice(packageInfoIndex < 0 ? children.length : packageInfoIndex, 0, ...branches);
+    packageNodes[index] = { ...languageNode, children };
+  }
+}
+
+async function buildDeckFamilyBranch(
+  languagePackageId: string,
+  family: DeckFamily,
+  installed: readonly InstalledPackageRecord[],
+  dataDir: string | undefined,
+  locale: SourceLocale,
+  progressItems: readonly ReviewItemState[]
+): Promise<LanguageTreeNode> {
+  const label = family === "general" ? "General Decks" : "Specialized Decks";
+  const adjective = family === "general" ? "General" : "Specialized";
+  const packages = packagesForLanguageAndDeckFamily(installed, languagePackageId, family);
+  const packageChildren = await Promise.all(packages.map(async (record) => {
+    const reviewItems = await listReadingReviewItems({
+      dataDir,
+      sourceLocale: locale,
+      packageId: record.packageId,
+      packageVersion: record.packageVersion
+    });
+    const sources = readingReviewSourcesFromItems(reviewItems, locale);
+    const presentation = deckFamilyPackageMenuPresentation(
+      record.displayName,
+      sources.map((source) => ({
+        ...(source.title === undefined ? {} : { authoritativeTitle: source.title }),
+        fallbackLabel: cleanContentPathLabel(source.sourcePath)
+      })),
+      translate(locale, "menu.reviewDeck")
+    );
+    const statuses = await Promise.all(sources.map((source) => describeReviewSourceMenuStatus(source, { dataDir, locale }, {
+      sourceItems: reviewItems.filter((item) => item.sourcePath === source.sourcePath),
+      progressItems
+    })));
+    const sourceChildren: LanguageTreeNode[] = sources.map((source, sourceIndex) => ({
+      id: `${languagePackageId}:deck-family:${family}:${record.packageId}@${record.packageVersion}:${source.sourcePath}`,
+      label: presentation.sourceLabels[sourceIndex] ?? cleanContentPathLabel(source.sourcePath),
+      kind: "review-source",
+      moduleId: languagePackageId,
+      moduleVersion: record.packageVersion,
+      sourceKind: "content-package",
+      packageId: record.packageId,
+      packageVersion: record.packageVersion,
+      packageLabel: record.displayName,
+      sourcePath: source.sourcePath,
+      itemCount: source.itemCount,
+      reviewStatus: statuses[sourceIndex]?.kind,
+      dueCardCount: statuses[sourceIndex]?.dueCardCount,
+      reviewStatusText: statuses[sourceIndex]?.text
+    }));
+    return {
+      id: `${languagePackageId}:deck-family:${family}:${record.packageId}@${record.packageVersion}`,
+      label: presentation.packageLabel,
+      kind: "package" as const,
+      moduleId: languagePackageId,
+      moduleVersion: record.packageVersion,
+      sourceKind: "content-package",
+      packageId: record.packageId,
+      packageVersion: record.packageVersion,
+      packageLabel: record.displayName,
+      previewText: [
+        record.displayName,
+        "",
+        `Package: ${record.packageId}`,
+        `Version: ${record.packageVersion}`,
+        `Deck family: ${family}`
+      ].join("\n"),
+      children: sourceChildren.length > 0 ? sourceChildren : [{
+        id: `${languagePackageId}:deck-family:${family}:${record.packageId}@${record.packageVersion}:none`,
+        label: "No review decks",
+        kind: "message" as const,
+        previewText: `No review decks are available in ${record.displayName}.`
+      }]
+    };
+  }));
+  const emptyState = `No ${adjective} decks are available for this language.`;
+  return {
+    id: `${languagePackageId}:deck-family:${family}`,
+    label,
+    kind: "category",
+    previewText: packageChildren.length > 0
+      ? `${label}\n\nInstalled packages explicitly classified as ${family} for this language.`
+      : emptyState,
+    children: packageChildren.length > 0 ? packageChildren : [{
+      id: `${languagePackageId}:deck-family:${family}:none`,
+      label: `No ${adjective} decks available`,
+      kind: "message",
+      previewText: emptyState
+    }]
+  };
 }
 
 function newestInstalledPackage(records: readonly InstalledPackageRecord[]): InstalledPackageRecord | undefined {
@@ -2775,7 +3068,18 @@ async function renderEmbeddedReviewPrompt(session: EmbeddedReviewSession, option
     itemId: current.itemId,
     sourceLocale: options.locale
   });
-  return { ...session, side: "prompt", promptRendered: prompt.rendered, answerRendered: undefined, message: undefined };
+  const artwork = await resolveEmbeddedReviewArtwork(session, current, "prompt", options);
+  return {
+    ...session,
+    side: "prompt",
+    promptRendered: prompt.rendered,
+    answerRendered: undefined,
+    artwork: artwork.value,
+    promptArtworkHadMedia: artwork.value !== undefined,
+    artworkResolutionFailed: artwork.failed,
+    artworkNotice: undefined,
+    message: undefined
+  };
 }
 
 async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
@@ -2792,7 +3096,37 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
     answer: true,
     sourceLocale: options.locale
   });
-  return { ...session, side: "answer", answerRendered: answer.rendered, message: undefined };
+  const artwork = await resolveEmbeddedReviewArtwork(session, current, "answer", options);
+  return {
+    ...session,
+    side: "answer",
+    answerRendered: answer.rendered,
+    artwork: artwork.value,
+    artworkResolutionFailed: artwork.failed,
+    artworkNotice: undefined,
+    message: undefined
+  };
+}
+
+async function resolveEmbeddedReviewArtwork(
+  session: EmbeddedReviewSession,
+  state: ReviewItemState,
+  side: "prompt" | "answer",
+  options: InteractiveMenuOptions
+): Promise<{ readonly value?: ResolvedReadingReviewArtwork; readonly failed: boolean }> {
+  const reviewItem = session.developerItems?.find((candidate) =>
+    candidate.packageId === state.packageId
+      && candidate.packageVersion === state.packageVersion
+      && candidate.item.id === state.itemId
+      && (state.sourcePath === undefined || candidate.sourcePath === state.sourcePath)
+  );
+  if (reviewItem === undefined) return { failed: false };
+  try {
+    const value = await resolveReadingReviewArtwork(reviewItem, side, { dataDir: options.dataDir, sourceLocale: options.locale });
+    return value === undefined ? { failed: false } : { value, failed: false };
+  } catch {
+    return { failed: true };
+  }
 }
 
 async function reprojectEmbeddedReviewSession(session: EmbeddedReviewSession, options: InteractiveMenuOptions): Promise<EmbeddedReviewSession> {
@@ -2821,14 +3155,15 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
     return [...header, "Loading review card..."].join("\n");
   }
   const cards = session.side === "prompt"
-    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode)]
-    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode)];
+    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode, session.artwork !== undefined)]
+    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode, session.artwork !== undefined || session.promptArtworkHadMedia === true)];
   const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled, locale);
   return [
     ...header,
     cards.join("\n\n"),
     ...(displayMode === "developer" ? developerReviewMetadataLines(session) : []),
     session.message === undefined ? "" : `\n${session.message}`,
+    session.artworkNotice === undefined ? "" : `\n${session.artworkNotice}`,
     reviewBottomBarMarker,
     controls
   ].filter((line) => line.length > 0).join("\n");
@@ -2893,10 +3228,11 @@ function isJapanesePackage(packageId?: string): boolean {
   return packageId === "com.sleepymario.language.japanese";
 }
 
-export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
+export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode, artworkRendered = false): string {
   const languageLines = formatLanguageSpecificEmbeddedExerciseLines(exercise, side, packageId);
+  const projectedLines = projectReviewLinesForMode(languageLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines), displayMode);
   const lines = formatEmbeddedReviewBody({
-    promptLines: projectReviewLinesForMode(languageLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines), displayMode),
+    promptLines: artworkRendered ? withoutArtworkPlaceholderLines(projectedLines) : projectedLines,
     answerLines: [],
     colorsEnabled,
     placeholder: "Answer hidden until reveal."
@@ -2910,15 +3246,22 @@ export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "
   return lines.join("\n");
 }
 
-export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
+export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode, artworkRendered = false): string {
   const languageReveal = formatLanguageSpecificEmbeddedRevealLines(prompt, packageId);
+  const promptLines = projectReviewLinesForMode(languageReveal?.promptLines ?? prompt.promptLines, displayMode);
+  const answerLines = projectReviewLinesForMode(languageReveal?.answerLines ?? answer.answerLines, displayMode);
   const lines = formatEmbeddedReviewBody({
-    promptLines: projectReviewLinesForMode(languageReveal?.promptLines ?? prompt.promptLines, displayMode),
-    answerLines: projectReviewLinesForMode(languageReveal?.answerLines ?? answer.answerLines, displayMode),
+    promptLines: artworkRendered ? withoutArtworkPlaceholderLines(promptLines) : promptLines,
+    answerLines: artworkRendered ? withoutArtworkPlaceholderLines(answerLines) : answerLines,
     colorsEnabled
   });
   appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(answer, !isFiveChapterReviewSource(sourcePath)));
   return lines.join("\n");
+}
+
+function withoutArtworkPlaceholderLines(lines: readonly string[]): readonly string[] {
+  const filtered = lines.filter((line) => !/^\[Image: [^\]\r\n]+\]$/u.test(line.trim()));
+  return filtered.length === 0 ? [""] : filtered;
 }
 
 function projectReviewLinesForMode(lines: readonly string[], mode: CurriculumDisplayMode): readonly string[] {
@@ -4234,11 +4577,12 @@ function renderLanguageTreeMenu(
   charactersEnabled = false,
   charactersApplicable = false,
   notesEnabled = true,
-  vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing
+  vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing,
+  terminalArtworkBackend: TerminalArtworkBackend = "auto"
 ): void {
   const frame = perfSpanSync("terminal.frame.generate", {}, () => {
     perfCount("render.count");
-    return `\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, 28, sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing)}`;
+    return `\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, terminalBodyHeight(terminal.height), sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend)}`;
   });
   perfSpanSync("terminal.write", { bytes: frame.length }, () => terminal.write(frame));
 }
@@ -4266,7 +4610,8 @@ export function renderTwoPaneLanguageTree(
   charactersEnabled = false,
   charactersApplicable = false,
   notesEnabled = true,
-  vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing
+  vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing,
+  terminalArtworkBackend: TerminalArtworkBackend = "auto"
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
   const layout = threePaneLayout(terminalWidth);
@@ -4301,7 +4646,7 @@ export function renderTwoPaneLanguageTree(
   lines.push(`${separator} ${padRight(navigationTitle, leftWidth)} ${separator} ${padRight(outputTitle, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(togglesTitle, layout.toggleWidth)} ${separator}` : ""}`);
   lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}${layout.showToggles ? ` ${" ".repeat(layout.toggleWidth)} ${separator}` : ""}`);
 
-  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
+  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
@@ -4326,7 +4671,7 @@ export function renderSourceLanguageToggle(sourceLocale: SourceLocale, colorsEna
   return colorsEnabled ? `${ansi.bold}${ansi.orange}${label}${ansi.reset}` : label;
 }
 
-function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, vocabularyEntrySpacing: VocabularyEntrySpacing, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
+function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, vocabularyEntrySpacing: VocabularyEntrySpacing, terminalArtworkBackend: TerminalArtworkBackend, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
   const viewLabel: Record<CurriculumDisplayMode, string> = { normal: "Normal", expert: "Expert", developer: "Developer" };
   const raw = [
     `Source: ${sourceLocaleLabel(sourceLocale, sourceLocale)}`,
@@ -4335,7 +4680,8 @@ function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDi
     ...(charactersApplicable ? [`Characters: ${charactersEnabled ? "On" : "Off"}`] : []),
     `Breakdown: ${breakdownEnabled ? "On" : "Off"}`,
     `Notes: ${notesEnabled ? "On" : "Off"}`,
-    `Spaces: ${vocabularyEntrySpacing === "separated" ? "Yes" : "No"}`
+    `Spaces: ${vocabularyEntrySpacing === "separated" ? "Yes" : "No"}`,
+    `Artwork: ${terminalArtworkBackendLabels[terminalArtworkBackend]}`
   ];
   return raw.map((value, index) => {
     const selected = focused && selection === index;
@@ -4364,6 +4710,41 @@ function threePaneLayout(terminalWidth?: number): { readonly showToggles: boolea
   return { showToggles: true, leftWidth, outputWidth: Math.max(36, available - leftWidth - toggleWidth), toggleWidth };
 }
 
+export interface CentrePaneGeometry extends TerminalArtworkRectangle {}
+
+export function terminalBodyHeight(terminalHeight?: number): number {
+  return terminalHeight === undefined ? 28 : Math.max(8, terminalHeight - 5);
+}
+
+export function centrePaneGeometry(terminalWidth?: number, terminalHeight?: number): CentrePaneGeometry {
+  const layout = threePaneLayout(terminalWidth);
+  return {
+    column: layout.leftWidth + 4,
+    row: 4,
+    widthColumns: layout.outputWidth,
+    heightRows: terminalBodyHeight(terminalHeight)
+  };
+}
+
+export function centrePaneArtworkRectangle(
+  pane: CentrePaneGeometry,
+  occupiedTopRows: number,
+  occupiedBottomRows: number
+): TerminalArtworkRectangle | undefined {
+  const column = pane.column + 1;
+  const row = pane.row + Math.max(0, occupiedTopRows) + 1;
+  const widthColumns = pane.widthColumns - 2;
+  const heightRows = pane.heightRows - Math.max(0, occupiedTopRows) - Math.max(0, occupiedBottomRows) - 2;
+  if (widthColumns < 12 || heightRows < 4) return undefined;
+  const rectangle = { column, row, widthColumns, heightRows };
+  const paneRight = pane.column + pane.widthColumns - 1;
+  const paneBottom = pane.row + pane.heightRows - 1;
+  if (rectangle.column <= pane.column || rectangle.row <= pane.row || rectangle.column + rectangle.widthColumns - 1 >= paneRight || rectangle.row + rectangle.heightRows - 1 >= paneBottom) {
+    return undefined;
+  }
+  return rectangle;
+}
+
 function leftPaneOffsetForSelection(selection: number, itemCount: number, paneHeight: number): number {
   if (itemCount <= paneHeight) {
     return 0;
@@ -4381,6 +4762,111 @@ function splitFixedBottomBar(text: string): { readonly body: string; readonly bo
     body: text.slice(0, markerIndex),
     bottomBar: text.slice(markerIndex + reviewBottomBarMarker.length + 2)
   };
+}
+
+const centrePaneArtworkIdentifier = "wsm-centre-pane-artwork";
+
+export class EmbeddedReviewArtworkManager {
+  private controller: TerminalArtworkController | undefined;
+  private reviewNodeId: string | undefined;
+  private placementKey: string | undefined;
+  private configuredBackend: TerminalArtworkBackend;
+
+  constructor(private readonly terminal: Terminal, private readonly options: InteractiveMenuOptions) {
+    this.configuredBackend = options.terminalArtworkBackend ?? "auto";
+  }
+
+  async configure(configuredBackend: TerminalArtworkBackend): Promise<void> {
+    if (configuredBackend === this.configuredBackend) return;
+    await this.shutdown();
+    this.configuredBackend = configuredBackend;
+  }
+
+  async sync(session: EmbeddedReviewSession | null, rightPaneText: string): Promise<string | undefined> {
+    if (session === null || session.side === "complete") {
+      await this.shutdown();
+      return undefined;
+    }
+    if (this.reviewNodeId !== undefined && this.reviewNodeId !== session.nodeId) await this.shutdown();
+    this.reviewNodeId = session.nodeId;
+
+    if (session.artworkResolutionFailed === true) {
+      await this.clear();
+      return "Artwork rendering is unavailable for this terminal.";
+    }
+    if (session.artwork === undefined) {
+      await this.clear();
+      return undefined;
+    }
+
+    if (this.controller === undefined) {
+      const factory = this.options.terminalArtworkControllerFactory ?? createTerminalArtworkController;
+      this.controller = await factory({
+        configuredBackend: this.configuredBackend,
+        io: { writeControl: (data) => this.terminal.writeControl?.(data) ?? this.terminal.write(typeof data === "string" ? data : Buffer.from(data).toString("base64")) }
+      });
+      await this.controller.start();
+    }
+    if (!this.controller.capabilities.ready) {
+      await this.clear();
+      return this.controller.capabilities.reason ?? "Artwork rendering is unavailable for this terminal.";
+    }
+
+    const pane = centrePaneGeometry(this.terminal.width, this.terminal.height);
+    const split = splitFixedBottomBar(rightPaneText);
+    const spacing = this.options.vocabularyEntrySpacing ?? defaultNewVocabularyDisplayPreferences.entrySpacing;
+    const bottomRows = split.bottomBar === undefined ? 0 : formatPaneText(split.bottomBar, pane.widthColumns, this.terminal.colorsEnabled, spacing).length;
+    const scrollableRows = Math.max(1, pane.heightRows - bottomRows);
+    const occupiedTopRows = Math.min(scrollableRows, formatPaneText(split.body, pane.widthColumns, this.terminal.colorsEnabled, spacing).length);
+    const rectangle = centrePaneArtworkRectangle(pane, occupiedTopRows, bottomRows);
+    if (rectangle === undefined) {
+      await this.clear();
+      return "Artwork rendering is unavailable for this terminal.";
+    }
+
+    const state = session.items[session.index];
+    const nextPlacementKey = `${state?.itemId ?? "unknown"}:${session.side}:${rectangle.column}:${rectangle.row}:${rectangle.widthColumns}:${rectangle.heightRows}`;
+    if (nextPlacementKey === this.placementKey) return undefined;
+    await this.controller.clear(centrePaneArtworkIdentifier);
+    await this.controller.show({
+      identifier: centrePaneArtworkIdentifier,
+      assetPath: session.artwork.assetPath,
+      assetData: session.artwork.assetData,
+      mediaType: session.artwork.mediaType,
+      altText: session.artwork.altText,
+      rectangle,
+      fit: "contain"
+    });
+    if (!this.controller.capabilities.ready) {
+      this.placementKey = undefined;
+      setActiveTerminalArtworkRectangle(undefined);
+      return this.controller.capabilities.reason ?? "Artwork rendering is unavailable for this terminal.";
+    }
+    this.placementKey = nextPlacementKey;
+    setActiveTerminalArtworkRectangle(rectangle);
+    return undefined;
+  }
+
+  async resize(): Promise<void> {
+    this.placementKey = undefined;
+    setActiveTerminalArtworkRectangle(undefined);
+    await this.controller?.resize();
+  }
+
+  async shutdown(): Promise<void> {
+    this.placementKey = undefined;
+    this.reviewNodeId = undefined;
+    setActiveTerminalArtworkRectangle(undefined);
+    if (this.controller !== undefined) await this.controller.shutdown();
+    this.controller = undefined;
+  }
+
+  private async clear(): Promise<void> {
+    if (this.placementKey === undefined) return;
+    await this.controller?.clear(centrePaneArtworkIdentifier);
+    this.placementKey = undefined;
+    setActiveTerminalArtworkRectangle(undefined);
+  }
 }
 
 function renderTreeLines(entry: VisibleLanguageTreeNode, selected: boolean, width: number, colorsEnabled: boolean): readonly string[] {
@@ -5174,7 +5660,15 @@ function isQuit(key: KeyPress): boolean {
 }
 
 function isCtrlC(key: KeyPress): boolean {
-  return key.ctrl === true && key.name === "c";
+  return key.name === "terminate" || (key.ctrl === true && key.name === "c");
+}
+
+function isResize(key: KeyPress): boolean {
+  return key.name === "resize";
+}
+
+function waitForResizeStabilization(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 80));
 }
 
 async function promptLine(prompt: string): Promise<string> {

@@ -283,6 +283,8 @@ whacksmacker content remove com.sleepymario.language.dutch --version 0.1.0
 
 Installed package content remains separate from user progress and settings.
 
+In the interactive CLI, every registered language exposes the learner-facing `Reading Decks`, `General Decks`, and `Specialized Decks` entries. `Reading Decks` replaces the former `Review decks` menu label without renaming internal Review, memorization, command, API, or progress concepts. Family entries are present even when empty, and packages enter them only through explicit validated package metadata; see [General and Specialized Deck Families](docs/content-packages/deck-families.md).
+
 Read installed package content:
 
 ```sh
@@ -301,6 +303,8 @@ whacksmacker language terms --file terms/phonetics-and-phonology.md
 Content packages may also declare reviewable memorization items using the v1 schema in `schemas/memorization-item-v1.schema.json`. WhackSmacker stores native review progress separately using `schemas/review-progress-v1.schema.json`; installed package content remains read-only.
 
 Terminal exercise renderers can display memorization items as separated prompt and answer text. The native `review run` command reviews one package source at a time and can offer to continue with the next source after completion.
+
+Interactive CLI Review can render validated package-relative raster artwork inside the existing Output pane through a deliberately narrow terminal-artwork controller. Supported classes are local Wayland/X11 overlays, Kitty, Sixel, iTerm2-style inline images, and disabled; there is no Chafa or ASCII/Unicode fallback. See [Terminal artwork in interactive Review](docs/terminal-artwork.md).
 
 Connect installed reading content to native review items:
 

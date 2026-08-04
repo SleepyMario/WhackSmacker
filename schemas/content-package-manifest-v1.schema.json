@@ -63,6 +63,9 @@
       "uniqueItems": true,
       "items": { "enum": ["reading-curriculum", "core-review", "specialized-review", "technical"] }
     },
+    "deckFamily": {
+      "enum": ["general", "specialized"]
+    },
     "relatedPackageIds": {
       "type": "array",
       "uniqueItems": true,

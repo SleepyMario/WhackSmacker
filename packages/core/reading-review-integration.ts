@@ -4,7 +4,13 @@ import { isSafeContentPackagePath } from "./content-package-spec";
 import { localized } from "./localized-content";
 import { renderMemorizationExercise, type RenderedExercise } from "./exercise-renderer";
 import { projectReviewTextForMode } from "./curriculum-display";
-import { listInstalledMemorizationItemFiles, readInstalledMemorizationItems, type MemorizationItem } from "./memorization-item";
+import {
+  listInstalledMemorizationItemFiles,
+  readInstalledMemorizationItems,
+  readInstalledPackageImageAsset,
+  type MemorizationItem
+} from "./memorization-item";
+import { parseMemorizationMarkdownImages } from "./package-media";
 import {
   defaultReviewProgressDirectoryForContentDataDirectory,
   listDueReviewItems,
@@ -114,6 +120,13 @@ export interface RenderReadingReviewItemResult {
   readonly text: string;
 }
 
+export interface ResolvedReadingReviewArtwork {
+  readonly altText: string;
+  readonly assetPath: string;
+  readonly assetData: Uint8Array;
+  readonly mediaType: "image/webp" | "image/png" | "image/jpeg";
+}
+
 export async function listReadingReviewSources(options: ReadingReviewOptions = {}): Promise<readonly ReadingReviewSource[]> {
   const items = await listReadingReviewItems(options);
   return readingReviewSourcesFromItems(items, options.sourceLocale);
@@ -171,7 +184,10 @@ export async function listReadingReviewItems(options: ListReadingReviewItemsOpti
       : contentPackage.packageId;
     const readablePaths = await safeReadablePathSet(contentPackage, options.dataDir);
     for (const file of await listInstalledMemorizationItemFiles(contentPackage.packageId, options.dataDir, contentPackage.packageVersion)) {
-      const collection = await readInstalledMemorizationItems(contentPackage.packageId, file.path, options.dataDir, contentPackage.packageVersion, options.sourceLocale);
+      // Package installation and the item collection contract already validate
+      // every declared reference. Review resolves and re-verifies the current
+      // side's bytes lazily so answer media is not touched before reveal.
+      const collection = await readInstalledMemorizationItems(contentPackage.packageId, file.path, options.dataDir, contentPackage.packageVersion, options.sourceLocale, false);
       for (const item of collection.items) {
         const sourcePath = item.source?.path;
         if (options.sourcePath !== undefined && sourcePath !== options.sourcePath) {
@@ -189,6 +205,32 @@ export async function listReadingReviewItems(options: ListReadingReviewItemsOpti
     }
   }
   return results.sort(compareItems);
+}
+
+export async function resolveReadingReviewArtwork(
+  reviewItem: ReadingReviewItem,
+  side: "prompt" | "answer",
+  options: { readonly dataDir?: string; readonly sourceLocale?: string } = {}
+): Promise<ResolvedReadingReviewArtwork | undefined> {
+  const block = reviewItem.item[side];
+  if (block.mediaType !== "text/markdown") return undefined;
+  const markdown = localized(block.text, options.sourceLocale ?? "en-US");
+  const references = parseMemorizationMarkdownImages(markdown);
+  const reference = references[0];
+  if (reference === undefined) return undefined;
+  const physicalPackageId = reviewItem.contentPackageId ?? reviewItem.packageId;
+  const asset = await readInstalledPackageImageAsset(
+    physicalPackageId,
+    reviewItem.packageVersion,
+    reference.path,
+    options.dataDir
+  );
+  return {
+    altText: reference.alt,
+    assetPath: asset.assetPath,
+    assetData: asset.data,
+    mediaType: asset.mediaType
+  };
 }
 
 export async function syncReadingReviewItems(options: SyncReadingReviewOptions): Promise<SyncReadingReviewResult> {

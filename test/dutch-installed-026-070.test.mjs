@@ -77,7 +77,7 @@ test("installed Dutch Chapters 26-80 expose all views and independent translatio
     const dutch = tree.children.find((node) => node.label === "Dutch");
     assert.ok(dutch);
     const readContent = dutch.children.find((node) => node.label === "Read content");
-    const reviewDecks = dutch.children.find((node) => node.label === "Review decks");
+    const reviewDecks = dutch.children.find((node) => node.label === "Reading Decks");
     assert.ok(readContent);
     assert.ok(reviewDecks);
 

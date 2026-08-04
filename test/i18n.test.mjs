@@ -37,26 +37,30 @@ test("source language and New Vocabulary display preferences default and persist
     assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
       settingsFormatVersion: 2,
       sourceLanguage: "en-US",
-      newVocabulary: { notesVisible: true, entrySpacing: "separated" }
+      newVocabulary: { notesVisible: true, entrySpacing: "separated" },
+      terminalArtworkBackend: "auto"
     });
     await saveSourceLanguage("zh-Hant-TW", settingsDir);
     await saveNewVocabularyDisplayPreferences({ notesVisible: false, entrySpacing: "compact" }, settingsDir);
     assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
       settingsFormatVersion: 2,
       sourceLanguage: "zh-Hant-TW",
-      newVocabulary: { notesVisible: false, entrySpacing: "compact" }
+      newVocabulary: { notesVisible: false, entrySpacing: "compact" },
+      terminalArtworkBackend: "auto"
     });
     await saveSourceLanguage("en-US", settingsDir);
     assert.deepEqual(JSON.parse(await readFile(sourceLanguageSettingsPath(settingsDir), "utf8")), {
       settingsFormatVersion: 2,
       sourceLanguage: "en-US",
-      newVocabulary: { notesVisible: false, entrySpacing: "compact" }
+      newVocabulary: { notesVisible: false, entrySpacing: "compact" },
+      terminalArtworkBackend: "auto"
     });
     await saveNewVocabularyDisplayPreferences({ notesVisible: true, entrySpacing: "separated" }, settingsDir);
     assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
       settingsFormatVersion: 2,
       sourceLanguage: "en-US",
-      newVocabulary: { notesVisible: true, entrySpacing: "separated" }
+      newVocabulary: { notesVisible: true, entrySpacing: "separated" },
+      terminalArtworkBackend: "auto"
     });
   } finally {
     await rm(settingsDir, { recursive: true, force: true });
@@ -81,7 +85,8 @@ test("missing, older, malformed, and obsolete settings fall back without resetti
     assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
       settingsFormatVersion: 2,
       sourceLanguage: "zh-Hant-TW",
-      newVocabulary: { notesVisible: false, entrySpacing: "separated" }
+      newVocabulary: { notesVisible: false, entrySpacing: "separated" },
+      terminalArtworkBackend: "auto"
     });
     await saveNewVocabularyDisplayPreferences({ notesVisible: false, entrySpacing: "compact" }, settingsDir);
     assert.equal((await loadSourceLanguageSettings(settingsDir)).sourceLanguage, "zh-Hant-TW");
@@ -94,7 +99,8 @@ test("missing, older, malformed, and obsolete settings fall back without resetti
     assert.deepEqual(await loadSourceLanguageSettings(settingsDir), {
       settingsFormatVersion: 2,
       sourceLanguage: "en-US",
-      newVocabulary: { notesVisible: true, entrySpacing: "separated" }
+      newVocabulary: { notesVisible: true, entrySpacing: "separated" },
+      terminalArtworkBackend: "auto"
     });
   } finally {
     await rm(settingsDir, { recursive: true, force: true });

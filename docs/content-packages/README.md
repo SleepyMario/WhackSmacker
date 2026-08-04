@@ -42,6 +42,7 @@ The application, downloaded package content, and user progress/settings remain s
 - backup, restore, inspect, and migration support for user-owned state;
 - Anki parity audit history for native memorization, rendering, scheduling, due-listing, and backup behavior;
 - native-only review routing with the old Anki deck command removed.
+- explicit General and Specialized deck-family metadata and interactive language submenus.
 
 ## Generator Targets
 
@@ -153,6 +154,8 @@ Point 12 removes the old Anki-backed review path. `whacksmacker review` now refe
 - [Reading Interface](reading-interface.md)
 - [Memorization Items](memorization-items.md)
 - [Package-relative memorization images](package-media.md)
+- [Terminal artwork in interactive Review](../terminal-artwork.md)
+- [General and Specialized Deck Families](deck-families.md)
 - [Native Review Scheduler](../review-scheduler.md)
 - [Exercise Renderers](../exercise-renderers.md)
 - [Reading to Review](../reading-to-review.md)

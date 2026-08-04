@@ -96,6 +96,7 @@ export interface InstalledPackageRecord {
   readonly displayName: string;
   readonly contentType: string;
   readonly capabilities?: ContentPackageManifest["capabilities"];
+  readonly deckFamily?: ContentPackageManifest["deckFamily"];
   readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
@@ -317,6 +318,7 @@ export async function installContentPackage(options: InstallContentPackageOption
     displayName: localized(manifest.displayName, "en-US"),
     contentType: manifest.contentType,
     ...(manifest.capabilities === undefined ? {} : { capabilities: manifest.capabilities }),
+    ...(manifest.deckFamily === undefined ? {} : { deckFamily: manifest.deckFamily }),
     ...(manifest.relatedPackageIds === undefined ? {} : { relatedPackageIds: manifest.relatedPackageIds }),
     contentSchemaVersion: manifest.contentSchemaVersion,
     minimumWhackSmackerVersion: manifest.minimumWhackSmackerVersion,
@@ -587,6 +589,9 @@ function validateManifestMatchesCatalogue(manifest: ContentPackageManifest, entr
       throw new Error(`Package manifest ${field} does not match catalogue entry: expected ${expected}, got ${actual}`);
     }
   }
+  if (manifest.deckFamily !== entry.deckFamily) {
+    throw new Error(`Package manifest deckFamily does not match catalogue entry: expected ${String(entry.deckFamily)}, got ${String(manifest.deckFamily)}`);
+  }
 }
 
 function validateDeclaredFiles(manifest: ContentPackageManifest, entries: readonly ZipEntry[]): void {
@@ -664,6 +669,9 @@ function validateRegistryPackages(value: unknown, errors: string[]): void {
     const packageVersion = readString(record.packageVersion);
     validatePackageId(packageId, `packages[${index}].packageId`, errors);
     validateSemver(packageVersion, `packages[${index}].packageVersion`, errors);
+    if (record.deckFamily !== undefined && record.deckFamily !== "general" && record.deckFamily !== "specialized") {
+      errors.push(`packages[${index}].deckFamily must be general or specialized when present.`);
+    }
     validateTimestamp(record.installedAt, `packages[${index}].installedAt`, errors);
     if (!isSafeContentPackagePath(readString(record.installPath))) {
       errors.push(`packages[${index}].installPath must be a safe relative path.`);

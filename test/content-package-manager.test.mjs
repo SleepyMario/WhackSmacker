@@ -98,6 +98,23 @@ test("malformed registry fails clearly", async () => {
   }
 });
 
+test("installed registry rejects invalid deck family metadata", async () => {
+  const fixture = await createPackageFixture();
+  try {
+    await installContentPackage({
+      cataloguePath: fixture.cataloguePath,
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.dutch",
+      installedAt: "2026-08-04T00:00:00Z"
+    });
+    const registry = await loadInstalledPackageRegistry(fixture.dataDir);
+    registry.packages[0].deckFamily = "topic";
+    assert.match(validateInstalledPackageRegistry(registry).errors.join("\n"), /deckFamily must be general or specialized/);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("installing from a file package succeeds and updates the registry", async () => {
   const fixture = await createPackageFixture();
   try {
@@ -245,6 +262,46 @@ test("install rejects package version mismatch between catalogue and manifest", 
     );
   } finally {
     await fixture.cleanup();
+  }
+});
+
+test("install preserves classified package identity and rejects a catalogue family mismatch", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-install-family-"));
+  const packageDirectory = join(root, "packages");
+  const cataloguePath = join(root, "catalogue", "catalogue.json");
+  const dataDir = join(root, "data", "content");
+  const packageId = "com.sleepymario.language.dutch.specialized.medical-1";
+  try {
+    const generated = await generateContentPackage({
+      targetId: "dutch-specialized-medical-1",
+      outputDirectory: packageDirectory,
+      generatedAt: "2026-08-04T00:00:00Z"
+    });
+    await generateLocalContentPackageCatalogue({
+      packagesDirectory: packageDirectory,
+      outputPath: cataloguePath,
+      generatedAt: "2026-08-04T00:00:00Z"
+    });
+    const installed = await installContentPackage({ cataloguePath, dataDir, packageId, installedAt: "2026-08-04T00:00:00Z" });
+    const [record] = await listInstalledContentPackages(dataDir);
+    const reviewItems = await readInstalledMemorizationItems(packageId, "content/memorization/medical-i.json", dataDir, "0.1.0");
+    assert.equal(installed.record.packageId, generated.packageId);
+    assert.equal(installed.record.packageVersion, generated.packageVersion);
+    assert.equal(record.deckFamily, "specialized");
+    assert.deepEqual(record.relatedPackageIds, ["com.sleepymario.language.dutch"]);
+    assert.equal(reviewItems.packageId, packageId);
+    assert.equal(reviewItems.packageVersion, "0.1.0");
+    assert.equal(reviewItems.items.every((item) => typeof item.id === "string" && item.id.length > 0), true);
+
+    const catalogue = await readJson(cataloguePath);
+    catalogue.packages[0].deckFamily = "general";
+    const mismatchedPath = await writeCatalogue({ root }, catalogue);
+    await assert.rejects(
+      () => installContentPackage({ cataloguePath: mismatchedPath, dataDir: join(root, "other-data"), packageId }),
+      /manifest deckFamily does not match catalogue entry/
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
   }
 });
 

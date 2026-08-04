@@ -68,6 +68,7 @@ export interface ContentPackageCatalogueEntry {
   readonly description: LocalizedContentValue;
   readonly contentType: string;
   readonly capabilities?: ContentPackageManifest["capabilities"];
+  readonly deckFamily?: ContentPackageManifest["deckFamily"];
   readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
@@ -201,6 +202,7 @@ async function createCatalogueEntry(packagePath: string, packageBaseUrl?: string
     description: manifest.description,
     contentType: manifest.contentType,
     ...(manifest.capabilities === undefined ? {} : { capabilities: manifest.capabilities }),
+    ...(manifest.deckFamily === undefined ? {} : { deckFamily: manifest.deckFamily }),
     ...(manifest.relatedPackageIds === undefined ? {} : { relatedPackageIds: manifest.relatedPackageIds }),
     contentSchemaVersion: manifest.contentSchemaVersion,
     minimumWhackSmackerVersion: manifest.minimumWhackSmackerVersion,
@@ -304,6 +306,7 @@ function validateCataloguePackages(value: unknown, errors: string[]): void {
     validateLocalizedContentValue(entry.displayName, `packages[${index}].displayName`, errors);
     validateLocalizedContentValue(entry.description, `packages[${index}].description`, errors);
     validateNonEmptyString(entry.contentType, `packages[${index}].contentType`, errors);
+    validateDeckFamily(entry.deckFamily, `packages[${index}].deckFamily`, errors);
     validateSemver(readString(entry.contentSchemaVersion), `packages[${index}].contentSchemaVersion`, errors);
     validateSemver(readString(entry.minimumWhackSmackerVersion), `packages[${index}].minimumWhackSmackerVersion`, errors);
     validateSource(entry.source, `packages[${index}].source`, errors);
@@ -316,6 +319,12 @@ function validateCataloguePackages(value: unknown, errors: string[]): void {
     } else {
       packageKeys.add(packageKey);
     }
+  }
+}
+
+function validateDeckFamily(value: unknown, field: string, errors: string[]): void {
+  if (value !== undefined && value !== "general" && value !== "specialized") {
+    errors.push(`${field} must be general or specialized when present.`);
   }
 }
 

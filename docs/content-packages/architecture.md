@@ -14,6 +14,8 @@ User progress must never be written back into an installed content package.
 
 Canonical curriculum and content repositories remain separate from both WhackSmacker and generated packages.
 
+Topic-centred source uses one topic-oriented repository for canonical topic inventories, language-neutral media, General/Specialized generation manifests, and per-language localization layers. General and Specialized are package families over that shared source, not separate repositories and not lexical-entry classifications. Topic source is not copied into ordinary per-language curriculum repositories.
+
 ## Flow
 
 ```text
@@ -31,6 +33,8 @@ read-only installed content
 
 user progress and settings remain separate
 ```
+
+The interactive CLI reads the generated package metadata carried through catalogues and installed registry records. It never reads topic-source Git repositories, source manifests, or localization TSV files at runtime.
 
 ## Boundaries
 

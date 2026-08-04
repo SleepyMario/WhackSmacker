@@ -16,6 +16,7 @@ import { mathematicsModule } from "../../packages/mathematics";
 import { runInteractiveMenu } from "./interactive-menu";
 import { parseWebOptions, startWebServer, webUsage } from "../web/server";
 import { runAdmin, adminUsage } from "./admin";
+import { runTerminalArtworkCommand } from "./terminal-artwork-command";
 
 declare function require(name: string): { version: string };
 
@@ -121,6 +122,11 @@ Native review commands:
   whacksmacker review show <package-id> <item-id> [--version <version>] [--data-dir <dir>] [--answer]
   whacksmacker review answer <package-id> <item-id> --rating <again|hard|good|easy> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>]
   whacksmacker review run --package <package-id> --source <path> [--version <version>] [--data-dir <dir>] [--now <iso-timestamp>] [--no-shuffle]
+
+Terminal artwork:
+  whacksmacker [--data-dir <dir>] artwork diagnostics
+  whacksmacker [--data-dir <dir>] artwork backend <auto|wayland-overlay|x11-overlay|kitty|sixel|iterm2|disabled>
+      Inspect terminal artwork readiness or persist the CLI artwork backend override.
 
 Module commands:
   whacksmacker module list [--data-dir <dir>]
@@ -228,6 +234,16 @@ export async function main(argv = process.argv.slice(2)): Promise<void> {
   }
   if (isVersionRequest(globalOptions.args)) {
     console.log(appVersion);
+    return;
+  }
+
+  if (globalOptions.args[0] === "artwork") {
+    try {
+      console.log(await runTerminalArtworkCommand(globalOptions.args.slice(1), { dataDir: globalOptions.dataDir }));
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exitCode = 1;
+    }
     return;
   }
 

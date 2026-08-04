@@ -63,7 +63,7 @@ The following are rejected:
 
 Content strings never become filesystem paths or browser `src` values. The private web API resolves an installed package ID, exact version, and validated media record to a same-origin `/api/package-media` URL. The browser renderer matches the Markdown destination to that server-produced record before creating an `img`; it constructs text and attributes through DOM APIs and does not enable raw HTML passthrough. Images use their Markdown alt text and safe responsive sizing.
 
-The CLI does not load terminal graphics. It renders each validated image as `[Image: <alt text>]`, followed by the surrounding headword and sentence. It never prints Markdown destinations, checksums, or installation paths.
+The ordinary noninteractive exercise formatter retains the safe `[Image: <alt text>]` text projection. Interactive CLI Review resolves the current side through this same installed package-media boundary and, when a supported backend is ready, renders real artwork inside the existing centre pane. Unsupported sessions show one concise unavailable notice; they do not use Chafa, ASCII, or Unicode picture approximations. Interactive rendering never prints Markdown destinations, checksums, or installation paths. See [Terminal artwork in interactive Review](../terminal-artwork.md).
 
 ## Backward compatibility
 

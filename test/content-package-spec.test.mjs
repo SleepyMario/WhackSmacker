@@ -23,6 +23,7 @@ test("content package JSON Schema parses as Draft 2020-12", async () => {
 
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
   assert.equal(schema.properties.packageFormatVersion.const, 1);
+  assert.deepEqual(schema.properties.deckFamily.enum, ["general", "specialized"]);
 });
 
 test("Linguistic Terminology example manifest is valid", async () => {
@@ -161,6 +162,18 @@ test("legacy combined manifests remain valid only as manifests without inferred 
   delete manifest.relatedPackageIds;
   assertValid(manifest);
   assert.equal(manifest.contentType, "linguistic-terminology");
+});
+
+test("deck family metadata is optional and accepts only the two package-level families", async () => {
+  const manifest = await readJson(exampleManifestUrl);
+  delete manifest.deckFamily;
+  assertValid(manifest);
+  for (const deckFamily of ["general", "specialized"]) {
+    manifest.deckFamily = deckFamily;
+    assertValid(manifest);
+  }
+  manifest.deckFamily = "animals";
+  assertInvalid(manifest, /deckFamily must be general or specialized/);
 });
 
 function assertValid(manifest) {

@@ -1,3 +1,5 @@
+import type { DeckFamily } from "./deck-family";
+
 export const whackSmackerPackageFormatVersion = 1;
 export const whackSmackerPackageExtension = ".wspkg";
 
@@ -23,6 +25,7 @@ export interface ContentPackageManifest {
   readonly description: LocalizedContentValue;
   readonly contentType: string;
   readonly capabilities?: readonly ContentPackageCapability[];
+  readonly deckFamily?: DeckFamily;
   readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
@@ -42,7 +45,6 @@ export interface ContentPackageManifest {
 }
 
 export type ContentPackageCapability = "reading-curriculum" | "core-review" | "specialized-review" | "technical";
-
 export type ContentPackageLocalizationMetadata =
   | { readonly role: "base-curriculum"; readonly schemaVersion: string; readonly targetLanguage: string; readonly defaultSourceLocale: string; readonly defaultSourcePackageId: string }
   | { readonly role: "source-language-pack"; readonly schemaVersion: string; readonly basePackageId: string; readonly sourceLocale: string; readonly targetLanguage: string; readonly compatibleBaseVersion: string; readonly isDefault?: boolean };
@@ -115,6 +117,7 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   validateLocalizedContentValue(manifest.description, "description", errors);
   validateContentType(readString(manifest.contentType), errors);
   validateCapabilities(manifest.capabilities, errors);
+  validateDeckFamily(manifest.deckFamily, "deckFamily", errors);
   validateRelatedPackageIds(manifest.relatedPackageIds, readString(manifest.packageId), errors);
   validateSemver(readString(manifest.contentSchemaVersion), "contentSchemaVersion", errors);
   validateSemver(readString(manifest.minimumWhackSmackerVersion), "minimumWhackSmackerVersion", errors);
@@ -129,6 +132,12 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   validateLocalization(manifest.localization, errors);
 
   return { valid: errors.length === 0, errors };
+}
+
+function validateDeckFamily(value: unknown, field: string, errors: string[]): void {
+  if (value !== undefined && value !== "general" && value !== "specialized") {
+    errors.push(`${field} must be general or specialized when present.`);
+  }
 }
 
 function validateNoReviewMenuStatusColorMetadata(value: unknown, path: string, errors: string[]): void {
