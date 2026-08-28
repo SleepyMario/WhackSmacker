@@ -40,7 +40,7 @@ test("installed Dutch Chapters 2–15 render every authored grammar role blue in
     const tree = await buildLanguageTree(fixture.dataDir, "developer");
     const dutch = tree.children.find((node) => node.label === "Dutch");
     const readContent = dutch.children.find((node) => node.label === "Read content");
-    const installedSnapshot = await readFile(join(fixture.dataDir, "packages", "com.sleepymario.language.dutch", "0.1.0", "content", "content.json"), "utf8");
+    const installedSnapshot = await readFile(join(fixture.installPaths.get("com.sleepymario.language.dutch"), "content", "content.json"), "utf8");
     assert.match(installedSnapshot, /\[\[grammar:Mijn naam is \.\.\.\]\]/u, "package serialization retains semantic roles");
 
     for (const [chapterNumber, expected] of chapterTargets) {
@@ -101,8 +101,12 @@ async function installedLanguages(targetIds, packageIds) {
   const dataDir = join(root, "data");
   for (const targetId of targetIds) await generateContentPackage({ targetId, outputDirectory: packageDirectory, generatedAt: "2026-07-17T00:00:00Z" });
   await generateLocalContentPackageCatalogue({ packagesDirectory: packageDirectory, outputPath: cataloguePath, generatedAt: "2026-07-17T00:00:00Z" });
-  for (const packageId of packageIds) await installContentPackage({ cataloguePath, dataDir, packageId, installedAt: "2026-07-17T00:00:00Z" });
-  return { dataDir, cleanup: () => rm(root, { recursive: true, force: true }) };
+  const installPaths = new Map();
+  for (const packageId of packageIds) {
+    const result = await installContentPackage({ cataloguePath, dataDir, packageId, installedAt: "2026-07-17T00:00:00Z" });
+    installPaths.set(packageId, result.installPath);
+  }
+  return { dataDir, installPaths, cleanup: () => rm(root, { recursive: true, force: true }) };
 }
 
 function stripAnsi(text) {

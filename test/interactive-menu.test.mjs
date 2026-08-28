@@ -20,6 +20,7 @@ import {
   getMainMenuItems,
   getMathematicsMenuItems,
   getOneTwoThreeMenuItems,
+  groupExplicitTopicMenuLeaves,
   formatEmbeddedReviewReveal,
   isEmbeddedReviewItemUsable,
   installedLanguagePackagesToMenuItems,
@@ -571,6 +572,21 @@ test("classified packages appear only in their explicit language deck family", a
   } finally {
     await fixture.cleanup();
   }
+});
+
+test("future topic ranges share only their explicit family-local category and remain direct Review leaves", () => {
+  const leaf = (id, label, packageId) => ({ id, label, kind: "review-source", packageId, packageLabel: "Animals", sourcePath: "content/memorization/cards.json" });
+  const general = groupExplicitTopicMenuLeaves("com.sleepymario.language.dutch", "general", [
+    { topicId: "animals", topicLabel: "Animals", leaf: leaf("animals-101", "101–200", "com.example.range-101") },
+    { topicId: "animals", topicLabel: "Animals", leaf: leaf("animals-001", "1–100", "com.example.not-derived-from-animals-title") }
+  ]);
+  const specialized = groupExplicitTopicMenuLeaves("com.sleepymario.language.dutch", "specialized", [
+    { topicId: "animals", topicLabel: "Animals", leaf: leaf("animals-specialized", "Complete range", "com.example.specialized") }
+  ]);
+  assert.deepEqual(general.map((node) => [node.label, node.children.map((child) => [child.label, child.kind])]), [["Animals", [["1–100", "review-source"], ["101–200", "review-source"]]]]);
+  assert.deepEqual(specialized.map((node) => [node.label, node.children.map((child) => [child.label, child.kind])]), [["Animals", [["Complete range", "review-source"]]]]);
+  assert.notEqual(general[0].id, specialized[0].id);
+  assert.doesNotMatch(JSON.stringify([general, specialized]), /Review deck/u);
 });
 
 test("current Medical package metadata reconciles an older registry record without deckFamily", async () => {

@@ -156,6 +156,18 @@ test("split package capabilities and related package IDs validate explicitly", a
   assertInvalid(manifest, /capabilities\[0\] is unsupported/);
 });
 
+test("topic Review is an explicit package capability and content type", async () => {
+  const manifest = await readJson(exampleManifestUrl);
+  manifest.contentType = "topic-review";
+  manifest.capabilities = ["topic-review"];
+  manifest.deckFamily = "general";
+  manifest.relatedPackageIds = ["com.sleepymario.language.dutch"];
+  manifest.topic = { id: "animals", displayName: "Animals", deckDisplayName: "1–100" };
+  assertValid(manifest);
+  manifest.topic.id = "Animals 1–100";
+  assertInvalid(manifest, /topic\.id must be a stable lowercase slug/);
+});
+
 test("legacy combined manifests remain valid only as manifests without inferred capabilities", async () => {
   const manifest = await readJson(exampleManifestUrl);
   delete manifest.capabilities;

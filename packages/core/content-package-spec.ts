@@ -1,4 +1,11 @@
 import type { DeckFamily } from "./deck-family";
+import {
+  validateDeckFrameworkVersion,
+  validateDeckInteractionProfile,
+  validateMediaPolicy,
+  type DeckInteractionProfile,
+  type MediaPolicy
+} from "./deck-framework";
 
 export const whackSmackerPackageFormatVersion = 1;
 export const whackSmackerPackageExtension = ".wspkg";
@@ -6,6 +13,7 @@ export const whackSmackerPackageExtension = ".wspkg";
 export const knownContentPackageTypes = [
   "language-curriculum",
   "core-review",
+  "topic-review",
   "specialized-review",
   "curriculum-source-language-pack",
   "linguistic-terminology",
@@ -20,12 +28,18 @@ export const knownContentPackageEntryPointRoles = ["primary", "index", "search-i
 export interface ContentPackageManifest {
   readonly packageFormatVersion: 1;
   readonly packageId: string;
+  /** Deprecated compatibility coordinate. New selection uses deckVersion + artifactRevision. */
   readonly packageVersion: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
   readonly displayName: LocalizedContentValue;
   readonly description: LocalizedContentValue;
   readonly contentType: string;
   readonly capabilities?: readonly ContentPackageCapability[];
   readonly deckFamily?: DeckFamily;
+  readonly topic?: ContentPackageTopicMetadata;
+  readonly mediaPolicy?: MediaPolicy;
+  readonly interactionProfile?: DeckInteractionProfile;
   readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
@@ -44,7 +58,12 @@ export interface ContentPackageManifest {
   readonly localization?: ContentPackageLocalizationMetadata;
 }
 
-export type ContentPackageCapability = "reading-curriculum" | "core-review" | "specialized-review" | "technical";
+export type ContentPackageCapability = "reading-curriculum" | "core-review" | "topic-review" | "specialized-review" | "technical";
+export interface ContentPackageTopicMetadata {
+  readonly id: string;
+  readonly displayName: LocalizedContentValue;
+  readonly deckDisplayName: LocalizedContentValue;
+}
 export type ContentPackageLocalizationMetadata =
   | { readonly role: "base-curriculum"; readonly schemaVersion: string; readonly targetLanguage: string; readonly defaultSourceLocale: string; readonly defaultSourcePackageId: string }
   | { readonly role: "source-language-pack"; readonly schemaVersion: string; readonly basePackageId: string; readonly sourceLocale: string; readonly targetLanguage: string; readonly compatibleBaseVersion: string; readonly isDefault?: boolean };
@@ -113,11 +132,22 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
 
   validatePackageId(readString(manifest.packageId), "packageId", errors);
   validateSemver(readString(manifest.packageVersion), "packageVersion", errors);
+  errors.push(...validateDeckFrameworkVersion({
+    packageVersion: readString(manifest.packageVersion),
+    ...(typeof manifest.deckVersion === "string" ? { deckVersion: manifest.deckVersion } : {}),
+    ...(typeof manifest.artifactRevision === "number" ? { artifactRevision: manifest.artifactRevision } : {})
+  }).errors);
   validateLocalizedContentValue(manifest.displayName, "displayName", errors);
   validateLocalizedContentValue(manifest.description, "description", errors);
   validateContentType(readString(manifest.contentType), errors);
   validateCapabilities(manifest.capabilities, errors);
   validateDeckFamily(manifest.deckFamily, "deckFamily", errors);
+  validateTopicMetadata(manifest.topic, errors);
+  if (manifest.mediaPolicy !== undefined) errors.push(...validateMediaPolicy(manifest.mediaPolicy).errors);
+  if (manifest.interactionProfile !== undefined) errors.push(...validateDeckInteractionProfile(manifest.interactionProfile).errors);
+  if (manifest.interactionProfile !== undefined && manifest.mediaPolicy === undefined) {
+    errors.push("mediaPolicy is required when interactionProfile is declared.");
+  }
   validateRelatedPackageIds(manifest.relatedPackageIds, readString(manifest.packageId), errors);
   validateSemver(readString(manifest.contentSchemaVersion), "contentSchemaVersion", errors);
   validateSemver(readString(manifest.minimumWhackSmackerVersion), "minimumWhackSmackerVersion", errors);
@@ -138,6 +168,19 @@ function validateDeckFamily(value: unknown, field: string, errors: string[]): vo
   if (value !== undefined && value !== "general" && value !== "specialized") {
     errors.push(`${field} must be general or specialized when present.`);
   }
+}
+
+function validateTopicMetadata(value: unknown, errors: string[]): void {
+  if (value === undefined) return;
+  if (!isRecord(value)) {
+    errors.push("topic must be an object when present.");
+    return;
+  }
+  if (typeof value.id !== "string" || !/^[a-z0-9][a-z0-9-]*$/u.test(value.id)) {
+    errors.push("topic.id must be a stable lowercase slug.");
+  }
+  validateLocalizedContentValue(value.displayName, "topic.displayName", errors);
+  validateLocalizedContentValue(value.deckDisplayName, "topic.deckDisplayName", errors);
 }
 
 function validateNoReviewMenuStatusColorMetadata(value: unknown, path: string, errors: string[]): void {
@@ -164,7 +207,7 @@ function isReviewMenuStatusColorMetadataKey(key: string): boolean {
 function validateCapabilities(value: unknown, errors: string[]): void {
   if (value === undefined) return;
   if (!Array.isArray(value) || value.length === 0) { errors.push("capabilities must be a non-empty array when present."); return; }
-  const allowed = new Set(["reading-curriculum", "core-review", "specialized-review", "technical"]);
+  const allowed = new Set(["reading-curriculum", "core-review", "topic-review", "specialized-review", "technical"]);
   const seen = new Set<string>();
   for (const [index, capability] of value.entries()) {
     if (typeof capability !== "string" || !allowed.has(capability)) errors.push(`capabilities[${index}] is unsupported.`);

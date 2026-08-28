@@ -5,6 +5,7 @@ import {
   getBuiltInFirstClassModules,
   installedPackageToFirstClassModuleDescriptor,
   installContentPackage,
+  isLegacyStructuredPromptEligible,
   isLanguageLikeModulePackage,
   listAvailableContentPackages,
   listInstalledContentPackages,
@@ -20,6 +21,7 @@ import {
   defaultNewVocabularyDisplayPreferences,
   classifyReviewDeckMenuStatus,
   combineDeveloperGrammarMarkdown,
+  compareDeckFrameworkVersions,
   contentPackageGeneratorTargets,
   deckFamilyPackageMenuPresentation,
   grammarEasyMenuLabel,
@@ -47,6 +49,7 @@ import {
   sortFirstClassModules,
   specializedReviewPackageDefinitions,
   syncReadingReviewItems,
+  topicReviewSideLines,
   unicodeTerminalDisplayWidth,
   isUnicodeWideCharacter,
   isLogicalVocabularyContinuation,
@@ -275,7 +278,8 @@ export interface EmbeddedReviewSession {
   readonly promptRendered?: RenderedExercise;
   readonly answerRendered?: RenderedExercise;
   readonly artwork?: ResolvedReadingReviewArtwork;
-  readonly promptArtworkHadMedia?: boolean;
+  readonly promptArtworkRendered?: boolean;
+  readonly answerArtworkRendered?: boolean;
   readonly artworkResolutionFailed?: boolean;
   readonly artworkNotice?: string;
   readonly message?: string;
@@ -1042,10 +1046,20 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     const toggleCount = charactersApplicable ? 8 : 7;
     toggleSelection = Math.min(toggleSelection, toggleCount - 1);
     renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
-    const artworkNotice = await artworkManager.sync(embeddedReview, rightPaneText);
+    const artworkSync = await artworkManager.sync(embeddedReview, rightPaneText);
     const currentEmbeddedReview = embeddedReview as EmbeddedReviewSession | null;
-    if (currentEmbeddedReview !== null && artworkNotice !== currentEmbeddedReview.artworkNotice) {
-      embeddedReview = { ...currentEmbeddedReview, artworkNotice };
+    const promptArtworkRendered = currentEmbeddedReview?.side === "prompt"
+      ? artworkSync.rendered
+      : currentEmbeddedReview?.promptArtworkRendered;
+    const answerArtworkRendered = currentEmbeddedReview?.side === "answer"
+      ? artworkSync.rendered
+      : currentEmbeddedReview?.answerArtworkRendered;
+    if (currentEmbeddedReview !== null && (
+      artworkSync.notice !== currentEmbeddedReview.artworkNotice
+      || promptArtworkRendered !== currentEmbeddedReview.promptArtworkRendered
+      || answerArtworkRendered !== currentEmbeddedReview.answerArtworkRendered
+    )) {
+      embeddedReview = { ...currentEmbeddedReview, promptArtworkRendered, answerArtworkRendered, artworkNotice: artworkSync.notice };
       rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
       renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
     }
@@ -1713,7 +1727,7 @@ export async function listAvailableModuleDescriptors(
 
   if (cataloguePath !== undefined) {
     for (const entry of await listAvailableContentPackages(cataloguePath)) {
-      if (entry.contentType === "curriculum-source-language-pack" || entry.contentType === "core-review" || entry.contentType === "specialized-review" || !entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
+      if (entry.contentType === "curriculum-source-language-pack" || entry.contentType === "core-review" || entry.contentType === "topic-review" || entry.contentType === "specialized-review" || !entry.packageId.startsWith("com.sleepymario.") || !isLanguageLikePackage(entry.packageId)) {
         continue;
       }
       descriptors.push(catalogueEntryToModuleDescriptor(entry, installedByPackageId.get(entry.packageId), locale));
@@ -1901,6 +1915,13 @@ async function buildLanguageTreeFromDescriptors(
   const packageNodes: LanguageTreeNode[] = [];
   const progressDir = dataDir === undefined ? undefined : defaultReviewProgressDirectoryForContentDataDirectory(dataDir);
   const progressItems = (await loadReviewProgressStore(progressDir)).items;
+  const installed = reconcileInstalledDeckFamilyMetadata(
+    await listInstalledContentPackages(dataDir),
+    currentPackageMetadata
+  );
+  const classifiedPackageVersions = new Set(installed
+    .filter((record) => record.deckFamily !== undefined)
+    .map((record) => `${record.packageId}@${record.packageVersion}`));
 
   for (const descriptor of descriptors) {
     if (descriptor.packageId === undefined) {
@@ -1909,12 +1930,12 @@ async function buildLanguageTreeFromDescriptors(
     const languagePackage = moduleDescriptorToMenuItem(descriptor);
     const entries = await listReadableContentEntries(descriptor.packageId, dataDir, descriptor.packageVersion, locale);
     const labeledEntries = await labelReadableContentEntries(languagePackage, entries, { dataDir, locale });
-    const rawReviewItems = await listReadingReviewItems({
+    const rawReviewItems = (await listReadingReviewItems({
       dataDir,
       sourceLocale: locale,
       packageId: descriptor.packageId,
       packageVersion: descriptor.packageVersion
-    });
+    })).filter((item) => !classifiedPackageVersions.has(`${item.contentPackageId ?? item.packageId}@${item.packageVersion}`));
     const rawReviewSources = readingReviewSourcesFromItems(rawReviewItems, locale);
     const enrichedDescriptor: FirstClassModuleDescriptor = {
       ...descriptor,
@@ -2069,10 +2090,6 @@ async function buildLanguageTreeFromDescriptors(
     });
   }
 
-  const installed = reconcileInstalledDeckFamilyMetadata(
-    await listInstalledContentPackages(dataDir),
-    currentPackageMetadata
-  );
   await addInstalledSpecializedReviewBranches(packageNodes, dataDir, locale, installed);
   await addInstalledDeckFamilyBranches(packageNodes, dataDir, locale, progressItems, installed);
 
@@ -2249,7 +2266,7 @@ async function buildDeckFamilyBranch(
   const label = family === "general" ? "General Decks" : "Specialized Decks";
   const adjective = family === "general" ? "General" : "Specialized";
   const packages = packagesForLanguageAndDeckFamily(installed, languagePackageId, family);
-  const packageChildren = await Promise.all(packages.map(async (record) => {
+  const projections = await Promise.all(packages.map(async (record) => {
     const reviewItems = await listReadingReviewItems({
       dataDir,
       sourceLocale: locale,
@@ -2285,6 +2302,31 @@ async function buildDeckFamilyBranch(
       dueCardCount: statuses[sourceIndex]?.dueCardCount,
       reviewStatusText: statuses[sourceIndex]?.text
     }));
+    if (record.topic !== undefined) {
+      const topicLabel = localized(record.topic.displayName, locale);
+      const deckLabel = localized(record.topic.deckDisplayName, locale);
+      if (sourceChildren.length !== 1) {
+        return {
+          topicId: record.topic.id,
+          topicLabel,
+          leaf: {
+            id: `${languagePackageId}:deck-family:${family}:topic:${record.topic.id}:${record.packageId}@${record.packageVersion}:invalid`,
+            label: deckLabel,
+            kind: "message" as const,
+            previewText: `This topic deck is unavailable because its package does not contain exactly one Review source.`
+          }
+        };
+      }
+      return {
+        topicId: record.topic.id,
+        topicLabel,
+        leaf: {
+          ...sourceChildren[0],
+          label: deckLabel,
+          packageLabel: topicLabel
+        }
+      };
+    }
     return {
       id: `${languagePackageId}:deck-family:${family}:${record.packageId}@${record.packageVersion}`,
       label: presentation.packageLabel,
@@ -2310,6 +2352,16 @@ async function buildDeckFamilyBranch(
       }]
     };
   }));
+  const packageChildren: LanguageTreeNode[] = [];
+  const topicProjections: ExplicitTopicMenuLeafProjection[] = [];
+  for (const projection of projections) {
+    if (typeof projection.topicId !== "string" || typeof projection.topicLabel !== "string" || projection.leaf === undefined) {
+      packageChildren.push(projection);
+      continue;
+    }
+    topicProjections.push(projection);
+  }
+  packageChildren.push(...groupExplicitTopicMenuLeaves(languagePackageId, family, topicProjections));
   const emptyState = `No ${adjective} decks are available for this language.`;
   return {
     id: `${languagePackageId}:deck-family:${family}`,
@@ -2327,8 +2379,46 @@ async function buildDeckFamilyBranch(
   };
 }
 
+export interface ExplicitTopicMenuLeafProjection {
+  readonly topicId: string;
+  readonly topicLabel: string;
+  readonly leaf: LanguageTreeNode;
+}
+
+export function groupExplicitTopicMenuLeaves(
+  languagePackageId: string,
+  family: DeckFamily,
+  projections: readonly ExplicitTopicMenuLeafProjection[]
+): readonly LanguageTreeNode[] {
+  const topicGroups = new Map<string, { label: string; leaves: LanguageTreeNode[] }>();
+  for (const projection of projections) {
+    const current = topicGroups.get(projection.topicId);
+    if (current === undefined) {
+      topicGroups.set(projection.topicId, { label: projection.topicLabel, leaves: [projection.leaf] });
+      continue;
+    }
+    if (current.label !== projection.topicLabel) {
+      current.leaves.push({
+        id: `${languagePackageId}:deck-family:${family}:topic:${projection.topicId}:label-conflict`,
+        label: "Conflicting topic metadata",
+        kind: "message",
+        previewText: "Installed packages with the same stable topic identity must use the same learner-facing category label."
+      });
+      continue;
+    }
+    current.leaves.push(projection.leaf);
+  }
+  return [...topicGroups.entries()].sort((left, right) => left[1].label.localeCompare(right[1].label) || left[0].localeCompare(right[0])).map(([topicId, topic]) => ({
+      id: `${languagePackageId}:deck-family:${family}:topic:${topicId}`,
+      label: topic.label,
+      kind: "category",
+      previewText: `${topic.label}\n\nInstalled topic decks explicitly assigned to this category and deck family.`,
+      children: topic.leaves.sort((left, right) => left.label.localeCompare(right.label) || left.id.localeCompare(right.id))
+    }));
+}
+
 function newestInstalledPackage(records: readonly InstalledPackageRecord[]): InstalledPackageRecord | undefined {
-  return [...records].sort((left, right) => right.packageVersion.localeCompare(left.packageVersion))[0];
+  return [...records].sort((left, right) => compareDeckFrameworkVersions(right, left))[0];
 }
 
 function emptyLanguagePackageNode(
@@ -3075,7 +3165,8 @@ async function renderEmbeddedReviewPrompt(session: EmbeddedReviewSession, option
     promptRendered: prompt.rendered,
     answerRendered: undefined,
     artwork: artwork.value,
-    promptArtworkHadMedia: artwork.value !== undefined,
+    promptArtworkRendered: false,
+    answerArtworkRendered: false,
     artworkResolutionFailed: artwork.failed,
     artworkNotice: undefined,
     message: undefined
@@ -3102,6 +3193,7 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
     side: "answer",
     answerRendered: answer.rendered,
     artwork: artwork.value,
+    answerArtworkRendered: false,
     artworkResolutionFailed: artwork.failed,
     artworkNotice: undefined,
     message: undefined
@@ -3135,7 +3227,7 @@ async function reprojectEmbeddedReviewSession(session: EmbeddedReviewSession, op
   return session.side === "answer" ? renderEmbeddedReviewAnswer(prompt, options) : prompt;
 }
 
-function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean, locale: SourceLocale = "en-US", displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
+export function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean, locale: SourceLocale = "en-US", displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
   const packageLabel = session.node.packageLabel ?? session.node.packageId ?? "Installed package";
   const header = [
     `Review: ${packageLabel} / ${session.node.label}`,
@@ -3155,11 +3247,21 @@ function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabl
     return [...header, "Loading review card..."].join("\n");
   }
   const cards = session.side === "prompt"
-    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode, session.artwork !== undefined)]
-    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(session.promptRendered, session.answerRendered, colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode, session.artwork !== undefined || session.promptArtworkHadMedia === true)];
+    ? [formatEmbeddedReviewExercise(session.promptRendered, "prompt", colorsEnabled, session.node.packageId, session.node.sourcePath, displayMode, session.promptArtworkRendered === true)]
+    : [session.answerRendered === undefined ? "Loading answer..." : formatEmbeddedReviewReveal(
+      session.promptRendered,
+      session.answerRendered,
+      colorsEnabled,
+      session.node.packageId,
+      session.node.sourcePath,
+      displayMode,
+      session.promptArtworkRendered === true,
+      session.answerArtworkRendered === true
+    )];
   const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled, locale);
   return [
     ...header,
+    ...(session.artwork === undefined ? [] : [reviewArtworkRegionMarker]),
     cards.join("\n\n"),
     ...(displayMode === "developer" ? developerReviewMetadataLines(session) : []),
     session.message === undefined ? "" : `\n${session.message}`,
@@ -3193,46 +3295,18 @@ function developerMetadataLabel(key: string): string {
 }
 
 export function isEmbeddedReviewItemUsable(item: ReadingReviewItem, locale: SourceLocale = "en-US"): boolean {
-  if (isChineseMandarinPackage(item.packageId)) {
-    const view = chineseReviewViewFromBlocks({
-      promptLines: normalizeReviewTextLines(localized(item.item.prompt.plainText ?? item.item.prompt.text, locale)),
-      answerLines: normalizeReviewTextLines(localized(item.item.answer.plainText ?? item.item.answer.text, locale)),
-      promptLanguage: item.item.prompt.language,
-      answerLanguage: item.item.answer.language
-    });
-    if (!isStructuredChineseReviewView(view)) {
-      return true;
-    }
-    return view.promptSide !== "pronunciation" || isCompoundChinesePronunciation(view.fields);
-  }
-  if (isJapanesePackage(item.packageId)) {
-    const view = japaneseReviewViewFromBlocks({
-      promptLines: normalizeReviewTextLines(localized(item.item.prompt.plainText ?? item.item.prompt.text, locale)),
-      answerLines: normalizeReviewTextLines(localized(item.item.answer.plainText ?? item.item.answer.text, locale)),
-      promptLanguage: item.item.prompt.language,
-      answerLanguage: item.item.answer.language
-    });
-    if (!isStructuredJapaneseReviewView(view)) {
-      return true;
-    }
-    return view.promptSide !== "reading" || isMultiMoraJapaneseReading(view.fields.reading);
-  }
-  return true;
-}
-
-function isChineseMandarinPackage(packageId?: string): boolean {
-  return packageId?.startsWith("com.sleepymario.language.chinese.mandarin.") === true;
-}
-
-function isJapanesePackage(packageId?: string): boolean {
-  return packageId === "com.sleepymario.language.japanese";
+  void locale;
+  return isLegacyStructuredPromptEligible(item.item.prompt, item.item.answer);
 }
 
 export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "prompt" | "answer", colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode, artworkRendered = false): string {
-  const languageLines = formatLanguageSpecificEmbeddedExerciseLines(exercise, side, packageId);
-  const projectedLines = projectReviewLinesForMode(languageLines ?? (side === "prompt" ? exercise.promptLines : exercise.answerLines), displayMode);
+  void packageId;
+  const topicSide = exercise.topicReview?.[side];
+  const projectedLines = topicSide === undefined
+    ? projectReviewLinesForMode(side === "prompt" ? exercise.promptLines : exercise.answerLines, displayMode)
+    : topicReviewSideLines(topicSide, artworkRendered);
   const lines = formatEmbeddedReviewBody({
-    promptLines: artworkRendered ? withoutArtworkPlaceholderLines(projectedLines) : projectedLines,
+    promptLines: topicSide === undefined && artworkRendered ? withoutArtworkPlaceholderLines(projectedLines) : projectedLines,
     answerLines: [],
     colorsEnabled,
     placeholder: "Answer hidden until reveal."
@@ -3241,22 +3315,39 @@ export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "
     lines.push("", "Hints", ...prefixReviewCardLines(exercise.hintLines));
   }
   if (side === "answer") {
-    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(exercise, !isFiveChapterReviewSource(sourcePath)));
+    if (exercise.topicReview === undefined) {
+      appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(exercise, !isFiveChapterReviewSource(sourcePath)));
+    }
   }
   return lines.join("\n");
 }
 
-export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode, artworkRendered = false): string {
-  const languageReveal = formatLanguageSpecificEmbeddedRevealLines(prompt, packageId);
-  const promptLines = projectReviewLinesForMode(languageReveal?.promptLines ?? prompt.promptLines, displayMode);
-  const answerLines = projectReviewLinesForMode(languageReveal?.answerLines ?? answer.answerLines, displayMode);
+export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode, promptArtworkRendered = false, answerArtworkRendered = promptArtworkRendered): string {
+  void packageId;
+  const promptLines = prompt.topicReview === undefined
+    ? projectReviewLinesForMode(prompt.promptLines, displayMode)
+    : topicReviewSideLines(prompt.topicReview.prompt, promptArtworkRendered);
+  const answerLines = answer.topicReview === undefined
+    ? deduplicateEquivalentStructuredOutputs(projectReviewLinesForMode(answer.answerLines, displayMode))
+    : topicReviewSideLines(answer.topicReview.answer, answerArtworkRendered);
   const lines = formatEmbeddedReviewBody({
-    promptLines: artworkRendered ? withoutArtworkPlaceholderLines(promptLines) : promptLines,
-    answerLines: artworkRendered ? withoutArtworkPlaceholderLines(answerLines) : answerLines,
+    promptLines: prompt.topicReview === undefined && promptArtworkRendered ? withoutArtworkPlaceholderLines(promptLines) : promptLines,
+    answerLines: answer.topicReview === undefined && answerArtworkRendered ? withoutArtworkPlaceholderLines(answerLines) : answerLines,
     colorsEnabled
   });
-  appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(answer, !isFiveChapterReviewSource(sourcePath)));
+  if (answer.topicReview === undefined) {
+    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(answer, !isFiveChapterReviewSource(sourcePath)));
+  }
   return lines.join("\n");
+}
+
+function deduplicateEquivalentStructuredOutputs(lines: readonly string[]): readonly string[] {
+  return lines.filter((line, index) => {
+    const match = /^[^:]+:\s*(.+)$/u.exec(line);
+    if (match === null) return true;
+    const value = match[1]?.normalize("NFC").trim();
+    return !lines.slice(index + 1).some((candidate) => /^[^:]+:\s*(.+)$/u.exec(candidate)?.[1]?.normalize("NFC").trim() === value);
+  });
 }
 
 function withoutArtworkPlaceholderLines(lines: readonly string[]): readonly string[] {
@@ -3388,26 +3479,6 @@ function isLearnerFacingEmbeddedReviewNote(line: string): boolean {
 
 function normalizeEmbeddedReviewNote(line: string): string {
   return line.replace(/^[*-]\s*/u, "").replace(/\s+/gu, " ").trim();
-}
-
-function formatLanguageSpecificEmbeddedExerciseLines(exercise: RenderedExercise, side: "prompt" | "answer", packageId?: string): readonly string[] | undefined {
-  if (isChineseMandarinPackage(packageId)) {
-    return formatChineseEmbeddedExerciseLines(exercise, side);
-  }
-  if (isJapanesePackage(packageId)) {
-    return formatJapaneseEmbeddedExerciseLines(exercise, side);
-  }
-  return undefined;
-}
-
-function formatLanguageSpecificEmbeddedRevealLines(exercise: RenderedExercise, packageId?: string): { readonly promptLines: readonly string[]; readonly answerLines: readonly string[] } | undefined {
-  if (isChineseMandarinPackage(packageId)) {
-    return formatChineseEmbeddedRevealLines(exercise);
-  }
-  if (isJapanesePackage(packageId)) {
-    return formatJapaneseEmbeddedRevealLines(exercise);
-  }
-  return undefined;
 }
 
 type JapaneseReviewSide = "meaning" | "reading" | "japanese" | "unknown";
@@ -4589,6 +4660,7 @@ function renderLanguageTreeMenu(
 
 const rightPanePageSize = 24;
 const reviewBottomBarMarker = "[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]";
+const reviewArtworkRegionMarker = "[[WHACKSMACKER_REVIEW_ARTWORK_REGION]]";
 const minimumThreePaneWidth = 100;
 type FocusablePane = "navigation" | "toggles";
 
@@ -4627,7 +4699,7 @@ export function renderTwoPaneLanguageTree(
     ? []
     : formatPaneText(rightPane.bottomBar, rightWidth, colorsEnabled, vocabularyEntrySpacing);
   const scrollableHeight = Math.max(1, bodyHeight - bottomBarLines.length);
-  const rightLines = formatPaneText(rightPane.body, rightWidth, colorsEnabled, vocabularyEntrySpacing);
+  const rightLines = formatPaneTextWithArtworkRegion(rightPane.body, rightWidth, scrollableHeight, colorsEnabled, vocabularyEntrySpacing).lines;
   const maxOffset = Math.max(0, rightLines.length - scrollableHeight);
   const offset = Math.min(Math.max(0, rightPaneOffset), maxOffset);
   const visibleRightLines = [
@@ -4745,6 +4817,30 @@ export function centrePaneArtworkRectangle(
   return rectangle;
 }
 
+export function centrePaneReviewArtworkRectangle(
+  pane: CentrePaneGeometry,
+  rightPaneText: string,
+  colorsEnabled: boolean,
+  vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing
+): TerminalArtworkRectangle | undefined {
+  const split = splitFixedBottomBar(rightPaneText);
+  const bottomRows = split.bottomBar === undefined ? 0 : formatPaneText(split.bottomBar, pane.widthColumns, colorsEnabled, vocabularyEntrySpacing).length;
+  const scrollableRows = Math.max(1, pane.heightRows - bottomRows);
+  const region = formatPaneTextWithArtworkRegion(split.body, pane.widthColumns, scrollableRows, colorsEnabled, vocabularyEntrySpacing).artworkRegion;
+  if (region === undefined) return undefined;
+  const rectangle = {
+    column: pane.column + 1,
+    row: pane.row + region.startRow + 1,
+    widthColumns: pane.widthColumns - 2,
+    heightRows: region.heightRows - 2
+  };
+  const paneRight = pane.column + pane.widthColumns - 1;
+  const paneBottom = pane.row + pane.heightRows - 1;
+  if (rectangle.widthColumns < 12 || rectangle.heightRows < 4) return undefined;
+  if (rectangle.column <= pane.column || rectangle.row <= pane.row || rectangle.column + rectangle.widthColumns - 1 >= paneRight || rectangle.row + rectangle.heightRows - 1 >= paneBottom) return undefined;
+  return rectangle;
+}
+
 function leftPaneOffsetForSelection(selection: number, itemCount: number, paneHeight: number): number {
   if (itemCount <= paneHeight) {
     return 0;
@@ -4766,6 +4862,11 @@ function splitFixedBottomBar(text: string): { readonly body: string; readonly bo
 
 const centrePaneArtworkIdentifier = "wsm-centre-pane-artwork";
 
+export interface EmbeddedReviewArtworkSyncResult {
+  readonly rendered: boolean;
+  readonly notice?: string;
+}
+
 export class EmbeddedReviewArtworkManager {
   private controller: TerminalArtworkController | undefined;
   private reviewNodeId: string | undefined;
@@ -4782,69 +4883,76 @@ export class EmbeddedReviewArtworkManager {
     this.configuredBackend = configuredBackend;
   }
 
-  async sync(session: EmbeddedReviewSession | null, rightPaneText: string): Promise<string | undefined> {
+  async sync(session: EmbeddedReviewSession | null, rightPaneText: string): Promise<EmbeddedReviewArtworkSyncResult> {
     if (session === null || session.side === "complete") {
       await this.shutdown();
-      return undefined;
+      return { rendered: false };
     }
     if (this.reviewNodeId !== undefined && this.reviewNodeId !== session.nodeId) await this.shutdown();
     this.reviewNodeId = session.nodeId;
 
     if (session.artworkResolutionFailed === true) {
       await this.clear();
-      return "Artwork rendering is unavailable for this terminal.";
+      return { rendered: false, notice: "Artwork rendering is unavailable for this terminal." };
     }
     if (session.artwork === undefined) {
       await this.clear();
-      return undefined;
+      return { rendered: false };
     }
 
-    if (this.controller === undefined) {
-      const factory = this.options.terminalArtworkControllerFactory ?? createTerminalArtworkController;
-      this.controller = await factory({
-        configuredBackend: this.configuredBackend,
-        io: { writeControl: (data) => this.terminal.writeControl?.(data) ?? this.terminal.write(typeof data === "string" ? data : Buffer.from(data).toString("base64")) }
-      });
-      await this.controller.start();
+    try {
+      if (this.controller === undefined) {
+        const factory = this.options.terminalArtworkControllerFactory ?? createTerminalArtworkController;
+        this.controller = await factory({
+          configuredBackend: this.configuredBackend,
+          io: { writeControl: (data) => this.terminal.writeControl?.(data) ?? this.terminal.write(typeof data === "string" ? data : Buffer.from(data).toString("base64")) }
+        });
+        await this.controller.start();
+      }
+    } catch {
+      await this.shutdown().catch(() => undefined);
+      return { rendered: false, notice: "Artwork rendering is unavailable for this terminal." };
     }
     if (!this.controller.capabilities.ready) {
       await this.clear();
-      return this.controller.capabilities.reason ?? "Artwork rendering is unavailable for this terminal.";
+      return { rendered: false, notice: this.controller.capabilities.reason ?? "Artwork rendering is unavailable for this terminal." };
     }
 
     const pane = centrePaneGeometry(this.terminal.width, this.terminal.height);
-    const split = splitFixedBottomBar(rightPaneText);
     const spacing = this.options.vocabularyEntrySpacing ?? defaultNewVocabularyDisplayPreferences.entrySpacing;
-    const bottomRows = split.bottomBar === undefined ? 0 : formatPaneText(split.bottomBar, pane.widthColumns, this.terminal.colorsEnabled, spacing).length;
-    const scrollableRows = Math.max(1, pane.heightRows - bottomRows);
-    const occupiedTopRows = Math.min(scrollableRows, formatPaneText(split.body, pane.widthColumns, this.terminal.colorsEnabled, spacing).length);
-    const rectangle = centrePaneArtworkRectangle(pane, occupiedTopRows, bottomRows);
+    const rectangle = centrePaneReviewArtworkRectangle(pane, rightPaneText, this.terminal.colorsEnabled, spacing);
     if (rectangle === undefined) {
       await this.clear();
-      return "Artwork rendering is unavailable for this terminal.";
+      return { rendered: false, notice: "Artwork rendering is unavailable for this terminal." };
     }
 
     const state = session.items[session.index];
     const nextPlacementKey = `${state?.itemId ?? "unknown"}:${session.side}:${rectangle.column}:${rectangle.row}:${rectangle.widthColumns}:${rectangle.heightRows}`;
-    if (nextPlacementKey === this.placementKey) return undefined;
-    await this.controller.clear(centrePaneArtworkIdentifier);
-    await this.controller.show({
-      identifier: centrePaneArtworkIdentifier,
-      assetPath: session.artwork.assetPath,
-      assetData: session.artwork.assetData,
-      mediaType: session.artwork.mediaType,
-      altText: session.artwork.altText,
-      rectangle,
-      fit: "contain"
-    });
+    if (nextPlacementKey === this.placementKey) return { rendered: true };
+    try {
+      await this.controller.clear(centrePaneArtworkIdentifier);
+      await this.controller.show({
+        identifier: centrePaneArtworkIdentifier,
+        assetPath: session.artwork.assetPath,
+        assetData: session.artwork.assetData,
+        mediaType: session.artwork.mediaType,
+        altText: session.artwork.altText,
+        rectangle,
+        fit: "contain"
+      });
+    } catch {
+      this.placementKey = undefined;
+      setActiveTerminalArtworkRectangle(undefined);
+      return { rendered: false, notice: "Artwork rendering is unavailable for this terminal." };
+    }
     if (!this.controller.capabilities.ready) {
       this.placementKey = undefined;
       setActiveTerminalArtworkRectangle(undefined);
-      return this.controller.capabilities.reason ?? "Artwork rendering is unavailable for this terminal.";
+      return { rendered: false, notice: this.controller.capabilities.reason ?? "Artwork rendering is unavailable for this terminal." };
     }
     this.placementKey = nextPlacementKey;
     setActiveTerminalArtworkRectangle(rectangle);
-    return undefined;
+    return { rendered: true };
   }
 
   async resize(): Promise<void> {
@@ -5003,6 +5111,34 @@ function displayTreeLabel(node: LanguageTreeNode): string {
   return label.replace(/^Chapter\s+(\d+)\b/u, "Ch $1");
 }
 
+interface FormattedPaneArtworkRegion {
+  readonly startRow: number;
+  readonly heightRows: number;
+}
+
+function formatPaneTextWithArtworkRegion(
+  text: string,
+  width: number,
+  availableRows: number,
+  colorsEnabled: boolean,
+  vocabularyEntrySpacing: VocabularyEntrySpacing
+): { readonly lines: readonly string[]; readonly artworkRegion?: FormattedPaneArtworkRegion } {
+  const markerIndex = text.indexOf(reviewArtworkRegionMarker);
+  if (markerIndex < 0 || text.indexOf(reviewArtworkRegionMarker, markerIndex + reviewArtworkRegionMarker.length) >= 0) {
+    return { lines: formatPaneText(text, width, colorsEnabled, vocabularyEntrySpacing) };
+  }
+  const beforeText = text.slice(0, markerIndex).replace(/\n$/u, "");
+  const afterText = text.slice(markerIndex + reviewArtworkRegionMarker.length).replace(/^\n/u, "");
+  const before = formatPaneText(beforeText, width, colorsEnabled, vocabularyEntrySpacing);
+  const after = formatPaneText(afterText, width, colorsEnabled, vocabularyEntrySpacing);
+  const heightRows = Math.min(16, Math.floor(availableRows / 2));
+  if (heightRows < 6) return { lines: [...before, ...after] };
+  return {
+    lines: [...before, ...Array.from({ length: heightRows }, () => ""), ...after],
+    artworkRegion: { startRow: before.length, heightRows }
+  };
+}
+
 function formatPaneText(
   text: string,
   width: number,
@@ -5072,7 +5208,7 @@ function formatPaneText(
     if (learnerReadingSection === "narrative" && narrativeIntroduction && !/^#{1,6}\s+/u.test(rawLine)) {
       narrativeIntroductionStarted = true;
       const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled, breakdownSection);
-      lines.push(...wrapDisplayText(prepared.text, width).map((line) => prepared.style(line)));
+      lines.push(...wrapPreparedPaneLine(prepared, width));
       continue;
     }
     if (learnerReadingSection === "narrative" && !/^#{1,6}\s+/u.test(rawLine)) {
@@ -5081,7 +5217,7 @@ function formatPaneText(
       continue;
     }
     const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled, breakdownSection);
-    lines.push(...wrapDisplayText(prepared.text, width).map((line) => prepared.style(line)));
+    lines.push(...wrapPreparedPaneLine(prepared, width));
   }
   return lines;
 }
@@ -5139,7 +5275,7 @@ function reflowMarkdownSourceLines(sourceLines: readonly string[]): readonly str
         && narrativeSectionHasIntroduction(sourceLines, index);
       narrativeIntroductionStarted = false;
     }
-    if (/^#{1,6}\s+/u.test(trimmed) || isMarkdownTableLine(line) || isDialogueSpeakerLine(line) || /^\s*(?:[-*+] |\d+[.)] |>)/u.test(line)) {
+    if (/^#{1,6}\s+/u.test(trimmed) || isMarkdownTableLine(line) || isDialogueSpeakerLine(line) || /^\s*(?:[-*+] |• |\d+[.)] |>)/u.test(line)) {
       flush();
       output.push(line);
       continue;
@@ -5359,7 +5495,25 @@ function isMarkdownTableSeparatorRow(row: readonly string[]): boolean {
   return row.every((cell) => /^:?-{3,}:?$/u.test(cell.trim()));
 }
 
-function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean, breakdownSection = false): { text: string; style(line: string): string } {
+interface PreparedPaneLine {
+  readonly text: string;
+  readonly style: (line: string) => string;
+  readonly firstPrefix?: string;
+  readonly continuationPrefix?: string;
+  readonly content?: string;
+}
+
+function wrapPreparedPaneLine(prepared: PreparedPaneLine, width: number): readonly string[] {
+  if (prepared.firstPrefix === undefined || prepared.continuationPrefix === undefined || prepared.content === undefined) {
+    return wrapDisplayText(prepared.text, width).map((line) => prepared.style(line));
+  }
+  const contentWidth = Math.max(1, width - displayWidth(prepared.firstPrefix));
+  return wrapDisplayText(prepared.content, contentWidth).map((line, index) =>
+    prepared.style(`${index === 0 ? prepared.firstPrefix : prepared.continuationPrefix}${line}`)
+  );
+}
+
+function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean, breakdownSection = false): PreparedPaneLine {
   if (inCodeBlock) {
     return {
       text: rawLine.trimEnd(),
@@ -5379,7 +5533,7 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
       style: (line) => colorsEnabled ? `${ansi.gray}${line}${ansi.reset}` : line
     };
   }
-  const bullet = rawLine.match(/^(\s*)[-*]\s+(.+)$/u);
+  const bullet = rawLine.match(/^(\s*)(?:[-*]|•)\s+(.+)$/u);
   if (bullet !== null) {
     if (breakdownSection) {
       const marker = colorsEnabled ? `${ansi.yellow}•${ansi.reset}` : "•";
@@ -5390,13 +5544,20 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
     }
     return {
       text: `${bullet[1] ?? ""}• ${stripInlineMarkdown(bullet[2] ?? "", colorsEnabled)}`,
-      style: (line) => colorsEnabled ? `${ansi.yellow}${line}${ansi.reset}` : line
+      firstPrefix: `${bullet[1] ?? ""}• `,
+      continuationPrefix: `${bullet[1] ?? ""}  `,
+      content: stripInlineMarkdown(bullet[2] ?? "", colorsEnabled),
+      style: (line) => ordinaryReadingLearnerTextStyle(line, colorsEnabled)
     };
   }
   return {
     text: stripInlineMarkdown(rawLine, colorsEnabled),
     style: (line) => line
   };
+}
+
+function ordinaryReadingLearnerTextStyle(text: string, colorsEnabled: boolean): string {
+  return colorsEnabled ? `${ansi.yellow}${text}${ansi.reset}` : text;
 }
 
 function stripInlineMarkdown(text: string, colorsEnabled: boolean): string {

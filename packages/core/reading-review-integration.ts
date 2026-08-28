@@ -2,7 +2,11 @@ import { listInstalledContentPackages, type InstalledPackageRecord } from "./con
 import { listReadableContentEntries } from "./content-package-reader";
 import { isSafeContentPackagePath } from "./content-package-spec";
 import { localized } from "./localized-content";
-import { renderMemorizationExercise, type RenderedExercise } from "./exercise-renderer";
+import {
+  renderMemorizationExercise,
+  type RenderedExercise,
+  type TopicReviewSidePresentation
+} from "./exercise-renderer";
 import { projectReviewTextForMode } from "./curriculum-display";
 import {
   listInstalledMemorizationItemFiles,
@@ -11,6 +15,7 @@ import {
   type MemorizationItem
 } from "./memorization-item";
 import { parseMemorizationMarkdownImages } from "./package-media";
+import { compareDeckFrameworkVersions } from "./deck-framework";
 import {
   defaultReviewProgressDirectoryForContentDataDirectory,
   listDueReviewItems,
@@ -327,12 +332,28 @@ export async function renderReadingReviewItem(options: RenderReadingReviewItemOp
 }
 
 function formatLearnerReviewExercise(exercise: RenderedExercise, answerVisible: boolean): string {
-  const lines = [exercise.title, "", "Phrase:", ...exercise.promptLines.map((line) => `  ${projectReviewTextForMode(line, "normal")}`)];
+  const promptLines = exercise.topicReview === undefined
+    ? exercise.promptLines.map((line) => projectReviewTextForMode(line, "normal"))
+    : topicReviewSideLines(exercise.topicReview.prompt, false);
+  const lines = [exercise.title, "", "Phrase:", ...promptLines.map((line) => `  ${line}`)];
   if (answerVisible) {
-    lines.push("", "Answer:", ...exercise.answerLines.map((line) => `  ${projectReviewTextForMode(line, "normal")}`));
-    if (exercise.exampleLines.length > 0) lines.push("", "Examples:", ...exercise.exampleLines.map((line) => `  - ${line}`));
+    const answerLines = exercise.topicReview === undefined
+      ? exercise.answerLines.map((line) => projectReviewTextForMode(line, "normal"))
+      : topicReviewSideLines(exercise.topicReview.answer, false);
+    lines.push("", "Answer:", ...answerLines.map((line) => `  ${line}`));
+    if (exercise.topicReview === undefined && exercise.exampleLines.length > 0) {
+      lines.push("", "Examples:", ...exercise.exampleLines.map((line) => `  - ${line}`));
+    }
   }
   return `${lines.join("\n").trimEnd()}\n`;
+}
+
+export function topicReviewSideLines(side: TopicReviewSidePresentation, artworkRendered: boolean): readonly string[] {
+  return [
+    ...(artworkRendered ? [] : [`[Image: ${side.media.altText}]`]),
+    `• ${side.headword}`,
+    `• ${side.exampleSentence}`
+  ];
 }
 
 export async function recordReadingReviewAnswer(options: RecordReadingReviewAnswerOptions): Promise<RecordStoredReviewOutcomeResult> {
@@ -397,30 +418,20 @@ async function findReadingReviewItem(options: RenderReadingReviewItemOptions | R
 
 async function selectInstalledPackages(options: ReadingReviewOptions): Promise<readonly InstalledPackageRecord[]> {
   const matches = (await listInstalledContentPackages(options.dataDir))
-    .filter((record) => record.capabilities?.includes("core-review") || record.capabilities?.includes("specialized-review") || (record.capabilities === undefined && record.contentType === "language-curriculum"))
+    .filter((record) => record.capabilities?.includes("core-review") || record.capabilities?.includes("topic-review") || record.capabilities?.includes("specialized-review") || (record.capabilities === undefined && record.contentType === "language-curriculum"))
     .filter((record) => options.packageId === undefined || record.packageId === options.packageId || record.relatedPackageIds?.includes(options.packageId))
     .filter((record) => options.packageVersion === undefined || record.packageVersion === options.packageVersion || record.relatedPackageIds?.includes(options.packageId ?? "") === true)
     .sort((left, right) => {
       const packageOrder = left.packageId.localeCompare(right.packageId);
-      return packageOrder === 0 ? left.packageVersion.localeCompare(right.packageVersion) : packageOrder;
+      return packageOrder === 0 ? compareDeckFrameworkVersions(left, right) : packageOrder;
     });
   if (options.packageVersion !== undefined) return matches;
   const newest = new Map<string, InstalledPackageRecord>();
   for (const record of matches) {
     const previous = newest.get(record.packageId);
-    if (previous === undefined || comparePackageVersions(record.packageVersion, previous.packageVersion) > 0) newest.set(record.packageId, record);
+    if (previous === undefined || compareDeckFrameworkVersions(record, previous) > 0) newest.set(record.packageId, record);
   }
   return [...newest.values()];
-}
-
-function comparePackageVersions(left: string, right: string): number {
-  const leftParts = left.split(".").map(Number);
-  const rightParts = right.split(".").map(Number);
-  for (let index = 0; index < 3; index += 1) {
-    const difference = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
-    if (difference !== 0) return difference;
-  }
-  return 0;
 }
 
 async function safeReadablePathSet(contentPackage: InstalledPackageRecord, dataDir?: string): Promise<ReadonlySet<string>> {

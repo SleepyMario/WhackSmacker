@@ -65,9 +65,11 @@ The item inventory validates all manifest references, but Review opens the curre
 
 ## Centre-pane and card lifecycle
 
-The artwork rectangle is derived from the current terminal width and height, the existing three-pane layout, formatted Review text, and the fixed bottom controls. Its coordinates are terminal columns and rows. The rectangle leaves the pane border intact, keeps at least one internal cell of padding on all sides, and uses only currently unoccupied rows below the card text and above the fixed controls. A minimum size gate turns a narrow or short pane into the unavailable message instead of drawing over borders or controls.
+The artwork rectangle is derived from the current terminal width and height, the existing three-pane layout, and the fixed bottom controls. Review inserts an explicit reserved region after its header and before `Phrase:`. The rectangle leaves the pane border intact, keeps one internal cell of layout gap, and is wholly contained inside that region. Prompt and answer therefore use exactly the same geometry; reveal replaces the current placement without putting artwork below or over card text. A minimum size gate turns a narrow or short pane into the unavailable message instead of drawing over borders or controls.
 
 Every backend receives `fit: contain`. Kitty and iTerm2 request the rectangle in character cells with aspect preservation. Sixel converts that cell rectangle through measured cell pixels. Überzug++ receives its documented cell coordinates and maximum cell width/height and owns compositor scaling; WSM does not apply a second Wayland scale factor.
+
+Before display, existing local ImageMagick support may prepare a conservative session-local PNG when all four contiguous candidate edge bands are pale, near-neutral, very low-variance matte and at least one band is materially large. Any missing band, non-uniform or naturally coloured edge, small accepted matte, analysis failure, or conversion failure falls back to the original validated asset. The cache key is the validated source bytes; derived files are removed with controller shutdown. Installed/package artwork is never rewritten. This display step does not repair blur, already-cropped subjects, placeholders, or other source defects. Sixel containment resizes within the measured bounds without adding a transparent extent.
 
 The lifecycle uses stable identifier `wsm-centre-pane-artwork`:
 

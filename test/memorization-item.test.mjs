@@ -60,6 +60,22 @@ test("v2 specialized decks may preserve an explicitly empty examples array", () 
   });
 });
 
+test("v2 topic decks support explicit non-curriculum unit ranges", () => {
+  const item = validV2Item();
+  assertValidItem({
+    ...item,
+    deck: { ...item.deck, chapterEnd: 100, scope: "topic" },
+    sourceChapters: [],
+    sourceUnits: ["animals-001-100"]
+  });
+  assertInvalidItem({
+    ...item,
+    deck: { ...item.deck, chapterStart: 100, chapterEnd: 1, scope: "topic" },
+    sourceChapters: [],
+    sourceUnits: ["animals-001-100"]
+  }, /non-curriculum unit range/u);
+});
+
 test("v2 duplicate stable card IDs and invalid fingerprints fail", () => {
   const item = validV2Item();
   assertInvalidCollection({ schemaVersion: 2, items: [item, item] }, /Duplicate memorization item ID/);

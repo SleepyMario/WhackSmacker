@@ -85,7 +85,7 @@ export const contentModule: DomainModule = {
         const packages = await listAvailableContentPackages(options.catalogue);
         console.log("Available packages:");
         for (const entry of packages) {
-          console.log(`- ${entry.packageId} ${entry.packageVersion} ${localized(entry.displayName, "en-US")}`);
+          console.log(`- ${entry.packageId} deck ${entry.deckVersion ?? entry.packageVersion} revision ${entry.artifactRevision ?? 1} ${localized(entry.displayName, "en-US")}`);
         }
       }
     });
@@ -104,7 +104,7 @@ export const contentModule: DomainModule = {
         });
         console.log(result.installed ? "Package installed." : "Package already installed.");
         console.log(`Package: ${result.record.packageId}`);
-        console.log(`Version: ${result.record.packageVersion}`);
+        printPackageVersionAxes(result.record);
         console.log(`Path: ${result.installPath}`);
       }
     });
@@ -147,7 +147,7 @@ export const contentModule: DomainModule = {
         });
         console.log("Package updated.");
         console.log(`Package: ${result.record.packageId}`);
-        console.log(`Version: ${result.record.packageVersion}`);
+        printPackageVersionAxes(result.record);
         console.log(`Path: ${result.installPath}`);
       }
     });
@@ -165,7 +165,7 @@ export const contentModule: DomainModule = {
         });
         console.log("Package removed.");
         for (const record of result.removed) {
-          console.log(`- ${record.packageId} ${record.packageVersion}`);
+          console.log(`- ${record.packageId} deck ${record.deckVersion ?? record.packageVersion} revision ${record.artifactRevision ?? 1}`);
         }
       }
     });
@@ -513,8 +513,14 @@ function printInstalled(packages: readonly InstalledPackageRecord[]): void {
   }
   console.log("Installed packages:");
   for (const record of packages) {
-    console.log(`- ${record.packageId} ${record.packageVersion} ${record.displayName}`);
+    console.log(`- ${record.packageId} deck ${record.deckVersion ?? record.packageVersion} revision ${record.artifactRevision ?? 1} ${record.displayName}`);
   }
+}
+
+function printPackageVersionAxes(record: InstalledPackageRecord): void {
+  console.log(`Deck version: ${record.deckVersion ?? record.packageVersion}`);
+  console.log(`Artifact revision: ${record.artifactRevision ?? 1}`);
+  console.log(`Legacy package version: ${record.packageVersion}`);
 }
 
 async function runReviewSourceSession(options: RunReviewSourceSessionOptions): Promise<void> {

@@ -9,6 +9,13 @@ import {
   type ContentPackageSourceProvenance
 } from "./content-package-spec";
 import { isLocalizedContentValue, type LocalizedContentValue } from "./localized-content";
+import {
+  compareDeckFrameworkVersions,
+  immutableDeckArtifactKey,
+  validateDeckFrameworkVersion,
+  validateDeckInteractionProfile,
+  validateMediaPolicy
+} from "./deck-framework";
 
 type BufferValue = {
   readonly length: number;
@@ -64,11 +71,16 @@ export interface ContentPackageCatalogue {
 export interface ContentPackageCatalogueEntry {
   readonly packageId: string;
   readonly packageVersion: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
   readonly displayName: LocalizedContentValue;
   readonly description: LocalizedContentValue;
   readonly contentType: string;
   readonly capabilities?: ContentPackageManifest["capabilities"];
   readonly deckFamily?: ContentPackageManifest["deckFamily"];
+  readonly topic?: ContentPackageManifest["topic"];
+  readonly mediaPolicy?: ContentPackageManifest["mediaPolicy"];
+  readonly interactionProfile?: ContentPackageManifest["interactionProfile"];
   readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
@@ -186,7 +198,9 @@ export async function generateLocalContentPackageCatalogue(
 export function sortCatalogueEntries(entries: readonly ContentPackageCatalogueEntry[]): readonly ContentPackageCatalogueEntry[] {
   return [...entries].sort((left, right) => {
     const packageOrder = left.packageId.localeCompare(right.packageId);
-    return packageOrder === 0 ? left.packageVersion.localeCompare(right.packageVersion) : packageOrder;
+    return packageOrder === 0
+      ? compareDeckFrameworkVersions(left, right) || left.packageVersion.localeCompare(right.packageVersion)
+      : packageOrder;
   });
 }
 
@@ -198,11 +212,16 @@ async function createCatalogueEntry(packagePath: string, packageBaseUrl?: string
   return {
     packageId: manifest.packageId,
     packageVersion: manifest.packageVersion,
+    ...(manifest.deckVersion === undefined ? {} : { deckVersion: manifest.deckVersion }),
+    ...(manifest.artifactRevision === undefined ? {} : { artifactRevision: manifest.artifactRevision }),
     displayName: manifest.displayName,
     description: manifest.description,
     contentType: manifest.contentType,
     ...(manifest.capabilities === undefined ? {} : { capabilities: manifest.capabilities }),
     ...(manifest.deckFamily === undefined ? {} : { deckFamily: manifest.deckFamily }),
+    ...(manifest.topic === undefined ? {} : { topic: manifest.topic }),
+    ...(manifest.mediaPolicy === undefined ? {} : { mediaPolicy: manifest.mediaPolicy }),
+    ...(manifest.interactionProfile === undefined ? {} : { interactionProfile: manifest.interactionProfile }),
     ...(manifest.relatedPackageIds === undefined ? {} : { relatedPackageIds: manifest.relatedPackageIds }),
     contentSchemaVersion: manifest.contentSchemaVersion,
     minimumWhackSmackerVersion: manifest.minimumWhackSmackerVersion,
@@ -303,17 +322,29 @@ function validateCataloguePackages(value: unknown, errors: string[]): void {
     const packageId = readString(entry.packageId);
     validateCatalogueId(packageId, `packages[${index}].packageId`, errors);
     validateSemver(readString(entry.packageVersion), `packages[${index}].packageVersion`, errors);
+    errors.push(...validateDeckFrameworkVersion({
+      packageVersion: readString(entry.packageVersion),
+      ...(typeof entry.deckVersion === "string" ? { deckVersion: entry.deckVersion } : {}),
+      ...(typeof entry.artifactRevision === "number" ? { artifactRevision: entry.artifactRevision } : {})
+    }, `packages[${index}]`).errors);
     validateLocalizedContentValue(entry.displayName, `packages[${index}].displayName`, errors);
     validateLocalizedContentValue(entry.description, `packages[${index}].description`, errors);
     validateNonEmptyString(entry.contentType, `packages[${index}].contentType`, errors);
     validateDeckFamily(entry.deckFamily, `packages[${index}].deckFamily`, errors);
+    validateTopicMetadata(entry.topic, `packages[${index}].topic`, errors);
+    if (entry.mediaPolicy !== undefined) errors.push(...validateMediaPolicy(entry.mediaPolicy, `packages[${index}].mediaPolicy`).errors);
+    if (entry.interactionProfile !== undefined) errors.push(...validateDeckInteractionProfile(entry.interactionProfile, `packages[${index}].interactionProfile`).errors);
     validateSemver(readString(entry.contentSchemaVersion), `packages[${index}].contentSchemaVersion`, errors);
     validateSemver(readString(entry.minimumWhackSmackerVersion), `packages[${index}].minimumWhackSmackerVersion`, errors);
     validateSource(entry.source, `packages[${index}].source`, errors);
     validatePackageFile(entry.package, `packages[${index}].package`, errors, packageUrls);
     validateDependencies(entry.dependencies, packageId, `packages[${index}].dependencies`, errors);
 
-    const packageKey = `${packageId}@${readString(entry.packageVersion)}`;
+    const packageKey = immutableDeckArtifactKey(packageId, {
+      packageVersion: readString(entry.packageVersion),
+      ...(typeof entry.deckVersion === "string" ? { deckVersion: entry.deckVersion } : {}),
+      ...(typeof entry.artifactRevision === "number" ? { artifactRevision: entry.artifactRevision } : {})
+    });
     if (packageKeys.has(packageKey)) {
       errors.push(`Duplicate package entry: ${packageKey}`);
     } else {
@@ -326,6 +357,19 @@ function validateDeckFamily(value: unknown, field: string, errors: string[]): vo
   if (value !== undefined && value !== "general" && value !== "specialized") {
     errors.push(`${field} must be general or specialized when present.`);
   }
+}
+
+function validateTopicMetadata(value: unknown, field: string, errors: string[]): void {
+  if (value === undefined) return;
+  if (!isRecord(value)) {
+    errors.push(`${field} must be an object when present.`);
+    return;
+  }
+  if (typeof value.id !== "string" || !/^[a-z0-9][a-z0-9-]*$/u.test(value.id)) {
+    errors.push(`${field}.id must be a stable lowercase slug.`);
+  }
+  validateLocalizedContentValue(value.displayName, `${field}.displayName`, errors);
+  validateLocalizedContentValue(value.deckDisplayName, `${field}.deckDisplayName`, errors);
 }
 
 function validatePackageFile(value: unknown, field: string, errors: string[], packageUrls: Set<string>): void {

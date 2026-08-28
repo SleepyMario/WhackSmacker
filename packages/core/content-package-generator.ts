@@ -7,6 +7,8 @@ import {
 } from "./content-package-spec";
 import {
   assertValidMemorizationItemCollection,
+  interactionProfileForMemorizationOutputs,
+  memorizationOutputsFromAnswer,
   memorizationItemFileMediaType,
   pedagogicalContentForMemorizationItem,
   type MemorizationItem,
@@ -41,6 +43,12 @@ import {
 } from "./language-curriculum-policy";
 import { removeCompleteRereadingSection, removeContentWrapperHeading } from "./curriculum-display";
 import { specializedReviewPackageDefinitions } from "./specialized-review";
+import {
+  defaultDeckInteractionProfile,
+  projectDeckFrameworkVersion,
+  type DeckInteractionProfile,
+  type MediaPolicy
+} from "./deck-framework";
 import {
   markdownWithImagePlaceholders,
   memorizationMediaReferences,
@@ -104,14 +112,21 @@ const { dirname, isAbsolute, join, relative, resolve, sep } = require("node:path
 
 export interface ContentPackageGeneratorTarget {
   readonly id: string;
+  readonly explicitOnly?: boolean;
   readonly packageId: string;
   readonly displayName: LocalizedContentValue;
   readonly description: LocalizedContentValue;
   readonly contentType: ContentPackageManifest["contentType"];
   readonly capabilities?: ContentPackageManifest["capabilities"];
   readonly deckFamily?: ContentPackageManifest["deckFamily"];
+  readonly topic?: ContentPackageManifest["topic"];
   readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
+  readonly mediaPolicy?: MediaPolicy;
+  readonly interactionProfile?: DeckInteractionProfile;
+  /** Deprecated compatibility coordinate retained for legacy callers and archive names. */
   readonly packageVersion: string;
   readonly sourcePath: string;
   readonly sourceRepository: string;
@@ -130,6 +145,13 @@ export interface ContentPackageGeneratorTarget {
   }[];
   readonly specializedDeck?: {
     readonly displayName: string;
+    readonly unitStart: number;
+    readonly unitEnd: number;
+  };
+  readonly topicDeck?: {
+    readonly id: string;
+    readonly displayName: string;
+    readonly outputFile: string;
     readonly unitStart: number;
     readonly unitEnd: number;
   };
@@ -469,6 +491,7 @@ const coreReviewTargets: readonly {
   readonly readingId?: string;
   readonly languages: readonly string[];
   readonly packageVersion: string;
+  readonly interactionProfile?: DeckInteractionProfile;
 }[] = [
   { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.1.0" },
   { slug: "dutch", name: "Dutch", readingId: "com.sleepymario.language.dutch", languages: ["nl", "en"], packageVersion: "0.1.0" },
@@ -476,7 +499,10 @@ const coreReviewTargets: readonly {
   { slug: "french", name: "French", readingId: "com.sleepymario.language.french", languages: ["fr", "en"], packageVersion: "0.1.0" },
   { slug: "german", name: "German", readingId: "com.sleepymario.language.german", languages: ["de", "en"], packageVersion: "0.1.0" },
   { slug: "hindi", name: "Hindi", readingId: "com.sleepymario.language.hindi", languages: ["hi", "en"], packageVersion: "0.1.0" },
-  { slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0" },
+  {
+    slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0",
+    interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent" }
+  },
   { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0" },
   { slug: "russian", name: "Russian", readingId: "com.sleepymario.language.russian", languages: ["ru", "en"], packageVersion: "0.1.0" },
   { slug: "spanish", name: "Spanish", readingId: "com.sleepymario.language.spanish", languages: ["es", "en"], packageVersion: "0.1.0" },
@@ -484,7 +510,7 @@ const coreReviewTargets: readonly {
   { slug: "zulu", name: "Zulu", readingId: "com.sleepymario.language.zulu", languages: ["zu", "en"], packageVersion: "0.1.0" }
 ];
 
-const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = coreReviewTargets.map(({ slug, name, readingId, languages, packageVersion }) => ({
+const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = coreReviewTargets.map(({ slug, name, readingId, languages, packageVersion, interactionProfile }) => ({
   id: `${slug}-core-reviews`,
   packageId: readingId === undefined ? `com.sleepymario.language.${slug}.reviews` : `${readingId}.reviews`,
   displayName: `${name} Core Reviews`,
@@ -496,6 +522,7 @@ const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = cor
   ...(readingId === undefined ? {} : { relatedPackageIds: [readingId] }),
   contentSchemaVersion: slug === "vietnamese" || slug === "dutch" ? "2.0.0" : "1.0.0",
   packageVersion,
+  ...(interactionProfile === undefined ? {} : { interactionProfile }),
   sourcePath: `review-content/${slug}`,
   sourceRepository: "https://github.com/SleepyMario/whacksmacker",
   languages,
@@ -539,7 +566,57 @@ const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = speci
   specializedDeck: { displayName: definition.deckDisplayName, unitStart: 1, unitEnd: 11 }
 }));
 
-export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [...readingTargets, ...generatedCoreReviewTargets, ...specializedReviewTargets];
+const technicalPreviewTargets: readonly ContentPackageGeneratorTarget[] = [{
+  id: "dutch-general-animals-preview-001-100",
+  explicitOnly: true,
+  packageId: "com.sleepymario.language.dutch.general.animals.preview-001-100",
+  displayName: "1–100",
+  description: "Non-published technical preview of the supplied draft English–Dutch animal cards and package-relative artwork; not learner-ready content.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.dutch"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 3,
+  mediaPolicy: "required",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.2",
+  sourcePath: "wsm-animals-en-nl-001-100-draft-v1.0.0",
+  sourceRepository: "provided-archive:wsm-animals-en-nl-001-100-draft-v1.0.0",
+  languages: ["en", "nl"],
+  targetLanguage: "nl",
+  subjects: ["animals", "language", "technical-preview"],
+  topic: {
+    id: "animals",
+    displayName: "Animals",
+    deckDisplayName: "1–100"
+  },
+  dependencies: [],
+  include: ["README.md", "cards.tsv"],
+  topicDeck: {
+    id: "animals-preview-001-100",
+    displayName: "1–100",
+    outputFile: "animals-preview-001-100.json",
+    unitStart: 1,
+    unitEnd: 100
+  }
+}];
+
+const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
+  ...readingTargets,
+  ...generatedCoreReviewTargets,
+  ...technicalPreviewTargets,
+  ...specializedReviewTargets
+];
+
+export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = rawContentPackageGeneratorTargets.map((target) => ({
+  ...target,
+  deckVersion: target.deckVersion ?? "0.0.1",
+  artifactRevision: target.artifactRevision ?? 1,
+  mediaPolicy: target.mediaPolicy ?? "none",
+  interactionProfile: target.interactionProfile ?? defaultDeckInteractionProfile
+}));
 
 export async function generateContentPackage(options: GenerateContentPackageOptions): Promise<GeneratedContentPackageResult> {
   const target = getContentPackageGeneratorTarget(options.targetId);
@@ -572,7 +649,8 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     assertPackagedCanonicalVocabulary(sourceFiles);
     assertChangedSectionAndGrammarContent(target, sourceRoot, sourceFiles, options.production === true);
   }
-  const bundledSource = target.capabilities?.includes("specialized-review") === true;
+  const bundledSource = target.capabilities?.includes("specialized-review") === true
+    || target.capabilities?.includes("topic-review") === true;
   const sourceCommit = normalizeGitCommit(bundledSource ? tryReadGitValue(sourceRoot, ["rev-parse", "HEAD"]) : readGitValue(sourceRoot, ["rev-parse", "HEAD"]));
   const sourceDirty = (bundledSource ? tryReadGitValue(sourceRoot, ["status", "--short"]) : readGitValue(sourceRoot, ["status", "--short"])).trim().length > 0;
   const generatorCommit = readGitValue(repositoryRoot, ["rev-parse", "HEAD"]);
@@ -597,11 +675,16 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     packageFormatVersion: whackSmackerPackageFormatVersion,
     packageId: target.packageId,
     packageVersion: target.packageVersion,
+    deckVersion: target.deckVersion ?? "0.0.1",
+    artifactRevision: target.artifactRevision ?? 1,
     displayName: target.displayName,
     description: target.description,
     contentType: target.contentType,
     ...(target.capabilities === undefined ? {} : { capabilities: target.capabilities }),
     ...(target.deckFamily === undefined ? {} : { deckFamily: target.deckFamily }),
+    ...(target.topic === undefined ? {} : { topic: target.topic }),
+    mediaPolicy: target.mediaPolicy ?? "none",
+    interactionProfile: target.interactionProfile ?? defaultDeckInteractionProfile,
     ...(target.relatedPackageIds === undefined ? {} : { relatedPackageIds: target.relatedPackageIds }),
     contentSchemaVersion: target.contentSchemaVersion,
     minimumWhackSmackerVersion: whackSmackerApplicationVersion,
@@ -642,7 +725,8 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     ...memorizationFiles.map((file) => ({ path: file.record.path, data: file.buffer })),
     ...packagedMediaFiles.map((file) => ({ path: file.record.path, data: file.buffer }))
   ]);
-  const filePath = join(options.outputDirectory, `${target.packageId}-${target.packageVersion}${whackSmackerPackageExtension}`);
+  const artifactIdentity = projectDeckFrameworkVersion(target);
+  const filePath = join(options.outputDirectory, `${target.packageId}-${artifactIdentity.deckVersion}-r${artifactIdentity.artifactRevision}${whackSmackerPackageExtension}`);
 
   await mkdir(dirname(filePath), { recursive: true });
   await writeFile(filePath, archiveBuffer);
@@ -1437,14 +1521,16 @@ function buildMemorizationFiles(
     ? parseJapaneseContextualReadings(evidenceFiles)
     : undefined;
   return sourceFiles
-    .filter((file) => isReviewDeckCardsPath(file.path) || (target.capabilities?.includes("specialized-review") === true && file.path === "cards.tsv"))
+    .filter((file) => isReviewDeckCardsPath(file.path) || (isStandaloneReviewPackageTarget(target) && file.path === "cards.tsv"))
     .map((file) => {
       const collection = parseReviewDeckCards(target, file, generatedAt, reviewExampleIndex, japaneseContextualReadings);
       assertValidMemorizationItemCollection(collection);
       const buffer = Buffer.from(`${JSON.stringify(collection, null, 2)}\n`, "utf8");
       const outputPath = target.capabilities?.includes("specialized-review") === true
         ? "content/memorization/medical-i.json"
-        : `content/memorization/${file.path.replace(/\/cards\.tsv$/u, ".json")}`;
+        : target.capabilities?.includes("topic-review") === true
+          ? `content/memorization/${target.topicDeck?.outputFile ?? "topic-review.json"}`
+          : `content/memorization/${file.path.replace(/\/cards\.tsv$/u, ".json")}`;
       return {
         record: createFileRecord(outputPath, memorizationItemFileMediaType, buffer),
         buffer
@@ -1607,11 +1693,14 @@ function reviewDeckV2RowToItem(
   const tagsJson = row[includesExamples ? 17 : 16] ?? "";
   const prompt = decodeReviewDeckField(promptField);
   const specialized = target.capabilities?.includes("specialized-review") === true;
+  const topic = target.capabilities?.includes("topic-review") === true;
+  const standalone = specialized || topic;
+  const standaloneDeck = topic ? target.topicDeck : target.specializedDeck;
   const range = deckTitle.match(/^Chapter (\d+)-(\d+)$/u);
-  if (!specialized && range === null) throw new Error(`Review deck v2 row ${rowNumber + 1} has an invalid five-chapter deck title: ${deckTitle}`);
-  const chapterStart = specialized ? target.specializedDeck?.unitStart ?? 1 : Number.parseInt(range?.[1] ?? "", 10);
-  const chapterEnd = specialized ? target.specializedDeck?.unitEnd ?? chapterStart : Number.parseInt(range?.[2] ?? "", 10);
-  const sourceChapter = Number.parseInt(chapterText, 10);
+  if (!standalone && range === null) throw new Error(`Review deck v2 row ${rowNumber + 1} has an invalid five-chapter deck title: ${deckTitle}`);
+  const chapterStart = standalone ? standaloneDeck?.unitStart ?? 1 : Number.parseInt(range?.[1] ?? "", 10);
+  const chapterEnd = standalone ? standaloneDeck?.unitEnd ?? chapterStart : Number.parseInt(range?.[2] ?? "", 10);
+  const sourceChapter = topic ? undefined : Number.parseInt(chapterText, 10);
   const acceptedAnswers = parseV2StringArray(acceptedJson, "accepted_answers", sourcePath, rowNumber);
   const distractors = parseV2StringArray(distractorsJson, "distractors", sourcePath, rowNumber);
   const testedLexicalIds = parseV2StringArray(lexicalJson, "lexical_ids", sourcePath, rowNumber);
@@ -1619,7 +1708,10 @@ function reviewDeckV2RowToItem(
   const testedGeographicIds = parseV2StringArray(geographicJson, "geographic_ids", sourcePath, rowNumber);
   const tags = parseV2StringArray(tagsJson, "tags", sourcePath, rowNumber);
   const resolvedExplanation = explanation.trim().length === 0 ? provenanceEvidence : explanation;
-  if (!Number.isSafeInteger(sourceChapter) || sourceChapter < chapterStart || sourceChapter > chapterEnd) {
+  if (topic && chapterText.trim().length === 0) {
+    throw new Error(`Review deck v2 row ${rowNumber + 1} source unit is empty in ${sourcePath}`);
+  }
+  if (!topic && (!Number.isSafeInteger(sourceChapter) || (sourceChapter ?? 0) < chapterStart || (sourceChapter ?? 0) > chapterEnd)) {
     throw new Error(`Review deck v2 row ${rowNumber + 1} source chapter is outside its deck block in ${sourcePath}`);
   }
   const reviewDirection = `${promptLanguage}-to-${answerLanguage}`;
@@ -1637,21 +1729,37 @@ function reviewDeckV2RowToItem(
     if (testedLexicalIds.length === 0) throw new Error(`Review row ${rowNumber + 1} must identify its canonical lexical item in ${sourcePath}`);
     if (testedGrammarIds.length > 0) throw new Error(`Review row ${rowNumber + 1} must not test grammar in ${sourcePath}`);
   }
-  const learnerDeckTitle = specialized ? target.specializedDeck?.displayName ?? "Specialized" : deckTitle;
+  const learnerDeckTitle = standalone ? standaloneDeck?.displayName ?? "Review" : deckTitle;
   const deckId = specialized
     ? `${target.packageId}/medical-1`
-    : `${targetLanguage}-core-review-${String(chapterStart).padStart(3, "0")}-${String(chapterEnd).padStart(3, "0")}`;
+    : topic
+      ? `${target.packageId}/${target.topicDeck?.id ?? "topic-review"}`
+      : `${targetLanguage}-core-review-${String(chapterStart).padStart(3, "0")}-${String(chapterEnd).padStart(3, "0")}`;
+  const answer = memorizationBlockFromTsv(topic ? decodeReviewDeckField(acceptedAnswers[0] ?? "") : acceptedAnswers[0] ?? "", answerLanguage);
+  const outputs = memorizationOutputsFromAnswer(answer);
   const item: MemorizationItemV2 = {
     schemaVersion: 2,
     id: cardId,
     cardId,
     pedagogicalFingerprint: "0".repeat(64),
     kind: kind as MemorizationItemV2["kind"],
-    deck: { id: deckId, title: learnerDeckTitle, chapterStart, chapterEnd, ...(specialized ? { scope: "specialized" as const } : {}) },
-    sourceChapters: [sourceChapter],
+    deck: {
+      id: deckId,
+      title: learnerDeckTitle,
+      chapterStart,
+      chapterEnd,
+      ...(specialized ? { scope: "specialized" as const } : topic ? { scope: "topic" as const } : {})
+    },
+    sourceChapters: sourceChapter === undefined ? [] : [sourceChapter],
+    ...(topic ? { sourceUnits: [chapterText] } : {}),
     reviewDirection,
     prompt: memorizationBlockFromTsv(prompt, promptLanguage),
-    answer: memorizationBlockFromTsv(acceptedAnswers[0] ?? "", answerLanguage),
+    answer,
+    outputs,
+    interactionProfile: interactionProfileForMemorizationOutputs(
+      outputs,
+      target.interactionProfile ?? defaultDeckInteractionProfile
+    ),
     acceptedAnswers,
     distractors,
     explanation: resolvedExplanation,
@@ -2166,7 +2274,14 @@ function isLanguageCurriculumTarget(target: ContentPackageGeneratorTarget): bool
 }
 
 function isReviewPackageTarget(target: ContentPackageGeneratorTarget): boolean {
-  return target.capabilities?.includes("core-review") === true || target.capabilities?.includes("specialized-review") === true;
+  return target.capabilities?.includes("core-review") === true
+    || target.capabilities?.includes("topic-review") === true
+    || target.capabilities?.includes("specialized-review") === true;
+}
+
+function isStandaloneReviewPackageTarget(target: ContentPackageGeneratorTarget): boolean {
+  return target.capabilities?.includes("topic-review") === true
+    || target.capabilities?.includes("specialized-review") === true;
 }
 
 function languageCodeForReviewLabel(label: string): string | undefined {

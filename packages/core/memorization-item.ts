@@ -22,6 +22,12 @@ import {
   packageImageMediaTypeForPath,
   parseMemorizationMarkdownImages
 } from "./package-media";
+import {
+  compareDeckFrameworkVersions,
+  defaultDeckInteractionProfile,
+  validateDeckInteractionProfile,
+  type DeckInteractionProfile
+} from "./deck-framework";
 
 type BufferValue = {
   readonly length: number;
@@ -79,10 +85,14 @@ export interface MemorizationItemV2 extends Omit<MemorizationItemV1, "schemaVers
     readonly title: string;
     readonly chapterStart: number;
     readonly chapterEnd: number;
-    readonly scope?: "curriculum" | "specialized";
+    readonly scope?: "curriculum" | "topic" | "specialized";
   };
   readonly sourceChapters: readonly number[];
+  readonly sourceUnits?: readonly string[];
   readonly reviewDirection: string;
+  /** Canonical ordered output projection. Legacy v2 items without it remain readable. */
+  readonly outputs?: readonly MemorizationItemOutput[];
+  readonly interactionProfile?: DeckInteractionProfile;
   readonly acceptedAnswers: readonly string[];
   readonly distractors: readonly string[];
   readonly explanation: string;
@@ -97,6 +107,12 @@ export interface MemorizationItemV2 extends Omit<MemorizationItemV1, "schemaVers
     readonly locator: string;
     readonly evidence: string;
   };
+}
+
+export interface MemorizationItemOutput {
+  readonly id: string;
+  readonly label?: LocalizedContentValue;
+  readonly content: MemorizationContentBlock;
 }
 
 export type MemorizationItem = MemorizationItemV1 | MemorizationItemV2;
@@ -403,7 +419,7 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     "createdAt",
     "updatedAt",
     ...(value.schemaVersion === 2 ? [
-      "cardId", "pedagogicalFingerprint", "deck", "sourceChapters", "reviewDirection",
+      "cardId", "pedagogicalFingerprint", "deck", "sourceChapters", "sourceUnits", "reviewDirection", "outputs", "interactionProfile",
       "acceptedAnswers", "distractors", "explanation", "testedMeaning", "testedLexicalIds",
       "testedGrammarIds", "testedGeographicIds", "testedCastIds", "testedSkillIds", "provenance"
     ] : [])
@@ -470,17 +486,24 @@ function validateV2Fields(value: Record<string, unknown>, field: string, errors:
   } else {
     validateChapter(value.deck.chapterStart, `${field}.deck.chapterStart`, errors);
     validateChapter(value.deck.chapterEnd, `${field}.deck.chapterEnd`, errors);
-    if (value.deck.scope !== undefined && value.deck.scope !== "curriculum" && value.deck.scope !== "specialized") {
-      errors.push(`${field}.deck.scope must be curriculum or specialized when present.`);
+    if (value.deck.scope !== undefined && value.deck.scope !== "curriculum" && value.deck.scope !== "topic" && value.deck.scope !== "specialized") {
+      errors.push(`${field}.deck.scope must be curriculum, topic, or specialized when present.`);
     }
-    if (typeof value.deck.chapterStart === "number" && typeof value.deck.chapterEnd === "number" && value.deck.scope === "specialized" && value.deck.chapterEnd < value.deck.chapterStart) {
-      errors.push(`${field}.deck specialized unit range must not end before it starts.`);
-    } else if (typeof value.deck.chapterStart === "number" && typeof value.deck.chapterEnd === "number" && value.deck.scope !== "specialized" && value.deck.chapterEnd - value.deck.chapterStart !== 4) {
+    if (typeof value.deck.chapterStart === "number" && typeof value.deck.chapterEnd === "number" && (value.deck.scope === "topic" || value.deck.scope === "specialized") && value.deck.chapterEnd < value.deck.chapterStart) {
+      errors.push(`${field}.deck non-curriculum unit range must not end before it starts.`);
+    } else if (typeof value.deck.chapterStart === "number" && typeof value.deck.chapterEnd === "number" && value.deck.scope !== "topic" && value.deck.scope !== "specialized" && value.deck.chapterEnd - value.deck.chapterStart !== 4) {
       errors.push(`${field}.deck must cover exactly five consecutive chapters.`);
     }
   }
-  validateChapterArray(value.sourceChapters, `${field}.sourceChapters`, errors);
+  const topicDeck = isRecord(value.deck) && value.deck.scope === "topic";
+  validateChapterArray(value.sourceChapters, `${field}.sourceChapters`, errors, topicDeck);
+  if (topicDeck) {
+    validateNonEmptyUniqueNfcStrings(value.sourceUnits, `${field}.sourceUnits`, errors, false);
+  } else if (value.sourceUnits !== undefined) {
+    errors.push(`${field}.sourceUnits is allowed only for topic decks.`);
+  }
   validateNonEmptyString(value.reviewDirection, `${field}.reviewDirection`, errors);
+  validateMemorizationOutputs(value.outputs, value.interactionProfile, field, errors);
   validateNonEmptyUniqueNfcStrings(value.acceptedAnswers, `${field}.acceptedAnswers`, errors, false);
   validateNonEmptyUniqueNfcStrings(value.distractors, `${field}.distractors`, errors, true);
   validateNonEmptyString(value.explanation, `${field}.explanation`, errors);
@@ -502,6 +525,89 @@ function validateV2Fields(value: Record<string, unknown>, field: string, errors:
     const expected = pedagogicalFingerprint(pedagogicalContentForMemorizationItem(value));
     if (value.pedagogicalFingerprint !== expected) errors.push(`${field}.pedagogicalFingerprint does not match pedagogically material content.`);
   }
+}
+
+function validateMemorizationOutputs(outputs: unknown, interaction: unknown, field: string, errors: string[]): void {
+  if (outputs === undefined && interaction === undefined) return;
+  if (!Array.isArray(outputs) || outputs.length === 0) {
+    errors.push(`${field}.outputs must be a non-empty ordered array when the universal output model is used.`);
+    return;
+  }
+  const ids = new Set<string>();
+  for (const [index, output] of outputs.entries()) {
+    if (!isRecord(output) || !/^[a-z0-9][a-z0-9-]*$/u.test(readString(output.id))) {
+      errors.push(`${field}.outputs[${index}].id must be a stable lowercase ID.`);
+      continue;
+    }
+    if (ids.has(output.id as string)) errors.push(`${field}.outputs contains duplicate ID: ${String(output.id)}`);
+    ids.add(output.id as string);
+    if (output.label !== undefined && !isLocalizedContentValue(output.label)) errors.push(`${field}.outputs[${index}].label must be localized learner-facing text.`);
+    validateContentBlock(output.content, `${field}.outputs[${index}].content`, errors);
+  }
+  errors.push(...validateDeckInteractionProfile(interaction, `${field}.interactionProfile`).errors);
+}
+
+export function memorizationOutputsFromAnswer(answer: MemorizationContentBlock): readonly MemorizationItemOutput[] {
+  if (typeof answer.text !== "string") return [{ id: "answer", content: answer }];
+  const parts = answer.text
+    .replace(/\r\n?/gu, "\n")
+    .split(/\n|;\s*(?=[\p{L}][\p{L}\p{N} -]*:\s*)/u)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+  const structured = parts.map((part) => {
+    const match = part.match(/^([\p{L}][\p{L}\p{N} -]*):\s*(.+)$/u);
+    if (match === null) return undefined;
+    const label = match[1]?.trim() ?? "";
+    const text = match[2]?.trim() ?? "";
+    const id = label.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "");
+    if (id.length === 0 || text.length === 0) return undefined;
+    return {
+      id,
+      label,
+      content: { ...answer, text, plainText: text }
+    } satisfies MemorizationItemOutput;
+  });
+  if (structured.length === parts.length && structured.every((part) => part !== undefined)) {
+    return structured as readonly MemorizationItemOutput[];
+  }
+  return [{ id: "answer", content: answer }];
+}
+
+export function interactionProfileForMemorizationOutputs(
+  outputs: readonly MemorizationItemOutput[],
+  profile: DeckInteractionProfile = defaultDeckInteractionProfile
+): DeckInteractionProfile {
+  return outputs.length > 1 || outputs.some((output) => output.label !== undefined)
+    ? { ...profile, labels: "independent" }
+    : profile;
+}
+
+/**
+ * Bounded compatibility projection for legacy structured pronunciation cards.
+ * New packages express their card set through precomposed interaction metadata;
+ * this keeps old unlabeled records from reintroducing single-unit B cards.
+ */
+export function isLegacyStructuredPromptEligible(
+  prompt: MemorizationContentBlock,
+  answer: MemorizationContentBlock
+): boolean {
+  const promptOutputs = memorizationOutputsFromAnswer(prompt);
+  const answerOutputs = memorizationOutputsFromAnswer(answer);
+  const pronunciationIds = new Set(["reading", "pinyin", "zhuyin", "pronunciation"]);
+  if (answerOutputs.length < 2 || !promptOutputs.some((output) => pronunciationIds.has(output.id))) return true;
+  return Math.max(...promptOutputs.map((output) => pronunciationUnitCount(typeof output.content.text === "string" ? output.content.text : ""))) >= 2;
+}
+
+function pronunciationUnitCount(value: string): number {
+  const normalized = value.normalize("NFC").trim();
+  if (normalized.length === 0) return 0;
+  if (/\p{Script=Latin}/u.test(normalized)) return normalized.split(/[\s·・-]+/u).filter(Boolean).length;
+  if (/[\u3100-\u312f\u31a0-\u31bf]/u.test(normalized)) return normalized.split(/\s+/u).filter(Boolean).length;
+  if (/[\u3040-\u30ff]/u.test(normalized)) {
+    return [...normalized.replace(/[\s、。・･\-.!?！？ー]/gu, "")]
+      .filter((character) => !/^[\u3083\u3085\u3087\u3041\u3043\u3045\u3047\u3049\u308e\u30e3\u30e5\u30e7\u30a1\u30a3\u30a5\u30a7\u30a9\u30ee]$/u.test(character)).length;
+  }
+  return [...normalized].filter((character) => /\p{L}|\p{N}/u.test(character)).length;
 }
 
 export function pedagogicalContentForMemorizationItem(item: MemorizationItemV2): PedagogicalContent {
@@ -541,8 +647,8 @@ function validateChapter(value: unknown, field: string, errors: string[]): void 
   if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 1) errors.push(`${field} must be a positive integer.`);
 }
 
-function validateChapterArray(value: unknown, field: string, errors: string[]): void {
-  if (!Array.isArray(value) || value.length === 0) { errors.push(`${field} must be a non-empty chapter array.`); return; }
+function validateChapterArray(value: unknown, field: string, errors: string[], allowEmpty = false): void {
+  if (!Array.isArray(value) || (!allowEmpty && value.length === 0)) { errors.push(`${field} must be ${allowEmpty ? "a" : "a non-empty"} chapter array.`); return; }
   for (const [index, chapter] of value.entries()) validateChapter(chapter, `${field}[${index}]`, errors);
   if (new Set(value).size !== value.length) errors.push(`${field} must not contain duplicates.`);
 }
@@ -758,7 +864,7 @@ async function selectInstalledPackage(packageId: string, dataDir?: string, packa
   if (matches.length === 0) {
     throw new Error(`Installed package not found: ${packageId}${packageVersion === undefined ? "" : ` ${packageVersion}`}`);
   }
-  return [...matches].sort((left, right) => compareSemver(right.packageVersion, left.packageVersion))[0];
+  return [...matches].sort((left, right) => compareDeckFrameworkVersions(right, left))[0];
 }
 
 function installedPackageRoot(record: InstalledPackageRecord, dataDir?: string): string {
@@ -771,17 +877,6 @@ async function readInstalledManifest(root: string): Promise<ContentPackageManife
   return manifest;
 }
 
-function compareSemver(left: string, right: string): number {
-  const leftParts = left.split(".").map(Number);
-  const rightParts = right.split(".").map(Number);
-  for (let index = 0; index < 3; index += 1) {
-    const difference = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
-    if (difference !== 0) {
-      return difference;
-    }
-  }
-  return 0;
-}
 
 function ensureInside(root: string, path: string): void {
   const relativePath = relative(root, path);

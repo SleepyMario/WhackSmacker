@@ -1,6 +1,8 @@
 import { execFile, spawn, type ChildProcess } from "node:child_process";
-import { access } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
+import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import {
   isTerminalArtworkBackend,
@@ -233,8 +235,11 @@ class ManagedTerminalArtworkController implements TerminalArtworkController {
   private failed = false;
   private failureReason: string | undefined;
   private failedOverlayProcess: TerminalArtworkOverlayProcessDiagnostics | undefined;
+  private readonly displayPreparer: SessionArtworkDisplayPreparer;
 
-  constructor(private readonly detection: TerminalArtworkDetection, private readonly backend: ArtworkBackendAdapter) {}
+  constructor(private readonly detection: TerminalArtworkDetection, private readonly backend: ArtworkBackendAdapter) {
+    this.displayPreparer = new SessionArtworkDisplayPreparer(detection.executables.magick);
+  }
 
   get selectedBackend(): TerminalArtworkBackend { return this.detection.selectedBackend; }
   get capabilities(): TerminalArtworkCapabilities {
@@ -270,7 +275,7 @@ class ManagedTerminalArtworkController implements TerminalArtworkController {
     if (this.failed || this.backend.failureReason?.() !== undefined || !this.detection.ready) return;
     if (!this.started) await this.start();
     if (!this.capabilities.ready) return;
-    try { await this.backend.show(options); } catch (error) { await this.fail(error); }
+    try { await this.backend.show(await this.displayPreparer.prepare(options)); } catch (error) { await this.fail(error); }
   }
 
   async clear(identifier?: string): Promise<void> {
@@ -284,7 +289,10 @@ class ManagedTerminalArtworkController implements TerminalArtworkController {
   }
 
   async shutdown(): Promise<void> {
-    try { await this.backend.shutdown(); } finally { this.started = false; }
+    try { await this.backend.shutdown(); } finally {
+      await this.displayPreparer.shutdown();
+      this.started = false;
+    }
   }
 
   private async fail(error: unknown): Promise<void> {
@@ -295,6 +303,138 @@ class ManagedTerminalArtworkController implements TerminalArtworkController {
     try { await this.backend.clear(); } catch { /* best-effort stale-placement cleanup */ }
     try { await this.backend.shutdown(); } catch { /* best-effort helper cleanup */ }
   }
+}
+
+interface MatteBandStatistics {
+  readonly means: readonly [number, number, number];
+  readonly deviations: readonly [number, number, number];
+}
+
+export interface SafeMatteTrimAnalysis {
+  readonly imageWidth: number;
+  readonly imageHeight: number;
+  readonly cropWidth: number;
+  readonly cropHeight: number;
+  readonly cropX: number;
+  readonly cropY: number;
+  readonly bands: readonly MatteBandStatistics[];
+}
+
+export function isSafeHighConfidenceMatteTrim(analysis: SafeMatteTrimAnalysis): boolean {
+  const right = analysis.imageWidth - analysis.cropX - analysis.cropWidth;
+  const bottom = analysis.imageHeight - analysis.cropY - analysis.cropHeight;
+  const margins = [analysis.cropX, analysis.cropY, right, bottom];
+  const minimumMargin = Math.max(2, Math.floor(Math.min(analysis.imageWidth, analysis.imageHeight) * 0.01));
+  const materiallyLarge = Math.ceil(Math.min(analysis.imageWidth, analysis.imageHeight) * 0.08);
+  if (analysis.imageWidth <= 0 || analysis.imageHeight <= 0 || analysis.cropWidth <= 0 || analysis.cropHeight <= 0) return false;
+  if (analysis.cropX < 0 || analysis.cropY < 0 || right < 0 || bottom < 0) return false;
+  if (margins.some((margin) => margin < minimumMargin) || margins.every((margin) => margin < materiallyLarge)) return false;
+  if (analysis.bands.length !== 4) return false;
+  return analysis.bands.every((band) => {
+    const minimum = Math.min(...band.means);
+    const maximum = Math.max(...band.means);
+    return minimum >= 0.9
+      && maximum <= 1
+      && maximum - minimum <= 0.08
+      && band.deviations.every((deviation) => deviation >= 0 && deviation <= 0.02);
+  });
+}
+
+class SessionArtworkDisplayPreparer {
+  private readonly cached = new Map<string, Promise<TerminalArtworkShowOptions>>();
+  private directory: string | undefined;
+
+  constructor(private readonly magick?: string) {}
+
+  async prepare(options: TerminalArtworkShowOptions): Promise<TerminalArtworkShowOptions> {
+    if (this.magick === undefined) return options;
+    const identity = createHash("sha256").update(options.assetData).digest("hex");
+    const existing = this.cached.get(identity);
+    if (existing !== undefined) return existing;
+    const prepared = this.prepareUncached(options, identity).catch(() => options);
+    this.cached.set(identity, prepared);
+    return prepared;
+  }
+
+  async shutdown(): Promise<void> {
+    this.cached.clear();
+    const directory = this.directory;
+    this.directory = undefined;
+    if (directory !== undefined) await rm(directory, { recursive: true, force: true }).catch(() => undefined);
+  }
+
+  private async prepareUncached(options: TerminalArtworkShowOptions, identity: string): Promise<TerminalArtworkShowOptions> {
+    if (this.directory === undefined) this.directory = await mkdtemp(join(tmpdir(), "whacksmacker-artwork-display-"));
+    const outputPath = join(this.directory, `${identity}.png`);
+    return prepareTerminalArtworkDisplayAsset(options, this.magick as string, outputPath);
+  }
+}
+
+export async function prepareTerminalArtworkDisplayAsset(
+  options: TerminalArtworkShowOptions,
+  magick: string,
+  outputPath: string
+): Promise<TerminalArtworkShowOptions> {
+  const analysis = await analyzeMatteTrim(magick, options.assetPath);
+  if (analysis === undefined || !isSafeHighConfidenceMatteTrim(analysis)) return options;
+  await execFileText(magick, [
+    options.assetPath,
+    "-crop", `${analysis.cropWidth}x${analysis.cropHeight}+${analysis.cropX}+${analysis.cropY}`,
+    "+repage",
+    "-define", "png:exclude-chunks=date,time",
+    outputPath
+  ]);
+  return { ...options, assetPath: outputPath, assetData: await readFile(outputPath), mediaType: "image/png" };
+}
+
+async function analyzeMatteTrim(magick: string, assetPath: string): Promise<SafeMatteTrimAnalysis | undefined> {
+  const dimensions = parseDimensions(await execFileText(magick, [assetPath, "-format", "%w %h", "info:"]));
+  const geometry = parseTrimGeometry(await execFileText(magick, [assetPath, "-fuzz", "1%", "-trim", "-format", "%w %h %X %Y", "info:"]));
+  if (dimensions === undefined || geometry === undefined) return undefined;
+  const right = dimensions.width - geometry.x - geometry.width;
+  const bottom = dimensions.height - geometry.y - geometry.height;
+  if ([geometry.x, geometry.y, right, bottom].some((value) => value <= 0)) return undefined;
+  const bandGeometries = [
+    `${dimensions.width}x${geometry.y}+0+0`,
+    `${dimensions.width}x${bottom}+0+${geometry.y + geometry.height}`,
+    `${geometry.x}x${dimensions.height}+0+0`,
+    `${right}x${dimensions.height}+${geometry.x + geometry.width}+0`
+  ];
+  const bands = await Promise.all(bandGeometries.map(async (band) => parseBandStatistics(await execFileText(magick, [
+    assetPath,
+    "-crop", band,
+    "-colorspace", "sRGB",
+    "-format", "%[fx:mean.r],%[fx:mean.g],%[fx:mean.b];%[fx:standard_deviation.r],%[fx:standard_deviation.g],%[fx:standard_deviation.b]",
+    "info:"
+  ]))));
+  if (bands.some((band) => band === undefined)) return undefined;
+  return {
+    imageWidth: dimensions.width,
+    imageHeight: dimensions.height,
+    cropWidth: geometry.width,
+    cropHeight: geometry.height,
+    cropX: geometry.x,
+    cropY: geometry.y,
+    bands: bands as MatteBandStatistics[]
+  };
+}
+
+function parseDimensions(value: string): { readonly width: number; readonly height: number } | undefined {
+  const match = /^(\d+)\s+(\d+)$/u.exec(value.trim());
+  if (match === null) return undefined;
+  return { width: Number(match[1]), height: Number(match[2]) };
+}
+
+function parseTrimGeometry(value: string): { readonly width: number; readonly height: number; readonly x: number; readonly y: number } | undefined {
+  const match = /^(\d+)\s+(\d+)\s+\+(\d+)\s+\+(\d+)$/u.exec(value.trim());
+  if (match === null) return undefined;
+  return { width: Number(match[1]), height: Number(match[2]), x: Number(match[3]), y: Number(match[4]) };
+}
+
+function parseBandStatistics(value: string): MatteBandStatistics | undefined {
+  const parts = value.trim().split(";").map((part) => part.split(",").map(Number));
+  if (parts.length !== 2 || parts.some((part) => part.length !== 3 || part.some((number) => !Number.isFinite(number)))) return undefined;
+  return { means: parts[0] as [number, number, number], deviations: parts[1] as [number, number, number] };
 }
 
 class DisabledArtworkBackend implements ArtworkBackendAdapter {
@@ -750,7 +890,7 @@ export function sixelHelperInvocation(
     ? { executable: detection.executables.img2sixel as string, args: ["-w", String(pixelWidth), "-h", String(pixelHeight), assetPath] }
     : {
         executable: detection.executables.magick as string,
-        args: [assetPath, "-resize", `${pixelWidth}x${pixelHeight}`, "-gravity", "center", "-background", "transparent", "-extent", `${pixelWidth}x${pixelHeight}`, "sixel:-"]
+        args: [assetPath, "-resize", `${pixelWidth}x${pixelHeight}`, "sixel:-"]
       };
 }
 

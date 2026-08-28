@@ -17,6 +17,7 @@ import {
   listInstalledContentPackages,
   loadInstalledPackageRegistry,
   maxPackageUncompressedSizeBytes,
+  migrateInstalledPackageRegistryVersionAxes,
   removeContentPackage,
   readInstalledContentEntry,
   readInstalledMemorizationItems,
@@ -27,6 +28,8 @@ import {
   validateContentPackageManifest,
   validateInstalledPackageRegistry
 } from "../dist/packages/core/index.js";
+
+const animalsPackageId = "com.sleepymario.language.dutch.general.animals.preview-001-100";
 
 test("installed Japanese Review rejects a stale reading that disagrees with the canonical reading package", async () => {
   const root = await mkdtemp(join(tmpdir(), "wsm-japanese-contextual-installed-"));
@@ -98,6 +101,48 @@ test("malformed registry fails clearly", async () => {
   }
 });
 
+test("registry version-axis migration is explicit and idempotent while preserving legacy paths", async () => {
+  const fixture = await createPackageFixture();
+  try {
+    await installContentPackage({ cataloguePath: fixture.cataloguePath, dataDir: fixture.dataDir, packageId: "com.sleepymario.language.dutch", installedAt: "2026-08-05T00:00:00Z" });
+    const installed = (await loadInstalledPackageRegistry(fixture.dataDir)).packages[0];
+    const legacyBase = { ...installed };
+    delete legacyBase.deckVersion;
+    delete legacyBase.artifactRevision;
+    const animalRecords = ["0.0.0", "0.0.1", "0.0.2"].map((packageVersion, index) => ({
+      ...legacyBase,
+      packageId: animalsPackageId,
+      packageVersion,
+      installPath: `packages/${animalsPackageId}/${packageVersion}`,
+      archiveSha256: String(index + 1).repeat(64),
+      manifestSha256: String(index + 4).repeat(64)
+    }));
+    await writeJson(join(fixture.dataDir, "registry.json"), { registryFormatVersion: 1, updatedAt: "2026-08-05T00:00:00Z", packages: [legacyBase, ...animalRecords] });
+
+    const first = await migrateInstalledPackageRegistryVersionAxes({
+      dataDir: fixture.dataDir,
+      migratedAt: "2026-08-05T01:00:00Z",
+      currentReleasePackageIds: [legacyBase.packageId],
+      reserveCanonicalAnimalsRevision3: true
+    });
+    assert.equal(first.changed, true);
+    assert.deepEqual(first.registry.packages.filter((record) => record.packageId === animalsPackageId).map((record) => [record.deckVersion, record.artifactRevision]), [["0.0.1", 1], ["0.0.1", 2]]);
+    assert.deepEqual(first.preservedLegacyInstallPaths, [`packages/${animalsPackageId}/0.0.2`]);
+    assert.deepEqual([first.registry.packages[0].deckVersion, first.registry.packages[0].artifactRevision], ["0.0.1", 1]);
+
+    const second = await migrateInstalledPackageRegistryVersionAxes({
+      dataDir: fixture.dataDir,
+      migratedAt: "2026-08-05T02:00:00Z",
+      currentReleasePackageIds: [legacyBase.packageId],
+      reserveCanonicalAnimalsRevision3: true
+    });
+    assert.equal(second.changed, false);
+    assert.deepEqual(second.registry, first.registry);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("installed registry rejects invalid deck family metadata", async () => {
   const fixture = await createPackageFixture();
   try {
@@ -132,7 +177,7 @@ test("installing from a file package succeeds and updates the registry", async (
     assert.equal(result.installed, true);
     assert.equal(registry.packages.length, 1);
     assert.equal(registry.packages[0].packageId, "com.sleepymario.language.dutch");
-    assert.equal(registry.packages[0].installPath, "packages/com.sleepymario.language.dutch/0.1.0");
+    assert.equal(registry.packages[0].installPath, "packages/com.sleepymario.language.dutch/deck-0.0.1/revision-1");
     assert.equal((await stat(manifestPath)).size > 0, true);
     assert.equal((await stat(contentPath)).size > 0, true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
@@ -569,7 +614,7 @@ test("reinstalling the same package does not delete review progress", async () =
   }
 });
 
-test("force reinstall replaces an older snapshot of the same package version", async () => {
+test("an immutable identity rejects different bytes even when force is requested", async () => {
   const fixture = await createPackageFixture();
   try {
     const packageId = "com.sleepymario.language.same-version-refresh";
@@ -595,11 +640,11 @@ test("force reinstall replaces an older snapshot of the same package version", a
       contentDocument: readableSnapshot("new snapshot with chapter 11")
     });
     cataloguePath = await writeSinglePackageCatalogue(fixture, archivePath, packageId);
-    const result = await installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId, force: true });
-
-    assert.equal(result.installed, true);
-    assert.match(await readFile(join(result.installPath, "content", "content.json"), "utf8"), /new snapshot with chapter 11/u);
-    assert.match((await readInstalledContentEntry(readOptions)).text, /new snapshot with chapter 11/u);
+    await assert.rejects(
+      () => installContentPackage({ cataloguePath, dataDir: fixture.dataDir, packageId, force: true }),
+      /immutable package identity.*different bytes/iu
+    );
+    assert.match((await readInstalledContentEntry(readOptions)).text, /old snapshot/u);
   } finally {
     await fixture.cleanup();
   }

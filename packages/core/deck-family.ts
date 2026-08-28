@@ -1,3 +1,5 @@
+import { compareDeckFrameworkVersions } from "./deck-framework";
+
 export const knownDeckFamilies = ["general", "specialized"] as const;
 
 export type DeckFamily = (typeof knownDeckFamilies)[number];
@@ -5,15 +7,20 @@ export type DeckFamily = (typeof knownDeckFamilies)[number];
 export interface DeckFamilyPackageRecord {
   readonly packageId: string;
   readonly packageVersion: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
   readonly displayName: string;
   readonly contentType?: string;
   readonly deckFamily?: DeckFamily;
+  readonly topic?: import("./content-package-spec").ContentPackageTopicMetadata;
   readonly relatedPackageIds?: readonly string[];
 }
 
 export interface DeckFamilyPackageMetadata {
   readonly packageId: string;
   readonly packageVersion: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
   readonly contentType?: string;
   readonly deckFamily?: DeckFamily;
   readonly relatedPackageIds?: readonly string[];
@@ -70,7 +77,7 @@ export function packagesForLanguageAndDeckFamily<T extends DeckFamilyPackageReco
       continue;
     }
     const current = newestByPackageId.get(candidate.packageId);
-    if (current === undefined || compareSemver(candidate.packageVersion, current.packageVersion) > 0) {
+    if (current === undefined || compareDeckFrameworkVersions(candidate, current) > 0) {
       newestByPackageId.set(candidate.packageId, candidate);
     }
   }
@@ -78,7 +85,7 @@ export function packagesForLanguageAndDeckFamily<T extends DeckFamilyPackageReco
   return [...newestByPackageId.values()].sort((left, right) =>
     left.displayName.localeCompare(right.displayName)
       || left.packageId.localeCompare(right.packageId)
-      || compareSemver(right.packageVersion, left.packageVersion)
+      || compareDeckFrameworkVersions(right, left)
   );
 }
 
@@ -99,16 +106,6 @@ export function deckFamilyPackageMenuPresentation(
     packageLabel: packageDisplayName,
     sourceLabels: reviewSources.map((source) => source.authoritativeTitle ?? source.fallbackLabel)
   };
-}
-
-function compareSemver(left: string, right: string): number {
-  const leftParts = left.split(".").map(Number);
-  const rightParts = right.split(".").map(Number);
-  for (let index = 0; index < 3; index += 1) {
-    const difference = (leftParts[index] ?? 0) - (rightParts[index] ?? 0);
-    if (difference !== 0) return difference;
-  }
-  return 0;
 }
 
 function hasExactLanguageAssociations(value: readonly string[] | undefined): value is readonly string[] {

@@ -7,7 +7,9 @@ declare const process: {
 
 async function main(argv = process.argv.slice(2)): Promise<void> {
   const options = parseArgs(argv);
-  const targetIds = options.targets.length === 0 ? contentPackageGeneratorTargets.map((target) => target.id) : options.targets;
+  const targetIds = options.targets.length === 0
+    ? contentPackageGeneratorTargets.filter((target) => target.explicitOnly !== true).map((target) => target.id)
+    : options.targets;
 
   for (const targetId of targetIds) {
     const result = await generateContentPackage({
@@ -18,7 +20,9 @@ async function main(argv = process.argv.slice(2)): Promise<void> {
     });
 
     console.log(`Package generated: ${result.packageId}`);
-    console.log(`Version: ${result.packageVersion}`);
+    console.log(`Deck version: ${result.manifest.deckVersion ?? result.packageVersion}`);
+    console.log(`Artifact revision: ${result.manifest.artifactRevision ?? 1}`);
+    console.log(`Legacy package version: ${result.packageVersion}`);
     console.log(`File: ${result.filePath}`);
     console.log(`SHA-256: ${result.archiveSha256}`);
   }

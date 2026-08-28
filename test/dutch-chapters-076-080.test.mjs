@@ -135,11 +135,11 @@ test("generated and installed Dutch packages expose Chapters, Review, and Gramma
     const reading = await generateContentPackage({ targetId: "dutch-curriculum", outputDirectory: packagesDirectory, generatedAt: "2026-07-23T00:00:00Z" });
     const review = await generateContentPackage({ targetId: "dutch-core-reviews", outputDirectory: packagesDirectory, generatedAt: "2026-07-23T00:00:00Z" });
     await generateLocalContentPackageCatalogue({ packagesDirectory, outputPath: cataloguePath, generatedAt: "2026-07-23T00:00:00Z" });
-    await installContentPackage({ cataloguePath, dataDir, packageId: "com.sleepymario.language.dutch", installedAt: "2026-07-23T00:00:00Z" });
-    await installContentPackage({ cataloguePath, dataDir, packageId: "com.sleepymario.language.dutch.reviews", installedAt: "2026-07-23T00:00:00Z" });
+    const installedReading = await installContentPackage({ cataloguePath, dataDir, packageId: "com.sleepymario.language.dutch", installedAt: "2026-07-23T00:00:00Z" });
+    const installedReview = await installContentPackage({ cataloguePath, dataDir, packageId: "com.sleepymario.language.dutch.reviews", installedAt: "2026-07-23T00:00:00Z" });
 
-    const readingContent = JSON.parse(await readFile(join(dataDir, "packages", "com.sleepymario.language.dutch", reading.packageVersion, "content", "content.json"), "utf8"));
-    const reviewContent = JSON.parse(await readFile(join(dataDir, "packages", "com.sleepymario.language.dutch.reviews", review.packageVersion, "content", "content.json"), "utf8"));
+    const readingContent = JSON.parse(await readFile(join(installedReading.installPath, "content", "content.json"), "utf8"));
+    const reviewContent = JSON.parse(await readFile(join(installedReview.installPath, "content", "content.json"), "utf8"));
     for (const [, [directory]] of chapters) assert.equal(readingContent.files.some((file) => file.path === `units/dutch-core/${directory}/chapter.md`), true, directory);
     assert.equal(readingContent.files.some((file) => /^units\/dutch-core\/chapter-086-/u.test(file.path)), false);
     assert.equal(reviewContent.files.some((file) => file.path === "review-decks/chapter-076-080/cards.tsv"), true);

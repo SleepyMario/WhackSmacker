@@ -45,10 +45,15 @@ test("content package generator exposes the supported local package targets", ()
       ["spanish-core-reviews", "com.sleepymario.language.spanish.reviews"],
       ["thai-core-reviews", "com.sleepymario.language.thai.reviews"],
       ["zulu-core-reviews", "com.sleepymario.language.zulu.reviews"],
+      ["dutch-general-animals-preview-001-100", "com.sleepymario.language.dutch.general.animals.preview-001-100"],
       ["dutch-specialized-medical-1", "com.sleepymario.language.dutch.specialized.medical-1"],
       ["chinese-traditional-specialized-medical-1", "com.sleepymario.language.chinese-traditional.specialized.medical-1"]
     ]
   );
+  assert.equal(contentPackageGeneratorTargets.every((target) => target.deckVersion === "0.0.1"), true);
+  assert.equal(contentPackageGeneratorTargets.every((target) => Number.isSafeInteger(target.artifactRevision) && target.artifactRevision > 0), true);
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "dutch-general-animals-preview-001-100")?.artifactRevision, 3);
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "japanese-core-reviews")?.interactionProfile?.labels, "independent");
 });
 
 test("content package generator preserves explicitly referenced image binaries with deterministic metadata and ordering", async () => {
@@ -155,6 +160,29 @@ test("Medical I generator targets retain exact specialized family and language p
   }
 });
 
+test("animal preview target is explicit-only general Dutch topic Review metadata", () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "dutch-general-animals-preview-001-100");
+  assert.equal(target?.explicitOnly, true);
+  assert.equal(target?.packageId, "com.sleepymario.language.dutch.general.animals.preview-001-100");
+  assert.equal(target?.packageVersion, "0.0.2");
+  assert.equal(target?.displayName, "1–100");
+  assert.equal(target?.contentType, "topic-review");
+  assert.deepEqual(target?.capabilities, ["topic-review"]);
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.topic, { id: "animals", displayName: "Animals", deckDisplayName: "1–100" });
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.dutch"]);
+  assert.deepEqual(target?.languages, ["en", "nl"]);
+  assert.equal(target?.sourcePath, "wsm-animals-en-nl-001-100-draft-v1.0.0");
+  assert.deepEqual(target?.include, ["README.md", "cards.tsv"]);
+  assert.deepEqual(target?.topicDeck, {
+    id: "animals-preview-001-100",
+    displayName: "1–100",
+    outputFile: "animals-preview-001-100.json",
+    unitStart: 1,
+    unitEnd: 100
+  });
+});
+
 test("content package generator creates a valid Linguistic Terminology package", async () => {
   const directory = await mkdtemp(join(tmpdir(), "wsm-terminology-package-"));
 
@@ -169,7 +197,7 @@ test("content package generator creates a valid Linguistic Terminology package",
     const content = JSON.parse(archive.get("content/content.json").toString("utf8"));
 
     assert.equal(result.packageId, "com.sleepymario.language.linguistic-terminology");
-    assert.equal(result.filePath.endsWith("com.sleepymario.language.linguistic-terminology-0.1.0.wspkg"), true);
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.linguistic-terminology-0.0.1-r1.wspkg"), true);
     assert.equal(archive.has("manifest.json"), true);
     assert.equal(archive.has("content/content.json"), true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
@@ -292,7 +320,7 @@ test("content package generator creates a valid Dutch package", async () => {
     ];
 
     assert.equal(result.packageId, "com.sleepymario.language.dutch");
-    assert.equal(result.filePath.endsWith("com.sleepymario.language.dutch-0.1.0.wspkg"), true);
+    assert.equal(result.filePath.endsWith("com.sleepymario.language.dutch-0.0.1-r1.wspkg"), true);
     assert.deepEqual(validateContentPackageManifest(manifest).errors, []);
     assert.equal(manifest.displayName, "Dutch");
     assert.equal(manifest.contentType, "language-curriculum");

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PassThrough, Writable } from "node:stream";
@@ -10,6 +10,7 @@ import { test } from "node:test";
 import {
   centrePaneArtworkRectangle,
   centrePaneGeometry,
+  centrePaneReviewArtworkRectangle,
   EmbeddedReviewArtworkManager,
   terminalBodyHeight
 } from "../dist/apps/cli/interactive-menu.js";
@@ -18,6 +19,7 @@ import {
   createTerminalArtworkController,
   formatTerminalArtworkDiagnostics,
   iterm2ArtworkSequence,
+  isSafeHighConfidenceMatteTrim,
   kittyArtworkDeleteSequence,
   kittyArtworkSequences,
   selectTerminalArtworkBackend,
@@ -242,6 +244,11 @@ test("Sixel helper invocations keep the asset path in an argument array", () => 
     executable: "/usr/bin/img2sixel",
     args: ["-w", "320", "-h", "192", "/trusted/path with spaces/prompt.png"]
   });
+  const magick = detectionFixture("sixel", { magick: true, magickSixel: true }, { magick: "/usr/bin/magick" });
+  assert.deepEqual(sixelHelperInvocation(magick, "/trusted/path with spaces/prompt.png", 320, 192), {
+    executable: "/usr/bin/magick",
+    args: ["/trusted/path with spaces/prompt.png", "-resize", "320x192", "sixel:-"]
+  });
 });
 
 test("centre-pane artwork rectangle remains padded inside borders and small terminals reject it", () => {
@@ -254,6 +261,63 @@ test("centre-pane artwork rectangle remains padded inside borders and small term
   assert.ok(rectangle.row + rectangle.heightRows - 1 < pane.row + pane.heightRows - 1);
   assert.equal(terminalBodyHeight(10), 8);
   assert.equal(centrePaneArtworkRectangle(centrePaneGeometry(50, 10), 6, 1), undefined);
+});
+
+test("Review artwork uses one fixed reserved region above Phrase and recomputes on resize", () => {
+  const prompt = "Review: Animals / 1–100\nCard: 1/200\nEsc Leave Review\n[[WHACKSMACKER_REVIEW_ARTWORK_REGION]]\nPhrase:\n  • rhinoceros\n  • The rhinoceros walks toward the water.\nAnswer:\n  Answer hidden until reveal.\n[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]\nEnter/Space Reveal Answer";
+  const answer = prompt.replace("Answer hidden until reveal.", "• de neushoorn\n  • De neushoorn loopt naar het water.").replace("Enter/Space Reveal Answer", "1 Again   2 Hard   3 Good   4 Easy");
+  const pane = centrePaneGeometry(160, 40);
+  const promptRectangle = centrePaneReviewArtworkRectangle(pane, prompt, false);
+  const answerRectangle = centrePaneReviewArtworkRectangle(pane, answer, false);
+  assert.deepEqual(answerRectangle, promptRectangle, "reveal replaces artwork in the same geometry");
+  assert.ok(promptRectangle);
+  assert.ok(promptRectangle.row > pane.row, "header remains above the reserved artwork");
+  assert.ok(promptRectangle.heightRows >= 4);
+  assert.notDeepEqual(centrePaneReviewArtworkRectangle(centrePaneGeometry(140, 32), prompt, false), promptRectangle, "resize recomputes current pane geometry");
+});
+
+test("safe matte trim accepts the measured rhinoceros frame and rejects accepted small mattes and natural edges", () => {
+  const paleCream = { means: [0.9998, 0.9806, 0.9411], deviations: [0.0009, 0.0009, 0.0007] };
+  const measuredRhinoceros = {
+    imageWidth: 768, imageHeight: 768,
+    cropWidth: 721, cropHeight: 559, cropX: 24, cropY: 106,
+    bands: [paleCream, paleCream, paleCream, paleCream]
+  };
+  assert.equal(isSafeHighConfidenceMatteTrim(measuredRhinoceros), true);
+  assert.equal(isSafeHighConfidenceMatteTrim({ ...measuredRhinoceros, cropWidth: 720, cropHeight: 720, cropX: 24, cropY: 24 }), false, "horse/bluebird-sized mattes remain unchanged");
+  assert.equal(isSafeHighConfidenceMatteTrim({ ...measuredRhinoceros, bands: [paleCream, paleCream, paleCream, { means: [0.52, 0.71, 0.92], deviations: [0.08, 0.06, 0.04] }] }), false, "non-uniform sky/water/grass-like edges are not cropped");
+  assert.equal(isSafeHighConfidenceMatteTrim({ ...measuredRhinoceros, bands: [paleCream, paleCream, paleCream] }), false, "low-confidence analysis falls back to the original");
+});
+
+test("derived matte-trim display files are session-local, cached by bytes, and cleaned on shutdown", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-matte-session-"));
+  const sourcePath = join(root, "measured-rhinoceros-matte-fixture.ppm");
+  try {
+    const pixels = Buffer.alloc(100 * 100 * 3);
+    for (let y = 0; y < 100; y += 1) for (let x = 0; x < 100; x += 1) {
+      const content = x >= 20 && x < 80 && y >= 15 && y < 85;
+      const offset = ((y * 100) + x) * 3;
+      pixels[offset] = content ? 55 : 250;
+      pixels[offset + 1] = content ? 70 : 246;
+      pixels[offset + 2] = content ? 65 : 240;
+    }
+    const bytes = Buffer.concat([Buffer.from("P6\n100 100\n255\n"), pixels]);
+    await writeFile(sourcePath, bytes);
+    const harness = overlayHarness("wayland-overlay", { magick: "/usr/bin/magick" });
+    const controller = await harness.controller;
+    const options = { ...artworkOptions(sourcePath, "fixture"), assetData: bytes, mediaType: "image/png" };
+    await controller.show(options);
+    await controller.show(options);
+    const adds = harness.child.writes.map((line) => JSON.parse(line)).filter((value) => value.action === "add");
+    assert.equal(adds.length, 2);
+    assert.equal(adds[0].path, adds[1].path, "identical validated source bytes reuse one derived path");
+    assert.notEqual(adds[0].path, sourcePath);
+    assert.ok((await stat(adds[0].path)).size > 0);
+    assert.deepEqual(await readFile(sourcePath), bytes);
+    const derivedPath = adds[0].path;
+    await controller.shutdown();
+    await assert.rejects(() => stat(derivedPath), /ENOENT/u);
+  } finally { await rm(root, { recursive: true, force: true }); }
 });
 
 test("validated package media resolves lazily by current side and rejects URLs, symlinks, and arbitrary paths", async () => {
@@ -285,11 +349,11 @@ test("prompt/answer/next/text-only/resize/leave lifecycle uses one fake controll
   const answer = reviewSession("answer", artwork("answer"), "card-1");
   const next = reviewSession("prompt", artwork("next"), "card-2");
   const textOnly = reviewSession("prompt", undefined, "card-3");
-  const paneText = "Review\nCard\n\nPhrase: dog\n[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]\nEnter/Space Reveal Answer";
-  assert.equal(await manager.sync(prompt, paneText), undefined);
-  assert.equal(await manager.sync(answer, paneText), undefined);
-  assert.equal(await manager.sync(next, paneText), undefined);
-  assert.equal(await manager.sync(textOnly, paneText), undefined);
+  const paneText = "Review\nCard\n[[WHACKSMACKER_REVIEW_ARTWORK_REGION]]\nPhrase: dog\n[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]\nEnter/Space Reveal Answer";
+  assert.deepEqual(await manager.sync(prompt, paneText), { rendered: true });
+  assert.deepEqual(await manager.sync(answer, paneText), { rendered: true });
+  assert.deepEqual(await manager.sync(next, paneText), { rendered: true });
+  assert.deepEqual(await manager.sync(textOnly, paneText), { rendered: false });
   await manager.sync(prompt, paneText);
   await manager.resize();
   await manager.sync(prompt, paneText);
@@ -404,7 +468,11 @@ function overlayHarness(backend, options = {}) {
     invocations,
     controller: createTerminalArtworkController({
       configuredBackend: backend,
-      detection: detectionFixture(backend, { ueberzugpp: true }, { ueberzugpp: "/usr/bin/ueberzugpp" }),
+      detection: detectionFixture(
+        backend,
+        { ueberzugpp: true, ...(options.magick === undefined ? {} : { magick: true }) },
+        { ueberzugpp: "/usr/bin/ueberzugpp", ...(options.magick === undefined ? {} : { magick: options.magick }) }
+      ),
       io: { writeControl() {} },
       spawnHelper
     })

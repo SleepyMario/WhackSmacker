@@ -1,9 +1,11 @@
 import {
   assertValidMemorizationItem,
+  memorizationOutputsFromAnswer,
   type MemorizationContentBlock,
   type MemorizationItem
 } from "./memorization-item";
 import { localized } from "./localized-content";
+import { parseMemorizationMarkdownImages } from "./package-media";
 
 export interface ExerciseItemIdentity {
   readonly packageId: string;
@@ -29,6 +31,23 @@ export interface RenderedExercise {
   readonly exampleLines: readonly string[];
   readonly metadataLines: readonly string[];
   readonly warnings: readonly string[];
+  readonly topicReview?: TopicReviewPresentation;
+}
+
+export interface TopicReviewMediaPresentation {
+  readonly path: string;
+  readonly altText: string;
+}
+
+export interface TopicReviewSidePresentation {
+  readonly media: TopicReviewMediaPresentation;
+  readonly headword: string;
+  readonly exampleSentence: string;
+}
+
+export interface TopicReviewPresentation {
+  readonly prompt: TopicReviewSidePresentation;
+  readonly answer: TopicReviewSidePresentation;
 }
 
 export function renderMemorizationExercise(options: RenderExerciseOptions): RenderedExercise {
@@ -45,6 +64,7 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
     throw new Error(`Memorization item ID does not match render identity: expected ${options.itemId}, got ${item.id}`);
   }
 
+  const topicReview = topicReviewPresentationFor(item, locale);
   return {
     itemIdentity: identity,
     kind: item.kind,
@@ -57,7 +77,42 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
     noteLines: item.notes === undefined ? [] : normalizeLines(localized(item.notes, locale)),
     exampleLines: (item.examples ?? []).flatMap((example) => normalizeExampleLines(example)).slice(0, 3),
     metadataLines: metadataLinesFor(item, identity, locale),
-    warnings: warningsFor(item, locale)
+    warnings: warningsFor(item, locale),
+    ...(topicReview === undefined ? {} : { topicReview })
+  };
+}
+
+function topicReviewPresentationFor(item: MemorizationItem, locale: string): TopicReviewPresentation | undefined {
+  if (item.schemaVersion !== 2 || item.deck.scope !== "topic") return undefined;
+  return {
+    prompt: topicReviewSidePresentationFor(item.prompt, locale, "prompt"),
+    answer: topicReviewSidePresentationFor(item.answer, locale, "answer")
+  };
+}
+
+function topicReviewSidePresentationFor(
+  block: MemorizationContentBlock,
+  locale: string,
+  side: "prompt" | "answer"
+): TopicReviewSidePresentation {
+  if (block.mediaType !== "text/markdown") {
+    throw new Error(`Topic Review ${side} must use the validated Markdown media format.`);
+  }
+  const markdown = localized(block.text, locale).replace(/\r\n?/gu, "\n");
+  const media = parseMemorizationMarkdownImages(markdown);
+  if (media.length !== 1) {
+    throw new Error(`Topic Review ${side} must contain exactly one package image reference.`);
+  }
+  const reference = media[0];
+  const structuralText = `${markdown.slice(0, reference.start)}${markdown.slice(reference.end)}`.trim();
+  const fields = structuralText.split(/\n[ \t]*\n+/u).map((field) => field.trim()).filter((field) => field.length > 0);
+  if (fields.length !== 2 || fields.some((field) => field.includes("\n"))) {
+    throw new Error(`Topic Review ${side} must contain a headword and example sentence separated by a blank line.`);
+  }
+  return {
+    media: { path: reference.path, altText: reference.alt },
+    headword: fields[0] as string,
+    exampleSentence: fields[1] as string
   };
 }
 
@@ -107,6 +162,19 @@ function answerLinesFor(item: MemorizationItem, locale: string): readonly string
     const clozeAnswers = extractClozeAnswers(blockText(item.prompt, locale));
     const answerLines = normalizeLines(blockText(item.answer, locale));
     return clozeAnswers.length === 0 ? answerLines : [...clozeAnswers.map((answer) => `Cloze: ${answer}`), ...answerLines];
+  }
+  if (item.schemaVersion === 2) {
+    const outputs = item.outputs ?? memorizationOutputsFromAnswer(item.answer);
+    const visibleOutputs = outputs.filter((output, index) => {
+      const value = blockText(output.content, locale).normalize("NFC").trim();
+      return !outputs.slice(index + 1).some((candidate) => blockText(candidate.content, locale).normalize("NFC").trim() === value);
+    });
+    return visibleOutputs.flatMap((output) => {
+      const lines = normalizeLines(blockText(output.content, locale));
+      if (output.label === undefined) return lines;
+      const label = localized(output.label, locale);
+      return lines.map((line, index) => index === 0 ? `${label}: ${line}` : line);
+    });
   }
   return normalizeLines(blockText(item.answer, locale));
 }

@@ -46,6 +46,13 @@
           "packageVersion": {
             "$ref": "#/$defs/semver"
           },
+          "deckVersion": {
+            "$ref": "#/$defs/semver"
+          },
+          "artifactRevision": {
+            "type": "integer",
+            "minimum": 1
+          },
           "displayName": {
             "$ref": "#/$defs/localizedContent"
           },
@@ -60,10 +67,19 @@
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": { "enum": ["reading-curriculum", "core-review", "specialized-review", "technical"] }
+            "items": { "enum": ["reading-curriculum", "core-review", "topic-review", "specialized-review", "technical"] }
           },
           "deckFamily": {
             "enum": ["general", "specialized"]
+          },
+          "topic": {
+            "$ref": "#/$defs/topic"
+          },
+          "mediaPolicy": {
+            "enum": ["none", "optional", "required"]
+          },
+          "interactionProfile": {
+            "$ref": "#/$defs/interactionProfile"
           },
           "relatedPackageIds": {
             "type": "array",
@@ -193,6 +209,29 @@
     }
   },
   "$defs": {
+    "interactionProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reveal", "satisfaction", "grading", "reverseCards", "labels", "outputMedia"],
+      "properties": {
+        "reveal": { "enum": ["together", "sequential"] },
+        "satisfaction": { "enum": ["one", "all"] },
+        "grading": { "enum": ["shared", "output-specific"] },
+        "reverseCards": { "enum": ["combined", "per-output", "precomposed"] },
+        "labels": { "enum": ["none", "independent"] },
+        "outputMedia": { "enum": ["none", "shared", "output-specific"] }
+      }
+    },
+    "topic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "deckDisplayName"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "displayName": { "$ref": "#/$defs/localizedContent" },
+        "deckDisplayName": { "$ref": "#/$defs/localizedContent" }
+      }
+    },
     "localizedContent": {
       "oneOf": [
         { "type": "string", "minLength": 1 },

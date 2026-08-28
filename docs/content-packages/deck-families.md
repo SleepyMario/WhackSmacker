@@ -1,5 +1,8 @@
 # General and Specialized Deck Families
 
+The complete orthogonal entry, output, media, interaction, and version contract
+is documented in [deck-framework.md](deck-framework.md).
+
 Every language shown in the interactive CLI has two package-family entries:
 
 ```text
@@ -57,13 +60,15 @@ Generated runtime output
 
 The CLI consumes generated manifest metadata preserved in installed/catalogued WSM packages. Its read-only compatibility overlay uses the same current package metadata compiled from the authoritative generator-target registry. It does not inspect Git repositories, source manifests, localization TSV files, or display titles at runtime.
 
+The non-published English–Dutch animal registration used to validate this path is documented in [Animals 001–100 Technical Preview](animals-preview.md). It is an explicit-only external-source target and does not establish production animal deck boundaries.
+
 ## Making a generated topic package visible
 
 To make a future package appear in a family submenu:
 
 1. Generate a WSM package from the authoritative topic repository.
-2. Give it a stable `packageId`, an explicit `deckFamily`, and exact `relatedPackageIds` for its learner-language associations.
+2. Give it a stable `packageId`, an explicit `deckFamily`, exact `relatedPackageIds` for its learner-language associations, and explicit `topic.id`, `topic.displayName`, and `topic.deckDisplayName` metadata.
 3. Publish the same metadata in its generated catalogue/feed entry.
 4. Install the package through the package manager.
 
-The interactive CLI then discovers it from the installed registry, selects the newest installed version of each package ID, sorts packages by the existing display-name/package-ID convention, and shows it only under its declared family for the associated languages.
+The interactive CLI then discovers it from the installed registry, selects the newest installed version of each package ID, groups topic packages only by the explicit stable topic identity within their declared family, and exposes each explicit deck label as a directly launchable Review leaf. Package IDs, titles, paths, ranges, and vocabulary are never parsed to infer either family or topic.

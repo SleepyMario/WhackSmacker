@@ -140,6 +140,16 @@ test("catalogue deck family metadata is optional and rejects unknown values", ()
   assertInvalid(catalogue, /deckFamily must be general or specialized/);
 });
 
+test("catalogue topic metadata is explicit and never inferred from package titles or IDs", () => {
+  const catalogue = validCatalogue();
+  catalogue.packages[0].displayName = "Could Look Like Animals 1–100";
+  catalogue.packages[0].topic = { id: "creatures", displayName: "Animals", deckDisplayName: "1–100" };
+  assertValid(catalogue);
+  assert.equal(catalogue.packages[1].topic, undefined);
+  catalogue.packages[0].topic.id = "parsed/range";
+  assertInvalid(catalogue, /topic\.id must be a stable lowercase slug/);
+});
+
 test("generated specialized package metadata reaches the catalogue without changing package identity", async () => {
   const packageDirectory = await mkdtemp(join(tmpdir(), "wsm-family-package-"));
   const outputPath = join(await mkdtemp(join(tmpdir(), "wsm-family-catalogue-")), "catalogue.json");
@@ -252,7 +262,7 @@ test("an explicit package base URL makes catalogue bytes independent of the stag
     assert.deepEqual(await readFile(firstOutput), await readFile(secondOutput));
     assert.equal(
       JSON.parse(await readFile(firstOutput, "utf8")).packages[0].package.url,
-      "file:///srv/whacksmacker/packages/com.sleepymario.language.arabic-0.1.0.wspkg"
+      "file:///srv/whacksmacker/packages/com.sleepymario.language.arabic-0.0.1-r1.wspkg"
     );
   } finally {
     await rm(firstPackages, { recursive: true, force: true });

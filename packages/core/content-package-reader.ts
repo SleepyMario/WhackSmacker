@@ -8,6 +8,7 @@ import {
   isSafeContentPackagePath,
   type ContentPackageManifest
 } from "./content-package-spec";
+import { compareDeckFrameworkVersions } from "./deck-framework";
 import { isLocalizedContentValue, localized, type LocalizedContentValue } from "./localized-content";
 import { defaultCurriculumDisplayMode, projectCurriculumMarkdown, type CurriculumDisplayMode } from "./curriculum-display";
 import { perfCount, perfSpan, perfSpanSync } from "./performance";
@@ -163,7 +164,7 @@ export async function readInstalledLanguageCurriculumChapter(options: {
 
 export async function listInstalledReadablePackages(dataDir?: string, locale = "en-US"): Promise<readonly InstalledReadablePackage[]> {
   return perfSpan("package.discovery.readable", { dataDir: dataDir ?? "default", locale }, async () =>
-    Promise.all((await listInstalledContentPackages(dataDir)).filter(record => record.contentType !== "curriculum-source-language-pack" && record.contentType !== "core-review" && record.contentType !== "specialized-review").map(async (record) => {
+    Promise.all((await listInstalledContentPackages(dataDir)).filter(record => record.contentType !== "curriculum-source-language-pack" && record.contentType !== "core-review" && record.contentType !== "topic-review" && record.contentType !== "specialized-review").map(async (record) => {
       const manifest = await readInstalledManifest(installedPackageRoot(record, dataDir));
       return toReadablePackage(record, manifest, locale);
     }))
@@ -530,7 +531,7 @@ async function selectInstalledPackage(packageId: string, dataDir?: string, packa
   if (matches.length === 0) {
     throw new Error(`Installed package not found: ${packageId}${packageVersion === undefined ? "" : ` ${packageVersion}`}`);
   }
-  return [...matches].sort((left, right) => compareSemver(right.packageVersion, left.packageVersion))[0];
+  return [...matches].sort((left, right) => compareDeckFrameworkVersions(right, left))[0];
 }
 
 function installedPackageRoot(record: InstalledPackageRecord, dataDir?: string): string {

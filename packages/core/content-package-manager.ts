@@ -14,11 +14,24 @@ import {
 import { perfCount, perfSpan, perfSpanSync } from "./performance";
 import { invalidateInstalledContent } from "./installed-content-cache";
 import { assertCanonicalCastBootstrapSnapshot } from "./language-curriculum-bootstrap";
-import { localized } from "./localized-content";
+import { isLocalizedContentValue, localized } from "./localized-content";
 import {
   assertMemorizationMediaManifestReferences,
   packageImageMediaTypeForPath
 } from "./package-media";
+import {
+  compareDeckFrameworkVersions,
+  immutableDeckArtifactKey,
+  projectDeckFrameworkVersion,
+  validateDeckFrameworkVersion,
+  validateDeckInteractionProfile,
+  validateMediaPolicy
+} from "./deck-framework";
+import {
+  animalsLegacyVersionMigrations,
+  animalsPreviewPackageId,
+  legacyPackageVersionMigration
+} from "./package-version-migration";
 
 type BufferValue = {
   readonly length: number;
@@ -93,10 +106,15 @@ export interface InstalledPackageRegistry {
 export interface InstalledPackageRecord {
   readonly packageId: string;
   readonly packageVersion: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
   readonly displayName: string;
   readonly contentType: string;
   readonly capabilities?: ContentPackageManifest["capabilities"];
   readonly deckFamily?: ContentPackageManifest["deckFamily"];
+  readonly topic?: ContentPackageManifest["topic"];
+  readonly mediaPolicy?: ContentPackageManifest["mediaPolicy"];
+  readonly interactionProfile?: ContentPackageManifest["interactionProfile"];
   readonly relatedPackageIds?: readonly string[];
   readonly contentSchemaVersion: string;
   readonly minimumWhackSmackerVersion: string;
@@ -118,6 +136,8 @@ export interface InstallContentPackageOptions {
   readonly cataloguePath: string;
   readonly packageId: string;
   readonly packageVersion?: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
   readonly dataDir?: string;
   readonly installedAt?: string;
   readonly force?: boolean;
@@ -133,6 +153,8 @@ export interface RemoveContentPackageOptions {
   readonly dataDir?: string;
   readonly packageId: string;
   readonly packageVersion?: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
   readonly allVersions?: boolean;
   readonly removedAt?: string;
 }
@@ -146,6 +168,20 @@ export interface ContentPackageUpdate {
   readonly installedVersion: string;
   readonly availableVersion: string;
   readonly catalogueEntry: ContentPackageCatalogueEntry;
+}
+
+export interface MigrateInstalledPackageRegistryVersionAxesOptions {
+  readonly dataDir?: string;
+  readonly migratedAt: string;
+  readonly currentReleasePackageIds: readonly string[];
+  readonly reserveCanonicalAnimalsRevision3?: boolean;
+}
+
+export interface MigrateInstalledPackageRegistryVersionAxesResult {
+  readonly changed: boolean;
+  readonly migratedRecordCount: number;
+  readonly preservedLegacyInstallPaths: readonly string[];
+  readonly registry: InstalledPackageRegistry;
 }
 
 export function resolveContentDataDirectory(dataDir?: string, env = process.env): string {
@@ -236,15 +272,61 @@ export async function listInstalledContentPackages(dataDir?: string): Promise<re
   return (await loadInstalledPackageRegistry(dataDir)).packages;
 }
 
+export async function migrateInstalledPackageRegistryVersionAxes(
+  options: MigrateInstalledPackageRegistryVersionAxesOptions
+): Promise<MigrateInstalledPackageRegistryVersionAxesResult> {
+  const contentDir = resolveContentDataDirectory(options.dataDir);
+  const original = await loadInstalledPackageRegistry(contentDir);
+  const currentIds = new Set(options.currentReleasePackageIds);
+  const packages: InstalledPackageRecord[] = [];
+  const preservedLegacyInstallPaths: string[] = [];
+  let migratedRecordCount = 0;
+  for (const record of original.packages) {
+    if (record.deckVersion !== undefined || record.artifactRevision !== undefined) {
+      packages.push(record);
+      continue;
+    }
+    const animals = legacyPackageVersionMigration(record.packageId, record.packageVersion, animalsLegacyVersionMigrations);
+    if (animals !== undefined && options.reserveCanonicalAnimalsRevision3 === true && record.packageId === animalsPreviewPackageId && animals.artifactRevision === 3) {
+      preservedLegacyInstallPaths.push(record.installPath);
+      migratedRecordCount += 1;
+      continue;
+    }
+    if (animals !== undefined) {
+      packages.push({ ...record, ...animals });
+      migratedRecordCount += 1;
+      continue;
+    }
+    if (record.packageVersion === "0.1.0" && currentIds.has(record.packageId)) {
+      packages.push({ ...record, deckVersion: "0.0.1", artifactRevision: 1 });
+      migratedRecordCount += 1;
+      continue;
+    }
+    packages.push(record);
+  }
+  const registry: InstalledPackageRegistry = {
+    registryFormatVersion: installedPackageRegistryFormatVersion,
+    updatedAt: migratedRecordCount === 0 ? original.updatedAt : options.migratedAt,
+    packages
+  };
+  assertValidInstalledPackageRegistry(registry);
+  if (migratedRecordCount > 0) {
+    await saveInstalledPackageRegistry(contentDir, registry);
+    invalidateInstalledContent(contentDir);
+  }
+  return { changed: migratedRecordCount > 0, migratedRecordCount, preservedLegacyInstallPaths, registry };
+}
+
 export async function installContentPackage(options: InstallContentPackageOptions): Promise<InstallContentPackageResult> {
   const installedAt = options.installedAt ?? currentTimestamp();
   const contentDir = resolveContentDataDirectory(options.dataDir);
   const catalogue = await loadContentPackageCatalogue(options.cataloguePath);
-  const entry = selectCatalogueEntry(catalogue, options.packageId, options.packageVersion);
+  const entry = selectCatalogueEntry(catalogue, options.packageId, options.packageVersion, options.deckVersion, options.artifactRevision);
   let registry = await loadInstalledPackageRegistry(contentDir);
-  const relativeInstallPath = packageInstallPath(entry.packageId, entry.packageVersion);
+  const relativeInstallPath = packageInstallPath(entry);
   const finalInstallPath = join(contentDir, relativeInstallPath);
-  const existing = registry.packages.find((record) => record.packageId === entry.packageId && record.packageVersion === entry.packageVersion);
+  const identityKey = immutableDeckArtifactKey(entry.packageId, entry);
+  const existing = registry.packages.find((record) => immutableDeckArtifactKey(record.packageId, record) === identityKey);
 
   for (const dependency of entry.dependencies ?? []) {
     if (dependency.optional === true || registry.packages.some(record => record.packageId === dependency.packageId)) continue;
@@ -253,12 +335,14 @@ export async function installContentPackage(options: InstallContentPackageOption
     registry = await loadInstalledPackageRegistry(contentDir);
   }
 
-  if (existing !== undefined && options.force !== true) {
-    return { installed: false, record: existing, installPath: finalInstallPath };
-  }
-
   const archive = await fetchPackageArchive(entry);
   verifyPackageArchive(entry, archive);
+  if (existing !== undefined) {
+    if (existing.archiveSha256 === entry.package.sha256 && existing.archiveSize === entry.package.size) {
+      return { installed: false, record: existing, installPath: join(contentDir, existing.installPath) };
+    }
+    throw new Error(`Immutable package identity ${identityKey} is already installed with different bytes.`);
+  }
   const zip = readPackageZip(archive);
   const manifestEntry = zip.entries.find((candidate) => candidate.path === "manifest.json");
   if (manifestEntry === undefined) {
@@ -300,11 +384,7 @@ export async function installContentPackage(options: InstallContentPackageOption
       await chmod(destination, 0o444);
     }
 
-    if (existing !== undefined && options.force === true) {
-      await rm(finalInstallPath, { recursive: true, force: true });
-    } else {
-      await assertPathMissing(finalInstallPath);
-    }
+    await assertPathMissing(finalInstallPath);
     await mkdir(dirname(finalInstallPath), { recursive: true });
     await rename(stagingPath, finalInstallPath);
   } catch (error) {
@@ -315,10 +395,15 @@ export async function installContentPackage(options: InstallContentPackageOption
   const record: InstalledPackageRecord = {
     packageId: manifest.packageId,
     packageVersion: manifest.packageVersion,
+    ...(manifest.deckVersion === undefined ? {} : { deckVersion: manifest.deckVersion }),
+    ...(manifest.artifactRevision === undefined ? {} : { artifactRevision: manifest.artifactRevision }),
     displayName: localized(manifest.displayName, "en-US"),
     contentType: manifest.contentType,
     ...(manifest.capabilities === undefined ? {} : { capabilities: manifest.capabilities }),
     ...(manifest.deckFamily === undefined ? {} : { deckFamily: manifest.deckFamily }),
+    ...(manifest.topic === undefined ? {} : { topic: manifest.topic }),
+    ...(manifest.mediaPolicy === undefined ? {} : { mediaPolicy: manifest.mediaPolicy }),
+    ...(manifest.interactionProfile === undefined ? {} : { interactionProfile: manifest.interactionProfile }),
     ...(manifest.relatedPackageIds === undefined ? {} : { relatedPackageIds: manifest.relatedPackageIds }),
     contentSchemaVersion: manifest.contentSchemaVersion,
     minimumWhackSmackerVersion: manifest.minimumWhackSmackerVersion,
@@ -343,8 +428,8 @@ export async function detectContentPackageUpdates(cataloguePath: string, dataDir
 
   for (const installed of registry.packages) {
     const candidates = catalogue.packages
-      .filter((entry) => entry.packageId === installed.packageId && compareSemver(entry.packageVersion, installed.packageVersion) > 0)
-      .sort((left, right) => compareSemver(right.packageVersion, left.packageVersion));
+      .filter((entry) => entry.packageId === installed.packageId && compareDeckFrameworkVersions(entry, installed) > 0)
+      .sort((left, right) => compareDeckFrameworkVersions(right, left));
     const newest = candidates[0];
     if (newest !== undefined) {
       updates.push({
@@ -379,7 +464,11 @@ export async function removeContentPackage(options: RemoveContentPackageOptions)
     if (options.allVersions === true) {
       return true;
     }
-    return options.packageVersion === undefined ? true : record.packageVersion === options.packageVersion;
+    if (options.packageVersion !== undefined && record.packageVersion !== options.packageVersion) return false;
+    const projected = projectDeckFrameworkVersion(record);
+    if (options.deckVersion !== undefined && projected.deckVersion !== options.deckVersion) return false;
+    if (options.artifactRevision !== undefined && projected.artifactRevision !== options.artifactRevision) return false;
+    return true;
   });
 
   if (matches.length === 0) {
@@ -395,8 +484,8 @@ export async function removeContentPackage(options: RemoveContentPackageOptions)
     await rm(installPath, { recursive: true, force: true });
   }
 
-  const removedKeys = new Set(matches.map((record) => recordKey(record.packageId, record.packageVersion)));
-  const packages = registry.packages.filter((record) => !removedKeys.has(recordKey(record.packageId, record.packageVersion)));
+  const removedKeys = new Set(matches.map((record) => immutableDeckArtifactKey(record.packageId, record)));
+  const packages = registry.packages.filter((record) => !removedKeys.has(immutableDeckArtifactKey(record.packageId, record)));
   await saveInstalledPackageRegistry(contentDir, { registryFormatVersion: installedPackageRegistryFormatVersion, updatedAt: removedAt, packages });
   invalidateInstalledContent(contentDir);
 
@@ -592,6 +681,15 @@ function validateManifestMatchesCatalogue(manifest: ContentPackageManifest, entr
   if (manifest.deckFamily !== entry.deckFamily) {
     throw new Error(`Package manifest deckFamily does not match catalogue entry: expected ${String(entry.deckFamily)}, got ${String(manifest.deckFamily)}`);
   }
+  if (JSON.stringify(manifest.topic) !== JSON.stringify(entry.topic)) {
+    throw new Error("Package manifest topic metadata does not match catalogue entry.");
+  }
+  if (manifest.deckVersion !== entry.deckVersion || manifest.artifactRevision !== entry.artifactRevision) {
+    throw new Error("Package manifest immutable deck identity does not match catalogue entry.");
+  }
+  if (manifest.mediaPolicy !== entry.mediaPolicy || JSON.stringify(manifest.interactionProfile) !== JSON.stringify(entry.interactionProfile)) {
+    throw new Error("Package manifest deck capability metadata does not match catalogue entry.");
+  }
 }
 
 function validateDeclaredFiles(manifest: ContentPackageManifest, entries: readonly ZipEntry[]): void {
@@ -644,12 +742,14 @@ async function saveInstalledPackageRegistry(contentDir: string, registry: Instal
 }
 
 function upsertRecord(registry: InstalledPackageRegistry, record: InstalledPackageRecord, updatedAt: string): InstalledPackageRegistry {
-  const key = recordKey(record.packageId, record.packageVersion);
-  const packages = registry.packages.filter((candidate) => recordKey(candidate.packageId, candidate.packageVersion) !== key);
+  const key = immutableDeckArtifactKey(record.packageId, record);
+  const packages = registry.packages.filter((candidate) => immutableDeckArtifactKey(candidate.packageId, candidate) !== key);
   packages.push(record);
   packages.sort((left, right) => {
     const packageOrder = left.packageId.localeCompare(right.packageId);
-    return packageOrder === 0 ? left.packageVersion.localeCompare(right.packageVersion) : packageOrder;
+    return packageOrder === 0
+      ? compareDeckFrameworkVersions(left, right) || left.packageVersion.localeCompare(right.packageVersion)
+      : packageOrder;
   });
   return { registryFormatVersion: installedPackageRegistryFormatVersion, updatedAt, packages };
 }
@@ -669,9 +769,17 @@ function validateRegistryPackages(value: unknown, errors: string[]): void {
     const packageVersion = readString(record.packageVersion);
     validatePackageId(packageId, `packages[${index}].packageId`, errors);
     validateSemver(packageVersion, `packages[${index}].packageVersion`, errors);
+    errors.push(...validateDeckFrameworkVersion({
+      packageVersion,
+      ...(typeof record.deckVersion === "string" ? { deckVersion: record.deckVersion } : {}),
+      ...(typeof record.artifactRevision === "number" ? { artifactRevision: record.artifactRevision } : {})
+    }, `packages[${index}]`).errors);
     if (record.deckFamily !== undefined && record.deckFamily !== "general" && record.deckFamily !== "specialized") {
       errors.push(`packages[${index}].deckFamily must be general or specialized when present.`);
     }
+    validateInstalledTopicMetadata(record.topic, `packages[${index}].topic`, errors);
+    if (record.mediaPolicy !== undefined) errors.push(...validateMediaPolicy(record.mediaPolicy, `packages[${index}].mediaPolicy`).errors);
+    if (record.interactionProfile !== undefined) errors.push(...validateDeckInteractionProfile(record.interactionProfile, `packages[${index}].interactionProfile`).errors);
     validateTimestamp(record.installedAt, `packages[${index}].installedAt`, errors);
     if (!isSafeContentPackagePath(readString(record.installPath))) {
       errors.push(`packages[${index}].installPath must be a safe relative path.`);
@@ -684,7 +792,11 @@ function validateRegistryPackages(value: unknown, errors: string[]): void {
     if (typeof record.archiveSize !== "number" || !Number.isSafeInteger(record.archiveSize) || record.archiveSize < 0) {
       errors.push(`packages[${index}].archiveSize must be a non-negative safe integer.`);
     }
-    const key = recordKey(packageId, packageVersion);
+    const key = immutableDeckArtifactKey(packageId, {
+      packageVersion,
+      ...(typeof record.deckVersion === "string" ? { deckVersion: record.deckVersion } : {}),
+      ...(typeof record.artifactRevision === "number" ? { artifactRevision: record.artifactRevision } : {})
+    });
     if (keys.has(key)) {
       errors.push(`Duplicate installed package: ${key}`);
     } else {
@@ -693,12 +805,34 @@ function validateRegistryPackages(value: unknown, errors: string[]): void {
   }
 }
 
-function selectCatalogueEntry(catalogue: ContentPackageCatalogue, packageId: string, packageVersion?: string): ContentPackageCatalogueEntry {
-  const matches = catalogue.packages.filter((entry) => entry.packageId === packageId && (packageVersion === undefined || entry.packageVersion === packageVersion));
+function validateInstalledTopicMetadata(value: unknown, field: string, errors: string[]): void {
+  if (value === undefined) return;
+  if (!isRecord(value)) {
+    errors.push(`${field} must be an object when present.`);
+    return;
+  }
+  if (typeof value.id !== "string" || !/^[a-z0-9][a-z0-9-]*$/u.test(value.id)) errors.push(`${field}.id must be a stable lowercase slug.`);
+  if (!isLocalizedContentValue(value.displayName)) errors.push(`${field}.displayName must be localized learner-facing text.`);
+  if (!isLocalizedContentValue(value.deckDisplayName)) errors.push(`${field}.deckDisplayName must be localized learner-facing text.`);
+}
+
+function selectCatalogueEntry(
+  catalogue: ContentPackageCatalogue,
+  packageId: string,
+  packageVersion?: string,
+  deckVersion?: string,
+  artifactRevision?: number
+): ContentPackageCatalogueEntry {
+  const matches = catalogue.packages.filter((entry) => {
+    if (entry.packageId !== packageId || (packageVersion !== undefined && entry.packageVersion !== packageVersion)) return false;
+    const projected = projectDeckFrameworkVersion(entry);
+    return (deckVersion === undefined || projected.deckVersion === deckVersion)
+      && (artifactRevision === undefined || projected.artifactRevision === artifactRevision);
+  });
   if (matches.length === 0) {
     throw new Error(`Package not found in catalogue: ${packageId}${packageVersion === undefined ? "" : ` ${packageVersion}`}`);
   }
-  return [...matches].sort((left, right) => compareSemver(right.packageVersion, left.packageVersion))[0];
+  return [...matches].sort((left, right) => compareDeckFrameworkVersions(right, left))[0];
 }
 
 function compareSemver(left: string, right: string): number {
@@ -713,12 +847,9 @@ function compareSemver(left: string, right: string): number {
   return 0;
 }
 
-function packageInstallPath(packageId: string, packageVersion: string): string {
-  return `packages/${packageId}/${packageVersion}`;
-}
-
-function recordKey(packageId: string, packageVersion: string): string {
-  return `${packageId}@${packageVersion}`;
+function packageInstallPath(entry: ContentPackageCatalogueEntry): string {
+  if (entry.deckVersion === undefined || entry.artifactRevision === undefined) return `packages/${entry.packageId}/${entry.packageVersion}`;
+  return `packages/${entry.packageId}/deck-${entry.deckVersion}/revision-${entry.artifactRevision}`;
 }
 
 function validatePackageId(value: string, field: string, errors: string[]): void {
