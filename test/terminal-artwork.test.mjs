@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
 import { createHash } from "node:crypto";
-import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PassThrough, Writable } from "node:stream";
@@ -289,7 +289,13 @@ test("safe matte trim accepts the measured rhinoceros frame and rejects accepted
   assert.equal(isSafeHighConfidenceMatteTrim({ ...measuredRhinoceros, bands: [paleCream, paleCream, paleCream] }), false, "low-confidence analysis falls back to the original");
 });
 
-test("derived matte-trim display files are session-local, cached by bytes, and cleaned on shutdown", async () => {
+test("derived matte-trim display files are session-local, cached by bytes, and cleaned on shutdown", async (context) => {
+  try {
+    await access("/usr/bin/magick");
+  } catch {
+    context.skip("ImageMagick is not installed on this test host");
+    return;
+  }
   const root = await mkdtemp(join(tmpdir(), "wsm-matte-session-"));
   const sourcePath = join(root, "measured-rhinoceros-matte-fixture.ppm");
   try {
