@@ -392,8 +392,6 @@ test("the installed conversion collection keeps cumulative conversion and vocabu
   const fixture = await createInstalledLanguageFixture(
     [
       "chinese-simplified-traditional-level-1-vocabulary",
-      "chinese-simplified-traditional-tmp",
-      "chinese-simplified-traditional-tmp2",
       "chinese-simplified-traditional-level-1",
       "chinese-simplified-traditional-level-2",
       "chinese-simplified-traditional-level-2-vocabulary",
@@ -402,8 +400,6 @@ test("the installed conversion collection keeps cumulative conversion and vocabu
     ],
     [
       "com.sleepymario.language.chinese-simplified-traditional.level-1-vocabulary",
-      "com.sleepymario.language.chinese-simplified-traditional.tmp",
-      "com.sleepymario.language.chinese-simplified-traditional.tmp2",
       "com.sleepymario.language.chinese-simplified-traditional.level-1",
       "com.sleepymario.language.chinese-simplified-traditional.level-2",
       "com.sleepymario.language.chinese-simplified-traditional.level-2-vocabulary",
@@ -430,44 +426,6 @@ test("the installed conversion collection keeps cumulative conversion and vocabu
     assert.equal(conversion.children.at(-4)?.label, "Level II");
     assert.equal(conversion.children.at(-5)?.label, "Level I - Vocabulary");
     assert.equal(conversion.children.slice(0, -1).some((node) => node.label === "Level III - Vocabulary"), false);
-  } finally {
-    await fixture.cleanup();
-  }
-});
-
-test("an installed tmp7 vocabulary package remains readable but is hidden from the menu", async () => {
-  const packageId = "com.sleepymario.language.chinese-simplified-traditional.tmp7-vocabulary";
-  const fixture = await createInstalledLanguageFixture(
-    ["chinese-simplified-traditional-tmp7-vocabulary"],
-    [packageId]
-  );
-
-  try {
-    const tree = await buildLanguageTree(fixture.dataDir);
-    const conversion = tree.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
-    assert.deepEqual(conversion.children.map((node) => node.label), []);
-
-    const items = await listReadingReviewItems({
-      dataDir: fixture.dataDir,
-      packageId,
-      packageVersion: "0.0.1",
-      sourcePath: "cards.tsv"
-    });
-    assert.equal(items.length, 234);
-    const meaningCard = items.find(({ item }) => item.id === "zh-tmp7-vocabulary/0002/a-meaning");
-    assert.ok(meaningCard);
-    const rendered = await renderReadingReviewItem({
-      dataDir: fixture.dataDir,
-      packageId,
-      packageVersion: "0.0.1",
-      sourcePath: "cards.tsv",
-      itemId: meaningCard.item.id
-    });
-    assert.match(rendered.text, /to understand/u);
-    assert.deepEqual(meaningCard.item.outputs.map((output) => [output.label, output.content.text]), [
-      ["Pinyin", "liǎo jiě"],
-      ["Characters", "了解 / 瞭解"]
-    ]);
   } finally {
     await fixture.cleanup();
   }

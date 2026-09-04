@@ -51,14 +51,6 @@ test("content package generator exposes the supported local package targets", ()
       ["chinese-simplified-traditional-level-2-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-2-vocabulary"],
       ["chinese-simplified-traditional-level-3", "com.sleepymario.language.chinese-simplified-traditional.level-3"],
       ["chinese-simplified-traditional-level-3-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-3-vocabulary"],
-      ["chinese-simplified-traditional-tmp", "com.sleepymario.language.chinese-simplified-traditional.tmp"],
-      ["chinese-simplified-traditional-tmp2", "com.sleepymario.language.chinese-simplified-traditional.tmp2"],
-      ["chinese-simplified-traditional-tmp3", "com.sleepymario.language.chinese-simplified-traditional.tmp3"],
-      ["chinese-simplified-traditional-tmp4", "com.sleepymario.language.chinese-simplified-traditional.tmp4"],
-      ["chinese-simplified-traditional-tmp5", "com.sleepymario.language.chinese-simplified-traditional.tmp5"],
-      ["chinese-simplified-traditional-tmp6", "com.sleepymario.language.chinese-simplified-traditional.tmp6"],
-      ["chinese-simplified-traditional-tmp7", "com.sleepymario.language.chinese-simplified-traditional.tmp7"],
-      ["chinese-simplified-traditional-tmp7-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.tmp7-vocabulary"],
       ["dutch-general-animals-preview-001-100", "com.sleepymario.language.dutch.general.animals.preview-001-100"],
       ["dutch-specialized-medical-1", "com.sleepymario.language.dutch.specialized.medical-1"],
       ["chinese-traditional-specialized-medical-1", "com.sleepymario.language.chinese-traditional.specialized.medical-1"]
@@ -77,7 +69,7 @@ test("content package generator exposes the supported local package targets", ()
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "japanese-core-reviews")?.interactionProfile?.labels, "independent");
 });
 
-test("Level I uses the approved tmp7 character（word） presentation in both directions", async () => {
+test("Level I uses the approved character（word） presentation in both directions", async () => {
   const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-level-1");
   assert.equal(target?.notesPolicy, "omit");
   const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-level-1-"));
@@ -296,175 +288,6 @@ test("animal preview target is explicit-only general Dutch topic Review metadata
     unitStart: 1,
     unitEnd: 100
   });
-});
-
-for (const suffix of ["tmp", "tmp2", "tmp3", "tmp4", "tmp5", "tmp6", "tmp7"]) {
-  test(`temporary Chinese script-conversion target ${suffix} is a fixed explicit-only 20-character sample`, () => {
-    const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === `chinese-simplified-traditional-${suffix}`);
-    assert.equal(target?.explicitOnly, true);
-    assert.equal(target?.packageId, `com.sleepymario.language.chinese-simplified-traditional.${suffix}`);
-    assert.equal(target?.packageVersion, "0.0.1");
-    assert.equal(target?.contentType, "topic-review");
-    assert.deepEqual(target?.capabilities, ["topic-review"]);
-    assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-simplified-traditional"]);
-    assert.deepEqual(target?.topic, {
-      id: "simplified-traditional-conversion",
-      displayName: "Chinese (Simplified <-> Traditional)",
-      deckDisplayName: suffix
-    });
-    assert.equal(target?.sourcePath, `review-content/chinese-simplified-traditional/${suffix}`);
-    assert.deepEqual(target?.include, ["README.md", "cards.tsv", "selection.tsv", "sources"]);
-    assert.equal(target?.notesPolicy, ["tmp4", "tmp5", "tmp6", "tmp7"].includes(suffix) ? "omit" : undefined);
-  });
-}
-
-test("tmp3 is a copy of tmp with only the Notes field removed", async () => {
-  const tmp = await readFile(join(resolveContentPackageSourcePath("review-content/chinese-simplified-traditional/tmp").resolvedPath, "cards.tsv"), "utf8");
-  const tmp3 = await readFile(join(resolveContentPackageSourcePath("review-content/chinese-simplified-traditional/tmp3").resolvedPath, "cards.tsv"), "utf8");
-  const sourceLines = tmp.trimEnd().split("\n").map((line) => line.split("\t"));
-  const revisionLines = tmp3.trimEnd().split("\n").map((line) => line.split("\t"));
-  const explanationIndex = sourceLines[0].indexOf("explanation");
-  assert.equal(explanationIndex >= 0, true);
-  assert.equal(revisionLines.length, sourceLines.length);
-  for (let row = 0; row < sourceLines.length; row += 1) {
-    assert.equal(revisionLines[row].length, sourceLines[row].length);
-    for (let column = 0; column < sourceLines[row].length; column += 1) {
-      assert.equal(
-        revisionLines[row][column],
-        row > 0 && column === explanationIndex ? "" : sourceLines[row][column],
-        `Unexpected tmp3 difference at row ${row + 1}, column ${sourceLines[0][column] ?? column}`
-      );
-    }
-  }
-});
-
-test("tmp4 suppresses generated student notes instead of falling back to provenance text", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp4-"));
-  try {
-    const result = await generateContentPackage({
-      targetId: "chinese-simplified-traditional-tmp4",
-      outputDirectory: directory,
-      generatedAt: "2026-09-04T13:00:00Z"
-    });
-    const archive = await readZip(result.filePath);
-    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-tmp4.json").toString("utf8"));
-    assert.equal(document.items.length, 40);
-    assert.equal(document.items.every((item) => item.notes === undefined && item.explanation.length > 0), true);
-    assert.equal(document.items.some((item) => item.provenance.evidence.length > 0), true);
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-});
-
-test("tmp5 uses natural paired script examples and the standard Traditional form 錄", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp5-"));
-  try {
-    const result = await generateContentPackage({
-      targetId: "chinese-simplified-traditional-tmp5",
-      outputDirectory: directory,
-      generatedAt: "2026-09-04T14:00:00Z"
-    });
-    const archive = await readZip(result.filePath);
-    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-tmp5.json").toString("utf8"));
-    assert.equal(document.items.length, 40);
-    assert.equal(document.items.every((item) => item.notes === undefined && item.examples.length >= 1 && item.examples.length <= 2), true);
-    assert.equal(document.items.every((item) => item.examples.every((example) => !example.includes("例句中使用"))), true);
-
-    const recording = document.items.find((item) => item.id.endsWith("1304-map-01/hans-to-hant"));
-    assert.ok(recording);
-    assert.equal(recording.answer.text.includes("錄（"), true);
-    assert.equal(recording.answer.text.includes("録"), false);
-    assert.deepEqual(recording.examples, ["他收到大学的录取通知。", "他收到大學的錄取通知。"]);
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-});
-
-test("tmp6 normalizes the 了 and 瞭 Phrase/Answer context without changing its examples", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp6-"));
-  try {
-    const result = await generateContentPackage({
-      targetId: "chinese-simplified-traditional-tmp6",
-      outputDirectory: directory,
-      generatedAt: "2026-09-04T14:30:00Z"
-    });
-    const archive = await readZip(result.filePath);
-    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-tmp6.json").toString("utf8"));
-    const forward = document.items.find((item) => item.id.endsWith("0017-map-01/hans-to-hant"));
-    const reverse = document.items.find((item) => item.id.endsWith("0017-map-01/hant-to-hans"));
-    assert.ok(forward);
-    assert.ok(reverse);
-    assert.equal(forward.prompt.text, "了（例句中使用了“了解”。）");
-    assert.equal(forward.answer.text, "瞭（例句中使用了「瞭解」。）");
-    assert.equal(reverse.prompt.text, "瞭（例句中使用了「瞭解」。）");
-    assert.equal(reverse.answer.text, "了（例句中使用了“了解”。）");
-    assert.deepEqual(forward.examples, ["我已经了解事情的经过。", "我已經瞭解事情的經過。"]);
-    assert.equal(forward.notes, undefined);
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-});
-
-test("tmp7 reduces every Phrase and Answer to character（word） while preserving Examples", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp7-"));
-  try {
-    const result = await generateContentPackage({
-      targetId: "chinese-simplified-traditional-tmp7",
-      outputDirectory: directory,
-      generatedAt: "2026-09-04T15:00:00Z"
-    });
-    const archive = await readZip(result.filePath);
-    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-tmp7.json").toString("utf8"));
-    assert.equal(document.items.length, 40);
-    assert.equal(document.items.every((item) => !item.prompt.text.includes("例句中使用了") && !item.answer.text.includes("例句中使用了")), true);
-    assert.equal(document.items.every((item) => !/[“”「」。]/u.test(item.prompt.text) && !/[“”「」。]/u.test(item.answer.text)), true);
-    assert.equal(document.items.every((item) => /^.+（.+）$/u.test(item.prompt.text) && /^.+（.+）$/u.test(item.answer.text)), true);
-
-    const recording = document.items.find((item) => item.id.endsWith("1304-map-01/hans-to-hant"));
-    assert.ok(recording);
-    assert.equal(recording.prompt.text, "录（录取）");
-    assert.equal(recording.answer.text, "錄（錄取）");
-    assert.deepEqual(recording.examples, ["他收到大学的录取通知。", "他收到大學的錄取通知。"]);
-    assert.equal(recording.notes, undefined);
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-});
-
-test("tmp7 - Vocabulary contains 78 three-direction Chinese ABC entries with paired examples", async () => {
-  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-tmp7-vocabulary");
-  assert.equal(target?.explicitOnly, true);
-  assert.equal(target?.notesPolicy, "omit");
-  assert.equal(target?.topic?.deckDisplayName, "tmp7 - Vocabulary");
-  assert.deepEqual(target?.languages, ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"]);
-  assert.deepEqual(target?.include, ["README.md", "cards.tsv", "sources"]);
-
-  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp7-vocabulary-"));
-  try {
-    const result = await generateContentPackage({
-      targetId: "chinese-simplified-traditional-tmp7-vocabulary",
-      outputDirectory: directory,
-      generatedAt: "2026-09-04T16:00:00Z"
-    });
-    const archive = await readZip(result.filePath);
-    const document = JSON.parse(archive.get("content/memorization/tmp7-vocabulary.json").toString("utf8"));
-    assert.equal(document.items.length, 234);
-    assert.equal(new Set(document.items.flatMap((item) => item.testedLexicalIds)).size, 78);
-    assert.deepEqual(
-      [...new Set(document.items.map((item) => item.prompt.language))].sort(),
-      ["en", "zh-Hans", "zh-Latn-pinyin"]
-    );
-    assert.equal(document.items.every((item) => item.notes === undefined && item.examples.length >= 1 && item.examples.length <= 2), true);
-    assert.equal(document.items.every((item) => item.outputs.length === 2), true);
-    assert.equal(document.items.every((item) => item.interactionProfile.labels === "independent"), true);
-
-    const understand = document.items.filter((item) => item.testedLexicalIds.includes("zh.tmp7-vocabulary.0002"));
-    assert.equal(understand.length, 3);
-    assert.deepEqual(understand.map((item) => item.prompt.text), ["to understand", "Pinyin: liǎo jiě", "Characters: 了解 / 瞭解"]);
-    assert.equal(understand.every((item) => item.examples.includes("我已經瞭解事情的經過。")), true);
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
 });
 
 test("Level I - Vocabulary contains 2815 ABC entries with regional Pinyin where Taiwan differs", async () => {

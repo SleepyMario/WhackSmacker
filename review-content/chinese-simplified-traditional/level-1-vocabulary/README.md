@@ -12,8 +12,8 @@ Traditional example sentences in `Level I`.
   Ministry of Education dictionary gives a different reading, the deck shows
   two lines: `陸：…` followed by `台：…`. CC-CEDICT's explicit Taiwan reading is
   used as a fallback when an entry is absent from the MOE dictionary.
-- English: deliberately short supporting glosses, in the style of
-  `tmp7 - Vocabulary`.
+- English: deliberately short supporting glosses in the shared Chinese
+  vocabulary-deck style.
 - Characters: both forms are shown, separated by ` / ` when they differ.
 - Examples: every card retains the paired Simplified and Traditional sentence
   from Level I; when both forms are identical, the learner-facing card shows

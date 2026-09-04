@@ -2,7 +2,7 @@
 
 - 对应关系：1255
 - 双向卡片：2510
-- Phrase / Answer：采用 `character（word）` 格式，与已确认的 `tmp7` 一致
+- Phrase / Answer：采用已确认的 `character（word）` 格式
 - Examples：每个对应关系都有一组实际使用该词的简体、繁体例句；不使用“例句中使用了……”式占位句
 - Notes：学习界面不显示
 - 未解决的 `X字` 占位：0
