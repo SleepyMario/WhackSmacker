@@ -359,7 +359,7 @@ test("module tree lists top-level categories and installed language packages", a
 
     assert.equal(tree.label, "WhackSmacker");
     assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
-    assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography", "Mathematics"]);
+    assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography"]);
     assert.deepEqual(languages.children.map((node) => node.label), ["Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
       "com.sleepymario.language.chinese-simplified",
@@ -407,27 +407,23 @@ test("language menu exposes Chinese Simplified, Greek Classical, and Latin as ho
   }
 });
 
-test("module tree exposes Games Chess Geography and Mathematics entries", async () => {
+test("module tree exposes Games and Geography while keeping Mathematics out of the module listings", async () => {
   const tree = await buildModuleTree();
   const installed = tree.children.find((node) => node.label === "Installed modules");
   const games = installed.children.find((node) => node.label === "Games");
   const geography = installed.children.find((node) => node.label === "Geography");
-  const mathematics = installed.children.find((node) => node.label === "Mathematics");
   const chess = games.children.find((node) => node.label === "Chess");
   const continents = geography.children.find((node) => node.label === "Continents");
-  const beginnerMath = mathematics.children.find((node) => node.label === "Beginner Mathematics");
 
+  assert.equal(installed.children.some((node) => node.label === "Mathematics"), false);
   assert.deepEqual(games.children.map((node) => node.label), ["Chess"]);
   assert.equal(chess.moduleId, "com.sleepymario.game.chess");
   assert.deepEqual(chess.children.map((node) => node.label), ["Play / Board", "Legal moves", "Module info"]);
   assert.deepEqual(geography.children.map((node) => node.label), ["Continents"]);
   assert.equal(continents.moduleId, "com.sleepymario.geography");
   assert.deepEqual(continents.children.map((node) => node.label), ["Continents"]);
-  assert.deepEqual(mathematics.children.map((node) => node.label), ["Beginner Mathematics"]);
-  assert.equal(beginnerMath.moduleId, "com.sleepymario.mathematics");
   assert.match(chess.previewText, /whacksmacker chess/);
   assert.match(continents.children[0].previewText, /whacksmacker geography continents/);
-  assert.match(beginnerMath.previewText, /workbook generators/);
 });
 
 test("language category can expand installed package nodes in the module tree", async () => {
@@ -1668,6 +1664,7 @@ test("module tree includes available modules from a catalogue with install statu
     const available = tree.children.find((node) => node.label === "Modules available");
     const availableLanguages = available.children.find((node) => node.label === "Languages");
 
+    assert.deepEqual(available.children.map((node) => node.label), ["Languages", "Games", "Geography"]);
     assert.deepEqual(descriptors.filter((descriptor) => descriptor.category === "Languages").map((descriptor) => `${descriptor.displayName}:${descriptor.availableStatus}`), [
       "Dutch:installed",
       "Vietnamese:available"
@@ -3583,7 +3580,7 @@ test("interactive menu starts with the module tree", async () => {
   assert.match(stripAnsi(terminal.output), /Modules available/);
   assert.match(stripAnsi(terminal.output), /Games/);
   assert.match(stripAnsi(terminal.output), /Geography/);
-  assert.match(stripAnsi(terminal.output), /Mathematics/);
+  assert.doesNotMatch(stripAnsi(terminal.output), /Mathematics/);
   assert.doesNotMatch(stripAnsi(terminal.output), /^\|[^\n]*\bSettings\b/mu);
   assert.doesNotMatch(stripAnsi(terminal.output), /^\|[^\n]*\bSource language\b/mu);
 });

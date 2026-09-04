@@ -1819,8 +1819,7 @@ async function buildInstalledModulesTree(
     children: [
       await buildLanguageTreeFromDescriptors(descriptors.filter((descriptor) => descriptor.category === "Languages"), dataDir, locale, displayMode),
       buildModuleCategoryTree("Games", descriptors, locale),
-      buildModuleCategoryTree("Geography", descriptors, locale),
-      buildModuleCategoryTree("Mathematics", descriptors, locale)
+      buildModuleCategoryTree("Geography", descriptors, locale)
     ]
   };
 }
@@ -1860,8 +1859,7 @@ function buildAvailableModulesTree(
     }] : [
       buildAvailableCategoryTree("Languages", descriptors, cataloguePath, locale),
       buildAvailableCategoryTree("Games", descriptors, cataloguePath, locale),
-      buildAvailableCategoryTree("Geography", descriptors, cataloguePath, locale),
-      buildAvailableCategoryTree("Mathematics", descriptors, cataloguePath, locale)
+      buildAvailableCategoryTree("Geography", descriptors, cataloguePath, locale)
     ]
   };
 }
