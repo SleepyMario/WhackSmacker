@@ -265,6 +265,9 @@ test("module commands expose first-class built-in module metadata", async () => 
 
   assert.equal(list.exitCode, 0);
   assert.match(list.stdout, /com\.sleepymario\.game\.chess 0\.1\.0 Games native-module Chess/);
+  assert.match(list.stdout, /com\.sleepymario\.language\.chinese-simplified 0\.1\.0 Languages built-in-module Chinese \(Simplified\)/);
+  assert.match(list.stdout, /com\.sleepymario\.language\.classical-greek 0\.1\.0 Languages built-in-module Greek \(Classical\)/);
+  assert.match(list.stdout, /com\.sleepymario\.language\.latin 0\.1\.0 Languages built-in-module Latin/);
   assert.match(list.stdout, /com\.sleepymario\.geography 0\.1\.0 Geography built-in-module Continents/);
   assert.match(list.stdout, /com\.sleepymario\.mathematics 0\.1\.0 Mathematics built-in-module Beginner Mathematics/);
   assert.equal(list.stderr, "");

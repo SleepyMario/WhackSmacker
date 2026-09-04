@@ -88,6 +88,54 @@ export const firstClassModuleCategoryOrder: readonly FirstClassModuleCategory[] 
 export function getBuiltInFirstClassModules(): readonly FirstClassModuleDescriptor[] {
   return [
     {
+      moduleId: "com.sleepymario.language.chinese-simplified",
+      displayName: "Chinese (Simplified)",
+      category: "Languages",
+      version: "0.1.0",
+      sourceKind: "built-in-module",
+      description: "Reserved language entry for the future Simplified Chinese curriculum. No chapters or review decks are installed yet.",
+      actions: [
+        {
+          id: "status",
+          label: "Curriculum planned",
+          kind: "message",
+          previewText: "Chinese (Simplified)\n\nThe language entry is ready. Curriculum content, review decks, and an installable package will be added later."
+        }
+      ]
+    },
+    {
+      moduleId: "com.sleepymario.language.classical-greek",
+      displayName: "Greek (Classical)",
+      category: "Languages",
+      version: "0.1.0",
+      sourceKind: "built-in-module",
+      description: "Reserved language entry for the future Classical Greek curriculum. No chapters or review decks are installed yet.",
+      actions: [
+        {
+          id: "status",
+          label: "Curriculum planned",
+          kind: "message",
+          previewText: "Greek (Classical)\n\nThe language entry is ready. Curriculum content, review decks, and an installable package will be added later."
+        }
+      ]
+    },
+    {
+      moduleId: "com.sleepymario.language.latin",
+      displayName: "Latin",
+      category: "Languages",
+      version: "0.1.0",
+      sourceKind: "built-in-module",
+      description: "Reserved language entry for the future Latin curriculum. No chapters or review decks are installed yet.",
+      actions: [
+        {
+          id: "status",
+          label: "Curriculum planned",
+          kind: "message",
+          previewText: "Latin\n\nThe language entry is ready. Curriculum content, review decks, and an installable package will be added later."
+        }
+      ]
+    },
+    {
       moduleId: "com.sleepymario.game.chess",
       displayName: "Chess",
       category: "Games",
@@ -178,6 +226,17 @@ export function getBuiltInFirstClassModules(): readonly FirstClassModuleDescript
       ]
     }
   ];
+}
+
+export function mergeFirstClassModules(
+  discovered: readonly FirstClassModuleDescriptor[],
+  builtIns: readonly FirstClassModuleDescriptor[] = getBuiltInFirstClassModules()
+): readonly FirstClassModuleDescriptor[] {
+  const discoveredIds = new Set(discovered.map((descriptor) => descriptor.moduleId));
+  return sortFirstClassModules([
+    ...discovered,
+    ...builtIns.filter((descriptor) => !discoveredIds.has(descriptor.moduleId))
+  ]);
 }
 
 export function isLanguageLikeModulePackage(packageId: string): boolean {

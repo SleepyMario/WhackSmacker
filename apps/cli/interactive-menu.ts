@@ -2,7 +2,6 @@ import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core
 import {
   displayLabelForModulePackage,
   formatFirstClassModuleInfo,
-  getBuiltInFirstClassModules,
   installedPackageToFirstClassModuleDescriptor,
   installContentPackage,
   isLegacyStructuredPromptEligible,
@@ -16,6 +15,7 @@ import {
   listReadingReviewSources,
   localized,
   loadReviewProgressStore,
+  mergeFirstClassModules,
   defaultReviewProgressDirectoryForContentDataDirectory,
   defaultCurriculumDisplayMode,
   defaultNewVocabularyDisplayPreferences,
@@ -1713,7 +1713,7 @@ export async function listFirstClassModuleDescriptors(dataDir?: string, locale: 
     }
   }
 
-  return sortFirstClassModules([...installedDescriptors, ...getBuiltInFirstClassModules()]);
+  return mergeFirstClassModules(installedDescriptors);
 }
 
 export async function listAvailableModuleDescriptors(
@@ -1734,8 +1734,13 @@ export async function listAvailableModuleDescriptors(
     }
   }
 
-  for (const descriptor of getBuiltInFirstClassModules()) {
-    descriptors.push({ ...descriptor, availableStatus: "installed" });
+  for (const descriptor of mergeFirstClassModules(descriptors)) {
+    if (descriptor.category === "Languages" && descriptor.packageId === undefined) {
+      continue;
+    }
+    if (!descriptors.some((candidate) => candidate.moduleId === descriptor.moduleId)) {
+      descriptors.push({ ...descriptor, availableStatus: "installed" });
+    }
   }
 
   return sortFirstClassModules(descriptors);
@@ -1912,6 +1917,9 @@ async function buildLanguageTreeFromDescriptors(
   currentPackageMetadata: readonly DeckFamilyPackageMetadata[] = contentPackageGeneratorTargets
 ): Promise<LanguageTreeNode> {
   return perfSpan("module-tree.languages", { locale, displayMode, packageCount: descriptors.length }, async () => {
+  const builtInLanguageNodes: LanguageTreeNode[] = descriptors
+    .filter((descriptor) => descriptor.packageId === undefined)
+    .map((descriptor) => buildBuiltInModuleTreeNode(descriptor));
   const packageNodes: LanguageTreeNode[] = [];
   const progressDir = dataDir === undefined ? undefined : defaultReviewProgressDirectoryForContentDataDirectory(dataDir);
   const progressItems = (await loadReviewProgressStore(progressDir)).items;
@@ -2091,7 +2099,9 @@ async function buildLanguageTreeFromDescriptors(
   }
 
   await addInstalledSpecializedReviewBranches(packageNodes, dataDir, locale, installed);
+  packageNodes.push(...builtInLanguageNodes);
   await addInstalledDeckFamilyBranches(packageNodes, dataDir, locale, progressItems, installed);
+  packageNodes.sort((left, right) => left.label.localeCompare(right.label));
 
   return {
     id: "languages",

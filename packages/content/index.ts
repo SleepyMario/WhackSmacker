@@ -10,12 +10,12 @@ import {
   findNextReadingReviewSource,
   findFirstClassModule,
   formatFirstClassModuleInfo,
-  getBuiltInFirstClassModules,
   installedPackageToFirstClassModuleDescriptor,
   isLanguageLikeModulePackage,
   listReadingReviewItems,
   listReadingReviewSources,
   localized,
+  mergeFirstClassModules,
   migrateUserDataBackupFile,
   orderReviewItemsForSession,
   projectReviewTextForMode,
@@ -26,7 +26,6 @@ import {
   renderReadingReviewItem,
   renderReadingContent,
   syncReadingReviewItems,
-  sortFirstClassModules,
   updateContentPackage,
   writeUserDataBackup,
   isReviewRating,
@@ -874,7 +873,7 @@ async function listFirstClassModulesForContentCli(dataDir?: string): Promise<rea
     }
   }
 
-  return sortFirstClassModules([...descriptors, ...getBuiltInFirstClassModules()]);
+  return mergeFirstClassModules(descriptors);
 }
 
 function renderModuleBuildStatus(descriptor: FirstClassModuleDescriptor): string {
