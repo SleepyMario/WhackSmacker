@@ -45,15 +45,130 @@ test("content package generator exposes the supported local package targets", ()
       ["spanish-core-reviews", "com.sleepymario.language.spanish.reviews"],
       ["thai-core-reviews", "com.sleepymario.language.thai.reviews"],
       ["zulu-core-reviews", "com.sleepymario.language.zulu.reviews"],
+      ["chinese-simplified-traditional-level-1", "com.sleepymario.language.chinese-simplified-traditional.level-1"],
+      ["chinese-simplified-traditional-level-1-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-1-vocabulary"],
+      ["chinese-simplified-traditional-level-2", "com.sleepymario.language.chinese-simplified-traditional.level-2"],
+      ["chinese-simplified-traditional-level-2-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-2-vocabulary"],
+      ["chinese-simplified-traditional-level-3", "com.sleepymario.language.chinese-simplified-traditional.level-3"],
+      ["chinese-simplified-traditional-level-3-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-3-vocabulary"],
+      ["chinese-simplified-traditional-tmp", "com.sleepymario.language.chinese-simplified-traditional.tmp"],
+      ["chinese-simplified-traditional-tmp2", "com.sleepymario.language.chinese-simplified-traditional.tmp2"],
+      ["chinese-simplified-traditional-tmp3", "com.sleepymario.language.chinese-simplified-traditional.tmp3"],
+      ["chinese-simplified-traditional-tmp4", "com.sleepymario.language.chinese-simplified-traditional.tmp4"],
+      ["chinese-simplified-traditional-tmp5", "com.sleepymario.language.chinese-simplified-traditional.tmp5"],
+      ["chinese-simplified-traditional-tmp6", "com.sleepymario.language.chinese-simplified-traditional.tmp6"],
+      ["chinese-simplified-traditional-tmp7", "com.sleepymario.language.chinese-simplified-traditional.tmp7"],
+      ["chinese-simplified-traditional-tmp7-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.tmp7-vocabulary"],
       ["dutch-general-animals-preview-001-100", "com.sleepymario.language.dutch.general.animals.preview-001-100"],
       ["dutch-specialized-medical-1", "com.sleepymario.language.dutch.specialized.medical-1"],
       ["chinese-traditional-specialized-medical-1", "com.sleepymario.language.chinese-traditional.specialized.medical-1"]
     ]
   );
-  assert.equal(contentPackageGeneratorTargets.every((target) => target.deckVersion === "0.0.1"), true);
+  assert.equal(contentPackageGeneratorTargets.filter((target) => !["chinese-simplified-traditional-level-1", "chinese-simplified-traditional-level-1-vocabulary", "chinese-simplified-traditional-level-2", "chinese-simplified-traditional-level-2-vocabulary", "chinese-simplified-traditional-level-3", "chinese-simplified-traditional-level-3-vocabulary"].includes(target.id)).every((target) => target.deckVersion === "0.0.1"), true);
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1")?.deckVersion, "1.2.0");
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1-vocabulary")?.deckVersion, "1.0.0");
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-2")?.deckVersion, "1.0.0");
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-2-vocabulary")?.deckVersion, "1.0.0");
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-3")?.deckVersion, "1.0.0");
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-3-vocabulary")?.deckVersion, "1.0.0");
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1")?.artifactRevision, 3);
   assert.equal(contentPackageGeneratorTargets.every((target) => Number.isSafeInteger(target.artifactRevision) && target.artifactRevision > 0), true);
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "dutch-general-animals-preview-001-100")?.artifactRevision, 3);
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "japanese-core-reviews")?.interactionProfile?.labels, "independent");
+});
+
+test("Level I uses the approved tmp7 character（word） presentation in both directions", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-level-1");
+  assert.equal(target?.notesPolicy, "omit");
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-level-1-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-level-1",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T16:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1.json").toString("utf8"));
+    assert.equal(document.items.length, 2510);
+    assert.equal(document.items.every((item) => /^.+（.{2,4}）$/u.test(item.prompt.text)), true);
+    assert.equal(document.items.every((item) => /^.+（.{2,4}）$/u.test(item.answer.text)), true);
+    assert.equal(document.items.every((item) => !/[“”「」。！？]/u.test(item.prompt.text)), true);
+    assert.equal(document.items.every((item) => !/[“”「」。！？]/u.test(item.answer.text)), true);
+    assert.equal(document.items.every((item) => item.examples.length >= 1 && item.examples.length <= 2), true);
+    assert.equal(document.items.every((item) => item.examples.every((example) => !/例句中使用了/u.test(example))), true);
+    assert.equal(document.items.every((item) => item.notes === undefined), true);
+
+    const recording = document.items.find((item) => item.id.endsWith("1304-map-01/hans-to-hant"));
+    assert.ok(recording);
+    assert.equal(recording.prompt.text, "录（录取）");
+    assert.equal(recording.answer.text, "錄（錄取）");
+    assert.deepEqual(recording.examples, ["他收到大学的录取通知。", "他收到大學的錄取通知。"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Level II uses the approved character（word） presentation with real paired examples", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-level-2");
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.deckDisplayName, "Level II");
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-level-2-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-level-2",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T18:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-2.json").toString("utf8"));
+    assert.equal(document.items.length, 1854);
+    assert.equal(document.items.every((item) => /^.+（.{2,}）$/u.test(item.prompt.text)), true);
+    assert.equal(document.items.every((item) => /^.+（.{2,}）$/u.test(item.answer.text)), true);
+    assert.equal(document.items.every((item) => !/[“”「」。！？]/u.test(item.prompt.text)), true);
+    assert.equal(document.items.every((item) => !/[“”「」。！？]/u.test(item.answer.text)), true);
+    assert.equal(document.items.every((item) => item.examples.length >= 1 && item.examples.length <= 2), true);
+    assert.equal(document.items.every((item) => item.examples.every((example) => !/例句中使用了/u.test(example))), true);
+    assert.equal(document.items.every((item) => item.notes === undefined), true);
+
+    const zimbabwe = document.items.find((item) => item.id.endsWith("3509-map-01/hans-to-hant"));
+    assert.ok(zimbabwe);
+    assert.equal(zimbabwe.prompt.text, "韦（津巴布韦）");
+    assert.equal(zimbabwe.answer.text, "韋（津巴布韋）");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Level III uses the approved character（word） presentation with real paired examples", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-level-3");
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.deckDisplayName, "Level III");
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-level-3-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-level-3",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T20:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-3.json").toString("utf8"));
+    assert.equal(document.items.length, 932);
+    assert.equal(document.items.every((item) => /^.+（.{2,}）$/u.test(item.prompt.text)), true);
+    assert.equal(document.items.every((item) => /^.+（.{2,}）$/u.test(item.answer.text)), true);
+    assert.equal(document.items.every((item) => !/[“”「」。！？]/u.test(item.prompt.text)), true);
+    assert.equal(document.items.every((item) => !/[“”「」。！？]/u.test(item.answer.text)), true);
+    assert.equal(document.items.every((item) => item.examples.length >= 1 && item.examples.length <= 2), true);
+    assert.equal(document.items.every((item) => item.examples.every((example) => !/例句中使用了/u.test(example))), true);
+    assert.equal(document.items.every((item) => item.notes === undefined), true);
+
+    const first = document.items.find((item) => item.id.endsWith("6509-map-01/hans-to-hant"));
+    assert.ok(first);
+    assert.equal(first.prompt.text, "戋（戋戋）");
+    assert.equal(first.answer.text, "戔（戔戔）");
+    assert.deepEqual(first.examples, ["戋戋是一个较少见的词语。", "戔戔是一個較少見的詞語。"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("content package generator preserves explicitly referenced image binaries with deterministic metadata and ordering", async () => {
@@ -181,6 +296,318 @@ test("animal preview target is explicit-only general Dutch topic Review metadata
     unitStart: 1,
     unitEnd: 100
   });
+});
+
+for (const suffix of ["tmp", "tmp2", "tmp3", "tmp4", "tmp5", "tmp6", "tmp7"]) {
+  test(`temporary Chinese script-conversion target ${suffix} is a fixed explicit-only 20-character sample`, () => {
+    const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === `chinese-simplified-traditional-${suffix}`);
+    assert.equal(target?.explicitOnly, true);
+    assert.equal(target?.packageId, `com.sleepymario.language.chinese-simplified-traditional.${suffix}`);
+    assert.equal(target?.packageVersion, "0.0.1");
+    assert.equal(target?.contentType, "topic-review");
+    assert.deepEqual(target?.capabilities, ["topic-review"]);
+    assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-simplified-traditional"]);
+    assert.deepEqual(target?.topic, {
+      id: "simplified-traditional-conversion",
+      displayName: "Chinese (Simplified <-> Traditional)",
+      deckDisplayName: suffix
+    });
+    assert.equal(target?.sourcePath, `review-content/chinese-simplified-traditional/${suffix}`);
+    assert.deepEqual(target?.include, ["README.md", "cards.tsv", "selection.tsv", "sources"]);
+    assert.equal(target?.notesPolicy, ["tmp4", "tmp5", "tmp6", "tmp7"].includes(suffix) ? "omit" : undefined);
+  });
+}
+
+test("tmp3 is a copy of tmp with only the Notes field removed", async () => {
+  const tmp = await readFile(join(resolveContentPackageSourcePath("review-content/chinese-simplified-traditional/tmp").resolvedPath, "cards.tsv"), "utf8");
+  const tmp3 = await readFile(join(resolveContentPackageSourcePath("review-content/chinese-simplified-traditional/tmp3").resolvedPath, "cards.tsv"), "utf8");
+  const sourceLines = tmp.trimEnd().split("\n").map((line) => line.split("\t"));
+  const revisionLines = tmp3.trimEnd().split("\n").map((line) => line.split("\t"));
+  const explanationIndex = sourceLines[0].indexOf("explanation");
+  assert.equal(explanationIndex >= 0, true);
+  assert.equal(revisionLines.length, sourceLines.length);
+  for (let row = 0; row < sourceLines.length; row += 1) {
+    assert.equal(revisionLines[row].length, sourceLines[row].length);
+    for (let column = 0; column < sourceLines[row].length; column += 1) {
+      assert.equal(
+        revisionLines[row][column],
+        row > 0 && column === explanationIndex ? "" : sourceLines[row][column],
+        `Unexpected tmp3 difference at row ${row + 1}, column ${sourceLines[0][column] ?? column}`
+      );
+    }
+  }
+});
+
+test("tmp4 suppresses generated student notes instead of falling back to provenance text", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp4-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-tmp4",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T13:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-tmp4.json").toString("utf8"));
+    assert.equal(document.items.length, 40);
+    assert.equal(document.items.every((item) => item.notes === undefined && item.explanation.length > 0), true);
+    assert.equal(document.items.some((item) => item.provenance.evidence.length > 0), true);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("tmp5 uses natural paired script examples and the standard Traditional form 錄", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp5-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-tmp5",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T14:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-tmp5.json").toString("utf8"));
+    assert.equal(document.items.length, 40);
+    assert.equal(document.items.every((item) => item.notes === undefined && item.examples.length >= 1 && item.examples.length <= 2), true);
+    assert.equal(document.items.every((item) => item.examples.every((example) => !example.includes("例句中使用"))), true);
+
+    const recording = document.items.find((item) => item.id.endsWith("1304-map-01/hans-to-hant"));
+    assert.ok(recording);
+    assert.equal(recording.answer.text.includes("錄（"), true);
+    assert.equal(recording.answer.text.includes("録"), false);
+    assert.deepEqual(recording.examples, ["他收到大学的录取通知。", "他收到大學的錄取通知。"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("tmp6 normalizes the 了 and 瞭 Phrase/Answer context without changing its examples", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp6-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-tmp6",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T14:30:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-tmp6.json").toString("utf8"));
+    const forward = document.items.find((item) => item.id.endsWith("0017-map-01/hans-to-hant"));
+    const reverse = document.items.find((item) => item.id.endsWith("0017-map-01/hant-to-hans"));
+    assert.ok(forward);
+    assert.ok(reverse);
+    assert.equal(forward.prompt.text, "了（例句中使用了“了解”。）");
+    assert.equal(forward.answer.text, "瞭（例句中使用了「瞭解」。）");
+    assert.equal(reverse.prompt.text, "瞭（例句中使用了「瞭解」。）");
+    assert.equal(reverse.answer.text, "了（例句中使用了“了解”。）");
+    assert.deepEqual(forward.examples, ["我已经了解事情的经过。", "我已經瞭解事情的經過。"]);
+    assert.equal(forward.notes, undefined);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("tmp7 reduces every Phrase and Answer to character（word） while preserving Examples", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp7-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-tmp7",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T15:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-tmp7.json").toString("utf8"));
+    assert.equal(document.items.length, 40);
+    assert.equal(document.items.every((item) => !item.prompt.text.includes("例句中使用了") && !item.answer.text.includes("例句中使用了")), true);
+    assert.equal(document.items.every((item) => !/[“”「」。]/u.test(item.prompt.text) && !/[“”「」。]/u.test(item.answer.text)), true);
+    assert.equal(document.items.every((item) => /^.+（.+）$/u.test(item.prompt.text) && /^.+（.+）$/u.test(item.answer.text)), true);
+
+    const recording = document.items.find((item) => item.id.endsWith("1304-map-01/hans-to-hant"));
+    assert.ok(recording);
+    assert.equal(recording.prompt.text, "录（录取）");
+    assert.equal(recording.answer.text, "錄（錄取）");
+    assert.deepEqual(recording.examples, ["他收到大学的录取通知。", "他收到大學的錄取通知。"]);
+    assert.equal(recording.notes, undefined);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("tmp7 - Vocabulary contains 78 three-direction Chinese ABC entries with paired examples", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-tmp7-vocabulary");
+  assert.equal(target?.explicitOnly, true);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.deckDisplayName, "tmp7 - Vocabulary");
+  assert.deepEqual(target?.languages, ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"]);
+  assert.deepEqual(target?.include, ["README.md", "cards.tsv", "sources"]);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-tmp7-vocabulary-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-tmp7-vocabulary",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T16:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tmp7-vocabulary.json").toString("utf8"));
+    assert.equal(document.items.length, 234);
+    assert.equal(new Set(document.items.flatMap((item) => item.testedLexicalIds)).size, 78);
+    assert.deepEqual(
+      [...new Set(document.items.map((item) => item.prompt.language))].sort(),
+      ["en", "zh-Hans", "zh-Latn-pinyin"]
+    );
+    assert.equal(document.items.every((item) => item.notes === undefined && item.examples.length >= 1 && item.examples.length <= 2), true);
+    assert.equal(document.items.every((item) => item.outputs.length === 2), true);
+    assert.equal(document.items.every((item) => item.interactionProfile.labels === "independent"), true);
+
+    const understand = document.items.filter((item) => item.testedLexicalIds.includes("zh.tmp7-vocabulary.0002"));
+    assert.equal(understand.length, 3);
+    assert.deepEqual(understand.map((item) => item.prompt.text), ["to understand", "Pinyin: liǎo jiě", "Characters: 了解 / 瞭解"]);
+    assert.equal(understand.every((item) => item.examples.includes("我已經瞭解事情的經過。")), true);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Level I - Vocabulary contains 2815 ABC entries with regional Pinyin where Taiwan differs", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-level-1-vocabulary");
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.deckDisplayName, "Level I - Vocabulary");
+  assert.deepEqual(target?.languages, ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"]);
+  assert.deepEqual(target?.include, ["README.md", "cards.tsv", "sources"]);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-level-1-vocabulary-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-level-1-vocabulary",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T16:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-1-vocabulary.json").toString("utf8"));
+    assert.equal(document.items.length, 8445);
+    assert.equal(new Set(document.items.flatMap((item) => item.testedLexicalIds)).size, 2815);
+    assert.deepEqual(
+      [...new Set(document.items.map((item) => item.prompt.language))].sort(),
+      ["en", "zh-Hans", "zh-Latn-pinyin"]
+    );
+    assert.equal(document.items.every((item) => item.notes === undefined && item.examples.length >= 1 && item.examples.length <= 2), true);
+    assert.equal(document.items.every((item) => item.outputs.length === 2), true);
+    assert.equal(document.items.every((item) => item.interactionProfile.labels === "independent"), true);
+    assert.equal(document.items.every((item) => !item.examples.some((example) => /例句中使用了/u.test(example))), true);
+    assert.equal(document.items.filter((item) => JSON.stringify(item).includes("陸：")).length, 525);
+
+    const substance = document.items.filter((item) => item.prompt.text.includes("物质 / 物質") || item.outputs.some((output) => output.content.text.includes("物质 / 物質")));
+    assert.equal(substance.length, 3);
+    assert.equal(substance.every((item) => JSON.stringify(item).includes("陸：wùzhì\\n台：wùzhí")), true);
+    assert.equal(substance.every((item) => item.examples.includes("這種劇毒物質能直接穿透皮膚。")), true);
+
+    const factory = document.items.filter((item) => item.prompt.text.includes("工厂 / 工廠") || item.outputs.some((output) => output.content.text.includes("工厂 / 工廠")));
+    assert.equal(factory.length, 3);
+    assert.equal(factory.every((item) => JSON.stringify(item).includes("gōng chǎng")), true);
+    assert.equal(factory.every((item) => !JSON.stringify(item).includes("陸：") && !JSON.stringify(item).includes("台：")), true);
+
+    const what = document.items.filter((item) => item.prompt.text.includes("什么 / 什麼") || item.outputs.some((output) => output.content.text.includes("什么 / 什麼")));
+    assert.equal(what.length, 3);
+    assert.equal(what.every((item) => item.examples.includes("你在看什麼？")), true);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Level II - Vocabulary contains only new cumulative ABC entries", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-level-2-vocabulary");
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.deckDisplayName, "Level II - Vocabulary");
+  assert.deepEqual(target?.languages, ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"]);
+
+  const parseTsv = (text) => {
+    const rows = text.trimEnd().split("\n").map((line) => line.split("\t"));
+    const header = rows.shift();
+    return { rows, at: Object.fromEntries(header.map((name, index) => [name, index])) };
+  };
+  const levelOne = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-1-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const levelTwo = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-2-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const exclusions = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-2-vocabulary/sources/level-1-exclusions.tsv"), "utf8"));
+  const levelOneWords = new Set(levelOne.rows.map((row) => row[levelOne.at.simplified]));
+  assert.equal(levelTwo.rows.length, 1474);
+  assert.equal(exclusions.rows.length, 685);
+  assert.equal(levelTwo.rows.some((row) => levelOneWords.has(row[levelTwo.at.simplified])), false);
+  assert.equal(levelTwo.rows.some((row) => row[levelTwo.at.meaning] === "meaning to be reviewed"), false);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-level-2-vocabulary-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-level-2-vocabulary",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T21:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-2-vocabulary.json").toString("utf8"));
+    assert.equal(document.items.length, 4422);
+    assert.equal(new Set(document.items.flatMap((item) => item.testedLexicalIds)).size, 1474);
+    assert.equal(document.items.every((item) => item.notes === undefined && item.examples.length >= 1 && item.examples.length <= 2), true);
+    assert.equal(document.items.every((item) => item.outputs.length === 2), true);
+    assert.equal(document.items.every((item) => item.interactionProfile.labels === "independent"), true);
+    assert.equal(document.items.every((item) => !item.examples.some((example) => /例句中使用了/u.test(example))), true);
+    assert.equal(document.items.filter((item) => JSON.stringify(item).includes("陸：")).length, 201);
+
+    const zimbabwe = document.items.filter((item) => item.prompt.text.includes("津巴布韦 / 津巴布韋") || item.outputs.some((output) => output.content.text.includes("津巴布韦 / 津巴布韋")));
+    assert.equal(zimbabwe.length, 3);
+    assert.equal(zimbabwe.every((item) => JSON.stringify(item).includes("jīn bā bù wéi")), true);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Level III - Vocabulary excludes both prior vocabulary levels", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-traditional-level-3-vocabulary");
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.deckDisplayName, "Level III - Vocabulary");
+  assert.deepEqual(target?.languages, ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"]);
+
+  const parseTsv = (text) => {
+    const rows = text.trimEnd().split("\n").map((line) => line.split("\t"));
+    const header = rows.shift();
+    return { rows, at: Object.fromEntries(header.map((name, index) => [name, index])) };
+  };
+  const levelOne = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-1-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const levelTwo = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-2-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const levelThree = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-3-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const exclusions = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-3-vocabulary/sources/prior-level-exclusions.tsv"), "utf8"));
+  const priorSimplified = new Set([
+    ...levelOne.rows.map((row) => row[levelOne.at.simplified]),
+    ...levelTwo.rows.map((row) => row[levelTwo.at.simplified])
+  ]);
+  assert.equal(priorSimplified.size, 4289);
+  assert.equal(levelThree.rows.length, 39);
+  assert.equal(exclusions.rows.length, 63);
+  assert.equal(exclusions.rows.filter((row) => row[exclusions.at.prior_level] === "Level I").length, 41);
+  assert.equal(exclusions.rows.filter((row) => row[exclusions.at.prior_level] === "Level II").length, 22);
+  assert.equal(levelThree.rows.some((row) => priorSimplified.has(row[levelThree.at.simplified])), false);
+  assert.equal(levelThree.rows.some((row) => row[levelThree.at.meaning] === "meaning to be reviewed"), false);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-conversion-level-3-vocabulary-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-traditional-level-3-vocabulary",
+      outputDirectory: directory,
+      generatedAt: "2026-09-04T22:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/tghz2013-level-3-vocabulary.json").toString("utf8"));
+    assert.equal(document.items.length, 117);
+    assert.equal(new Set(document.items.flatMap((item) => item.testedLexicalIds)).size, 39);
+    assert.equal(document.items.every((item) => item.notes === undefined && item.examples.length >= 1 && item.examples.length <= 2), true);
+    assert.equal(document.items.every((item) => item.outputs.length === 2), true);
+    assert.equal(document.items.every((item) => item.interactionProfile.labels === "independent"), true);
+    assert.equal(document.items.every((item) => !item.examples.some((example) => /例句中使用了/u.test(example))), true);
+    assert.equal(document.items.filter((item) => JSON.stringify(item).includes("陸：")).length, 3);
+
+    const fermentation = document.items.filter((item) => item.prompt.text.includes("酦酵 / 醱酵") || item.outputs.some((output) => output.content.text.includes("酦酵 / 醱酵")));
+    assert.equal(fermentation.length, 3);
+    assert.equal(fermentation.every((item) => JSON.stringify(item).includes("fermentation") && JSON.stringify(item).includes("fājiào")), true);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("content package generator creates a valid Linguistic Terminology package", async () => {

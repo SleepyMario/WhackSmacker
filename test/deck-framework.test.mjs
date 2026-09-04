@@ -43,6 +43,10 @@ test("Animals historical technical versions have one explicit idempotent migrati
 test("one and three outputs use the same ordered stable output model", () => {
   assert.deepEqual(memorizationOutputsFromAnswer({ text: "one", mediaType: "text/plain" }).map((output) => output.id), ["answer"]);
   assert.deepEqual(memorizationOutputsFromAnswer({ text: "A: alpha\nB: beta\nC: gamma", mediaType: "text/plain" }).map((output) => output.id), ["a", "b", "c"]);
+  assert.deepEqual(
+    memorizationOutputsFromAnswer({ text: "Pinyin: 陸：wùzhì\n台：wùzhí\nCharacters: 物质 / 物質", mediaType: "text/plain" }).map((output) => [output.id, output.content.text]),
+    [["pinyin", "陸：wùzhì\n台：wùzhí"], ["characters", "物质 / 物質"]]
+  );
 });
 
 test("synthetic Korean and Vietnamese three-output fixtures need no language switch", () => {

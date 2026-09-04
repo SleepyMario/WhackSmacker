@@ -109,13 +109,13 @@ test("missing, older, malformed, and obsolete settings fall back without resetti
 
 test("module tree displays English roots without the former settings path", async () => {
   const tree = await buildModuleTree({ locale: "en-US" });
-  assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
+  assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available", "Language backup"]);
   assert.equal(tree.children.some((node) => node.id === "settings"), false);
 });
 
 test("module tree displays Traditional Chinese Taiwan roots without the former settings path", async () => {
   const tree = await buildModuleTree({ locale: "zh-Hant-TW" });
-  assert.deepEqual(tree.children.map((node) => node.label), ["已安裝模組", "可安裝模組"]);
+  assert.deepEqual(tree.children.map((node) => node.label), ["已安裝模組", "可安裝模組", "語言備份"]);
   assert.equal(tree.children.some((node) => node.id === "settings"), false);
 });
 

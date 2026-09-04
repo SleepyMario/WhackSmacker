@@ -1,0 +1,928 @@
+official_no	level	simplified	mapping_code	traditional	inherited	simplified_example	traditional_example	example_source	original_example_source	simplified_sentence	traditional_sentence	field_usage	context_kind
+3509	2	韦	3509_1	韋	false	津巴布韦	津巴布韋	corpus-example	tatoeba:801434	津巴布韦曾经是英国的殖民地。	津巴布韋曾經是英國的殖民地。		lexical-context
+3522	2	闩	3522_1	閂	false	门闩	門閂	corpus-example	tatoeba:350674	他把门闩上。	他把門閂上。		lexical-context
+3523	2	讣	3523_1	訃	false	讣告	訃告	corpus-example	leipzig:zho_news_2020_300K:158271	报纸讣告版面不断记录着新增的死亡。	報紙訃告版面不斷記錄著新增的死亡。		lexical-context
+3537	2	劢	3537_1	勱	false	张君劢	張君勱	corpus-example	leipzig:zho_news_2020_300K:165137	政协会议闭幕后，经王世杰和周恩来推荐，民社党的张君劢先生主持起草了《中华民国宪法草案》。	政協會議閉幕後，經王世傑和周恩來推薦，民社黨的張君勱先生主持起草了《中華民國憲法草案》。		lexical-context
+3550	2	刍	3550_1	芻	false	反刍	反芻	corpus-example	tatoeba:1551891	牛是一种反刍类的哺乳动物。	牛是一種反芻類的哺乳動物。		lexical-context
+3551	2	邝	3551_1	鄺	false	邝天雄	鄺天雄	authored-example	project-authored	邝天雄是一个人名。	鄺天雄是一個人名。		lexical-context
+3554	2	讦	3554_1	訐	false	攻讦	攻訐	corpus-example	leipzig:zho_news_2020_300K:170953	无论是出于哪一种心理，辱骂、攻讦、造谣明星都是不可取的。	無論是出於哪一種心理，辱罵、攻訐、造謠明星都是不可取的。		lexical-context
+3555	2	讧	3555_1	訌	false	内讧	內訌	corpus-example	tatoeba:1409086	他们开始内讧了。	他們開始內訌了。		lexical-context
+3556	2	讪	3556_1	訕	false	搭讪	搭訕	corpus-example	tatoeba:1806670	在酒吧有没有美女找你搭讪？	在酒吧有沒有美女找你搭訕？		lexical-context
+3557	2	讫	3557_1	訖	false	起讫	起訖	corpus-example	leipzig:zho_wikipedia_2018_1M:228035	其流行期的起讫，集中出现在狂热个人崇拜、	其流行期的起訖，集中出現在狂熱個人崇拜、		lexical-context
+3562	2	驭	3562_1	馭	false	驾驭	駕馭	corpus-example	tatoeba:13610551	若没有适当训练，狼狗的力量与反应速度足以让一般饲主无法驾驭。	若沒有適當訓練，狼狗的力量與反應速度足以讓一般飼主無法駕馭。		lexical-context
+3566	2	玑	3566_1	璣	false	天玑	天璣	authored-example	project-authored	天玑是一颗恒星。	天璣是一顆恆星。		lexical-context
+3574	2	圹	3574_1	壙	false	川圹	川壙	authored-example	project-authored	川圹是一个较少见的词语。	川壙是一個較少見的詞語。		lexical-context
+3575	2	扪	3575_1	捫	false	扪心自问	捫心自問	corpus-example	leipzig:zho_news_2020_300K:180248	有时候扪心自问，这是一种病，得治。	有時候捫心自問，這是一種病，得治。		lexical-context
+3584	2	芗	3584_1	薌	false	芗城	薌城	corpus-example	leipzig:zho_wikipedia_2018_1M:833326	芗城区还有市区环城河以及大小河塘。	薌城區還有市區環城河以及大小河塘。		lexical-context
+3586	2	厍	3586_1	厙	false	厍狻保	厙狻保	authored-example	project-authored	厍狻保是一个较少见的词语。	厙狻保是一個較少見的詞語。		lexical-context
+3597	2	钇	3597_1	釔	false	磷钇矿	磷釔礦	authored-example	project-authored	磷钇矿是一种材料或化学物质。	磷釔礦是一種材料或化學物質。		lexical-context
+3603	2	伛	3603_1	傴	false	伛偻	傴僂	authored-example	project-authored	伛偻是一个较少见的词语。	傴僂是一個較少見的詞語。		lexical-context
+3607	2	伥	3607_1	倀	false	为虎作伥	為虎作倀	corpus-example	leipzig:zho_news_2020_300K:37620	他仗着后台硬，为虎作伥，鱼肉乡里。	他仗著後臺硬，為虎作倀，魚肉鄉里。		lexical-context
+3608	2	伧	3608_1	傖	false	寒伧	寒傖	authored-example	project-authored	寒伧是一个描写性质或状态的词。	寒傖是一個描寫性質或狀態的詞。		lexical-context
+3617	2	犷	3617_1	獷	false	粗犷	粗獷	corpus-example	leipzig:zho_news_2020_300K:224690	石阶数百，錾凿粗犷，仅可容足，陡峭若泰山十八盘。	石階數百，鏨鑿粗獷，僅可容足，陡峭若泰山十八盤。		lexical-context
+3618	2	犸	3618_1	獁	false	猛犸象	猛獁象	corpus-example	leipzig:zho_wikipedia_2018_1M:780163	，結果產生的樣本近似于真正的猛犸象細胞。	，結果產生的樣本近似於真正的猛獁象細胞。		lexical-context
+3620	2	凫	3620_1	鳬	false	凫水	鳬水	authored-example	project-authored	凫水表示游水。	鳬水表示游水。		lexical-context
+3621	2	邬	3621_1	鄔	false	邬君临	鄔君臨	authored-example	project-authored	邬君临是一个人名。	鄔君臨是一個人名。		lexical-context
+3622	2	饧	3622_1	餳	false	饧面	餳麵	authored-example	project-authored	饧面表示一种动作。	餳麵表示一種動作。		lexical-context
+3630	2	忏	3630_1	懺	false	忏悔	懺悔	corpus-example	tatoeba:838375	犯错出忏悔心，才能清净无烦恼。	犯錯出懺悔心，才能清淨無煩惱。		lexical-context
+3631	2	讴	3631_1	謳	false	讴歌	謳歌	corpus-example	leipzig:zho_news_2020_300K:124834	容若一向讴歌爱情，字字句句都是爱情的悲唱。	容若一向謳歌愛情，字字句句都是愛情的悲唱。		lexical-context
+3632	2	讵	3632_1	詎	false	讵非所料	詎非所料	authored-example	project-authored	讵非所料是一个成语或固定说法。	詎非所料是一個成語或固定說法。		lexical-context
+3634	2	讷	3634_1	訥	false	木讷	木訥	corpus-example	leipzig:zho_news_2020_300K:181849	木讷人，有酒镇压独坐一处不敢动，有思无思。	木訥人，有酒鎮壓獨坐一處不敢動，有思無思。		lexical-context
+3644	2	纡	3644_1	紆	false	纡尊降贵	紆尊降貴	authored-example	project-authored	纡尊降贵是一个成语或固定说法。	紆尊降貴是一個成語或固定說法。		lexical-context
+3645	2	纣	3645_1	紂	false	助纣为虐	助紂為虐	corpus-example	leipzig:zho_news_2020_300K:207647	然而，现实情况却是网络霸凌“助纣为虐”。	然而，現實情況卻是網路霸凌“助紂為虐”。		lexical-context
+3646	2	纥	3646_1	紇	false	回纥	回紇	corpus-example	leipzig:zho_news_2020_300K:256849	要说清楚这个问题，首先我们就要说下维吾尔族的先祖回纥。	要說清楚這個問題，首先我們就要說下維吾爾族的先祖回紇。		lexical-context
+3647	2	纨	3647_1	紈	false	纨扇	紈扇	corpus-example	leipzig:zho_wikipedia_2018_1M:529101	扇面多是桃形，形似纨扇，是用细如绢丝的竹丝精心编织而成的。	扇面多是桃形，形似紈扇，是用細如絹絲的竹絲精心編織而成的。		lexical-context
+3649	2	玙	3649_1	璵	false	玙字	璵字	curated-domain	metalinguistic-fallback	古代玉器记载中提到了玙。	古代玉器記載中提到了璵。	Jade terminology / personal names: a rare character associated with fine jade and sometimes used in names.	curated-domain
+3650	2	抟	3650_1	摶	false	抟风	摶風	authored-example	project-authored	抟风表示一种动作。	摶風表示一種動作。		lexical-context
+3655	2	坞	3655_1	塢	false	好莱坞	好萊塢	corpus-example	tatoeba:883466	好莱坞不是以前的样子了。	好萊塢不是以前的樣子了。		lexical-context
+3658	2	㧐	3658_1	㩳	false	㧐字	㩳字	curated-domain	metalinguistic-fallback	他用手㧐住了木架。	他用手㩳住了木架。	Rare action vocabulary: an uncommon hand-related verb recorded in older or regional usage.	curated-domain
+3661	2	芸	3661_0	芸	true	芸豆	芸豆	corpus-example	leipzig:zho_wikipedia_2018_1M:787543	经济作物有亚麻、大麻、芸豆、向日葵、白瓜子等。	經濟作物有亞麻、大麻、芸豆、向日葵、白瓜子等。		lexical-context
+3661	2	芸	3661_1	蕓	false	芸薹	蕓薹	authored-example	project-authored	芸薹是一种植物。	蕓薹是一種植物。		lexical-context
+3663	2	苈	3663_1	藶	false	葶苈子	葶藶子	authored-example	project-authored	葶苈子是一种植物。	葶藶子是一種植物。		lexical-context
+3667	2	苋	3667_1	莧	false	刺苋	刺莧	authored-example	project-authored	刺苋是一种植物。	刺莧是一種植物。		lexical-context
+3669	2	苌	3669_1	萇	false	苌楚	萇楚	authored-example	project-authored	苌楚是一种植物。	萇楚是一種植物。		lexical-context
+3670	2	苁	3670_1	蓯	false	肉苁蓉	肉蓯蓉	authored-example	project-authored	肉苁蓉是一种植物。	肉蓯蓉是一種植物。		lexical-context
+3676	2	苎	3676_1	苧	false	苎麻	苧麻	corpus-example	leipzig:zho_wikipedia_2018_1M:834033	；苎麻种植面积51万亩，占全国的30%。	；苧麻種植面積51萬畝，佔全國的30%。		lexical-context
+3686	2	矶	3686_1	磯	false	洛杉矶	洛杉磯	corpus-example	tatoeba:4267353	我应该取消我到洛杉矶的旅行。	我應該取消我到洛杉磯的旅行。		lexical-context
+3687	2	奁	3687_1	奩	false	妆奁	妝奩	corpus-example	leipzig:zho_wikipedia_2018_1M:953815	阮大铖匿名托人赠送丰厚妆奁以拉拢侯方域，被李香君知晓坚决退回。	阮大鋮匿名託人贈送豐厚妝奩以拉攏侯方域，被李香君知曉堅決退回。		lexical-context
+3690	2	欤	3690_1	歟	false	欤字	歟字	approved-manual	metalinguistic-fallback	此事可行欤？	此事可行歟？	Classical Chinese grammar: sentence-final particle indicating a question, rhetorical question, or exclamation.	approved-manual
+3691	2	轫	3691_1	軔	false	发轫	發軔	corpus-example	leipzig:zho_news_2020_300K:132577	工农武装割据、农村包围城市、武装夺取政权的伟大历程由此发轫。	工農武裝割據、農村包圍城市、武裝奪取政權的偉大曆程由此發軔。		lexical-context
+3696	2	邺	3696_1	鄴	false	建邺	建鄴	corpus-example	leipzig:zho_wikipedia_2018_1M:219741	，其中玄武、鼓楼、秦淮、建邺、栖霞和雨花台等六区被称为主城区。	，其中玄武、鼓樓、秦淮、建鄴、棲霞和雨花臺等六區被稱為主城區。		lexical-context
+3699	2	呒	3699_1	嘸	false	呒没	嘸沒	authored-example	project-authored	呒没是一个较少见的词语。	嘸沒是一個較少見的詞語。		lexical-context
+3700	2	呓	3700_1	囈	false	呓语	囈語	corpus-example	leipzig:zho_news_2020_300K:264628	说是微醺里的呓语吧，人家也一本正经的文字。	說是微醺裡的囈語吧，人家也一本正經的文字。		lexical-context
+3702	2	呖	3702_1	嚦	false	呖字	嚦字	approved-manual	metalinguistic-fallback	林中传来黄莺呖呖的叫声。	林中傳來黃鶯嚦嚦的叫聲。	Onomatopoeia / literary Chinese: represents the clear, repeated sound of birds singing.	approved-manual
+3704	2	旸	3704_1	暘	false	旸谷	暘谷	authored-example	project-authored	旸谷是一个地名。	暘谷是一個地名。		lexical-context
+3708	2	呗	3708_1	唄	false	梵呗	梵唄	corpus-example	leipzig:zho_wikipedia_2018_1M:281457	受其影响，歌赞梵呗也随着佛教传入中国。	受其影響，歌贊梵唄也隨著佛教傳入中國。		lexical-context
+3712	2	帏	3712_1	幃	false	帏幕	幃幕	authored-example	project-authored	帏幕是一种器物。	幃幕是一種器物。		lexical-context
+3715	2	岘	3715_1	峴	false	岘港	峴港	corpus-example	leipzig:zho_news_2020_300K:177508	最大的可能，航母是在越南岘港停泊时感染上的。	最大的可能，航母是在越南峴港停泊時感染上的。		lexical-context
+3717	2	岚	3717_1	嵐	false	李岚清	李嵐清	corpus-example	leipzig:zho_wikipedia_2018_1M:608307	李岚清副总理任内曾主持多个高校合并的案例。	李嵐清副總理任內曾主持多個高校合併的案例。		lexical-context
+3719	2	囵	3719_1	圇	false	囫囵	囫圇	corpus-example	leipzig:zho_wikipedia_2018_1M:68407	与猛兽不同，猛禽在进食时并不咀嚼猎物，大多是将猎物连皮毛带骨骼囫囵吞下。	與猛獸不同，猛禽在進食時並不咀嚼獵物，大多是將獵物連皮毛帶骨骼囫圇吞下。		lexical-context
+3721	2	钊	3721_1	釗	false	李大钊	李大釗	corpus-example	leipzig:zho_news_2020_300K:140768	当时，李大钊每月的收入完全可以过上富裕的生活。	當時，李大釗每月的收入完全可以過上富裕的生活。		lexical-context
+3722	2	钋	3722_1	釙	false	钋字	釙字	approved-manual	metalinguistic-fallback	实验室严格管理钋样品。	實驗室嚴格管理釙樣品。	Chemistry / nuclear science: polonium, a radioactive chemical element.	approved-manual
+3723	2	钌	3723_1	釕	false	钌铞儿	釕銱兒	authored-example	project-authored	钌铞儿是一种器物。	釕銱兒是一種器物。		lexical-context
+3738	2	佥	3738_1	僉	false	佥同	僉同	authored-example	project-authored	佥同是一个较少见的词语。	僉同是一個較少見的詞語。		lexical-context
+3748	2	鸠	3748_1	鳩	false	斑鸠	斑鳩	corpus-example	leipzig:zho_wikipedia_2018_1M:759102	祭牲通常是母羊、羊羔或山羊，若力量不够，可用斑鸠或雏鸽等。	祭牲通常是母羊、羊羔或山羊，若力量不夠，可用斑鳩或雛鴿等。		lexical-context
+3749	2	邹	3749_1	鄒	false	邹容	鄒容	corpus-example	leipzig:zho_wikipedia_2018_1M:492391	当天，炮台街更名为沧白路，新生路更名为邹容路。	當天，炮臺街更名為滄白路，新生路更名為鄒容路。		lexical-context
+3750	2	饨	3750_1	飩	false	馄饨	餛飩	corpus-example	tatoeba:420336	一碗绉纱馄饨，皮儿薄得连肉也看得见！	一碗縐紗餛飩，皮兒薄得連肉也看得見！		lexical-context
+3751	2	饩	3751_1	餼	false	饔饩	饔餼	authored-example	project-authored	饔饩表示一种动作。	饔餼表示一種動作。		lexical-context
+3752	2	饪	3752_1	飪	false	烹饪	烹飪	corpus-example	tatoeba:487621	印度是一个烹饪文化丰富的地区。	印度是一個烹飪文化豐富的地區。		lexical-context
+3753	2	饫	3753_1	飫	false	饫甘餍肥	飫甘饜肥	authored-example	project-authored	饫甘餍肥是一个成语或固定说法。	飫甘饜肥是一個成語或固定說法。		lexical-context
+3754	2	饬	3754_1	飭	false	申饬	申飭	corpus-example	leipzig:zho_wikipedia_2018_1M:534398	拜辞礼毕，上将起，复立而申饬者再四。	拜辭禮畢，上將起，復立而申飭者再四。		lexical-context
+3756	2	庑	3756_1	廡	false	廊庑	廊廡	corpus-example	leipzig:zho_wikipedia_2018_1M:485942	建筑底层中央是土台，四周有单坡的廊庑。	建築底層中央是土臺，四周有單坡的廊廡。		lexical-context
+3759	2	疖	3759_1	癤	false	疖子	癤子	corpus-example	leipzig:zho_news_2020_300K:14986	不少同志长疖子，生痱子，患阴囊炎。	不少同志長癤子，生痱子，患陰囊炎。		lexical-context
+3761	2	闱	3761_1	闈	false	秋闱	秋闈	corpus-example	leipzig:zho_wikipedia_2018_1M:203446	光绪二十三年（1897年），15岁的蔡艮寅跟随樊锥赴秋闱（	光緒二十三年（1897年），15歲的蔡艮寅跟隨樊錐赴秋闈（		lexical-context
+3762	2	闳	3762_1	閎	false	面黄肌闳	面黃肌閎	authored-example	project-authored	面黄肌闳是一个较少见的词语。	面黃肌閎是一個較少見的詞語。		lexical-context
+3763	2	闵	3763_1	閔	false	闵行区	閔行區	corpus-example	leipzig:zho_wikipedia_2018_1M:315215	吴淞地区-浦东新区-闵行区-吴淞地区。	吳淞地區-浦東新區-閔行區-吳淞地區。		lexical-context
+3765	2	炀	3765_1	煬	false	隋炀帝	隋煬帝	corpus-example	leipzig:zho_news_2020_300K:290465	隋炀帝的荒淫无度，史上人尽皆知。	隋煬帝的荒淫無度，史上人盡皆知。		lexical-context
+3766	2	沣	3766_1	灃	false	沣水	灃水	authored-example	project-authored	沣水是一个地名。	灃水是一個地名。		lexical-context
+3769	2	沤	3769_1	漚	false	沤凼	漚凼	authored-example	project-authored	沤凼是一个较少见的词语。	漚凼是一個較少見的詞語。		lexical-context
+3777	2	沨	3777_1	渢	false	沨字	渢字	domain-template	metalinguistic-fallback	地方志中记载了沨。	地方志中記載了渢。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+3781	2	沩	3781_1	潙	false	沩山	潙山	corpus-example	leipzig:zho_news_2020_300K:213441	生于斯、长于斯的陈林经常思考，为什么沩山毛尖品质拔尖，但种植茶叶的茶农却不能脱贫致富？	生於斯、長於斯的陳林經常思考，為什麼潙山毛尖品質拔尖，但種植茶葉的茶農卻不能脫貧致富？		lexical-context
+3783	2	怃	3783_1	憮	false	怃然	憮然	corpus-example	leipzig:zho_wikipedia_2018_1M:444062	宪宗得知万贞儿死后，怃然曰："万妃长去，吾亦安能久矣"。	憲宗得知萬貞兒死後，憮然曰："萬妃長去，吾亦安能久矣"。		lexical-context
+3784	2	怄	3784_1	慪	false	怄气	慪氣	corpus-example	leipzig:zho_news_2020_300K:38138	他们总说我们‘过火’，实在怄气要命。”	他們總說我們‘過火’，實在慪氣要命。”		lexical-context
+3787	2	忾	3787_1	愾	false	同仇敌忾	同仇敵愾	corpus-example	leipzig:zho_news_2020_300K:11489	一言以蔽之，赢取这场硬仗，靠的是同仇敌忾，众志成城。	一言以蔽之，贏取這場硬仗，靠的是同仇敵愾，眾志成城。		lexical-context
+3788	2	怅	3788_1	悵	false	惆怅	惆悵	corpus-example	leipzig:zho_news_2020_300K:195479	每每这个时候，我总倍感孤独与惆怅。	每每這個時候，我總倍感孤獨與惆悵。		lexical-context
+3791	2	怆	3791_1	愴	false	悲怆	悲愴	corpus-example	leipzig:zho_news_2020_300K:277575	这种笔调优雅悲怆，又具有沉郁凝重。	這種筆調優雅悲愴，又具有沉鬱凝重。		lexical-context
+3794	2	诂	3794_1	詁	false	训诂	訓詁	corpus-example	leipzig:zho_wikipedia_2018_1M:559363	新训诂学是相对旧有的训诂学而言的。	新訓詁學是相對舊有的訓詁學而言的。		lexical-context
+3795	2	诃	3795_1	訶	false	契诃夫	契訶夫	corpus-example	leipzig:zho_wikipedia_2018_1M:461413	尽管如此，契诃夫对父母始终非常孝顺。	儘管如此，契訶夫對父母始終非常孝順。		lexical-context
+3796	2	诅	3796_1	詛	false	诅咒	詛咒	corpus-example	tatoeba:5611463	她大声诅咒。	她大聲詛咒。		lexical-context
+3797	2	诋	3797_1	詆	false	诋毁	詆毀	corpus-example	tatoeba:1358598	通过诋毁别人，你得不到什么。	透過詆毀別人，你得不到什麼。		lexical-context
+3798	2	诌	3798_1	謅	false	胡诌	胡謅	corpus-example	leipzig:zho_wikipedia_2018_1M:699627	率汰三笔五笔，覆酱嫌粗；胡诌五言七言，打油自喜。	率汰三筆五筆，覆醬嫌粗；胡謅五言七言，打油自喜。		lexical-context
+3799	2	诏	3799_1	詔	false	诏书	詔書	corpus-example	leipzig:zho_news_2020_300K:28758	事后司马伦伪造诏书自封相国，司马伦一党掌握了朝政大权。	事後司馬倫偽造詔書自封相國，司馬倫一黨掌握了朝政大權。		lexical-context
+3800	2	诒	3800_1	詒	false	自诒伊戚	自詒伊戚	authored-example	project-authored	自诒伊戚是一个成语或固定说法。	自詒伊戚是一個成語或固定說法。		lexical-context
+3802	2	陇	3802_1	隴	false	陇西	隴西	corpus-example	leipzig:zho_news_2020_300K:220188	皇帝指婚的消息传遍陇西，威远郡更是一片沸腾。	皇帝指婚的訊息傳遍隴西，威遠郡更是一片沸騰。		lexical-context
+3805	2	陉	3805_1	陘	false	井陉	井陘	corpus-example	leipzig:zho_news_2020_300K:272889	这些事都记载在《李斯列传》中，继续往前走，从井陉到达九原。	這些事都記載在《李斯列傳》中，繼續往前走，從井陘到達九原。		lexical-context
+3807	2	妩	3807_1	嫵	false	妩媚	嫵媚	corpus-example	tatoeba:817297	我喜欢这幅画不是因为它是个杰作而是因为它妩媚。	我喜歡這幅畫不是因為它是個傑作而是因為它嫵媚。		lexical-context
+3808	2	妪	3808_1	嫗	false	老妪	老嫗	corpus-example	leipzig:zho_news_2020_300K:129547	就像白居易的诗之所以为人喜爱，是因为连老妪也能朗朗上口。	就像白居易的詩之所以為人喜愛，是因為連老嫗也能朗朗上口。		lexical-context
+3812	2	妫	3812_1	嬀	false	妫字	嬀字	curated-domain	metalinguistic-fallback	妫是一个古老的姓氏。	嬀是一個古老的姓氏。	Genealogy / surnames: an old Chinese family name associated with historical lineages.	curated-domain
+3818	2	刭	3818_1	剄	false	刭字	剄字	curated-domain	metalinguistic-fallback	古书记载了刭刑。	古書記載了剄刑。	Historical law and punishment: refers to cutting the throat or execution by that method.	curated-domain
+3821	2	纭	3821_1	紜	false	众说纷纭	眾說紛紜	corpus-example	leipzig:zho_news_2020_300K:218503	疫情间网红的论吃，很有点众说纷纭了。	疫情間網紅的論吃，很有點眾說紛紜了。		lexical-context
+3822	2	纰	3822_1	紕	false	纰漏	紕漏	corpus-example	leipzig:zho_news_2020_300K:107844	在隔离病区，纰漏所带来的影响是无法预计的。	在隔離病區，紕漏所帶來的影響是無法預計的。		lexical-context
+3823	2	纴	3823_1	紝	false	纴织	紝織	authored-example	project-authored	纴织表示一种动作。	紝織表示一種動作。		lexical-context
+3824	2	纶	3824_1	綸	false	涤纶	滌綸	corpus-example	leipzig:zho_wikipedia_2018_1M:854303	衣物材質一般包括棉，涤纶，锦纶等各种纤维制品的编制物，由编织产生布料最后加工成服装。	衣物材質一般包括棉，滌綸，錦綸等各種纖維製品的編制物，由編織產生布料最後加工成服裝。		lexical-context
+3825	2	纾	3825_1	紓	false	林纾	林紓	corpus-example	leipzig:zho_wikipedia_2018_1M:614295	林纾分任大学堂译书局总办、副总办。	林紓分任大學堂譯書局總辦、副總辦。		lexical-context
+3826	2	玮	3826_1	瑋	false	瑰玮	瑰瑋	authored-example	project-authored	瑰玮是一个较少见的词语。	瑰瑋是一個較少見的詞語。		lexical-context
+3835	2	匦	3835_1	匭	false	投票匦	投票匭	authored-example	project-authored	投票匦是一种器物。	投票匭是一種器物。		lexical-context
+3841	2	垆	3841_1	壚	false	当垆	當壚	corpus-example	leipzig:zho_wikipedia_2018_1M:492266	，当垆卖酒，演绎了一段千古佳话。	，當壚賣酒，演繹了一段千古佳話。		lexical-context
+3848	2	㧟	3848_1	擓	false	㧟字	擓字	curated-domain	metalinguistic-fallback	他把篮子㧟在胳膊上。	他把籃子擓在胳膊上。	Regional and dialect vocabulary: a verb used for carrying something over the arm or for a rubbing or scratching action.	curated-domain
+3857	2	茏	3857_1	蘢	false	葱茏	蔥蘢	corpus-example	leipzig:zho_news_2020_300K:285389	重庆梅花山麓的墓碑前满眼草木葱茏。	重慶梅花山麓的墓碑前滿眼草木蔥蘢。		lexical-context
+3868	2	茑	3868_1	蔦	false	茑萝	蔦蘿	authored-example	project-authored	茑萝是一种植物。	蔦蘿是一種植物。		lexical-context
+3870	2	茔	3870_1	塋	false	坟茔	墳塋	corpus-example	leipzig:zho_news_2020_300K:74357	北方是到了春节将近，年三十还是二十九，要到故人坟茔上迎先人回去过年节的。	北方是到了春節將近，年三十還是二十九，要到故人墳塋上迎先人回去過年節的。		lexical-context
+3871	2	茕	3871_1	煢	false	茕茕孑立	煢煢孑立	corpus-example	tatoeba:10537181	我茕茕孑立，形影相吊。	我煢煢孑立，形影相弔。		lexical-context
+3874	2	枥	3874_1	櫪	false	老骥伏枥	老驥伏櫪	corpus-example	leipzig:zho_news_2020_300K:238779	老骥伏枥，志在千里；烈士暮年，壮心不已。	老驥伏櫪，志在千里；烈士暮年，壯心不已。		lexical-context
+3878	2	枧	3878_1	梘	false	枧字	梘字	curated-domain	metalinguistic-fallback	清水从枧里流出来。	清水從梘裡流出來。	Traditional material culture: a bamboo or wooden tube, peg, or water spout.	curated-domain
+3880	2	枨	3880_1	棖	false	枨字	棖字	curated-domain	metalinguistic-fallback	门旁装着一根枨。	門旁裝著一根棖。	Traditional architecture: a doorpost, door stop, or related wooden fitting.	curated-domain
+3881	2	枞	3881_1	樅	false	枞树	樅樹	corpus-example	leipzig:zho_news_2020_300K:283380	那山，已经长满枞树、藤蔓，石头都见不着了。	那山，已經長滿樅樹、藤蔓，石頭都見不著了。		lexical-context
+3887	2	砀	3887_1	碭	false	砀山	碭山	corpus-example	leipzig:zho_wikipedia_2018_1M:755408	，砀山县，组建萧砀县，属蚌埠专区。	，碭山縣，組建蕭碭縣，屬蚌埠專區。		lexical-context
+3890	2	瓯	3890_1	甌	false	建瓯	建甌	corpus-example	leipzig:zho_wikipedia_2018_1M:633793	此后，建瓯成为闽北的政治文化中心。	此後，建甌成為閩北的政治文化中心。		lexical-context
+3892	2	郏	3892_1	郟	false	郏县	郟縣	corpus-example	leipzig:zho_wikipedia_2018_1M:668111	，流经汝州市、郏县、宝丰县、叶县，	，流經汝州市、郟縣、寶豐縣、葉縣，		lexical-context
+3893	2	轭	3893_1	軛	false	共轭	共軛	corpus-example	leipzig:zho_wikipedia_2018_1M:67331	与其共轭 在复平面中的几何表示。	與其共軛 在複平面中的幾何表示。		lexical-context
+3895	2	鸢	3895_1	鳶	false	鸢尾	鳶尾	corpus-example	leipzig:zho_wikipedia_2018_1M:506867	德国鸢尾、西班牙鸢尾、黄鸢尾是最常见的品种。	德國鳶尾、西班牙鳶尾、黃鳶尾是最常見的品種。		lexical-context
+3898	2	昙	3898_1	曇	false	昙花一现	曇花一現	corpus-example	leipzig:zho_news_2020_300K:177029	曾经的那段岁月，犹如昙花一现，那么美好，却又如此短暂。	曾經的那段歲月，猶如曇花一現，那麼美好，卻又如此短暫。		lexical-context
+3910	2	虮	3910_1	蟣	false	虮子	蟣子	authored-example	project-authored	虮子是一个较少见的词语。	蟣子是一個較少見的詞語。		lexical-context
+3913	2	黾	3913_1	黽	false	黾勉	黽勉	corpus-example	tatoeba:2941315	差池不相见，黾勉空仰止。	差池不相見，黽勉空仰止。		lexical-context
+3918	2	咛	3918_1	嚀	false	叮咛	叮嚀	corpus-example	tatoeba:13860167	老师叮咛学生不要因为会考而过度紧张。	老師叮嚀學生不要因為會考而過度緊張。		lexical-context
+3922	2	咝	3922_1	噝	false	咝咝声	噝噝聲	authored-example	project-authored	咝咝声是一个较少见的词语。	噝噝聲是一個較少見的詞語。		lexical-context
+3924	2	岿	3924_1	巋	false	岿然不动	巋然不動	corpus-example	leipzig:zho_news_2020_300K:166184	敌军围困万千重，我自岿然不动”。	敵軍圍困萬千重，我自巋然不動”。		lexical-context
+3930	2	刿	3930_1	劌	false	刿心刳肺	劌心刳肺	authored-example	project-authored	刿心刳肺是一个成语或固定说法。	劌心刳肺是一個成語或固定說法。		lexical-context
+3933	2	剀	3933_1	剴	false	剀切	剴切	corpus-example	leipzig:zho_wikipedia_2018_1M:825798	至其持议守正，虽严谕屡下，陈辞益剀切不挠。	至其持議守正，雖嚴諭屢下，陳辭益剴切不撓。		lexical-context
+3935	2	峄	3935_1	嶧	false	峄城区	嶧城區	corpus-example	leipzig:zho_wikipedia_2018_1M:636086	此外，在市中区有枣庄东湖公园和光明广场，在峄城区有枣庄冠世榴园生态文化旅游区。	此外，在市中區有棗莊東湖公園和光明廣場，在嶧城區有棗莊冠世榴園生態文化旅遊區。		lexical-context
+3939	2	钍	3939_1	釷	false	钍字	釷字	approved-manual	metalinguistic-fallback	这种矿石含有少量钍。	這種礦石含有少量釷。	Chemistry / nuclear science: thorium, a naturally occurring radioactive metallic element.	approved-manual
+3940	2	钎	3940_1	釺	false	钢钎	鋼釺	authored-example	project-authored	钢钎是一种器物。	鋼釺是一種器物。		lexical-context
+3941	2	钏	3941_1	釧	false	玉钏儿	玉釧兒	authored-example	project-authored	玉钏儿是一种器物。	玉釧兒是一種器物。		lexical-context
+3942	2	钒	3942_1	釩	false	五氧化二钒	五氧化二釩	corpus-example	leipzig:zho_wikipedia_2018_1M:113026	五氧化二钒加熱可放出氧氣，且這個反應是可逆的。	五氧化二釩加熱可放出氧氣，且這個反應是可逆的。		lexical-context
+3943	2	钕	3943_1	釹	false	钕铁硼	釹鐵硼	authored-example	project-authored	钕铁硼是一种材料或化学物质。	釹鐵硼是一種材料或化學物質。		lexical-context
+3944	2	钗	3944_1	釵	false	薛宝钗	薛寶釵	corpus-example	leipzig:zho_news_2020_300K:282928	那么我为什么说美玉无瑕说的是神瑛侍者薛宝钗呢？	那麼我為什麼說美玉無瑕說的是神瑛侍者薛寶釵呢？		lexical-context
+3960	2	侩	3960_1	儈	false	市侩	市儈	corpus-example	leipzig:zho_news_2020_300K:285510	重要的原因，袁溥之反感杨子烈在婚姻问题上的市侩气味。	重要的原因，袁溥之反感楊子烈在婚姻問題上的市儈氣味。		lexical-context
+3963	2	侪	3963_1	儕	false	同侪	同儕	corpus-example	leipzig:zho_wikipedia_2018_1M:821532	自己好好实践，吾不告过你去爱你的同侪么？	自己好好實踐，吾不告過你去愛你的同儕麼？		lexical-context
+3966	2	侬	3966_1	儂	false	蓝侬	藍儂	authored-example	project-authored	蓝侬是一个较少见的词语。	藍儂是一個較少見的詞語。		lexical-context
+3971	2	刽	3971_1	劊	false	刽子手	劊子手	corpus-example	leipzig:zho_news_2020_300K:235173	罗兰夫人歉意地对刽子手说了一声“对不起！”	羅蘭夫人歉意地對劊子手說了一聲“對不起！”		lexical-context
+3973	2	怂	3973_1	慫	false	怂恿	慫恿	corpus-example	tatoeba:919907	广告怂恿我们买奢侈品。	廣告慫恿我們買奢侈品。		lexical-context
+3974	2	籴	3974_1	糴	false	平籴	平糴	authored-example	project-authored	平籴是一个较少见的词语。	平糴是一個較少見的詞語。		lexical-context
+3976	2	戗	3976_1	戧	false	戗风	戧風	authored-example	project-authored	戗风是一个较少见的词语。	戧風是一個較少見的詞語。		lexical-context
+3978	2	䏝	3978_1	膞	false	䏝字	膞字	curated-domain	metalinguistic-fallback	厨师把䏝清洗干净。	廚師把膞清洗乾淨。	Anatomy / food terminology: a rare character associated with an animal gizzard or internal organ.	curated-domain
+3983	2	迩	3983_1	邇	false	闻名遐迩	聞名遐邇	corpus-example	tatoeba:13920751	我去年寒假去哈尔滨旅游，参观了闻名遐迩的冰雕展。	我去年寒假去哈爾濱旅遊，參觀了聞名遐邇的冰雕展。		lexical-context
+3991	2	枭	3991_1	梟	false	枭雄	梟雄	corpus-example	leipzig:zho_news_2020_300K:96304	国内用户如何才能够免费领取到《刺客信条：枭雄》呢？	國內使用者如何才能夠免費領取到《刺客信條：梟雄》呢？		lexical-context
+3992	2	饯	3992_1	餞	false	蜜饯	蜜餞	corpus-example	leipzig:zho_wikipedia_2018_1M:42705	一些食用花卉还可加工为蜜饯，例如菊花、	一些食用花卉還可加工為蜜餞，例如菊花、		lexical-context
+3993	2	饴	3993_1	飴	false	饴糖	飴糖	corpus-example	leipzig:zho_wikipedia_2018_1M:555514	料中有麻屑、白糖、香条、桂花等，食时甜酥，骨子虽用饴糖熬制而成，但松脆，落口消深，不沾牙齿。	料中有麻屑、白糖、香條、桂花等，食時甜酥，骨子雖用飴糖熬製而成，但鬆脆，落口消深，不沾牙齒。		lexical-context
+3997	2	疠	3997_1	癘	false	瘴疠	瘴癘	corpus-example	leipzig:zho_news_2020_300K:122319	宁远在永州的南边，在九疑山、阳明山两山的围合之中，古称瘴疠之地。	寧遠在永州的南邊，在九疑山、陽明山兩山的圍合之中，古稱瘴癘之地。		lexical-context
+3999	2	疡	3999_1	瘍	false	溃疡	潰瘍	corpus-example	leipzig:zho_news_2020_300K:243753	胃肠炎和溃疡的人群要远离这种腌制食物，否则会加重病情。	胃腸炎和潰瘍的人群要遠離這種醃製食物，否則會加重病情。		lexical-context
+4003	2	炜	4003_1	煒	false	沈起炜	沈起煒	authored-example	project-authored	沈起炜是一个人名。	沈起煒是一個人名。		lexical-context
+4004	2	𬉼	4004_1	熰	false	𬉼字	熰字	curated-domain	metalinguistic-fallback	今年大旱，天气十分𬉼。	今年大旱，天氣十分熰。	Classical environmental vocabulary: describes severe drought or intense heat.	curated-domain
+4007	2	炝	4007_1	熗	false	炝字	熗字	curated-domain	metalinguistic-fallback	这道菜先用热油炝一下。	這道菜先用熱油熗一下。	Cooking: a technique involving hot oil, brief boiling, or seasoning before further preparation.	curated-domain
+4011	2	泷	4011_1	瀧	false	泷水	瀧水	corpus-example	leipzig:zho_wikipedia_2018_1M:666436	、泷水等较大支流汇入，水量大增；吉水到新干段，切穿武功山余脉，形成一较长的峡谷带。	、瀧水等較大支流匯入，水量大增；吉水到新幹段，切穿武功山餘脈，形成一較長的峽谷帶。		lexical-context
+4012	2	泸	4012_1	瀘	false	泸州	瀘州	corpus-example	leipzig:zho_news_2020_300K:275372	这时泸州刚遭受过敌机洗劫，火光未息，一片废墟，惨不忍睹。	這時瀘州剛遭受過敵機洗劫，火光未息，一片廢墟，慘不忍睹。		lexical-context
+4017	2	泺	4017_1	濼	false	泺字	濼字	curated-domain	metalinguistic-fallback	泺水流经山东。	濼水流經山東。	Historical geography / hydrology: used in the name of a river in Shandong.	curated-domain
+4024	2	泾	4024_1	涇	false	泾县	涇縣	corpus-example	leipzig:zho_news_2020_300K:51520	但男现在部队在敌后，驻在泾县杨村。	但男現在部隊在敵後，駐在涇縣楊村。		lexical-context
+4031	2	㤘	4031_1	㥮	false	㤘字	㥮字	curated-domain	metalinguistic-fallback	他的性情十分㤘。	他的性情十分㥮。	Classical character description: denotes stubborn, obstinate, or fierce behaviour.	curated-domain
+4034	2	怿	4034_1	懌	false	怿字	懌字	curated-domain	metalinguistic-fallback	闻此喜讯，众人皆怿。	聞此喜訊，眾人皆懌。	Classical literature: means pleased, glad, or delighted.	curated-domain
+4038	2	诓	4038_1	誆	false	诓骗	誆騙	authored-example	project-authored	诓骗表示一种动作。	誆騙表示一種動作。		lexical-context
+4039	2	诔	4039_1	誄	false	诔赞	誄讚	authored-example	project-authored	诔赞是一个较少见的词语。	誄讚是一個較少見的詞語。		lexical-context
+4040	2	诖	4040_1	詿	false	扶同诖误	扶同詿誤	authored-example	project-authored	扶同诖误是一个较少见的词语。	扶同詿誤是一個較少見的詞語。		lexical-context
+4041	2	诘	4041_1	詰	false	诘问	詰問	corpus-example	leipzig:zho_wikipedia_2018_1M:280965	取中之，结党欺君，故上召对诘问。	取中之，結黨欺君，故上召對詰問。		lexical-context
+4043	2	诙	4043_1	詼	false	诙谐	詼諧	corpus-example	tatoeba:13149133	汤姆具有诙谐的性格。	湯姆具有詼諧的性格。		lexical-context
+4045	2	郓	4045_1	鄆	false	郓城县	鄆城縣	corpus-example	leipzig:zho_wikipedia_2018_1M:556715	新任郓城县知县的姘头白秀英到郓城卖艺。	新任鄆城縣知縣的姘頭白秀英到鄆城賣藝。		lexical-context
+4048	2	祎	4048_1	禕	false	祎字	禕字	approved-manual	metalinguistic-fallback	古人称其德甚祎。	古人稱其德甚禕。	Classical literature: adjective meaning beautiful, excellent, or admirable.	approved-manual
+4051	2	诛	4051_1	誅	false	诛杀	誅殺	corpus-example	leipzig:zho_news_2020_300K:234738	继诛杀蒙氏兄弟之后，他们又将杀戮的矛头转向了秦国王室。	繼誅殺蒙氏兄弟之後，他們又將殺戮的矛頭轉向了秦國王室。		lexical-context
+4052	2	诜	4052_1	詵	false	郤诜丹桂	郤詵丹桂	authored-example	project-authored	郤诜丹桂是一个较少见的词语。	郤詵丹桂是一個較少見的詞語。		lexical-context
+4053	2	诟	4053_1	詬	false	诟病	詬病	corpus-example	leipzig:zho_news_2020_300K:196195	毕竟他们出手的话，实在是落人诟病。	畢竟他們出手的話，實在是落人詬病。		lexical-context
+4054	2	诠	4054_1	詮	false	诠释	詮釋	corpus-example	tatoeba:13233305	这部电影试图打破刻板印象，重新诠释何谓真正的男性特质。	這部電影試圖打破刻板印象，重新詮釋何謂真正的男性特質。		lexical-context
+4055	2	诣	4055_1	詣	false	造诣	造詣	corpus-example	tatoeba:2432799	虽然在钢琴上她的造诣不是很深，但是她勤而好学。	雖然在鋼琴上她的造詣不是很深，但是她勤而好學。		lexical-context
+4056	2	诤	4056_1	諍	false	诤人	諍人	authored-example	project-authored	诤人是一个较少见的词语。	諍人是一個較少見的詞語。		lexical-context
+4057	2	诧	4057_1	詫	false	诧异	詫異	corpus-example	leipzig:zho_news_2020_300K:298601	魏小明很诧异：“你怎么变得这么厉害！	魏小明很詫異：“你怎麼變得這麼厲害！		lexical-context
+4058	2	诨	4058_1	諢	false	插科打诨	插科打諢	corpus-example	leipzig:zho_wikipedia_2018_1M:48566	，一般扮演插科打诨比较滑稽或貌不驚人的角色，	，一般扮演插科打諢比較滑稽或貌不驚人的角色，		lexical-context
+4059	2	诩	4059_1	詡	false	自诩	自詡	corpus-example	leipzig:zho_news_2020_300K:223548	看来，我似乎也可自诩为“有足够多的人生历练积累”者了。	看來，我似乎也可自詡為“有足夠多的人生歷練積累”者了。		lexical-context
+4070	2	驽	4070_1	駑	false	驽马	駑馬	corpus-example	leipzig:zho_news_2020_300K:75249	千里马用来拉磨或不如普通驽马，才尽其用、用当其时方可得“求才”始终，让人才发挥出其最大效能。	千里馬用來拉磨或不如普通駑馬，才盡其用、用當其時方可得“求才”始終，讓人才發揮出其最大效能。		lexical-context
+4074	2	绀	4074_1	紺	false	发绀	發紺	corpus-example	tatoeba:13573939	将血压带 (或止血带) 套在手臂上，逐渐增加压力，直到前臂发绀，桡动脉搏动几乎消失。	將血壓帶 (或止血帶) 套在手臂上，逐漸增加壓力，直到前臂發紺，橈動脈搏動幾乎消失。		lexical-context
+4075	2	绁	4075_1	紲	false	累绁	累紲	authored-example	project-authored	累绁是一个较少见的词语。	累紲是一個較少見的詞語。		lexical-context
+4076	2	绂	4076_1	紱	false	朱绂	朱紱	authored-example	project-authored	朱绂是一种器物。	朱紱是一種器物。		lexical-context
+4077	2	驷	4077_1	駟	false	一言既出驷马难追	一言既出駟馬難追	authored-example	project-authored	一言既出驷马难追是一个成语或固定说法。	一言既出駟馬難追是一個成語或固定說法。		lexical-context
+4078	2	驸	4078_1	駙	false	驸马	駙馬	corpus-example	leipzig:zho_news_2020_300K:185040	杨师道尚桂阳公主，拜驸马都尉。	楊師道尚桂陽公主，拜駙馬都尉。		lexical-context
+4079	2	绉	4079_1	縐	false	文绉绉	文縐縐	authored-example	project-authored	文绉绉是一个较少见的词语。	文縐縐是一個較少見的詞語。		lexical-context
+4080	2	绌	4080_1	絀	false	相形见绌	相形見絀	corpus-example	leipzig:zho_news_2020_300K:273137	这些庞然大物的到来使机场上的其他飞机顿时相形见绌：	這些龐然大物的到來使機場上的其他飛機頓時相形見絀：		lexical-context
+4081	2	驿	4081_1	驛	false	驿站	驛站	corpus-example	leipzig:zho_news_2020_300K:275665	这是中国的春节，也是中国的逐梦驿站。	這是中國的春節，也是中國的逐夢驛站。		lexical-context
+4082	2	骀	4082_1	駘	false	骀借	駘藉	authored-example	project-authored	骀借是一个较少见的词语。	駘藉是一個較少見的詞語。		lexical-context
+4087	2	珑	4087_1	瓏	false	玲珑	玲瓏	corpus-example	leipzig:zho_news_2020_300K:273535	这些雨花石晶莹圆润，玲珑剔透。	這些雨花石晶瑩圓潤，玲瓏剔透。		lexical-context
+4090	2	顸	4090_1	頇	false	颟里颟顸	顢里顢頇	authored-example	project-authored	颟里颟顸是一个较少见的词语。	顢里顢頇是一個較少見的詞語。		lexical-context
+4094	2	垭	4094_1	埡	false	垭口	埡口	corpus-example	leipzig:zho_news_2020_300K:79241	参加过松山、阴登山、大垭口战役及滇西收复战役。	參加過鬆山、陰登山、大埡口戰役及滇西收復戰役。		lexical-context
+4095	2	挝	4095_1	撾	false	老挝	老撾	corpus-example	tatoeba:10529598	泰国在北边接壤缅甸和老挝。	泰國在北邊接壤緬甸和老撾。		lexical-context
+4097	2	挞	4097_1	撻	false	鞭挞	鞭撻	corpus-example	leipzig:zho_news_2020_300K:122466	它会鞭挞着我，成为一个优秀的人民教师。	它會鞭撻著我，成為一個優秀的人民教師。		lexical-context
+4100	2	贲	4100_1	賁	false	贲门	賁門	authored-example	project-authored	贲门是一个医学词语。	賁門是一個醫學詞語。		lexical-context
+4101	2	垱	4101_1	壋	false	垱字	壋字	curated-domain	metalinguistic-fallback	农民修好垱来引水。	農民修好壋來引水。	Traditional agriculture / irrigation: a small dike used to divert water in a field.	curated-domain
+4106	2	挦	4106_1	撏	false	东挦西扯	東撏西扯	authored-example	project-authored	东挦西扯是一个成语或固定说法。	東撏西扯是一個成語或固定說法。		lexical-context
+4109	2	荚	4109_1	莢	false	荚果	莢果	corpus-example	leipzig:zho_wikipedia_2018_1M:840575	荚果的形状、大小及荚瓣质地变化很大。	莢果的形狀、大小及莢瓣質地變化很大。		lexical-context
+4111	2	贳	4111_1	貰	false	诛故贳误	誅故貰誤	authored-example	project-authored	诛故贳误是一个成语或固定说法。	誅故貰誤是一個成語或固定說法。		lexical-context
+4112	2	荜	4112_1	蓽	false	蓬荜	蓬蓽	authored-example	project-authored	蓬荜是一个较少见的词语。	蓬蓽是一個較少見的詞語。		lexical-context
+4118	2	荞	4118_1	蕎	false	荞麦	蕎麥	corpus-example	leipzig:zho_wikipedia_2018_1M:463930	，山区白族多食粗粮，比如玉米、荞麦。	，山區白族多食粗糧，比如玉米、蕎麥。		lexical-context
+4123	2	荟	4123_1	薈	false	荟萃	薈萃	corpus-example	leipzig:zho_news_2020_300K:157252	承东启西、接南济北、通江达海、人文荟萃。	承東啟西、接南濟北、通江達海、人文薈萃。		lexical-context
+4126	2	荠	4126_1	薺	false	荸荠	荸薺	corpus-example	leipzig:zho_news_2020_300K:248944	荸荠又甜又脆，可以生吃也可以煮吃。	荸薺又甜又脆，可以生吃也可以煮吃。		lexical-context
+4129	2	垩	4129_1	堊	false	白垩纪	白堊紀	corpus-example	leipzig:zho_wikipedia_2018_1M:984753	食虫性动物在中生代上白垩纪地层中就已出现。	食蟲性動物在中生代上白堊紀地層中就已出現。		lexical-context
+4130	2	荥	4130_1	滎	false	荥阳	滎陽	corpus-example	leipzig:zho_news_2020_300K:131604	山径绕秋江，胜览幽芳，扶贫政策进荥阳。	山徑繞秋江，勝覽幽芳，扶貧政策進滎陽。		lexical-context
+4131	2	荦	4131_1	犖	false	荦确	犖确	authored-example	project-authored	荦确是一个较少见的词语。	犖确是一個較少見的詞語。		lexical-context
+4132	2	荨	4132_1	蕁	false	荨麻疹	蕁麻疹	corpus-example	leipzig:zho_news_2020_300K:224315	睡醒后在镜子前坐定，她才发现，原来红肿的地方，长出了像荨麻疹似的水肿性团块，还溃烂了。	睡醒後在鏡子前坐定，她才發現，原來紅腫的地方，長出了像蕁麻疹似的水腫性團塊，還潰爛了。		lexical-context
+4133	2	荩	4133_1	藎	false	荩字	藎字	domain-template	metalinguistic-fallback	本草书中记载了荩。	本草書中記載了藎。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+4135	2	荪	4135_1	蓀	false	竹荪	竹蓀	authored-example	project-authored	竹荪是一种植物。	竹蓀是一種植物。		lexical-context
+4137	2	荬	4137_1	蕒	false	苦荬菜	苦蕒菜	authored-example	project-authored	苦荬菜是一种植物。	苦蕒菜是一種植物。		lexical-context
+4138	2	荮	4138_1	葤	false	荮字	葤字	domain-template	metalinguistic-fallback	本草书中记载了荮。	本草書中記載了葤。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+4140	2	栉	4140_1	櫛	false	鳞次栉比	鱗次櫛比	corpus-example	leipzig:zho_news_2020_300K:286819	镇内屋宇鳞次栉比，人口在5万以上。	鎮內屋宇鱗次櫛比，人口在5萬以上。		lexical-context
+4143	2	栊	4143_1	櫳	false	帘栊	簾櫳	corpus-example	leipzig:zho_wikipedia_2018_1M:624252	梯横画阁黄昏后，又还是、斜月帘栊。	梯橫畫閣黃昏後，又還是、斜月簾櫳。		lexical-context
+4146	2	栌	4146_1	櫨	false	黄栌	黃櫨	corpus-example	leipzig:zho_news_2020_300K:299477	黄栌数株，高逾五米，径粗数寸，冠盖亭亭，处草滩中，殊为罕见。	黃櫨數株，高逾五米，徑粗數寸，冠蓋亭亭，處草灘中，殊為罕見。		lexical-context
+4155	2	栎	4155_1	櫟	false	栓皮栎	栓皮櫟	corpus-example	leipzig:zho_wikipedia_2018_1M:207885	全洲盛产红木、黑檀木、花梨木、柯巴树、乌木、樟树、栲树、胡桃木、黄漆木、栓皮栎等经济林木。	全洲盛產紅木、黑檀木、花梨木、柯巴樹、烏木、樟樹、栲樹、胡桃木、黃漆木、栓皮櫟等經濟林木。		lexical-context
+4160	2	柽	4160_1	檉	false	柽柳	檉柳	authored-example	project-authored	柽柳是一种植物。	檉柳是一種植物。		lexical-context
+4163	2	郦	4163_1	酈	false	郦道元	酈道元	corpus-example	leipzig:zho_news_2020_300K:74488	北魏郦道元作《水经注，大辽水》引《博物志》也记载说：”魏武于马上逢狮子、使格之，杀伤甚众。	北魏酈道元作《水經注，大遼水》引《博物志》也記載說：”魏武於馬上逢獅子、使格之，殺傷甚眾。		lexical-context
+4165	2	砗	4165_1	硨	false	砗磲	硨磲	corpus-example	leipzig:zho_news_2020_300K:118646	如果不是陈学冬举报，滥捕砗磲会被发现吗？	如果不是陳學冬舉報，濫捕硨磲會被發現嗎？		lexical-context
+4170	2	砜	4170_1	碸	false	聚砜	聚碸	authored-example	project-authored	聚砜是一种材料或化学物质。	聚碸是一種材料或化學物質。		lexical-context
+4175	2	殇	4175_1	殤	false	河殇	河殤	corpus-example	leipzig:zho_wikipedia_2018_1M:82109	，中国大陆主流媒体在批判赵紫阳的同时，对《河殇》也进行了抨击。	，中國大陸主流媒體在批判趙紫陽的同時，對《河殤》也進行了抨擊。		lexical-context
+4178	2	轱	4178_1	軲	false	轱辘	軲轆	corpus-example	leipzig:zho_wikipedia_2018_1M:237716	凿井须于竹树下，深见泉脉，上置轱辘引汲，不则盖一小亭覆之。	鑿井須於竹樹下，深見泉脈，上置軲轆引汲，不則蓋一小亭覆之。		lexical-context
+4179	2	轲	4179_1	軻	false	荆轲	荊軻	corpus-example	leipzig:zho_news_2020_300K:64229	其中，司马迁细致描写了荆轲刺杀秦王的故事。	其中，司馬遷細緻描寫了荊軻刺殺秦王的故事。		lexical-context
+4180	2	轳	4180_1	轤	false	辘轳	轆轤	corpus-example	leipzig:zho_wikipedia_2018_1M:252998	勒勒车，古称辘轳车、罗罗车、牛牛车等，	勒勒車，古稱轆轤車、羅羅車、牛牛車等，		lexical-context
+4181	2	轶	4181_1	軼	false	轶闻	軼聞	authored-example	project-authored	轶闻是一个较少见的词语。	軼聞是一個較少見的詞語。		lexical-context
+4182	2	轸	4182_1	軫	false	轸方	軫方	authored-example	project-authored	轸方是一个较少见的词语。	軫方是一個較少見的詞語。		lexical-context
+4183	2	虿	4183_1	蠆	false	水虿	水蠆	authored-example	project-authored	水虿是蜻蜓的幼虫。	水蠆是蜻蜓的幼蟲。		lexical-context
+4185	2	觇	4185_1	覘	false	觇标	覘標	authored-example	project-authored	觇标是一个较少见的词语。	覘標是一個較少見的詞語。		lexical-context
+4189	2	眍	4189_1	瞘	false	眍䁖	瞘瞜	authored-example	project-authored	眍䁖表示一种动作。	瞘瞜表示一種動作。		lexical-context
+4203	2	哓	4203_1	嘵	false	哓音瘏口	嘵音瘏口	authored-example	project-authored	哓音瘏口是一个成语或固定说法。	嘵音瘏口是一個成語或固定說法。		lexical-context
+4204	2	哔	4204_1	嗶	false	呫哔	呫嗶	authored-example	project-authored	呫哔表示一种动作。	呫嗶表示一種動作。		lexical-context
+4215	2	哕	4215_1	噦	false	干哕	乾噦	authored-example	project-authored	干哕表示一种动作。	乾噦表示一種動作。		lexical-context
+4216	2	剐	4216_1	剮	false	千刀万剐	千刀萬剮	corpus-example	leipzig:zho_wikipedia_2018_1M:234991	凌遲或磔刑，俗称千刀万剐，碎尸万段，	凌遲或磔刑，俗稱千刀萬剮，碎屍萬段，		lexical-context
+4217	2	郧	4217_1	鄖	false	郧县	鄖縣	corpus-example	leipzig:zho_wikipedia_2018_1M:547086	，改称郧阳专区，郧阳县改为郧县，郧阳专署驻郧县；	，改稱鄖陽專區，鄖陽縣改為鄖縣，鄖陽專署駐鄖縣；		lexical-context
+4222	2	哙	4222_1	噲	false	羞与哙伍	羞與噲伍	authored-example	project-authored	羞与哙伍是一个成语或固定说法。	羞與噲伍是一個成語或固定說法。		lexical-context
+4227	2	哝	4227_1	噥	false	咕哝	咕噥	corpus-example	tatoeba:7781719	你咕咕哝哝的来着。	你咕咕噥噥的來著。		lexical-context
+4231	2	峣	4231_1	嶢	false	峣字	嶢字	domain-template	metalinguistic-fallback	地方志中记载了峣。	地方志中記載了嶢。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+4233	2	帧	4233_1	幀	false	装帧	裝幀	corpus-example	leipzig:zho_news_2020_300K:69417	初识《鲤鱼》，仅仅是觉得装帧还算不错。	初識《鯉魚》，僅僅是覺得裝幀還算不錯。		lexical-context
+4235	2	峤	4235_1	嶠	false	郭寄峤	郭寄嶠	authored-example	project-authored	郭寄峤是一个人名。	郭寄嶠是一個人名。		lexical-context
+4238	2	贶	4238_1	貺	false	贶字	貺字	curated-domain	metalinguistic-fallback	长者以礼物相贶。	長者以禮物相貺。	Classical literature / gift exchange: means to bestow or present a gift.	curated-domain
+4239	2	钚	4239_1	鈈	false	钚后元素	鈈後元素	authored-example	project-authored	钚后元素是一种材料或化学物质。	鈈後元素是一種材料或化學物質。		lexical-context
+4240	2	钛	4240_1	鈦	false	钛铁矿	鈦鐵礦	corpus-example	leipzig:zho_wikipedia_2018_1M:760952	科乌安德地区有金红石和钛铁矿。	科烏安德地區有金紅石和鈦鐵礦。		lexical-context
+4241	2	钡	4241_1	鋇	false	硫酸钡	硫酸鋇	corpus-example	leipzig:zho_wikipedia_2018_1M:756361	硫酸钡作为一种不溶的重添加剂被加进钻井液中，	硫酸鋇作為一種不溶的重新增劑被加進鑽井液中，		lexical-context
+4242	2	钣	4242_1	鈑	false	钣金	鈑金	corpus-example	leipzig:zho_news_2020_300K:192314	此外，得益于钣金上的处理，车尾层次感十足。	此外，得益於鈑金上的處理，車尾層次感十足。		lexical-context
+4243	2	钤	4243_1	鈐	false	朱启钤	朱啓鈐	corpus-example	leipzig:zho_wikipedia_2018_1M:606119	朱启钤曾官至代理中华民国国务总理，	朱啓鈐曾官至代理中華民國國務總理，		lexical-context
+4244	2	钨	4244_1	鎢	false	白钨矿	白鎢礦	corpus-example	leipzig:zho_wikipedia_2018_1M:205897	全世界钨的贮藏总量估计为700万吨，其中约30%是黑钨矿，70%是白钨矿。	全世界鎢的貯藏總量估計為700萬噸，其中約30%是黑鎢礦，70%是白鎢礦。		lexical-context
+4245	2	钫	4245_1	鈁	false	杨钫涵	楊鈁涵	authored-example	project-authored	杨钫涵是一个人名。	楊鈁涵是一個人名。		lexical-context
+4246	2	钯	4246_1	鈀	false	钉钯	釘鈀	authored-example	project-authored	钉钯是一种器物。	釘鈀是一種器物。		lexical-context
+4255	2	笃	4255_1	篤	false	笃信	篤信	corpus-example	tatoeba:7681046	事物皆有两面。笃信者只见其一。	事物皆有兩面。篤信者只見其一。		lexical-context
+4256	2	俦	4256_1	儔	false	孤俦寡匹	孤儔寡匹	authored-example	project-authored	孤俦寡匹是一个成语或固定说法。	孤儔寡匹是一個成語或固定說法。		lexical-context
+4257	2	俨	4257_1	儼	false	俨然	儼然	corpus-example	leipzig:zho_news_2020_300K:84892	可在逆袭背后，俨然存在许多问题。	可在逆襲背後，儼然存在許多問題。		lexical-context
+4259	2	俪	4259_1	儷	false	伉俪	伉儷	corpus-example	leipzig:zho_news_2020_300K:274544	这对革命伉俪都曾在鲁山战斗、生活过，与这里结下了不解之缘。	這對革命伉儷都曾在魯山戰鬥、生活過，與這裡結下了不解之緣。		lexical-context
+4279	2	胨	4279_1	腖	false	蛋白胨	蛋白腖	authored-example	project-authored	蛋白胨是一种材料或化学物质。	蛋白腖是一種材料或化學物質。		lexical-context
+4280	2	胪	4280_1	臚	false	大鸿胪	大鴻臚	corpus-example	leipzig:zho_news_2020_300K:226607	秦汉以来中央政府就设有掌管对外的机构和官员，如秦汉的典客、大鸿胪，魏晋隋唐以后的鸿胪寺、礼宾院。	秦漢以來中央政府就設有掌管對外的機構和官員，如秦漢的典客、大鴻臚，魏晉隋唐以後的鴻臚寺、禮賓院。		lexical-context
+4288	2	胫	4288_1	脛	false	不胫而走	不脛而走	corpus-example	leipzig:zho_wikipedia_2018_1M:822593	自此，蒯大富当上三司「司令」或「副司令」的谣传便不胫而走，蒯大富也得到了「蒯司令」的绰号。	自此，蒯大富當上三司「司令」或「副司令」的謠傳便不脛而走，蒯大富也得到了「蒯司令」的綽號。		lexical-context
+4289	2	鸨	4289_1	鴇	false	老鸨	老鴇	authored-example	project-authored	老鸨指旧时妓院的女老板。	老鴇指舊時妓院的女老闆。		lexical-context
+4292	2	狯	4292_1	獪	false	狡狯	狡獪	corpus-example	leipzig:zho_wikipedia_2018_1M:425844	始见之如和柔，一与之接近，则狡狯之色，轻侮之行，立现无余。	始見之如和柔，一與之接近，則狡獪之色，輕侮之行，立現無餘。		lexical-context
+4293	2	飑	4293_1	颮	false	飑字	颮字	approved-manual	metalinguistic-fallback	雷达显示飑线正在东移。	雷達顯示颮線正在東移。	Meteorology: a sudden, powerful squall or local windstorm.	approved-manual
+4295	2	狲	4295_1	猻	false	猢狲	猢猻	authored-example	project-authored	猢狲是一种猕猴。	猢猻是一種獼猴。		lexical-context
+4299	2	饷	4299_1	餉	false	军饷	軍餉	corpus-example	leipzig:zho_news_2020_300K:51579	但皖南事变后，国民政府污蔑新四军为“叛军”，完全停拨了军饷。	但皖南事變後，國民政府汙衊新四軍為“叛軍”，完全停撥了軍餉。		lexical-context
+4300	2	饸	4300_1	餄	false	饸饹	餄餎	corpus-example	leipzig:zho_news_2020_300K:90740	周人后代——庆阳人爱咥饸饹面，万事皆可“饸饹面”：	周人後代——慶陽人愛咥餄餎面，萬事皆可“餄餎面”：		lexical-context
+4301	2	饹	4301_1	餎	false	饸饹	餄餎	corpus-example	leipzig:zho_news_2020_300K:90740	周人后代——庆阳人爱咥饸饹面，万事皆可“饸饹面”：	周人後代——慶陽人愛咥餄餎面，萬事皆可“餄餎面”：		lexical-context
+4303	2	孪	4303_1	孿	false	孪生	孿生	corpus-example	leipzig:zho_news_2020_300K:135907	幸福和缺陷总是伴随着出现，犹如孪生兄弟，我们没有必要为此感叹。	幸福和缺陷總是伴隨著出現，猶如孿生兄弟，我們沒有必要為此感嘆。		lexical-context
+4304	2	娈	4304_1	孌	false	娈童	孌童	corpus-example	leipzig:zho_wikipedia_2018_1M:541692	，提供性服務的男妓稱為娈童、龙阳等。	，提供性服務的男妓稱為孌童、龍陽等。		lexical-context
+4308	2	疬	4308_1	癧	false	瘰疬	瘰癧	corpus-example	leipzig:zho_wikipedia_2018_1M:564835	既善清热解毒，消痈散结，治疮痈、瘰疬。	既善清熱解毒，消癰散結，治瘡癰、瘰癧。		lexical-context
+4311	2	疭	4311_1	瘲	false	瘛疭	瘛瘲	authored-example	project-authored	瘛疭是一个医学词语。	瘛瘲是一個醫學詞語。		lexical-context
+4315	2	飒	4315_1	颯	false	飒爽	颯爽	corpus-example	leipzig:zho_news_2020_300K:295665	风驰电掣、飒爽十足，这就是我的第一观感！	風馳電掣、颯爽十足，這就是我的第一觀感！		lexical-context
+4316	2	闼	4316_1	闥	false	干闼婆	乾闥婆	authored-example	project-authored	干闼婆是一个较少见的词语。	乾闥婆是一個較少見的詞語。		lexical-context
+4317	2	闾	4317_1	閭	false	闾里	閭里	corpus-example	leipzig:zho_wikipedia_2018_1M:953600	，闾里书师将三篇以六十字为一章合并为《	，閭里書師將三篇以六十字為一章合併為《		lexical-context
+4318	2	闿	4318_1	闓	false	闿字	闓字	curated-domain	metalinguistic-fallback	大门已闿。	大門已闓。	Classical architectural vocabulary: means open, opened, or unobstructed.	curated-domain
+4319	2	阂	4319_1	閡	false	隔阂	隔閡	corpus-example	tatoeba:1401810	欢笑是人之本能，有了欢笑， 就没了文化隔阂。	歡笑是人之本能，有了歡笑， 就沒了文化隔閡。		lexical-context
+4326	2	炽	4326_1	熾	false	炽热	熾熱	corpus-example	leipzig:zho_news_2020_300K:181826	木星中心炽热的岩浆就好象被敌人包围着。	木星中心熾熱的岩漿就好象被敵人包圍著。		lexical-context
+4330	2	烃	4330_1	烴	false	烯烃	烯烴	corpus-example	leipzig:zho_wikipedia_2018_1M:486877	，开始涉足对烯烃复分解反应的研究。	，開始涉足對烯烴複分解反應的研究。		lexical-context
+4335	2	浃	4335_1	浹	false	汗流浃背	汗流浹背	corpus-example	tatoeba:13516944	即使在酷暑天气中，外送员仍汗流浃背地工作著。	即使在酷暑天氣中，外送員仍汗流浹背地工作著。		lexical-context
+4342	2	浍	4342_1	澮	false	浍字	澮字	domain-template	metalinguistic-fallback	地方志中记载了浍。	地方志中記載了澮。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+4345	2	浒	4345_1	滸	false	水浒传	水滸傳	corpus-example	leipzig:zho_news_2020_300K:89255	后来中国又掀起了评《水浒传》，屡屡提起了他的名字。	後來中國又掀起了評《水滸傳》，屢屢提起了他的名字。		lexical-context
+4346	2	浔	4346_1	潯	false	南浔	南潯	corpus-example	leipzig:zho_news_2020_300K:235296	罗霄山脉北段靠大江，又有武汉三镇和南浔铁路，南段敌人调动比较方便，都不好。	羅霄山脈北段靠大江，又有武漢三鎮和南潯鐵路，南段敵人調動比較方便，都不好。		lexical-context
+4347	2	浕	4347_1	濜	false	浕字	濜字	domain-template	metalinguistic-fallback	地方志中记载了浕。	地方志中記載了濜。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+4349	2	恸	4349_1	慟	false	悲恸	悲慟	corpus-example	leipzig:zho_news_2020_300K:153973	战士们闻讯潸然泪下、悲恸不已！	戰士們聞訊潸然淚下、悲慟不已！		lexical-context
+4351	2	恹	4351_1	懨	false	恹恹	懨懨	corpus-example	leipzig:zho_news_2020_300K:180256	有时候浮想联翩、心潮起伏；有时候又恹恹欲睡、昏昏沉沉。	有時候浮想聯翩、心潮起伏；有時候又懨懨欲睡、昏昏沉沉。		lexical-context
+4353	2	恺	4353_1	愷	false	顾恺之	顧愷之	corpus-example	leipzig:zho_news_2020_300K:130179	就算是顾恺之也画不出来的狼狈，就算是神笔马良也难描绘，我如此落魄不仅仅是憔悴！	就算是顧愷之也畫不出來的狼狽，就算是神筆馬良也難描繪，我如此落魄不僅僅是憔悴！		lexical-context
+4354	2	恻	4354_1	惻	false	恻隐之心	惻隱之心	corpus-example	leipzig:zho_news_2020_300K:145547	恻隐之心，人皆有之，就像马云在微博里说的那样：“善良是真正的自信。	惻隱之心，人皆有之，就像馬雲在微博裡說的那樣：“善良是真正的自信。		lexical-context
+4357	2	恽	4357_1	惲	false	恽代英	惲代英	corpus-example	leipzig:zho_news_2020_300K:289100	除了上政治课以外，还经常请负责同志如周恩来、恽代英、叶挺等同志来作报告。	除了上政治課以外，還經常請負責同志如周恩來、惲代英、葉挺等同志來作報告。		lexical-context
+4368	2	诮	4368_1	誚	false	讥诮	譏誚	corpus-example	leipzig:zho_news_2020_300K:161998	揄扬贬损、称许讥诮，随它去罢。	揄揚貶損、稱許譏誚，隨它去罷。		lexical-context
+4370	2	祢	4370_1	禰	false	祢衡	禰衡	corpus-example	leipzig:zho_news_2020_300K:207637	然而，狂妄的结局就像祢衡那样，是自毁，是失败。	然而，狂妄的結局就像禰衡那樣，是自毀，是失敗。		lexical-context
+4371	2	诰	4371_1	誥	false	制诰	制誥	corpus-example	leipzig:zho_wikipedia_2018_1M:539400	，掌管宫中制诰多年，有“巾帼宰相”之名。	，掌管宮中制誥多年，有“巾幗宰相”之名。		lexical-context
+4372	2	诳	4372_1	誑	false	诳语	誑語	corpus-example	leipzig:zho_wikipedia_2018_1M:998708	黛玉道：“禅门第一戒是不打诳语的。”	黛玉道：“禪門第一戒是不打誑語的。”		lexical-context
+4373	2	鸩	4373_1	鴆	false	饮鸩止渴	飲鴆止渴	corpus-example	leipzig:zho_news_2020_300K:180013	有幻想干脆不要阴阳五行者，那是饮鸩止渴，是医药学术领域的大倒退！	有幻想幹脆不要陰陽五行者，那是飲鴆止渴，是醫藥學術領域的大倒退！		lexical-context
+4382	2	娅	4382_1	婭	false	玛丽娅	瑪麗婭	corpus-example	tatoeba:5854769	汤姆肯定玛丽娅不会开车。	湯姆肯定瑪麗婭不會開車。		lexical-context
+4384	2	娆	4384_1	嬈	false	妖娆	妖嬈	corpus-example	leipzig:zho_news_2020_300K:232851	红色的艳丽，黄色的高雅，粉色的妖娆！	紅色的豔麗，黃色的高雅，粉色的妖嬈！		lexical-context
+4389	2	怼	4389_1	懟	false	怨怼	怨懟	corpus-example	leipzig:zho_news_2020_300K:178680	有一天给予你的好少了，你便觉得怨怼。	有一天給予你的好少了，你便覺得怨懟。		lexical-context
+4393	2	绔	4393_1	絝	false	纨绔子弟	紈絝子弟	authored-example	project-authored	纨绔子弟是一个成语或固定说法。	紈絝子弟是一個成語或固定說法。		lexical-context
+4394	2	骁	4394_1	驍	false	骁将	驍將	corpus-example	leipzig:zho_wikipedia_2018_1M:278825	友谅骁将张定边直犯太祖舟，舟胶于浅，几殆。	友諒驍將張定邊直犯太祖舟，舟膠於淺，幾殆。		lexical-context
+4395	2	骅	4395_1	驊	false	黄骅	黃驊	authored-example	project-authored	黄骅是一个地名。	黃驊是一個地名。		lexical-context
+4396	2	绗	4396_1	絎	false	绗缝	絎縫	authored-example	project-authored	绗缝表示一种动作。	絎縫表示一種動作。		lexical-context
+4397	2	绛	4397_1	絳	false	新绛	新絳	corpus-example	leipzig:zho_wikipedia_2018_1M:291087	，只是部分地区与现在新绛东部接壤。	，只是部分地區與現在新絳東部接壤。		lexical-context
+4398	2	骈	4398_1	駢	false	骈体	駢體	corpus-example	leipzig:zho_wikipedia_2018_1M:241686	初期骈体文分韵骈文和无韵骈文，	初期駢體文分韻駢文和無韻駢文，		lexical-context
+4403	2	顼	4403_1	頊	false	颛顼	顓頊	corpus-example	leipzig:zho_wikipedia_2018_1M:223306	其先颛顼后，周武王封其苗裔于邾。	其先顓頊後，周武王封其苗裔於邾。		lexical-context
+4404	2	珰	4404_1	璫	false	丁珰	丁璫	authored-example	project-authored	丁珰是一个人名。	丁璫是一個人名。		lexical-context
+4410	2	珲	4410_1	琿	false	珲春	琿春	corpus-example	leipzig:zho_news_2020_300K:52448	位于吉林珲春市的五家山要塞是该防线最南端的起点。	位於吉林琿春市的五家山要塞是該防線最南端的起點。		lexical-context
+4415	2	埘	4415_1	塒	false	埘字	塒字	approved-manual	metalinguistic-fallback	母鸡黄昏时回到埘里。	母雞黃昏時回到塒裡。	Traditional agriculture: a chicken roost or nesting space cut into a wall.	approved-manual
+4416	2	埙	4416_1	塤	false	严义埙	嚴義塤	authored-example	project-authored	严义埙是一个人名。	嚴義塤是一個人名。		lexical-context
+4417	2	埚	4417_1	堝	false	坩埚	坩堝	corpus-example	leipzig:zho_wikipedia_2018_1M:393000	坩埚炼钢工艺是转炉炼钢技术发明前最重要的炼钢方法，是欧洲历史上钢首次被熔化冶炼。	坩堝鍊鋼工藝是轉爐鍊鋼技術發明前最重要的鍊鋼方法，是歐洲歷史上鋼首次被熔化冶煉。		lexical-context
+4423	2	贽	4423_1	贄	false	李贽	李贄	corpus-example	leipzig:zho_wikipedia_2018_1M:609694	李贽又把念佛之修持分为两类，即念真佛与假佛。	李贄又把唸佛之修持分為兩類，即念真佛與假佛。		lexical-context
+4429	2	莳	4429_1	蒔	false	莳萝	蒔蘿	authored-example	project-authored	莳萝是一种植物。	蒔蘿是一種植物。		lexical-context
+4430	2	莴	4430_1	萵	false	莴苣	萵苣	corpus-example	tatoeba:1593707	蜗牛一直在吃我们的莴苣。	蝸牛一直在吃我們的萵苣。		lexical-context
+4439	2	莸	4439_1	蕕	false	薰莸同器	薰蕕同器	authored-example	project-authored	薰莸同器是一个成语或固定说法。	薰蕕同器是一個成語或固定說法。		lexical-context
+4445	2	鸪	4445_1	鴣	false	鹧鸪	鷓鴣	corpus-example	leipzig:zho_news_2020_300K:96043	因而笔者赏析《鹧鸪天·桂花》，也就别有一番心得与网友分享。	因而筆者賞析《鷓鴣天·桂花》，也就別有一番心得與網友分享。		lexical-context
+4446	2	莼	4446_1	蒓	false	莼菜	蒓菜	corpus-example	leipzig:zho_wikipedia_2018_1M:439965	、宋嫂鱼羹、干炸响铃、钱江肉丝、杭州酱鸭、杭州卷鸡、西湖莼菜羹。	、宋嫂魚羹、幹炸響鈴、錢江肉絲、杭州醬鴨、杭州卷雞、西湖蒓菜羹。		lexical-context
+4451	2	桡	4451_1	橈	false	桡骨	橈骨	corpus-example	tatoeba:9870685	桡骨是前臂中的一块骨。	橈骨是前臂中的一塊骨。		lexical-context
+4453	2	桢	4453_1	楨	false	竺可桢	竺可楨	corpus-example	leipzig:zho_news_2020_300K:271901	这两个字是竺可桢校长多次强调过的。	這兩個字是竺可楨校長多次強調過的。		lexical-context
+4454	2	桤	4454_1	榿	false	桤木	榿木	corpus-example	leipzig:zho_wikipedia_2018_1M:201892	元谋人所在地层的孢粉组合，松属占33.3%，桤木属占13%，草本植物占40%。	元謀人所在地層的孢粉組合，松屬佔33.3%，榿木屬佔13%，草本植物佔40%。		lexical-context
+4459	2	桧	4459_1	檜	false	秦桧	秦檜	corpus-example	leipzig:zho_news_2020_300K:171139	无赖秦桧被当众吃瘪，这件事情一下哄动了临安城。	無賴秦檜被當眾吃癟，這件事情一下鬨動了臨安城。		lexical-context
+4470	2	逦	4470_1	邐	false	迤逦	迤邐	corpus-example	leipzig:zho_news_2020_300K:265337	……谐丽附带蜂蝶大军迤逦前行。	……諧麗附帶蜂蝶大軍迤邐前行。		lexical-context
+4475	2	砺	4475_1	礪	false	磨砺	磨礪	corpus-example	leipzig:zho_news_2020_300K:56249	保剑锋从磨砺出，梅花香自苦寒来。	保劍鋒從磨礪出，梅花香自苦寒來。		lexical-context
+4483	2	砻	4483_1	礱	false	雅砻江	雅礱江	corpus-example	leipzig:zho_wikipedia_2018_1M:777095	，系雅砻江卡拉至江口河段规划的5个梯级电站之一，	，系雅礱江卡拉至江口河段規劃的5個梯級電站之一，		lexical-context
+4484	2	轼	4484_1	軾	false	苏轼	蘇軾	corpus-example	leipzig:zho_news_2020_300K:247606	苏轼觉得白杨梅稀有，所以特意赋诗。	蘇軾覺得白楊梅稀有，所以特意賦詩。		lexical-context
+4485	2	轾	4485_1	輊	false	不分轩轾	不分軒輊	authored-example	project-authored	不分轩轾是一个成语或固定说法。	不分軒輊是一個成語或固定說法。		lexical-context
+4486	2	辂	4486_1	輅	false	大辂椎轮	大輅椎輪	authored-example	project-authored	大辂椎轮是一个成语或固定说法。	大輅椎輪是一個成語或固定說法。		lexical-context
+4487	2	鸫	4487_1	鶇	false	乌鸫	烏鶇	corpus-example	tatoeba:10752798	乌鸫在绿草中发现了一条小红虫。	烏鶇在綠草中發現了一條小紅蟲。		lexical-context
+4488	2	趸	4488_1	躉	false	趸批	躉批	authored-example	project-authored	趸批是一个较少见的词语。	躉批是一個較少見的詞語。		lexical-context
+4489	2	龀	4489_1	齔	false	龀字	齔字	approved-manual	metalinguistic-fallback	这孩子已经始龀。	這孩子已經始齔。	Historical age terminology / dentition: describes a child beginning to lose milk teeth and grow permanent teeth.	approved-manual
+4490	2	鸬	4490_1	鸕	false	鸬鹚	鸕鶿	corpus-example	leipzig:zho_news_2020_300K:263244	设计师反向利用了鸬鹚捕鱼的捕食链制作包装。	設計師反向利用了鸕鶿捕魚的捕食鏈製作包裝。		lexical-context
+4493	2	眬	4493_1	矓	false	蒙眬	矇矓	corpus-example	tatoeba:13533891	刚睡醒时眼睛还有点蒙眬，什么都看不清楚。	剛睡醒時眼睛還有點矇矓，什麼都看不清楚。		lexical-context
+4494	2	唛	4494_1	嘜	false	唛头	嘜頭	authored-example	project-authored	唛头是一种器物。	嘜頭是一種器物。		lexical-context
+4503	2	鸮	4503_1	鴞	false	仓鸮	倉鴞	corpus-example	tatoeba:6075175	雕鸮和仓鸮有什么区别？	雕鴞和倉鴞有什麼區別？		lexical-context
+4511	2	蚬	4511_1	蜆	false	真蚬	真蜆	authored-example	project-authored	真蚬是一种动物。	真蜆是一種動物。		lexical-context
+4514	2	唢	4514_1	嗩	false	唢呐	嗩吶	corpus-example	leipzig:zho_wikipedia_2018_1M:798911	，而不是用原稿上的中音唢呐独奏。	，而不是用原稿上的中音嗩吶獨奏。		lexical-context
+4520	2	崂	4520_1	嶗	false	崂山	嶗山	corpus-example	leipzig:zho_news_2020_300K:284400	都给五百罐 崂山啤酒就倒闭了估计。	都給五百罐 嶗山啤酒就倒閉了估計。		lexical-context
+4521	2	崃	4521_1	崍	false	邛崃	邛崍	corpus-example	leipzig:zho_news_2020_300K:74364	北有邛崃山，南临岷江河网，周围是起伏的的丘陵和稻田。	北有邛崍山，南臨岷江河網，周圍是起伏的的丘陵和稻田。		lexical-context
+4525	2	觊	4525_1	覬	false	觊觎	覬覦	corpus-example	tatoeba:805219	这个职位受人觊觎。	這個職位受人覬覦。		lexical-context
+4526	2	赅	4526_1	賅	false	言简意赅	言簡意賅	corpus-example	leipzig:zho_news_2020_300K:55273	你问甘肃人，甘肃有什么，他们言简意赅：	你問甘肅人，甘肅有什麼，他們言簡意賅：		lexical-context
+4527	2	钰	4527_1	鈺	false	朱祁钰	朱祁鈺	corpus-example	leipzig:zho_wikipedia_2018_1M:245087	到景泰三年（1452年），朱祁钰将见深廢為沂王，	到景泰三年（1452年），朱祁鈺將見深廢為沂王，		lexical-context
+4528	2	钲	4528_1	鉦	false	钲字	鉦字	approved-manual	metalinguistic-fallback	军士鸣钲，队伍停止前进。	軍士鳴鉦，隊伍停止前進。	Ancient military music: a handheld bronze percussion instrument used to regulate or halt troop movement.	approved-manual
+4529	2	钴	4529_1	鈷	false	钴𬭁	鈷鉧	authored-example	project-authored	钴𬭁是一种材料或化学物质。	鈷鉧是一種材料或化學物質。		lexical-context
+4530	2	钵	4530_1	鉢	false	托钵	托鉢	corpus-example	leipzig:zho_wikipedia_2018_1M:128409	，他们托钵乞食或受人供养，也不排除肉食。	，他們托鉢乞食或受人供養，也不排除肉食。		lexical-context
+4531	2	钹	4531_1	鈸	false	水钹	水鈸	authored-example	project-authored	水钹是一种器物。	水鈸是一種器物。		lexical-context
+4532	2	钺	4532_1	鉞	false	白旄黄钺	白旄黃鉞	corpus-example	leipzig:zho_wikipedia_2018_1M:737315	白旄黄钺，时则亲巡；犀甲雕弧，止于不用。	白旄黃鉞，時則親巡；犀甲雕弧，止於不用。		lexical-context
+4533	2	钽	4533_1	鉭	false	钽铁矿	鉭鐵礦	authored-example	project-authored	钽铁矿是一种材料或化学物质。	鉭鐵礦是一種材料或化學物質。		lexical-context
+4534	2	钼	4534_1	鉬	false	钼矿	鉬礦	corpus-example	leipzig:zho_wikipedia_2018_1M:948827	、铅锌矿11个、钼矿2个、锑矿2个、	、鉛鋅礦11個、鉬礦2個、銻礦2個、		lexical-context
+4535	2	钿	4535_1	鈿	false	佣钿	佣鈿	authored-example	project-authored	佣钿是一个较少见的词语。	佣鈿是一個較少見的詞語。		lexical-context
+4536	2	铀	4536_1	鈾	false	浓缩铀	濃縮鈾	corpus-example	leipzig:zho_news_2020_300K:18284	与此同时，朝鲜从未放慢过浓缩铀或洲际弹道导弹的研制。	與此同時，朝鮮從未放慢過濃縮鈾或洲際彈道導彈的研製。		lexical-context
+4537	2	铂	4537_1	鉑	false	铂金	鉑金	corpus-example	tatoeba:420196	现在铂金首饰非常热。	現在鉑金首飾非常熱。		lexical-context
+4538	2	铄	4538_1	鑠	false	矍铄	矍鑠	corpus-example	leipzig:zho_wikipedia_2018_1M:890452	、身材高瘦、留着山羊鬍、帥氣、精神矍铄的老人形象。	、身材高瘦、留著山羊鬍、帥氣、精神矍鑠的老人形象。		lexical-context
+4539	2	铆	4539_1	鉚	false	铆接	鉚接	corpus-example	leipzig:zho_wikipedia_2018_1M:899119	这一过程中的工作量很大，每一处铆接部分都需要单独打造。	這一過程中的工作量很大，每一處鉚接部分都需要單獨打造。		lexical-context
+4540	2	铈	4540_1	鈰	false	铈量法	鈰量法	authored-example	project-authored	铈量法是一种化学分析方法。	鈰量法是一種化學分析方法。		lexical-context
+4541	2	铉	4541_1	鉉	false	卢武铉	盧武鉉	corpus-example	leipzig:zho_news_2020_300K:240044	而卢武铉派和文在寅派正是共同民主党的主要力量。	而盧武鉉派和文在寅派正是共同民主黨的主要力量。		lexical-context
+4542	2	铊	4542_1	鉈	false	铊字	鉈字	element-domain	metalinguistic-fallback	实验记录中提到了铊。	實驗記錄中提到了鉈。	Chemistry: thallium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+4543	2	铋	4543_1	鉍	false	化铋	化鉍	corpus-example	leipzig:zho_wikipedia_2018_1M:755353	矿中如果有氧化铋则直接被盐酸溶解：	礦中如果有氧化鉍則直接被鹽酸溶解：		lexical-context
+4544	2	铌	4544_1	鈮	false	铌字	鈮字	approved-manual	metalinguistic-fallback	这种合金含有少量铌。	這種合金含有少量鈮。	Chemistry / metallurgy: niobium, a metallic element used in high-strength and heat-resistant alloys.	approved-manual
+4545	2	铍	4545_1	鈹	false	氧化铍	氧化鈹	authored-example	project-authored	氧化铍是一种材料或化学物质。	氧化鈹是一種材料或化學物質。		lexical-context
+4546	2	䥽	4546_1	鏺	false	䥽字	鏺字	domain-template	metalinguistic-fallback	古代器物记录中提到了䥽。	古代器物記錄中提到了鏺。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+4547	2	铎	4547_1	鐸	false	司铎	司鐸	corpus-example	leipzig:zho_wikipedia_2018_1M:897314	，还有一些不是修士的独身者是司铎。	，還有一些不是修士的獨身者是司鐸。		lexical-context
+4548	2	氩	4548_1	氬	false	氩气	氬氣	corpus-example	leipzig:zho_wikipedia_2018_1M:336100	因此，铷一般保存在真空安瓿或充有稀有气体（如氩气）的安瓿中。	因此，銣一般儲存在真空安瓿或充有稀有氣體（如氬氣）的安瓿中。		lexical-context
+4557	2	笕	4557_1	筧	false	笕济学家	筧濟學家	authored-example	project-authored	笕济学家是一个较少见的词语。	筧濟學家是一個較少見的詞語。		lexical-context
+4583	2	颀	4583_1	頎	false	颀长	頎長	corpus-example	leipzig:zho_news_2020_300K:268230	身材颀长，配着瓜子脸的林志卿，在学生们，包括学堂以外的人来看，不仅人品是好，而且相貌也够美。	身材頎長，配著瓜子臉的林志卿，在學生們，包括學堂以外的人來看，不僅人品是好，而且相貌也夠美。		lexical-context
+4584	2	徕	4584_1	徠	false	招徕	招徠	corpus-example	leipzig:zho_wikipedia_2018_1M:989853	騎樓既可防雨防晒，又便于展示橱窗，招徕生意。	騎樓既可防雨防曬，又便於展示櫥窗，招徠生意。		lexical-context
+4593	2	脍	4593_1	膾	false	脍炙人口	膾炙人口	corpus-example	tatoeba:6319202	这家影业公司生产了许多脍炙人口的作品。	這家影業公司生產了許多膾炙人口的作品。		lexical-context
+4598	2	鸱	4598_1	鴟	false	鸱鸮	鴟鴞	corpus-example	leipzig:zho_wikipedia_2018_1M:450773	将军既毁宗室，今又欲破我父子，感鸱鸮之章， 能不惨然心恻耶？	將軍既毀宗室，今又欲破我父子，感鴟鴞之章， 能不慘然心惻耶？		lexical-context
+4599	2	玺	4599_1	璽	false	碧玺	碧璽	authored-example	project-authored	碧玺是一种材料或化学物质。	碧璽是一種材料或化學物質。		lexical-context
+4600	2	鸲	4600_1	鴝	false	鸲鹆	鴝鵒	corpus-example	leipzig:zho_wikipedia_2018_1M:700563	王导曾当众要求谢尚为此舞：“闻君能为鸲鹆舞，一座倾想，宁有此理乎？”	王導曾當眾要求謝尚為此舞：“聞君能為鴝鵒舞，一座傾想，寧有此理乎？”		lexical-context
+4604	2	猃	4604_1	獫	false	猃狁	獫狁	corpus-example	leipzig:zho_wikipedia_2018_1M:849967	虢季子白在班师回朝举行献俘礼时，又命属下不其 率兵追击败退至洛水的猃狁，取得胜利。	虢季子白在班師回朝舉行獻俘禮時，又命屬下不其 率兵追擊敗退至洛水的獫狁，取得勝利。		lexical-context
+4608	2	袅	4608_1	裊	false	袅娜	裊娜	authored-example	project-authored	袅娜是一个描写性质或状态的词。	裊娜是一個描寫性質或狀態的詞。		lexical-context
+4609	2	饽	4609_1	餑	false	饽饽	餑餑	corpus-example	leipzig:zho_news_2020_300K:112111	大咖加持，‘土味’农产品成了新潮‘香饽饽’。”	大咖加持，‘土味’農產品成了新潮‘香餑餑’。”		lexical-context
+4611	2	栾	4611_1	欒	false	栾城	欒城	corpus-example	leipzig:zho_wikipedia_2018_1M:201330	元太祖十五年，割栾城县、元氏县隶真定路。	元太祖十五年，割欒城縣、元氏縣隸真定路。		lexical-context
+4612	2	挛	4612_1	攣	false	痉挛	痙攣	corpus-example	leipzig:zho_news_2020_300K:290522	随后，一个痉挛，这孕妇仅剩一缝的黑眼珠也翻过去了。	隨後，一個痙攣，這孕婦僅剩一縫的黑眼珠也翻過去了。		lexical-context
+4618	2	痈	4618_1	癰	false	养痈遗患	養癰遺患	authored-example	project-authored	养痈遗患表示一种动作。	養癰遺患表示一種動作。		lexical-context
+4621	2	痉	4621_1	痙	false	痉挛	痙攣	corpus-example	leipzig:zho_news_2020_300K:290522	随后，一个痉挛，这孕妇仅剩一缝的黑眼珠也翻过去了。	隨後，一個痙攣，這孕婦僅剩一縫的黑眼珠也翻過去了。		lexical-context
+4624	2	颃	4624_1	頏	false	颉颃	頡頏	corpus-example	leipzig:zho_wikipedia_2018_1M:403241	“《大公报》自创办以来之奋斗史，已在中国新闻史上放一异彩，迄无可以颉颃者。”	“《大公報》自創辦以來之奮鬥史，已在中國新聞史上放一異彩，迄無可以頡頏者。”		lexical-context
+4629	2	阃	4629_1	閫	false	闺阃	閨閫	authored-example	project-authored	闺阃是一个较少见的词语。	閨閫是一個較少見的詞語。		lexical-context
+4630	2	阄	4630_1	鬮	false	抓阄	抓鬮	corpus-example	leipzig:zho_wikipedia_2018_1M:481241	，广东一带民间从放鸽会中演生出白鸽票，由众人先行醵资，抓阄猜射。	，廣東一帶民間從放鴿會中演生出白鴿票，由眾人先行醵資，抓鬮猜射。		lexical-context
+4631	2	訚	4631_1	誾	false	訚字	誾字	approved-manual	metalinguistic-fallback	他以訚訚之言直率劝告。	他以誾誾之言直率勸告。	Classical rhetoric: describes candid but courteous advice or remonstrance.	approved-manual
+4632	2	阆	4632_1	閬	false	阆中	閬中	corpus-example	leipzig:zho_news_2020_300K:100686	在四川阆中市王家嘴社区残疾人编织基地，双下肢瘫痪的李荣华是业务骨干。	在四川閬中市王家嘴社群殘疾人編織基地，雙下肢癱瘓的李榮華是業務骨幹。		lexical-context
+4636	2	郸	4636_1	鄲	false	邯郸	邯鄲	corpus-example	leipzig:zho_news_2020_300K:219624	白居易此时走到邯郸驿，他想家了。	白居易此時走到邯鄲驛，他想家了。		lexical-context
+4638	2	烨	4638_1	燁	false	黄长烨	黃長燁	authored-example	project-authored	黄长烨是一个人名。	黃長燁是一個人名。		lexical-context
+4639	2	烩	4639_1	燴	false	烩面	燴麵	corpus-example	leipzig:zho_wikipedia_2018_1M:599436	，有羊肉烩面、三鲜烩麵、什锦烩麵等多种类型。	，有羊肉燴麵、三鮮燴麵、什錦燴麵等多種型別。		lexical-context
+4643	2	烬	4643_1	燼	false	灰烬	灰燼	corpus-example	tatoeba:1470516	那场大火把整个小镇烧成了灰烬。	那場大火把整個小鎮燒成了灰燼。		lexical-context
+4646	2	涞	4646_1	淶	false	涞水	淶水	corpus-example	leipzig:zho_wikipedia_2018_1M:71198	东临固安，西接涞水，北通北京，南到高碑店。	東臨固安，西接淶水，北通北京，南到高碑店。		lexical-context
+4647	2	涟	4647_1	漣	false	涟漪	漣漪	corpus-example	tatoeba:532197	微风在湖面上掀起了一丝丝涟漪。	微風在湖面上掀起了一絲絲漣漪。		lexical-context
+4650	2	涠	4650_1	潿	false	涠字	潿字	domain-template	metalinguistic-fallback	地方志中记载了涠。	地方志中記載了潿。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+4660	2	悭	4660_1	慳	false	悭吝	慳吝	corpus-example	leipzig:zho_wikipedia_2018_1M:772945	》等，及外国剧目《悭吝人》、《	》等，及外國劇目《慳吝人》、《		lexical-context
+4668	2	诹	4668_1	諏	false	下诹访市	下諏訪市	authored-example	project-authored	下诹访市是一个地名。	下諏訪市是一個地名。		lexical-context
+4670	2	诼	4670_1	諑	false	谣诼	謠諑	authored-example	project-authored	谣诼是一个较少见的词语。	謠諑是一個較少見的詞語。		lexical-context
+4673	2	祯	4673_1	禎	false	崇祯	崇禎	corpus-example	leipzig:zho_news_2020_300K:131948	崇祯帝阅疏，非常生气，将黄道周贬斥为民。	崇禎帝閱疏，非常生氣，將黃道周貶斥為民。		lexical-context
+4674	2	诿	4674_1	諉	false	推诿	推諉	corpus-example	leipzig:zho_news_2020_300K:15675	“不畏难，不推诿”的投入工作。	“不畏難，不推諉”的投入工作。		lexical-context
+4675	2	谀	4675_1	諛	false	阿谀	阿諛	corpus-example	tatoeba:502938	国王受够了他的大臣们总是对他阿谀奉承，于是把他们遣散了。	國王受夠了他的大臣們總是對他阿諛奉承，於是把他們遣散了。		lexical-context
+4676	2	谂	4676_1	諗	false	谂字	諗字	curated-domain	metalinguistic-fallback	此事还须细谂。	此事還須細諗。	Classical reasoning vocabulary: means to consider, know, or consult.	curated-domain
+4677	2	谄	4677_1	諂	false	谄媚	諂媚	corpus-example	leipzig:zho_news_2020_300K:175169	是居心不良的看笑话，再就是谄媚了。	是居心不良的看笑話，再就是諂媚了。		lexical-context
+4678	2	谇	4678_1	誶	false	谇帚德锄	誶帚德鋤	authored-example	project-authored	谇帚德锄是一个成语或固定说法。	誶帚德鋤是一個成語或固定說法。		lexical-context
+4691	2	娲	4691_1	媧	false	女娲	女媧	corpus-example	leipzig:zho_news_2020_300K:184150	李白有诗云“女娲戏黄土，团作愚下人。	李白有詩云“女媧戲黃土，團作愚下人。		lexical-context
+4693	2	娴	4693_1	嫻	false	娴熟	嫻熟	corpus-example	tatoeba:13046546	汤姆车开得不是很娴熟。	湯姆車開得不是很嫻熟。		lexical-context
+4699	2	绠	4699_1	綆	false	心长绠短	心長綆短	authored-example	project-authored	心长绠短是一个成语或固定说法。	心長綆短是一個成語或固定說法。		lexical-context
+4700	2	骊	4700_1	驪	false	骊山	驪山	corpus-example	leipzig:zho_news_2020_300K:226577	秦始皇为何要将陵址选在骊山北麓呢？	秦始皇為何要將陵址選在驪山北麓呢？		lexical-context
+4701	2	绡	4701_1	綃	false	鲛绡	鮫綃	authored-example	project-authored	鲛绡是一个较少见的词语。	鮫綃是一個較少見的詞語。		lexical-context
+4702	2	骋	4702_1	騁	false	驰骋	馳騁	corpus-example	leipzig:zho_news_2020_300K:108270	地方空起来，供给我们天子驰骋打猎？	地方空起來，供給我們天子馳騁打獵？		lexical-context
+4703	2	绥	4703_1	綏	false	绥远	綏遠	corpus-example	leipzig:zho_news_2020_300K:20409	中华人民共和国成立后，姚喆任绥远军区副司令员。	中華人民共和國成立後，姚喆任綏遠軍區副司令員。		lexical-context
+4704	2	绦	4704_1	縧	false	褟绦子	褟縧子	authored-example	project-authored	褟绦子是一个较少见的词语。	褟縧子是一個較少見的詞語。		lexical-context
+4705	2	绨	4705_1	綈	false	敝绨恶粟	敝綈惡粟	authored-example	project-authored	敝绨恶粟是一个成语或固定说法。	敝綈惡粟是一個成語或固定說法。		lexical-context
+4706	2	骎	4706_1	駸	false	骎字	駸字	curated-domain	metalinguistic-fallback	骏马骎骎向前。	駿馬駸駸向前。	Classical equine vocabulary: describes horses moving swiftly and continuously.	curated-domain
+4708	2	鸶	4708_1	鷥	false	鹭鸶	鷺鷥	corpus-example	leipzig:zho_wikipedia_2018_1M:299964	各种鸟类二十九种，其中鹭鸶为曲阜的“	各種鳥類二十九種，其中鷺鷥為曲阜的“		lexical-context
+4711	2	焘	4711_1	燾	false	张国焘	張國燾	corpus-example	leipzig:zho_news_2020_300K:137900	张国焘，中国共产党第二届中央委员会委员；	張國燾，中國共產黨第二屆中央委員會委員；		lexical-context
+4713	2	琏	4713_1	璉	false	吴敬琏	吳敬璉	corpus-example	leipzig:zho_wikipedia_2018_1M:974274	》雜誌上點名批評，認為吴敬琏等「	》雜誌上點名批評，認為吳敬璉等「		lexical-context
+4715	2	麸	4715_1	麩	false	麸皮	麩皮	corpus-example	leipzig:zho_wikipedia_2018_1M:559902	方形截面，外观洁白，偶有麸皮夹入其中。	方形截面，外觀潔白，偶有麩皮夾入其中。		lexical-context
+4720	2	掳	4720_1	擄	false	掳掠	擄掠	corpus-example	leipzig:zho_news_2020_300K:278738	远离东南沿海的中原人，只能通过诸侯的朝贡、征战中的掳掠以及交易获得。	遠離東南沿海的中原人，只能透過諸侯的朝貢、征戰中的擄掠以及交易獲得。		lexical-context
+4721	2	掴	4721_1	摑	false	掌掴	掌摑	corpus-example	leipzig:zho_news_2020_300K:252956	袁某之前对缪可馨的掌掴，造成了多大心理阴影？	袁某之前對繆可馨的掌摑，造成了多大心理陰影？		lexical-context
+4732	2	鸷	4732_1	鷙	false	阴鸷	陰鷙	authored-example	project-authored	阴鸷是一个较少见的词语。	陰鷙是一個較少見的詞語。		lexical-context
+4737	2	掸	4737_1	撣	false	掸邦	撣邦	corpus-example	leipzig:zho_wikipedia_2018_1M:493674	”，当时掸邦跟云南南部同属一个地区。	”，當時撣邦跟雲南南部同屬一個地區。		lexical-context
+4740	2	悫	4740_1	慤	false	王忠悫	王忠慤	corpus-example	leipzig:zho_wikipedia_2018_1M:791196	罗振玉在《海宁王忠悫公遗书序》提及王国维有预言“中国近状，恐以共和始，而以共产终。”	羅振玉在《海寧王忠慤公遺書序》提及王國維有預言“中國近狀，恐以共和始，而以共產終。”		lexical-context
+4744	2	掼	4744_1	摜	false	掼蛋	摜蛋	authored-example	project-authored	掼蛋是一个较少见的词语。	摜蛋是一個較少見的詞語。		lexical-context
+4767	2	萦	4767_1	縈	false	萦绕	縈繞	corpus-example	tatoeba:532195	我昨晚一整夜没睡好，因为有许多事情萦绕在我的心头。	我昨晚一整夜沒睡好，因為有許多事情縈繞在我的心頭。		lexical-context
+4771	2	梿	4771_1	槤	false	榴梿	榴槤	corpus-example	leipzig:zho_wikipedia_2018_1M:959944	除了本种，还有另外9种可食用的榴梿属物种，多只在原生地的市场上出现。	除了本種，還有另外9種可食用的榴槤屬物種，多隻在原生地的市場上出現。		lexical-context
+4773	2	觋	4773_1	覡	false	巫觋	巫覡	corpus-example	leipzig:zho_wikipedia_2018_1M:511869	惟遵其国俗，喜田猎，信巫觋卜筮，是其小蔽。	惟遵其國俗，喜田獵，信巫覡卜筮，是其小蔽。		lexical-context
+4779	2	棂	4779_1	欞	false	窗棂	窗欞	corpus-example	leipzig:zho_news_2020_300K:136636	庙门两侧是漏明窗，窗棂以木条构成几何图形。	廟門兩側是漏明窗，窗欞以木條構成幾何圖形。		lexical-context
+4780	2	啬	4780_1	嗇	false	吝啬	吝嗇	corpus-example	tatoeba:4805724	玛莉不喜欢跟汤姆一样吝啬的男人。	瑪莉不喜歡跟湯姆一樣吝嗇的男人。		lexical-context
+4782	2	匮	4782_1	匱	false	匮乏	匱乏	corpus-example	tatoeba:2065020	乐观主义仅仅是一种信息的匮乏的产物。	樂觀主義僅僅是一種資訊的匱乏的產物。		lexical-context
+4792	2	硖	4792_1	硤	false	硖石	硤石	corpus-example	leipzig:zho_wikipedia_2018_1M:109398	二女：曰适京兆王佑，任硖石尉；曰适会稽贺酰卒常熟主簿。	二女：曰適京兆王佑，任硤石尉；曰適會稽賀醯卒常熟主簿。		lexical-context
+4793	2	硗	4793_1	磽	false	硗确	磽确	authored-example	project-authored	硗确是一个较少见的词语。	磽确是一個較少見的詞語。		lexical-context
+4797	2	鸸	4797_1	鴯	false	鸸鹋	鴯鶓	corpus-example	tatoeba:13924819	鸸鹋和鸵鸟有什么区别？	鴯鶓和鴕鳥有什麼區別？		lexical-context
+4801	2	龚	4801_1	龔	false	龚自珍	龔自珍	corpus-example	leipzig:zho_news_2020_300K:271858	这与龚自珍“落红不是无情物，化作春泥更护花”佳句之意，已然相通。	這與龔自珍“落紅不是無情物，化作春泥更護花”佳句之意，已然相通。		lexical-context
+4802	2	殒	4802_1	殞	false	殒命	殞命	corpus-example	leipzig:zho_wikipedia_2018_1M:277870	及以忧殒命，则操之猜忍实甚，非所及料也。	及以憂殞命，則操之猜忍實甚，非所及料也。		lexical-context
+4803	2	殓	4803_1	殮	false	入殓	入殮	corpus-example	leipzig:zho_wikipedia_2018_1M:655961	水族实行土葬，若死者是妇女要等娘家人验看后才能入殓。	水族實行土葬，若死者是婦女要等孃家人驗看後才能入殮。		lexical-context
+4805	2	赉	4805_1	賚	false	镇赉县	鎮賚縣	corpus-example	leipzig:zho_wikipedia_2018_1M:737128	白城市辖镇赉县、通榆县、洮北区，代管大安、洮南市。	白城市轄鎮賚縣、通榆縣、洮北區，代管大安、洮南市。		lexical-context
+4807	2	辄	4807_1	輒	false	动辄	動輒	corpus-example	tatoeba:501219	他动辄就发脾气，所以我不怎么喜欢他。	他動輒就發脾氣，所以我不怎麼喜歡他。		lexical-context
+4808	2	堑	4808_1	塹	false	地堑	地塹	corpus-example	leipzig:zho_wikipedia_2018_1M:463982	山地丘陵间有桃村地堑盆地、莱阳断陷盆地和胶莱凹陷平原等。	山地丘陵間有桃村地塹盆地、萊陽斷陷盆地和膠萊凹陷平原等。		lexical-context
+4811	2	啧	4811_1	嘖	false	啧啧	嘖嘖	corpus-example	leipzig:zho_news_2020_300K:80812	口罩坐地起价，啧啧，我真的不晓得他们怎么想的。	口罩坐地起價，嘖嘖，我真的不曉得他們怎麼想的。		lexical-context
+4826	2	啭	4826_1	囀	false	啼啭	啼囀	authored-example	project-authored	啼啭表示一种动作。	啼囀表示一種動作。		lexical-context
+4829	2	啮	4829_1	嚙	false	啮齿	嚙齒	corpus-example	leipzig:zho_wikipedia_2018_1M:195867	值得一提的是，与杂食的啮齿目不同，	值得一提的是，與雜食的嚙齒目不同，		lexical-context
+4830	2	跄	4830_1	蹌	false	踉跄	踉蹌	corpus-example	leipzig:zho_news_2020_300K:9975	一干人踉踉跄跄地回到宿舍，老二立刻不省人事，倒在床上就睡了，没脱鞋，两只脚耷拉在地上。	一干人踉踉蹌蹌地回到宿舍，老二立刻不省人事，倒在床上就睡了，沒脫鞋，兩隻腳耷拉在地上。		lexical-context
+4833	2	蛎	4833_1	蠣	false	牡蛎	牡蠣	corpus-example	tatoeba:834889	我后悔吃了那些牡蛎。	我後悔吃了那些牡蠣。		lexical-context
+4836	2	蛊	4836_1	蠱	false	蛊惑	蠱惑	corpus-example	leipzig:zho_news_2020_300K:291933	难道这些游行活动是受中国媒体蛊惑的吗？	難道這些遊行活動是受中國媒體蠱惑的嗎？		lexical-context
+4840	2	蛏	4840_1	蟶	false	蛏干	蟶乾	authored-example	project-authored	蛏干是一种食物。	蟶乾是一種食物。		lexical-context
+4855	2	帻	4855_1	幘	false	卷帻	卷幘	authored-example	project-authored	卷帻是一个较少见的词语。	卷幘是一個較少見的詞語。		lexical-context
+4858	2	帼	4858_1	幗	false	巾帼	巾幗	corpus-example	leipzig:zho_news_2020_300K:184446	村民可在巾帼家美积分超市兑换各类用品。	村民可在巾幗家美積分超市兌換各類用品。		lexical-context
+4862	2	赇	4862_1	賕	false	招权纳赇	招權納賕	authored-example	project-authored	招权纳赇是一个成语或固定说法。	招權納賕是一個成語或固定說法。		lexical-context
+4863	2	赈	4863_1	賑	false	赈济	賑濟	corpus-example	leipzig:zho_wikipedia_2018_1M:312294	后知常州，赈济饥荒有功，进一官 《	後知常州，賑濟饑荒有功，進一官 《		lexical-context
+4864	2	赊	4864_1	賒	false	赊购	賒購	authored-example	project-authored	赊购表示一种动作。	賒購表示一種動作。		lexical-context
+4865	2	铑	4865_1	銠	false	铑字	銠字	approved-manual	metalinguistic-fallback	首饰表面镀了一层铑。	首飾表面鍍了一層銠。	Chemistry / jewellery metallurgy: rhodium, a corrosion-resistant precious metal often used for plating.	approved-manual
+4866	2	铒	4866_1	鉺	false	铒字	鉺字	approved-manual	metalinguistic-fallback	这种玻璃含有铒。	這種玻璃含有鉺。	Materials science / optics: erbium, an element used in specialised glass, lasers, and optical technology.	approved-manual
+4867	2	铗	4867_1	鋏	false	铗子	鋏子	authored-example	project-authored	铗子是一个较少见的词语。	鋏子是一個較少見的詞語。		lexical-context
+4868	2	铙	4868_1	鐃	false	铙钹	鐃鈸	authored-example	project-authored	铙钹是一种器物。	鐃鈸是一種器物。		lexical-context
+4869	2	铟	4869_1	銦	false	磷化铟	磷化銦	authored-example	project-authored	磷化铟是一种材料或化学物质。	磷化銦是一種材料或化學物質。		lexical-context
+4870	2	铠	4870_1	鎧	false	铠甲	鎧甲	corpus-example	leipzig:zho_news_2020_300K:278410	这颗老人的心还能撑多久，这副伪装的铠甲还能装多久。	這顆老人的心還能撐多久，這副偽裝的鎧甲還能裝多久。		lexical-context
+4871	2	铡	4871_1	鍘	false	铡刀	鍘刀	corpus-example	leipzig:zho_news_2020_300K:128672	小时候就知道刘胡兰的英雄事迹，她视死如归，面对敌人的铡刀，毫无惧色。	小時候就知道劉胡蘭的英雄事蹟，她視死如歸，面對敵人的鍘刀，毫無懼色。		lexical-context
+4872	2	铢	4872_1	銖	false	泰铢	泰銖	corpus-example	leipzig:zho_wikipedia_2018_1M:983478	预计投资金额245亿4900万泰铢。	預計投資金額245億4900萬泰銖。		lexical-context
+4873	2	铣	4873_1	銑	false	铣床	銑床	corpus-example	leipzig:zho_news_2020_300K:98147	在一次技术攻关会战中，以父亲为主力的几个人新上了一台双面铣床。	在一次技術攻關會戰中，以父親為主力的幾個人新上了一臺雙面銑床。		lexical-context
+4874	2	铤	4874_1	鋌	false	铤而走险	鋌而走險	corpus-example	tatoeba:346901	铤而走险。	鋌而走險。		lexical-context
+4875	2	铧	4875_1	鏵	false	犁铧	犁鏵	corpus-example	leipzig:zho_wikipedia_2018_1M:911229	这种短辕一牛挽犁的出现，是跟犁铧的改进结合在一起的。	這種短轅一牛挽犁的出現，是跟犁鏵的改進結合在一起的。		lexical-context
+4876	2	铨	4876_1	銓	false	蒋士铨	蔣士銓	corpus-example	leipzig:zho_news_2020_300K:183180	朱彝尊、洪昇、蒋士铨、翁方纲、阮元等103人题咏于上。	朱彝尊、洪昇、蔣士銓、翁方綱、阮元等103人題詠於上。		lexical-context
+4877	2	铩	4877_1	鎩	false	铩羽而归	鎩羽而歸	corpus-example	leipzig:zho_news_2020_300K:207439	然而，当时正值气候湿热，蒙古大军受不了这样的气候，最终铩羽而归，只能作罢。	然而，當時正值氣候溼熱，蒙古大軍受不了這樣的氣候，最終鎩羽而歸，只能作罷。		lexical-context
+4878	2	铪	4878_1	鉿	false	铪字	鉿字	element-domain	metalinguistic-fallback	实验记录中提到了铪。	實驗記錄中提到了鉿。	Chemistry: hafnium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+4879	2	铫	4879_1	銚	false	铫字	銚字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见铫。	金屬器物或技術資料中可見銚。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+4880	2	铬	4880_1	鉻	false	单铬	單鉻	authored-example	project-authored	单铬是一种材料或化学物质。	單鉻是一種材料或化學物質。		lexical-context
+4881	2	铮	4881_1	錚	false	铮亮	錚亮	authored-example	project-authored	铮亮是一个较少见的词语。	錚亮是一個較少見的詞語。		lexical-context
+4882	2	铯	4882_1	銫	false	铯钟	銫鐘	authored-example	project-authored	铯钟是一种器物。	銫鐘是一種器物。		lexical-context
+4883	2	铰	4883_1	鉸	false	铰链	鉸鏈	corpus-example	leipzig:zho_news_2020_300K:277077	这款手机的最大特点在于形状，使用可以360度旋转的铰链将两个5.	這款手機的最大特點在於形狀，使用可以360度旋轉的鉸鏈將兩個5.		lexical-context
+4884	2	铱	4884_1	銥	false	铱金笔	銥金筆	authored-example	project-authored	铱金笔是一种器物。	銥金筆是一種器物。		lexical-context
+4885	2	铳	4885_1	銃	false	鸟铳	鳥銃	corpus-example	leipzig:zho_news_2020_300K:140954	当晚10点,农民自卫军向黄安县城进发,成千上万的群众手持鸟铳、鱼叉等原始武器纷纷加入起义行列。	當晚10點,農民自衛軍向黃安縣城進發,成千上萬的群眾手持鳥銃、魚叉等原始武器紛紛加入起義行列。		lexical-context
+4886	2	铵	4886_1	銨	false	氯化铵	氯化銨	corpus-example	leipzig:zho_wikipedia_2018_1M:778779	索氏是加入生石灰发使氨逸出，而侯氏是加入食盐使氯化铵结晶而出。	索氏是加入生石灰髮使氨逸出，而侯氏是加入食鹽使氯化銨結晶而出。		lexical-context
+4887	2	铷	4887_1	銣	false	铷字	銣字	element-domain	metalinguistic-fallback	实验记录中提到了铷。	實驗記錄中提到了銣。	Chemistry: rubidium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+4890	2	鸹	4890_1	鴰	false	老鸹	老鴰	corpus-example	leipzig:zho_news_2020_300K:36453	从此之后，狗剩子外出总爱戴个草帽，“吃一亏，长一智”，防止老鸹子来个突然袭击。	從此之後，狗剩子外出總愛戴個草帽，“吃一虧，長一智”，防止老鴰子來個突然襲擊。		lexical-context
+4891	2	秾	4891_1	穠	false	秾纤	穠纖	corpus-example	leipzig:zho_wikipedia_2018_1M:228702	其秾纤绵密者亦不在小晏秦郎之下。”	其穠纖綿密者亦不在小晏秦郎之下。”		lexical-context
+4893	2	笺	4893_1	箋	false	信笺	信箋	corpus-example	leipzig:zho_news_2020_300K:170676	无数句写在信笺上的勿念，此刻通通化作一句 ：“见到了你，我怎么会不开心呢？”	無數句寫在信箋上的勿念，此刻通通化作一句 ：“見到了你，我怎麼會不開心呢？”		lexical-context
+4902	2	笾	4902_1	籩	false	笾字	籩字	approved-manual	metalinguistic-fallback	祭案上摆着几只笾。	祭案上擺著幾隻籩。	Ancient ritual culture: bamboo vessel used for dry offerings during sacrifices and banquets.	approved-manual
+4904	2	偾	4904_1	僨	false	血脉偾张	血脈僨張	authored-example	project-authored	血脉偾张是一个成语或固定说法。	血脈僨張是一個成語或固定說法。		lexical-context
+4910	2	偻	4910_1	僂	false	佝偻	佝僂	corpus-example	leipzig:zho_news_2020_300K:287035	长年累月的篾匠生涯，使他的背有些佝偻，人们爱喊他“醴陵驼子”。	長年累月的篾匠生涯，使他的背有些佝僂，人們愛喊他“醴陵駝子”。		lexical-context
+4911	2	皑	4911_1	皚	false	皑皑	皚皚	corpus-example	tatoeba:13573235	这座位于南亚中心的雄伟山脉，山峰白雪皑皑，覆盖著广阔的冰川。	這座位於南亞中心的雄偉山脈，山峰白雪皚皚，覆蓋著廣闊的冰川。		lexical-context
+4913	2	鸻	4913_1	鴴	false	鸻科	鴴科	authored-example	project-authored	鸻科是一种鸟。	鴴科是一種鳥。		lexical-context
+4916	2	舻	4916_1	艫	false	舳舻千里	舳艫千里	authored-example	project-authored	舳舻千里是一个成语或固定说法。	舳艫千里是一個成語或固定說法。		lexical-context
+4919	2	龛	4919_1	龕	false	神龛	神龕	corpus-example	leipzig:zho_news_2020_300K:176994	曾经我也向着上天祈祷，神龛前默默地把愿望相告……	曾經我也向著上天祈禱，神龕前默默地把願望相告……		lexical-context
+4926	2	猡	4926_1	玀	false	猡字	玀字	curated-domain	metalinguistic-fallback	村里养了几头猡。	村裡養了幾頭玀。	Regional animal vocabulary: a rare character associated with pigs or livestock terminology.	curated-domain
+4930	2	猕	4930_1	獼	false	猕猴桃	獼猴桃	corpus-example	tatoeba:8825041	你从来没吃过猕猴桃吗？	你從來沒吃過獼猴桃嗎？		lexical-context
+4932	2	馃	4932_1	餜	false	馃字	餜字	curated-domain	metalinguistic-fallback	摊上卖着新做的馃。	攤上賣著新做的餜。	Regional food vocabulary: a character used in names of cakes, pastries, or prepared foods.	curated-domain
+4933	2	馄	4933_1	餛	false	馄饨	餛飩	corpus-example	tatoeba:420336	一碗绉纱馄饨，皮儿薄得连肉也看得见！	一碗縐紗餛飩，皮兒薄得連肉也看得見！		lexical-context
+4934	2	鸾	4934_1	鸞	false	鸾凤	鸞鳳	corpus-example	leipzig:zho_news_2020_300K:34997	今日幸为秦晋会，早教鸾凤下妆楼”，请新娘抓紧时间化妆下楼。	今日幸為秦晉會，早教鸞鳳下妝樓”，請新娘抓緊時間化妝下樓。		lexical-context
+4945	2	阇	4945_1	闍	false	阇梨	闍梨	corpus-example	leipzig:zho_wikipedia_2018_1M:281922	，受法修行直至最終成为有傳法資格的阿阇梨。	，受法修行直至最終成為有傳法資格的阿闍梨。		lexical-context
+4946	2	阈	4946_1	閾	false	阈值	閾值	corpus-example	leipzig:zho_news_2020_300K:51412	但现在十几位专家表示，阈值达到50％可能就够了。	但現在十幾位專家表示，閾值達到50％可能就夠了。		lexical-context
+4947	2	阉	4947_1	閹	false	阉党	閹黨	corpus-example	leipzig:zho_wikipedia_2018_1M:953668	阉党阮大铖时亦屏居金陵，谋复用。	閹黨阮大鋮時亦屏居金陵，謀複用。		lexical-context
+4948	2	阊	4948_1	閶	false	金阊区	金閶區	authored-example	project-authored	金阊区是一个地名。	金閶區是一個地名。		lexical-context
+4949	2	阋	4949_1	鬩	false	兄弟阋墙	兄弟鬩牆	corpus-example	leipzig:zho_wikipedia_2018_1M:202031	兄弟阋墙事堪叹，术也仇绍翻结瓒，谬算适足羞先公，强云图谶天所赞。	兄弟鬩牆事堪嘆，術也仇紹翻結瓚，謬算適足羞先公，強雲圖讖天所贊。		lexical-context
+4950	2	阍	4950_1	閽	false	九阍虎豹	九閽虎豹	authored-example	project-authored	九阍虎豹是一个成语或固定说法。	九閽虎豹是一個成語或固定說法。		lexical-context
+4951	2	阏	4951_1	閼	false	阏氏	閼氏	corpus-example	leipzig:zho_wikipedia_2018_1M:992326	高帝用陈平奇计，使单于阏氏，围以得开。	高帝用陳平奇計，使單于閼氏，圍以得開。		lexical-context
+4952	2	羟	4952_1	羥	false	羟基	羥基	corpus-example	leipzig:zho_wikipedia_2018_1M:837217	苯环上直接连有两个羟基时叫苯二酚。	苯環上直接連有兩個羥基時叫苯二酚。		lexical-context
+4953	2	粝	4953_1	糲	false	粗粝	粗糲	authored-example	project-authored	粗粝是一个描写性质或状态的词。	粗糲是一個描寫性質或狀態的詞。		lexical-context
+4960	2	焖	4960_1	燜	false	焖烧锅	燜燒鍋	authored-example	project-authored	焖烧锅是一种器物。	燜燒鍋是一種器物。		lexical-context
+4963	2	渍	4963_1	漬	false	血渍	血漬	corpus-example	leipzig:zho_news_2020_300K:275546	这是一张特殊的党证，上面沾满血渍，它的主人就是开国将帅中13位独臂将军之一的陈波。	這是一張特殊的黨證，上面沾滿血漬，它的主人就是開國將帥中13位獨臂將軍之一的陳波。		lexical-context
+4968	2	渎	4968_1	瀆	false	亵渎	褻瀆	corpus-example	tatoeba:9094081	亵渎是没有受害者的犯罪。	褻瀆是沒有受害者的犯罪。		lexical-context
+4974	2	渑	4974_1	澠	false	渑池	澠池	corpus-example	leipzig:zho_wikipedia_2018_1M:70892	，世称月川先生，明代著名理学家，渑池人。	，世稱月川先生，明代著名理學家，澠池人。		lexical-context
+4983	2	惬	4983_1	愜	false	惬意	愜意	corpus-example	tatoeba:1941668	没有比泡热水澡更惬意的事了。	沒有比泡熱水澡更愜意的事了。		lexical-context
+4992	2	惮	4992_1	憚	false	肆无忌惮	肆無忌憚	corpus-example	leipzig:zho_news_2020_300K:101542	在屋子里吃烧烤，能吃出自由惬意肆无忌惮不？	在屋子裡吃燒烤，能吃出自由愜意肆無忌憚不？		lexical-context
+4994	2	谌	4994_1	諶	false	谌家矶	諶家磯	corpus-example	leipzig:zho_news_2020_300K:90138	听转图的四唯街道干部说，那小伙子是球场街的；球场街那边说，人是谌家矶那边的。	聽轉圖的四唯街道幹部說，那小夥子是球場街的；球場街那邊說，人是諶家磯那邊的。		lexical-context
+4995	2	谏	4995_1	諫	false	劝谏	勸諫	corpus-example	leipzig:zho_news_2020_300K:51659	但秦二世不听子婴的劝谏，派人杀死蒙恬和蒙毅。	但秦二世不聽子嬰的勸諫，派人殺死蒙恬和蒙毅。		lexical-context
+4997	2	皲	4997_1	皸	false	皲裂	皸裂	corpus-example	leipzig:zho_wikipedia_2018_1M:316406	周围皮肤潮红或皲裂，鼻毛脱落。	周圍皮膚潮紅或皸裂，鼻毛脫落。		lexical-context
+4998	2	谑	4998_1	謔	false	戏谑	戲謔	corpus-example	leipzig:zho_news_2020_300K:143120	得意的刻薄，依旧在粗暴的戏谑着正义、、、	得意的刻薄，依舊在粗暴的戲謔著正義、、、		lexical-context
+4999	2	裆	4999_1	襠	false	裤裆	褲襠	corpus-example	tatoeba:344779	要尿裤裆了。	要尿褲襠了。		lexical-context
+5002	2	谒	5002_1	謁	false	拜谒	拜謁	corpus-example	leipzig:zho_news_2020_300K:195284	每年的东坡诞辰日，他不仅拜谒苏轼墓，还会召集幕僚举行祭祀和诗文唱和活动以表纪念。	每年的東坡誕辰日，他不僅拜謁蘇軾墓，還會召集幕僚舉行祭祀和詩文唱和活動以表紀念。		lexical-context
+5003	2	谔	5003_1	諤	false	薛定谔	薛定諤	corpus-example	leipzig:zho_news_2020_300K:218945	病毒在特朗普手上就是一只薛定谔的猫。	病毒在特朗普手上就是一隻薛定諤的貓。		lexical-context
+5004	2	谕	5004_1	諭	false	谕旨	諭旨	corpus-example	leipzig:zho_news_2020_300K:66958	……冒死陈言：恳请焕汗大号，明降谕旨，宣示中外，立定共和政体。”	……冒死陳言：懇請煥汗大號，明降諭旨，宣示中外，立定共和政體。”		lexical-context
+5005	2	谖	5005_1	諼	false	谖字	諼字	domain-template	metalinguistic-fallback	古文中可见谖。	古文中可見諼。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+5006	2	谗	5006_1	讒	false	谗言	讒言	corpus-example	leipzig:zho_news_2020_300K:131232	屈原虽忠事楚怀王，但却屡遭排挤，怀王死后又因顷襄工听信谗言而被流放，最终投泪罗江而死。	屈原雖忠事楚懷王，但卻屢遭排擠，懷王死後又因頃襄工聽信讒言而被流放，最終投淚羅江而死。		lexical-context
+5007	2	谙	5007_1	諳	false	熟谙	熟諳	corpus-example	leipzig:zho_news_2020_300K:108063	在高等学校担任领导职务20多年，勤奋学习，刻苦钻研，熟谙学校教育工作规律，精通教育管理业务。	在高等學校擔任領導職務20多年，勤奮學習，刻苦鑽研，熟諳學校教育工作規律，精通教育管理業務。		lexical-context
+5008	2	谛	5008_1	諦	false	真谛	真諦	corpus-example	leipzig:zho_news_2020_300K:276750	这样虽然平平淡淡，但却是生活的真谛。	這樣雖然平平淡淡，但卻是生活的真諦。		lexical-context
+5009	2	谝	5009_1	諞	false	谝字	諞字	domain-template	metalinguistic-fallback	古文中可见谝。	古文中可見諞。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+5013	2	粜	5013_1	糶	false	出粜	出糶	authored-example	project-authored	出粜是一个较少见的词语。	出糶是一個較少見的詞語。		lexical-context
+5021	2	婵	5021_1	嬋	false	婵娟	嬋娟	authored-example	project-authored	婵娟是一个较少见的词语。	嬋娟是一個較少見的詞語。		lexical-context
+5027	2	绫	5027_1	綾	false	绫罗绸缎	綾羅綢緞	corpus-example	leipzig:zho_news_2020_300K:220106	皇上这天要向后妃、内侍、诸阁臣僚行赏，赏赐的物品有珍珠玉翠、绫罗绸缎等。	皇上這天要向後妃、內侍、諸閣臣僚行賞，賞賜的物品有珍珠玉翠、綾羅綢緞等。		lexical-context
+5028	2	骐	5028_1	騏	false	骐麟	騏麟	authored-example	project-authored	骐麟是一个较少见的词语。	騏麟是一個較少見的詞語。		lexical-context
+5029	2	绮	5029_1	綺	false	绮丽	綺麗	corpus-example	leipzig:zho_news_2020_300K:80926	古今中外，不知多少骚人墨客为漓江的绮丽风光写下了脍炙人口的优美诗文。	古今中外，不知多少騷人墨客為灕江的綺麗風光寫下了膾炙人口的優美詩文。		lexical-context
+5030	2	绯	5030_1	緋	false	绯红	緋紅	corpus-example	leipzig:zho_news_2020_300K:90045	听到阿龙的山歌，早已满面绯红的阿美，又深情地回唱道：“泉水流出哗哗响，妹想那个真心郎。	聽到阿龍的山歌，早已滿面緋紅的阿美，又深情地回唱道：“泉水流出嘩嘩響，妹想那個真心郎。		lexical-context
+5031	2	绱	5031_1	緔	false	绱字	緔字	curated-domain	metalinguistic-fallback	师傅正在绱鞋。	師傅正在緔鞋。	Traditional shoemaking: means stitching or attaching an upper to the sole of a shoe.	curated-domain
+5032	2	骒	5032_1	騍	false	骒马	騍馬	authored-example	project-authored	骒马是一个较少见的词语。	騍馬是一個較少見的詞語。		lexical-context
+5033	2	绲	5033_1	緄	false	绲边	緄邊	authored-example	project-authored	绲边表示一种动作。	緄邊表示一種動作。		lexical-context
+5034	2	骓	5034_1	騅	false	项别骓	項別騅	authored-example	project-authored	项别骓是一个较少见的词语。	項別騅是一個較少見的詞語。		lexical-context
+5035	2	绶	5035_1	綬	false	印绶	印綬	corpus-example	leipzig:zho_news_2020_300K:77621	即日解印绶去职，赋《归去来》。	即日解印綬去職，賦《歸去來》。		lexical-context
+5036	2	绺	5036_1	綹	false	发绺	髮綹	authored-example	project-authored	发绺是一个较少见的词语。	髮綹是一個較少見的詞語。		lexical-context
+5037	2	绻	5037_1	綣	false	缱绻	繾綣	corpus-example	leipzig:zho_news_2020_300K:11598	一转身，天涯海角；一回眸，婆娑缱绻。	一轉身，天涯海角；一回眸，婆娑繾綣。		lexical-context
+5038	2	绾	5038_1	綰	false	绾发	綰髮	authored-example	project-authored	绾发表示一种动作。	綰髮表示一種動作。		lexical-context
+5039	2	骖	5039_1	驂	false	方骖并路	方驂並路	authored-example	project-authored	方骖并路是一个成语或固定说法。	方驂並路是一個成語或固定說法。		lexical-context
+5040	2	缁	5040_1	緇	false	削发披缁	削髮披緇	authored-example	project-authored	削发披缁是一个成语或固定说法。	削髮披緇是一個成語或固定說法。		lexical-context
+5050	2	靓	5050_1	靚	false	靓丽	靚麗	corpus-example	leipzig:zho_news_2020_300K:117345	好一派靓丽的田野风光，令人心旷神怡。	好一派靚麗的田野風光，令人心曠神怡。		lexical-context
+5057	2	辇	5057_1	輦	false	輂辇	輂輦	authored-example	project-authored	輂辇是一个较少见的词语。	輂輦是一個較少見的詞語。		lexical-context
+5058	2	鼋	5058_1	黿	false	鼋鱼	黿魚	authored-example	project-authored	鼋鱼是一种动物。	黿魚是一種動物。		lexical-context
+5067	2	颉	5067_1	頡	false	仓颉	倉頡	corpus-example	leipzig:zho_news_2020_300K:199980	注：“鬼神”句，相传仓颉造字时：“天雨粟、鬼夜哭”	注：“鬼神”句，相傳倉頡造字時：“天雨粟、鬼夜哭”		lexical-context
+5069	2	揿	5069_1	撳	false	揿下	撳下	authored-example	project-authored	揿下表示一种动作。	撳下表示一種動作。		lexical-context
+5073	2	蛰	5073_1	蟄	false	蛰伏	蟄伏	corpus-example	leipzig:zho_news_2020_300K:252853	袁不再蛰伏，接受任命，独揽大权，其与那桐的来往便愈加密切，这在《那桐日记》中颇有体现：	袁不再蟄伏，接受任命，獨攬大權，其與那桐的來往便愈加密切，這在《那桐日記》中頗有體現：		lexical-context
+5074	2	塆	5074_1	壪	false	塆字	壪字	domain-template	metalinguistic-fallback	地方志中记载了塆。	地方志中記載了壪。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+5090	2	蒌	5090_1	蔞	false	冲蒌	沖蔞	authored-example	project-authored	冲蒌是一个地名。	沖蔞是一個地名。		lexical-context
+5096	2	椟	5096_1	櫝	false	买椟还珠	買櫝還珠	authored-example	project-authored	买椟还珠是一个成语或固定说法。	買櫝還珠是一個成語或固定說法。		lexical-context
+5098	2	椤	5098_1	欏	false	桫椤	桫欏	corpus-example	leipzig:zho_news_2020_300K:197733	江东桫椤自然保护区是县级森林生态自然保护区。	江東桫欏自然保護區是縣級森林生態自然保護區。		lexical-context
+5100	2	赍	5100_1	賫	false	赍志以没	賫志以沒	authored-example	project-authored	赍志以没是一个成语或固定说法。	賫志以沒是一個成語或固定說法。		lexical-context
+5106	2	鹁	5106_1	鵓	false	鹁鸽	鵓鴿	authored-example	project-authored	鹁鸽是一种鸟。	鵓鴿是一種鳥。		lexical-context
+5111	2	鹂	5111_1	鸝	false	黄鹂	黃鸝	corpus-example	leipzig:zho_news_2020_300K:171747	日斜林外，黄鹂对对，杜宇声声。	日斜林外，黃鸝對對，杜宇聲聲。		lexical-context
+5113	2	殚	5113_1	殫	false	殚精竭虑	殫精竭慮	corpus-example	leipzig:zho_news_2020_300K:37215	他一生为国为民，殚精竭虑，从不谋求私利。	他一生為國為民，殫精竭慮，從不謀求私利。		lexical-context
+5117	2	辊	5117_1	輥	false	轧辊	軋輥	authored-example	project-authored	轧辊是一个较少见的词语。	軋輥是一個較少見的詞語。		lexical-context
+5118	2	辋	5118_1	輞	false	轮辋	輪輞	authored-example	project-authored	轮辋是一个较少见的词语。	輪輞是一個較少見的詞語。		lexical-context
+5119	2	椠	5119_1	槧	false	抱椠怀铅	抱槧懷鉛	authored-example	project-authored	抱椠怀铅是一个成语或固定说法。	抱槧懷鉛是一個成語或固定說法。		lexical-context
+5120	2	辍	5120_1	輟	false	辍学	輟學	corpus-example	tatoeba:1561576	如果我是他的话，我是不会辍学的。	如果我是他的話，我是不會輟學的。		lexical-context
+5121	2	辎	5121_1	輜	false	辎重	輜重	corpus-example	leipzig:zho_news_2020_300K:66473	内打出而外攻入，枪械辎重，损失甚钜。	內打出而外攻入，槍械輜重，損失甚鉅。		lexical-context
+5124	2	睑	5124_1	瞼	false	眼睑	眼瞼	corpus-example	leipzig:zho_news_2020_300K:54715	你依然像从前面若桃花，频频低垂的眼睑，弯弯的柳叶眉。	你依然像從前面若桃花，頻頻低垂的眼瞼，彎彎的柳葉眉。		lexical-context
+5137	2	跞	5137_1	躒	false	跞字	躒字	curated-domain	metalinguistic-fallback	他跞过石路。	他躒過石路。	Classical movement vocabulary: a rare verb associated with walking, stepping, or movement.	curated-domain
+5142	2	蛱	5142_1	蛺	false	蛱蝶	蛺蝶	corpus-example	leipzig:zho_wikipedia_2018_1M:797008	“翻阶蛱蝶恋花情”中的三个字。	“翻階蛺蝶戀花情”中的三個字。		lexical-context
+5143	2	蛲	5143_1	蟯	false	蛲虫	蟯蟲	authored-example	project-authored	蛲虫是一种动物。	蟯蟲是一種動物。		lexical-context
+5145	2	蛳	5145_1	螄	false	螺蛳	螺螄	corpus-example	tatoeba:10062394	你觉得螺蛳粉臭吗？	你覺得螺螄粉臭嗎？		lexical-context
+5149	2	蛴	5149_1	蠐	false	蝤蛴	蝤蠐	authored-example	project-authored	蝤蛴是一种动物。	蝤蠐是一種動物。		lexical-context
+5158	2	喽	5158_1	嘍	false	哈喽	哈嘍	authored-example	project-authored	哈喽是一个较少见的词语。	哈嘍是一個較少見的詞語。		lexical-context
+5163	2	嵘	5163_1	嶸	false	峥嵘	崢嶸	corpus-example	leipzig:zho_news_2020_300K:144241	忆往昔，岁月峥嵘；看今朝，风华正茂。	憶往昔，歲月崢嶸；看今朝，風華正茂。		lexical-context
+5173	2	嵝	5173_1	嶁	false	嵝字	嶁字	domain-template	metalinguistic-fallback	地方志中记载了嵝。	地方志中記載了嶁。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+5177	2	赕	5177_1	賧	false	赕佛	賧佛	corpus-example	leipzig:zho_wikipedia_2018_1M:428645	孕妇忌参加赕佛或参拜佛爷，忌参加婚礼、丧葬仪式以及各种节庆祭典等。	孕婦忌參加賧佛或參拜佛爺，忌參加婚禮、喪葬儀式以及各種節慶祭典等。		lexical-context
+5178	2	铻	5178_1	鋙	false	铻字	鋙字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见铻。	金屬器物或技術資料中可見鋙。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+5179	2	铼	5179_1	錸	false	铼字	錸字	element-domain	metalinguistic-fallback	实验记录中提到了铼。	實驗記錄中提到了錸。	Chemistry: rhenium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+5180	2	铿	5180_1	鏗	false	铿锵	鏗鏘	corpus-example	tatoeba:918007	这个孩子正在铿铿锵锵地玩著他的玩具。	這個孩子正在鏗鏗鏘鏘地玩著他的玩具。		lexical-context
+5181	2	锃	5181_1	鋥	false	锃亮	鋥亮	corpus-example	tatoeba:420258	你脸蛋长得帅，头发理得锃亮，太有型了！	你臉蛋長得帥，頭髮理得鋥亮，太有型了！		lexical-context
+5182	2	锂	5182_1	鋰	false	锂电池	鋰電池	corpus-example	leipzig:zho_news_2020_300K:20115	中伟新能源是一家研发、生产锂电池正极前驱体材料的企业。	中偉新能源是一家研發、生產鋰電池正極前驅體材料的企業。		lexical-context
+5183	2	锆	5183_1	鋯	false	锆石	鋯石	authored-example	project-authored	锆石是一种材料或化学物质。	鋯石是一種材料或化學物質。		lexical-context
+5184	2	锇	5184_1	鋨	false	锇字	鋨字	approved-manual	metalinguistic-fallback	锇是一种密度很高的金属。	鋨是一種密度很高的金屬。	Chemistry / metallurgy: osmium, an extremely dense metallic element.	approved-manual
+5185	2	锉	5185_1	銼	false	锉刀	銼刀	corpus-example	leipzig:zho_news_2020_300K:45111	他领着六七个工人，带着几把锉刀、钳子，修械厂就算办起来了。	他領著六七個工人，帶著幾把銼刀、鉗子，修械廠就算辦起來了。		lexical-context
+5186	2	锏	5186_1	鐧	false	撒手锏	撒手鐧	corpus-example	leipzig:zho_news_2020_300K:251701	蛇有个“撒手锏”，就是绞杀，将猎物缠住、收紧，使其窒息而死。	蛇有個“撒手鐧”，就是絞殺，將獵物纏住、收緊，使其窒息而死。		lexical-context
+5187	2	锑	5187_1	銻	false	辉锑矿	輝銻礦	corpus-example	leipzig:zho_wikipedia_2018_1M:949272	锑的工业制法是先焙烧，再用碳在高温下还原，或者是直接用金属铁还原辉锑矿。	銻的工業製法是先焙燒，再用碳在高溫下還原，或者是直接用金屬鐵還原輝銻礦。		lexical-context
+5188	2	锒	5188_1	鋃	false	锒铛入狱	鋃鐺入獄	corpus-example	tatoeba:13917209	他纵容手下横行不法，如今公司倾覆、自身锒铛入狱，恶有恶报。	他縱容手下橫行不法，如今公司傾覆、自身鋃鐺入獄，惡有惡報。		lexical-context
+5189	2	锔	5189_1	鋦	false	锔子	鋦子	authored-example	project-authored	锔子是一种器物。	鋦子是一種器物。		lexical-context
+5190	2	锕	5190_1	錒	false	锕系元素	錒系元素	corpus-example	leipzig:zho_wikipedia_2018_1M:436150	，它是被人们认识的第一个锕系元素。	，它是被人們認識的第一個錒系元素。		lexical-context
+5196	2	犊	5196_1	犢	false	牛犊	牛犢	corpus-example	leipzig:zho_news_2020_300K:242404	而青年干部有“初生牛犊不怕虎”的闯劲、稚气，就不应放弃这个优势，在体制内“老成”得太快。	而青年幹部有“初生牛犢不怕虎”的闖勁、稚氣，就不應放棄這個優勢，在體制內“老成”得太快。		lexical-context
+5199	2	鹄	5199_1	鵠	false	鸿鹄	鴻鵠	corpus-example	leipzig:zho_news_2020_300K:146508	意思是：鸿鹄高飞啊，振翅千里。	意思是：鴻鵠高飛啊，振翅千里。		lexical-context
+5205	2	筚	5205_1	篳	false	筚路蓝缕	篳路藍縷	corpus-example	leipzig:zho_news_2020_300K:93085	四十余年，筚路蓝缕，家道复兴矣。	四十餘年，篳路藍縷，家道復興矣。		lexical-context
+5211	2	牍	5211_1	牘	false	文牍	文牘	corpus-example	leipzig:zho_wikipedia_2018_1M:611061	杨一生识字不多，文牍皆由身边人代劳。	楊一生識字不多，文牘皆由身邊人代勞。		lexical-context
+5212	2	傥	5212_1	儻	false	倜傥	倜儻	corpus-example	leipzig:zho_news_2020_300K:156641	才子是否也倜傥风流，俊美潇洒，气度轩昂呢？	才子是否也倜儻風流，俊美瀟灑，氣度軒昂呢？		lexical-context
+5213	2	傧	5213_1	儐	false	傧相	儐相	authored-example	project-authored	傧相是一个较少见的词语。	儐相是一個較少見的詞語。		lexical-context
+5215	2	傩	5215_1	儺	false	傩戏	儺戲	corpus-example	leipzig:zho_wikipedia_2018_1M:667600	“活化石”，桃源傩戏在民间仍广为流传并保留着原始的特色。	“活化石”，桃源儺戲在民間仍廣為流傳並保留著原始的特色。		lexical-context
+5218	2	媭	5218_1	嬃	false	媭字	嬃字	curated-domain	metalinguistic-fallback	古文中以媭称姐姐。	古文中以嬃稱姐姐。	Classical kinship vocabulary: an old term associated with an elder sister or female relative.	curated-domain
+5221	2	颌	5221_1	頜	false	下颌	下頜	corpus-example	leipzig:zho_news_2020_300K:177037	曾经被判“无 期徒 刑”的颞下颌关节紊乱，就这样治疗结束了！	曾經被判“無 期徒 刑”的顳下頜關節紊亂，就這樣治療結束了！		lexical-context
+5224	2	鹆	5224_1	鵒	false	鸲鹆	鴝鵒	corpus-example	leipzig:zho_wikipedia_2018_1M:700563	王导曾当众要求谢尚为此舞：“闻君能为鸲鹆舞，一座倾想，宁有此理乎？”	王導曾當眾要求謝尚為此舞：“聞君能為鴝鵒舞，一座傾想，寧有此理乎？”		lexical-context
+5235	2	鱿	5235_1	魷	false	鱿鱼	魷魚	corpus-example	tatoeba:899095	当在餐馆里时，不能点炒鱿鱼。	當在餐館裡時，不能點炒魷魚。		lexical-context
+5236	2	鲀	5236_1	魨	false	鲀字	魨字	domain-template	metalinguistic-fallback	图鉴中收录了鲀这种鱼。	圖鑑中收錄了魨這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+5237	2	鲂	5237_1	魴	false	团头鲂	團頭魴	corpus-example	leipzig:zho_wikipedia_2018_1M:496464	、彭泽鲫、团头鲂、美国叉尾鲴等品种，年水产品产量达5000吨左右。	、彭澤鯽、團頭魴、美國叉尾鯝等品種，年水產品產量達5000噸左右。		lexical-context
+5238	2	颍	5238_1	潁	false	临颍	臨潁	corpus-example	leipzig:zho_wikipedia_2018_1M:983548	，领召陵、曲阳、临颍三县，称南颍川郡。	，領召陵、曲陽、臨潁三縣，稱南潁川郡。		lexical-context
+5242	2	飓	5242_1	颶	false	飓风	颶風	corpus-example	tatoeba:13559101	居民在飓风来临前，纷纷撤离低洼地区。	居民在颶風來臨前，紛紛撤離低窪地區。		lexical-context
+5243	2	觞	5243_1	觴	false	滥觞	濫觴	corpus-example	leipzig:zho_news_2020_300K:205026	滥觞于家庭与社会传统的期望正失去它们的借鉴意义。	濫觴於家庭與社會傳統的期望正失去它們的借鑑意義。		lexical-context
+5246	2	颎	5246_1	熲	false	脱颎而出	脫熲而出	authored-example	project-authored	脱颎而出是一个成语或固定说法。	脫熲而出是一個成語或固定說法。		lexical-context
+5248	2	馇	5248_1	餷	false	馇字	餷字	domain-template	metalinguistic-fallback	地方食谱中提到了馇。	地方食譜中提到了餷。	Traditional or regional food vocabulary: a rare character used for a dish, food, or preparation.	domain-template
+5249	2	馊	5249_1	餿	false	馊主意	餿主意	corpus-example	tatoeba:602908	亏你想到这种馊主意！	虧你想到這種餿主意！		lexical-context
+5250	2	亵	5250_1	褻	false	亵渎	褻瀆	corpus-example	tatoeba:9094081	亵渎是没有受害者的犯罪。	褻瀆是沒有受害者的犯罪。		lexical-context
+5251	2	脔	5251_1	臠	false	禁脔	禁臠	authored-example	project-authored	禁脔是一个较少见的词语。	禁臠是一個較少見的詞語。		lexical-context
+5254	2	痨	5254_1	癆	false	馋痨	饞癆	authored-example	project-authored	馋痨是一个较少见的词语。	饞癆是一個較少見的詞語。		lexical-context
+5258	2	痫	5258_1	癇	false	癫痫	癲癇	corpus-example	leipzig:zho_news_2020_300K:271982	这两年，姚德芬还要面对的病痛就是，因过去脑瘤手术遗留下的癫痫病。“	這兩年，姚德芬還要面對的病痛就是，因過去腦瘤手術遺留下的癲癇病。“		lexical-context
+5260	2	赓	5260_1	賡	false	赓即	賡即	authored-example	project-authored	赓即是一个较少见的词语。	賡即是一個較少見的詞語。		lexical-context
+5264	2	颏	5264_1	頦	false	下颏	下頦	corpus-example	leipzig:zho_news_2020_300K:79850	双耳长且略向下垂，下颏圆而略向前突。	雙耳長且略向下垂，下頦圓而略向前突。		lexical-context
+5265	2	鹇	5265_1	鷳	false	白鹇	白鷳	corpus-example	leipzig:zho_wikipedia_2018_1M:822873	自然保护区内栖息着蜂猴、长尾花叶 猴、水鹿、豹子、绿孔雀、金丝猴、白鹇、蟒蛇、麂子等珍贵动物。	自然保護區內棲息著蜂猴、長尾花葉 猴、水鹿、豹子、綠孔雀、金絲猴、白鷳、蟒蛇、麂子等珍貴動物。		lexical-context
+5266	2	阑	5266_1	闌	false	阑尾炎	闌尾炎	corpus-example	tatoeba:1616581	我弟弟可能得了急性阑尾炎，要是这样他必须做个手术。	我弟弟可能得了急性闌尾炎，要是這樣他必須做個手術。		lexical-context
+5267	2	阒	5267_1	闃	false	阒寂	闃寂	authored-example	project-authored	阒寂是一个描写性质或状态的词。	闃寂是一個描寫性質或狀態的詞。		lexical-context
+5268	2	阕	5268_1	闋	false	一阕	一闋	authored-example	project-authored	一阕是一个较少见的词语。	一闋是一個較少見的詞語。		lexical-context
+5276	2	鹈	5276_1	鵜	false	鹈鹕	鵜鶘	corpus-example	leipzig:zho_wikipedia_2018_1M:795222	美國馬里蘭州切薩皮克灣鹈鹕與其幼鳥。	美國馬裡蘭州切薩皮克灣鵜鶘與其幼鳥。		lexical-context
+5296	2	愦	5296_1	憒	false	昏愦	昏憒	corpus-example	leipzig:zho_wikipedia_2018_1M:250703	功罪不分昏愦甚，从知灵帝本无灵！	功罪不分昏憒甚，從知靈帝本無靈！		lexical-context
+5301	2	喾	5301_1	嚳	false	帝喾	帝嚳	corpus-example	leipzig:zho_news_2020_300K:176424	更正：因笔误，五帝中“帝善”应为“帝喾”。	更正：因筆誤，五帝中“帝善”應為“帝嚳”。		lexical-context
+5303	2	谟	5303_1	謨	false	望谟	望謨	authored-example	project-authored	望谟是一个地名。	望謨是一個地名。		lexical-context
+5305	2	裢	5305_1	褳	false	褡裢	褡褳	authored-example	project-authored	褡裢是一种器物。	褡褳是一種器物。		lexical-context
+5307	2	裥	5307_1	襇	false	褶裥	褶襇	authored-example	project-authored	褶裥是一个较少见的词语。	褶襇是一個較少見的詞語。		lexical-context
+5310	2	谠	5310_1	讜	false	谠言嘉论	讜言嘉論	authored-example	project-authored	谠言嘉论是一个成语或固定说法。	讜言嘉論是一個成語或固定說法。		lexical-context
+5312	2	谡	5312_1	謖	false	懬谡写	懬謖寫	authored-example	project-authored	懬谡写是一个较少见的词语。	懬謖寫是一個較少見的詞語。		lexical-context
+5313	2	谥	5313_1	謚	false	谥号	謚號	corpus-example	leipzig:zho_news_2020_300K:181632	朝廷赠其为幽州都督，谥号“懿”。	朝廷贈其為幽州都督，謚號“懿”。		lexical-context
+5314	2	谧	5314_1	謐	false	静谧	靜謐	corpus-example	tatoeba:10059283	那是一个静谧的下午。	那是一個靜謐的下午。		lexical-context
+5319	2	骘	5319_1	騭	false	阴骘	陰騭	corpus-example	leipzig:zho_wikipedia_2018_1M:290562	另《灵剑子·松沙记》：“学道之士，初广布阴骘，先行气攻，持内丹长生久视之法。”	另《靈劍子·松沙記》：“學道之士，初廣佈陰騭，先行氣攻，持內丹長生久視之法。”		lexical-context
+5323	2	巯	5323_1	巰	false	巯基	巰基	corpus-example	leipzig:zho_wikipedia_2018_1M:479633	，并最终以巯基尿酸的形式排出。	，並最終以巰基尿酸的形式排出。		lexical-context
+5324	2	翚	5324_1	翬	false	鸟革翚飞	鳥革翬飛	authored-example	project-authored	鸟革翚飞是一个成语或固定说法。	鳥革翬飛是一個成語或固定說法。		lexical-context
+5327	2	骛	5327_1	騖	false	好高骛远	好高騖遠	corpus-example	tatoeba:5836362	人不能好高骛远。	人不能好高騖遠。		lexical-context
+5328	2	缂	5328_1	緙	false	缂丝	緙絲	corpus-example	leipzig:zho_wikipedia_2018_1M:978802	靠北摆放的屏风上，原来有一幅高10米（三丈）、宽3米（一丈）的巨幅缂丝缎绣佛挂像，	靠北擺放的屏風上，原來有一幅高10米（三丈）、寬3米（一丈）的巨幅緙絲緞繡佛掛像，		lexical-context
+5329	2	缃	5329_1	緗	false	缣缃黄卷	縑緗黃卷	authored-example	project-authored	缣缃黄卷是一个成语或固定说法。	縑緗黃卷是一個成語或固定說法。		lexical-context
+5330	2	缄	5330_1	緘	false	缄默	緘默	corpus-example	leipzig:zho_news_2020_300K:37668	他们一个个垂头丧气，缄默不语。	他們一個個垂頭喪氣，緘默不語。		lexical-context
+5332	2	缇	5332_1	緹	false	钟丽缇	鍾麗緹	authored-example	project-authored	钟丽缇是一个人名。	鍾麗緹是一個人名。		lexical-context
+5333	2	缈	5333_1	緲	false	缥缈	縹緲	corpus-example	leipzig:zho_news_2020_300K:226092	秋光寂历，烟波缥缈，桂影扶疏。	秋光寂歷，煙波縹緲，桂影扶疏。		lexical-context
+5334	2	缌	5334_1	緦	false	缌麻服	緦麻服	authored-example	project-authored	缌麻服是一个较少见的词语。	緦麻服是一個較少見的詞語。		lexical-context
+5335	2	缑	5335_1	緱	false	缑字	緱字	domain-template	metalinguistic-fallback	古代织物记录中出现了缑。	古代織物記錄中出現了緱。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+5336	2	缒	5336_1	縋	false	缒字	縋字	approved-manual	metalinguistic-fallback	守军用绳索把使者缒下城墙。	守軍用繩索把使者縋下城牆。	Historical and military vocabulary: lowering a person or object using a rope.	approved-manual
+5337	2	缗	5337_1	緡	false	缗字	緡字	domain-template	metalinguistic-fallback	古代织物记录中出现了缗。	古代織物記錄中出現了緡。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+5338	2	飨	5338_1	饗	false	飨客	饗客	authored-example	project-authored	飨客表示一种动作。	饗客表示一種動作。		lexical-context
+5339	2	耢	5339_1	耮	false	耢字	耮字	domain-template	metalinguistic-fallback	古代器物记录中提到了耢。	古代器物記錄中提到了耮。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+5347	2	骜	5347_1	驁	false	桀骜不驯	桀驁不馴	corpus-example	leipzig:zho_wikipedia_2018_1M:396586	塑像主体是一头桀骜不驯的狮子，长22米，高11米，	塑像主體是一頭桀驁不馴的獅子，長22米，高11米，		lexical-context
+5348	2	韫	5348_1	韞	false	周韫维	周韞維	authored-example	project-authored	周韫维是一个人名。	周韞維是一個人名。		lexical-context
+5354	2	摅	5354_1	攄	false	摅肝沥胆	攄肝瀝膽	authored-example	project-authored	摅肝沥胆是一个成语或固定说法。	攄肝瀝膽是一個成語或固定說法。		lexical-context
+5362	2	摈	5362_1	擯	false	摈弃	擯棄	corpus-example	leipzig:zho_news_2020_300K:40131	他在信中明确表示：“虽万受摈弃，不更乎其内。”	他在信中明確表示：“雖萬受擯棄，不更乎其內。”		lexical-context
+5364	2	毂	5364_1	轂	false	轮毂	輪轂	corpus-example	leipzig:zho_news_2020_300K:229732	箭形轮毂，花式不错，尺寸再大一点就更好了。	箭形輪轂，花式不錯，尺寸再大一點就更好了。		lexical-context
+5373	2	蓦	5373_1	驀	false	蓦地	驀地	corpus-example	leipzig:zho_news_2020_300K:214830	由于过于紧张，上岸的同志蓦地站了起来，但谁也没有行动。	由於過於緊張，上岸的同志驀地站了起來，但誰也沒有行動。		lexical-context
+5374	2	鹋	5374_1	鶓	false	鸸鹋	鴯鶓	corpus-example	tatoeba:13924819	鸸鹋和鸵鸟有什么区别？	鴯鶓和鴕鳥有什麼區別？		lexical-context
+5380	2	蓟	5380_1	薊	false	蓟县	薊縣	corpus-example	leipzig:zho_news_2020_300K:814	1940年夏，天津蓟县盘山根据地莲花峰，7名八路军战士纵身跳崖，只有马占东一人幸存；	1940年夏，天津薊縣盤山根據地蓮花峰，7名八路軍戰士縱身跳崖，只有馬佔東一人倖存；		lexical-context
+5384	2	蓠	5384_1	蘺	false	江蓠	江蘺	corpus-example	leipzig:zho_wikipedia_2018_1M:60431	不学汉臣栽苜蓿，空教楚客咏江蓠。	不學漢臣栽苜蓿，空教楚客詠江蘺。		lexical-context
+5390	2	蓥	5390_1	鎣	false	华蓥	華鎣	corpus-example	leipzig:zho_wikipedia_2018_1M:260774	华蓥山•中国酒文化博物馆高两层。	華鎣山•中國酒文化博物館高兩層。		lexical-context
+5391	2	颐	5391_1	頤	false	颐和园	頤和園	corpus-example	leipzig:zho_news_2020_300K:74238	【北京颐和园的灭麻雀人——图片来自网络】	【北京頤和園的滅麻雀人——圖片來自網路】		lexical-context
+5402	2	榈	5402_1	櫚	false	棕榈	棕櫚	corpus-example	tatoeba:13894761	王强被棕榈树的叶子砸伤了。	王強被棕櫚樹的葉子砸傷了。		lexical-context
+5404	2	榉	5404_1	櫸	false	榉木	櫸木	authored-example	project-authored	榉木是一种植物。	櫸木是一種植物。		lexical-context
+5417	2	碛	5417_1	磧	false	冰碛	冰磧	corpus-example	leipzig:zho_wikipedia_2018_1M:803854	；而在其南部地区，覆盖着冰碛丘陵。	；而在其南部地區，覆蓋著冰磧丘陵。		lexical-context
+5423	2	碜	5423_1	磣	false	寒碜	寒磣	corpus-example	leipzig:zho_news_2020_300K:234794	维权，是不必寒碜里的一跪，去博同情，示无奈，卖惨相！	維權，是不必寒磣裡的一跪，去博同情，示無奈，賣慘相！		lexical-context
+5424	2	鹌	5424_1	鵪	false	鹌鹑	鵪鶉	corpus-example	leipzig:zho_news_2020_300K:64491	其中，特区可食用的人工饲养的陆地动物只有10种：猪、牛、羊、驴、兔、鸡、鸭、鹅、鸽、鹌鹑。	其中，特區可食用的人工飼養的陸地動物只有10種：豬、牛、羊、驢、兔、雞、鴨、鵝、鴿、鵪鶉。		lexical-context
+5425	2	辏	5425_1	輳	false	并辏	並輳	corpus-example	leipzig:zho_wikipedia_2018_1M:192363	，促进了南北经济文化交流，当时杭州“川泽沃衍，有海陆之饶，珍异所聚，故商贾并辏” 《	，促進了南北經濟文化交流，當時杭州“川澤沃衍，有海陸之饒，珍異所聚，故商賈並輳” 《		lexical-context
+5426	2	龃	5426_1	齟	false	龃龉	齟齬	corpus-example	leipzig:zho_wikipedia_2018_1M:596019	有以事力相龃龉者，委曲为调护。	有以事力相齟齬者，委曲為調護。		lexical-context
+5427	2	龅	5427_1	齙	false	龅牙	齙牙	corpus-example	tatoeba:717448	这个女孩龅牙，又全身都是赘肉，真是个猪血肠。	這個女孩齙牙，又全身都是贅肉，真是個豬血腸。		lexical-context
+5433	2	韪	5433_1	韙	false	不韪	不韙	corpus-example	leipzig:zho_wikipedia_2018_1M:607420	、李不韪、胡國偉、張子柱、何魯之、黃晃、梁志偉等人。	、李不韙、胡國偉、張子柱、何魯之、黃晃、梁志偉等人。		lexical-context
+5442	2	嗫	5442_1	囁	false	嗫嚅	囁嚅	corpus-example	tatoeba:512085	“闭嘴。”他嗫嚅道。	“閉嘴。”他囁嚅道。		lexical-context
+5453	2	跶	5453_1	躂	false	蹦跶	蹦躂	corpus-example	leipzig:zho_news_2020_300K:198675	没有就医和教育资质的机构能蹦跶到现在？	沒有就醫和教育資質的機構能蹦躂到現在？		lexical-context
+5454	2	跸	5454_1	蹕	false	驻跸	駐蹕	corpus-example	leipzig:zho_wikipedia_2018_1M:743916	皇帝驻跸平江，召秦桧赴行在，是张浚推荐的。	皇帝駐蹕平江，召秦檜赴行在，是張浚推薦的。		lexical-context
+5457	2	跹	5457_1	躚	false	翩跹	翩躚	corpus-example	leipzig:zho_news_2020_300K:94571	因山上有一峰酷似翩跹起舞的仙女而得名。	因山上有一峰酷似翩躚起舞的仙女而得名。		lexical-context
+5458	2	跻	5458_1	躋	false	跻身	躋身	corpus-example	leipzig:zho_news_2020_300K:78892	去年公司出笼优质鸡6000万羽，黄羽肉鸡跻身全国“前三甲”。	去年公司出籠優質雞6000萬羽，黃羽肉雞躋身全國“前三甲”。		lexical-context
+5470	2	嗳	5470_1	噯	false	嗳气	噯氣	corpus-example	tatoeba:1014155	我常常嗳气。	我常常噯氣。		lexical-context
+5482	2	锗	5482_1	鍺	false	锗石	鍺石	authored-example	project-authored	锗石是一种材料或化学物质。	鍺石是一種材料或化學物質。		lexical-context
+5483	2	锛	5483_1	錛	false	锛得儿木	錛得兒木	authored-example	project-authored	锛得儿木是一种植物。	錛得兒木是一種植物。		lexical-context
+5484	2	锜	5484_1	錡	false	叶绍锜	葉紹錡	authored-example	project-authored	叶绍锜是一个人名。	葉紹錡是一個人名。		lexical-context
+5485	2	锝	5485_1	鍀	false	锝字	鍀字	element-domain	metalinguistic-fallback	实验记录中提到了锝。	實驗記錄中提到了鍀。	Chemistry: technetium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+5486	2	锞	5486_1	錁	false	银锞子	銀錁子	authored-example	project-authored	银锞子是一个较少见的词语。	銀錁子是一個較少見的詞語。		lexical-context
+5487	2	锟	5487_1	錕	false	曹锟	曹錕	corpus-example	leipzig:zho_wikipedia_2018_1M:306713	，同时鹿钟麟还释放了被软禁的曹锟。	，同時鹿鍾麟還釋放了被軟禁的曹錕。		lexical-context
+5488	2	锢	5488_1	錮	false	禁锢	禁錮	corpus-example	tatoeba:2004690	是什么禁锢了我们的自由呢？	是什麼禁錮了我們的自由呢？		lexical-context
+5489	2	锨	5489_1	鍁	false	铁锨	鐵鍁	authored-example	project-authored	铁锨是一种器物。	鐵鍁是一種器物。		lexical-context
+5490	2	锩	5490_1	錈	false	锩字	錈字	domain-template	metalinguistic-fallback	古代器物记录中提到了锩。	古代器物記錄中提到了錈。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+5491	2	锭	5491_1	錠	false	银锭	銀錠	corpus-example	leipzig:zho_wikipedia_2018_1M:949109	银锭观山”是什刹海的著名景观之一。	銀錠觀山”是什剎海的著名景觀之一。		lexical-context
+5492	2	锱	5492_1	錙	false	锱铢必较	錙銖必較	corpus-example	leipzig:zho_news_2020_300K:67220	农村的资源比城市更紧张，为了争夺赖以生存的资源，农民没有动力讲文明，他们必须锱铢必较。	農村的資源比城市更緊張，為了爭奪賴以生存的資源，農民沒有動力講文明，他們必須錙銖必較。		lexical-context
+5511	2	觎	5511_1	覦	false	觊觎	覬覦	corpus-example	tatoeba:805219	这个职位受人觊觎。	這個職位受人覬覦。		lexical-context
+5516	2	颔	5516_1	頷	false	颔首	頷首	corpus-example	leipzig:zho_news_2020_300K:158343	抬起头，稍稍颔首，露出微笑就很好！	抬起頭，稍稍頷首，露出微笑就很好！		lexical-context
+5525	2	鲅	5525_1	鮁	false	鲅鱼	鮁魚	corpus-example	leipzig:zho_wikipedia_2018_1M:289170	另外，红烧鲅鱼则是青岛人节庆活动中必不可少的传统菜肴。	另外，紅燒鮁魚則是青島人節慶活動中必不可少的傳統菜餚。		lexical-context
+5526	2	鲆	5526_1	鮃	false	大菱鲆	大菱鮃	corpus-example	leipzig:zho_wikipedia_2018_1M:638398	，此外，还出产海肠、爬虾、扇贝、海参、大菱鲆养殖鱼。	，此外，還出產海腸、爬蝦、扇貝、海參、大菱鮃養殖魚。		lexical-context
+5527	2	鲇	5527_1	鮎	false	鲇鱼	鮎魚	authored-example	project-authored	鲇鱼是一种动物。	鮎魚是一種動物。		lexical-context
+5528	2	鲈	5528_1	鱸	false	鲈鱼	鱸魚	corpus-example	tatoeba:420300	叫个清蒸鲈鱼好呢，还是蚝油牛肉好？	叫個清蒸鱸魚好呢，還是蠔油牛肉好？		lexical-context
+5529	2	稣	5529_1	穌	false	耶稣	耶穌	corpus-example	tatoeba:1214441	基督徒认为耶稣是上帝的儿子。	基督徒認為耶穌是上帝的兒子。		lexical-context
+5530	2	鲋	5530_1	鮒	false	涸辙之鲋	涸轍之鮒	corpus-example	tatoeba:415488	涸辙之鲋。	涸轍之鮒。		lexical-context
+5531	2	鲐	5531_1	鮐	false	羽鳃鲐	羽鰓鮐	authored-example	project-authored	羽鳃鲐是一个较少见的词语。	羽鰓鮐是一個較少見的詞語。		lexical-context
+5533	2	鹐	5533_1	鵮	false	鹐字	鵮字	domain-template	metalinguistic-fallback	图鉴中记录了鹐这种鸟。	圖鑑中記錄了鵮這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+5534	2	飕	5534_1	颼	false	飕飕	颼颼	corpus-example	leipzig:zho_news_2020_300K:266896	走出宾馆，感到凉飕飕的，好在穿了夹克衫，还能够对付，这里毕竟是高原。	走出賓館，感到涼颼颼的，好在穿了夾克衫，還能夠對付，這裡畢竟是高原。		lexical-context
+5537	2	馐	5537_1	饈	false	珍馐	珍饈	corpus-example	leipzig:zho_news_2020_300K:195247	每年农博会就像是湖南特色的满汉全席，好多珍馐美味！	每年農博會就像是湖南特色的滿漢全席，好多珍饈美味！		lexical-context
+5538	2	鹑	5538_1	鶉	false	鹌鹑	鵪鶉	corpus-example	leipzig:zho_news_2020_300K:64491	其中，特区可食用的人工饲养的陆地动物只有10种：猪、牛、羊、驴、兔、鸡、鸭、鹅、鸽、鹌鹑。	其中，特區可食用的人工飼養的陸地動物只有10種：豬、牛、羊、驢、兔、雞、鴨、鵝、鴿、鵪鶉。		lexical-context
+5546	2	瘆	5546_1	瘮	false	瘆人	瘮人	corpus-example	leipzig:zho_news_2020_300K:135143	平时热闹朝气的城市突然慢了下来，甚至到了一种瘆人的地步。	平時熱鬧朝氣的城市突然慢了下來，甚至到了一種瘮人的地步。		lexical-context
+5552	2	阖	5552_1	闔	false	阖家	闔家	corpus-example	leipzig:zho_news_2020_300K:287819	阖家团圆是东亚影视作品常用的主题，我们虽然用得多，却非常克制。	闔家團圓是東亞影視作品常用的主題，我們雖然用得多，卻非常剋制。		lexical-context
+5553	2	阗	5553_1	闐	false	和阗	和闐	corpus-example	leipzig:zho_wikipedia_2018_1M:999226	、齐卢文、粟特文、和阗文、回鹘文、龟兹文等。	、齊盧文、粟特文、和闐文、回鶻文、龜茲文等。		lexical-context
+5554	2	阙	5554_1	闕	false	宫阙	宮闕	corpus-example	leipzig:zho_wikipedia_2018_1M:685095	，焚毁宫阙，留七日后方才离去。	，焚燬宮闕，留七日後方才離去。		lexical-context
+5566	2	滟	5566_1	灧	false	潋滟	瀲灧	corpus-example	leipzig:zho_news_2020_300K:227018	空濛远黛，潋滟春池，江南形胜之时。	空濛遠黛，瀲灧春池，江南形勝之時。		lexical-context
+5570	2	滢	5570_1	瀅	false	陈西滢	陳西瀅	authored-example	project-authored	陈西滢是一个人名。	陳西瀅是一個人名。		lexical-context
+5577	2	滗	5577_1	潷	false	滗字	潷字	curated-domain	metalinguistic-fallback	把汤里的油慢慢滗掉。	把湯裡的油慢慢潷掉。	Cooking and liquid handling: means carefully pouring off or straining liquid.	curated-domain
+5582	2	滦	5582_1	灤	false	滦河	灤河	corpus-example	leipzig:zho_news_2020_300K:108194	地处巍巍燕山山脉，滦河潮河纵贯南北，河北省承德市滦平县是沟通京冀蒙的交通要冲。	地處巍巍燕山山脈，灤河潮河縱貫南北，河北省承德市灤平縣是溝通京冀蒙的交通要衝。		lexical-context
+5587	2	滪	5587_1	澦	false	滪字	澦字	domain-template	metalinguistic-fallback	地方志中记载了滪。	地方志中記載了澦。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+5589	2	慑	5589_1	懾	false	威慑	威懾	corpus-example	leipzig:zho_news_2020_300K:67009	军事打击和政治威慑使傅作义完全明白了自己的处境，遂下令退兵。	軍事打擊和政治威懾使傅作義完全明白了自己的處境，遂下令退兵。		lexical-context
+5591	2	鲎	5591_1	鱟	false	鲎鱼	鱟魚	authored-example	project-authored	鲎鱼是一种动物。	鱟魚是一種動物。		lexical-context
+5592	2	骞	5592_1	騫	false	张骞	張騫	corpus-example	leipzig:zho_news_2020_300K:138154	张骞出使西域后被发现，之后被带回汉朝。	張騫出使西域後被發現，之後被帶回漢朝。		lexical-context
+5593	2	窦	5593_1	竇	false	窦太后	竇太后	corpus-example	leipzig:zho_wikipedia_2018_1M:765328	窦太后忧死后，曹节、王甫因深恨窦氏，	竇太后憂死後，曹節、王甫因深恨竇氏，		lexical-context
+5602	2	谩	5602_1	謾	false	谩骂	謾罵	corpus-example	tatoeba:1316151	一连三年的谩骂之后他们终于离婚了。	一連三年的謾罵之後他們終於離婚了。		lexical-context
+5603	2	谪	5603_1	謫	false	贬谪	貶謫	corpus-example	leipzig:zho_news_2020_300K:29609	二十三年的贬谪生活，并没有使他消沉颓唐。	二十三年的貶謫生活，並沒有使他消沉頹唐。		lexical-context
+5607	2	嫒	5607_1	嬡	false	令嫒	令嬡	authored-example	project-authored	令嫒是一个较少见的词语。	令嬡是一個較少見的詞語。		lexical-context
+5608	2	嫔	5608_1	嬪	false	嫔妃	嬪妃	corpus-example	leipzig:zho_news_2020_300K:194593	母因子贵，司马适立为太子后，他的母亲也由才人升为淑媛（嫔妃的称号）。	母因子貴，司馬適立為太子後，他的母親也由才人升為淑媛（嬪妃的稱號）。		lexical-context
+5610	2	缙	5610_1	縉	false	缙云	縉雲	corpus-example	leipzig:zho_news_2020_300K:270351	近日，浙江丽水缙云县召开了一次别具一格的“颁奖仪式”。	近日，浙江麗水縉雲縣召開了一次別具一格的“頒獎儀式”。		lexical-context
+5611	2	缜	5611_1	縝	false	缜密	縝密	corpus-example	leipzig:zho_news_2020_300K:159761	换句话说，腾讯方面在客户资质核验方面是否做到了细致缜密？	換句話說，騰訊方面在客戶資質核驗方面是否做到了細緻縝密？		lexical-context
+5612	2	缛	5612_1	縟	false	繁文缛节	繁文縟節	corpus-example	leipzig:zho_news_2020_300K:164821	改进督查检查考核方式方法，切实减少“繁文缛节”。	改進督查檢查考核方式方法，切實減少“繁文縟節”。		lexical-context
+5613	2	辔	5613_1	轡	false	辔头	轡頭	authored-example	project-authored	辔头是一种器物。	轡頭是一種器物。		lexical-context
+5614	2	骝	5614_1	騮	false	马骝	馬騮	corpus-example	leipzig:zho_wikipedia_2018_1M:991028	、马骝洲等岛屿；三、领水则为以上陆地及海岛附近之水路；四、关闸至北山岭为“局外地”。	、馬騮洲等島嶼；三、領水則為以上陸地及海島附近之水路；四、關閘至北山嶺為“局外地”。		lexical-context
+5615	2	缟	5615_1	縞	false	缟素	縞素	corpus-example	leipzig:zho_wikipedia_2018_1M:876352	诏内外官缟素哭临，禁剃发百日。	詔內外官縞素哭臨，禁剃髮百日。		lexical-context
+5616	2	缡	5616_1	縭	false	结缡	結縭	corpus-example	leipzig:zho_wikipedia_2018_1M:822224	自此与沈祖棻在战乱中结缡逆旅，辗转于长沙、武汉、	自此與沈祖棻在戰亂中結縭逆旅，輾轉於長沙、武漢、		lexical-context
+5617	2	缢	5617_1	縊	false	自缢	自縊	corpus-example	leipzig:zho_news_2020_300K:151330	我在武汉的一个好朋友的亲戚，他有其他的疾病，昨天自缢身亡。	我在武漢的一個好朋友的親戚，他有其他的疾病，昨天自縊身亡。		lexical-context
+5618	2	缣	5618_1	縑	false	缣缃黄卷	縑緗黃卷	authored-example	project-authored	缣缃黄卷是一个成语或固定说法。	縑緗黃卷是一個成語或固定說法。		lexical-context
+5619	2	骟	5619_1	騸	false	骟字	騸字	domain-template	metalinguistic-fallback	古籍中用骟描述马匹。	古籍中用騸描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+5625	2	觏	5625_1	覯	false	觏字	覯字	curated-domain	metalinguistic-fallback	两位故友终于相觏。	兩位故友終於相覯。	Classical literature: means to meet, encounter, or see someone.	curated-domain
+5628	2	韬	5628_1	韜	false	韬光养晦	韜光養晦	corpus-example	leipzig:zho_news_2020_300K:98225	在上一个世代，邓小平的格言是“韬光养晦”。	在上一個世代，鄧小平的格言是“韜光養晦”。		lexical-context
+5629	2	叆	5629_1	靉	false	叆叇	靉靆	corpus-example	leipzig:zho_news_2020_300K:79437	叆叇，原指云彩厚重，后来成了老花镜的别名。	靉靆，原指雲彩厚重，後來成了老花鏡的別名。		lexical-context
+5635	2	撄	5635_1	攖	false	陈撄宁	陳攖寧	authored-example	project-authored	陈撄宁是一个人名。	陳攖寧是一個人名。		lexical-context
+5644	2	蔷	5644_1	薔	false	蔷薇	薔薇	corpus-example	tatoeba:8496115	心有猛虎，细嗅蔷薇。	心有猛虎，細嗅薔薇。		lexical-context
+5652	2	蔺	5652_1	藺	false	蔺相如	藺相如	corpus-example	leipzig:zho_news_2020_300K:190668	正如“将相和”中的廉颇与蔺相如，只能相互配合，而不能相互较劲、盲目攀比。	正如“將相和”中的廉頗與藺相如，只能相互配合，而不能相互較勁、盲目攀比。		lexical-context
+5658	2	鹕	5658_1	鶘	false	鹈鹕	鵜鶘	corpus-example	leipzig:zho_wikipedia_2018_1M:795222	美國馬里蘭州切薩皮克灣鹈鹕與其幼鳥。	美國馬裡蘭州切薩皮克灣鵜鶘與其幼鳥。		lexical-context
+5668	2	槟	5668_1	檳	false	槟榔	檳榔	corpus-example	leipzig:zho_news_2020_300K:277120	这段描述的话犹如一颗槟榔，越咀嚼越有味。	這段描述的話猶如一顆檳榔，越咀嚼越有味。		lexical-context
+5669	2	槠	5669_1	櫧	false	甜槠	甜櫧	authored-example	project-authored	甜槠是一种植物。	甜櫧是一種植物。		lexical-context
+5672	2	酽	5672_1	釅	false	酽字	釅字	curated-domain	metalinguistic-fallback	这杯茶泡得很酽。	這杯茶泡得很釅。	Food and drink vocabulary: describes tea, wine, colour, or flavour as strong and concentrated.	curated-domain
+5683	2	殡	5683_1	殯	false	殡葬	殯葬	corpus-example	leipzig:zho_news_2020_300K:61431	全市各殡葬服务单位实行按日分时段预约祭扫。	全市各殯葬服務單位實行按日分時段預約祭掃。		lexical-context
+5685	2	霁	5685_1	霽	false	光风霁月	光風霽月	corpus-example	leipzig:zho_wikipedia_2018_1M:817681	胸无城府，光风霁月，令我忆君之天真有如提孩。	胸無城府，光風霽月，令我憶君之天真有如提孩。		lexical-context
+5686	2	辕	5686_1	轅	false	轩辕	軒轅	corpus-example	leipzig:zho_news_2020_300K:178263	最近电视剧《轩辕剑之天之痕》热播。	最近電視劇《軒轅劍之天之痕》熱播。		lexical-context
+5690	2	龇	5690_1	齜	false	龇牙咧嘴	齜牙咧嘴	corpus-example	leipzig:zho_news_2020_300K:33046	人鬼妖各路货色都龇牙咧嘴做直播，弄虚作假，吹嘘显摆，各种假货。	人鬼妖各路貨色都齜牙咧嘴做直播，弄虛作假，吹噓顯擺，各種假貨。		lexical-context
+5691	2	龈	5691_1	齦	false	牙龈	牙齦	corpus-example	tatoeba:503031	一个简单的牙齿检查显示他有牙龈炎。	一個簡單的牙齒檢查顯示他有牙齦炎。		lexical-context
+5693	2	䁖	5693_1	瞜	false	眍䁖	瞘瞜	authored-example	project-authored	眍䁖表示一种动作。	瞘瞜表示一種動作。		lexical-context
+5700	2	暧	5700_1	曖	false	暧昧	曖昧	corpus-example	tatoeba:3054543	他们的关系有些暧昧。	他們的關係有些曖昧。		lexical-context
+5702	2	踌	5702_1	躊	false	踌躇	躊躇	corpus-example	leipzig:zho_news_2020_300K:195114	每天，他依然踌躇满志、斗志昂扬。	每天，他依然躊躇滿志、鬥志昂揚。		lexical-context
+5707	2	蝈	5707_1	蟈	false	蝈蝈	蟈蟈	corpus-example	leipzig:zho_wikipedia_2018_1M:695292	、牙雕、漆雕、蝈蝈笼和吹糖人等传统艺术。	、牙雕、漆雕、蟈蟈籠和吹糖人等傳統藝術。		lexical-context
+5717	2	鹗	5717_1	鶚	false	刘鹗	劉鶚	corpus-example	leipzig:zho_wikipedia_2018_1M:240573	刘鹗青年时期不愿走科举入仕道路，	劉鶚青年時期不願走科舉入仕道路，		lexical-context
+5719	2	嘤	5719_1	嚶	false	嘤其鸣矣	嚶其鳴矣	authored-example	project-authored	嘤其鸣矣是一个成语或固定说法。	嚶其鳴矣是一個成語或固定說法。		lexical-context
+5723	2	罴	5723_1	羆	false	熊罴	熊羆	corpus-example	leipzig:zho_wikipedia_2018_1M:892420	轩辕乃脩德振兵，治五气，蓻五种，抚万民，度四方，教熊罴貔貅䝙虎，以与炎帝战于阪泉之野。	軒轅乃脩德振兵，治五氣，蓻五種，撫萬民，度四方，教熊羆貔貅貙虎，以與炎帝戰於阪泉之野。		lexical-context
+5728	2	赙	5728_1	賻	false	赙仪	賻儀	authored-example	project-authored	赙仪是一个较少见的词语。	賻儀是一個較少見的詞語。		lexical-context
+5729	2	罂	5729_1	罌	false	罂粟	罌粟	corpus-example	leipzig:zho_news_2020_300K:138059	张爱玲像是一朵艳丽的罂粟花，她蛊惑着世间，纵然也被这凡俗所蛊惑。	張愛玲像是一朵豔麗的罌粟花，她蠱惑著世間，縱然也被這凡俗所蠱惑。		lexical-context
+5732	2	鹘	5732_1	鶻	false	回鹘	回鶻	corpus-example	tatoeba:632037	学回鹘语吧！	學回鶻語吧！		lexical-context
+5733	2	锲	5733_1	鍥	false	锲而不舍	鍥而不捨	corpus-example	leipzig:zho_news_2020_300K:286802	锲而不舍能够把缺点转换为能量。	鍥而不捨能夠把缺點轉換為能量。		lexical-context
+5734	2	锴	5734_1	鍇	false	蔡廷锴	蔡廷鍇	corpus-example	leipzig:zho_news_2020_300K:250163	蒋氏随后让何应钦立即飞往上海，阻止蔡廷锴的行动。	蔣氏隨後讓何應欽立即飛往上海，阻止蔡廷鍇的行動。		lexical-context
+5735	2	锶	5735_1	鍶	false	氧化锶	氧化鍶	corpus-example	leipzig:zho_wikipedia_2018_1M:655410	氧化锶有时也用于生产适用于敏感性牙齿的牙膏。	氧化鍶有時也用於生產適用於敏感性牙齒的牙膏。		lexical-context
+5736	2	锷	5736_1	鍔	false	蔡锷	蔡鍔	corpus-example	leipzig:zho_news_2020_300K:147113	戊戌六君子最有刚骨的谭嗣同，孙中山发起革命的左辅右弼黄兴、宋教仁，讨袁护国的蔡锷将军。	戊戌六君子最有剛骨的譚嗣同，孫中山發起革命的左輔右弼黃興、宋教仁，討袁護國的蔡鍔將軍。		lexical-context
+5737	2	锸	5737_1	鍤	false	锸字	鍤字	domain-template	metalinguistic-fallback	古代器物记录中提到了锸。	古代器物記錄中提到了鍤。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+5738	2	锵	5738_1	鏘	false	铿锵	鏗鏘	corpus-example	tatoeba:918007	这个孩子正在铿铿锵锵地玩著他的玩具。	這個孩子正在鏗鏗鏘鏘地玩著他的玩具。		lexical-context
+5739	2	镁	5739_1	鎂	false	菱镁矿	菱鎂礦	corpus-example	leipzig:zho_wikipedia_2018_1M:264679	，占中国固体硼储量94%，菱镁矿远景储量6亿吨，高岭土远景储量2000多万吨。	，佔中國固體硼儲量94%，菱鎂礦遠景儲量6億噸，高嶺土遠景儲量2000多萬噸。		lexical-context
+5740	2	镂	5740_1	鏤	false	镂空	鏤空	corpus-example	tatoeba:918492	她在她的衣服上做了镂空。	她在她的衣服上做了鏤空。		lexical-context
+5743	2	箦	5743_1	簀	false	箦字	簀字	domain-template	metalinguistic-fallback	古代器物记录中提到了箦。	古代器物記錄中提到了簀。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+5744	2	箧	5744_1	篋	false	书箧	書篋	authored-example	project-authored	书箧是一种器物。	書篋是一種器物。		lexical-context
+5749	2	箪	5749_1	簞	false	箪食壶浆	簞食壺漿	corpus-example	leipzig:zho_wikipedia_2018_1M:471863	师道裨将杨可世闻燕人久欲内附，若王师入境必箪食壶浆以迎，乃将轻骑数千直欲取之。	師道裨將楊可世聞燕人久欲內附，若王師入境必簞食壺漿以迎，乃將輕騎數千直欲取之。		lexical-context
+5753	2	箓	5753_1	籙	false	符箓	符籙	corpus-example	leipzig:zho_wikipedia_2018_1M:231289	，内丹与符箓的结合产生了新的符箓道派。	，內丹與符籙的結合產生了新的符籙道派。		lexical-context
+5767	2	膑	5767_1	臏	false	孙膑	孫臏	corpus-example	leipzig:zho_news_2020_300K:214238	田忌采取孙膑的计策，不去赵国，直逼魏国。	田忌採取孫臏的計策，不去趙國，直逼魏國。		lexical-context
+5768	2	鲑	5768_1	鮭	false	鲑鱼	鮭魚	corpus-example	tatoeba:5248195	这里卖的鲑鱼是品质最好的。	這裡賣的鮭魚是品質最好的。		lexical-context
+5769	2	鲔	5769_1	鮪	false	鲔鱼	鮪魚	corpus-example	tatoeba:1567823	鲨鱼的皮比鲔鱼的皮粗糙多了。	鯊魚的皮比鮪魚的皮粗糙多了。		lexical-context
+5770	2	鲚	5770_1	鱭	false	鲚字	鱭字	domain-template	metalinguistic-fallback	图鉴中收录了鲚这种鱼。	圖鑑中收錄了鱭這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+5771	2	鲛	5771_1	鮫	false	马鲛鱼	馬鮫魚	corpus-example	leipzig:zho_wikipedia_2018_1M:95651	主要有鳗鱼、对虾、大黄鱼、马鲛鱼、	主要有鰻魚、對蝦、大黃魚、馬鮫魚、		lexical-context
+5772	2	鲟	5772_1	鱘	false	鲟鱼	鱘魚	corpus-example	leipzig:zho_wikipedia_2018_1M:994561	鱼卵的数量可以相差很大，鲟鱼每次产子可达上百万，而育子之的刺鱼每次产子不超过一百。	魚卵的數量可以相差很大，鱘魚每次產子可達上百萬，而育子之的刺魚每次產子不超過一百。		lexical-context
+5777	2	馑	5777_1	饉	false	饥馑	饑饉	corpus-example	leipzig:zho_wikipedia_2018_1M:965981	随着冬天来临，许多殖民地定居者死于饥馑和疾病。	隨著冬天來臨，許多殖民地定居者死於饑饉和疾病。		lexical-context
+5778	2	銮	5778_1	鑾	false	金銮殿	金鑾殿	corpus-example	leipzig:zho_wikipedia_2018_1M:945825	“金銮殿”，明初称“奉天殿”，后称“皇极殿”，清朝时称“太和殿”。	“金鑾殿”，明初稱“奉天殿”，後稱“皇極殿”，清朝時稱“太和殿”。		lexical-context
+5783	2	瘘	5783_1	瘻	false	瘘管	瘻管	authored-example	project-authored	瘘管是一个医学词语。	瘻管是一個醫學詞語。		lexical-context
+5789	2	阚	5789_1	闞	false	阚维雍	闞維雍	authored-example	project-authored	阚维雍是一个人名。	闞維雍是一個人名。		lexical-context
+5791	2	鲞	5791_1	鮝	false	茄鲞	茄鮝	authored-example	project-authored	茄鲞是一种食物。	茄鮝是一種食物。		lexical-context
+5795	2	糁	5795_1	糝	false	玉米糁	玉米糝	authored-example	project-authored	玉米糁是一种食物。	玉米糝是一種食物。		lexical-context
+5797	2	鹚	5797_1	鷀	false	鸬鹚	鸕鷀	corpus-example	leipzig:zho_news_2020_300K:263244	设计师反向利用了鸬鹚捕鱼的捕食链制作包装。	設計師反向利用了鸕鷀捕魚的捕食鏈製作包裝。		lexical-context
+5805	2	潋	5805_1	瀲	false	潋滟	瀲灩	corpus-example	leipzig:zho_news_2020_300K:227018	空濛远黛，潋滟春池，江南形胜之时。	空濛遠黛，瀲灩春池，江南形勝之時。		lexical-context
+5812	2	潍	5812_1	濰	false	潍坊	濰坊	corpus-example	leipzig:zho_news_2020_300K:175682	晚上九点左右，潍坊奎文区北宫东街附近下了十几分钟，大约有金丝小枣般大。	晚上九點左右，濰坊奎文區北宮東街附近下了十幾分鍾，大約有金絲小棗般大。		lexical-context
+5818	2	谮	5818_1	譖	false	谮言	譖言	authored-example	project-authored	谮言表示一种动作。	譖言表示一種動作。		lexical-context
+5822	2	褛	5822_1	褸	false	褴褛	襤褸	corpus-example	leipzig:zho_news_2020_300K:173478	昔荒村旧院，衣衫褴褛，粗食又寒贫。	昔荒村舊院，衣衫襤褸，粗食又寒貧。		lexical-context
+5824	2	谯	5824_1	譙	false	南谯	南譙	corpus-example	leipzig:zho_wikipedia_2018_1M:676759	）、滁州经济技术开发区（国家级）、滁州高教科创城、琅琊新区、南谯新区。	）、滁州經濟技術開發區（國家級）、滁州高教科創城、琅琊新區、南譙新區。		lexical-context
+5825	2	谰	5825_1	讕	false	谰言	讕言	corpus-example	leipzig:zho_wikipedia_2018_1M:232992	》写道：“长洲王韬作《遁窟谰言》（	》寫道：“長洲王韜作《遁窟讕言》（		lexical-context
+5826	2	谲	5826_1	譎	false	诡谲	詭譎	corpus-example	leipzig:zho_news_2020_300K:191027	正是这些在现实中有迹可循的种种文化符号，赋予了《明日方舟》的剧情一种诡谲莫测又无比真实的观感。	正是這些在現實中有跡可循的種種文化符號，賦予了《明日方舟》的劇情一種詭譎莫測又無比真實的觀感。		lexical-context
+5829	2	鹛	5829_1	鶥	false	山鹛	山鶥	corpus-example	leipzig:zho_wikipedia_2018_1M:464585	山鹛 虹膜褐色，嘴角质色，脚黄褐色。	山鶥 虹膜褐色，嘴角質色，腳黃褐色。		lexical-context
+5831	2	嫱	5831_1	嬙	false	妃嫔媵嫱	妃嬪媵嬙	authored-example	project-authored	妃嫔媵嫱是一个较少见的词语。	妃嬪媵嬙是一個較少見的詞語。		lexical-context
+5840	2	鹜	5840_1	鶩	false	趋之若鹜	趨之若鶩	corpus-example	tatoeba:2218592	越是禁忌的事情越是让人趋之若鹜。	越是禁忌的事情越是讓人趨之若鶩。		lexical-context
+5841	2	骠	5841_1	驃	false	骠骑	驃騎	corpus-example	leipzig:zho_news_2020_300K:183835	李密得到秦琼非常高兴，加以重用让他作骠骑将军。	李密得到秦瓊非常高興，加以重用讓他作驃騎將軍。		lexical-context
+5842	2	缥	5842_1	縹	false	缥缈	縹緲	corpus-example	leipzig:zho_news_2020_300K:226092	秋光寂历，烟波缥缈，桂影扶疏。	秋光寂歷，煙波縹緲，桂影扶疏。		lexical-context
+5843	2	缦	5843_1	縵	false	烂缦	爛縵	authored-example	project-authored	烂缦是一个描写性质或状态的词。	爛縵是一個描寫性質或狀態的詞。		lexical-context
+5844	2	缧	5844_1	縲	false	缧绁	縲紲	authored-example	project-authored	缧绁是一个较少见的词语。	縲紲是一個較少見的詞語。		lexical-context
+5845	2	缨	5845_1	纓	false	请缨	請纓	corpus-example	leipzig:zho_news_2020_300K:264880	请缨来黄冈，段阳说得斩钉截铁。	請纓來黃岡，段陽說得斬釘截鐵。		lexical-context
+5846	2	骢	5846_1	驄	false	杨文骢	楊文驄	corpus-example	leipzig:zho_wikipedia_2018_1M:829876	與杨文骢同被押至建阳，拒降被殺。	與楊文驄同被押至建陽，拒降被殺。		lexical-context
+5847	2	缪	5847_1	繆	false	未雨绸缪	未雨綢繆	corpus-example	tatoeba:736535	你应该未雨绸缪，经常攒钱。	你應該未雨綢繆，經常攢錢。		lexical-context
+5848	2	缫	5848_1	繅	false	缫丝	繅絲	corpus-example	leipzig:zho_news_2020_300K:195656	比如，仅黄帝就发明了养蚕、缫丝、舟车、文字、音律、算术、历法、棺椁、器皿等。	比如，僅黃帝就發明了養蠶、繅絲、舟車、文字、音律、算術、曆法、棺槨、器皿等。		lexical-context
+5850	2	耧	5850_1	耬	false	耧字	耬字	domain-template	metalinguistic-fallback	古代器物记录中提到了耧。	古代器物記錄中提到了耬。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+5854	2	璎	5854_1	瓔	false	璎珞	瓔珞	corpus-example	leipzig:zho_wikipedia_2018_1M:701217	王着朝霞古贝，瞒络腰腹，下垂至胫，头戴金宝花冠，被真珠璎珞，足履革屣，耳悬金珰。	王著朝霞古貝，瞞絡腰腹，下垂至脛，頭戴金寶花冠，被真珠瓔珞，足履革屣，耳懸金璫。		lexical-context
+5861	2	撷	5861_1	擷	false	采撷	採擷	corpus-example	leipzig:zho_news_2020_300K:204315	湖南日报记者采撷他们的精彩观点，以飨读者。	湖南日報記者採擷他們的精彩觀點，以饗讀者。		lexical-context
+5864	2	撸	5864_1	擼	false	撸猫	擼貓	authored-example	project-authored	撸猫表示一种动作。	擼貓表示一種動作。		lexical-context
+5867	2	撺	5867_1	攛	false	撺掇	攛掇	corpus-example	leipzig:zho_wikipedia_2018_1M:311495	后来开科，有人撺掇肉贩去应试，说功名全靠祖上积德。	後來開科，有人攛掇肉販去應試，說功名全靠祖上積德。		lexical-context
+5869	2	聩	5869_1	聵	false	昏聩	昏聵	corpus-example	leipzig:zho_wikipedia_2018_1M:509626	总之，我将被指责为昏聩无知的老糊涂。”	總之，我將被指責為昏聵無知的老糊塗。”		lexical-context
+5870	2	觐	5870_1	覲	false	朝觐	朝覲	corpus-example	leipzig:zho_news_2020_300K:201094	洪武二十年（公元1387年），程本立被升任为长史，随周王入朝觐见。	洪武二十年（公元1387年），程本立被升任為長史，隨周王入朝覲見。		lexical-context
+5871	2	鞑	5871_1	韃	false	鞑靼	韃靼	corpus-example	leipzig:zho_news_2020_300K:192340	此外，我认为影响俄罗斯现如今政策最重要的因素在于其反鞑靼人情结。	此外，我認為影響俄羅斯現如今政策最重要的因素在於其反韃靼人情結。		lexical-context
+5873	2	鞒	5873_1	鞽	false	鞒字	鞽字	domain-template	metalinguistic-fallback	古代器物记录中提到了鞒。	古代器物記錄中提到了鞽。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+5881	2	蕲	5881_1	蘄	false	蕲春	蘄春	corpus-example	leipzig:zho_wikipedia_2018_1M:604023	，本地域分属魏弋阳郡和吴蕲春郡。	，本地域分屬魏弋陽郡和吳蘄春郡。		lexical-context
+5882	2	赜	5882_1	賾	false	研几探赜	研幾探賾	authored-example	project-authored	研几探赜是一个成语或固定说法。	研幾探賾是一個成語或固定說法。		lexical-context
+5884	2	樯	5884_1	檣	false	帆樯	帆檣	corpus-example	leipzig:zho_wikipedia_2018_1M:235747	，“凡枪炮刀锚之模式，帆樯桨橹之位置，无不躬自演试，殚竭思力”	，“凡槍炮刀錨之模式，帆檣槳櫓之位置，無不躬自演試，殫竭思力”		lexical-context
+5892	2	靥	5892_1	靨	false	笑靥	笑靨	corpus-example	leipzig:zho_news_2020_300K:262178	认真地平视和描画自己，不为仕途，只为事业，无论笑靥，还是泪滴！	認真地平視和描畫自己，不為仕途，只為事業，無論笑靨，還是淚滴！		lexical-context
+5893	2	魇	5893_1	魘	false	梦魇	夢魘	corpus-example	leipzig:zho_news_2020_300K:149654	“我们约在春天相见，穿过这个冬天的梦魇 。	“我們約在春天相見，穿過這個冬天的夢魘 。		lexical-context
+5894	2	餍	5894_1	饜	false	饫甘餍肥	飫甘饜肥	authored-example	project-authored	饫甘餍肥是一个成语或固定说法。	飫甘饜肥是一個成語或固定說法。		lexical-context
+5898	2	辘	5898_1	轆	false	辘轳	轆轤	corpus-example	leipzig:zho_wikipedia_2018_1M:252998	勒勒车，古称辘轳车、罗罗车、牛牛车等，	勒勒車，古稱轆轤車、羅羅車、牛牛車等，		lexical-context
+5899	2	龉	5899_1	齬	false	龃龉	齟齬	corpus-example	leipzig:zho_wikipedia_2018_1M:596019	有以事力相龃龉者，委曲为调护。	有以事力相齟齬者，委曲為調護。		lexical-context
+5900	2	龊	5900_1	齪	false	龌龊	齷齪	corpus-example	leipzig:zho_news_2020_300K:147016	懈怠懒惰与脱离群众都是我们工作上的弊端与恶劣表现，都是有损党和国家及个人形象的卑鄙龌龊的表现。	懈怠懶惰與脫離群眾都是我們工作上的弊端與惡劣表現，都是有損黨和國家及個人形象的卑鄙齷齪的表現。		lexical-context
+5901	2	觑	5901_1	覷	false	面面相觑	面面相覷	corpus-example	tatoeba:13921881	系统在比赛前一刻全面崩溃，技术团队面面相觑，不知所措。	系統在比賽前一刻全面崩潰，技術團隊面面相覷，不知所措。		lexical-context
+5908	2	颙	5908_1	顒	false	周颙	周顒	corpus-example	leipzig:zho_news_2020_300K:91355	和周颙有共识的是唐朝食疗家孟诜，他在《食疗本草》中记述：“菘菜，治消渴，和羊肉甚美。	和周顒有共識的是唐朝食療家孟詵，他在《食療本草》中記述：“菘菜，治消渴，和羊肉甚美。		lexical-context
+5915	2	踬	5915_1	躓	false	跋前踬后	跋前躓後	authored-example	project-authored	跋前踬后是一个成语或固定说法。	跋前躓後是一個成語或固定說法。		lexical-context
+5917	2	踯	5917_1	躑	false	踯躅	躑躅	corpus-example	leipzig:zho_news_2020_300K:69609	别名 映山红、山石榴、山踯躅等，在我国南方分布广泛，	別名 映山紅、山石榴、山躑躅等，在我國南方分佈廣泛，		lexical-context
+5921	2	蝾	5921_1	蠑	false	蝾螈	蠑螈	corpus-example	tatoeba:13572151	蝾螈是两栖类。	蠑螈是兩棲類。		lexical-context
+5928	2	蝼	5928_1	螻	false	蝼蚁	螻蟻	corpus-example	leipzig:zho_news_2020_300K:40999	他总是说：自身为蝼蚁，不过平常人。	他總是說：自身為螻蟻，不過平常人。		lexical-context
+5931	2	颚	5931_1	顎	false	下颚	下顎	corpus-example	leipzig:zho_news_2020_300K:38130	他们必须把下颚抬高，以便保持呼吸。	他們必須把下顎抬高，以便保持呼吸。		lexical-context
+5935	2	噜	5935_1	嚕	false	咕噜	咕嚕	corpus-example	tatoeba:13556406	英文老师叽哩咕噜说啥呢？	英文老師嘰哩咕嚕說啥呢？		lexical-context
+5938	2	颛	5938_1	顓	false	颛顼	顓頊	corpus-example	leipzig:zho_wikipedia_2018_1M:223306	其先颛顼后，周武王封其苗裔于邾。	其先顓頊後，周武王封其苗裔於邾。		lexical-context
+5946	2	镊	5946_1	鑷	false	镊子	鑷子	corpus-example	tatoeba:5152993	你有没有镊子？	你有沒有鑷子？		lexical-context
+5947	2	镉	5947_1	鎘	false	硫化镉	硫化鎘	authored-example	project-authored	硫化镉是一种材料或化学物质。	硫化鎘是一種材料或化學物質。		lexical-context
+5948	2	镌	5948_1	鎸	false	镌刻	鎸刻	corpus-example	leipzig:zho_news_2020_300K:75291	半个世纪后，一位雕塑家把这一幕镌刻成了永恒。	半個世紀後，一位雕塑家把這一幕鎸刻成了永恆。		lexical-context
+5949	2	镍	5949_1	鎳	false	镍合金	鎳合金	corpus-example	leipzig:zho_wikipedia_2018_1M:737716	白銅（铜镍合金）以外的都稱為青銅。	白銅（銅鎳合金）以外的都稱為青銅。		lexical-context
+5950	2	镏	5950_1	鎦	false	镏金	鎦金	corpus-example	leipzig:zho_wikipedia_2018_1M:270653	厅外有月台，台下有一对镏金铜狮。	廳外有月臺，臺下有一對鎦金銅獅。		lexical-context
+5951	2	镒	5951_1	鎰	false	吴征镒	吳徵鎰	authored-example	project-authored	吴征镒是一个人名。	吳徵鎰是一個人名。		lexical-context
+5952	2	镓	5952_1	鎵	false	砷化镓	砷化鎵	corpus-example	leipzig:zho_wikipedia_2018_1M:637804	此外，砷化镓热导率较低，有利于高温下进行的加工。	此外，砷化鎵熱導率較低，有利於高溫下進行的加工。		lexical-context
+5953	2	镔	5953_1	鑌	false	镔铁	鑌鐵	corpus-example	leipzig:zho_wikipedia_2018_1M:936996	、邓州南阳等，云内州盛产一种叫做青镔铁的铁器。	、鄧州南陽等，雲內州盛產一種叫做青鑌鐵的鐵器。		lexical-context
+5956	2	篑	5956_1	簣	false	功亏一篑	功虧一簣	corpus-example	leipzig:zho_news_2020_300K:89936	否则，稍一松懈，就可能前功尽弃、功亏一篑。	否則，稍一鬆懈，就可能前功盡棄、功虧一簣。		lexical-context
+5965	2	鹞	5965_1	鷂	false	纸鹞	紙鷂	authored-example	project-authored	纸鹞是一种器物。	紙鷂是一種器物。		lexical-context
+5968	2	鲠	5968_1	鯁	false	骨鲠	骨鯁	corpus-example	leipzig:zho_wikipedia_2018_1M:259766	“千古骨鲠之士”，“其才其学，皆足以辅之”。	“千古骨鯁之士”，“其才其學，皆足以輔之”。		lexical-context
+5969	2	鲡	5969_1	鱺	false	鳗鲡	鰻鱺	authored-example	project-authored	鳗鲡是一种动物。	鰻鱺是一種動物。		lexical-context
+5970	2	鲢	5970_1	鰱	false	鲢鱼	鰱魚	corpus-example	leipzig:zho_wikipedia_2018_1M:581435	，晾干去鳞，用木棒槌捶打得像棉布一样柔软，再用鲢鱼皮线缝制而成。	，晾乾去鱗，用木棒槌捶打得像棉布一樣柔軟，再用鰱魚皮線縫製而成。		lexical-context
+5971	2	鲣	5971_1	鰹	false	红鲣	紅鰹	authored-example	project-authored	红鲣是一种动物。	紅鰹是一種動物。		lexical-context
+5972	2	鲥	5972_1	鰣	false	鲥鱼	鰣魚	corpus-example	leipzig:zho_news_2020_300K:287164	“长江三鲜”河豚、鲥鱼和刀鱼自从被端上饭桌后，就离灭绝更近一步了。	“長江三鮮”河豚、鰣魚和刀魚自從被端上飯桌後，就離滅絕更近一步了。		lexical-context
+5973	2	鲧	5973_1	鯀	false	鲧字	鯀字	domain-template	metalinguistic-fallback	图鉴中收录了鲧这种鱼。	圖鑑中收錄了鯀這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+5974	2	鲩	5974_1	鯇	false	黑鲩	黑鯇	authored-example	project-authored	黑鲩是一种动物。	黑鯇是一種動物。		lexical-context
+5977	2	觯	5977_1	觶	false	觯字	觶字	domain-template	metalinguistic-fallback	古代礼制记载中出现了觯。	古代禮制記載中出現了觶。	Ancient ritual and material culture: a rare character associated with ceremony, offerings, dress, or ritual objects.	domain-template
+5978	2	馓	5978_1	饊	false	馓子	饊子	corpus-example	tatoeba:819277	这个馓子太好吃了！	這個饊子太好吃了！		lexical-context
+5979	2	馔	5979_1	饌	false	美馔	美饌	authored-example	project-authored	美馔是一种食物。	美饌是一種食物。		lexical-context
+5986	2	齑	5986_1	齏	false	齑粉	齏粉	corpus-example	leipzig:zho_wikipedia_2018_1M:758714	，神王吞入腹中，吐生了新的戴歐尼修斯，并用雷电将泰坦神炸成齑粉，从中糅造出人类。	，神王吞入腹中，吐生了新的戴歐尼修斯，並用雷電將泰坦神炸成齏粉，從中糅造出人類。		lexical-context
+6010	2	谳	6010_1	讞	false	定谳	定讞	corpus-example	tatoeba:759655	法官判决定谳。	法官判決定讞。		lexical-context
+6011	2	褴	6011_1	襤	false	褴褛	襤褸	corpus-example	leipzig:zho_news_2020_300K:173478	昔荒村旧院，衣衫褴褛，粗食又寒贫。	昔荒村舊院，衣衫襤褸，粗食又寒貧。		lexical-context
+6014	2	谵	6014_1	譫	false	谵妄	譫妄	authored-example	project-authored	谵妄是一个医学词语。	譫妄是一個醫學詞語。		lexical-context
+6016	2	屦	6016_1	屨	false	刖足适屦	刖足適屨	authored-example	project-authored	刖足适屦是一个成语或固定说法。	刖足適屨是一個成語或固定說法。		lexical-context
+6021	2	缬	6021_1	纈	false	缬氨酸	纈氨酸	corpus-example	leipzig:zho_wikipedia_2018_1M:790675	缬氨酸是一种必需氨基酸，因此它必须被摄入，通常是以一种蛋白质组分的形式。	纈氨酸是一種必需氨基酸，因此它必須被攝入，通常是以一種蛋白質組分的形式。		lexical-context
+6022	2	缮	6022_1	繕	false	修缮	修繕	corpus-example	leipzig:zho_news_2020_300K:196024	比如，鸟某中标循化县某文物修缮项目，真的合规吗？	比如，鳥某中標循化縣某文物修繕專案，真的合規嗎？		lexical-context
+6023	2	缯	6023_1	繒	false	彩缯	綵繒	corpus-example	leipzig:zho_wikipedia_2018_1M:473152	：“帗舞者，析五彩缯，若汉灵星舞子所持是也。”	：“帗舞者，析五綵繒，若漢靈星舞子所持是也。”		lexical-context
+6024	2	骣	6024_1	驏	false	骣字	驏字	domain-template	metalinguistic-fallback	古籍中用骣描述马匹。	古籍中用驏描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6042	2	擞	6042_1	擻	false	精神抖擞	精神抖擻	corpus-example	leipzig:zho_news_2020_300K:249060	莫耶着陆后精神抖擞地走出机舱向人群挥手致意。	莫耶著陸後精神抖擻地走出機艙向人群揮手致意。		lexical-context
+6045	2	颞	6045_1	顳	false	颞颥	顳顬	corpus-example	leipzig:zho_wikipedia_2018_1M:376162	，在演化過程中失去兩個颞颥孔，但這理論還沒被普遍的接受。	，在演化過程中失去兩個顳顬孔，但這理論還沒被普遍的接受。		lexical-context
+6048	2	颟	6048_1	顢	false	颟里颟顸	顢里顢頇	authored-example	project-authored	颟里颟顸是一个较少见的词语。	顢里顢頇是一個較少見的詞語。		lexical-context
+6053	2	薮	6053_1	藪	false	渊薮	淵藪	corpus-example	leipzig:zho_wikipedia_2018_1M:858240	襟江带海，从古数扬州；今更作人文渊薮。	襟江帶海，從古數揚州；今更作人文淵藪。		lexical-context
+6061	2	橹	6061_1	櫓	false	楼橹	樓櫓	corpus-example	leipzig:zho_wikipedia_2018_1M:150999	以木为城，起楼橹，开四出门，其上皆得驰马来往。	以木為城，起樓櫓，開四出門，其上皆得馳馬來往。		lexical-context
+6064	2	橼	6064_1	櫞	false	枸橼	枸櫞	authored-example	project-authored	枸橼是一种植物。	枸櫞是一種植物。		lexical-context
+6073	2	赝	6073_1	贋	false	赝品	贋品	corpus-example	tatoeba:8744617	我觉得当汤姆发现他买来的画是赝品的时候，他会很生气。	我覺得當湯姆發現他買來的畫是贋品的時候，他會很生氣。		lexical-context
+6074	2	飙	6074_1	飆	false	飙升	飆升	corpus-example	leipzig:zho_news_2020_300K:18906	世界各地的自行车销量都在飙升。	世界各地的腳踏車銷量都在飆升。		lexical-context
+6079	2	錾	6079_1	鏨	false	錾子	鏨子	authored-example	project-authored	錾子是一种器物。	鏨子是一種器物。		lexical-context
+6080	2	辚	6080_1	轔	false	车辚马啸	車轔馬嘯	authored-example	project-authored	车辚马啸是一个成语或固定说法。	車轔馬嘯是一個成語或固定說法。		lexical-context
+6097	2	螨	6097_1	蟎	false	螨虫	蟎蟲	corpus-example	leipzig:zho_news_2020_300K:51865	但螨虫进入耳道后，并不安分，它会不停的爬动，刺激我们的耳膜，让我们的耳朵突发奇痒。	但蟎蟲進入耳道後，並不安分，它會不停的爬動，刺激我們的耳膜，讓我們的耳朵突發奇癢。		lexical-context
+6111	2	䦃	6111_1	鐯	false	䦃字	鐯字	domain-template	metalinguistic-fallback	古代器物记录中提到了䦃。	古代器物記錄中提到了鐯。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+6112	2	镖	6112_1	鏢	false	保镖	保鏢	corpus-example	tatoeba:6559052	保镖要求看她的身份证。	保鏢要求看她的身份證。		lexical-context
+6113	2	镗	6113_1	鏜	false	镗床	鏜牀	authored-example	project-authored	镗床是一种器物。	鏜牀是一種器物。		lexical-context
+6114	2	镘	6114_1	鏝	false	镘字	鏝字	domain-template	metalinguistic-fallback	古代器物记录中提到了镘。	古代器物記錄中提到了鏝。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+6115	2	镚	6115_1	鏰	false	钢镚	鋼鏰	authored-example	project-authored	钢镚是一个较少见的词语。	鋼鏰是一個較少見的詞語。		lexical-context
+6116	2	镛	6116_1	鏞	false	桂世镛	桂世鏞	authored-example	project-authored	桂世镛是一个人名。	桂世鏞是一個人名。		lexical-context
+6117	2	镝	6117_1	鏑	false	冒镝当锋	冒鏑當鋒	authored-example	project-authored	冒镝当锋是一个成语或固定说法。	冒鏑當鋒是一個成語或固定說法。		lexical-context
+6118	2	镞	6118_1	鏃	false	箭镞	箭鏃	corpus-example	leipzig:zho_wikipedia_2018_1M:991361	骨蚌多用于箭镞制作，以及用于增强木殳、木棒杀伤力的辅助物。	骨蚌多用於箭鏃製作，以及用於增強木殳、木棒殺傷力的輔助物。		lexical-context
+6119	2	镠	6119_1	鏐	false	镠字	鏐字	curated-domain	metalinguistic-fallback	工匠用镠制作饰物。	工匠用鏐製作飾物。	Metallurgy / historical material culture: a rare term for fine gold or high-quality metal.	curated-domain
+6120	2	氇	6120_1	氌	false	氆氇	氆氌	corpus-example	leipzig:zho_wikipedia_2018_1M:728411	，男女都穿氆氇袍，腰间都系红氆氇腰带，很像藏装，但衣着比藏装短小。	，男女都穿氆氌袍，腰間都系紅氆氌腰帶，很像藏裝，但衣著比藏裝短小。		lexical-context
+6123	2	穑	6123_1	穡	false	稼穑	稼穡	corpus-example	leipzig:zho_news_2020_300K:8313	一个财主的儿子不知道稼穑之艰难，常到一个饭馆里吃饺子，但把饺子皮全吐掉，只吃肉馅。	一個財主的兒子不知道稼穡之艱難，常到一個飯館裡吃餃子，但把餃子皮全吐掉，只吃肉餡。		lexical-context
+6132	2	魉	6132_1	魎	false	魍魉	魍魎	corpus-example	leipzig:zho_news_2020_300K:228466	第一辑定名“鬼蜮魍魉”，集中表现日寇残忍暴行。	第一輯定名“鬼蜮魍魎”，集中表現日寇殘忍暴行。		lexical-context
+6139	2	鲮	6139_1	鯪	false	鲮鲤	鯪鯉	corpus-example	leipzig:zho_wikipedia_2018_1M:758080	祐曰：‘此是三吴所出，厥名鲮鲤，馀域率无。’	祐曰：‘此是三吳所出，厥名鯪鯉，餘域率無。’		lexical-context
+6140	2	鲱	6140_1	鯡	false	鲱鱼	鯡魚	corpus-example	tatoeba:5899458	今天早饭我吃了些腌鲱鱼。	今天早飯我吃了些醃鯡魚。		lexical-context
+6141	2	鲲	6141_1	鯤	false	鲲鹏	鯤鵬	corpus-example	leipzig:zho_news_2020_300K:281369	通过软硬件产业结合，共筑鲲鹏生态体系，预计可带动产业链产值约800亿元。	透過軟硬體產業結合，共築鯤鵬生態體系，預計可帶動產業鏈產值約800億元。		lexical-context
+6142	2	鲳	6142_1	鯧	false	鲳鱼	鯧魚	corpus-example	leipzig:zho_wikipedia_2018_1M:844169	著名的东矶渔场盛产大黄鱼、小黄鱼、带鱼、鲳鱼、鱼时鱼、	著名的東磯漁場盛產大黃魚、小黃魚、帶魚、鯧魚、魚時魚、		lexical-context
+6143	2	鲴	6143_1	鯝	false	鲴字	鯝字	domain-template	metalinguistic-fallback	图鉴中收录了鲴这种鱼。	圖鑑中收錄了鯝這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+6144	2	鲵	6144_1	鯢	false	大鲵	大鯢	authored-example	project-authored	大鲵是一种动物。	大鯢是一種動物。		lexical-context
+6145	2	鲷	6145_1	鯛	false	丁鲷	丁鯛	authored-example	project-authored	丁鲷是一种动物。	丁鯛是一種動物。		lexical-context
+6146	2	鲻	6146_1	鯔	false	鲻鱼	鯔魚	authored-example	project-authored	鲻鱼是一种动物。	鯔魚是一種動物。		lexical-context
+6148	2	獭	6148_1	獺	false	水獭	水獺	corpus-example	leipzig:zho_news_2020_300K:89132	后因家人反对其饲养水獭，谢某将其中1只水獭出售给重庆买家岳某(在逃)。	後因家人反對其飼養水獺，謝某將其中1只水獺出售給重慶買家嶽某(在逃)。		lexical-context
+6151	2	鹧	6151_1	鷓	false	鹧鸪	鷓鴣	corpus-example	leipzig:zho_news_2020_300K:96043	因而笔者赏析《鹧鸪天·桂花》，也就别有一番心得与网友分享。	因而筆者賞析《鷓鴣天·桂花》，也就別有一番心得與網友分享。		lexical-context
+6153	2	赟	6153_1	贇	false	赟字	贇字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见赟。	古代玉器或人名記錄中可見贇。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+6156	2	瘿	6156_1	癭	false	虫瘿	蟲癭	authored-example	project-authored	虫瘿是植物受到刺激后形成的组织。	蟲癭是植物受到刺激後形成的組織。		lexical-context
+6161	2	斓	6161_1	斕	false	斑斓	斑斕	corpus-example	tatoeba:14028311	秋天的森林五彩斑斓，景色十分迷人。	秋天的森林五彩斑斕，景色十分迷人。		lexical-context
+6174	2	濑	6174_1	瀨	false	岩濑健	岩瀨健	authored-example	project-authored	岩濑健是一个人名。	岩瀨健是一個人名。		lexical-context
+6191	2	颡	6191_1	顙	false	稽颡	稽顙	corpus-example	leipzig:zho_wikipedia_2018_1M:520345	或以事被让，必稽颡请罪，畏惕，视若无所容”。	或以事被讓，必稽顙請罪，畏惕，視若無所容”。		lexical-context
+6192	2	缱	6192_1	繾	false	缱绻	繾綣	corpus-example	leipzig:zho_news_2020_300K:11598	一转身，天涯海角；一回眸，婆娑缱绻。	一轉身，天涯海角；一回眸，婆娑繾綣。		lexical-context
+6193	2	缲	6193_1	繰	false	缲字	繰字	domain-template	metalinguistic-fallback	古代织物记录中出现了缲。	古代織物記錄中出現了繰。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6194	2	缳	6194_1	繯	false	缳首	繯首	authored-example	project-authored	缳首是一个较少见的词语。	繯首是一個較少見的詞語。		lexical-context
+6210	2	藓	6210_1	蘚	false	苔藓	苔蘚	corpus-example	tatoeba:4439896	让苔藓盖上我的坟墓吧。	讓苔蘚蓋上我的墳墓吧。		lexical-context
+6219	2	鹩	6219_1	鷯	false	鹩哥	鷯哥	authored-example	project-authored	鹩哥是一种鸟。	鷯哥是一種鳥。		lexical-context
+6220	2	龋	6220_1	齲	false	龋齿	齲齒	corpus-example	leipzig:zho_wikipedia_2018_1M:144564	他首次使用牙齿填充物来治疗龋齿。	他首次使用牙齒填充物來治療齲齒。		lexical-context
+6221	2	龌	6221_1	齷	false	龌龊	齷齪	corpus-example	leipzig:zho_news_2020_300K:147016	懈怠懒惰与脱离群众都是我们工作上的弊端与恶劣表现，都是有损党和国家及个人形象的卑鄙龌龊的表现。	懈怠懶惰與脫離群眾都是我們工作上的弊端與惡劣表現，都是有損黨和國家及個人形象的卑鄙齷齪的表現。		lexical-context
+6227	2	蹑	6227_1	躡	false	蹑足	躡足	corpus-example	leipzig:zho_wikipedia_2018_1M:495257	当良、平蹑足时，而汉王杀信之心已断断乎不可解，虽无赦官徒、袭吕后之谋，信其不死乎？”	當良、平躡足時，而漢王殺信之心已斷斷乎不可解，雖無赦官徒、襲呂后之謀，信其不死乎？”		lexical-context
+6228	2	蹒	6228_1	蹣	false	蹒跚	蹣跚	corpus-example	leipzig:zho_news_2020_300K:193917	步履蹒跚新韵童，跋涉中，道不同。	步履蹣跚新韻童，跋涉中，道不同。		lexical-context
+6237	2	羁	6237_1	羈	false	羁押	羈押	corpus-example	leipzig:zho_news_2020_300K:106055	在被羁押之前，周广华就患病在身。	在被羈押之前，周廣華就患病在身。		lexical-context
+6245	2	镡	6245_1	鐔	false	镡字	鐔字	domain-template	metalinguistic-fallback	古代器物记录中提到了镡。	古代器物記錄中提到了鐔。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+6246	2	镢	6246_1	鐝	false	镢头	鐝頭	authored-example	project-authored	镢头是一种器物。	鐝頭是一種器物。		lexical-context
+6247	2	镣	6247_1	鐐	false	镣铐	鐐銬	corpus-example	leipzig:zho_wikipedia_2018_1M:543247	摩尼教领袖带着镣铐参加了辩论。	摩尼教領袖帶著鐐銬參加了辯論。		lexical-context
+6248	2	镦	6248_1	鐓	false	镦字	鐓字	domain-template	metalinguistic-fallback	古代器物记录中提到了镦。	古代器物記錄中提到了鐓。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+6249	2	镧	6249_1	鑭	false	镧系元素	鑭系元素	corpus-example	leipzig:zho_wikipedia_2018_1M:958494	除+3特征氧化态外，镧系元素还存在着一些不常见的氧化态。	除+3特徵氧化態外，鑭系元素還存在著一些不常見的氧化態。		lexical-context
+6250	2	镩	6250_1	鑹	false	冰镩	冰鑹	authored-example	project-authored	冰镩是一种器物。	冰鑹是一種器物。		lexical-context
+6251	2	镪	6251_1	鏹	false	镪水	鏹水	authored-example	project-authored	镪水是一种材料或化学物质。	鏹水是一種材料或化學物質。		lexical-context
+6252	2	镫	6252_1	鐙	false	马镫	馬鐙	corpus-example	leipzig:zho_wikipedia_2018_1M:964047	陶马一侧有三角形马镫，虽然仅供上马时使用，仍是世界上有关马镫的最早实物证据。	陶馬一側有三角形馬鐙，雖然僅供上馬時使用，仍是世界上有關馬鐙的最早實物證據。		lexical-context
+6258	2	簖	6258_1	籪	false	簖字	籪字	domain-template	metalinguistic-fallback	古代器物记录中提到了簖。	古代器物記錄中提到了籪。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+6263	2	鹪	6263_1	鷦	false	鹪鹩	鷦鷯	corpus-example	leipzig:zho_news_2020_300K:185929	枯枝为啄木鸟、尖嘴猫头鹰和卡罗莱纳鹪鹩等洞穴筑巢鸟类提供家园。	枯枝為啄木鳥、尖嘴貓頭鷹和卡羅萊納鷦鷯等洞穴築巢鳥類提供家園。		lexical-context
+6276	2	鲼	6276_1	鱝	false	鹞鲼	鷂鱝	authored-example	project-authored	鹞鲼是一种动物。	鷂鱝是一種動物。		lexical-context
+6277	2	鲽	6277_1	鰈	false	鲽鲛	鰈鮫	authored-example	project-authored	鲽鲛是一种动物。	鰈鮫是一種動物。		lexical-context
+6278	2	鳀	6278_1	鯷	false	鳀鱼	鯷魚	authored-example	project-authored	鳀鱼是一种动物。	鯷魚是一種動物。		lexical-context
+6279	2	鳃	6279_1	鰓	false	鳃裂	鰓裂	corpus-example	leipzig:zho_wikipedia_2018_1M:88009	、中空的背神经管、咽鳃裂以及肛后尾。	、中空的背神經管、咽鰓裂以及肛後尾。		lexical-context
+6280	2	鳅	6280_1	鰍	false	泥鳅	泥鰍	corpus-example	leipzig:zho_news_2020_300K:180936	有经验的“老麻拐”，一夜能捕一二斤黄鳝泥鳅。	有經驗的“老麻拐”，一夜能捕一二斤黃鱔泥鰍。		lexical-context
+6281	2	鳇	6281_1	鰉	false	鳇鱼	鰉魚	authored-example	project-authored	鳇鱼是一种动物。	鰉魚是一種動物。		lexical-context
+6282	2	鳊	6282_1	鯿	false	鳊鱼	鯿魚	corpus-example	leipzig:zho_news_2020_300K:298161	高子回到家中才几天，湖北佬提着两条鳊鱼来了。	高子回到家中才幾天，湖北佬提著兩條鯿魚來了。		lexical-context
+6285	2	鹫	6285_1	鷲	false	秃鹫	禿鷲	corpus-example	leipzig:zho_wikipedia_2018_1M:158328	似鹰嘴、食肉的则不能吃，如老鹰、枭、骛、秃鹫、乌鸦、喜鹊、啄木鸟等。	似鷹嘴、食肉的則不能吃，如老鷹、梟、騖、禿鷲、烏鴉、喜鵲、啄木鳥等。		lexical-context
+6292	2	懑	6292_1	懣	false	愤懑	憤懣	corpus-example	leipzig:zho_news_2020_300K:242430	而颔联则通过对比方式，抒发自己对不平境遇的愤懑。	而頷聯則透過對比方式，抒發自己對不平境遇的憤懣。		lexical-context
+6308	2	鹬	6308_1	鷸	false	鹬蚌相争	鷸蚌相爭	corpus-example	leipzig:zho_wikipedia_2018_1M:44411	一天，和藤内和妻子小睦在海边抬贝，看到鹬蚌相争，从而解悟了兵法的真谛。	一天，和藤內和妻子小睦在海邊抬貝，看到鷸蚌相爭，從而解悟了兵法的真諦。		lexical-context
+6311	2	鳌	6311_1	鰲	false	博鳌	博鰲	corpus-example	leipzig:zho_wikipedia_2018_1M:575437	是国际会议组织——博鳌亚洲論壇永久性会址所在地。	是國際會議組織——博鰲亞洲論壇永久性會址所在地。		lexical-context
+6315	2	鞯	6315_1	韉	false	鞍鞯	鞍韉	authored-example	project-authored	鞍鞯是一种器物。	鞍韉是一種器物。		lexical-context
+6330	2	颢	6330_1	顥	false	程颢	程顥	authored-example	project-authored	程颢是一个人名。	程顥是一個人名。		lexical-context
+6334	2	鹭	6334_1	鷺	false	白鹭	白鷺	corpus-example	tatoeba:13900316	蓝蓝的天空中，一群白鹭飞过。	藍藍的天空中，一群白鷺飛過。		lexical-context
+6339	2	鹮	6339_1	䴉	false	朱鹮	朱䴉	corpus-example	leipzig:zho_wikipedia_2018_1M:606652	朱鹮终于摆脱了“野外灭绝”的危险。	朱䴉終於擺脫了“野外滅絕”的危險。		lexical-context
+6342	2	髅	6342_1	髏	false	骷髅	骷髏	corpus-example	leipzig:zho_news_2020_300K:233866	经搜查，他们的武器、手表、金属纽扣、眼镜等完好无损，共计骷髅1764具。	經搜查，他們的武器、手錶、金屬紐扣、眼鏡等完好無損，共計骷髏1764具。		lexical-context
+6344	2	镬	6344_1	鑊	false	刀锯鼎镬	刀鋸鼎鑊	corpus-example	leipzig:zho_wikipedia_2018_1M:495612	当韩之亡，秦之方盛也，以刀锯鼎镬待天下之士。	當韓之亡，秦之方盛也，以刀鋸鼎鑊待天下之士。		lexical-context
+6345	2	镭	6345_1	鐳	false	镭射	鐳射	corpus-example	leipzig:zho_wikipedia_2018_1M:437633	它还可以用作人造大气层和镭射媒体的组成部分。	它還可以用作人造大氣層和鐳射媒體的組成部分。		lexical-context
+6346	2	镯	6346_1	鐲	false	镯子	鐲子	corpus-example	leipzig:zho_news_2020_300K:70941	剩下的几个镯子戴在左右的手腕上。	剩下的幾個鐲子戴在左右的手腕上。		lexical-context
+6351	2	雠	6351_1	讎	false	仇雠	仇讎	corpus-example	leipzig:zho_wikipedia_2018_1M:69318	且夫商君，固大王仇雠也，愿大王图之。”	且夫商君，固大王仇讎也，願大王圖之。”		lexical-context
+6353	2	鳎	6353_1	鰨	false	舌鳎	舌鰨	authored-example	project-authored	舌鳎是一种动物。	舌鰨是一種動物。		lexical-context
+6354	2	鳏	6354_1	鰥	false	鳏夫	鰥夫	corpus-example	tatoeba:400174	死了妻子的人叫做鳏夫。	死了妻子的人叫做鰥夫。		lexical-context
+6355	2	鳐	6355_1	鰩	false	鳐字	鰩字	domain-template	metalinguistic-fallback	图鉴中收录了鳐这种鱼。	圖鑑中收錄了鰩這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+6356	2	癞	6356_1	癩	false	癞蛤蟆	癩蛤蟆	corpus-example	tatoeba:13888914	癞蛤蟆想吃天鹅肉。	癩蛤蟆想吃天鵝肉。		lexical-context
+6368	2	攒	6368_1	攢	false	积攒	積攢	corpus-example	leipzig:zho_news_2020_300K:151739	我很难想象，这些仇恨是怎么积攒起来的。	我很難想象，這些仇恨是怎麼積攢起來的。		lexical-context
+6379	2	霭	6379_1	靄	false	暮霭	暮靄	corpus-example	leipzig:zho_news_2020_300K:144543	念去去，千里烟波，暮霭沉沉楚天阔。	念去去，千里煙波，暮靄沉沉楚天闊。		lexical-context
+6389	2	蹿	6389_1	躥	false	蹿升	躥升	corpus-example	leipzig:zho_wikipedia_2018_1M:754162	，知名度蹿升，并吸引众多的追随者。	，知名度躥升，並吸引眾多的追隨者。		lexical-context
+6395	2	髋	6395_1	髖	false	髋关节	髖關節	corpus-example	leipzig:zho_wikipedia_2018_1M:715430	由于出生时髋关节发育不良，年幼时她腿是瘸的，后来恢复正常。	由於出生時髖關節發育不良，年幼時她腿是瘸的，後來恢復正常。		lexical-context
+6396	2	髌	6396_1	髕	false	髌骨	髕骨	authored-example	project-authored	髌骨是一个医学词语。	髕骨是一個醫學詞語。		lexical-context
+6397	2	镲	6397_1	鑔	false	踩镲	踩鑔	authored-example	project-authored	踩镲表示一种动作。	踩鑔表示一種動作。		lexical-context
+6399	2	籁	6399_1	籟	false	天籁	天籟	corpus-example	leipzig:zho_news_2020_300K:135834	并解读“绝唱天籁，奇词妙哉”的隐语诗为：	並解讀“絕唱天籟，奇詞妙哉”的隱語詩為：		lexical-context
+6403	2	鳓	6403_1	鰳	false	鳓字	鰳字	domain-template	metalinguistic-fallback	图鉴中收录了鳓这种鱼。	圖鑑中收錄了鰳這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+6404	2	鳔	6404_1	鰾	false	鱼鳔	魚鰾	corpus-example	leipzig:zho_wikipedia_2018_1M:994608	鱼鳔豆的膜质荚瓣，充气呈泡状，借风力传播；	魚鰾豆的膜質莢瓣，充氣呈泡狀，借風力傳播；		lexical-context
+6405	2	鳕	6405_1	鱈	false	鳕鱼	鱈魚	corpus-example	tatoeba:10366873	她要鳕鱼吗？	她要鱈魚嗎？		lexical-context
+6406	2	鳗	6406_1	鰻	false	鳗鱼	鰻魚	corpus-example	leipzig:zho_wikipedia_2018_1M:95651	主要有鳗鱼、对虾、大黄鱼、马鲛鱼、	主要有鰻魚、對蝦、大黃魚、馬鮫魚、		lexical-context
+6407	2	鳙	6407_1	鱅	false	鳙鱼	鱅魚	authored-example	project-authored	鳙鱼是一种动物。	鱅魚是一種動物。		lexical-context
+6416	2	谶	6416_1	讖	false	谶纬	讖緯	corpus-example	leipzig:zho_wikipedia_2018_1M:881158	谶纬之学的内容很庞杂，其内容比如：	讖緯之學的內容很龐雜，其內容比如：		lexical-context
+6418	2	骥	6418_1	驥	false	冯骥才	馮驥才	corpus-example	leipzig:zho_news_2020_300K:1333	1991年，冯骥才先生夫妻俩陪母亲一起登泰山。	1991年，馮驥才先生夫妻倆陪母親一起登泰山。		lexical-context
+6419	2	缵	6419_1	纘	false	王缵绪	王纘緒	authored-example	project-authored	王缵绪是一个人名。	王纘緒是一個人名。		lexical-context
+6420	2	瓒	6420_1	瓚	false	公孙瓒	公孫瓚	authored-example	project-authored	公孙瓒是一个人名。	公孫瓚是一個人名。		lexical-context
+6430	2	鼍	6430_1	鼉	false	鼍龙	鼉龍	authored-example	project-authored	鼍龙是一个较少见的词语。	鼉龍是一個較少見的詞語。		lexical-context
+6432	2	黩	6432_1	黷	false	穷兵黩武	窮兵黷武	corpus-example	tatoeba:13987334	频繁发动战争、穷兵黩武的人，没有不后悔的。	頻繁發動戰爭、窮兵黷武的人，沒有不後悔的。		lexical-context
+6434	2	黪	6434_1	黲	false	黪字	黲字	curated-domain	metalinguistic-fallback	远山呈现出黪色。	遠山呈現出黲色。	Classical colour terminology: describes a dark grey or blackish colour.	curated-domain
+6435	2	镳	6435_1	鑣	false	分道扬镳	分道揚鑣	corpus-example	leipzig:zho_news_2020_300K:18583	专家说，与美国分道扬镳将给双方的经济带来毁灭性的打击。	專家說，與美國分道揚鑣將給雙方的經濟帶來毀滅性的打擊。		lexical-context
+6436	2	镴	6436_1	鑞	false	白镴	白鑞	authored-example	project-authored	白镴是一种材料或化学物质。	白鑞是一種材料或化學物質。		lexical-context
+6441	2	臜	6441_1	臢	false	腌臜	腌臢	authored-example	project-authored	腌臜是一个描写性质或状态的词。	腌臢是一個描寫性質或狀態的詞。		lexical-context
+6442	2	鳜	6442_1	鱖	false	鳜鱼	鱖魚	corpus-example	leipzig:zho_news_2020_300K:131873	岳阳的洞庭鱼粉是用鲜活鲫鱼熬汤，洞庭湖鳜鱼作码，其汤香味浓，汤之鲜美，回味无穷。	岳陽的洞庭魚粉是用鮮活鯽魚熬湯，洞庭湖鱖魚作碼，其湯香味濃，湯之鮮美，回味無窮。		lexical-context
+6443	2	鳝	6443_1	鱔	false	黄鳝	黃鱔	corpus-example	leipzig:zho_news_2020_300K:180936	有经验的“老麻拐”，一夜能捕一二斤黄鳝泥鳅。	有經驗的“老麻拐”，一夜能捕一二斤黃鱔泥鰍。		lexical-context
+6444	2	鳟	6444_1	鱒	false	鳟鱼	鱒魚	corpus-example	tatoeba:462140	鲤鱼和鳟鱼等鱼类生活在淡水中。	鯉魚和鱒魚等魚類生活在淡水中。		lexical-context
+6447	2	骧	6447_1	驤	false	云起龙骧	雲起龍驤	corpus-example	leipzig:zho_news_2020_300K:276130	这是神明和龙族的故事，云起龙骧，化为侯王!	這是神明和龍族的故事，雲起龍驤，化為侯王!		lexical-context
+6452	2	颦	6452_1	顰	false	一颦一笑	一顰一笑	corpus-example	leipzig:zho_news_2020_300K:15220	不得不说，李沁饰演的薛宝钗一颦一笑都令人印象深刻，李沁也因此而被观众记住。	不得不說，李沁飾演的薛寶釵一顰一笑都令人印象深刻，李沁也因此而被觀眾記住。		lexical-context
+6454	2	鳢	6454_1	鱧	false	斑鳢	斑鱧	authored-example	project-authored	斑鳢是一种动物。	斑鱧是一種動物。		lexical-context
+6455	2	癫	6455_1	癲	false	癫痫	癲癇	corpus-example	leipzig:zho_news_2020_300K:271982	这两年，姚德芬还要面对的病痛就是，因过去脑瘤手术遗留下的癫痫病。“	這兩年，姚德芬還要面對的病痛就是，因過去腦瘤手術遺留下的癲癇病。“		lexical-context
+6459	2	灏	6459_1	灝	false	翁文灏	翁文灝	corpus-example	leipzig:zho_wikipedia_2018_1M:288993	，另外由翁文灏在改革实施前几天，	，另外由翁文灝在改革實施前幾天，		lexical-context
+6467	2	鹳	6467_1	鸛	false	黑鹳	黑鸛	authored-example	project-authored	黑鹳是一种鸟。	黑鸛是一種鳥。		lexical-context
+6473	2	镵	6473_1	鑱	false	镵字	鑱字	domain-template	metalinguistic-fallback	古代器物记录中提到了镵。	古代器物記錄中提到了鑱。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+6478	2	趱	6478_1	趲	false	趱干	趲幹	authored-example	project-authored	趱干是一个较少见的词语。	趲幹是一個較少見的詞語。		lexical-context
+6481	2	颧	6481_1	顴	false	颧骨	顴骨	corpus-example	leipzig:zho_news_2020_300K:23391	中等身材，眉棱、颧骨很高，显得有些瘦，但身体结实，脸上稍带赭黑色，眼睛大而有神。	中等身材，眉稜、顴骨很高，顯得有些瘦，但身體結實，臉上稍帶赭黑色，眼睛大而有神。		lexical-context
+6482	2	躜	6482_1	躦	false	躜字	躦字	domain-template	metalinguistic-fallback	古代器物记录中提到了躜。	古代器物記錄中提到了躦。	Historical tools and material culture: a rare character used for an implement, object, or craft process.	domain-template
+6497	2	馕	6497_1	饢	false	馕饼	饢餅	corpus-example	leipzig:zho_wikipedia_2018_1M:245544	制作讲究的馕饼中间会拓上花纹，	製作講究的饢餅中間會拓上花紋，		lexical-context
+6498	2	戆	6498_1	戇	false	戆督	戇督	authored-example	project-authored	戆督是一个描写性质或状态的词。	戇督是一個描寫性質或狀態的詞。		lexical-context

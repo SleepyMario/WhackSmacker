@@ -425,7 +425,6 @@ async function selectInstalledPackages(options: ReadingReviewOptions): Promise<r
       const packageOrder = left.packageId.localeCompare(right.packageId);
       return packageOrder === 0 ? compareDeckFrameworkVersions(left, right) : packageOrder;
     });
-  if (options.packageVersion !== undefined) return matches;
   const newest = new Map<string, InstalledPackageRecord>();
   for (const record of matches) {
     const previous = newest.get(record.packageId);

@@ -1,0 +1,467 @@
+official_no	level	simplified	mapping_code	traditional	inherited	simplified_example	traditional_example	example_source	original_example_source	simplified_sentence	traditional_sentence	field_usage	context_kind
+6509	3	戋	6509_1	戔	false	戋戋	戔戔	authored-example	project-authored	戋戋是一个较少见的词语。	戔戔是一個較少見的詞語。		lexical-context
+6520	3	𬣙	6520_1	訏	false	𬣙字	訏字	domain-template	metalinguistic-fallback	古文中可见𬣙。	古文中可見訏。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+6521	3	讱	6521_1	訒	false	讱字	訒字	domain-template	metalinguistic-fallback	古文中可见讱。	古文中可見訒。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+6536	3	钆	6536_1	釓	false	钆字	釓字	approved-manual	metalinguistic-fallback	这种造影剂含有钆。	這種造影劑含有釓。	Medicine / chemistry: gadolinium, an element used in certain magnetic-resonance contrast agents.	approved-manual
+6538	3	伣	6538_1	俔	false	伣字	俔字	domain-template	metalinguistic-fallback	古文中可见伣。	古文中可見俔。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+6546	3	闫	6546_1	閆	false	闫怀礼	閆懷禮	authored-example	project-authored	闫怀礼是一个人名。	閆懷禮是一個人名。		lexical-context
+6547	3	𬇕	6547_1	澫	false	𬇕字	澫字	domain-template	metalinguistic-fallback	地方志中记载了𬇕。	地方志中記載了澫。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+6549	3	䜣	6549_1	訢	false	奕䜣	奕訢	authored-example	project-authored	奕䜣是一个人名。	奕訢是一個人名。		lexical-context
+6550	3	讻	6550_1	訩	false	讻字	訩字	domain-template	metalinguistic-fallback	古文中可见讻。	古文中可見訩。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+6551	3	𬣞	6551_1	詝	false	𬣞字	詝字	domain-template	metalinguistic-fallback	古文中可见𬣞。	古文中可見詝。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+6553	3	𬘓	6553_1	紃	false	𬘓字	紃字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬘓。	古代織物記錄中出現了紃。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6554	3	纩	6554_1	纊	false	纩字	纊字	approved-manual	metalinguistic-fallback	工匠把纩填进冬衣。	工匠把纊填進冬衣。	Traditional textiles: fine cotton or silk wadding used in clothing and bedding.	approved-manual
+6558	3	玚	6558_1	瑒	false	玚字	瑒字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见玚。	古代玉器或人名記錄中可見瑒。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+6559	3	刬	6559_1	剗	false	刬恶除奸	剗惡除奸	authored-example	project-authored	刬恶除奸是一个成语或固定说法。	剗惡除奸是一個成語或固定說法。		lexical-context
+6560	3	𫭟	6560_1	塸	false	𫭟字	塸字	domain-template	metalinguistic-fallback	地方志中记载了𫭟。	地方志中記載了塸。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6561	3	坜	6561_1	壢	false	中坜	中壢	authored-example	project-authored	中坜是一个地名。	中壢是一個地名。		lexical-context
+6564	3	𫭢	6564_1	埨	false	𫭢字	埨字	domain-template	metalinguistic-fallback	地方志中记载了𫭢。	地方志中記載了埨。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6567	3	㧑	6567_1	撝	false	㧑挹	撝挹	authored-example	project-authored	㧑挹是一个较少见的词语。	撝挹是一個較少見的詞語。		lexical-context
+6576	3	𫇭	6576_1	蔿	false	𫇭字	蔿字	domain-template	metalinguistic-fallback	本草书中记载了𫇭。	本草書中記載了蔿。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+6582	3	杩	6582_1	榪	false	杩字	榪字	domain-template	metalinguistic-fallback	古代木器或植物记录中可见杩。	古代木器或植物記錄中可見榪。	Woodcraft / historical botany: a rare character associated with wood, a wooden object, or a plant name.	domain-template
+6585	3	轪	6585_1	軑	false	轪字	軑字	domain-template	metalinguistic-fallback	古代车辆记录中出现了轪。	古代車輛記錄中出現了軑。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+6586	3	𫐄	6586_1	軏	false	𫐄字	軏字	domain-template	metalinguistic-fallback	古代车辆记录中出现了𫐄。	古代車輛記錄中出現了軏。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+6591	3	呙	6591_1	咼	false	呙字	咼字	domain-template	metalinguistic-fallback	古文中可见呙。	古文中可見咼。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+6594	3	𫵷	6594_1	㠣	false	𫵷字	㠣字	domain-template	metalinguistic-fallback	地方志中记载了𫵷。	地方志中記載了㠣。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6599	3	觃	6599_1	覎	false	觃口	覎口	authored-example	project-authored	觃口是一个地名。	覎口是一個地名。		lexical-context
+6602	3	㑇	6602_1	㑳	false	㑇字	㑳字	domain-template	metalinguistic-fallback	古文中可见㑇。	古文中可見㑳。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+6607	3	飏	6607_1	颺	false	神魂荡飏	神魂盪颺	authored-example	project-authored	神魂荡飏是一个较少见的词语。	神魂盪颺是一個較少見的詞語。		lexical-context
+6609	3	闶	6609_1	閌	false	闶字	閌字	domain-template	metalinguistic-fallback	古代建筑记录中出现了闶。	古代建築記錄中出現了閌。	Historical architecture: a rare character associated with a gate, room, structure, architectural fitting, or decorative support.	domain-template
+6612	3	𣲘	6612_1	潕	false	𣲘溪	潕谿	authored-example	project-authored	𣲘溪是一个地名。	潕谿是一個地名。		lexical-context
+6613	3	𣲗	6613_1	湋	false	𣲗字	湋字	domain-template	metalinguistic-fallback	地方志中记载了𣲗。	地方志中記載了湋。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+6614	3	沄	6614_1	澐	false	沄字	澐字	domain-template	metalinguistic-fallback	地方志中记载了沄。	地方志中記載了澐。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+6616	3	𬇙	6616_1	浿	false	𬇙字	浿字	domain-template	metalinguistic-fallback	地方志中记载了𬇙。	地方志中記載了浿。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+6623	3	𬣡	6623_1	諓	false	𬣡字	諓字	domain-template	metalinguistic-fallback	古文中可见𬣡。	古文中可見諓。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+6624	3	祃	6624_1	禡	false	祃字	禡字	approved-manual	metalinguistic-fallback	军队出征前举行祃祭。	軍隊出征前舉行禡祭。	Ancient military religion: a sacrifice performed by an army at its encampment or place of deployment.	approved-manual
+6625	3	诇	6625_1	詗	false	诇字	詗字	domain-template	metalinguistic-fallback	古文中可见诇。	古文中可見詗。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+6627	3	诎	6627_1	詘	false	时诎举赢	時詘舉贏	authored-example	project-authored	时诎举赢是一个成语或固定说法。	時詘舉贏是一個成語或固定說法。		lexical-context
+6628	3	诐	6628_1	詖	false	曲学诐行	曲學詖行	authored-example	project-authored	曲学诐行是一个成语或固定说法。	曲學詖行是一個成語或固定說法。		lexical-context
+6629	3	屃	6629_1	屓	false	屃字	屓字	domain-template	metalinguistic-fallback	古代建筑记录中出现了屃。	古代建築記錄中出現了屓。	Historical architecture: a rare character associated with a gate, room, structure, architectural fitting, or decorative support.	domain-template
+6630	3	𫸩	6630_1	彄	false	𫸩字	彄字	curated-domain	metalinguistic-fallback	弓匠正在修整𫸩。	弓匠正在修整彄。	Historical archery: the nock at the end of a bow or a term associated with stretching a bow.	curated-domain
+6638	3	纮	6638_1	紘	false	八纮同轨	八紘同軌	authored-example	project-authored	八纮同轨是一个成语或固定说法。	八紘同軌是一個成語或固定說法。		lexical-context
+6639	3	驲	6639_1	馹	false	驲字	馹字	approved-manual	metalinguistic-fallback	使者乘驲连夜赶路。	使者乘馹連夜趕路。	Ancient postal transport: a relay horse or carriage used at historical courier stations.	approved-manual
+6640	3	𫘜	6640_1	馼	false	𫘜字	馼字	domain-template	metalinguistic-fallback	古籍中用𫘜描述马匹。	古籍中用馼描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6641	3	纻	6641_1	紵	false	缟纻之交	縞紵之交	authored-example	project-authored	缟纻之交是一个成语或固定说法。	縞紵之交是一個成語或固定說法。		lexical-context
+6642	3	𬘘	6642_1	紞	false	𬘘字	紞字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬘘。	古代織物記錄中出現了紞。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6643	3	𫘝	6643_1	駃	false	𫘝字	駃字	domain-template	metalinguistic-fallback	古籍中用𫘝描述马匹。	古籍中用駃描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6644	3	纼	6644_1	紖	false	纼字	紖字	domain-template	metalinguistic-fallback	古代织物记录中出现了纼。	古代織物記錄中出現了紖。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6647	3	玱	6647_1	瑲	false	玱字	瑲字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见玱。	古代玉器或人名記錄中可見瑲。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+6660	3	苧	6660_1	薴	false	苧悴	薴悴	authored-example	project-authored	苧悴是一个较少见的词语。	薴悴是一個較少見的詞語。		lexical-context
+6664	3	㭎	6664_1	棡	false	㭎字	棡字	domain-template	metalinguistic-fallback	古代木器或植物记录中可见㭎。	古代木器或植物記錄中可見棡。	Woodcraft / historical botany: a rare character associated with wood, a wooden object, or a plant name.	domain-template
+6670	3	𬨂	6670_1	軝	false	𬨂字	軝字	domain-template	metalinguistic-fallback	古代车辆记录中出现了𬨂。	古代車輛記錄中出現了軝。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+6671	3	𬀩	6671_1	暐	false	𬀩字	暐字	domain-template	metalinguistic-fallback	古文中用𬀩描写光线或天气。	古文中用暐描寫光線或天氣。	Classical descriptions of light or weather: a rare character associated with brightness, sky conditions, or atmospheric movement.	domain-template
+6672	3	𬀪	6672_1	晛	false	𬀪字	晛字	domain-template	metalinguistic-fallback	古文中用𬀪描写光线或天气。	古文中用晛描寫光線或天氣。	Classical descriptions of light or weather: a rare character associated with brightness, sky conditions, or atmospheric movement.	domain-template
+6682	3	岽	6682_1	崬	false	岽字	崬字	domain-template	metalinguistic-fallback	地方志中记载了岽。	地方志中記載了崬。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6688	3	𬬩	6688_1	釴	false	𬬩字	釴字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬬩。	金屬器物或技術資料中可見釴。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+6689	3	钐	6689_1	釤	false	钐字	釤字	element-domain	metalinguistic-fallback	实验记录中提到了钐。	實驗記錄中提到了釤。	Chemistry: samarium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+6690	3	钔	6690_1	鍆	false	钔字	鍆字	element-domain	metalinguistic-fallback	实验记录中提到了钔。	實驗記錄中提到了鍆。	Chemistry: mendelevium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+6691	3	钖	6691_1	鍚	false	钖字	鍚字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见钖。	金屬器物或技術資料中可見鍚。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+6706	3	郐	6706_1	鄶	false	自郐以下	自鄶以下	authored-example	project-authored	自郐以下是一个成语或固定说法。	自鄶以下是一個成語或固定說法。		lexical-context
+6713	3	狝	6713_1	獮	false	秋狝	秋獮	authored-example	project-authored	秋狝是一个较少见的词语。	秋獮是一個較少見的詞語。		lexical-context
+6714	3	饳	6714_1	飿	false	饳字	飿字	domain-template	metalinguistic-fallback	地方食谱中提到了饳。	地方食譜中提到了飿。	Traditional or regional food vocabulary: a rare character used for a dish, food, or preparation.	domain-template
+6726	3	峃	6726_1	嶨	false	峃字	嶨字	domain-template	metalinguistic-fallback	地方志中记载了峃。	地方志中記載了嶨。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6730	3	𫍣	6730_1	詷	false	𫍣字	詷字	domain-template	metalinguistic-fallback	古文中可见𫍣。	古文中可見詷。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+6731	3	𬣳	6731_1	詪	false	𬣳字	詪字	domain-template	metalinguistic-fallback	古文中可见𬣳。	古文中可見詪。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+6732	3	𬩽	6732_1	鄩	false	𬩽字	鄩字	domain-template	metalinguistic-fallback	地方志中以𬩽记录地名。	地方志中以鄩記錄地名。	Historical geography: a rare character used in an old place name, administrative name, or surname.	domain-template
+6733	3	鸤	6733_1	鳲	false	鸤字	鳲字	domain-template	metalinguistic-fallback	图鉴中记录了鸤这种鸟。	圖鑑中記錄了鳲這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+6737	3	𬮿	6737_1	隑	false	𬮿字	隑字	domain-template	metalinguistic-fallback	地方志中记载了𬮿。	地方志中記載了隑。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6739	3	𬯀	6739_1	隮	false	𬯀字	隮字	domain-template	metalinguistic-fallback	地方志中记载了𬯀。	地方志中記載了隮。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6744	3	𫰛	6744_1	娙	false	𫰛字	娙字	curated-domain	metalinguistic-fallback	古文称她姿容𫰛美。	古文稱她姿容娙美。	Classical descriptions of appearance: a rare adjective or noun associated with a beautiful woman.	curated-domain
+6745	3	迳	6745_1	逕	false	迳庭	逕庭	authored-example	project-authored	迳庭是一个较少见的词语。	逕庭是一個較少見的詞語。		lexical-context
+6747	3	𬳵	6747_1	駓	false	𬳵字	駓字	domain-template	metalinguistic-fallback	古籍中用𬳵描述马匹。	古籍中用駓描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6748	3	驵	6748_1	駔	false	驵字	駔字	domain-template	metalinguistic-fallback	古籍中用驵描述马匹。	古籍中用駔描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6749	3	𬳶	6749_1	駉	false	𬳶字	駉字	domain-template	metalinguistic-fallback	古籍中用𬳶描述马匹。	古籍中用駉描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6750	3	䌹	6750_1	絅	false	䌹字	絅字	domain-template	metalinguistic-fallback	古代织物记录中出现了䌹。	古代織物記錄中出現了絅。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6751	3	驺	6751_1	騶	false	驺从	騶從	authored-example	project-authored	驺从是一个较少见的词语。	騶從是一個較少見的詞語。		lexical-context
+6752	3	𫠊	6752_1	䮄	false	𫠊字	䮄字	domain-template	metalinguistic-fallback	古籍中用𫠊描述马匹。	古籍中用䮄描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6753	3	绋	6753_1	紼	false	执绋	執紼	authored-example	project-authored	执绋是一个较少见的词语。	執紼是一個較少見的詞語。		lexical-context
+6754	3	绐	6754_1	紿	false	绐字	紿字	domain-template	metalinguistic-fallback	古代织物记录中出现了绐。	古代織物記錄中出現了紿。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6761	3	𬍛	6761_1	瓅	false	玓𬍛	玓瓅	authored-example	project-authored	玓𬍛是一个较少见的词语。	玓瓅是一個較少見的詞語。		lexical-context
+6766	3	韨	6766_1	韍	false	韨字	韍字	domain-template	metalinguistic-fallback	古代礼制记载中出现了韨。	古代禮制記載中出現了韍。	Ancient ritual and material culture: a rare character associated with ceremony, offerings, dress, or ritual objects.	domain-template
+6768	3	垯	6768_1	墶	false	榆木圪垯	榆木圪墶	authored-example	project-authored	榆木圪垯是一个较少见的词语。	榆木圪墶是一個較少見的詞語。		lexical-context
+6770	3	垲	6770_1	塏	false	垲字	塏字	domain-template	metalinguistic-fallback	地方志中记载了垲。	地方志中記載了塏。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6785	3	荙	6785_1	薘	false	荙字	薘字	domain-template	metalinguistic-fallback	本草书中记载了荙。	本草書中記載了薘。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+6786	3	荛	6786_1	蕘	false	刍荛	芻蕘	authored-example	project-authored	刍荛是一个较少见的词语。	芻蕘是一個較少見的詞語。		lexical-context
+6791	3	𬜬	6791_1	蔄	false	𬜬字	蔄字	domain-template	metalinguistic-fallback	本草书中记载了𬜬。	本草書中記載了蔄。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+6796	3	荭	6796_1	葒	false	荭字	葒字	domain-template	metalinguistic-fallback	本草书中记载了荭。	本草書中記載了葒。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+6806	3	䴓	6806_1	鳾	false	丽䴓	麗鳾	authored-example	project-authored	丽䴓是一个较少见的词语。	麗鳾是一個較少見的詞語。		lexical-context
+6814	3	䶮	6814_1	龑	false	䶮字	龑字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见䶮。	古代玉器或人名記錄中可見龑。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+6815	3	轵	6815_1	軹	false	轵字	軹字	domain-template	metalinguistic-fallback	古代车辆记录中出现了轵。	古代車輛記錄中出現了軹。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+6816	3	轷	6816_1	軤	false	轷字	軤字	domain-template	metalinguistic-fallback	古代车辆记录中出现了轷。	古代車輛記錄中出現了軤。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+6817	3	轹	6817_1	轢	false	凌轹	凌轢	authored-example	project-authored	凌轹是一个较少见的词语。	凌轢是一個較少見的詞語。		lexical-context
+6818	3	轺	6818_1	軺	false	轺字	軺字	domain-template	metalinguistic-fallback	古代车辆记录中出现了轺。	古代車輛記錄中出現了軺。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+6820	3	𪾢	6820_1	睍	false	𪾢字	睍字	domain-template	metalinguistic-fallback	古文中可见𪾢。	古文中可見睍。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+6821	3	昽	6821_1	曨	false	昽字	曨字	domain-template	metalinguistic-fallback	古文中用昽描写光线或天气。	古文中用曨描寫光線或天氣。	Classical descriptions of light or weather: a rare character associated with brightness, sky conditions, or atmospheric movement.	domain-template
+6827	3	哒	6827_1	噠	false	哒嗪	噠嗪	authored-example	project-authored	哒嗪是一种材料或化学物质。	噠嗪是一種材料或化學物質。		lexical-context
+6843	3	钘	6843_1	鈃	false	钘字	鈃字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见钘。	金屬器物或技術資料中可見鈃。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+6844	3	𫓧	6844_1	鈇	false	𫓧字	鈇字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𫓧。	金屬器物或技術資料中可見鈇。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+6845	3	钜	6845_1	鉅	false	钜子	鉅子	authored-example	project-authored	钜子是一种器物。	鉅子是一種器物。		lexical-context
+6846	3	𬬮	6846_1	鋹	false	𬬮字	鋹字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬬮。	金屬器物或技術資料中可見鋹。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+6847	3	𬬱	6847_1	釿	false	𬬱字	釿字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬬱。	金屬器物或技術資料中可見釿。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+6848	3	𬬭	6848_1	錀	false	𬬭字	錀字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬬭。	金屬器物或技術資料中可見錀。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+6849	3	钪	6849_1	鈧	false	钪字	鈧字	element-domain	metalinguistic-fallback	实验记录中提到了钪。	實驗記錄中提到了鈧。	Chemistry: scandium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+6850	3	钬	6850_1	鈥	false	钬字	鈥字	element-domain	metalinguistic-fallback	实验记录中提到了钬。	實驗記錄中提到了鈥。	Chemistry: holmium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+6851	3	钭	6851_1	鈄	false	钭字	鈄字	curated-domain	metalinguistic-fallback	钭也可见于姓氏记录。	鈄也可見於姓氏記錄。	Surname and historical object terminology: a rare character used as a family name and in older metal-object vocabulary.	curated-domain
+6854	3	俫	6854_1	倈	false	按俫	按倈	authored-example	project-authored	按俫是一个较少见的词语。	按倈是一個較少見的詞語。		lexical-context
+6861	3	舣	6861_1	艤	false	南舣北驾	南艤北駕	authored-example	project-authored	南舣北驾是一个较少见的词语。	南艤北駕是一個較少見的詞語。		lexical-context
+6864	3	鸧	6864_1	鶬	false	鸧鹒	鶬鶊	authored-example	project-authored	鸧鹒是一种鸟。	鶬鶊是一種鳥。		lexical-context
+6872	3	飐	6872_1	颭	false	飐飐	颭颭	authored-example	project-authored	飐飐是一个较少见的词语。	颭颭是一個較少見的詞語。		lexical-context
+6874	3	饻	6874_1	餏	false	饻字	餏字	domain-template	metalinguistic-fallback	地方食谱中提到了饻。	地方食譜中提到了餏。	Traditional or regional food vocabulary: a rare character used for a dish, food, or preparation.	domain-template
+6886	3	浈	6886_1	湞	false	浈江区	湞江區	authored-example	project-authored	浈江区是一个地名。	湞江區是一個地名。		lexical-context
+6887	3	浉	6887_1	溮	false	浉河	溮河	authored-example	project-authored	浉河是一个地名。	溮河是一個地名。		lexical-context
+6895	3	浐	6895_1	滻	false	浐河	滻河	authored-example	project-authored	浐河是一个地名。	滻河是一個地名。		lexical-context
+6903	3	袆	6903_1	褘	false	袆字	褘字	domain-template	metalinguistic-fallback	古代礼制记载中出现了袆。	古代禮制記載中出現了褘。	Ancient ritual and material culture: a rare character associated with ceremony, offerings, dress, or ritual objects.	domain-template
+6917	3	绖	6917_1	絰	false	绖字	絰字	domain-template	metalinguistic-fallback	古代织物记录中出现了绖。	古代織物記錄中出現了絰。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6918	3	骃	6918_1	駰	false	骃字	駰字	domain-template	metalinguistic-fallback	古籍中用骃描述马匹。	古籍中用駰描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6919	3	𬘡	6919_1	絪	false	𬘡字	絪字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬘡。	古代織物記錄中出現了絪。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6920	3	𬳽	6920_1	駪	false	𬳽字	駪字	domain-template	metalinguistic-fallback	古籍中用𬳽描述马匹。	古籍中用駪描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6921	3	𬘩	6921_1	綎	false	𬘩字	綎字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬘩。	古代織物記錄中出現了綎。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6922	3	𫄧	6922_1	綖	false	𫄧字	綖字	domain-template	metalinguistic-fallback	古代织物记录中出现了𫄧。	古代織物記錄中出現了綖。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+6924	3	骉	6924_1	驫	false	骉字	驫字	domain-template	metalinguistic-fallback	古籍中用骉描述马匹。	古籍中用驫描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+6932	3	𪟝	6932_1	勣	false	𪟝字	勣字	curated-domain	metalinguistic-fallback	史书称赞他的𪟝。	史書稱讚他的勣。	Classical administrative and biographical vocabulary: achievements, merit, or conduct deserving recognition.	curated-domain
+6937	3	𬍤	6937_1	璕	false	𬍤字	璕字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见𬍤。	古代玉器或人名記錄中可見璕。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+6941	3	𫭼	6941_1	𡑍	false	𫭼字	𡑍字	domain-template	metalinguistic-fallback	地方志中记载了𫭼。	地方志中記載了𡑍。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+6951	3	𬜯	6951_1	䓣	false	𬜯字	䓣字	domain-template	metalinguistic-fallback	本草书中记载了𬜯。	本草書中記載了䓣。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+6953	3	莶	6953_1	薟	false	豨莶草	豨薟草	authored-example	project-authored	豨莶草是一种植物。	豨薟草是一種植物。		lexical-context
+6955	3	䓖	6955_1	藭	false	芎䓖	芎藭	authored-example	project-authored	芎䓖是一种植物。	芎藭是一種植物。		lexical-context
+6958	3	桠	6958_1	椏	false	枝桠	枝椏	authored-example	project-authored	枝桠是一个较少见的词语。	枝椏是一個較少見的詞語。		lexical-context
+6959	3	𬂩	6959_1	梜	false	𬂩字	梜字	domain-template	metalinguistic-fallback	古代木器或植物记录中可见𬂩。	古代木器或植物記錄中可見梜。	Woodcraft / historical botany: a rare character associated with wood, a wooden object, or a plant name.	domain-template
+6967	3	𫠆	6967_1	頍	false	𫠆字	頍字	curated-domain	metalinguistic-fallback	他听见呼声便𫠆首。	他聽見呼聲便頍首。	Classical body-action vocabulary: means to raise the head.	curated-domain
+6972	3	硁	6972_1	硜	false	硁字	硜字	domain-template	metalinguistic-fallback	古代石材记录中出现了硁。	古代石材記錄中出現了硜。	Geology / historical stone terminology: a rare character associated with stone, rock, minerals, or their properties.	domain-template
+6976	3	𨐈	6976_1	輄	false	𨐈字	輄字	domain-template	metalinguistic-fallback	古代车辆记录中出现了𨐈。	古代車輛記錄中出現了輄。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+6977	3	辀	6977_1	輈	false	梁辀	梁輈	authored-example	project-authored	梁辀是一种器物。	梁輈是一種器物。		lexical-context
+6978	3	辁	6978_1	輇	false	辁才	輇才	authored-example	project-authored	辁才是一个较少见的词语。	輇才是一個較少見的詞語。		lexical-context
+6981	3	赀	6981_1	貲	false	不赀	不貲	authored-example	project-authored	不赀是一个较少见的词语。	不貲是一個較少見的詞語。		lexical-context
+6985	3	唝	6985_1	嗊	false	唝吥	嗊吥	authored-example	project-authored	唝吥是一个较少见的词语。	嗊吥是一個較少見的詞語。		lexical-context
+6989	3	晔	6989_1	曄	false	范晔	范曄	authored-example	project-authored	范晔是一个人名。	范曄是一個人名。		lexical-context
+6991	3	晖	6991_1	暉	false	余晖	餘暉	authored-example	project-authored	余晖是一个较少见的词语。	餘暉是一個較少見的詞語。		lexical-context
+6995	3	𫑡	6995_1	鄳	false	𫑡字	鄳字	domain-template	metalinguistic-fallback	地方志中以𫑡记录地名。	地方志中以鄳記錄地名。	Historical geography: a rare character used in an old place name, administrative name, or surname.	domain-template
+6996	3	帱	6996_1	幬	false	覆帱	覆幬	authored-example	project-authored	覆帱是一个较少见的词语。	覆幬是一個較少見的詞語。		lexical-context
+6999	3	𪨶	6999_1	輋	false	𪨶字	輋字	domain-template	metalinguistic-fallback	古代车辆记录中出现了𪨶。	古代車輛記錄中出現了輋。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+7000	3	崄	7000_1	嶮	false	行崄侥幸	行嶮僥幸	authored-example	project-authored	行崄侥幸是一个成语或固定说法。	行嶮僥幸是一個成語或固定說法。		lexical-context
+7003	3	赆	7003_1	贐	false	西赆南琛	西贐南琛	authored-example	project-authored	西赆南琛是一个成语或固定说法。	西贐南琛是一個成語或固定說法。		lexical-context
+7004	3	𬬸	7004_1	鉥	false	𬬸字	鉥字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬬸。	金屬器物或技術資料中可見鉥。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7005	3	钷	7005_1	鉕	false	钷字	鉕字	element-domain	metalinguistic-fallback	实验记录中提到了钷。	實驗記錄中提到了鉕。	Chemistry: promethium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7006	3	𬬻	7006_1	鑪	false	𬬻字	鑪字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬬻。	金屬器物或技術資料中可見鑪。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7007	3	𬬹	7007_1	鉮	false	𬬹字	鉮字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬬹。	金屬器物或技術資料中可見鉮。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7008	3	𬬿	7008_1	鉊	false	𬬿字	鉊字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬬿。	金屬器物或技術資料中可見鉊。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7009	3	𬭁	7009_1	鉧	false	钴𬭁	鈷鉧	authored-example	project-authored	钴𬭁是一个较少见的词语。	鈷鉧是一個較少見的詞語。		lexical-context
+7019	3	𫢸	7019_1	僤	false	𫢸字	僤字	domain-template	metalinguistic-fallback	古文中可见𫢸。	古文中可見僤。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7029	3	鸰	7029_1	鴒	false	鹡鸰	鶺鴒	authored-example	project-authored	鹡鸰是一种鸟。	鶺鴒是一種鳥。		lexical-context
+7034	3	鱽	7034_1	魛	false	鱽字	魛字	domain-template	metalinguistic-fallback	图鉴中收录了鱽这种鱼。	圖鑑中收錄了魛這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7039	3	𫗧	7039_1	餗	false	覆𫗧	覆餗	authored-example	project-authored	覆𫗧是一个较少见的词语。	覆餗是一個較少見的詞語。		lexical-context
+7053	3	𬊈	7053_1	燖	false	𬊈字	燖字	curated-domain	metalinguistic-fallback	厨师把饭菜重新𬊈热。	廚師把飯菜重新燖熱。	Cooking vocabulary: means to reheat food.	curated-domain
+7059	3	涢	7059_1	溳	false	涢水	溳水	authored-example	project-authored	涢水是一个地名。	溳水是一個地名。		lexical-context
+7070	3	𬒈	7070_1	礐	false	𬒈字	礐字	domain-template	metalinguistic-fallback	古代石材记录中出现了𬒈。	古代石材記錄中出現了礐。	Geology / historical stone terminology: a rare character associated with stone, rock, minerals, or their properties.	domain-template
+7074	3	窎	7074_1	窵	false	窎字	窵字	curated-domain	metalinguistic-fallback	山谷窎远而幽静。	山谷窵遠而幽靜。	Classical spatial description: means deep or distant.	curated-domain
+7079	3	袯	7079_1	襏	false	袯襫	襏襫	authored-example	project-authored	袯襫是一个较少见的词语。	襏襫是一個較少見的詞語。		lexical-context
+7093	3	𬳿	7093_1	駼	false	𬳿字	駼字	domain-template	metalinguistic-fallback	古籍中用𬳿描述马匹。	古籍中用駼描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7094	3	𫄨	7094_1	絺	false	𫄨字	絺字	domain-template	metalinguistic-fallback	古代织物记录中出现了𫄨。	古代織物記錄中出現了絺。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7095	3	绤	7095_1	綌	false	绤字	綌字	curated-domain	metalinguistic-fallback	古人用绤制作粗布衣。	古人用綌製作粗布衣。	Traditional textiles: coarse hempen cloth.	curated-domain
+7096	3	骍	7096_1	騂	false	犁牛骍角	犁牛騂角	authored-example	project-authored	犁牛骍角是一个较少见的词语。	犁牛騂角是一個較少見的詞語。		lexical-context
+7097	3	𬘫	7097_1	綄	false	𬘫字	綄字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬘫。	古代織物記錄中出現了綄。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7099	3	琎	7099_1	璡	false	琎字	璡字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见琎。	古代玉器或人名記錄中可見璡。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+7114	3	𫮃	7114_1	墠	false	𫮃字	墠字	domain-template	metalinguistic-fallback	地方志中记载了𫮃。	地方志中記載了墠。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+7117	3	壸	7117_1	壼	false	一壸千金	一壼千金	authored-example	project-authored	一壸千金是一个成语或固定说法。	一壼千金是一個成語或固定說法。		lexical-context
+7119	3	聍	7119_1	聹	false	耵聍	耵聹	authored-example	project-authored	耵聍是一个医学词语。	耵聹是一個醫學詞語。		lexical-context
+7121	3	萚	7121_1	蘀	false	萚字	蘀字	domain-template	metalinguistic-fallback	本草书中记载了萚。	本草書中記載了蘀。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+7125	3	勚	7125_1	勩	false	勚字	勩字	domain-template	metalinguistic-fallback	古文中可见勚。	古文中可見勩。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7132	3	䓨	7132_1	罃	false	䓨字	罃字	domain-template	metalinguistic-fallback	本草书中记载了䓨。	本草書中記載了罃。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+7135	3	梼	7135_1	檮	false	梼杌	檮杌	authored-example	project-authored	梼杌是一个较少见的词语。	檮杌是一個較少見的詞語。		lexical-context
+7138	3	梾	7138_1	棶	false	梾木	棶木	authored-example	project-authored	梾木是一种植物。	棶木是一種植物。		lexical-context
+7144	3	厣	7144_1	厴	false	厣字	厴字	curated-domain	metalinguistic-fallback	这只贝壳的厣很完整。	這隻貝殼的厴很完整。	Zoology / shell anatomy: a shell or shell-like covering.	curated-domain
+7146	3	鿎	7146_1	䃮	false	鿎字	䃮字	domain-template	metalinguistic-fallback	古代石材记录中出现了鿎。	古代石材記錄中出現了䃮。	Geology / historical stone terminology: a rare character associated with stone, rock, minerals, or their properties.	domain-template
+7147	3	硙	7147_1	磑	false	硙硙	磑磑	authored-example	project-authored	硙硙是一个较少见的词语。	磑磑是一個較少見的詞語。		lexical-context
+7148	3	硚	7148_1	礄	false	硚口区	礄口區	authored-example	project-authored	硚口区是一个地名。	礄口區是一個地名。		lexical-context
+7152	3	䴕	7152_1	鴷	false	蚁䴕	蟻鴷	authored-example	project-authored	蚁䴕是一种鸟。	蟻鴷是一種鳥。		lexical-context
+7153	3	龁	7153_1	齕	false	龁字	齕字	domain-template	metalinguistic-fallback	古代医书中出现了龁。	古代醫書中出現了齕。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+7161	3	𬱖	7161_1	頔	false	𬱖字	頔字	curated-domain	metalinguistic-fallback	古文赞其容貌𬱖美。	古文讚其容貌頔美。	Classical descriptions of appearance: means good and beautiful.	curated-domain
+7166	3	𬟽	7166_1	蝀	false	䗖𬟽	螮蝀	authored-example	project-authored	䗖𬟽是一个较少见的词语。	螮蝀是一個較少見的詞語。		lexical-context
+7168	3	啴	7168_1	嘽	false	啴缓	嘽緩	authored-example	project-authored	啴缓是一个较少见的词语。	嘽緩是一個較少見的詞語。		lexical-context
+7176	3	铏	7176_1	鉶	false	铏字	鉶字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见铏。	金屬器物或技術資料中可見鉶。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7177	3	𫓯	7177_1	銈	false	𫓯字	銈字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𫓯。	金屬器物或技術資料中可見銈。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7178	3	𫟹	7178_1	鉷	false	𫟹字	鉷字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𫟹。	金屬器物或技術資料中可見鉷。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7179	3	铕	7179_1	銪	false	铕字	銪字	element-domain	metalinguistic-fallback	实验记录中提到了铕。	實驗記錄中提到了銪。	Chemistry: europium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7180	3	𫟼	7180_1	鐽	false	𫟼字	鐽字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𫟼。	金屬器物或技術資料中可見鐽。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7181	3	铖	7181_1	鋮	false	阮大铖	阮大鋮	authored-example	project-authored	阮大铖是一个人名。	阮大鋮是一個人名。		lexical-context
+7182	3	铘	7182_1	鋣	false	铘字	鋣字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见铘。	金屬器物或技術資料中可見鋣。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7183	3	铚	7183_1	銍	false	铚字	銍字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见铚。	金屬器物或技術資料中可見銍。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7184	3	铞	7184_1	銱	false	钌铞儿	釕銱兒	authored-example	project-authored	钌铞儿是一种器物。	釕銱兒是一種器物。		lexical-context
+7185	3	铥	7185_1	銩	false	铥字	銩字	element-domain	metalinguistic-fallback	实验记录中提到了铥。	實驗記錄中提到了銩。	Chemistry: thulium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7186	3	铴	7186_1	鐋	false	铴锣	鐋鑼	authored-example	project-authored	铴锣是一种器物。	鐋鑼是一種器物。		lexical-context
+7194	3	鸺	7194_1	鵂	false	鸺鹠	鵂鶹	authored-example	project-authored	鸺鹠是一种鸟。	鵂鶹是一種鳥。		lexical-context
+7205	3	鸼	7205_1	鵃	false	鸼字	鵃字	domain-template	metalinguistic-fallback	图鉴中记录了鸼这种鸟。	圖鑑中記錄了鵃這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7209	3	䝙	7209_1	貙	false	䝙字	貙字	domain-template	metalinguistic-fallback	古代动物记录中可见䝙。	古代動物記錄中可見貙。	Historical zoology / animal husbandry: a rare character associated with an animal or livestock term.	domain-template
+7210	3	脶	7210_1	腡	false	脶字	腡字	domain-template	metalinguistic-fallback	古代医书中出现了脶。	古代醫書中出現了腡。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+7214	3	鱾	7214_1	魢	false	鱾字	魢字	domain-template	metalinguistic-fallback	图鉴中收录了鱾这种鱼。	圖鑑中收錄了魢這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7221	3	庼	7221_1	廎	false	庼字	廎字	domain-template	metalinguistic-fallback	古代建筑记录中出现了庼。	古代建築記錄中出現了廎。	Historical architecture: a rare character associated with a gate, room, structure, architectural fitting, or decorative support.	domain-template
+7224	3	䴔	7224_1	鵁	false	䴔字	鵁字	domain-template	metalinguistic-fallback	图鉴中记录了䴔这种鸟。	圖鑑中記錄了鵁這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7227	3	阌	7227_1	閿	false	阌字	閿字	domain-template	metalinguistic-fallback	古代建筑记录中出现了阌。	古代建築記錄中出現了閿。	Historical architecture: a rare character associated with a gate, room, structure, architectural fitting, or decorative support.	domain-template
+7234	3	𬇹	7234_1	漍	false	𬇹字	漍字	domain-template	metalinguistic-fallback	地方志中记载了𬇹。	地方志中記載了漍。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+7241	3	𬍡	7241_1	璗	false	𬍡字	璗字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见𬍡。	古代玉器或人名記錄中可見璗。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+7249	3	𬤇	7249_1	諲	false	𬤇字	諲字	domain-template	metalinguistic-fallback	古文中可见𬤇。	古文中可見諲。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+7250	3	𫍯	7250_1	諴	false	𫍯字	諴字	domain-template	metalinguistic-fallback	古文中可见𫍯。	古文中可見諴。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+7252	3	裈	7252_1	褌	false	花下晒裈	花下曬褌	authored-example	project-authored	花下晒裈是一个较少见的词语。	花下曬褌是一個較少見的詞語。		lexical-context
+7254	3	𬤊	7254_1	諟	false	𬤊字	諟字	domain-template	metalinguistic-fallback	古文中可见𬤊。	古文中可見諟。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+7255	3	𫍲	7255_1	謏	false	𫍲字	謏字	domain-template	metalinguistic-fallback	古文中可见𫍲。	古文中可見謏。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+7256	3	谞	7256_1	諝	false	谋无遗谞	謀無遺諝	authored-example	project-authored	谋无遗谞是一个较少见的词语。	謀無遺諝是一個較少見的詞語。		lexical-context
+7260	3	𬯎	7260_1	隤	false	𬯎字	隤字	domain-template	metalinguistic-fallback	地方志中记载了𬯎。	地方志中記載了隤。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+7266	3	婳	7266_1	嫿	false	婳字	嫿字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见婳。	古代玉器或人名記錄中可見嫿。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+7273	3	𬘬	7273_1	綪	false	𬘬字	綪字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬘬。	古代織物記錄中出現了綪。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7274	3	𬘭	7274_1	綝	false	𬘭字	綝字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬘭。	古代織物記錄中出現了綝。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7275	3	𬴂	7275_1	騑	false	𬴂字	騑字	domain-template	metalinguistic-fallback	古籍中用𬴂描述马匹。	古籍中用騑描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7276	3	𫘦	7276_1	騊	false	𫘦字	騊字	domain-template	metalinguistic-fallback	古籍中用𫘦描述马匹。	古籍中用騊描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7277	3	绹	7277_1	綯	false	绹字	綯字	domain-template	metalinguistic-fallback	古代织物记录中出现了绹。	古代織物記錄中出現了綯。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7278	3	𫟅	7278_1	綡	false	𫟅字	綡字	domain-template	metalinguistic-fallback	古代织物记录中出现了𫟅。	古代織物記錄中出現了綡。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7279	3	𬘯	7279_1	綧	false	𬘯字	綧字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬘯。	古代織物記錄中出現了綧。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7280	3	骕	7280_1	驌	false	骕骦	驌驦	authored-example	project-authored	骕骦是一个较少见的词语。	驌驦是一個較少見的詞語。		lexical-context
+7281	3	𫘧	7281_1	騄	false	𫘧字	騄字	domain-template	metalinguistic-fallback	古籍中用𫘧描述马匹。	古籍中用騄描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7298	3	絷	7298_1	縶	false	絷字	縶字	domain-template	metalinguistic-fallback	古代织物记录中出现了絷。	古代織物記錄中出現了縶。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7299	3	𪣻	7299_1	塿	false	𪣻字	塿字	domain-template	metalinguistic-fallback	地方志中记载了𪣻。	地方志中記載了塿。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+7307	3	蒇	7307_1	蕆	false	蒇字	蕆字	domain-template	metalinguistic-fallback	本草书中记载了蒇。	本草書中記載了蕆。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+7310	3	蒉	7310_1	蕢	false	蒉字	蕢字	domain-template	metalinguistic-fallback	本草书中记载了蒉。	本草書中記載了蕢。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+7326	3	𬃊	7326_1	櫍	false	𬃊字	櫍字	domain-template	metalinguistic-fallback	古代木器或植物记录中可见𬃊。	古代木器或植物記錄中可見櫍。	Woodcraft / historical botany: a rare character associated with wood, a wooden object, or a plant name.	domain-template
+7327	3	鹀	7327_1	鵐	false	圃鹀	圃鵐	authored-example	project-authored	圃鹀是一种鸟。	圃鵐是一種鳥。		lexical-context
+7334	3	𬷕	7334_1	鵏	false	𬷕字	鵏字	domain-template	metalinguistic-fallback	图鉴中记录了𬷕这种鸟。	圖鑑中記錄了鵏這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7336	3	酦	7336_1	醱	false	酦酵	醱酵	authored-example	project-authored	酦酵是一种材料或化学物质。	醱酵是一種材料或化學物質。		lexical-context
+7337	3	觌	7337_1	覿	false	觌面	覿面	authored-example	project-authored	觌面是一个较少见的词语。	覿面是一個較少見的詞語。		lexical-context
+7342	3	詟	7342_1	讋	false	陆詟水栗	陸讋水慄	authored-example	project-authored	陆詟水栗是一个成语或固定说法。	陸讋水慄是一個成語或固定說法。		lexical-context
+7343	3	𫐐	7343_1	輗	false	𫐐字	輗字	domain-template	metalinguistic-fallback	古代车辆记录中出现了𫐐。	古代車輛記錄中出現了輗。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+7344	3	辌	7344_1	輬	false	辒辌	轀輬	authored-example	project-authored	辒辌是一种器物。	轀輬是一種器物。		lexical-context
+7346	3	龂	7346_1	齗	false	龂字	齗字	domain-template	metalinguistic-fallback	古代医书中出现了龂。	古代醫書中出現了齗。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+7347	3	𬹼	7347_1	齘	false	𬹼字	齘字	domain-template	metalinguistic-fallback	古代医书中出现了𬹼。	古代醫書中出現了齘。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+7361	3	𫶇	7361_1	嵽	false	𫶇字	嵽字	domain-template	metalinguistic-fallback	地方志中记载了𫶇。	地方志中記載了嵽。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+7365	3	嵚	7365_1	嶔	false	欹嵚历落	欹嶔歷落	authored-example	project-authored	欹嵚历落是一个较少见的词语。	欹嶔歷落是一個較少見的詞語。		lexical-context
+7366	3	翙	7366_1	翽	false	翙字	翽字	domain-template	metalinguistic-fallback	古文中可见翙。	古文中可見翽。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7367	3	𫖮	7367_1	顗	false	智𫖮	智顗	authored-example	project-authored	智𫖮是一个人名。	智顗是一個人名。		lexical-context
+7370	3	赑	7370_1	贔	false	赑屃	贔屭	authored-example	project-authored	赑屃是一个较少见的词语。	贔屭是一個較少見的詞語。		lexical-context
+7372	3	赒	7372_1	賙	false	赒人	賙人	authored-example	project-authored	赒人是一个较少见的词语。	賙人是一個較少見的詞語。		lexical-context
+7373	3	鿏	7373_1	䥑	false	鿏字	䥑字	element-domain	metalinguistic-fallback	实验记录中提到了鿏。	實驗記錄中提到了䥑。	Chemistry: meitnerium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7374	3	铹	7374_1	鐒	false	铹字	鐒字	element-domain	metalinguistic-fallback	实验记录中提到了铹。	實驗記錄中提到了鐒。	Chemistry: lawrencium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7375	3	𬭊	7375_1	𨧀	false	𬭊字	𨧀字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭊。	金屬器物或技術資料中可見𨧀。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7376	3	铽	7376_1	鋱	false	铽字	鋱字	element-domain	metalinguistic-fallback	实验记录中提到了铽。	實驗記錄中提到了鋱。	Chemistry: terbium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7377	3	𨱇	7377_1	銶	false	𨱇字	銶字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𨱇。	金屬器物或技術資料中可見銶。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7378	3	𫓶	7378_1	鋗	false	𫓶字	鋗字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𫓶。	金屬器物或技術資料中可見鋗。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7379	3	锊	7379_1	鋝	false	锊字	鋝字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锊。	金屬器物或技術資料中可見鋝。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7380	3	锍	7380_1	鋶	false	锍字	鋶字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锍。	金屬器物或技術資料中可見鋶。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7381	3	锎	7381_1	鐦	false	锎字	鐦字	element-domain	metalinguistic-fallback	实验记录中提到了锎。	實驗記錄中提到了鐦。	Chemistry: californium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7382	3	𬭎	7382_1	鋐	false	𬭎字	鋐字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭎。	金屬器物或技術資料中可見鋐。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7383	3	锓	7383_1	鋟	false	中度锓	中度鋟	authored-example	project-authored	中度锓是一个较少见的词语。	中度鋟是一個較少見的詞語。		lexical-context
+7385	3	颋	7385_1	頲	false	颋字	頲字	domain-template	metalinguistic-fallback	古文中可见颋。	古文中可見頲。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7389	3	筜	7389_1	簹	false	筼筜	篔簹	authored-example	project-authored	筼筜是一种植物。	篔簹是一種植物。		lexical-context
+7399	3	𫖯	7399_1	頫	false	𫖯字	頫字	domain-template	metalinguistic-fallback	古文中可见𫖯。	古文中可見頫。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7401	3	腘	7401_1	膕	false	腘窝	膕窩	authored-example	project-authored	腘窝是一个医学词语。	膕窩是一個醫學詞語。		lexical-context
+7405	3	𬱟	7405_1	頠	false	𬱟字	頠字	domain-template	metalinguistic-fallback	古文中可见𬱟。	古文中可見頠。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7406	3	鲃	7406_1	䰾	false	鲃鱼	䰾魚	authored-example	project-authored	鲃鱼是一种鱼类或水生动物。	䰾魚是一種魚類或水生動物。		lexical-context
+7408	3	𫛭	7408_1	鵟	false	大𫛭	大鵟	authored-example	project-authored	大𫛭是一个较少见的词语。	大鵟是一個較少見的詞語。		lexical-context
+7411	3	馉	7411_1	餶	false	馉字	餶字	domain-template	metalinguistic-fallback	地方食谱中提到了馉。	地方食譜中提到了餶。	Traditional or regional food vocabulary: a rare character used for a dish, food, or preparation.	domain-template
+7414	3	𫷷	7414_1	廞	false	𫷷字	廞字	curated-domain	metalinguistic-fallback	军队出发前先𫷷备车马。	軍隊出發前先廞備車馬。	Ancient military logistics: preparing horses and chariots for battle.	curated-domain
+7421	3	𬮱	7421_1	闉	false	𬮱字	闉字	domain-template	metalinguistic-fallback	古代建筑记录中出现了𬮱。	古代建築記錄中出現了闉。	Historical architecture: a rare character associated with a gate, room, structure, architectural fitting, or decorative support.	domain-template
+7423	3	𬊤	7423_1	燀	false	𬊤字	燀字	curated-domain	metalinguistic-fallback	众人添柴，使火更𬊤。	眾人添柴，使火更燀。	Classical fire vocabulary: to make a fire or cause a blaze.	curated-domain
+7425	3	𣸣	7425_1	濆	false	𣸣字	濆字	domain-template	metalinguistic-fallback	地方志中记载了𣸣。	地方志中記載了濆。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+7427	3	溁	7427_1	濚	false	溁字	濚字	domain-template	metalinguistic-fallback	地方志中记载了溁。	地方志中記載了濚。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+7435	3	溇	7435_1	漊	false	溇水	漊水	authored-example	project-authored	溇水是一个地名。	漊水是一個地名。		lexical-context
+7441	3	敩	7441_1	斆	false	敩学相长	斆學相長	authored-example	project-authored	敩学相长是一个较少见的词语。	斆學相長是一個較少見的詞語。		lexical-context
+7445	3	裣	7445_1	襝	false	裣衽	襝衽	authored-example	project-authored	裣衽是一个较少见的词语。	襝衽是一個較少見的詞語。		lexical-context
+7454	3	毵	7454_1	毿	false	毵字	毿字	domain-template	metalinguistic-fallback	古文中可见毵。	古文中可見毿。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7456	3	𬴃	7456_1	騞	false	坛𬴃	罈騞	authored-example	project-authored	坛𬴃是一个较少见的词语。	罈騞是一個較少見的詞語。		lexical-context
+7457	3	𫘨	7457_1	騠	false	𫘨字	騠字	domain-template	metalinguistic-fallback	古籍中用𫘨描述马匹。	古籍中用騠描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7458	3	缊	7458_1	緼	false	束缊举火	束緼舉火	authored-example	project-authored	束缊举火是一个成语或固定说法。	束緼舉火是一個成語或固定說法。		lexical-context
+7459	3	缐	7459_1	線	false	一针一缐	一針一線	authored-example	project-authored	一针一缐是一个较少见的词语。	一針一線是一個較少見的詞語。		lexical-context
+7460	3	骙	7460_1	騤	false	骙字	騤字	domain-template	metalinguistic-fallback	古籍中用骙描述马匹。	古籍中用騤描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7465	3	䴖	7465_1	鶄	false	䴖字	鶄字	domain-template	metalinguistic-fallback	图鉴中记录了䴖这种鸟。	圖鑑中記錄了鶄這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7479	3	赪	7479_1	赬	false	鲂鱼赪尾	魴魚赬尾	authored-example	project-authored	鲂鱼赪尾是一个成语或固定说法。	魴魚赬尾是一個成語或固定說法。		lexical-context
+7491	3	蓣	7491_1	蕷	false	薯蓣	薯蕷	authored-example	project-authored	薯蓣是一种植物。	薯蕷是一種植物。		lexical-context
+7499	3	榇	7499_1	櫬	false	面缚舆榇	面縛輿櫬	authored-example	project-authored	面缚舆榇是一种器物。	面縛輿櫬是一種器物。		lexical-context
+7503	3	𬪩	7503_1	醲	false	𬪩字	醲字	domain-template	metalinguistic-fallback	传统饮食文献中出现了𬪩。	傳統飲食文獻中出現了醲。	Traditional food and drink terminology: a rare character associated with salt, flavour, wine, or food preparation.	domain-template
+7508	3	䃅	7508_1	磾	false	䃅字	磾字	domain-template	metalinguistic-fallback	古代石材记录中出现了䃅。	古代石材記錄中出現了磾。	Geology / historical stone terminology: a rare character associated with stone, rock, minerals, or their properties.	domain-template
+7511	3	辒	7511_1	輼	false	辒字	輼字	domain-template	metalinguistic-fallback	古代车辆记录中出现了辒。	古代車輛記錄中出現了輼。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+7512	3	𬨎	7512_1	輶	false	𬨎字	輶字	domain-template	metalinguistic-fallback	古代车辆记录中出现了𬨎。	古代車輛記錄中出現了輶。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+7513	3	𫐓	7513_1	輮	false	𫐓字	輮字	domain-template	metalinguistic-fallback	古代车辆记录中出现了𫐓。	古代車輛記錄中出現了輮。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+7514	3	龆	7514_1	齠	false	龆字	齠字	domain-template	metalinguistic-fallback	古代医书中出现了龆。	古代醫書中出現了齠。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+7518	3	鹍	7518_1	鵾	false	鹍弦	鵾弦	authored-example	project-authored	鹍弦是一种器物。	鵾弦是一種器物。		lexical-context
+7519	3	𫫇	7519_1	噁	false	二𫫇英	二噁英	authored-example	project-authored	二𫫇英是一种材料或化学物质。	二噁英是一種材料或化學物質。		lexical-context
+7526	3	赗	7526_1	賵	false	赗字	賵字	domain-template	metalinguistic-fallback	古代丧礼中有赗赠礼。	古代喪禮中有賵贈禮。	Ancient funerary custom: a rare character associated with gifts presented for a burial or funeral.	domain-template
+7528	3	锖	7528_1	錆	false	锖色	錆色	authored-example	project-authored	锖色是一种材料或化学物质。	錆色是一種材料或化學物質。		lexical-context
+7529	3	𫓹	7529_1	錤	false	𫓹字	錤字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𫓹。	金屬器物或技術資料中可見錤。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7530	3	锘	7530_1	鍩	false	锘字	鍩字	element-domain	metalinguistic-fallback	实验记录中提到了锘。	實驗記錄中提到了鍩。	Chemistry: nobelium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7531	3	锳	7531_1	鍈	false	锳字	鍈字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锳。	金屬器物或技術資料中可見鍈。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7532	3	锧	7532_1	鑕	false	锧字	鑕字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锧。	金屬器物或技術資料中可見鑕。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7533	3	锪	7533_1	鍃	false	锪字	鍃字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锪。	金屬器物或技術資料中可見鍃。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7534	3	𬭚	7534_1	錞	false	𬭚字	錞字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭚。	金屬器物或技術資料中可見錞。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7535	3	锫	7535_1	錇	false	锫字	錇字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锫。	金屬器物或技術資料中可見錇。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7536	3	锬	7536_1	錟	false	锬字	錟字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锬。	金屬器物或技術資料中可見錟。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7537	3	𬭛	7537_1	𨨏	false	𬭛字	𨨏字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭛。	金屬器物或技術資料中可見𨨏。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7540	3	䅟	7540_1	穇	false	䅟字	穇字	domain-template	metalinguistic-fallback	农书中记载了䅟。	農書中記載了穇。	Traditional agriculture / grain terminology: a rare character associated with a crop or cereal plant.	domain-template
+7541	3	𬕂	7541_1	篢	false	𬕂字	篢字	domain-template	metalinguistic-fallback	本草书中记载了𬕂。	本草書中記載了篢。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+7543	3	筼	7543_1	篔	false	筼筜	篔簹	authored-example	project-authored	筼筜是一种植物。	篔簹是一種植物。		lexical-context
+7548	3	鹎	7548_1	鵯	false	台湾鹎	臺灣鵯	authored-example	project-authored	台湾鹎是一种鸟。	臺灣鵯是一種鳥。		lexical-context
+7557	3	鲉	7557_1	鮋	false	鲉字	鮋字	domain-template	metalinguistic-fallback	图鉴中收录了鲉这种鱼。	圖鑑中收錄了鮋這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7558	3	鲊	7558_1	鮓	false	鲊字	鮓字	domain-template	metalinguistic-fallback	图鉴中收录了鲊这种鱼。	圖鑑中收錄了鮓這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7559	3	鲌	7559_1	鮊	false	鲌字	鮊字	domain-template	metalinguistic-fallback	图鉴中收录了鲌这种鱼。	圖鑑中收錄了鮊這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7560	3	䲟	7560_1	鮣	false	䲟字	鮣字	domain-template	metalinguistic-fallback	图鉴中收录了䲟这种鱼。	圖鑑中收錄了鮣這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7561	3	𬶋	7561_1	鮈	false	𬶋字	鮈字	domain-template	metalinguistic-fallback	图鉴中收录了𬶋这种鱼。	圖鑑中收錄了鮈這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7562	3	𬶍	7562_1	鮀	false	𬶍字	鮀字	domain-template	metalinguistic-fallback	图鉴中收录了𬶍这种鱼。	圖鑑中收錄了鮀這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7563	3	鲏	7563_1	鮍	false	鳑鲏	鰟鮍	authored-example	project-authored	鳑鲏是一种鱼类或水生动物。	鰟鮍是一種魚類或水生動物。		lexical-context
+7566	3	飔	7566_1	颸	false	飔字	颸字	domain-template	metalinguistic-fallback	古文中用飔描写光线或天气。	古文中用颸描寫光線或天氣。	Classical descriptions of light or weather: a rare character associated with brightness, sky conditions, or atmospheric movement.	domain-template
+7568	3	𦝼	7568_1	膢	false	𦝼字	膢字	domain-template	metalinguistic-fallback	古代医书中出现了𦝼。	古代醫書中出現了膢。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+7569	3	馌	7569_1	饁	false	鸡鸣馌耕	雞鳴饁耕	authored-example	project-authored	鸡鸣馌耕是一个成语或固定说法。	雞鳴饁耕是一個成語或固定說法。		lexical-context
+7573	3	瘅	7573_1	癉	false	彰善瘅恶	彰善癉惡	authored-example	project-authored	彰善瘅恶是一个成语或固定说法。	彰善癉惡是一個成語或固定說法。		lexical-context
+7575	3	鹒	7575_1	鶊	false	鸧鹒	鶬鶊	authored-example	project-authored	鸧鹒是一种鸟。	鶬鶊是一種鳥。		lexical-context
+7579	3	阘	7579_1	闒	false	阘字	闒字	curated-domain	metalinguistic-fallback	楼上的阘已经关好。	樓上的闒已經關好。	Historical architecture: an upper-storey door or window.	curated-domain
+7580	3	𫔶	7580_1	闑	false	𫔶字	闑字	domain-template	metalinguistic-fallback	古代建筑记录中出现了𫔶。	古代建築記錄中出現了闑。	Historical architecture: a rare character associated with a gate, room, structure, architectural fitting, or decorative support.	domain-template
+7587	3	滠	7587_1	灄	false	滠字	灄字	domain-template	metalinguistic-fallback	地方志中记载了滠。	地方志中記載了灄。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+7602	3	𫌀	7602_1	襀	false	𫌀字	襀字	domain-template	metalinguistic-fallback	古代服饰记录中出现了𫌀。	古代服飾記錄中出現了襀。	Historical clothing and material culture: a rare character associated with garments or dress.	domain-template
+7608	3	谫	7608_1	謭	false	肤见谫识	膚見謭識	authored-example	project-authored	肤见谫识是一个成语或固定说法。	膚見謭識是一個成語或固定說法。		lexical-context
+7609	3	鹔	7609_1	鷫	false	鹔鹴	鷫鸘	authored-example	project-authored	鹔鹴是一种鸟。	鷫鸘是一種鳥。		lexical-context
+7610	3	𫖳	7610_1	頵	false	𫖳字	頵字	curated-domain	metalinguistic-fallback	旧文用𫖳描写大头。	舊文用頵描寫大頭。	Regional physical-description vocabulary: a rare character associated with a large head.	curated-domain
+7617	3	𫘪	7617_1	騵	false	𫘪字	騵字	domain-template	metalinguistic-fallback	古籍中用𫘪描述马匹。	古籍中用騵描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7618	3	𫘬	7618_1	騱	false	𫘬字	騱字	domain-template	metalinguistic-fallback	古籍中用𫘬描述马匹。	古籍中用騱描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7619	3	缞	7619_1	縗	false	缞字	縗字	domain-template	metalinguistic-fallback	古代织物记录中出现了缞。	古代織物記錄中出現了縗。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7622	3	𫞩	7622_1	璊	false	𫞩字	璊字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见𫞩。	古代玉器或人名記錄中可見璊。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+7625	3	瑷	7625_1	璦	false	瑷珲条约	璦琿條約	authored-example	project-authored	瑷珲条约是一个成语或固定说法。	璦琿條約是一個成語或固定說法。		lexical-context
+7644	3	蔹	7644_1	蘞	false	白蔹	白蘞	authored-example	project-authored	白蔹是一种植物。	白蘞是一種植物。		lexical-context
+7649	3	槚	7649_1	檟	false	槚字	檟字	domain-template	metalinguistic-fallback	古代木器或植物记录中可见槚。	古代木器或植物記錄中可見檟。	Woodcraft / historical botany: a rare character associated with wood, a wooden object, or a plant name.	domain-template
+7650	3	𣗋	7650_1	欓	false	𣗋字	欓字	domain-template	metalinguistic-fallback	古代木器或植物记录中可见𣗋。	古代木器或植物記錄中可見欓。	Woodcraft / historical botany: a rare character associated with wood, a wooden object, or a plant name.	domain-template
+7654	3	𬸘	7654_1	鶠	false	𬸘字	鶠字	domain-template	metalinguistic-fallback	图鉴中记录了𬸘这种鸟。	圖鑑中記錄了鶠這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7656	3	酾	7656_1	釃	false	栉风酾雨	櫛風釃雨	authored-example	project-authored	栉风酾雨是一个成语或固定说法。	櫛風釃雨是一個成語或固定說法。		lexical-context
+7661	3	𬒗	7661_1	𥗽	false	𬒗字	𥗽字	domain-template	metalinguistic-fallback	古代石材记录中出现了𬒗。	古代石材記錄中出現了𥗽。	Geology / historical stone terminology: a rare character associated with stone, rock, minerals, or their properties.	domain-template
+7667	3	𫚖	7667_1	鮆	false	𫚖字	鮆字	domain-template	metalinguistic-fallback	图鉴中收录了𫚖这种鱼。	圖鑑中收錄了鮆這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7668	3	䴗	7668_1	鶪	false	大鹃䴗	大鵑鶪	authored-example	project-authored	大鹃䴗是一个较少见的词语。	大鵑鶪是一個較少見的詞語。		lexical-context
+7671	3	鹖	7671_1	鶡	false	鹖字	鶡字	domain-template	metalinguistic-fallback	图鉴中记录了鹖这种鸟。	圖鑑中記錄了鶡這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7678	3	𨱏	7678_1	鎝	false	𨱏字	鎝字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𨱏。	金屬器物或技術資料中可見鎝。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7679	3	锺	7679_1	鍾	false	万锺	萬鍾	authored-example	project-authored	万锺是一个较少见的词语。	萬鍾是一個較少見的詞語。		lexical-context
+7680	3	锼	7680_1	鎪	false	锼字	鎪字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锼。	金屬器物或技術資料中可見鎪。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7681	3	锽	7681_1	鍠	false	锽字	鍠字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见锽。	金屬器物或技術資料中可見鍠。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7682	3	𬭤	7682_1	鍭	false	𬭤字	鍭字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭤。	金屬器物或技術資料中可見鍭。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7683	3	锾	7683_1	鍰	false	罚锾	罰鍰	authored-example	project-authored	罚锾是一个较少见的词语。	罰鍰是一個較少見的詞語。		lexical-context
+7684	3	锿	7684_1	鎄	false	锿字	鎄字	element-domain	metalinguistic-fallback	实验记录中提到了锿。	實驗記錄中提到了鎄。	Chemistry: einsteinium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7685	3	镃	7685_1	鎡	false	镃字	鎡字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见镃。	金屬器物或技術資料中可見鎡。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7686	3	镄	7686_1	鐨	false	镄字	鐨字	element-domain	metalinguistic-fallback	实验记录中提到了镄。	實驗記錄中提到了鐨。	Chemistry: fermium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7687	3	镅	7687_1	鎇	false	镅字	鎇字	element-domain	metalinguistic-fallback	实验记录中提到了镅。	實驗記錄中提到了鎇。	Chemistry: americium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7689	3	鹙	7689_1	鶖	false	鹙鹭	鶖鷺	authored-example	project-authored	鹙鹭是一种鸟。	鶖鷺是一種鳥。		lexical-context
+7690	3	箨	7690_1	籜	false	箨字	籜字	domain-template	metalinguistic-fallback	本草书中记载了箨。	本草書中記載了籜。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+7699	3	鲒	7699_1	鮚	false	鲒字	鮚字	domain-template	metalinguistic-fallback	图鉴中收录了鲒这种鱼。	圖鑑中收錄了鮚這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7700	3	鲕	7700_1	鮞	false	鲕字	鮞字	domain-template	metalinguistic-fallback	图鉴中收录了鲕这种鱼。	圖鑑中收錄了鮞這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7701	3	𫚕	7701_1	鰤	false	𫚕字	鰤字	domain-template	metalinguistic-fallback	图鉴中收录了𫚕这种鱼。	圖鑑中收錄了鰤這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7702	3	鲖	7702_1	鮦	false	鲖字	鮦字	domain-template	metalinguistic-fallback	图鉴中收录了鲖这种鱼。	圖鑑中收錄了鮦這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7703	3	鲗	7703_1	鰂	false	鲗鱼涌	鰂魚涌	authored-example	project-authored	鲗鱼涌是一个地名。	鰂魚涌是一個地名。		lexical-context
+7704	3	鲘	7704_1	鮜	false	鲘字	鮜字	domain-template	metalinguistic-fallback	图鉴中收录了鲘这种鱼。	圖鑑中收錄了鮜這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7705	3	鲙	7705_1	鱠	false	鲙鱼	鱠魚	authored-example	project-authored	鲙鱼是一种鱼类或水生动物。	鱠魚是一種魚類或水生動物。		lexical-context
+7706	3	𬶐	7706_1	鮡	false	𬶐字	鮡字	domain-template	metalinguistic-fallback	图鉴中收录了𬶐这种鱼。	圖鑑中收錄了鮡這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7707	3	𬶏	7707_1	鮠	false	𬶏字	鮠字	domain-template	metalinguistic-fallback	图鉴中收录了𬶏这种鱼。	圖鑑中收錄了鮠這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7708	3	𩽾	7708_1	鮟	false	𩽾𩾌	鮟鱇	authored-example	project-authored	𩽾𩾌是一个较少见的词语。	鮟鱇是一個較少見的詞語。		lexical-context
+7711	3	飗	7711_1	飀	false	飗字	飀字	domain-template	metalinguistic-fallback	古文中用飗描写光线或天气。	古文中用飀描寫光線或天氣。	Classical descriptions of light or weather: a rare character associated with brightness, sky conditions, or atmospheric movement.	domain-template
+7712	3	𬸚	7712_1	鸑	false	𬸚字	鸑字	domain-template	metalinguistic-fallback	图鉴中记录了𬸚这种鸟。	圖鑑中記錄了鸑這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7716	3	瘗	7716_1	瘞	false	瘗玉埋香	瘞玉埋香	authored-example	project-authored	瘗玉埋香是一个成语或固定说法。	瘞玉埋香是一個成語或固定說法。		lexical-context
+7719	3	鲝	7719_1	鮺	false	鲝字	鮺字	domain-template	metalinguistic-fallback	图鉴中收录了鲝这种鱼。	圖鑑中收錄了鮺這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7724	3	潆	7724_1	瀠	false	潆字	瀠字	domain-template	metalinguistic-fallback	地方志中记载了潆。	地方志中記載了瀠。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+7735	3	窭	7735_1	窶	false	窭字	窶字	domain-template	metalinguistic-fallback	古文中可见窭。	古文中可見窶。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7737	3	𬤝	7737_1	譓	false	𬤝字	譓字	domain-template	metalinguistic-fallback	古文中可见𬤝。	古文中可見譓。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+7746	3	𬙂	7746_1	縯	false	𬙂字	縯字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬙂。	古代織物記錄中出現了縯。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7748	3	麹	7748_1	麴	false	麹义	麴義	authored-example	project-authored	麹义是一个人名。	麴義是一個人名。		lexical-context
+7751	3	叇	7751_1	靆	false	叆叇	靉靆	authored-example	project-authored	叆叇是一个较少见的词语。	靉靆是一個較少見的詞語。		lexical-context
+7761	3	鹝	7761_1	鷊	false	鹝字	鷊字	domain-template	metalinguistic-fallback	图鉴中记录了鹝这种鸟。	圖鑑中記錄了鷊這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7765	3	慭	7765_1	憖	false	慭字	憖字	domain-template	metalinguistic-fallback	古文中可见慭。	古文中可見憖。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7772	3	䗖	7772_1	螮	false	䗖𬟽	螮蝀	authored-example	project-authored	䗖𬟽是一个较少见的词语。	螮蝀是一個較少見的詞語。		lexical-context
+7785	3	镆	7785_1	鏌	false	镆字	鏌字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见镆。	金屬器物或技術資料中可見鏌。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7786	3	镈	7786_1	鎛	false	皇甫镈	皇甫鎛	authored-example	project-authored	皇甫镈是一个人名。	皇甫鎛是一個人名。		lexical-context
+7787	3	镋	7787_1	钂	false	镋字	钂字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见镋。	金屬器物或技術資料中可見钂。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7788	3	镎	7788_1	鎿	false	镎字	鎿字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见镎。	金屬器物或技術資料中可見鎿。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7789	3	𬭩	7789_1	鎓	false	𬭩字	鎓字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭩。	金屬器物或技術資料中可見鎓。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7790	3	镕	7790_1	鎔	false	朱镕基	朱鎔基	authored-example	project-authored	朱镕基是一个人名。	朱鎔基是一個人名。		lexical-context
+7795	3	䴘	7795_1	鷉	false	䴙䴘	鸊鷉	authored-example	project-authored	䴙䴘是一种鸟。	鸊鷉是一種鳥。		lexical-context
+7798	3	鹟	7798_1	鶲	false	乌鹟	烏鶲	authored-example	project-authored	乌鹟是一种鸟。	烏鶲是一種鳥。		lexical-context
+7799	3	𩾃	7799_1	鮸	false	𩾃字	鮸字	domain-template	metalinguistic-fallback	图鉴中收录了𩾃这种鱼。	圖鑑中收錄了鮸這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7800	3	鲦	7800_1	鰷	false	鲦字	鰷字	domain-template	metalinguistic-fallback	图鉴中收录了鲦这种鱼。	圖鑑中收錄了鰷這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7801	3	鲪	7801_1	鮶	false	鲪字	鮶字	domain-template	metalinguistic-fallback	图鉴中收录了鲪这种鱼。	圖鑑中收錄了鮶這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7802	3	鲬	7802_1	鯒	false	鲬字	鯒字	domain-template	metalinguistic-fallback	图鉴中收录了鲬这种鱼。	圖鑑中收錄了鯒這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7805	3	鹠	7805_1	鶹	false	鸺鹠	鵂鶹	authored-example	project-authored	鸺鹠是一种鸟。	鵂鶹是一種鳥。		lexical-context
+7806	3	鹡	7806_1	鶺	false	鹡鸰	鶺鴒	authored-example	project-authored	鹡鸰是一种鸟。	鶺鴒是一種鳥。		lexical-context
+7810	3	鹢	7810_1	鷁	false	彩鹢	彩鷁	authored-example	project-authored	彩鹢是一种鸟。	彩鷁是一種鳥。		lexical-context
+7811	3	鹣	7811_1	鶼	false	鲽鹣	鰈鶼	authored-example	project-authored	鲽鹣是一个较少见的词语。	鰈鶼是一個較少見的詞語。		lexical-context
+7817	3	澛	7817_1	瀂	false	澛字	瀂字	domain-template	metalinguistic-fallback	地方志中记载了澛。	地方志中記載了瀂。	Historical geography / hydrology: a rare water-related character used for a river, water feature, sound, or flow.	domain-template
+7824	3	𬸣	7824_1	鶱	false	𬸣字	鶱字	domain-template	metalinguistic-fallback	图鉴中记录了𬸣这种鸟。	圖鑑中記錄了鶱這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7828	3	𫍽	7828_1	譞	false	𫍽字	譞字	domain-template	metalinguistic-fallback	古文中可见𫍽。	古文中可見譞。	Classical Chinese rhetoric / language: a rare speech-related character used in older vocabulary or writing.	domain-template
+7831	3	𬴊	7831_1	驎	false	𬴊字	驎字	domain-template	metalinguistic-fallback	古籍中用𬴊描述马匹。	古籍中用驎描述馬匹。	Historical transport / equine terminology: a rare character associated with horses, riding, or carriage travel.	domain-template
+7841	3	𬞟	7841_1	蘋	false	𬞟字	蘋字	domain-template	metalinguistic-fallback	本草书中记载了𬞟。	本草書中記載了蘋。	Botany / traditional materia medica: a rare character used in a plant name or botanical description.	domain-template
+7853	3	豮	7853_1	豶	false	豮字	豶字	domain-template	metalinguistic-fallback	古代动物记录中可见豮。	古代動物記錄中可見豶。	Historical zoology / animal husbandry: a rare character associated with an animal or livestock term.	domain-template
+7854	3	𫟦	7854_1	䡵	false	𫟦字	䡵字	domain-template	metalinguistic-fallback	古代车辆记录中出现了𫟦。	古代車輛記錄中出現了䡵。	Historical transport technology: a rare character associated with a cart, carriage, wheel, or vehicle component.	domain-template
+7855	3	𬺈	7855_1	齮	false	𬺈字	齮字	domain-template	metalinguistic-fallback	古代医书中出现了𬺈。	古代醫書中出現了齮。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+7856	3	𫠜	7856_1	齯	false	𫠜字	齯字	domain-template	metalinguistic-fallback	古代医书中出现了𫠜。	古代醫書中出現了齯。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+7857	3	鹾	7857_1	鹺	false	鹾字	鹺字	domain-template	metalinguistic-fallback	传统饮食文献中出现了鹾。	傳統飲食文獻中出現了鹺。	Traditional food and drink terminology: a rare character associated with salt, flavour, wine, or food preparation.	domain-template
+7870	3	𪩘	7870_1	巘	false	𪩘字	巘字	domain-template	metalinguistic-fallback	地方志中记载了𪩘。	地方志中記載了巘。	Historical geography / topography: a rare character used for terrain, a structure, or a place name.	domain-template
+7872	3	𬭬	7872_1	鏏	false	𬭬字	鏏字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭬。	金屬器物或技術資料中可見鏏。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7873	3	𨱑	7873_1	鐄	false	𨱑字	鐄字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𨱑。	金屬器物或技術資料中可見鐄。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7874	3	𬭯	7874_1	䥕	false	𬭯字	䥕字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭯。	金屬器物或技術資料中可見䥕。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7878	3	篯	7878_1	籛	false	篯字	籛字	curated-domain	metalinguistic-fallback	族谱中记载了篯姓。	族譜中記載了籛姓。	Genealogy / surnames: a rare family-name character.	curated-domain
+7885	3	鲭	7885_1	鯖	false	鲭鱼	鯖魚	authored-example	project-authored	鲭鱼是一种鱼类或水生动物。	鯖魚是一種魚類或水生動物。		lexical-context
+7886	3	鲯	7886_1	鯕	false	鲯鳅	鯕鰍	authored-example	project-authored	鲯鳅是一种鱼类或水生动物。	鯕鰍是一種魚類或水生動物。		lexical-context
+7887	3	鲰	7887_1	鯫	false	鲰字	鯫字	domain-template	metalinguistic-fallback	图鉴中收录了鲰这种鱼。	圖鑑中收錄了鯫這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7888	3	鲺	7888_1	鯴	false	鲺字	鯴字	domain-template	metalinguistic-fallback	图鉴中收录了鲺这种鱼。	圖鑑中收錄了鯴這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7889	3	鲹	7889_1	鰺	false	鲹字	鰺字	domain-template	metalinguistic-fallback	图鉴中收录了鲹这种鱼。	圖鑑中收錄了鰺這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7890	3	𫗴	7890_1	饘	false	𫗴字	饘字	domain-template	metalinguistic-fallback	地方食谱中提到了𫗴。	地方食譜中提到了饘。	Traditional or regional food vocabulary: a rare character used for a dish, food, or preparation.	domain-template
+7891	3	亸	7891_1	嚲	false	柳亸花娇	柳嚲花嬌	authored-example	project-authored	柳亸花娇是一个成语或固定说法。	柳嚲花嬌是一個成語或固定說法。		lexical-context
+7894	3	𬸦	7894_1	鷟	false	𬸦字	鷟字	domain-template	metalinguistic-fallback	图鉴中记录了𬸦这种鸟。	圖鑑中記錄了鷟這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7912	3	黉	7912_1	黌	false	黉舍	黌舍	authored-example	project-authored	黉舍是一种器物。	黌舍是一種器物。		lexical-context
+7914	3	鹨	7914_1	鷚	false	田鹨	田鷚	authored-example	project-authored	田鹨是一种鸟。	田鷚是一種鳥。		lexical-context
+7916	3	𫄷	7916_1	繶	false	𫄷字	繶字	domain-template	metalinguistic-fallback	古代织物记录中出现了𫄷。	古代織物記錄中出現了繶。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7918	3	𤩽	7918_1	瓛	false	𤩽字	瓛字	domain-template	metalinguistic-fallback	古代玉器或人名记录中可见𤩽。	古代玉器或人名記錄中可見瓛。	Jade terminology / personal names: a rare character associated with jade, ornament, or name usage.	domain-template
+7935	3	蟏	7935_1	蠨	false	蟏蛸	蠨蛸	authored-example	project-authored	蟏蛸是一个较少见的词语。	蠨蛸是一個較少見的詞語。		lexical-context
+7936	3	㘎	7936_1	㘚	false	㘎字	㘚字	domain-template	metalinguistic-fallback	古文中可见㘎。	古文中可見㘚。	Classical Chinese vocabulary: a rare character used in older descriptions of people, actions, states, sounds, or qualities.	domain-template
+7937	3	𬭳	7937_1	𨭎	false	𬭳字	𨭎字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭳。	金屬器物或技術資料中可見𨭎。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7938	3	镤	7938_1	鏷	false	镤字	鏷字	element-domain	metalinguistic-fallback	实验记录中提到了镤。	實驗記錄中提到了鏷。	Chemistry: protactinium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7939	3	𬭶	7939_1	𨭆	false	𬭶字	𨭆字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭶。	金屬器物或技術資料中可見𨭆。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7940	3	𫔍	7940_1	鐇	false	𫔍字	鐇字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𫔍。	金屬器物或技術資料中可見鐇。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7941	3	镥	7941_1	鑥	false	镥字	鑥字	element-domain	metalinguistic-fallback	实验记录中提到了镥。	實驗記錄中提到了鑥。	Chemistry: lutetium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7942	3	镨	7942_1	鐠	false	镨字	鐠字	element-domain	metalinguistic-fallback	实验记录中提到了镨。	實驗記錄中提到了鐠。	Chemistry: praseodymium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+7943	3	𬭸	7943_1	鏻	false	𬭸字	鏻字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭸。	金屬器物或技術資料中可見鏻。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7944	3	𨱔	7944_1	鐏	false	𨱔字	鐏字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𨱔。	金屬器物或技術資料中可見鐏。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7945	3	𬭼	7945_1	鐩	false	𬭼字	鐩字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𬭼。	金屬器物或技術資料中可見鐩。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7946	3	𫔎	7946_1	鐍	false	𫔎字	鐍字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见𫔎。	金屬器物或技術資料中可見鐍。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+7958	3	𬸪	7958_1	鷭	false	𬸪字	鷭字	domain-template	metalinguistic-fallback	图鉴中记录了𬸪这种鸟。	圖鑑中記錄了鷭這種鳥。	Zoology / ornithology: a rare character used in the name of a bird or bird group.	domain-template
+7960	3	䲠	7960_1	鰆	false	䲠鱼	鰆魚	authored-example	project-authored	䲠鱼是一种鱼类或水生动物。	鰆魚是一種魚類或水生動物。		lexical-context
+7961	3	𬶟	7961_1	鯻	false	𬶟字	鯻字	domain-template	metalinguistic-fallback	图鉴中收录了𬶟这种鱼。	圖鑑中收錄了鯻這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7962	3	鲾	7962_1	鰏	false	鲾字	鰏字	domain-template	metalinguistic-fallback	图鉴中收录了鲾这种鱼。	圖鑑中收錄了鰏這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7963	3	𬶠	7963_1	鰊	false	𬶠字	鰊字	domain-template	metalinguistic-fallback	图鉴中收录了𬶠这种鱼。	圖鑑中收錄了鰊這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7964	3	鲿	7964_1	鱨	false	鲿字	鱨字	domain-template	metalinguistic-fallback	图鉴中收录了鲿这种鱼。	圖鑑中收錄了鱨這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7965	3	鳁	7965_1	鰛	false	鳁字	鰛字	domain-template	metalinguistic-fallback	图鉴中收录了鳁这种鱼。	圖鑑中收錄了鰛這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7966	3	鳂	7966_1	鰃	false	崆鳂	崆鰃	authored-example	project-authored	崆鳂是一种鱼类或水生动物。	崆鰃是一種魚類或水生動物。		lexical-context
+7967	3	鳈	7967_1	鰁	false	鳈字	鰁字	domain-template	metalinguistic-fallback	图鉴中收录了鳈这种鱼。	圖鑑中收錄了鰁這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7968	3	鳉	7968_1	鱂	false	鳉字	鱂字	domain-template	metalinguistic-fallback	图鉴中收录了鳉这种鱼。	圖鑑中收錄了鱂這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+7972	3	襕	7972_1	襴	false	襕字	襴字	domain-template	metalinguistic-fallback	古代服饰记录中出现了襕。	古代服飾記錄中出現了襴。	Historical clothing and material culture: a rare character associated with garments or dress.	domain-template
+7974	3	𬶨	7974_1	鱀	false	白𬶨豚	白鱀豚	authored-example	project-authored	白𬶨豚是一个较少见的词语。	白鱀豚是一個較少見的詞語。		lexical-context
+7979	3	𦈡	7979_1	繻	false	𦈡字	繻字	domain-template	metalinguistic-fallback	古代织物记录中出现了𦈡。	古代織物記錄中出現了繻。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7980	3	𫄸	7980_1	纁	false	𫄸字	纁字	domain-template	metalinguistic-fallback	古代织物记录中出现了𫄸。	古代織物記錄中出現了纁。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+7983	3	鬶	7983_1	鬹	false	鬶字	鬹字	domain-template	metalinguistic-fallback	考古记录中提到了鬶。	考古記錄中提到了鬹。	Archaeology / ancient material culture: a rare character used for a vessel or cooking implement.	domain-template
+7987	3	𬟁	7987_1	虉	false	𬟁草	虉草	authored-example	project-authored	𬟁草是一种植物。	虉草是一種植物。		lexical-context
+7991	3	鹲	7991_1	鸏	false	白尾鹲	白尾鸏	authored-example	project-authored	白尾鹲是一种鸟。	白尾鸏是一種鳥。		lexical-context
+7993	3	黡	7993_1	黶	false	披毛索黡	披毛索黶	authored-example	project-authored	披毛索黡是一个成语或固定说法。	披毛索黶是一個成語或固定說法。		lexical-context
+8003	3	镮	8003_1	鐶	false	镮字	鐶字	domain-template	metalinguistic-fallback	金属器物或技术资料中可见镮。	金屬器物或技術資料中可見鐶。	Metallurgy / historical material culture: a rare metal-radical character used for a metal, tool, weapon, vessel, ornament, or technical term.	domain-template
+8004	3	镱	8004_1	鐿	false	镱字	鐿字	element-domain	metalinguistic-fallback	实验记录中提到了镱。	實驗記錄中提到了鐿。	Chemistry: ytterbium, a chemical element represented by this character in Chinese technical terminology.	element-domain
+8005	3	酂	8005_1	酇	false	酂字	酇字	curated-domain	metalinguistic-fallback	地方志中记载了酂。	地方志中記載了酇。	Historical geography / surnames: a rare character used in old place names and family names.	curated-domain
+8014	3	䲢	8014_1	鰧	false	䲢字	鰧字	domain-template	metalinguistic-fallback	图鉴中收录了䲢这种鱼。	圖鑑中收錄了鰧這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8015	3	鳑	8015_1	鰟	false	鳑鲏	鰟鮍	authored-example	project-authored	鳑鲏是一种鱼类或水生动物。	鰟鮍是一種魚類或水生動物。		lexical-context
+8016	3	鳒	8016_1	鰜	false	鳒字	鰜字	domain-template	metalinguistic-fallback	图鉴中收录了鳒这种鱼。	圖鑑中收錄了鰜這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8017	3	鹱	8017_1	鸌	false	灰鹱	灰鸌	authored-example	project-authored	灰鹱是一种鸟。	灰鸌是一種鳥。		lexical-context
+8018	3	鹯	8018_1	鸇	false	鹯视狼顾	鸇視狼顧	authored-example	project-authored	鹯视狼顾是一个成语或固定说法。	鸇視狼顧是一個成語或固定說法。		lexical-context
+8023	3	冁	8023_1	囅	false	冁然而笑	囅然而笑	authored-example	project-authored	冁然而笑是一个成语或固定说法。	囅然而笑是一個成語或固定說法。		lexical-context
+8029	3	䴙	8029_1	鸊	false	䴙䴘	鸊鷉	authored-example	project-authored	䴙䴘是一种鸟。	鸊鷉是一種鳥。		lexical-context
+8030	3	𬙊	8030_1	纆	false	𬙊字	纆字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬙊。	古代織物記錄中出現了纆。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+8038	3	鳘	8038_1	鰵	false	鳘字	鰵字	domain-template	metalinguistic-fallback	图鉴中收录了鳘这种鱼。	圖鑑中收錄了鰵這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8042	3	𬶭	8042_1	鰶	false	𬶭字	鰶字	domain-template	metalinguistic-fallback	图鉴中收录了𬶭这种鱼。	圖鑑中收錄了鰶這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8043	3	𩾌	8043_1	鱇	false	𩽾𩾌	鮟鱇	authored-example	project-authored	𩽾𩾌是一个较少见的词语。	鮟鱇是一個較少見的詞語。		lexical-context
+8044	3	鳚	8044_1	䲁	false	鳚字	䲁字	domain-template	metalinguistic-fallback	图鉴中收录了鳚这种鱼。	圖鑑中收錄了䲁這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8045	3	鳛	8045_1	鰼	false	鳛字	鰼字	domain-template	metalinguistic-fallback	图鉴中收录了鳛这种鱼。	圖鑑中收錄了鰼這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8049	3	彟	8049_1	彠	false	武士彟	武士彠	authored-example	project-authored	武士彟是一个人名。	武士彠是一個人名。		lexical-context
+8055	3	颥	8055_1	顬	false	颞颥	顳顬	authored-example	project-authored	颞颥是一个医学词语。	顳顬是一個醫學詞語。		lexical-context
+8062	3	𬶮	8062_1	鱚	false	𬶮字	鱚字	domain-template	metalinguistic-fallback	图鉴中收录了𬶮这种鱼。	圖鑑中收錄了鱚這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8072	3	骦	8072_1	驦	false	骕骦	驌驦	authored-example	project-authored	骕骦是一个较少见的词语。	驌驦是一個較少見的詞語。		lexical-context
+8073	3	𬙋	8073_1	纕	false	𬙋字	纕字	domain-template	metalinguistic-fallback	古代织物记录中出现了𬙋。	古代織物記錄中出現了纕。	Traditional textiles / cordage: a rare character associated with fibres, silk, thread, rope, or textile production.	domain-template
+8079	3	𬺓	8079_1	齼	false	𬺓字	齼字	domain-template	metalinguistic-fallback	古代医书中出现了𬺓。	古代醫書中出現了齼。	Historical anatomy / medicine: a rare character associated with the body, teeth, or an anatomical term.	domain-template
+8082	3	鳠	8082_1	鱯	false	鳠字	鱯字	domain-template	metalinguistic-fallback	图鉴中收录了鳠这种鱼。	圖鑑中收錄了鱯這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8083	3	鳡	8083_1	鱤	false	鳡字	鱤字	domain-template	metalinguistic-fallback	图鉴中收录了鳡这种鱼。	圖鑑中收錄了鱤這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8084	3	鳣	8084_1	鱣	false	鳣舍	鱣舍	authored-example	project-authored	鳣舍是一种器物。	鱣舍是一種器物。		lexical-context
+8092	3	鹴	8092_1	鸘	false	鹔鹴	鷫鸘	authored-example	project-authored	鹔鹴是一种鸟。	鷫鸘是一種鳥。		lexical-context
+8096	3	鳤	8096_1	䲘	false	鳤字	䲘字	domain-template	metalinguistic-fallback	图鉴中收录了鳤这种鱼。	圖鑑中收錄了䲘這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template
+8100	3	𫚭	8100_1	鱲	false	𫚭字	鱲字	domain-template	metalinguistic-fallback	图鉴中收录了𫚭这种鱼。	圖鑑中收錄了鱲這種魚。	Zoology / ichthyology: a rare character used in the name of a fish or fish group.	domain-template

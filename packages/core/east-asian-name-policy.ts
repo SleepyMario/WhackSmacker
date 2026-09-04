@@ -26,7 +26,7 @@ export function eastAsianNamePolicyContext(
   if (language === undefined) return undefined;
   const inferredChineseScriptVariant = language === "chinese"
     ? chineseScriptVariant
-      ?? (/(?:traditional|zh-hant)/u.test(normalized)
+      ?? (/(?:traditional|zh-hant|classical)/u.test(normalized)
         ? "traditional"
         : /(?:simplified|zh-hans)/u.test(normalized)
           ? "simplified"

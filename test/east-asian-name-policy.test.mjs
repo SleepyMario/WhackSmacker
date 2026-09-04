@@ -87,6 +87,7 @@ test("Traditional and Simplified Chinese canonical names select by script while 
   assert.equal(canonicalFullNameForEastAsianPolicy(person, simplified), "陈志明");
   assert.equal(canonicalFullNameForEastAsianPolicy(person, eastAsianNamePolicyContext("com.sleepymario.language.chinese-traditional")), "陳志明");
   assert.equal(canonicalFullNameForEastAsianPolicy(person, eastAsianNamePolicyContext("com.sleepymario.language.chinese-simplified")), "陈志明");
+  assert.equal(canonicalFullNameForEastAsianPolicy(person, eastAsianNamePolicyContext("com.sleepymario.language.chinese-classical")), "陳志明");
   assert.equal(person.id, "CAST-002");
   assert.throws(
     () => canonicalFullNameForEastAsianPolicy(person, eastAsianNamePolicyContext("chinese-curriculum")),

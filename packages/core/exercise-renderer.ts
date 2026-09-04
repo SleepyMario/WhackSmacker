@@ -84,6 +84,7 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
 
 function topicReviewPresentationFor(item: MemorizationItem, locale: string): TopicReviewPresentation | undefined {
   if (item.schemaVersion !== 2 || item.deck.scope !== "topic") return undefined;
+  if (item.prompt.mediaType === "text/plain" && item.answer.mediaType === "text/plain") return undefined;
   return {
     prompt: topicReviewSidePresentationFor(item.prompt, locale, "prompt"),
     answer: topicReviewSidePresentationFor(item.answer, locale, "answer")

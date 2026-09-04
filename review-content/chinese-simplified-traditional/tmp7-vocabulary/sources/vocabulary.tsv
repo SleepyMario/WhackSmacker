@@ -1,0 +1,79 @@
+order	sentence_no	simplified	traditional	pinyin	meaning	simplified_sentence	traditional_sentence
+1	1	已经	已經	yǐ jīng	already	我已经了解事情的经过。	我已經瞭解事情的經過。
+2	1	了解	瞭解	liǎo jiě	to understand	我已经了解事情的经过。	我已經瞭解事情的經過。
+3	1	事情	事情	shì qing	matter; affair	我已经了解事情的经过。	我已經瞭解事情的經過。
+4	1	经过	經過	jīng guò	course; process	我已经了解事情的经过。	我已經瞭解事情的經過。
+5	2	传说	傳說	chuán shuō	legend	传说中的凤凰从烈火中重生。	傳說中的鳳凰從烈火中重生。
+6	2	凤凰	鳳凰	fèng huáng	phoenix	传说中的凤凰从烈火中重生。	傳說中的鳳凰從烈火中重生。
+7	2	烈火	烈火	liè huǒ	raging fire	传说中的凤凰从烈火中重生。	傳說中的鳳凰從烈火中重生。
+8	2	重生	重生	chóng shēng	to be reborn	传说中的凤凰从烈火中重生。	傳說中的鳳凰從烈火中重生。
+9	3	我们	我們	wǒ men	we; us	我们计划明年去日本旅行。	我們計劃明年去日本旅行。
+10	3	计划	計劃	jì huà	plan; to plan	我们计划明年去日本旅行。	我們計劃明年去日本旅行。
+11	3	明年	明年	míng nián	next year	我们计划明年去日本旅行。	我們計劃明年去日本旅行。
+12	3	日本	日本	rì běn	Japan	我们计划明年去日本旅行。	我們計劃明年去日本旅行。
+13	3	旅行	旅行	lǚ xíng	to travel; trip	我们计划明年去日本旅行。	我們計劃明年去日本旅行。
+14	4	这样	這樣	zhè yàng	like this; in this way	这样做岂非浪费时间？	這樣做豈非浪費時間？
+15	4	岂非	豈非	qǐ fēi	wouldn't it be ...?	这样做岂非浪费时间？	這樣做豈非浪費時間？
+16	4	浪费	浪費	làng fèi	to waste	这样做岂非浪费时间？	這樣做豈非浪費時間？
+17	4	时间	時間	shí jiān	time	这样做岂非浪费时间？	這樣做豈非浪費時間？
+18	5	朱红	硃紅	zhū hóng	vermilion	她用朱红色颜料画了一朵花。	她用硃紅色顏料畫了一朵花。
+19	5	颜料	顏料	yán liào	paint; pigment	她用朱红色颜料画了一朵花。	她用硃紅色顏料畫了一朵花。
+20	6	大厅	大廳	dà tīng	hall; lobby	大厅里的气氛十分庄严。	大廳裡的氣氛十分莊嚴。
+21	6	气氛	氣氛	qì fēn	atmosphere; mood	大厅里的气氛十分庄严。	大廳裡的氣氛十分莊嚴。
+22	6	十分	十分	shí fēn	very; extremely	大厅里的气氛十分庄严。	大廳裡的氣氛十分莊嚴。
+23	6	庄严	莊嚴	zhuāng yán	solemn; dignified	大厅里的气氛十分庄严。	大廳裡的氣氛十分莊嚴。
+24	7	湖边	湖邊	hú biān	lakeside	我们在湖边搭起了帐篷。	我們在湖邊搭起了帳篷。
+25	7	帐篷	帳篷	zhàng peng	tent	我们在湖边搭起了帐篷。	我們在湖邊搭起了帳篷。
+26	8	必须	必須	bì xū	must; have to	我们必须彻底解决这个问题。	我們必須徹底解決這個問題。
+27	8	彻底	徹底	chè dǐ	thorough; thoroughly	我们必须彻底解决这个问题。	我們必須徹底解決這個問題。
+28	8	解决	解決	jiě jué	to solve; resolve	我们必须彻底解决这个问题。	我們必須徹底解決這個問題。
+29	8	这个	這個	zhè ge	this	我们必须彻底解决这个问题。	我們必須徹底解決這個問題。
+30	8	问题	問題	wèn tí	problem; question	我们必须彻底解决这个问题。	我們必須徹底解決這個問題。
+31	9	工程	工程	gōng chéng	project; engineering work	这项工程需要一笔庞大的预算。	這項工程需要一筆龐大的預算。
+32	9	需要	需要	xū yào	to need; require	这项工程需要一笔庞大的预算。	這項工程需要一筆龐大的預算。
+33	9	庞大	龐大	páng dà	enormous	这项工程需要一笔庞大的预算。	這項工程需要一筆龐大的預算。
+34	9	预算	預算	yù suàn	budget	这项工程需要一笔庞大的预算。	這項工程需要一筆龐大的預算。
+35	10	委员会	委員會	wěi yuán huì	committee	委员会明天将审议这项提案。	委員會明天將審議這項提案。
+36	10	明天	明天	míng tiān	tomorrow	委员会明天将审议这项提案。	委員會明天將審議這項提案。
+37	10	审议	審議	shěn yì	to deliberate; review	委员会明天将审议这项提案。	委員會明天將審議這項提案。
+38	10	提案	提案	tí àn	proposal	委员会明天将审议这项提案。	委員會明天將審議這項提案。
+39	11	收到	收到	shōu dào	to receive	他收到大学的录取通知。	他收到大學的錄取通知。
+40	11	大学	大學	dà xué	university	他收到大学的录取通知。	他收到大學的錄取通知。
+41	11	录取	錄取	lù qǔ	to admit; accept	他收到大学的录取通知。	他收到大學的錄取通知。
+42	11	通知	通知	tōng zhī	notice; notification	他收到大学的录取通知。	他收到大學的錄取通知。
+43	12	天冷	天冷	tiān lěng	cold weather; it is cold	天冷了，他穿上厚厚的棉袄。	天冷了，他穿上厚厚的棉襖。
+44	12	穿上	穿上	chuān shàng	to put on	天冷了，他穿上厚厚的棉袄。	天冷了，他穿上厚厚的棉襖。
+45	12	棉袄	棉襖	mián ǎo	cotton-padded jacket	天冷了，他穿上厚厚的棉袄。	天冷了，他穿上厚厚的棉襖。
+46	13	当地	當地	dāng dì	local; the local area	当地渔民靠捕捞海鱼为生。	當地漁民靠捕撈海魚為生。
+47	13	渔民	漁民	yú mín	fisher; fisherfolk	当地渔民靠捕捞海鱼为生。	當地漁民靠捕撈海魚為生。
+48	13	捕捞	捕撈	bǔ lāo	to catch; fish for	当地渔民靠捕捞海鱼为生。	當地漁民靠捕撈海魚為生。
+49	13	海鱼	海魚	hǎi yú	saltwater fish	当地渔民靠捕捞海鱼为生。	當地漁民靠捕撈海魚為生。
+50	13	为生	為生	wéi shēng	to make a living	当地渔民靠捕捞海鱼为生。	當地漁民靠捕撈海魚為生。
+51	14	这种	這種	zhè zhǒng	this kind of	这种肥料含有丰富的钾盐。	這種肥料含有豐富的鉀鹽。
+52	14	肥料	肥料	féi liào	fertilizer	这种肥料含有丰富的钾盐。	這種肥料含有豐富的鉀鹽。
+53	14	含有	含有	hán yǒu	to contain	这种肥料含有丰富的钾盐。	這種肥料含有豐富的鉀鹽。
+54	14	丰富	豐富	fēng fù	rich; abundant	这种肥料含有丰富的钾盐。	這種肥料含有豐富的鉀鹽。
+55	14	钾盐	鉀鹽	jiǎ yán	potassium salt	这种肥料含有丰富的钾盐。	這種肥料含有豐富的鉀鹽。
+56	15	衣服	衣服	yī fu	clothes	这件衣服需要用冷水洗涤。	這件衣服需要用冷水洗滌。
+57	15	冷水	冷水	lěng shuǐ	cold water	这件衣服需要用冷水洗涤。	這件衣服需要用冷水洗滌。
+58	15	洗涤	洗滌	xǐ dí	to wash	这件衣服需要用冷水洗涤。	這件衣服需要用冷水洗滌。
+59	16	申请	申請	shēn qǐng	to apply; application	申请手续比预想的更加繁琐。	申請手續比預想的更加繁瑣。
+60	16	手续	手續	shǒu xù	procedure; formalities	申请手续比预想的更加繁琐。	申請手續比預想的更加繁瑣。
+61	16	预想	預想	yù xiǎng	to anticipate; expect	申请手续比预想的更加繁琐。	申請手續比預想的更加繁瑣。
+62	16	更加	更加	gèng jiā	even more	申请手续比预想的更加繁琐。	申請手續比預想的更加繁瑣。
+63	16	繁琐	繁瑣	fán suǒ	complicated; tedious	申请手续比预想的更加繁琐。	申請手續比預想的更加繁瑣。
+64	17	悬挂	懸掛	xuán guà	to hang; suspend	墙上悬挂着一幅山水画。	牆上懸掛著一幅山水畫。
+65	17	山水画	山水畫	shān shuǐ huà	landscape painting	墙上悬挂着一幅山水画。	牆上懸掛著一幅山水畫。
+66	18	群山	群山	qún shān	mountain range	群山绵延到视线尽头。	群山綿延到視線盡頭。
+67	18	绵延	綿延	mián yán	to stretch continuously	群山绵延到视线尽头。	群山綿延到視線盡頭。
+68	18	视线	視線	shì xiàn	line of sight	群山绵延到视线尽头。	群山綿延到視線盡頭。
+69	18	尽头	盡頭	jìn tóu	end; limit	群山绵延到视线尽头。	群山綿延到視線盡頭。
+70	19	阳光	陽光	yáng guāng	sunlight	阳光从窗帘的缝隙照进来。	陽光從窗簾的縫隙照進來。
+71	19	窗帘	窗簾	chuāng lián	curtain	阳光从窗帘的缝隙照进来。	陽光從窗簾的縫隙照進來。
+72	19	缝隙	縫隙	fèng xì	gap; crack	阳光从窗帘的缝隙照进来。	陽光從窗簾的縫隙照進來。
+73	19	进来	進來	jìn lái	to come in	阳光从窗帘的缝隙照进来。	陽光從窗簾的縫隙照進來。
+74	20	同学	同學	tóng xué	classmate; fellow student	同学们踊跃报名参加比赛。	同學們踴躍報名參加比賽。
+75	20	踊跃	踴躍	yǒng yuè	eagerly; enthusiastically	同学们踊跃报名参加比赛。	同學們踴躍報名參加比賽。
+76	20	报名	報名	bào míng	to sign up; register	同学们踊跃报名参加比赛。	同學們踴躍報名參加比賽。
+77	20	参加	參加	cān jiā	to participate; join	同学们踊跃报名参加比赛。	同學們踴躍報名參加比賽。
+78	20	比赛	比賽	bǐ sài	competition; match	同学们踊跃报名参加比赛。	同學們踴躍報名參加比賽。

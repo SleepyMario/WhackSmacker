@@ -113,6 +113,7 @@ const { dirname, isAbsolute, join, relative, resolve, sep } = require("node:path
 export interface ContentPackageGeneratorTarget {
   readonly id: string;
   readonly explicitOnly?: boolean;
+  readonly notesPolicy?: "default" | "omit";
   readonly packageId: string;
   readonly displayName: LocalizedContentValue;
   readonly description: LocalizedContentValue;
@@ -603,9 +604,577 @@ const technicalPreviewTargets: readonly ContentPackageGeneratorTarget[] = [{
   }
 }];
 
+const chineseScriptConversionTargets: readonly ContentPackageGeneratorTarget[] = [{
+  id: "chinese-simplified-traditional-level-1",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.level-1",
+  displayName: "Chinese (Simplified <-> Traditional) Level I",
+  description: "Level I bidirectional Simplified and Traditional Chinese conversion deck based on the 通用规范汉字表.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.2.0",
+  artifactRevision: 3,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  notesPolicy: "omit",
+  packageVersion: "1.2.0",
+  sourcePath: "review-content/chinese-simplified-traditional/level-1",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "Level I"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1",
+    displayName: "Level I",
+    outputFile: "tghz2013-level-1.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-level-1-vocabulary",
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.level-1-vocabulary",
+  displayName: "Chinese (Simplified <-> Traditional) Level I - Vocabulary",
+  description: "ABC-style Chinese vocabulary extracted from the paired example sentences in the Level I conversion deck.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 2,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "1.0.0",
+  sourcePath: "review-content/chinese-simplified-traditional/level-1-vocabulary",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hans",
+  subjects: ["chinese", "vocabulary", "simplified-traditional", "tghz2013"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "Level I - Vocabulary"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1-vocabulary",
+    displayName: "Level I - Vocabulary",
+    outputFile: "tghz2013-level-1-vocabulary.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-level-2",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.level-2",
+  displayName: "Chinese (Simplified <-> Traditional) Level II",
+  description: "Level II bidirectional Simplified and Traditional Chinese conversion deck based on the 通用规范汉字表.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 2,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  notesPolicy: "omit",
+  packageVersion: "1.0.0",
+  sourcePath: "review-content/chinese-simplified-traditional/level-2",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "Level II"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-2",
+    displayName: "Level II",
+    outputFile: "tghz2013-level-2.json",
+    unitStart: 2,
+    unitEnd: 2
+  }
+}, {
+  id: "chinese-simplified-traditional-level-2-vocabulary",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.level-2-vocabulary",
+  displayName: "Chinese (Simplified <-> Traditional) Level II - Vocabulary",
+  description: "ABC-style Chinese vocabulary extracted from Level II examples after excluding the complete Level I vocabulary inventory.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  notesPolicy: "omit",
+  packageVersion: "1.0.0",
+  sourcePath: "review-content/chinese-simplified-traditional/level-2-vocabulary",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hans",
+  subjects: ["chinese", "vocabulary", "simplified-traditional", "tghz2013"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "Level II - Vocabulary"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-2-vocabulary",
+    displayName: "Level II - Vocabulary",
+    outputFile: "tghz2013-level-2-vocabulary.json",
+    unitStart: 2,
+    unitEnd: 2
+  }
+}, {
+  id: "chinese-simplified-traditional-level-3",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.level-3",
+  displayName: "Chinese (Simplified <-> Traditional) Level III",
+  description: "Level III bidirectional Simplified and Traditional Chinese conversion deck based on the 通用规范汉字表.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 3,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  notesPolicy: "omit",
+  packageVersion: "1.0.0",
+  sourcePath: "review-content/chinese-simplified-traditional/level-3",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "Level III"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-3",
+    displayName: "Level III",
+    outputFile: "tghz2013-level-3.json",
+    unitStart: 3,
+    unitEnd: 3
+  }
+}, {
+  id: "chinese-simplified-traditional-level-3-vocabulary",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.level-3-vocabulary",
+  displayName: "Chinese (Simplified <-> Traditional) Level III - Vocabulary",
+  description: "ABC-style Chinese vocabulary extracted from Level III examples after excluding the complete Level I and Level II vocabulary inventories.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  notesPolicy: "omit",
+  packageVersion: "1.0.0",
+  sourcePath: "review-content/chinese-simplified-traditional/level-3-vocabulary",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hans",
+  subjects: ["chinese", "vocabulary", "simplified-traditional", "tghz2013"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "Level III - Vocabulary"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-3-vocabulary",
+    displayName: "Level III - Vocabulary",
+    outputFile: "tghz2013-level-3-vocabulary.json",
+    unitStart: 3,
+    unitEnd: 3
+  }
+}, {
+  id: "chinese-simplified-traditional-tmp",
+  explicitOnly: true,
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.tmp",
+  displayName: "Chinese (Simplified <-> Traditional) tmp",
+  description: "Original unedited 20-character formatting sample drawn from the Level I bidirectional Simplified and Traditional Chinese conversion deck.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.1",
+  sourcePath: "review-content/chinese-simplified-traditional/tmp",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion", "temporary"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "tmp"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "selection.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1-tmp",
+    displayName: "tmp",
+    outputFile: "tghz2013-level-1-tmp.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-tmp2",
+  explicitOnly: true,
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.tmp2",
+  displayName: "Chinese (Simplified <-> Traditional) tmp2",
+  description: "Temporary 20-character formatting sample drawn from the Level I bidirectional Simplified and Traditional Chinese conversion deck.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.1",
+  sourcePath: "review-content/chinese-simplified-traditional/tmp2",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion", "temporary"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "tmp2"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "selection.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1-tmp2",
+    displayName: "tmp2",
+    outputFile: "tghz2013-level-1-tmp2.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-tmp3",
+  explicitOnly: true,
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.tmp3",
+  displayName: "Chinese (Simplified <-> Traditional) tmp3",
+  description: "Temporary 20-character formatting sample copied from tmp with the student-facing Notes section removed.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.1",
+  sourcePath: "review-content/chinese-simplified-traditional/tmp3",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion", "temporary"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "tmp3"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "selection.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1-tmp3",
+    displayName: "tmp3",
+    outputFile: "tghz2013-level-1-tmp3.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-tmp4",
+  explicitOnly: true,
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.tmp4",
+  displayName: "Chinese (Simplified <-> Traditional) tmp4",
+  description: "Temporary 20-character formatting sample with the student-facing Notes section suppressed entirely.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.1",
+  sourcePath: "review-content/chinese-simplified-traditional/tmp4",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion", "temporary"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "tmp4"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "selection.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1-tmp4",
+    displayName: "tmp4",
+    outputFile: "tghz2013-level-1-tmp4.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-tmp5",
+  explicitOnly: true,
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.tmp5",
+  displayName: "Chinese (Simplified <-> Traditional) tmp5",
+  description: "Temporary 20-character formatting sample with no student Notes and natural paired Simplified and Traditional example sentences.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.1",
+  sourcePath: "review-content/chinese-simplified-traditional/tmp5",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion", "temporary"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "tmp5"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "selection.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1-tmp5",
+    displayName: "tmp5",
+    outputFile: "tghz2013-level-1-tmp5.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-tmp6",
+  explicitOnly: true,
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.tmp6",
+  displayName: "Chinese (Simplified <-> Traditional) tmp6",
+  description: "Temporary 20-character formatting sample with paired natural examples and consistent Phrase/Answer placeholders.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.1",
+  sourcePath: "review-content/chinese-simplified-traditional/tmp6",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion", "temporary"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "tmp6"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "selection.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1-tmp6",
+    displayName: "tmp6",
+    outputFile: "tghz2013-level-1-tmp6.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-tmp7",
+  explicitOnly: true,
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.tmp7",
+  displayName: "Chinese (Simplified <-> Traditional) tmp7",
+  description: "Temporary 20-character formatting sample with compact character-and-word prompts plus paired natural examples.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.1",
+  sourcePath: "review-content/chinese-simplified-traditional/tmp7",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "simplified-traditional", "tghz2013", "conversion", "temporary"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "tmp7"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "selection.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tghz2013-level-1-tmp7",
+    displayName: "tmp7",
+    outputFile: "tghz2013-level-1-tmp7.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}, {
+  id: "chinese-simplified-traditional-tmp7-vocabulary",
+  explicitOnly: true,
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.chinese-simplified-traditional.tmp7-vocabulary",
+  displayName: "Chinese (Simplified <-> Traditional) tmp7 - Vocabulary",
+  description: "ABC-style Chinese vocabulary extracted from the paired natural example sentences in tmp7.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.0.1",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  packageVersion: "0.0.1",
+  sourcePath: "review-content/chinese-simplified-traditional/tmp7-vocabulary",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["en", "zh-Latn-pinyin", "zh-Hans", "zh-Hant"],
+  targetLanguage: "zh-Hans",
+  subjects: ["chinese", "vocabulary", "simplified-traditional", "temporary"],
+  topic: {
+    id: "simplified-traditional-conversion",
+    displayName: "Chinese (Simplified <-> Traditional)",
+    deckDisplayName: "tmp7 - Vocabulary"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "tmp7-vocabulary",
+    displayName: "tmp7 - Vocabulary",
+    outputFile: "tmp7-vocabulary.json",
+    unitStart: 1,
+    unitEnd: 1
+  }
+}];
+
 const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
   ...readingTargets,
   ...generatedCoreReviewTargets,
+  ...chineseScriptConversionTargets,
   ...technicalPreviewTargets,
   ...specializedReviewTargets
 ];
@@ -1722,7 +2291,10 @@ function reviewDeckV2RowToItem(
     const targetToSource = promptLanguage === targetLanguage && answerLanguage === sourceLanguage;
     const sourceToTarget = promptLanguage === sourceLanguage && answerLanguage === targetLanguage;
     const japaneseReadingToTarget = targetLanguage === "ja" && promptLanguage === "ja-Kana" && answerLanguage === "ja";
-    if (!targetToSource && !sourceToTarget && !japaneseReadingToTarget) {
+    const chinesePronunciationToTarget = targetLanguage.startsWith("zh-")
+      && promptLanguage === "zh-Latn-pinyin"
+      && answerLanguage === targetLanguage;
+    if (!targetToSource && !sourceToTarget && !japaneseReadingToTarget && !chinesePronunciationToTarget) {
       throw new Error(`Review row ${rowNumber + 1} has an unsupported review direction in ${sourcePath}`);
     }
     if (distractors.length > 0) throw new Error(`Review row ${rowNumber + 1} must not contain distractors in ${sourcePath}`);
@@ -1771,7 +2343,7 @@ function reviewDeckV2RowToItem(
     testedSkillIds: [],
     provenance: { path: provenancePath, locator: provenanceLocator, evidence: provenanceEvidence },
     examples,
-    notes: resolvedExplanation,
+    ...(target.notesPolicy === "omit" ? {} : { notes: resolvedExplanation }),
     tags,
     source: { path: sourcePath, title: learnerDeckTitle },
     language: { target: targetLanguage, base: "en", script: scriptLabelForTarget(target) },

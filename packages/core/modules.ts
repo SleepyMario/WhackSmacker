@@ -88,6 +88,38 @@ export const firstClassModuleCategoryOrder: readonly FirstClassModuleCategory[] 
 export function getBuiltInFirstClassModules(): readonly FirstClassModuleDescriptor[] {
   return [
     {
+      moduleId: "com.sleepymario.language.chinese-classical",
+      displayName: "Chinese (Classical)",
+      category: "Languages",
+      version: "0.1.0",
+      sourceKind: "built-in-module",
+      description: "Reserved language entry for the future Classical Chinese curriculum. No chapters or review decks are installed yet.",
+      actions: [
+        {
+          id: "status",
+          label: "Curriculum planned",
+          kind: "message",
+          previewText: "Chinese (Classical)\n\nThe language entry is ready. Curriculum content, review decks, and an installable package will be added later."
+        }
+      ]
+    },
+    {
+      moduleId: "com.sleepymario.language.chinese-simplified-traditional",
+      displayName: "Chinese (Simplified <-> Traditional)",
+      category: "Languages",
+      version: "0.1.0",
+      sourceKind: "built-in-module",
+      description: "Bidirectional Simplified and Traditional Chinese conversion deck collection. This is not a language curriculum.",
+      actions: [
+        {
+          id: "level-1",
+          label: "Level I",
+          kind: "message",
+          previewText: "Level I\n\nSimplified <-> Traditional Chinese\n\n1,255 mappings\n2,510 bidirectional cards\n\nThis is a conversion deck, not a language curriculum."
+        }
+      ]
+    },
+    {
       moduleId: "com.sleepymario.language.chinese-simplified",
       displayName: "Chinese (Simplified)",
       category: "Languages",

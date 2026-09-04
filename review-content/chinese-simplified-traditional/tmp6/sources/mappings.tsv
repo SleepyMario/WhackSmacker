@@ -1,0 +1,21 @@
+official_no	level	simplified	mapping_code	traditional	inherited	simplified_example	traditional_example	example_source	original_example_source	simplified_sentence	traditional_sentence	field_usage	context_kind
+17	1	了	17_1	瞭	false	了解	瞭解	authored-natural-example	manual	我已经了解事情的经过。	我已經瞭解事情的經過。		lexical-context
+159	1	凤	159_1	鳳	false	凤凰	鳳凰	authored-natural-example	manual	传说中的凤凰从烈火中重生。	傳說中的鳳凰從烈火中重生。		lexical-context
+407	1	划	407_1	劃	false	计划	計劃	authored-natural-example	manual	我们计划明年去日本旅行。	我們計劃明年去日本旅行。		lexical-context
+439	1	岂	439_1	豈	false	岂非	豈非	authored-natural-example	manual	这样做岂非浪费时间？	這樣做豈非浪費時間？		lexical-context
+445	1	朱	445_1	硃	false	朱红	硃紅	authored-natural-example	manual	她用朱红色颜料画了一朵花。	她用硃紅色顏料畫了一朵花。		lexical-context
+514	1	庄	514_1	莊	false	庄严	莊嚴	authored-natural-example	manual	大厅里的气氛十分庄严。	大廳裡的氣氛十分莊嚴。		lexical-context
+755	1	帐	755_1	帳	false	帐篷	帳篷	authored-natural-example	manual	我们在湖边搭起了帐篷。	我們在湖邊搭起了帳篷。		lexical-context
+792	1	彻	792_1	徹	false	彻底	徹底	authored-natural-example	manual	我们必须彻底解决这个问题。	我們必須徹底解決這個問題。		lexical-context
+1207	1	庞	1207_1	龐	false	庞大	龐大	authored-natural-example	manual	这项工程需要一笔庞大的预算。	這項工程需要一筆龐大的預算。		lexical-context
+1279	1	审	1279_1	審	false	审议	審議	authored-natural-example	manual	委员会明天将审议这项提案。	委員會明天將審議這項提案。		lexical-context
+1304	1	录	1304_1	錄	false	录取	錄取	authored-natural-example	manual	他收到大学的录取通知。	他收到大學的錄取通知。		lexical-context
+1709	1	袄	1709_1	襖	false	棉袄	棉襖	authored-natural-example	manual	天冷了，他穿上厚厚的棉袄。	天冷了，他穿上厚厚的棉襖。		lexical-context
+1781	1	捞	1781_1	撈	false	捕捞	捕撈	authored-natural-example	manual	当地渔民靠捕捞海鱼为生。	當地漁民靠捕撈海魚為生。		lexical-context
+1931	1	钾	1931_1	鉀	false	钾盐	鉀鹽	authored-natural-example	manual	这种肥料含有丰富的钾盐。	這種肥料含有豐富的鉀鹽。		lexical-context
+2079	1	涤	2079_1	滌	false	洗涤	洗滌	authored-natural-example	manual	这件衣服需要用冷水洗涤。	這件衣服需要用冷水洗滌。		lexical-context
+2156	1	琐	2156_1	瑣	false	繁琐	繁瑣	authored-natural-example	manual	申请手续比预想的更加繁琐。	申請手續比預想的更加繁瑣。		lexical-context
+2264	1	悬	2264_1	懸	false	悬挂	懸掛	authored-natural-example	manual	墙上悬挂着一幅山水画。	牆上懸掛著一幅山水畫。		lexical-context
+2493	1	绵	2493_1	綿	false	绵延	綿延	authored-natural-example	manual	群山绵延到视线尽头。	群山綿延到視線盡頭。		lexical-context
+3045	1	缝	3045_1	縫	false	缝隙	縫隙	authored-natural-example	manual	阳光从窗帘的缝隙照进来。	陽光從窗簾的縫隙照進來。		lexical-context
+3104	1	踊	3104_1	踴	false	踊跃	踴躍	authored-natural-example	manual	同学们踊跃报名参加比赛。	同學們踴躍報名參加比賽。		lexical-context

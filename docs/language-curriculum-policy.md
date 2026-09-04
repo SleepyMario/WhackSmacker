@@ -142,7 +142,8 @@ Japanese, and Korean curricula. Every actual canonical participant in a primary
 Dialogue or Narrative appears by exact full canonical target-script name in the
 scene introduction. Every canonical structural Dialogue label is that same
 full name on every turn. Chinese chooses its Traditional or Simplified field
-from package context while resolving both forms to the same shared cast ID;
+from package context while resolving both forms to the same shared cast ID.
+The Classical Chinese curriculum explicitly uses the Traditional field;
 Japanese and Korean use canonical native name order and orthography.
 
 The rule does not rewrite natural reference inside utterances or Narrative

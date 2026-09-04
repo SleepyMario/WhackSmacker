@@ -549,13 +549,21 @@ function validateMemorizationOutputs(outputs: unknown, interaction: unknown, fie
 
 export function memorizationOutputsFromAnswer(answer: MemorizationContentBlock): readonly MemorizationItemOutput[] {
   if (typeof answer.text !== "string") return [{ id: "answer", content: answer }];
-  const parts = answer.text
+  const rawParts = answer.text
     .replace(/\r\n?/gu, "\n")
     .split(/\n|;\s*(?=[\p{L}][\p{L}\p{N} -]*:\s*)/u)
     .map((part) => part.trim())
     .filter((part) => part.length > 0);
+  const parts: string[] = [];
+  for (const part of rawParts) {
+    if (!/^[\p{L}][\p{L}\p{N} -]*:\s*.+$/u.test(part) && parts.length > 0 && /^[\p{L}][\p{L}\p{N} -]*:\s*[\s\S]+$/u.test(parts.at(-1) ?? "")) {
+      parts[parts.length - 1] = `${parts.at(-1)}\n${part}`;
+    } else {
+      parts.push(part);
+    }
+  }
   const structured = parts.map((part) => {
-    const match = part.match(/^([\p{L}][\p{L}\p{N} -]*):\s*(.+)$/u);
+    const match = part.match(/^([\p{L}][\p{L}\p{N} -]*):\s*([\s\S]+)$/u);
     if (match === null) return undefined;
     const label = match[1]?.trim() ?? "";
     const text = match[2]?.trim() ?? "";

@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 
 import { createCommandRegistry, resolveCliCommand } from "../dist/apps/cli/main.js";
 import {
+  addLanguageExercisesBranches,
   applyLanguageSpecificReadableContentMenuPolicy,
   buildLanguageTree,
   buildLanguageMenuItems,
@@ -20,6 +21,7 @@ import {
   getMainMenuItems,
   getMathematicsMenuItems,
   getOneTwoThreeMenuItems,
+  groupLanguageDeckBranches,
   groupExplicitTopicMenuLeaves,
   formatEmbeddedReviewReveal,
   isEmbeddedReviewItemUsable,
@@ -31,6 +33,7 @@ import {
   projectionToggleRequiresModuleTreeRefresh,
   renderTwoPaneLanguageTree,
   renderLanguageTreeRightPane,
+  resolveLanguageBackupDataDirectory,
   renderSourceLanguageToggle,
   renderWhackSmackerHeader,
   readableContentEntriesToMenuItems,
@@ -67,6 +70,7 @@ import {
   mergeFirstClassModules,
   readInstalledContentEntry,
   recordReadingReviewAnswer,
+  renderReadingReviewItem,
   syncReadingReviewItems
 } from "../dist/packages/core/index.js";
 import { loadSourceLanguageSettings } from "../dist/src/settings/source-language.js";
@@ -272,6 +276,263 @@ test("installed package action menu exposes read review info and back", () => {
   );
 });
 
+test("every language receives one hard-coded Exercises submenu", () => {
+  const languages = [
+    {
+      id: "com.sleepymario.language.example",
+      label: "Example",
+      kind: "package",
+      moduleId: "com.sleepymario.language.example",
+      children: [
+        { id: "example:read", label: "Read content", kind: "read-section", children: [] },
+        { id: "example:review", label: "Reading Decks", kind: "review-section", children: [] }
+      ]
+    },
+    {
+      id: "com.sleepymario.language.planned",
+      label: "Planned",
+      kind: "module",
+      moduleId: "com.sleepymario.language.planned",
+      children: [{ id: "planned:status", label: "Curriculum planned", kind: "message" }]
+    }
+  ];
+
+  addLanguageExercisesBranches(languages);
+  addLanguageExercisesBranches(languages);
+
+  assert.deepEqual(languages[0].children.map((node) => node.label), ["Read content", "Exercises", "Reading Decks"]);
+  assert.deepEqual(languages[1].children.map((node) => node.label), ["Curriculum planned", "Exercises"]);
+  for (const language of languages) {
+    const exercises = language.children.filter((node) => node.label === "Exercises");
+    assert.equal(exercises.length, 1);
+    assert.deepEqual(exercises[0].children.map((node) => node.label), ["No exercises yet"]);
+  }
+});
+
+test("the Simplified and Traditional Chinese conversion collection receives no curriculum submenus", () => {
+  const conversion = {
+    id: "com.sleepymario.language.chinese-simplified-traditional",
+    label: "Chinese (Simplified <-> Traditional)",
+    kind: "module",
+    moduleId: "com.sleepymario.language.chinese-simplified-traditional",
+    children: [{ id: "conversion:level-1", label: "Level I", kind: "message" }]
+  };
+  const languages = [conversion];
+
+  addLanguageExercisesBranches(languages);
+  groupLanguageDeckBranches(languages);
+
+  assert.deepEqual(languages[0].children.map((node) => node.label), ["Level I"]);
+});
+
+test("the installed-module skeleton keeps Level I directly below the conversion collection", async () => {
+  const tree = await buildModuleTree();
+  const languages = tree.children
+    .find((node) => node.label === "Installed modules")
+    .children.find((node) => node.label === "Languages");
+  const conversion = languages.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
+
+  assert.deepEqual(conversion.children.map((node) => node.label), ["Level I"]);
+  assert.match(conversion.children[0].previewText, /2,510 bidirectional cards/u);
+  assert.match(conversion.previewText, /not a language curriculum/u);
+});
+
+test("an installed Level I conversion package replaces the placeholder with a runnable review deck", async () => {
+  const packageId = "com.sleepymario.language.chinese-simplified-traditional.level-1";
+  const fixture = await createInstalledLanguageFixture(
+    ["chinese-simplified-traditional-level-1"],
+    [packageId]
+  );
+
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const conversion = tree.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
+
+    assert.deepEqual(conversion.children.map((node) => node.label), ["Level I"]);
+    assert.equal(conversion.children[0].kind, "review-source");
+    assert.equal(conversion.children[0].packageId, packageId);
+    assert.equal(conversion.children[0].itemCount, 2510);
+    assert.equal(conversion.children[0].reviewStatus, "not_started");
+
+    const first = (await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId,
+      packageVersion: "1.2.0",
+      sourcePath: "cards.tsv"
+    }))[0];
+    const rendered = await renderReadingReviewItem({
+      dataDir: fixture.dataDir,
+      packageId,
+      packageVersion: "1.2.0",
+      sourcePath: "cards.tsv",
+      itemId: first.item.id
+    });
+    assert.match(rendered.text, /厂（工厂）/u);
+
+    const terminal = new FakeTerminal([
+      key("down"),
+      key("return"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("down"),
+      key("return"),
+      key("escape"),
+      key("q", { sequence: "q" })
+    ]);
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
+    assert.match(stripAnsi(terminal.output), /Review: Chinese \(Simplified <-> Traditional\) \/ Level I/u);
+    assert.match(stripAnsi(terminal.output), /Card: 1\/2510/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("the installed conversion collection keeps cumulative conversion and vocabulary levels together", async () => {
+  const fixture = await createInstalledLanguageFixture(
+    [
+      "chinese-simplified-traditional-level-1-vocabulary",
+      "chinese-simplified-traditional-tmp",
+      "chinese-simplified-traditional-tmp2",
+      "chinese-simplified-traditional-level-1",
+      "chinese-simplified-traditional-level-2",
+      "chinese-simplified-traditional-level-2-vocabulary",
+      "chinese-simplified-traditional-level-3",
+      "chinese-simplified-traditional-level-3-vocabulary"
+    ],
+    [
+      "com.sleepymario.language.chinese-simplified-traditional.level-1-vocabulary",
+      "com.sleepymario.language.chinese-simplified-traditional.tmp",
+      "com.sleepymario.language.chinese-simplified-traditional.tmp2",
+      "com.sleepymario.language.chinese-simplified-traditional.level-1",
+      "com.sleepymario.language.chinese-simplified-traditional.level-2",
+      "com.sleepymario.language.chinese-simplified-traditional.level-2-vocabulary",
+      "com.sleepymario.language.chinese-simplified-traditional.level-3",
+      "com.sleepymario.language.chinese-simplified-traditional.level-3-vocabulary"
+    ]
+  );
+
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const conversion = tree.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
+    assert.equal(conversion.children.some((node) => node.label.toLocaleLowerCase("en").includes("tmp")), false);
+    assert.deepEqual(conversion.children.map((node) => node.label), [
+      "Level I",
+      "Level I - Vocabulary",
+      "Level II",
+      "Level II - Vocabulary",
+      "Level III",
+      "Level III - Vocabulary"
+    ]);
+    assert.equal(conversion.children.at(-1)?.label, "Level III - Vocabulary");
+    assert.equal(conversion.children.at(-2)?.label, "Level III");
+    assert.equal(conversion.children.at(-3)?.label, "Level II - Vocabulary");
+    assert.equal(conversion.children.at(-4)?.label, "Level II");
+    assert.equal(conversion.children.at(-5)?.label, "Level I - Vocabulary");
+    assert.equal(conversion.children.slice(0, -1).some((node) => node.label === "Level III - Vocabulary"), false);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("an installed tmp7 vocabulary package remains readable but is hidden from the menu", async () => {
+  const packageId = "com.sleepymario.language.chinese-simplified-traditional.tmp7-vocabulary";
+  const fixture = await createInstalledLanguageFixture(
+    ["chinese-simplified-traditional-tmp7-vocabulary"],
+    [packageId]
+  );
+
+  try {
+    const tree = await buildLanguageTree(fixture.dataDir);
+    const conversion = tree.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
+    assert.deepEqual(conversion.children.map((node) => node.label), []);
+
+    const items = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId,
+      packageVersion: "0.0.1",
+      sourcePath: "cards.tsv"
+    });
+    assert.equal(items.length, 234);
+    const meaningCard = items.find(({ item }) => item.id === "zh-tmp7-vocabulary/0002/a-meaning");
+    assert.ok(meaningCard);
+    const rendered = await renderReadingReviewItem({
+      dataDir: fixture.dataDir,
+      packageId,
+      packageVersion: "0.0.1",
+      sourcePath: "cards.tsv",
+      itemId: meaningCard.item.id
+    });
+    assert.match(rendered.text, /to understand/u);
+    assert.deepEqual(meaningCard.item.outputs.map((output) => [output.label, output.content.text]), [
+      ["Pinyin", "liǎo jiě"],
+      ["Characters", "了解 / 瞭解"]
+    ]);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("the application-data launcher layout opens the installed Level I conversion deck", async () => {
+  const packageId = "com.sleepymario.language.chinese-simplified-traditional.level-1";
+  const fixture = await createInstalledLanguageFixture(
+    ["chinese-simplified-traditional-level-1"],
+    [packageId]
+  );
+
+  try {
+    const applicationDataDir = join(fixture.root, "data");
+    const tree = await buildModuleTree({ dataDir: applicationDataDir });
+    const languages = tree.children
+      .find((node) => node.label === "Installed modules")
+      .children.find((node) => node.label === "Languages");
+    const conversion = languages.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
+
+    assert.equal(conversion.children[0].kind, "review-source");
+    assert.equal(conversion.children[0].contentDataDir, fixture.dataDir);
+
+    const terminal = new FakeTerminal([
+      key("down"),
+      key("return"),
+      key("down"),
+      key("down"),
+      key("return"),
+      key("down"),
+      key("return"),
+      key("escape"),
+      key("q", { sequence: "q" })
+    ]);
+    await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: applicationDataDir });
+    assert.match(stripAnsi(terminal.output), /Review: Chinese \(Simplified <-> Traditional\) \/ Level I/u);
+    assert.match(stripAnsi(terminal.output), /Card: 1\/2510/u);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
+test("every language groups Reading, General, Specialized, and Custom below one Decks submenu", () => {
+  const languages = [{
+    id: "com.sleepymario.language.example",
+    label: "Example",
+    kind: "package",
+    moduleId: "com.sleepymario.language.example",
+    children: [
+      { id: "example:read", label: "Read content", kind: "read-section", children: [] },
+      { id: "example:exercises", label: "Exercises", kind: "category", children: [] },
+      { id: "example:review", label: "Reading Decks", kind: "review-section", children: [] },
+      { id: "example:deck-family:general", label: "General Decks", kind: "category", children: [] },
+      { id: "example:deck-family:specialized", label: "Specialized Decks", kind: "category", children: [] }
+    ]
+  }];
+
+  groupLanguageDeckBranches(languages);
+  groupLanguageDeckBranches(languages);
+
+  assert.deepEqual(languages[0].children.map((node) => node.label), ["Read content", "Exercises", "Decks"]);
+  const decks = languages[0].children.find((node) => node.label === "Decks");
+  assert.deepEqual(decks.children.map((node) => node.label), ["Reading", "General", "Specialized", "Custom"]);
+});
+
 test("Linguistic Terms menu exposes General before language groups", () => {
   assert.deepEqual(
     getLinguisticTermsMenuItems().map((item) => item.label),
@@ -333,6 +594,7 @@ test("interactive menu opens the module three-pane tree", async () => {
     assert.match(terminal.output, /WhackSmacker/);
     assert.match(terminal.output, /Installed modules/);
     assert.match(terminal.output, /Modules available/);
+    assert.match(terminal.output, /Language backup/);
     assert.match(terminal.output, /Languages/);
     assert.match(terminal.output, /Games/);
     assert.match(terminal.output, /Geography/);
@@ -358,19 +620,75 @@ test("module tree lists top-level categories and installed language packages", a
     const languages = installed.children.find((node) => node.label === "Languages");
 
     assert.equal(tree.label, "WhackSmacker");
-    assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available"]);
+    const backupLanguages = tree.children
+      .find((node) => node.label === "Language backup")
+      .children.find((node) => node.label === "Languages");
+    const installedDutch = languages.children.find((node) => node.label === "Dutch");
+    const backupDutch = backupLanguages.children.find((node) => node.label === "Dutch");
+
+    assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available", "Language backup"]);
     assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography"]);
-    assert.deepEqual(languages.children.map((node) => node.label), ["Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
+    assert.deepEqual(languages.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
+      "com.sleepymario.language.chinese-classical",
+      "com.sleepymario.language.chinese-simplified-traditional",
       "com.sleepymario.language.chinese-simplified",
       "com.sleepymario.language.dutch",
       "com.sleepymario.language.classical-greek",
       "com.sleepymario.language.latin",
       "com.sleepymario.language.vietnamese"
     ]);
+    assert.deepEqual(installedDutch.children.map((node) => node.label), ["Read content", "Exercises", "Decks"]);
+    assert.equal(installedDutch.children.every((node) => node.children.length === 1 && node.children[0].label === "No final content yet"), true);
+    assert.deepEqual(backupDutch.children.map((node) => node.label), ["Read content", "Exercises", "Decks", "Package info", "Uninstall"]);
+    assert.deepEqual(backupDutch.children.find((node) => node.label === "Decks").children.map((node) => node.label), ["Reading", "General", "Specialized", "Custom"]);
+    assert.equal(backupDutch.children.find((node) => node.label === "Read content").children.some((node) => node.label === "No final content yet"), false);
+    assert.equal(backupDutch.children.find((node) => node.label === "Uninstall").kind, "message");
   } finally {
     await fixture.cleanup();
   }
+});
+
+test("normal launch resolves the dedicated language backup directory", async () => {
+  const xdgRoot = await mkdtemp(join(tmpdir(), "wsm-menu-default-data-"));
+  const defaultDataDir = join(xdgRoot, "whacksmacker", "content");
+  const backupDataDir = join(dirname(defaultDataDir), "language-backup");
+  const explicitDataDir = join(xdgRoot, "explicit-content-data");
+  const explicitBackupDataDir = join(explicitDataDir, "language-backup");
+  const previousXdgDataHome = process.env.XDG_DATA_HOME;
+
+  try {
+    await mkdir(backupDataDir, { recursive: true });
+    await writeFile(join(backupDataDir, "registry.json"), "{}\n");
+    await mkdir(explicitBackupDataDir, { recursive: true });
+    await writeFile(join(explicitBackupDataDir, "registry.json"), "{}\n");
+    process.env.XDG_DATA_HOME = xdgRoot;
+
+    assert.equal(await resolveLanguageBackupDataDirectory(undefined), backupDataDir);
+    assert.equal(await resolveLanguageBackupDataDirectory(explicitDataDir), explicitBackupDataDir);
+  } finally {
+    if (previousXdgDataHome === undefined) {
+      delete process.env.XDG_DATA_HOME;
+    } else {
+      process.env.XDG_DATA_HOME = previousXdgDataHome;
+    }
+    await rm(xdgRoot, { recursive: true, force: true });
+  }
+});
+
+test("Language backup alone uses the dedicated dark-green root colour", async () => {
+  const tree = await buildModuleTree();
+  const rendered = renderTwoPaneLanguageTree(
+    tree,
+    new Set(["whacksmacker"]),
+    0,
+    "",
+    true
+  );
+
+  assert.match(rendered, /\x1b\[1m\x1b\[38;5;28m[^\n]*Language backup\x1b\[0m/u);
+  assert.doesNotMatch(rendered, /\x1b\[38;5;28m[^\n]*Installed modules/u);
+  assert.doesNotMatch(rendered, /\x1b\[38;5;28m[^\n]*Modules available/u);
 });
 
 test("first-class module descriptors include built-ins and installed language packages", () => {
@@ -378,6 +696,8 @@ test("first-class module descriptors include built-ins and installed language pa
   const installed = installedPackageToFirstClassModuleDescriptor(packageRecord("com.sleepymario.language.example", "Example Curriculum"));
 
   assert.deepEqual(builtIns.map((descriptor) => descriptor.moduleId), [
+    "com.sleepymario.language.chinese-classical",
+    "com.sleepymario.language.chinese-simplified-traditional",
     "com.sleepymario.language.chinese-simplified",
     "com.sleepymario.language.classical-greek",
     "com.sleepymario.language.latin",
@@ -396,13 +716,18 @@ test("first-class module descriptors include built-ins and installed language pa
   assert.equal(merged.find((descriptor) => descriptor.moduleId === "com.sleepymario.language.latin").sourceKind, "content-package");
 });
 
-test("language menu exposes Chinese Simplified, Greek Classical, and Latin as honest planned entries", async () => {
+test("language menu exposes the planned Chinese, Greek Classical, and Latin entries", async () => {
   const tree = await buildLanguageTree();
 
-  assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Simplified)", "Greek (Classical)", "Latin"]);
-  for (const language of tree.children) {
+  assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Greek (Classical)", "Latin"]);
+  const conversion = tree.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
+  assert.deepEqual(conversion.children.map((node) => node.label), ["Level I"]);
+  assert.match(conversion.children[0].previewText, /1,255 mappings/u);
+  assert.match(conversion.children[0].previewText, /2,510 bidirectional cards/u);
+  for (const language of tree.children.filter((node) => node !== conversion)) {
     assert.equal(language.sourceKind, "built-in-module");
-    assert.deepEqual(language.children.map((node) => node.label), ["Curriculum planned", "General Decks", "Specialized Decks"]);
+    assert.deepEqual(language.children.map((node) => node.label), ["Curriculum planned", "Exercises", "Decks"]);
+    assert.deepEqual(language.children.find((node) => node.label === "Decks").children.map((node) => node.label), ["Reading", "General", "Specialized", "Custom"]);
     assert.match(language.previewText, /No chapters or review decks are installed yet/u);
   }
 });
@@ -469,10 +794,10 @@ test("language tree lists installed packages and package sections", async () => 
     const treesByMode = new Map([["normal", tree]]);
 
     assert.equal(tree.label, "Languages");
-    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
+    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
     const installedCurricula = tree.children.filter((node) => node.sourceKind === "content-package");
     for (const languagePackage of installedCurricula) {
-      assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Reading Decks", "General Decks", "Specialized Decks", "Package info", "Uninstall"]);
+      assert.deepEqual(languagePackage.children.map((node) => node.label), ["Read content", "Exercises", "Decks", "Package info", "Uninstall"]);
     }
     for (const mode of ["expert", "developer"]) treesByMode.set(mode, await buildLanguageTree(fixture.dataDir, mode));
     for (const [mode, modeTree] of treesByMode) {
@@ -487,11 +812,16 @@ test("language tree lists installed packages and package sections", async () => 
       for (const languagePackage of modeTree.children.filter((node) => node.sourceKind === "content-package")) {
         assert.deepEqual(languagePackage.children.map((node) => [node.label, node.kind]), [
           ["Read content", "read-section"],
-          ["Reading Decks", "review-section"],
-          ["General Decks", "category"],
-          ["Specialized Decks", "category"],
+          ["Exercises", "category"],
+          ["Decks", "category"],
           ["Package info", "package-info"],
           ["Uninstall", "uninstall"]
+        ]);
+        assert.deepEqual(languagePackage.children.find((node) => node.label === "Decks").children.map((node) => [node.label, node.kind]), [
+          ["Reading", "review-section"],
+          ["General", "category"],
+          ["Specialized", "category"],
+          ["Custom", "category"]
         ]);
         const readContent = languagePackage.children.find((node) => node.label === "Read content");
         const grammarNode = readContent.children.find((node) => node.label === "Grammar");
@@ -506,25 +836,28 @@ test("language tree lists installed packages and package sections", async () => 
   }
 });
 
-test("every installed curriculum receives exactly one Reading Decks, General Decks, and Specialized Decks entry", async () => {
+test("every installed curriculum receives one Exercises entry and one three-part Decks submenu", async () => {
   const fixture = await createInstalledLanguageFixture(
     ["vietnamese-curriculum", "dutch-curriculum"],
     ["com.sleepymario.language.vietnamese", "com.sleepymario.language.dutch"]
   );
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
-    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
+    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
     for (const language of tree.children.filter((node) => node.sourceKind === "content-package")) {
       const labels = language.children.map((node) => node.label);
-      assert.equal(labels.filter((label) => label === "Reading Decks").length, 1, `${language.label} has one exactly capitalized Reading Decks entry`);
-      assert.equal(labels.includes("Review decks"), false, `${language.label} does not expose the former Review decks label`);
-      assert.equal(labels.filter((label) => label === "General Decks").length, 1, `${language.label} has one General Decks entry`);
-      assert.equal(labels.filter((label) => label === "Specialized Decks").length, 1, `${language.label} has one Specialized Decks entry`);
-      for (const legacyLabel of ["Read content", "Reading Decks", "Package info", "Uninstall"]) {
+      assert.equal(labels.filter((label) => label === "Exercises").length, 1, `${language.label} has one Exercises entry`);
+      assert.equal(labels.filter((label) => label === "Decks").length, 1, `${language.label} has one Decks entry`);
+      assert.equal(labels.includes("Reading Decks"), false, `${language.label} does not expose the former top-level Reading Decks label`);
+      assert.equal(labels.includes("General Decks"), false, `${language.label} does not expose the former top-level General Decks label`);
+      assert.equal(labels.includes("Specialized Decks"), false, `${language.label} does not expose the former top-level Specialized Decks label`);
+      for (const legacyLabel of ["Read content", "Package info", "Uninstall"]) {
         assert.equal(labels.includes(legacyLabel), true, `${language.label} retains ${legacyLabel}`);
       }
-      const general = language.children.find((node) => node.label === "General Decks");
-      const specialized = language.children.find((node) => node.label === "Specialized Decks");
+      const decks = language.children.find((node) => node.label === "Decks");
+      assert.deepEqual(decks.children.map((node) => node.label), ["Reading", "General", "Specialized", "Custom"]);
+      const general = decks.children.find((node) => node.label === "General");
+      const specialized = decks.children.find((node) => node.label === "Specialized");
       assert.equal(general.children[0].previewText, "No General decks are available for this language.");
       assert.equal(specialized.children[0].previewText, "No Specialized decks are available for this language.");
     }
@@ -557,8 +890,8 @@ test("empty General and Specialized family states return to the language menu wi
     assert.match(terminal.output, /No General decks are available for this language\./u);
     assert.match(terminal.output, /No Specialized decks are available for this language\./u);
     const screens = terminal.output.split("\x1b[2J\x1b[H").filter(Boolean).map(stripAnsi);
-    assert.equal(screens.some((screen) => />\s+General Decks/u.test(screen)), true);
-    assert.equal(screens.some((screen) => />\s+Specialized Decks/u.test(screen)), true);
+    assert.equal(screens.some((screen) => />\s+General/u.test(screen)), true);
+    assert.equal(screens.some((screen) => />\s+Specialized/u.test(screen)), true);
   } finally {
     await fixture.cleanup();
   }
@@ -573,8 +906,8 @@ test("classified packages appear only in their explicit language deck family", a
   try {
     let tree = await buildLanguageTree(fixture.dataDir);
     let dutch = tree.children.find((node) => node.label === "Dutch");
-    let general = dutch.children.find((node) => node.label === "General Decks");
-    let specialized = dutch.children.find((node) => node.label === "Specialized Decks");
+    let general = languageDeckSection(dutch, "General");
+    let specialized = languageDeckSection(dutch, "Specialized");
     assert.deepEqual(general.children.map((node) => node.label), ["No General decks available"]);
     assert.deepEqual(specialized.children.map((node) => node.label), ["Medical I"]);
     assert.equal(specialized.children[0].packageId, packageId);
@@ -584,8 +917,8 @@ test("classified packages appear only in their explicit language deck family", a
     await setInstalledDeckFamily(fixture.dataDir, packageId, "general");
     tree = await buildLanguageTree(fixture.dataDir);
     dutch = tree.children.find((node) => node.label === "Dutch");
-    general = dutch.children.find((node) => node.label === "General Decks");
-    specialized = dutch.children.find((node) => node.label === "Specialized Decks");
+    general = languageDeckSection(dutch, "General");
+    specialized = languageDeckSection(dutch, "Specialized");
     assert.deepEqual(general.children.map((node) => node.label), ["Medical I"]);
     assert.deepEqual(specialized.children.map((node) => node.label), ["No Specialized decks available"]);
     assert.equal(general.children[0].packageId, packageId);
@@ -620,8 +953,8 @@ test("current Medical package metadata reconciles an older registry record witho
     const tree = await buildLanguageTree(fixture.dataDir);
     const dutch = tree.children.find((node) => node.label === "Dutch");
     const legacy = dutch.children.find((node) => node.label === "Specialized");
-    const general = dutch.children.find((node) => node.label === "General Decks");
-    const specialized = dutch.children.find((node) => node.label === "Specialized Decks");
+    const general = languageDeckSection(dutch, "General");
+    const specialized = languageDeckSection(dutch, "Specialized");
     assert.equal(legacy, undefined);
     assert.deepEqual(general.children.map((node) => node.label), ["No General decks available"]);
     assert.deepEqual(specialized.children.map((node) => node.label), ["Medical I"]);
@@ -631,7 +964,7 @@ test("current Medical package metadata reconciles an older registry record witho
   }
 });
 
-test("a genuinely unclassified older package retains the legacy Specialized branch", async () => {
+test("a genuinely unclassified older package is folded into the Specialized deck branch", async () => {
   const packageId = "com.sleepymario.language.dutch.specialized.medical-1";
   const fixture = await createInstalledLanguageFixture(
     ["dutch-curriculum", "dutch-specialized-medical-1"],
@@ -642,9 +975,9 @@ test("a genuinely unclassified older package retains the legacy Specialized bran
     const tree = await buildLanguageTree(fixture.dataDir, "normal", []);
     const dutch = tree.children.find((node) => node.label === "Dutch");
     const legacy = dutch.children.find((node) => node.label === "Specialized");
-    const specialized = dutch.children.find((node) => node.label === "Specialized Decks");
-    assert.deepEqual(legacy.children.map((node) => node.label), ["Medical I"]);
-    assert.deepEqual(specialized.children.map((node) => node.label), ["No Specialized decks available"]);
+    const specialized = languageDeckSection(dutch, "Specialized");
+    assert.equal(legacy, undefined);
+    assert.deepEqual(specialized.children.map((node) => node.label), ["Medical I"]);
   } finally {
     await fixture.cleanup();
   }
@@ -658,18 +991,17 @@ test("a classified family package preserves a registered language that has no or
   );
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
-    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Simplified)", "Chinese (Traditional)", "Greek (Classical)", "Latin"]);
+    assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Chinese (Traditional)", "Greek (Classical)", "Latin"]);
     const chinese = tree.children.find((node) => node.label === "Chinese (Traditional)");
     assert.deepEqual(chinese.children.map((node) => node.label), [
       "Read content",
-      "Reading Decks",
-      "General Decks",
-      "Specialized Decks",
+      "Exercises",
+      "Decks",
       "Package info",
       "Uninstall"
     ]);
-    assert.deepEqual(chinese.children.find((node) => node.label === "General Decks").children.map((node) => node.label), ["No General decks available"]);
-    assert.deepEqual(chinese.children.find((node) => node.label === "Specialized Decks").children.map((node) => node.packageId), [packageId]);
+    assert.deepEqual(languageDeckSection(chinese, "General").children.map((node) => node.label), ["No General decks available"]);
+    assert.deepEqual(languageDeckSection(chinese, "Specialized").children.map((node) => node.packageId), [packageId]);
   } finally {
     await fixture.cleanup();
   }
@@ -723,7 +1055,7 @@ test("language tree exposes Dutch content and review deck labels", async () => {
     const tree = await buildLanguageTree(fixture.dataDir);
     const dutch = tree.children.find((node) => node.label === "Dutch");
     const readContent = dutch.children.find((node) => node.label === "Read content");
-    const reviewDecks = dutch.children.find((node) => node.label === "Reading Decks");
+    const reviewDecks = languageDeckSection(dutch, "Reading");
 
     assert.ok(readContent.children.some((node) => node.label === "Chapter 1 -- Greetings and Identity"));
     assert.ok(readContent.children.some((node) => node.label === "Chapter 5 -- There Is / There Are I"));
@@ -1456,7 +1788,7 @@ test("Normal and Expert deck previews hide internal metadata while Developer exp
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
     const dutch = tree.children.find((node) => node.label === "Dutch");
-    const decks = dutch.children.find((node) => node.label === "Reading Decks");
+    const decks = languageDeckSection(dutch, "Reading");
     const deck = decks.children[0];
     const before = (await listReadingReviewItems({ dataDir: fixture.dataDir, packageId: deck.packageId, packageVersion: deck.packageVersion, sourcePath: deck.sourcePath })).map((item) => [item.item.id, item.item.prompt.text, item.item.answer.text]);
     const normal = await renderLanguageTreeRightPane(deck, { dataDir: fixture.dataDir, displayMode: "normal" });
@@ -1592,7 +1924,7 @@ test("Vietnamese read content interleaves reviews after Core Chapters 5 and 10",
     assert.equal(labels[firstReviewIndex], "Review -- Chapters 1–5");
     assert.equal(labels[secondReviewIndex], "Review -- Chapters 6–10");
 
-    const reviewDecks = vietnamese.children.find((node) => node.label === "Reading Decks");
+    const reviewDecks = languageDeckSection(vietnamese, "Reading");
     assert.ok(reviewDecks);
     const first = reviewDecks.children.find((node) => node.label === "Chapter 1-5");
     const second = reviewDecks.children.find((node) => node.label === "Chapter 6-10");
@@ -1636,7 +1968,7 @@ test("Dutch read tree includes the complete zero-padded Chapters 11-85 blocks", 
     assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-085-/u.test(node.filePath ?? "")), true);
     assert.equal(readContent.children.some((node) => /^units\/dutch-core\/chapter-086-/u.test(node.filePath ?? "")), false);
     assert.equal(readContent.children.some((node) => /chapter-011-015-grammar-(?:easy|hard)/u.test(node.filePath ?? "")), true);
-    const reviewDecks = dutch.children.find((node) => node.label === "Reading Decks");
+    const reviewDecks = languageDeckSection(dutch, "Reading");
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 11-15"), true);
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 16-20"), true);
     assert.equal(reviewDecks.children.some((node) => node.label === "Chapter 21-25"), true);
@@ -1688,7 +2020,7 @@ test("language tree flattening and renderer use deterministic keyboard state", a
     const output = renderTwoPaneLanguageTree(tree, expanded, labels.indexOf("Read content"), "Preview text", false);
 
     const dutchIndex = labels.indexOf("Dutch");
-    assert.deepEqual(labels.slice(dutchIndex, dutchIndex + 6), ["Dutch", "Read content", "Reading Decks", "General Decks", "Specialized Decks", "Package info"]);
+    assert.deepEqual(labels.slice(dutchIndex, dutchIndex + 5), ["Dutch", "Read content", "Exercises", "Decks", "Package info"]);
     assert.match(output, />\s+>\s+Read content/);
     assert.match(output, /Preview text/);
     assert.match(output, /Space activate\/install/);
@@ -2307,7 +2639,7 @@ test("review deck tree status handles missing progress files and exposes output-
   try {
     const tree = await buildLanguageTree(fixture.dataDir);
     const dutch = tree.children.find((node) => node.label === "Dutch");
-    const reviewDecks = dutch.children.find((node) => node.label === "Reading Decks");
+    const reviewDecks = languageDeckSection(dutch, "Reading");
     const chapterDeck = reviewDecks.children.find((node) => node.label === "Chapter 1-5");
 
     assert.equal(chapterDeck.reviewStatus, "not_started");
@@ -3597,7 +3929,7 @@ test("module tree omits the former Settings source-language path in every locale
     };
     visit(tree);
 
-    assert.deepEqual(tree.children.map((node) => node.id), ["installed-modules", "available-modules"]);
+    assert.deepEqual(tree.children.map((node) => node.id), ["installed-modules", "available-modules", "language-backup"]);
     assert.equal(nodes.some((node) => node.id === "settings" || node.id.startsWith("settings:")), false);
     assert.equal(nodes.some((node) => ["settings", "source-language", "source-locale"].includes(node.kind)), false);
     assert.equal(nodes.some((node) => node.label === "Settings" || node.label === "Source language" || node.label === "設定" || node.label === "來源語言"), false);
@@ -4082,11 +4414,19 @@ async function createInstalledDutchFixture() {
 function dutchReviewDeckNode(tree, label) {
   const dutch = tree.children.find((node) => node.label === "Dutch");
   assert.ok(dutch, "Dutch package appears in the language tree");
-  const reviewDecks = dutch.children.find((node) => node.label === "Reading Decks");
+  const reviewDecks = languageDeckSection(dutch, "Reading");
   assert.ok(reviewDecks, "Dutch package has a review deck section");
   const deck = reviewDecks.children.find((node) => node.label === label);
   assert.ok(deck, `Dutch review deck exists: ${label}`);
   return deck;
+}
+
+function languageDeckSection(language, label) {
+  const decks = language.children.find((node) => node.label === "Decks");
+  assert.ok(decks, `${language.label} has a Decks submenu`);
+  const section = decks.children.find((node) => node.label === label);
+  assert.ok(section, `${language.label} has the ${label} deck section`);
+  return section;
 }
 
 async function createDutchReviewProgress(dataDir) {

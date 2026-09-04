@@ -64,6 +64,30 @@ test("items can be listed by source and source paths are validated", async () =>
   }
 });
 
+test("a requested deck version reads only its newest installed artifact revision", async () => {
+  const fixture = await createReadingReviewFixture();
+  try {
+    const registryPath = join(fixture.dataDir, "registry.json");
+    const registry = JSON.parse(await readFile(registryPath, "utf8"));
+    const original = registry.packages[0];
+    registry.packages = [
+      { ...original, deckVersion: "0.1.0", artifactRevision: 1 },
+      { ...original, deckVersion: "0.1.0", artifactRevision: 2, archiveSha256: "2".repeat(64) }
+    ];
+    await writeFile(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
+
+    const items = await listReadingReviewItems({
+      dataDir: fixture.dataDir,
+      packageId: "com.sleepymario.language.memory",
+      packageVersion: "0.1.0"
+    });
+    assert.equal(items.length, 4);
+    assert.equal(new Set(items.map((item) => item.item.id)).size, 4);
+  } finally {
+    await fixture.cleanup();
+  }
+});
+
 test("items without source paths remain reviewable", async () => {
   const fixture = await createReadingReviewFixture();
   try {
