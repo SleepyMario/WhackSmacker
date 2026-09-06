@@ -774,8 +774,8 @@ function validateRegistryPackages(value: unknown, errors: string[]): void {
       ...(typeof record.deckVersion === "string" ? { deckVersion: record.deckVersion } : {}),
       ...(typeof record.artifactRevision === "number" ? { artifactRevision: record.artifactRevision } : {})
     }, `packages[${index}]`).errors);
-    if (record.deckFamily !== undefined && record.deckFamily !== "general" && record.deckFamily !== "specialized") {
-      errors.push(`packages[${index}].deckFamily must be general or specialized when present.`);
+    if (record.deckFamily !== undefined && record.deckFamily !== "general" && record.deckFamily !== "specialized" && record.deckFamily !== "custom") {
+      errors.push(`packages[${index}].deckFamily must be general, specialized, or custom when present.`);
     }
     validateInstalledTopicMetadata(record.topic, `packages[${index}].topic`, errors);
     if (record.mediaPolicy !== undefined) errors.push(...validateMediaPolicy(record.mediaPolicy, `packages[${index}].mediaPolicy`).errors);

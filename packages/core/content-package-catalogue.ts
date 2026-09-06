@@ -354,8 +354,8 @@ function validateCataloguePackages(value: unknown, errors: string[]): void {
 }
 
 function validateDeckFamily(value: unknown, field: string, errors: string[]): void {
-  if (value !== undefined && value !== "general" && value !== "specialized") {
-    errors.push(`${field} must be general or specialized when present.`);
+  if (value !== undefined && value !== "general" && value !== "specialized" && value !== "custom") {
+    errors.push(`${field} must be general, specialized, or custom when present.`);
   }
 }
 

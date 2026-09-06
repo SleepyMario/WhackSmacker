@@ -70,7 +70,7 @@
             "items": { "enum": ["reading-curriculum", "core-review", "topic-review", "specialized-review", "technical"] }
           },
           "deckFamily": {
-            "enum": ["general", "specialized"]
+            "enum": ["general", "specialized", "custom"]
           },
           "topic": {
             "$ref": "#/$defs/topic"

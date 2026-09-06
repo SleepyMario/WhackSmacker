@@ -154,7 +154,7 @@ test("installed registry rejects invalid deck family metadata", async () => {
     });
     const registry = await loadInstalledPackageRegistry(fixture.dataDir);
     registry.packages[0].deckFamily = "topic";
-    assert.match(validateInstalledPackageRegistry(registry).errors.join("\n"), /deckFamily must be general or specialized/);
+    assert.match(validateInstalledPackageRegistry(registry).errors.join("\n"), /deckFamily must be general, specialized, or custom/);
   } finally {
     await fixture.cleanup();
   }

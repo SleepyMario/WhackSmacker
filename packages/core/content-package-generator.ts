@@ -846,10 +846,60 @@ const chineseScriptConversionTargets: readonly ContentPackageGeneratorTarget[] =
   }
 }];
 
+const vietnameseCustomDeckDefinitions = [
+  ["numbers-money-dates-time", "Numbers, Money, Dates & Time"],
+  ["pronunciation-tones", "Pronunciation & Tones"],
+  ["core-sentence-patterns", "Core Sentence Patterns"],
+  ["people-pronouns-languages", "People, Pronouns & Languages"],
+  ["frequency-preference-comparison", "Frequency, Preference & Comparison"],
+  ["daily-life-common-actions", "Daily Life & Common Actions"],
+  ["conversation-social-phrases", "Conversation & Social Phrases"],
+  ["food-drink-restaurants", "Food, Drink & Restaurants"],
+  ["shopping-clothing", "Shopping & Clothing"],
+  ["classifiers-common-objects", "Classifiers & Common Objects"],
+  ["animals", "Animals"],
+  ["descriptions-opposites", "Descriptions & Opposites"],
+  ["common-confusions", "Common Confusions"]
+] as const;
+
+const vietnameseCustomDeckTargets: readonly ContentPackageGeneratorTarget[] = vietnameseCustomDeckDefinitions.map(([slug, displayName], index) => ({
+  id: `vietnamese-custom-${slug}`,
+  explicitOnly: true,
+  packageId: `local.user.decks.vietnamese-${slug}`,
+  displayName,
+  description: `Private bidirectional Vietnamese deck derived from the user's handwritten notes: ${displayName}.`,
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "custom",
+  relatedPackageIds: ["com.sleepymario.language.vietnamese"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "0.1.0",
+  artifactRevision: slug === "classifiers-common-objects" ? 3 : 2,
+  mediaPolicy: "none",
+  interactionProfile: defaultDeckInteractionProfile,
+  notesPolicy: "omit",
+  packageVersion: "0.1.0",
+  sourcePath: `vietnamese-custom/${slug}`,
+  sourceRepository: "local-only:whacksmacker-decks-private",
+  languages: ["en", "vi"],
+  targetLanguage: "vi",
+  subjects: ["vietnamese", "custom", "handwritten-notes", slug],
+  dependencies: [],
+  include: ["README.md", "cards.tsv"],
+  topicDeck: {
+    id: `vietnamese-${slug}`,
+    displayName,
+    outputFile: `${slug}.json`,
+    unitStart: index + 1,
+    unitEnd: index + 1
+  }
+}));
+
 const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
   ...readingTargets,
   ...generatedCoreReviewTargets,
   ...chineseScriptConversionTargets,
+  ...vietnameseCustomDeckTargets,
   ...technicalPreviewTargets,
   ...specializedReviewTargets
 ];
@@ -2017,7 +2067,7 @@ function reviewDeckV2RowToItem(
     testedCastIds: [],
     testedSkillIds: [],
     provenance: { path: provenancePath, locator: provenanceLocator, evidence: provenanceEvidence },
-    examples,
+    ...(examples.length === 0 ? {} : { examples }),
     ...(target.notesPolicy === "omit" ? {} : { notes: resolvedExplanation }),
     tags,
     source: { path: sourcePath, title: learnerDeckTitle },

@@ -86,7 +86,7 @@ Review-deck child.
 
 ## Family, topic, readiness, and ownership
 
-`deckFamily` is explicitly `general` or `specialized`. Topic objects retain
+`deckFamily` is explicitly `general`, `specialized`, or `custom`. Topic objects retain
 stable `id`, `displayName`, and `deckDisplayName`; grouping is never parsed
 from display text. Topics are family-local, so the same topic ID can appear
 under both families without changing lexical IDs, entry IDs, media identities,

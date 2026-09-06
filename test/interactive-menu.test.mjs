@@ -27,6 +27,7 @@ import {
   isEmbeddedReviewItemUsable,
   installedLanguagePackagesToMenuItems,
   interleaveReviewSources,
+  languageSubmenuSkeleton,
   languageMenuHeading,
   listAvailableModuleDescriptors,
   menuStyles,
@@ -605,6 +606,47 @@ test("module tree lists top-level categories and installed language packages", a
   } finally {
     await fixture.cleanup();
   }
+});
+
+test("Custom is a standard deck family and remains usable during a curriculum reset", () => {
+  const tree = languageSubmenuSkeleton({
+    id: "languages",
+    label: "Languages",
+    kind: "category",
+    children: [{
+      id: "com.sleepymario.language.vietnamese",
+      label: "Vietnamese",
+      kind: "package",
+      packageId: "com.sleepymario.language.vietnamese",
+      children: [{
+        id: "com.sleepymario.language.vietnamese:read",
+        label: "Read content",
+        kind: "read-section",
+        children: [{ id: "old-reading", label: "Old reading", kind: "message" }]
+      }, {
+        id: "com.sleepymario.language.vietnamese:decks",
+        label: "Decks",
+        kind: "category",
+        children: [{
+          id: "com.sleepymario.language.vietnamese:review",
+          label: "Reading",
+          kind: "review-section",
+          children: [{ id: "old-review", label: "Old review", kind: "message" }]
+        }, {
+          id: "com.sleepymario.language.vietnamese:deck-family:custom",
+          label: "Custom",
+          kind: "category",
+          children: [{ id: "custom-topic", label: "Food, Drink & Restaurants", kind: "review-source" }]
+        }]
+      }]
+    }]
+  });
+
+  const vietnamese = tree.children[0];
+  assert.equal(vietnamese.children.find((node) => node.label === "Read content").children[0].label, "No final content yet");
+  const decks = vietnamese.children.find((node) => node.label === "Decks");
+  assert.equal(decks.children.find((node) => node.label === "Reading").children[0].label, "No final content yet");
+  assert.deepEqual(decks.children.find((node) => node.label === "Custom").children.map((node) => node.label), ["Food, Drink & Restaurants"]);
 });
 
 test("normal launch resolves the dedicated language backup directory", async () => {

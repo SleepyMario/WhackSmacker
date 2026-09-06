@@ -1,16 +1,24 @@
-# General and Specialized Deck Families
+# Reading, General, Specialized, and Custom Deck Families
 
 The complete orthogonal entry, output, media, interaction, and version contract
 is documented in [deck-framework.md](deck-framework.md).
 
-Every language shown in the interactive CLI has two package-family entries:
+Every language shown in the interactive CLI has four standard deck-family
+entries:
 
 ```text
-General Decks
-Specialized Decks
+Reading
+General
+Specialized
+Custom
 ```
 
-The entries are always present. When no installed package belongs to a family for that language, the submenu shows `No General decks are available for this language.` or `No Specialized decks are available for this language.` Escape returns to the language menu through the normal tree navigation.
+The entries are always present. Reading contains the curriculum's ordinary
+Review material. General and Specialized contain explicitly classified topic
+packages. Custom contains learner-managed deck packages and is not a special
+case for any one language. When no installed package belongs to a family for
+that language, its submenu shows the corresponding empty state. Escape returns
+to the language menu through the normal tree navigation.
 
 The ordinary memorization entry is learner-facing `Reading Decks`, replacing the former `Review decks` label in every language menu. This is a label-only change: internal Review/memorization terminology, launch behavior, commands, APIs, item kinds, and progress identities remain unchanged.
 
@@ -25,7 +33,7 @@ Topic-deck packages declare one optional manifest property:
 }
 ```
 
-`deckFamily` accepts only `general` or `specialized`. The property is copied unchanged from the package manifest into the generated catalogue and installed-package registry. `relatedPackageIds` is the existing exact package-identity association: each listed language package receives the classified package. A package that intentionally supports more than one learner language lists each relevant language package identity explicitly.
+`deckFamily` accepts only `general`, `specialized`, or `custom`. The property is copied unchanged from the package manifest into the generated catalogue and installed-package registry. `relatedPackageIds` is the existing exact package-identity association: each listed language package receives the classified package. A package that intentionally supports more than one learner language lists each relevant language package identity explicitly. Custom is the standard family for learner-managed material. Installed Custom packages appear in the normal menu for every associated language and appear as direct Review leaves when they contain one source.
 
 Family is package/deck metadata, not lexical-entry metadata. Display names, package-ID substrings, filesystem names, and source paths never classify a package. Package IDs, package versions, memorization item IDs, and progress identity are independent of mutable display titles and are unchanged by this metadata.
 

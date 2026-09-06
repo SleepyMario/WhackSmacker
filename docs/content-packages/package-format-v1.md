@@ -142,7 +142,7 @@ keywords
 localization
 ```
 
-`deckFamily`, when present, is package-level metadata and must be exactly `general` or `specialized`. It is not inferred from display text, source paths, or lexical entries. Language-family menu association uses exact `relatedPackageIds`. For compatibility, an older installed record without these fields may receive an effective family and associations only from one exact matching current package metadata record: package ID and version must match, and content type must be compatible. This read-only reconciliation does not change the installed registry or stored identities. Records without an exact compatible match remain unclassified in the legacy `Specialized` branch.
+`deckFamily`, when present, is package-level metadata and must be exactly `general`, `specialized`, or `custom`. It is not inferred from display text, source paths, or lexical entries. Language-family menu association uses exact `relatedPackageIds`. For compatibility, an older installed record without these fields may receive an effective family and associations only from one exact matching current package metadata record: package ID and version must match, and content type must be compatible. This read-only reconciliation does not change the installed registry or stored identities. Records without an exact compatible match remain unclassified in the legacy `Specialized` branch.
 
 Known initial content types:
 

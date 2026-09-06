@@ -1,6 +1,6 @@
 import { compareDeckFrameworkVersions } from "./deck-framework";
 
-export const knownDeckFamilies = ["general", "specialized"] as const;
+export const knownDeckFamilies = ["general", "specialized", "custom"] as const;
 
 export type DeckFamily = (typeof knownDeckFamilies)[number];
 

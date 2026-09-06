@@ -1866,7 +1866,7 @@ function buildInstalledModulesTree(
   };
 }
 
-function languageSubmenuSkeleton(languages: LanguageTreeNode): LanguageTreeNode {
+export function languageSubmenuSkeleton(languages: LanguageTreeNode): LanguageTreeNode {
   const submenuOnly = (language: LanguageTreeNode): LanguageTreeNode => {
     if (isNonCurriculumLanguageCollection(language)) {
       return language;
@@ -1883,10 +1883,18 @@ function languageSubmenuSkeleton(languages: LanguageTreeNode): LanguageTreeNode 
         if (submenu.id.endsWith(":decks")) {
           return {
             ...submenu,
-            children: (submenu.children ?? []).map((deckType) => ({
-              ...deckType,
-              children: [pendingChild(deckType.id)]
-            }))
+            children: (submenu.children ?? []).map((deckType) => {
+              // Custom is a standard, learner-managed deck family. Installed
+              // Custom decks remain usable while authored curriculum families
+              // are temporarily replaced by the final-curriculum placeholders.
+              if (deckType.id.includes(":deck-family:custom") || deckType.id.endsWith(":decks:custom")) {
+                return deckType;
+              }
+              return {
+                ...deckType,
+                children: [pendingChild(deckType.id)]
+              };
+            })
           };
         }
         return { ...submenu, children: [pendingChild(submenu.id)] };
@@ -2364,13 +2372,15 @@ export function groupLanguageDeckBranches(
       ?? existingDecks?.children?.find((child) => child.label === translate(locale, "menu.general"));
     const specialized = children.find((child) => child.id.includes(":deck-family:specialized"))
       ?? existingDecks?.children?.find((child) => child.label === translate(locale, "menu.specialized"));
-    const custom = existingDecks?.children?.find((child) => child.label === translate(locale, "menu.custom"));
+    const custom = children.find((child) => child.id.includes(":deck-family:custom"))
+      ?? existingDecks?.children?.find((child) => child.label === translate(locale, "menu.custom"));
     const legacySpecialized = children.find((child) => child.id === `${languageId}:specialized`);
     const groupedIds = new Set([
       decksId,
       reading?.id,
       general?.id,
       specialized?.id,
+      custom?.id,
       legacySpecialized?.id
     ].filter((id): id is string => id !== undefined));
     const firstGroupedIndex = children.findIndex((child) => groupedIds.has(child.id));
@@ -2567,7 +2577,7 @@ async function addInstalledDeckFamilyBranches(
     const languagePackageId = languageNode.packageId ?? languageNode.moduleId;
     if (languagePackageId === undefined) continue;
 
-    const branches = await Promise.all((["general", "specialized"] as const).map((family) =>
+    const branches = await Promise.all((["general", "specialized", "custom"] as const).map((family) =>
       buildDeckFamilyBranch(languagePackageId, family, installed, dataDir, locale, progressItems)
     ));
     const familyBranchIds = new Set(branches.map((branch) => branch.id));
@@ -2586,8 +2596,8 @@ async function buildDeckFamilyBranch(
   locale: SourceLocale,
   progressItems: readonly ReviewItemState[]
 ): Promise<LanguageTreeNode> {
-  const label = family === "general" ? "General Decks" : "Specialized Decks";
-  const adjective = family === "general" ? "General" : "Specialized";
+  const label = family === "general" ? "General Decks" : family === "specialized" ? "Specialized Decks" : "Custom";
+  const adjective = family === "general" ? "General" : family === "specialized" ? "Specialized" : "Custom";
   const packages = packagesForLanguageAndDeckFamily(installed, languagePackageId, family);
   const projections = await Promise.all(packages.map(async (record) => {
     const reviewItems = await listReadingReviewItems({
@@ -2625,6 +2635,13 @@ async function buildDeckFamilyBranch(
       dueCardCount: statuses[sourceIndex]?.dueCardCount,
       reviewStatusText: statuses[sourceIndex]?.text
     }));
+    if (family === "custom" && sourceChildren.length === 1) {
+      return {
+        ...sourceChildren[0],
+        label: record.displayName,
+        packageLabel: record.displayName
+      };
+    }
     if (record.topic !== undefined) {
       const topicLabel = localized(record.topic.displayName, locale);
       const deckLabel = localized(record.topic.deckDisplayName, locale);

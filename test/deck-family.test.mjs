@@ -14,6 +14,7 @@ test("deck family filtering uses explicit metadata and exact language associatio
   const packages = [
     familyPackage("com.example.topic.animals.general", "Animals", "general", [languageOne]),
     familyPackage("com.example.topic.animals.specialized", "Animals", "specialized", [languageOne]),
+    familyPackage("local.user.decks.vietnamese-notes", "Personal Notes", "custom", [languageOne]),
     familyPackage("com.example.topic.shared.general", "Shared Topic", "general", [languageOne, languageTwo]),
     familyPackage("com.example.topic.general-in-id", "Specialized in title", undefined, [languageOne]),
     familyPackage("com.example.topic.other", "Animals", "general", [languageTwo])
@@ -26,6 +27,10 @@ test("deck family filtering uses explicit metadata and exact language associatio
   assert.deepEqual(
     packagesForLanguageAndDeckFamily(packages, languageOne, "specialized").map((entry) => entry.packageId),
     ["com.example.topic.animals.specialized"]
+  );
+  assert.deepEqual(
+    packagesForLanguageAndDeckFamily(packages, languageOne, "custom").map((entry) => entry.packageId),
+    ["local.user.decks.vietnamese-notes"]
   );
   assert.deepEqual(
     packagesForLanguageAndDeckFamily(packages, languageTwo, "general").map((entry) => entry.packageId),

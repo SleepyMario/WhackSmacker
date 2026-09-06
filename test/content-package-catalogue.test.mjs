@@ -21,7 +21,7 @@ test("content package catalogue JSON Schema parses as Draft 2020-12", async () =
 
   assert.equal(schema.$schema, "https://json-schema.org/draft/2020-12/schema");
   assert.equal(schema.properties.catalogueFormatVersion.const, contentPackageCatalogueFormatVersion);
-  assert.deepEqual(schema.properties.packages.items.properties.deckFamily.enum, ["general", "specialized"]);
+  assert.deepEqual(schema.properties.packages.items.properties.deckFamily.enum, ["general", "specialized", "custom"]);
 });
 
 test("example catalogue validates", async () => {
@@ -136,8 +136,10 @@ test("catalogue deck family metadata is optional and rejects unknown values", ()
   catalogue.packages[0].deckFamily = "general";
   catalogue.packages[1].deckFamily = "specialized";
   assertValid(catalogue);
+  catalogue.packages[0].deckFamily = "custom";
+  assertValid(catalogue);
   catalogue.packages[0].deckFamily = "optional";
-  assertInvalid(catalogue, /deckFamily must be general or specialized/);
+  assertInvalid(catalogue, /deckFamily must be general, specialized, or custom/);
 });
 
 test("catalogue topic metadata is explicit and never inferred from package titles or IDs", () => {

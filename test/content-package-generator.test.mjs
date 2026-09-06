@@ -51,12 +51,26 @@ test("content package generator exposes the supported local package targets", ()
       ["chinese-simplified-traditional-level-2-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-2-vocabulary"],
       ["chinese-simplified-traditional-level-3", "com.sleepymario.language.chinese-simplified-traditional.level-3"],
       ["chinese-simplified-traditional-level-3-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-3-vocabulary"],
+      ["vietnamese-custom-numbers-money-dates-time", "local.user.decks.vietnamese-numbers-money-dates-time"],
+      ["vietnamese-custom-pronunciation-tones", "local.user.decks.vietnamese-pronunciation-tones"],
+      ["vietnamese-custom-core-sentence-patterns", "local.user.decks.vietnamese-core-sentence-patterns"],
+      ["vietnamese-custom-people-pronouns-languages", "local.user.decks.vietnamese-people-pronouns-languages"],
+      ["vietnamese-custom-frequency-preference-comparison", "local.user.decks.vietnamese-frequency-preference-comparison"],
+      ["vietnamese-custom-daily-life-common-actions", "local.user.decks.vietnamese-daily-life-common-actions"],
+      ["vietnamese-custom-conversation-social-phrases", "local.user.decks.vietnamese-conversation-social-phrases"],
+      ["vietnamese-custom-food-drink-restaurants", "local.user.decks.vietnamese-food-drink-restaurants"],
+      ["vietnamese-custom-shopping-clothing", "local.user.decks.vietnamese-shopping-clothing"],
+      ["vietnamese-custom-classifiers-common-objects", "local.user.decks.vietnamese-classifiers-common-objects"],
+      ["vietnamese-custom-animals", "local.user.decks.vietnamese-animals"],
+      ["vietnamese-custom-descriptions-opposites", "local.user.decks.vietnamese-descriptions-opposites"],
+      ["vietnamese-custom-common-confusions", "local.user.decks.vietnamese-common-confusions"],
       ["dutch-general-animals-preview-001-100", "com.sleepymario.language.dutch.general.animals.preview-001-100"],
       ["dutch-specialized-medical-1", "com.sleepymario.language.dutch.specialized.medical-1"],
       ["chinese-traditional-specialized-medical-1", "com.sleepymario.language.chinese-traditional.specialized.medical-1"]
     ]
   );
-  assert.equal(contentPackageGeneratorTargets.filter((target) => !["chinese-simplified-traditional-level-1", "chinese-simplified-traditional-level-1-vocabulary", "chinese-simplified-traditional-level-2", "chinese-simplified-traditional-level-2-vocabulary", "chinese-simplified-traditional-level-3", "chinese-simplified-traditional-level-3-vocabulary"].includes(target.id)).every((target) => target.deckVersion === "0.0.1"), true);
+  assert.equal(contentPackageGeneratorTargets.filter((target) => !target.id.startsWith("chinese-simplified-traditional-") && !target.id.startsWith("vietnamese-custom-")).every((target) => target.deckVersion === "0.0.1"), true);
+  assert.equal(contentPackageGeneratorTargets.filter((target) => target.id.startsWith("vietnamese-custom-")).every((target) => target.deckVersion === "0.1.0"), true);
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1")?.deckVersion, "1.2.0");
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1-vocabulary")?.deckVersion, "1.0.0");
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-2")?.deckVersion, "1.0.0");
