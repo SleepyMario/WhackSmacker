@@ -136,6 +136,22 @@ export function getBuiltInFirstClassModules(): readonly FirstClassModuleDescript
       ]
     },
     {
+      moduleId: "com.sleepymario.language.chinese-traditional",
+      displayName: "Chinese (Traditional)",
+      category: "Languages",
+      version: "0.1.0",
+      sourceKind: "built-in-module",
+      description: "Reserved language entry for the rewritten Traditional Chinese curriculum. No chapters or review decks are installed yet. Installed General and Specialized decks remain available independently.",
+      actions: [
+        {
+          id: "status",
+          label: "Curriculum planned",
+          kind: "message",
+          previewText: "Chinese (Traditional)\n\nThe language entry is ready for the rewritten final curriculum. Installed General and Specialized decks remain available here."
+        }
+      ]
+    },
+    {
       moduleId: "com.sleepymario.language.classical-greek",
       displayName: "Greek (Classical)",
       category: "Languages",

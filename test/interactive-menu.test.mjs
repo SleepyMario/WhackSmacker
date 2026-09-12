@@ -649,6 +649,60 @@ test("Custom is a standard deck family and remains usable during a curriculum re
   assert.deepEqual(decks.children.find((node) => node.label === "Custom").children.map((node) => node.label), ["Food, Drink & Restaurants"]);
 });
 
+test("new General decks survive the curriculum reset without exposing archived decks", () => {
+  const old = { id: "old", label: "Old deck", kind: "review-source", packageId: "old.package" };
+  const current = { id: "colours", label: "Colours I", kind: "review-source", packageId: "new.package", itemCount: 60 };
+  const languages = { id: "languages", label: "Languages", kind: "category", children: [{
+    id: "vi", label: "Vietnamese", kind: "package", children: [{
+      id: "vi:decks", label: "Decks", kind: "category", children: [{
+        id: "vi:deck-family:general", label: "General", kind: "category", children: [old, current]
+      }]
+    }]
+  }] };
+  const archive = { id: "archive", label: "Language backup", kind: "category", children: [old] };
+  const result = languageSubmenuSkeleton(languages, archive);
+  assert.deepEqual(result.children[0].children[0].children[0].children, [current]);
+  assert.deepEqual(archive.children, [old]);
+});
+
+test("123Vietnamese Custom lessons stay grouped and ordered by Roman numeral", () => {
+  const titles = [
+    "Tên tôi là Peter",
+    "Tôi là giáo viên",
+    "Anh bao nhiêu tuổi?",
+    "Nhà của anh rất đẹp!",
+    "Cái này bao nhiêu tiền?",
+    "Bây giờ là mấy giờ?",
+    "Hôm nay là ngày bao nhiêu?",
+    "Anh đã có nhà riêng chưa?",
+    "Khi rỗi, chị thường làm gì?",
+    "Anh đi thẳng đường này"
+  ];
+  const projections = [10, 4, 9, 1, 6, 2, 8, 3, 7, 5].map((lesson) => {
+    const numeral = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"][lesson - 1];
+    return {
+      topicId: "123vietnamese",
+      topicLabel: "123Vietnamese",
+      leaf: { id: `lesson-${lesson}`, label: `Lesson ${numeral} - ${titles[lesson - 1]}`, kind: "review-source" }
+    };
+  });
+  const grouped = groupExplicitTopicMenuLeaves("com.sleepymario.language.vietnamese", "custom", projections);
+  assert.equal(grouped.length, 1);
+  assert.equal(grouped[0].label, "123Vietnamese");
+  assert.deepEqual(grouped[0].children.map((node) => node.label), [
+    "Lesson I - Tên tôi là Peter",
+    "Lesson II - Tôi là giáo viên",
+    "Lesson III - Anh bao nhiêu tuổi?",
+    "Lesson IV - Nhà của anh rất đẹp!",
+    "Lesson V - Cái này bao nhiêu tiền?",
+    "Lesson VI - Bây giờ là mấy giờ?",
+    "Lesson VII - Hôm nay là ngày bao nhiêu?",
+    "Lesson VIII - Anh đã có nhà riêng chưa?",
+    "Lesson IX - Khi rỗi, chị thường làm gì?",
+    "Lesson X - Anh đi thẳng đường này"
+  ]);
+});
+
 test("normal launch resolves the dedicated language backup directory", async () => {
   const xdgRoot = await mkdtemp(join(tmpdir(), "wsm-menu-default-data-"));
   const defaultDataDir = join(xdgRoot, "whacksmacker", "content");
@@ -699,6 +753,7 @@ test("first-class module descriptors include built-ins and installed language pa
     "com.sleepymario.language.chinese-classical",
     "com.sleepymario.language.chinese-simplified-traditional",
     "com.sleepymario.language.chinese-simplified",
+    "com.sleepymario.language.chinese-traditional",
     "com.sleepymario.language.classical-greek",
     "com.sleepymario.language.latin",
     "com.sleepymario.game.chess",
@@ -719,7 +774,7 @@ test("first-class module descriptors include built-ins and installed language pa
 test("language menu exposes the planned Chinese, Greek Classical, and Latin entries", async () => {
   const tree = await buildLanguageTree();
 
-  assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Greek (Classical)", "Latin"]);
+  assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Chinese (Traditional)", "Greek (Classical)", "Latin"]);
   const conversion = tree.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
   assert.deepEqual(conversion.children.map((node) => node.label), ["Level I"]);
   assert.match(conversion.children[0].previewText, /1,255 mappings/u);

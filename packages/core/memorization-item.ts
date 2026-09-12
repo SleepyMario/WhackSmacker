@@ -572,7 +572,7 @@ export function memorizationOutputsFromAnswer(answer: MemorizationContentBlock):
     return {
       id,
       label,
-      content: { ...answer, text, plainText: text }
+      content: { ...answer, text, plainText: markdownWithImagePlaceholders(text) }
     } satisfies MemorizationItemOutput;
   });
   if (structured.length === parts.length && structured.every((part) => part !== undefined)) {

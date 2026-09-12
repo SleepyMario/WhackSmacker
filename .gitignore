@@ -24,3 +24,6 @@ beginner-mathematics-volume-one.pdf
 .env
 .env.*
 !.env.production.example
+
+# Local authored-content installation and learner state
+.local-content/

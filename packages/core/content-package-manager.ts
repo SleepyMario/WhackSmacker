@@ -93,8 +93,10 @@ const { access, chmod, mkdir, readFile, rename, rm, stat, writeFile } = require(
 const { dirname, join, relative, resolve } = require("node:path");
 
 export const installedPackageRegistryFormatVersion = 1;
-export const maxPackageArchiveSizeBytes = 100 * 1024 * 1024;
-export const maxPackageUncompressedSizeBytes = 100 * 1024 * 1024;
+// Shared illustrations can make complete language decks larger than 100 MiB.
+// Retain finite archive and extraction limits for untrusted packages.
+export const maxPackageArchiveSizeBytes = 512 * 1024 * 1024;
+export const maxPackageUncompressedSizeBytes = 512 * 1024 * 1024;
 export const maxPackageArchiveFileCount = 10000;
 
 export interface InstalledPackageRegistry {

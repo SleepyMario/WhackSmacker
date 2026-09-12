@@ -14,7 +14,7 @@ const ids = Array.from({ length: 30 }, (_, index) => `CAST-${String(index + 1).p
 const record = (chapter, personIds, extra = {}) => ({ chapter, authorship: "new", migrationStatus: "compliant", participatingPersonIds: personIds, meaningfulPersonIds: personIds, ...extra });
 
 test("active pool expands by three only after each twenty-chapter block and caps permanently at thirty", () => {
-  const boundaries = [[1, 5], [20, 5], [21, 8], [40, 8], [41, 11], [60, 11], [61, 14], [80, 14], [81, 17], [100, 17], [101, 20], [120, 20], [121, 23], [140, 23], [141, 26], [160, 26], [161, 29], [180, 29], [181, 30], [200, 30], [201, 30], [999, 30]];
+  const boundaries = [[1, 3], [10, 3], [11, 5], [20, 5], [21, 8], [40, 8], [41, 11], [60, 11], [61, 14], [80, 14], [81, 17], [100, 17], [101, 20], [120, 20], [121, 23], [140, 23], [141, 26], [160, 26], [161, 29], [180, 29], [181, 30], [200, 30], [201, 30], [999, 30]];
   for (const [chapter, size] of boundaries) {
     assert.equal(activeCastSizeForChapter(chapter), size);
     assert.deepEqual(activePersonIdsForChapter(chapter, ids), ids.slice(0, size));
@@ -46,31 +46,33 @@ test("reviews reuse source-chapter people and cannot independently activate late
 });
 
 test("appearance audit tracks IDs, warns on severe imbalance, and keeps recurring relationships valid", () => {
-  const sets = [
-    [ids[0], ids[1], ids[2], ids[3], ids[4]],
-    [ids[0], ids[1], ids[2], ids[3]],
-    [ids[0], ids[1], ids[2], ids[4]],
-    [ids[0], ids[1], ids[3], ids[4]],
-    [ids[0], ids[2], ids[3], ids[4]],
-    [ids[0], ids[1], ids[2], ids[3], ids[4]],
-    [ids[0]], [ids[0]], [ids[0]], [ids[0]],
-    [], [ids[0]], [ids[0]], [ids[0]], [ids[0]],
-    [], [ids[0]], [ids[0]], [ids[0]], [ids[0]]
-  ];
+  const sets = Array.from({ length: 20 }, (_, i) => {
+    if (i < 5) return ids.slice(0, 3);
+    if (i === 10 || i === 15) return [];
+    if (i >= 11 && i <= 15 || i === 16) return [ids[0], ids[3], ids[4]];
+    return [ids[0]];
+  });
+  sets[4] = [ids[1], ids[2]];
+  sets[5] = [ids[0]];
+  sets[9] = [ids[0], ids[1]];
+  sets[10] = [ids[0], ids[3], ids[4]];
+  sets[16] = [ids[0]];
+  sets[11] = [ids[3], ids[4]];
   const chapters = sets.map((personIds, index) => record(index + 1, personIds, { recurringRelationship: "recurring classmates" }));
   const audit = auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters });
   assert.equal(audit.appearancesByChapter[1][ids[0]], 1);
-  assert.equal(audit.cumulativeAppearances[ids[0]], 18);
-  assert.equal(audit.blocks[0].appearancesByPersonId[ids[1]], 5);
+  assert.equal(audit.cumulativeAppearances[ids[0]], 17);
+  assert.equal(audit.blocks[0].appearancesByPersonId[ids[1]], 6);
   assert.match(audit.warnings[0], /severe active-cast appearance imbalance/u);
-  assert.deepEqual(leastUsedSuitableActivePersonIds({ chapter: 1, progression: ids, cumulativeAppearances: audit.cumulativeAppearances, count: 2 }), [ids[1], ids[2]]);
+  assert.deepEqual(leastUsedSuitableActivePersonIds({ chapter: 1, progression: ids, cumulativeAppearances: audit.cumulativeAppearances, count: 2 }), [ids[2], ids[1]]);
 });
 
 test("completed blocks require five distinct meaningful chapters for every newly activated person", () => {
   const firstSets = [
-    [ids[0], ids[1]], [ids[1], ids[2]], [ids[2], ids[3]], [ids[3], ids[4]], [ids[4], ids[0]],
-    [ids[0], ids[1], ids[2]], [ids[3], ids[4]], [ids[0], ids[3]], [ids[1], ids[4]], [ids[2]],
-    ids.slice(0, 5), [], [], [], [], [], [], [], [], []
+    [ids[0], ids[1]], [ids[1], ids[2]], [ids[0], ids[2]], [ids[0], ids[1]], [ids[1], ids[2]],
+    [ids[0], ids[2]], [ids[0], ids[1]], [ids[1], ids[2]], [ids[0], ids[2]], [],
+    [ids[3], ids[4]], [ids[0], ids[3], ids[4]], [ids[1], ids[3], ids[4]], [ids[2], ids[3], ids[4]], [ids[3], ids[4]],
+    [], [], [], [], []
   ];
   const first = firstSets.map((personIds, index) => record(index + 1, personIds));
   assert.equal(auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: first }).blocks[0].coverageStatus, "complete");
@@ -86,7 +88,7 @@ test("completed blocks require five distinct meaningful chapters for every newly
 });
 
 test("incomplete blocks are pending and metadata or review references do not satisfy coverage", () => {
-  const audit = auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(1, [], { participatingPersonIds: ids.slice(0, 5), dialogueSpeakerIds: ids.slice(0, 5) })] });
+  const audit = auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(1, [], { participatingPersonIds: ids.slice(0, 3), dialogueSpeakerIds: ids.slice(0, 3) })] });
   assert.equal(audit.blocks[0].coverageStatus, "pending");
   assert.deepEqual(audit.blocks[0].missingNewPersonIds, ids.slice(0, 5));
   assert.equal(audit.blocks[0].activationPeople[0].remainingCount, 5);
@@ -105,9 +107,9 @@ test("completed five-chapter blocks reject one repeated canonical participant se
   const varied = [
     record(1, [ids[0], ids[1]]),
     record(2, []),
-    record(3, [ids[2], ids[3]]),
-    record(4, [ids[0], ids[4]]),
-    record(5, [ids[2], ids[3]])
+    record(3, [ids[1], ids[2]]),
+    record(4, [ids[0], ids[2]]),
+    record(5, [ids[1], ids[2]])
   ];
   assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: varied }));
 });
@@ -122,10 +124,9 @@ test("newly activated people must appear before the final quarter of their activ
   );
 
   const onTrackSets = [
-    [ids[0], ids[1]], [], [ids[2], ids[3]], [ids[0], ids[4]], [ids[2], ids[3]],
-    [ids[2]], [ids[4]], [ids[1]], [ids[3], ids[4]], [ids[0], ids[1]],
-    [ids[2], ids[4]], [ids[0], ids[2]], [ids[2], ids[3]], [ids[1], ids[4]], [ids[0], ids[2], ids[3]]
-  ];
+    [ids[0], ids[1]], [], [ids[1], ids[2]], [ids[0], ids[2]], [ids[2]],
+    [ids[2]], [], [ids[1]], [ids[0], ids[2]], [ids[0], ids[1]],
+    [ids[2], ids[4]], [ids[0], ids[2]], [ids[2], ids[3]], [ids[1], ids[4]], [ids[0], ids[2], ids[3]]];
   const onTrack = onTrackSets.map((personIds, index) => record(index + 1, personIds));
   assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: onTrack }));
 });
@@ -156,4 +157,13 @@ test("no legacy or preview status can permit an inactive canonical person", () =
     /pre-activation canonical appearances are prohibited/u
   );
   assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [{ chapter: 1, authorship: "new", migrationStatus: "pending-legacy-migration", participatingPersonIds: [ids[10]] }] }), /newly authored content cannot be marked/u);
+});
+
+test("fourth and fifth people activate at eleven, including report dates", () => {
+  for (const id of ids.slice(3, 5)) {
+    assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(10, [id])] }), /inactive canonical person/u);
+    assert.doesNotThrow(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(11, [id])] }));
+  }
+  const report = activeCastBlockReport({ chapterStart: 1, progression: ids, appearancesByChapter: {}, suppliedChapters: new Set() });
+  assert.deepEqual(report.activationPeople.map(p => p.activationChapter), [1, 1, 1, 11, 11]);
 });

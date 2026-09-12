@@ -1,5 +1,6 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
 import { dirname, join } from "node:path";
+import { readFileSync } from "node:fs";
 import {
   displayLabelForModulePackage,
   formatFirstClassModuleInfo,
@@ -222,6 +223,9 @@ export interface LanguageTreeNode {
   readonly dueCardCount?: number;
   readonly reviewStatusText?: string;
   readonly previewText?: string;
+  readonly previewArtworkPath?: string;
+  readonly authoredReadingDirectory?: string;
+  readonly authoredGrammarPaths?: readonly [string, string];
   readonly commandPath?: readonly string[];
   readonly commandArgs?: readonly string[];
   readonly launchTitle?: string;
@@ -1051,7 +1055,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     const toggleCount = charactersApplicable ? 8 : 7;
     toggleSelection = Math.min(toggleSelection, toggleCount - 1);
     renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
-    const artworkSync = await artworkManager.sync(embeddedReview, rightPaneText);
+    const artworkSync: EmbeddedReviewArtworkSyncResult = embeddedReview === null
+      ? await artworkManager.syncPreview(selectedNode, rightPaneText, rightPaneOffset)
+      : await artworkManager.sync(embeddedReview, rightPaneText);
     const currentEmbeddedReview = embeddedReview as EmbeddedReviewSession | null;
     const promptArtworkRendered = currentEmbeddedReview?.side === "prompt"
       ? artworkSync.rendered
@@ -1067,6 +1073,21 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       embeddedReview = { ...currentEmbeddedReview, promptArtworkRendered, answerArtworkRendered, artworkNotice: artworkSync.notice };
       rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
       renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
+      // Updating the fallback state redraws the entire terminal after the first
+      // successful placement. Re-place the image above that final frame;
+      // otherwise Kitty's freshly drawn terminal cells can cover the image.
+      if (artworkSync.rendered) {
+        const redrawSync = await artworkManager.redraw(embeddedReview, rightPaneText);
+        if (!redrawSync.rendered) {
+          embeddedReview = {
+            ...embeddedReview,
+            ...(embeddedReview.side === "prompt" ? { promptArtworkRendered: false } : { answerArtworkRendered: false }),
+            artworkNotice: redrawSync.notice
+          };
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+          renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
+        }
+      }
     }
     if (firstFrame) {
       firstFrame = false;
@@ -1446,7 +1467,8 @@ function nextCurriculumDisplayMode(mode: CurriculumDisplayMode): CurriculumDispl
 }
 
 function charactersToggleAppliesToNode(node: LanguageTreeNode): boolean {
-  return node.packageId === "com.sleepymario.language.vietnamese";
+  return node.packageId === "com.sleepymario.language.vietnamese"
+    || node.packageId === "com.sleepymario.language.korean";
 }
 
 async function persistInteractiveSourceLocale(options: InteractiveMenuOptions, locale: SourceLocale): Promise<InteractiveMenuOptions> {
@@ -1495,7 +1517,7 @@ export async function buildModuleTree(options: InteractiveMenuOptions | string |
     label: "WhackSmacker",
     kind: "root",
     children: [
-      buildInstalledModulesTree(descriptors, languageSubmenuSkeleton(fullLanguageTree), locale),
+      buildInstalledModulesTree(descriptors, languageSubmenuSkeleton(fullLanguageTree, backupDataDir === resolvedOptions.dataDir ? undefined : backupLanguageTree), locale),
       buildAvailableModulesTree(availableDescriptors, resolvedOptions.cataloguePath, locale),
       buildLanguageBackupTree(backupLanguageTree, locale)
     ]
@@ -1866,7 +1888,35 @@ function buildInstalledModulesTree(
   };
 }
 
-export function languageSubmenuSkeleton(languages: LanguageTreeNode): LanguageTreeNode {
+export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLanguages?: LanguageTreeNode): LanguageTreeNode {
+  const restoredMedicalPackages = new Set([
+    "com.sleepymario.language.chinese-traditional.specialized.medical-tmp",
+    "com.sleepymario.language.chinese-traditional.specialized.economics-tmp",
+    "com.sleepymario.language.dutch.specialized.medical-1",
+    "com.sleepymario.language.chinese-traditional.specialized.medical-1"
+  ]);
+  const keepMedicalDecks = (node: LanguageTreeNode): LanguageTreeNode | undefined => {
+    if (node.kind === "review-source") {
+      return node.packageId !== undefined && restoredMedicalPackages.has(node.packageId) ? node : undefined;
+    }
+    const children = (node.children ?? []).map(keepMedicalDecks)
+      .filter((child): child is LanguageTreeNode => child !== undefined);
+    return children.length === 0 ? undefined : { ...node, children };
+  };
+  const archivedPackageIds = new Set<string>();
+  const collectArchived = (node: LanguageTreeNode): void => {
+    if (node.packageId !== undefined) archivedPackageIds.add(node.packageId);
+    node.children?.forEach(collectArchived);
+  };
+  if (archivedLanguages !== undefined) collectArchived(archivedLanguages);
+  const keepNewGeneralDecks = (node: LanguageTreeNode): LanguageTreeNode | undefined => {
+    if (node.kind === "review-source") {
+      return node.packageId !== undefined && archivedPackageIds.has(node.packageId) ? undefined : node;
+    }
+    const children = (node.children ?? []).map(keepNewGeneralDecks)
+      .filter((child): child is LanguageTreeNode => child !== undefined);
+    return children.length === 0 ? undefined : { ...node, children };
+  };
   const submenuOnly = (language: LanguageTreeNode): LanguageTreeNode => {
     if (isNonCurriculumLanguageCollection(language)) {
       return language;
@@ -1880,15 +1930,116 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode): LanguageTr
           kind: "message",
           previewText: "This submenu is ready for the rewritten final curriculum. The previous material remains available under Language backup."
         });
+        if (language.packageId === "com.sleepymario.language.japanese" && submenu.kind === "read-section") {
+          return {
+            ...submenu,
+            children: [
+              { id: `${submenu.id}:full-cast`, label: "Full Cast", kind: "category" as const,
+                children: [
+                  { id: `${submenu.id}:full-cast:aki`, label: "Aki Satō — 佐藤あき", kind: "message" as const,
+                    previewArtworkPath: join(__dirname, "content/media/cast-introduction-i.png"),
+                    previewText: readFileSync(join(__dirname, "content/japanese-cast-aki.md"), "utf8") },
+                  { id: `${submenu.id}:full-cast:ren`, label: "Ren Takahashi — 高橋蓮", kind: "message" as const,
+                    previewArtworkPath: join(__dirname, "content/media/cast-introduction-i.png"),
+                    previewText: readFileSync(join(__dirname, "content/japanese-cast-ren.md"), "utf8") },
+                  { id: `${submenu.id}:full-cast:yuki`, label: "Yuki Nakamura — 中村ゆき", kind: "message" as const,
+                    previewArtworkPath: join(__dirname, "content/media/cast-introduction-i.png"),
+                    previewText: readFileSync(join(__dirname, "content/japanese-cast-yuki.md"), "utf8") },
+                  { id: `${submenu.id}:full-cast:misaki`, label: "Misaki Itō — 伊藤美咲", kind: "message" as const,
+                    previewArtworkPath: join(__dirname, "content/media/cast-introduction-ii.png"),
+                    previewText: readFileSync(join(__dirname, "content/japanese-cast-introduction-ii.md"), "utf8") }
+                ] },
+              { id: `${submenu.id}:hiragana`, label: "Hiragana", kind: "message" as const, previewText: "" },
+              { id: `${submenu.id}:katakana`, label: "Katakana", kind: "message" as const, previewText: "" },
+              { id: `${submenu.id}:introduction-to-kanji`, label: "Introduction to Kanji", kind: "message" as const, previewText: "" },
+              { id: `${submenu.id}:cast-introduction-i`, label: "Meet Aki, Ren and Yuki", kind: "message" as const,
+                previewArtworkPath: join(__dirname, "content/media/cast-introduction-i.png"),
+                previewText: readFileSync(join(__dirname, "content/japanese-cast-introduction-i.md"), "utf8") },
+              { id: `${submenu.id}:chapter-001`, label: "Chapter I — A First Meeting", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-001"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-001/media/scene.png") },
+              { id: `${submenu.id}:chapter-002`, label: "Chapter II — Aki’s Introduction", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-002"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-002/media/scene.png") },
+              { id: `${submenu.id}:chapter-003`, label: "Chapter III — Checking Study Supplies", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-003"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-003/media/scene.png") },
+              { id: `${submenu.id}:chapter-004`, label: "Chapter IV — Ren’s Study Materials", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-004"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-004/media/scene.png") },
+              { id: `${submenu.id}:chapter-005`, label: "Chapter V — At the Café", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-005"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-005/media/scene.png") },
+              { id: `${submenu.id}:grammar-001-005`, label: "Grammar I - V", kind: "message" as const,
+                authoredGrammarPaths: [join(__dirname, "content/japanese/grammar-001-005-easy.md"), join(__dirname, "content/japanese/grammar-001-005-hard.md")] as const },
+              { id: `${submenu.id}:chapter-006`, label: "Chapter VI — Meeting Misaki", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-006"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-006/media/scene.png") },
+              { id: `${submenu.id}:chapter-007`, label: "Chapter VII — Misaki’s Pottery", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-007"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-007/media/scene.png") }
+            ]
+          };
+        }
+        if ((language.packageId === "com.sleepymario.language.korean" || language.moduleId === "com.sleepymario.language.korean") && submenu.kind === "read-section") {
+          return { ...submenu, children: [
+            { id: `${submenu.id}:hangul`, label: "한글", kind: "message" as const, previewText: "" },
+            { id: `${submenu.id}:cast-introduction-i`, label: "Meet Minji, Seoyeon and Junho", kind: "message" as const,
+              previewArtworkPath: join(__dirname, "content/media/korean-cast-introduction-i.png"),
+              previewText: readFileSync(join(__dirname, "content/korean-cast-introduction-i.md"), "utf8") },
+            { id: `${submenu.id}:chapter-001`, label: "Chapter I — A First Meeting", kind: "message" as const,
+              packageId: "com.sleepymario.language.korean",
+              authoredReadingDirectory: join(__dirname, "content/korean/chapter-001"),
+              previewArtworkPath: join(__dirname, "content/korean/chapter-001/media/scene.png") },
+            { id: `${submenu.id}:chapter-002`, label: "Chapter II — Seoyeon’s Introduction", kind: "message" as const,
+              packageId: "com.sleepymario.language.korean",
+              authoredReadingDirectory: join(__dirname, "content/korean/chapter-002"),
+              previewArtworkPath: join(__dirname, "content/korean/chapter-002/media/scene.png") }
+          ] };
+        }
+        if ((language.packageId === "com.sleepymario.language.vietnamese" || language.moduleId === "com.sleepymario.language.vietnamese") && submenu.kind === "read-section") {
+          return { ...submenu, children: [
+            ...["Consonants", "Vowels", "Tones"].map(label => ({ id: `${submenu.id}:${label.toLowerCase()}`, label, kind: "message" as const, previewText: "" })),
+            { id: `${submenu.id}:cast-introduction-i`, label: "Meet Maria, Minh Anh and Thu Hà", kind: "message" as const,
+              previewArtworkPath: join(__dirname, "content/media/vietnamese-cast-introduction-i.png"),
+              previewText: readFileSync(join(__dirname, "content/vietnamese-cast-introduction-i.md"), "utf8") },
+            { id: `${submenu.id}:chapter-001`, label: "Chapter I — A First Meeting", kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-001"),
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-001/media/scene.png") },
+            { id: `${submenu.id}:chapter-002`, label: "Chapter II — Maria’s Introduction", kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-002"),
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-002/media/scene.png") }
+          ] };
+        }
         if (submenu.id.endsWith(":decks")) {
           return {
             ...submenu,
             children: (submenu.children ?? []).map((deckType) => {
+              if ((language.packageId === "com.sleepymario.language.japanese" || language.moduleId === "com.sleepymario.language.japanese") && deckType.kind === "review-section") {
+                return { ...deckType, children: [{
+                  id: `${deckType.id}:chapter-001-005`, label: "Chapter I - V", kind: "review-source" as const,
+                  packageId: "com.sleepymario.language.japanese", packageVersion: "0.1.0",
+                  packageLabel: "Japanese", sourcePath: "review-decks/chapter-001-005/cards.tsv", itemCount: 102,
+                  contentDataDir: join(__dirname, "../../../.local-content/japanese-reviews")
+                }] };
+              }
               // Custom is a standard, learner-managed deck family. Installed
               // Custom decks remain usable while authored curriculum families
               // are temporarily replaced by the final-curriculum placeholders.
               if (deckType.id.includes(":deck-family:custom") || deckType.id.endsWith(":decks:custom")) {
                 return deckType;
+              }
+              // The two approved Medical I packages remain usable during the reset.
+              if (deckType.id.includes(":deck-family:specialized") || deckType.id.endsWith(":decks:specialized")) {
+                const restored = keepMedicalDecks(deckType);
+                if (restored !== undefined) return restored;
+              }
+              // Newly installed General decks are live content, not the archived curriculum.
+              if (deckType.id.includes(":deck-family:general") || deckType.id.endsWith(":decks:general")) {
+                const current = keepNewGeneralDecks(deckType);
+                if (current !== undefined) return current;
               }
               return {
                 ...deckType,
@@ -2208,8 +2359,8 @@ async function buildLanguageTreeFromDescriptors(
     });
   }
 
-  await addInstalledSpecializedReviewBranches(packageNodes, dataDir, locale, installed);
   packageNodes.push(...builtInLanguageNodes);
+  await addInstalledSpecializedReviewBranches(packageNodes, dataDir, locale, installed);
   await addInstalledChineseScriptConversionDecks(packageNodes, dataDir, locale, progressItems, installed);
   await addInstalledDeckFamilyBranches(packageNodes, dataDir, locale, progressItems, installed);
   addLanguageExercisesBranches(packageNodes, locale);
@@ -2455,7 +2606,7 @@ async function addInstalledSpecializedReviewBranches(
   for (const definition of specializedReviewPackageDefinitions) {
     const record = newestInstalledPackage(installed.filter((candidate) => candidate.packageId === definition.packageId));
     if (record === undefined) continue;
-    const ordinaryIndex = packageNodes.findIndex((node) => node.packageId === definition.languagePackageId);
+    const ordinaryIndex = packageNodes.findIndex((node) => (node.packageId ?? node.moduleId) === definition.languagePackageId);
     if (record.deckFamily !== undefined) {
       if (ordinaryIndex < 0) packageNodes.push(emptyClassifiedLanguagePackageNode(definition, record, locale));
       packageNodes.sort((left, right) => left.label.localeCompare(right.label));
@@ -2635,13 +2786,6 @@ async function buildDeckFamilyBranch(
       dueCardCount: statuses[sourceIndex]?.dueCardCount,
       reviewStatusText: statuses[sourceIndex]?.text
     }));
-    if (family === "custom" && sourceChildren.length === 1) {
-      return {
-        ...sourceChildren[0],
-        label: record.displayName,
-        packageLabel: record.displayName
-      };
-    }
     if (record.topic !== undefined) {
       const topicLabel = localized(record.topic.displayName, locale);
       const deckLabel = localized(record.topic.deckDisplayName, locale);
@@ -2665,6 +2809,13 @@ async function buildDeckFamilyBranch(
           label: deckLabel,
           packageLabel: topicLabel
         }
+      };
+    }
+    if ((family === "custom" || family === "general") && sourceChildren.length === 1) {
+      return {
+        ...sourceChildren[0],
+        label: record.displayName,
+        packageLabel: record.displayName
       };
     }
     return {
@@ -2701,7 +2852,12 @@ async function buildDeckFamilyBranch(
     }
     topicProjections.push(projection);
   }
-  packageChildren.push(...groupExplicitTopicMenuLeaves(languagePackageId, family, topicProjections));
+  const groupedTopicChildren = groupExplicitTopicMenuLeaves(languagePackageId, family, topicProjections);
+  if (family === "custom") {
+    packageChildren.unshift(...groupedTopicChildren);
+  } else {
+    packageChildren.push(...groupedTopicChildren);
+  }
   const emptyState = `No ${adjective} decks are available for this language.`;
   return {
     id: `${languagePackageId}:deck-family:${family}`,
@@ -2748,13 +2904,32 @@ export function groupExplicitTopicMenuLeaves(
     }
     current.leaves.push(projection.leaf);
   }
-  return [...topicGroups.entries()].sort((left, right) => left[1].label.localeCompare(right[1].label) || left[0].localeCompare(right[0])).map(([topicId, topic]) => ({
+  return [...topicGroups.entries()].sort((left, right) => left[1].label.localeCompare(right[1].label) || left[0].localeCompare(right[0])).map(([topicId, topic]) => {
+    const leaves = topic.leaves.sort(compareExplicitTopicLeafLabels);
+    if (leaves.length === 1 && leaves[0]?.label === topic.label) return leaves[0];
+    return {
       id: `${languagePackageId}:deck-family:${family}:topic:${topicId}`,
       label: topic.label,
       kind: "category",
       previewText: `${topic.label}\n\nInstalled topic decks explicitly assigned to this category and deck family.`,
-      children: topic.leaves.sort((left, right) => left.label.localeCompare(right.label) || left.id.localeCompare(right.id))
-    }));
+      children: leaves
+    };
+  });
+}
+
+function compareExplicitTopicLeafLabels(left: LanguageTreeNode, right: LanguageTreeNode): number {
+  const leftLesson = numberedLessonLabel(left.label);
+  const rightLesson = numberedLessonLabel(right.label);
+  if (leftLesson !== undefined && rightLesson !== undefined) {
+    return leftLesson - rightLesson || left.id.localeCompare(right.id);
+  }
+  return left.label.localeCompare(right.label) || left.id.localeCompare(right.id);
+}
+
+function numberedLessonLabel(label: string): number | undefined {
+  const match = label.match(/^Lesson (I|II|III|IV|V|VI|VII|VIII|IX|X)(?: - .+)?$/u);
+  if (match === null) return undefined;
+  return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"].indexOf(match[1]) + 1;
 }
 
 function newestInstalledPackage(records: readonly InstalledPackageRecord[]): InstalledPackageRecord | undefined {
@@ -3059,6 +3234,36 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     return `${translate(locale, "menu.reviewDecks")}\n\n${translate(locale, "pane.reviewDecksHelp")}`;
   }
   if (node.kind === "message") {
+    if (node.authoredGrammarPaths !== undefined) {
+      const mode = options.displayMode ?? defaultCurriculumDisplayMode;
+      const [easyPath, hardPath] = node.authoredGrammarPaths;
+      const easy = readFileSync(easyPath, "utf8");
+      if (mode === "normal") return projectCurriculumMarkdown(easy, "normal", { contentRole: "grammar-easy" });
+      const hard = readFileSync(hardPath, "utf8");
+      if (mode === "expert") return projectCurriculumMarkdown(hard, "expert", { contentRole: "grammar-hard" });
+      return combineDeveloperGrammarMarkdown(easy, hard);
+    }
+    if (node.authoredReadingDirectory !== undefined) {
+      const directory = node.authoredReadingDirectory;
+      let markdown = readFileSync(join(directory, "chapter.md"), "utf8");
+      const support = parseReadingSupport(readFileSync(join(directory, "reading-support.json"), "utf8"));
+      if (support !== undefined) markdown = applyReadingSupport(markdown, support, options);
+      if (options.translationsEnabled === true) {
+        const translation = parseStructuredReadingTranslation(readFileSync(join(directory, "reading-translation.en.json"), "utf8"));
+        if (translation !== undefined) markdown = insertStructuredReadingTranslation(markdown, translation);
+      }
+      const projected = projectCurriculumMarkdown(markdown, options.displayMode ?? defaultCurriculumDisplayMode, {
+        contentRole: "reading", translationsEnabled: options.translationsEnabled === true,
+        notesEnabled: options.notesEnabled !== false
+      });
+      if (node.previewArtworkPath !== undefined) {
+        return projected.replace(/!\[[^\]]*\]\(media\/scene\.png\)/u, reviewArtworkRegionMarker);
+      }
+      return projected;
+    }
+    if (node.previewArtworkPath !== undefined) {
+      return `${node.label}\n\n${reviewArtworkRegionMarker}\n\n${(node.previewText ?? "").replace(/^# .*\n+/u, "")}`;
+    }
     return node.previewText ?? node.label;
   }
   if (node.kind === "available-module") {
@@ -3241,7 +3446,7 @@ function insertAfterNamedSection(markdown: string, title: string, addition: stri
 
 function insertBeforeExercises(markdown: string, addition: string): string {
   const lines = markdown.replace(/\r\n?/gu, "\n").split("\n");
-  const index = lines.findIndex((line) => /^##\s+Simple Exercises\s*$/iu.test(line.trim()));
+  const index = lines.findIndex((line) => /^#{2,6}\s+(?:Simple Exercises|Written Exercise)\s*$/iu.test(line.trim()));
   const at = index < 0 ? lines.length : index;
   return [...lines.slice(0, at), "", ...addition.split("\n"), "", ...lines.slice(at)].join("\n");
 }
@@ -3529,14 +3734,21 @@ async function renderEmbeddedReviewAnswer(session: EmbeddedReviewSession, option
     answer: true,
     sourceLocale: options.locale
   });
-  const artwork = await resolveEmbeddedReviewArtwork(session, current, "answer", options);
+  const answerArtwork = await resolveEmbeddedReviewArtwork(session, current, "answer", options);
+  // Ordinary illustrated vocabulary cards may intentionally have artwork on
+  // the prompt only. Revealing their text answer must retain that prompt image
+  // and the reserved region instead of clearing it merely because the answer
+  // has no second image.
+  const retainPromptArtwork = answerArtwork.value === undefined
+    && !answerArtwork.failed
+    && session.artwork !== undefined;
   return {
     ...session,
     side: "answer",
     answerRendered: answer.rendered,
-    artwork: artwork.value,
-    answerArtworkRendered: false,
-    artworkResolutionFailed: artwork.failed,
+    artwork: answerArtwork.value ?? (retainPromptArtwork ? session.artwork : undefined),
+    answerArtworkRendered: retainPromptArtwork ? session.promptArtworkRendered : false,
+    artworkResolutionFailed: answerArtwork.failed,
     artworkNotice: undefined,
     message: undefined
   };
@@ -3601,10 +3813,15 @@ export function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colo
       session.answerArtworkRendered === true
     )];
   const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled, locale);
+  const currentItem = session.developerItems?.find(candidate => candidate.item.id === session.items[session.index]?.itemId)?.item;
+  const artworkBelowAnswer = session.side === "answer"
+    && currentItem?.tags?.includes("medical") === true
+    && currentItem.prompt.language !== currentItem.language?.base;
   return [
     ...header,
-    ...(session.artwork === undefined ? [] : [reviewArtworkRegionMarker]),
+    ...(session.artwork === undefined || artworkBelowAnswer ? [] : [reviewArtworkRegionMarker]),
     cards.join("\n\n"),
+    ...(session.artwork !== undefined && artworkBelowAnswer ? [reviewArtworkRegionMarker] : []),
     ...(displayMode === "developer" ? developerReviewMetadataLines(session) : []),
     session.message === undefined ? "" : `\n${session.message}`,
     session.artworkNotice === undefined ? "" : `\n${session.artworkNotice}`,
@@ -3693,7 +3910,9 @@ function deduplicateEquivalentStructuredOutputs(lines: readonly string[]): reado
 }
 
 function withoutArtworkPlaceholderLines(lines: readonly string[]): readonly string[] {
-  const filtered = lines.filter((line) => !/^\[Image: [^\]\r\n]+\]$/u.test(line.trim()));
+  const filtered = lines
+    .map((line) => line.replace(/\[Image: [^\]\r\n]+\]/gu, "").trimEnd())
+    .filter((line) => line.trim().length > 0 && !/^\s*Artwork:\s*$/u.test(line));
   return filtered.length === 0 ? [""] : filtered;
 }
 
@@ -5214,6 +5433,22 @@ export class EmbeddedReviewArtworkManager {
   private reviewNodeId: string | undefined;
   private placementKey: string | undefined;
   private configuredBackend: TerminalArtworkBackend;
+  private previewArtwork: ResolvedReadingReviewArtwork | undefined;
+
+  async syncPreview(node: LanguageTreeNode, text: string, scrollOffset = 0): Promise<EmbeddedReviewArtworkSyncResult> {
+    if (node.previewArtworkPath === undefined || scrollOffset !== 0) return this.sync(null, text);
+    try {
+      if (this.previewArtwork?.assetPath !== node.previewArtworkPath) {
+        this.previewArtwork = { assetPath: node.previewArtworkPath, assetData: readFileSync(node.previewArtworkPath), mediaType: "image/png", altText: node.label };
+      }
+      // A newly painted text frame can cover terminal-protocol images.
+      this.placementKey = undefined;
+      return this.sync({ nodeId: node.id, side: "prompt", items: [], index: 0, artwork: this.previewArtwork }, text);
+    } catch {
+      await this.shutdown();
+      return { rendered: false, notice: "Artwork rendering is unavailable for this terminal." };
+    }
+  }
 
   constructor(private readonly terminal: Terminal, private readonly options: InteractiveMenuOptions) {
     this.configuredBackend = options.terminalArtworkBackend ?? "auto";
@@ -5225,7 +5460,7 @@ export class EmbeddedReviewArtworkManager {
     this.configuredBackend = configuredBackend;
   }
 
-  async sync(session: EmbeddedReviewSession | null, rightPaneText: string): Promise<EmbeddedReviewArtworkSyncResult> {
+  async sync(session: Pick<EmbeddedReviewSession, "nodeId" | "side" | "items" | "index" | "artwork" | "artworkResolutionFailed"> | null, rightPaneText: string): Promise<EmbeddedReviewArtworkSyncResult> {
     if (session === null || session.side === "complete") {
       await this.shutdown();
       return { rendered: false };
@@ -5301,6 +5536,12 @@ export class EmbeddedReviewArtworkManager {
     this.placementKey = undefined;
     setActiveTerminalArtworkRectangle(undefined);
     await this.controller?.resize();
+  }
+
+  async redraw(session: EmbeddedReviewSession, rightPaneText: string): Promise<EmbeddedReviewArtworkSyncResult> {
+    this.placementKey = undefined;
+    setActiveTerminalArtworkRectangle(undefined);
+    return this.sync(session, rightPaneText);
   }
 
   async shutdown(): Promise<void> {
@@ -5497,9 +5738,11 @@ function formatPaneText(
   let learnerReadingSection: LearnerReadingSection = undefined;
   let primaryReadingSection: LearnerReadingSection = undefined;
   let breakdownSection = false;
+  let grammarHeadingLevel: number | undefined;
   let narrativeIntroduction = false;
   let narrativeIntroductionStarted = false;
   let vocabularyHeadingLevel: number | undefined;
+  let previousReadingLine = false;
   const rawLines = reflowMarkdownSourceLines(text.replace(/\t/gu, "  ").split("\n"));
   const dialogueLabelWidths = dialogueLabelWidthsByLine(rawLines);
   for (let index = 0; index < rawLines.length; index += 1) {
@@ -5511,8 +5754,11 @@ function formatPaneText(
     if (!inCodeBlock) {
       const heading = rawLine.match(/^(#{1,6})\s+(.+)$/u);
       if (heading !== null && (heading[1]?.length ?? 0) <= 4) {
+        previousReadingLine = false;
         const title = heading[2]?.trim() ?? "";
         const level = heading[1]?.length ?? 0;
+        if (/^Grammar(?:\s|$)/iu.test(title)) grammarHeadingLevel = level;
+        else if (grammarHeadingLevel !== undefined && level <= grammarHeadingLevel) grammarHeadingLevel = undefined;
         if (isNewVocabularyHeading(title)) vocabularyHeadingLevel = level;
         else if (vocabularyHeadingLevel !== undefined && level <= vocabularyHeadingLevel) vocabularyHeadingLevel = undefined;
         breakdownSection = /^Line-by-line Breakdown(?:\s*:\s*(?:Normal|Expert))?$/iu.test(title);
@@ -5529,6 +5775,7 @@ function formatPaneText(
       }
     }
     if (!inCodeBlock && isMarkdownTableLine(rawLine)) {
+      previousReadingLine = false;
       const tableLines = [rawLine];
       while (index + 1 < rawLines.length && isMarkdownTableLine(rawLines[index + 1] ?? "")) {
         index += 1;
@@ -5544,26 +5791,45 @@ function formatPaneText(
       continue;
     }
     if (rawLine.length === 0) {
+      if (breakdownSection && vocabularyEntrySpacing === "compact") {
+        let previous = index - 1;
+        let next = index + 1;
+        while (previous >= 0 && (rawLines[previous] ?? "").trim() === "") previous -= 1;
+        while (next < rawLines.length && (rawLines[next] ?? "").trim() === "") next += 1;
+        const before = rawLines[previous] ?? "";
+        const after = rawLines[next] ?? "";
+        const originalToReading = /^\s*\d+[.)]\s+\*\*.+\*\*\s*$/u.test(before)
+          && /^\s*Reading:/u.test(after);
+        const readingToEnglish = /^\s*Reading:/u.test(before) && /^\s*English:/u.test(after);
+        if (originalToReading || readingToEnglish) continue;
+      }
       lines.push("");
+      previousReadingLine = false;
       if (narrativeIntroductionStarted) narrativeIntroduction = false;
       continue;
     }
     if (learnerReadingSection === "dialogue" && (inCodeBlock || isDialogueSpeakerLine(rawLine))) {
+      if (previousReadingLine && vocabularyEntrySpacing === "separated") lines.push("");
       lines.push(...formatLearnerDialogueLine(rawLine, width, colorsEnabled, dialogueLabelWidths.get(index)));
+      previousReadingLine = true;
       continue;
     }
     if (learnerReadingSection === "narrative" && narrativeIntroduction && !/^#{1,6}\s+/u.test(rawLine)) {
+      previousReadingLine = false;
       narrativeIntroductionStarted = true;
-      const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled, breakdownSection);
+      const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled, breakdownSection, grammarHeadingLevel !== undefined);
       lines.push(...wrapPreparedPaneLine(prepared, width));
       continue;
     }
     if (learnerReadingSection === "narrative" && !/^#{1,6}\s+/u.test(rawLine)) {
+      if (previousReadingLine && vocabularyEntrySpacing === "separated") lines.push("");
       const narrative = stripInlineMarkdown(rawLine, false);
       lines.push(...wrapDisplayText(narrative, width).map((line) => applyTargetReadingStyle(line, colorsEnabled)));
+      previousReadingLine = true;
       continue;
     }
-    const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled, breakdownSection);
+    previousReadingLine = false;
+    const prepared = preparePaneLine(rawLine, inCodeBlock, width, colorsEnabled, breakdownSection, grammarHeadingLevel !== undefined);
     lines.push(...wrapPreparedPaneLine(prepared, width));
   }
   return lines;
@@ -5658,6 +5924,12 @@ function chapterNumberFromMarkdown(sourceLines: readonly string[]): number | und
     const match = /^chapter:\s*["']?(\d+)["']?\s*$/iu.exec(line.trim())
       ?? /^#\s+(?:Chapter|Ch)\s+(\d+)\b/iu.exec(line.trim());
     if (match !== null) return Number.parseInt(match[1] ?? "", 10);
+    const roman = /^#\s+(?:Chapter|Ch)\s+([IVXLCDM]+)\b/u.exec(line.trim());
+    if (roman !== null) {
+      const values: Record<string, number> = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+      const digits = [...(roman[1] ?? "")].map(character => values[character] ?? 0);
+      return digits.reduce((total, value, index) => total + (value < (digits[index + 1] ?? 0) ? -value : value), 0);
+    }
   }
   return undefined;
 }
@@ -5860,7 +6132,7 @@ function wrapPreparedPaneLine(prepared: PreparedPaneLine, width: number): readon
   );
 }
 
-function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean, breakdownSection = false): PreparedPaneLine {
+function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, colorsEnabled: boolean, breakdownSection = false, grammarSection = false): PreparedPaneLine {
   if (inCodeBlock) {
     return {
       text: rawLine.trimEnd(),
@@ -5878,6 +6150,36 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
     return {
       text: "-".repeat(width),
       style: (line) => colorsEnabled ? `${ansi.gray}${line}${ansi.reset}` : line
+    };
+  }
+  if (breakdownSection || grammarSection) {
+    const original = grammarSection
+      ? /^\s*(\d+[.)])\s+(.+?)\s*$/u.exec(rawLine)
+      : /^\s*(\d+[.)])\s+\*\*(.+)\*\*\s*$/u.exec(rawLine);
+    const reading = /^\s*Reading:\s*(.+)$/u.exec(rawLine);
+    const english = /^\s*English:\s*(.+)$/u.exec(rawLine);
+    if (original !== null || reading !== null || english !== null) {
+      const prefix = original === null ? "    " : `${original[1]} `.padStart(4);
+      const content = original !== null ? original[2] ?? ""
+        : reading !== null ? (breakdownSection ? reading[1] ?? "" : `Reading: ${reading[1]}`)
+        : (breakdownSection ? english?.[1] ?? "" : `English: ${english?.[1]}`);
+      const color = original !== null ? ansi.pink : reading !== null ? ansi.cyan : ansi.yellow;
+      return {
+        text: `${prefix}${stripInlineMarkdown(content, false)}`,
+        firstPrefix: prefix,
+        continuationPrefix: "    ",
+        content: stripInlineMarkdown(content, false),
+        style: (line) => colorsEnabled ? `${color}${line}${ansi.reset}` : line
+      };
+    }
+  }
+  if (grammarSection) {
+    // Mark Japanese spans without nesting the existing semantic grammar marks.
+    const marked = rawLine.replace(/\[\[grammar:[^\]\n]+\]\]|[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}ー々〆ヶ。、・「」『』]+/gu,
+      (span) => span.startsWith("[[grammar:") ? span : `[[grammar:${span}]]`);
+    return {
+      text: stripInlineMarkdown(marked.replace(/^(\s*)[-*]\s+/u, "$1• "), colorsEnabled),
+      style: (line) => line
     };
   }
   const bullet = rawLine.match(/^(\s*)(?:[-*]|•)\s+(.+)$/u);

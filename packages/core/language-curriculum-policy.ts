@@ -627,7 +627,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Every ordinary target-language curriculum begins with a schema-v2 canonical cast of exactly thirty people, even before Chapter 1 exists; schema v1 is historical diagnostic data only and no repository retains a compatibility path.",
     "Canonical-cast metadata declares one explicit versioned progression and one deck-person pool, each an exact permutation of exactly thirty unique canonical person IDs.",
     "Every strengthened person has typed plausible age, explicit controlled gender, substantive background/household/role/interest/personality/continuity data, and reciprocal structured stable-ID relationships.",
-    "The active pool is the first min(30, 5 + 3 * floor((chapter - 1) / 20)) progression IDs.",
+    "Chapters 1-10 use the first three progression IDs; Chapters 11-20 use the first five. From Chapter 21 the active pool is the first min(30, 5 + 3 * floor((chapter - 1) / 20)) progression IDs.",
     "Previously active people remain active; Chapter 201 onward retains the same thirty people.",
     "Dialogue, narrative, metadata, and review cast IDs must be active; only meaningful learner-facing dialogue or narrative appearances satisfy block coverage.",
     "In each person's first activation block, that person appears meaningfully in at least five distinct ordinary chapters; duplicate lines in one chapter count once.",
@@ -1300,6 +1300,7 @@ function spokenDialogueSentenceCount(lines: readonly string[]): number {
 
 export function activeCastSizeForChapter(chapter: number): number {
   assertPositiveIntegerChapter(chapter);
+  if (chapter <= 10) return 3;
   return Math.min(canonicalCastSize, 5 + activeCastExpansionSize * Math.floor((chapter - 1) / activeCastBlockSize));
 }
 
@@ -1472,16 +1473,17 @@ export function activeCastBlockReport(values: {
   const chapterEnd = chapterStart + activeCastBlockSize - 1;
   const complete = Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index).every((chapter) => values.suppliedChapters.has(chapter));
   if (chapterStart > 200) return { activationPeople: [], oldCastAppearanceCount: 0, newCastAppearanceCount: 0, totalCanonicalAppearanceCount: 0, requiredMinimumOldCastCount: 0, oldCastPercentage: null, distributionOnTrack: "not-applicable", distributionStatus: "not-applicable" };
-  const current = activePersonIdsForChapter(chapterStart, values.progression);
+  const current = activePersonIdsForChapter(chapterEnd, values.progression);
   const previousCount = chapterStart === 1 ? 0 : activeCastSizeForChapter(chapterStart - 1);
   const oldIds = new Set(current.slice(0, previousCount));
   const newIds = new Set(current.slice(previousCount));
   const qualifyingChapters = (id: string) => Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index)
     .filter((chapter) => (values.appearancesByChapter[chapter]?.[id] ?? 0) > 0);
   const activationPeople: ActivationPersonAppearanceReport[] = [...newIds].map((canonicalId) => {
-    const chapters = qualifyingChapters(canonicalId);
+    const activationChapter = chapterStart === 1 && values.progression.indexOf(canonicalId) >= 3 ? 11 : chapterStart;
+    const chapters = qualifyingChapters(canonicalId).filter(chapter => chapter >= activationChapter);
     const remainingCount = Math.max(0, 5 - chapters.length);
-    return { canonicalId, activationChapter: chapterStart, activationBlock: `${chapterStart}-${chapterEnd}`, qualifyingChapterNumbers: chapters, distinctQualifyingChapterCount: chapters.length, requiredCount: 5, remainingCount, status: complete ? (remainingCount === 0 ? "passed" : "failed") : "pending" };
+    return { canonicalId, activationChapter, activationBlock: `${chapterStart}-${chapterEnd}`, qualifyingChapterNumbers: chapters, distinctQualifyingChapterCount: chapters.length, requiredCount: 5, remainingCount, status: complete ? (remainingCount === 0 ? "passed" : "failed") : "pending" };
   });
   let oldCastAppearanceCount = 0;
   let newCastAppearanceCount = 0;

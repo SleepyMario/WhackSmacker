@@ -45,6 +45,8 @@ test("content package generator exposes the supported local package targets", ()
       ["spanish-core-reviews", "com.sleepymario.language.spanish.reviews"],
       ["thai-core-reviews", "com.sleepymario.language.thai.reviews"],
       ["zulu-core-reviews", "com.sleepymario.language.zulu.reviews"],
+      ["chinese-traditional-radicals", "com.sleepymario.language.chinese-traditional.radicals"],
+      ["chinese-simplified-radicals", "com.sleepymario.language.chinese-simplified.radicals"],
       ["chinese-simplified-traditional-level-1", "com.sleepymario.language.chinese-simplified-traditional.level-1"],
       ["chinese-simplified-traditional-level-1-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-1-vocabulary"],
       ["chinese-simplified-traditional-level-2", "com.sleepymario.language.chinese-simplified-traditional.level-2"],
@@ -64,6 +66,16 @@ test("content package generator exposes the supported local package targets", ()
       ["vietnamese-custom-animals", "local.user.decks.vietnamese-animals"],
       ["vietnamese-custom-descriptions-opposites", "local.user.decks.vietnamese-descriptions-opposites"],
       ["vietnamese-custom-common-confusions", "local.user.decks.vietnamese-common-confusions"],
+      ["vietnamese-custom-123-lesson-01", "local.user.decks.vietnamese-123.lesson-01"],
+      ["vietnamese-custom-123-lesson-02", "local.user.decks.vietnamese-123.lesson-02"],
+      ["vietnamese-custom-123-lesson-03", "local.user.decks.vietnamese-123.lesson-03"],
+      ["vietnamese-custom-123-lesson-04", "local.user.decks.vietnamese-123.lesson-04"],
+      ["vietnamese-custom-123-lesson-05", "local.user.decks.vietnamese-123.lesson-05"],
+      ["vietnamese-custom-123-lesson-06", "local.user.decks.vietnamese-123.lesson-06"],
+      ["vietnamese-custom-123-lesson-07", "local.user.decks.vietnamese-123.lesson-07"],
+      ["vietnamese-custom-123-lesson-08", "local.user.decks.vietnamese-123.lesson-08"],
+      ["vietnamese-custom-123-lesson-09", "local.user.decks.vietnamese-123.lesson-09"],
+      ["vietnamese-custom-123-lesson-10", "local.user.decks.vietnamese-123.lesson-10"],
       ["dutch-general-animals-preview-001-100", "com.sleepymario.language.dutch.general.animals.preview-001-100"],
       ["dutch-specialized-medical-1", "com.sleepymario.language.dutch.specialized.medical-1"],
       ["chinese-traditional-specialized-medical-1", "com.sleepymario.language.chinese-traditional.specialized.medical-1"]
@@ -80,7 +92,101 @@ test("content package generator exposes the supported local package targets", ()
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1")?.artifactRevision, 3);
   assert.equal(contentPackageGeneratorTargets.every((target) => Number.isSafeInteger(target.artifactRevision) && target.artifactRevision > 0), true);
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "dutch-general-animals-preview-001-100")?.artifactRevision, 3);
+  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "vietnamese-custom-animals")?.artifactRevision, 4);
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "japanese-core-reviews")?.interactionProfile?.labels, "independent");
+  const vietnamese123Lessons = contentPackageGeneratorTargets.filter((target) => target.id.startsWith("vietnamese-custom-123-lesson-"));
+  assert.deepEqual(vietnamese123Lessons.map((target) => target.topic?.deckDisplayName), [
+    "Lesson I - Tên tôi là Peter",
+    "Lesson II - Tôi là giáo viên",
+    "Lesson III - Anh bao nhiêu tuổi?",
+    "Lesson IV - Nhà của anh rất đẹp!",
+    "Lesson V - Cái này bao nhiêu tiền?",
+    "Lesson VI - Bây giờ là mấy giờ?",
+    "Lesson VII - Hôm nay là ngày bao nhiêu?",
+    "Lesson VIII - Anh đã có nhà riêng chưa?",
+    "Lesson IX - Khi rỗi, chị thường làm gì?",
+    "Lesson X - Anh đi thẳng đường này"
+  ]);
+  assert.deepEqual(vietnamese123Lessons.map((target) => target.topicDeck?.displayName), vietnamese123Lessons.map((target) => target.topic?.deckDisplayName));
+  assert.equal(vietnamese123Lessons.find((target) => target.id === "vietnamese-custom-123-lesson-02")?.artifactRevision, 10);
+  assert.equal(vietnamese123Lessons.filter((target) => target.id !== "vietnamese-custom-123-lesson-02").every((target) => target.artifactRevision === 8), true);
+});
+
+test("Traditional Chinese Radicals presents only A and reveals English plus Hanyu Pinyin", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "default");
+  assert.equal(target?.interactionProfile?.labels, "independent");
+  assert.equal(target?.artifactRevision, 4);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals",
+      outputDirectory: directory,
+      generatedAt: "2026-09-12T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals.json").toString("utf8"));
+
+    assert.equal(document.items.length, 214);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1), true);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/a-radical")), true);
+    assert.equal(document.items.every((item) => item.outputs.map((output) => output.id).join(",") === "english,hanyu-pinyin"), true);
+    assert.equal(document.items.every((item) => item.interactionProfile.labels === "independent"), true);
+    assert.equal(document.items.every((item) => /(?:^|\n)Strokes: \d+$/u.test(item.notes)), true);
+
+    assert.equal(document.items[0].prompt.text, "一");
+    assert.equal(document.items[0].answer.text, "English: one\nHanyu Pinyin: yī");
+    assert.deepEqual(document.items[0].outputs.map((output) => [output.label, output.content.text]), [
+      ["English", "one"],
+      ["Hanyu Pinyin", "yī"]
+    ]);
+    assert.equal(document.items[0].notes, "Strokes: 1");
+    const fire = document.items.find((item) => item.prompt.text === "火");
+    assert.equal(fire?.notes, "Alternative forms: 灬\nStrokes: 4");
+    const heart = document.items.find((item) => item.prompt.text === "心");
+    assert.equal(heart?.notes, "Alternative forms: 忄、⺗\nStrokes: 4");
+    assert.equal(document.items[213].prompt.text, "龠");
+    assert.equal(document.items[213].notes, "Strokes: 17");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Simplified Chinese Radicals follows GF 0011-2009 and disambiguates only simplified fight", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-simplified-radicals");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-simplified"]);
+  assert.equal(target?.artifactRevision, 2);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-simplified-chinese-radicals-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-simplified-radicals",
+      outputDirectory: directory,
+      generatedAt: "2026-09-12T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/simplified-chinese-radicals.json").toString("utf8"));
+
+    assert.equal(document.items.length, 201);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/a-radical")), true);
+    assert.equal(document.items.every((item) => item.outputs.map((output) => output.id).join(",") === "english,hanyu-pinyin"), true);
+    assert.equal(document.items.every((item) => /(?:^|\n)Strokes: \d+$/u.test(item.notes)), true);
+    assert.equal(document.items.filter((item) => item.prompt.text === "斗").length, 1);
+    assert.equal(document.items.filter((item) => item.prompt.text === "斗 (simplified form of 鬥)").length, 1);
+    assert.equal(document.items.filter((item) => item.prompt.text.includes("(")).length, 1);
+    assert.equal(document.items.find((item) => item.prompt.text === "斗")?.answer.text, "English: dipper\nHanyu Pinyin: dǒu");
+    assert.equal(document.items.find((item) => item.prompt.text === "斗 (simplified form of 鬥)")?.answer.text, "English: struggle\nHanyu Pinyin: dòu");
+    assert.equal(document.items.find((item) => item.prompt.text === "火")?.notes, "Alternative forms: 灬\nStrokes: 4");
+    assert.equal(document.items.find((item) => item.prompt.text === "业")?.notes, "Strokes: 5");
+    assert.equal(document.items.find((item) => item.prompt.text === "龺")?.notes, "Strokes: 8");
+    assert.equal(document.items[200].prompt.text, "龠");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("Level I uses the approved character（word） presentation in both directions", async () => {

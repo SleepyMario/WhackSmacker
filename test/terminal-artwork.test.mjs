@@ -21,6 +21,7 @@ import {
   iterm2ArtworkSequence,
   isSafeHighConfidenceMatteTrim,
   kittyArtworkDeleteSequence,
+  kittyIcatInvocation,
   kittyArtworkSequences,
   selectTerminalArtworkBackend,
   sixelHelperInvocation,
@@ -106,12 +107,48 @@ test("Sixel requires an encoder and safe cell-pixel geometry", () => {
 
 test("Kitty sequences chunk payloads, place with stable IDs, contain in cells, and delete", () => {
   const rectangle = { column: 33, row: 8, widthColumns: 40, heightRows: 12 };
-  const sequences = kittyArtworkSequences({ pngData: Buffer.alloc(9000, 7), rectangle, chunkSize: 1024 });
+  const pngData = Buffer.alloc(9000, 7);
+  const sequences = kittyArtworkSequences({ pngData, rectangle, chunkSize: 1024 });
   assert.ok(sequences.length > 1);
-  assert.match(sequences[0], /a=T,f=100,t=d,i=19394561,p=1,c=40,r=12,C=1,q=2,m=1/u);
+  assert.match(sequences[0], /a=T,f=100,i=19394561,p=1,c=40,r=12,C=1,m=1,q=2/u);
   assert.match(sequences.at(-1), /q=2,m=0/u);
   assert.ok(sequences.every((sequence) => sequence.length < 1200));
-  assert.match(kittyArtworkDeleteSequence(), /a=d,d=I,i=19394561,p=1/u);
+  const reconstructed = Buffer.concat(sequences.map((sequence) => {
+    const match = sequence.match(/;([A-Za-z0-9+/=]*)\x1b\\$/u);
+    assert.notEqual(match, null);
+    return Buffer.from(match[1], "base64");
+  }));
+  assert.deepEqual(reconstructed, pngData);
+  assert.equal(kittyArtworkDeleteSequence(), "\x1b_Ga=d,d=I,i=19394561,q=2;\x1b\\");
+});
+
+test("Kitty deletion removes only the image placement and never blanks redrawn card text", async () => {
+  const writes = [];
+  const detection = detectionFixture("kitty", {}, {});
+  const controller = await createTerminalArtworkController({ configuredBackend: "kitty", detection, io: { writeControl: (value) => writes.push(value) } });
+  await controller.start();
+  await controller.show({
+    ...artworkOptions("/trusted/prompt.png", "prompt", { column: 33, row: 8, widthColumns: 40, heightRows: 12 }),
+    assetData: Buffer.from([137, 80, 78, 71]),
+    mediaType: "image/png"
+  });
+  writes.length = 0;
+  await controller.clear();
+
+  assert.equal(writes.join(""), kittyArtworkDeleteSequence());
+  assert.doesNotMatch(writes.join(""), /\x1b\[8;33H| {40}/u);
+});
+
+test("Kitty's native image helper receives an exact shell-free placement invocation", () => {
+  const rectangle = { column: 33, row: 8, widthColumns: 40, heightRows: 12 };
+  assert.deepEqual(kittyIcatInvocation("/trusted/package/media/dog.png", rectangle), {
+    args: [
+      "+kitten", "icat", "--transfer-mode", "stream",
+      "--place", "40x12@32x7", "--align", "center", "--scale-up",
+      "--stdin", "no", "--image-id", "19394561", "--no-trailing-newline",
+      "/trusted/package/media/dog.png"
+    ]
+  });
 });
 
 test("iTerm2 sequence uses cell width/height, inline mode, aspect preservation, and cursor restore", () => {
@@ -614,3 +651,21 @@ function tinyPng(gray) {
     ? "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     : "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII=", "base64");
 }
+
+test("cast preview displays bundled art, clears on scroll and leave, and restores on return", async () => {
+  const calls = [];
+  const terminal = { colorsEnabled: false, width: 160, height: 40, write() {} };
+  const manager = new EmbeddedReviewArtworkManager(terminal, {
+    terminalArtworkBackend: "wayland-overlay",
+    terminalArtworkControllerFactory: async () => fakeController(calls)
+  });
+  const node = { id: "cast-introduction-i", label: "Meet Aki, Ren and Yuki", kind: "message",
+    previewArtworkPath: new URL("../dist/apps/cli/content/media/cast-introduction-i.png", import.meta.url).pathname };
+  const text = "Meet Aki, Ren and Yuki\n\n[[WHACKSMACKER_REVIEW_ARTWORK_REGION]]\n\n佐藤あき — Aki Satō\n高橋蓮 — Ren Takahashi\n中村ゆき — Yuki Nakamura";
+  assert.equal((await manager.syncPreview(node, text)).rendered, true);
+  assert.equal((await manager.syncPreview(node, text, 2)).rendered, false);
+  assert.equal((await manager.syncPreview(node, text)).rendered, true);
+  assert.equal((await manager.syncPreview({ id: "hiragana", label: "Hiragana", kind: "message" }, "")).rendered, false);
+  assert.equal(calls.filter(call => call[0] === "show").length, 2);
+  assert.equal(calls.filter(call => call[0] === "shutdown").length, 2);
+});

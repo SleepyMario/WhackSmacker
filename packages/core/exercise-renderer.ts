@@ -5,6 +5,7 @@ import {
   type MemorizationItem
 } from "./memorization-item";
 import { localized } from "./localized-content";
+import { medicalPresentation } from "./medical-presentation";
 import { parseMemorizationMarkdownImages } from "./package-media";
 
 export interface ExerciseItemIdentity {
@@ -52,8 +53,8 @@ export interface TopicReviewPresentation {
 
 export function renderMemorizationExercise(options: RenderExerciseOptions): RenderedExercise {
   assertValidMemorizationItem(options.item);
-  const item = options.item;
   const locale = options.sourceLocale ?? "en-US";
+  const item = medicalPresentation(options.item, locale);
   const identity = {
     packageId: options.packageId,
     packageVersion: options.packageVersion,
@@ -84,7 +85,12 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
 
 function topicReviewPresentationFor(item: MemorizationItem, locale: string): TopicReviewPresentation | undefined {
   if (item.schemaVersion !== 2 || item.deck.scope !== "topic") return undefined;
-  if (item.prompt.mediaType === "text/plain" && item.answer.mediaType === "text/plain") return undefined;
+  // The special topic presentation represents two fully illustrated sides,
+  // each with an image, headword, and example sentence. Ordinary vocabulary
+  // cards may deliberately put artwork on the prompt only; those must retain
+  // the normal Phrase/Answer renderer instead of being forced into this
+  // two-sided structure.
+  if (item.prompt.mediaType !== "text/markdown" || item.answer.mediaType !== "text/markdown") return undefined;
   return {
     prompt: topicReviewSidePresentationFor(item.prompt, locale, "prompt"),
     answer: topicReviewSidePresentationFor(item.answer, locale, "answer")

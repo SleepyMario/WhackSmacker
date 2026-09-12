@@ -107,6 +107,7 @@ export interface TerminalArtworkDetection {
   readonly reason?: string;
   readonly helpers: TerminalArtworkHelperAvailability;
   readonly executables: {
+    readonly kitty?: string;
     readonly ueberzugpp?: string;
     readonly img2sixel?: string;
     readonly magick?: string;
@@ -128,7 +129,7 @@ export type TerminalArtworkSpawn = (
   args: readonly string[],
   options: {
     readonly shell: false;
-    readonly stdio: readonly ["pipe", "ignore", "pipe"];
+    readonly stdio: readonly [("pipe" | "ignore" | "inherit"), ("pipe" | "ignore" | "inherit"), ("pipe" | "ignore" | "inherit")];
     readonly env: NodeJS.ProcessEnv;
   }
 ) => ChildProcess;
@@ -188,7 +189,8 @@ export async function detectTerminalArtwork(
   configuredBackend: TerminalArtworkBackend = "auto",
   env: TerminalArtworkEnvironment = process.env
 ): Promise<TerminalArtworkDetection> {
-  const [ueberzugpp, img2sixel, magick] = await Promise.all([
+  const [kitty, ueberzugpp, img2sixel, magick] = await Promise.all([
+    findExecutable("kitty", env),
     findExecutable("ueberzugpp", env),
     findExecutable("img2sixel", env),
     findExecutable("magick", env)
@@ -202,6 +204,7 @@ export async function detectTerminalArtwork(
     ...selection,
     helpers,
     executables: {
+      ...(kitty === undefined ? {} : { kitty }),
       ...(ueberzugpp === undefined ? {} : { ueberzugpp }),
       ...(img2sixel === undefined ? {} : { img2sixel }),
       ...(magick === undefined ? {} : { magick })
@@ -455,7 +458,7 @@ function createBackend(
     case "wayland-overlay":
     case "x11-overlay":
       return new UeberzugOverlayBackend(detection.selectedBackend, detection.executables.ueberzugpp as string, env, spawnHelper);
-    case "kitty": return new KittyArtworkBackend(io, detection.executables.magick);
+    case "kitty": return new KittyArtworkBackend(io, detection.executables.magick, detection.executables.kitty, env, spawnHelper);
     case "iterm2": return new Iterm2ArtworkBackend(io);
     case "sixel": return new SixelArtworkBackend(io, detection, env);
     default: return new DisabledArtworkBackend();
@@ -772,29 +775,66 @@ export function kittyArtworkSequences(options: {
   readonly rectangle: TerminalArtworkRectangle;
   readonly chunkSize?: number;
 }): readonly string[] {
-  const encoded = Buffer.from(options.pngData).toString("base64");
-  const chunkSize = options.chunkSize ?? 4096;
-  const chunks = encoded.match(new RegExp(`.{1,${chunkSize}}`, "gu")) ?? [""];
+  // Kitty limits each encoded payload to 4096 bytes. Split the original data
+  // on a three-byte boundary and encode each part independently, matching the
+  // proven Streamchat implementation and avoiding ambiguous base64 fragments.
+  const encodedChunkSize = options.chunkSize ?? 4096;
+  const rawChunkSize = Math.max(3, Math.floor(encodedChunkSize / 4) * 3);
+  const data = Buffer.from(options.pngData);
+  const chunks: string[] = [];
+  for (let offset = 0; offset < data.length; offset += rawChunkSize) {
+    chunks.push(data.subarray(offset, offset + rawChunkSize).toString("base64"));
+  }
+  if (chunks.length === 0) chunks.push("");
   return chunks.map((payload, index) => {
     const first = index === 0;
     const more = index < chunks.length - 1 ? 1 : 0;
     const keys = first
-      ? `a=T,f=100,t=d,i=${kittyImageId},p=${kittyPlacementId},c=${options.rectangle.widthColumns},r=${options.rectangle.heightRows},C=1,q=2,m=${more}`
+      ? `a=T,f=100,i=${kittyImageId},p=${kittyPlacementId},c=${options.rectangle.widthColumns},r=${options.rectangle.heightRows},C=1,m=${more},q=2`
       : `q=2,m=${more}`;
     return `\x1b_G${keys};${payload}\x1b\\`;
   });
 }
 
 export function kittyArtworkDeleteSequence(): string {
-  return `\x1b_Ga=d,d=I,i=${kittyImageId},p=${kittyPlacementId},q=2\x1b\\`;
+  return `\x1b_Ga=d,d=I,i=${kittyImageId},q=2;\x1b\\`;
+}
+
+export function kittyIcatInvocation(assetPath: string, rectangle: TerminalArtworkRectangle): {
+  readonly args: readonly string[];
+} {
+  return {
+    args: [
+      "+kitten", "icat",
+      "--transfer-mode", "stream",
+      "--place", `${rectangle.widthColumns}x${rectangle.heightRows}@${rectangle.column - 1}x${rectangle.row - 1}`,
+      "--align", "center",
+      "--scale-up",
+      "--stdin", "no",
+      "--image-id", String(kittyImageId),
+      "--no-trailing-newline",
+      assetPath
+    ]
+  };
 }
 
 class KittyArtworkBackend implements ArtworkBackendAdapter {
   private currentRectangle: TerminalArtworkRectangle | undefined;
-  constructor(private readonly io: TerminalArtworkIo, private readonly magick?: string) {}
+  constructor(
+    private readonly io: TerminalArtworkIo,
+    private readonly magick?: string,
+    private readonly kitty?: string,
+    private readonly env: TerminalArtworkEnvironment = process.env,
+    private readonly spawnHelper: TerminalArtworkSpawn = defaultTerminalArtworkSpawn
+  ) {}
   async start(): Promise<void> {}
   async show(options: TerminalArtworkShowOptions): Promise<void> {
     await this.clear();
+    if (this.kitty !== undefined) {
+      await this.showWithIcat(options);
+      this.currentRectangle = options.rectangle;
+      return;
+    }
     const pngData = options.mediaType === "image/png" ? options.assetData : await convertToPng(options.assetPath, this.magick);
     this.io.writeControl("\x1b7");
     this.io.writeControl(cursorPosition(options.rectangle.row, options.rectangle.column));
@@ -805,11 +845,32 @@ class KittyArtworkBackend implements ArtworkBackendAdapter {
   async clear(): Promise<void> {
     if (this.currentRectangle === undefined) return;
     this.io.writeControl(kittyArtworkDeleteSequence());
-    this.io.writeControl(clearRectangleSequence(this.currentRectangle));
     this.currentRectangle = undefined;
   }
   async resize(): Promise<void> { await this.clear(); }
   async shutdown(): Promise<void> { await this.clear(); }
+
+  private async showWithIcat(options: TerminalArtworkShowOptions): Promise<void> {
+    const invocation = kittyIcatInvocation(options.assetPath, options.rectangle);
+    this.io.writeControl("\x1b7");
+    try {
+      await new Promise<void>((resolve, reject) => {
+        let stderr = "";
+        const child = this.spawnHelper(this.kitty as string, invocation.args, {
+          shell: false,
+          stdio: ["inherit", "inherit", "pipe"],
+          env: { ...process.env, ...this.env }
+        });
+        child.stderr?.on("data", (chunk) => { stderr = `${stderr}${String(chunk)}`.slice(-512); });
+        child.once("error", () => reject(new Error("Kitty's image helper could not be started.")));
+        child.once("exit", (code) => code === 0
+          ? resolve()
+          : reject(new Error(`Kitty's image helper failed${stderr.trim() === "" ? "." : `: ${safeErrorMessage(stderr)}`}`)));
+      });
+    } finally {
+      this.io.writeControl("\x1b8");
+    }
+  }
 }
 
 export function iterm2ArtworkSequence(options: {

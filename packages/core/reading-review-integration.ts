@@ -2,6 +2,7 @@ import { listInstalledContentPackages, type InstalledPackageRecord } from "./con
 import { listReadableContentEntries } from "./content-package-reader";
 import { isSafeContentPackagePath } from "./content-package-spec";
 import { localized } from "./localized-content";
+import { medicalArtworkAllowed } from "./medical-presentation";
 import {
   renderMemorizationExercise,
   type RenderedExercise,
@@ -217,6 +218,7 @@ export async function resolveReadingReviewArtwork(
   side: "prompt" | "answer",
   options: { readonly dataDir?: string; readonly sourceLocale?: string } = {}
 ): Promise<ResolvedReadingReviewArtwork | undefined> {
+  if (!medicalArtworkAllowed(reviewItem.item, side)) return undefined;
   const block = reviewItem.item[side];
   if (block.mediaType !== "text/markdown") return undefined;
   const markdown = localized(block.text, options.sourceLocale ?? "en-US");

@@ -114,6 +114,49 @@ test("topic Review alt text follows per-side successful artwork state", () => {
   assert.doesNotMatch(answerRendered, /\[Image:/u);
 });
 
+test("one-sided topic artwork uses the ordinary vocabulary presentation", () => {
+  const original = topicItem("en-to-vi", english, dutch);
+  const draft = {
+    ...original,
+    id: "vi-handnotes.animals.0001/source-to-vi",
+    cardId: "vi-handnotes.animals.0001/source-to-vi",
+    reviewDirection: "en-to-vi",
+    prompt: {
+      text: "![Children's-book animal illustration](media/0001-dog.png)\n\ndog",
+      plainText: "[Image: Children's-book animal illustration]\n\ndog",
+      language: "en",
+      mediaType: "text/markdown"
+    },
+    answer: {
+      text: "chó",
+      plainText: "chó",
+      language: "vi",
+      mediaType: "text/plain"
+    },
+    acceptedAnswers: ["chó"],
+    examples: undefined,
+    testedMeaning: "chó",
+    pedagogicalFingerprint: "0".repeat(64)
+  };
+  const item = { ...draft, pedagogicalFingerprint: pedagogicalFingerprint(pedagogicalContentForMemorizationItem(draft)) };
+  const exercise = renderMemorizationExercise({
+    packageId: "local.user.decks.vietnamese-animals",
+    packageVersion: "0.1.0",
+    itemId: item.id,
+    item
+  });
+
+  assert.equal(exercise.topicReview, undefined);
+  assert.deepEqual(exercise.promptLines, ["[Image: Children's-book animal illustration]", "dog"]);
+  assert.deepEqual(exercise.answerLines, ["chó"]);
+
+  const hidden = formatEmbeddedReviewExercise(exercise, "prompt", false, undefined, undefined, "normal", true);
+  const revealed = formatEmbeddedReviewReveal(exercise, exercise, false, undefined, undefined, "normal", true, false);
+  assert.match(hidden, /Phrase:\s+dog/u);
+  assert.doesNotMatch(hidden, /\[Image:/u);
+  assert.match(revealed, /Phrase:\s+dog[\s\S]+Answer:\s+chó/u);
+});
+
 test("topic Review session header uses the explicit topic and deck labels", () => {
   const exercise = renderTopic(topicItem("en-to-nl", english, dutch));
   const output = renderEmbeddedReviewSession({
@@ -150,6 +193,31 @@ test("artwork manager reports actual show success instead of inferring it from t
     notice: "Artwork rendering is unavailable for this terminal."
   });
   await resolutionFailed.shutdown();
+});
+
+test("artwork manager can re-place artwork after the fallback-free terminal frame is redrawn", async () => {
+  const calls = [];
+  const terminal = { isInteractive: true, colorsEnabled: false, width: 160, height: 40, write() {}, async readKey() {}, enter() {}, restore() {} };
+  const pane = "Review\nCard\n[[WHACKSMACKER_REVIEW_ARTWORK_REGION]]\nPhrase\n[[WHACKSMACKER_REVIEW_BOTTOM_BAR]]\nEnter/Space Reveal Answer";
+  const manager = new EmbeddedReviewArtworkManager(terminal, managerOptions(controller({ ready: true, calls })));
+  const session = reviewSession({ altText: "Animal illustration", assetPath: "/trusted/prompt.png", assetData: Buffer.from([1]), mediaType: "image/png" });
+
+  assert.deepEqual(await manager.sync(session, pane), { rendered: true });
+  assert.deepEqual(await manager.redraw(session, pane), { rendered: true });
+  assert.equal(calls.filter((entry) => entry[0] === "show").length, 2);
+  await manager.shutdown();
+});
+
+test("medical artwork fallback is removed without losing adjacent terms on either side", () => {
+  const medical = ordinaryExercise(["[Image: Skull and jaw muscles] cranium"], ["Chinese: 頭蓋骨", "Artwork: [Image: Skull and jaw muscles]"], []);
+  const before = formatEmbeddedReviewExercise(medical, "prompt", false, undefined, undefined, undefined, true);
+  const after = formatEmbeddedReviewReveal(medical, medical, false, undefined, undefined, undefined, true, true);
+  assert.match(before, /cranium/u);
+  assert.match(after, /cranium/u);
+  assert.match(after, /頭蓋骨/u);
+  assert.doesNotMatch(before + after, /\[Image:|Artwork:/u);
+  const fallback = formatEmbeddedReviewExercise(medical, "prompt", false);
+  assert.match(fallback, /\[Image: Skull and jaw muscles\]/u);
 });
 
 test("ordinary Reading and Medical embedded Review formatting remains unchanged", () => {
@@ -247,15 +315,15 @@ function managerOptions(fakeController) {
   return { terminalArtworkBackend: "wayland-overlay", terminalArtworkControllerFactory: async () => fakeController };
 }
 
-function controller({ ready, reason, showFails = false }) {
+function controller({ ready, reason, showFails = false, calls = [] }) {
   return {
     selectedBackend: ready ? "wayland-overlay" : "disabled",
     capabilities: { configuredBackend: "wayland-overlay", selectedBackend: ready ? "wayland-overlay" : "disabled", ready, failed: false, reason, helpers: {}, terminalIndicators: [], graphicalSession: "Wayland" },
-    async start() {},
-    async show() { if (showFails) throw new Error("render failed"); },
-    async clear() {},
-    async resize() {},
-    async shutdown() {}
+    async start() { calls.push(["start"]); },
+    async show(options) { calls.push(["show", options]); if (showFails) throw new Error("render failed"); },
+    async clear() { calls.push(["clear"]); },
+    async resize() { calls.push(["resize"]); },
+    async shutdown() { calls.push(["shutdown"]); }
   };
 }
 
