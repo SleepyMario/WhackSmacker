@@ -385,7 +385,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
-    artifactRevision: 2,
+    artifactRevision: 3,
     sourcePath: "../korean-curriculum",
     sourceRepository: "https://github.com/SleepyMario/korean-curriculum",
     languages: ["ko", "en"],

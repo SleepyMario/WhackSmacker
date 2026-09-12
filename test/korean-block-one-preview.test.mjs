@@ -35,11 +35,11 @@ for (const [number, count] of [['003', 12], ['004', 9], ['005', 10]]) {
       assert.ok(!plain.includes('[[grammar:'));
       assert.ok(coloured.includes('\x1b[34m'));
       if (breakdownEnabled) {
-        assert.ok(coloured.includes('\x1b[36m'));
+        assert.ok(coloured.includes('\x1b[38;5;213m'));
         assert.ok(coloured.includes('\x1b[33m'));
         if (mode === 'Dialogue') {
           const support = JSON.parse(await readFile(`${directory}/reading-support.json`, 'utf8'));
-          for (const speaker of ['김민지', '박서연']) for (const label of ['Reading', 'English']) assert.ok(support.breakdown.normal.includes(`${label}: ${speaker}:`));
+          for (const speaker of ['김민지', '박서연']) for (const label of ['English']) assert.ok(support.breakdown.normal.includes(`${label}: ${speaker}:`));
         }
       }
     }
@@ -108,4 +108,25 @@ test('reading discovery selects the newest retained revision once without changi
     assert.equal(found[0].displayName, 'Current Korean Curriculum');
     assert.equal(await readFile(path, 'utf8'), before);
   } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test('all Korean breakdowns use aligned coloured original/translation pairs without visible labels', async () => {
+  for (const number of ['001','002','003','004','005']) {
+    const directory=new URL(`../dist/apps/cli/content/korean/chapter-${number}/`,import.meta.url).pathname;
+    const support=JSON.parse(await readFile(join(directory,'reading-support.json'),'utf8'));
+    for(const mode of ['normal','expert']) {
+      assert.ok(!support.breakdown[mode].includes('Reading:'));
+      const node={id:'ko-pairs',label:'Korean',kind:'message'};
+      // Plain numbered originals must work too; bold is presentation, not identity.
+      const text='### Line-by-line Breakdown\n\n'+support.breakdown[mode].replaceAll('**','');
+      for(const spacing of ['compact','separated']) {
+        const rendered=renderTwoPaneLanguageTree(node,new Set(),0,text,true,0,250,'en-US','navigation',180,0,mode,false,true,false,false,true,spacing);
+        assert.ok(!rendered.includes('Reading:'));assert.ok(!rendered.includes('English:'));
+        assert.ok(rendered.includes('\x1b[38;5;213m 1. '));
+        assert.ok(rendered.includes('\x1b[33m    '));
+        const lines=rendered.split('\n');const original=lines.findIndex(l=>l.includes('\x1b[38;5;213m 1. '));
+        if(spacing==='compact')assert.ok(lines[original+1].includes('\x1b[33m    '));
+      }
+    }
+  }
 });

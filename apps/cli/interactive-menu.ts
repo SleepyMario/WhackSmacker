@@ -5845,8 +5845,8 @@ function formatPaneText(
         while (next < rawLines.length && (rawLines[next] ?? "").trim() === "") next += 1;
         const before = rawLines[previous] ?? "";
         const after = rawLines[next] ?? "";
-        const originalToReading = /^\s*\d+[.)]\s+\*\*.+\*\*\s*$/u.test(before)
-          && /^\s*Reading:/u.test(after);
+        const originalToReading = /^\s*\d+[.)]\s+.+$/u.test(before)
+          && /^\s*(?:Reading|English):/u.test(after);
         const readingToEnglish = /^\s*Reading:/u.test(before) && /^\s*English:/u.test(after);
         if (originalToReading || readingToEnglish) continue;
       }
@@ -6202,7 +6202,7 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
   if (breakdownSection || grammarSection) {
     const original = grammarSection
       ? /^\s*(\d+[.)])\s+(.+?)\s*$/u.exec(rawLine)
-      : /^\s*(\d+[.)])\s+\*\*(.+)\*\*\s*$/u.exec(rawLine);
+      : /^\s*(\d+[.)])\s+(.+?)\s*$/u.exec(rawLine);
     const reading = /^\s*Reading:\s*(.+)$/u.exec(rawLine);
     const english = /^\s*English:\s*(.+)$/u.exec(rawLine);
     if (original !== null || reading !== null || english !== null) {
