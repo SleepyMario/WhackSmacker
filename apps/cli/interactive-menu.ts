@@ -2029,16 +2029,24 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
             { id: `${submenu.id}:chapter-002`, label: "Chapter II — Maria’s Introduction", kind: "message" as const,
               packageId: "com.sleepymario.language.vietnamese",
               authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-002"),
-              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-002/media/scene.png") }
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-002/media/scene.png") },
+            ...[["003", "III", "Tea with Minh Anh"], ["004", "IV", "In the Kitchen"], ["005", "V", "A Neighborhood Walk"]].map(([number, roman, title]) => ({
+              id: `${submenu.id}:chapter-${number}`, label: `Chapter ${roman} — ${title}`, kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, `content/vietnamese/chapter-${number}`),
+              previewArtworkPath: join(__dirname, `content/vietnamese/chapter-${number}/media/scene.png`)
+            })),
+            { id: `${submenu.id}:grammar-001-005`, label: "Grammar I - V", kind: "message" as const,
+              authoredGrammarPaths: [join(__dirname, "content/vietnamese/grammar-001-005-easy.md"), join(__dirname, "content/vietnamese/grammar-001-005-hard.md")] as const }
           ] };
         }
         if (submenu.id.endsWith(":decks")) {
           return {
             ...submenu,
             children: (submenu.children ?? []).map((deckType) => {
-              // Korean's rebuilt review blocks are discovered from installed
+              // Rebuilt Korean and Vietnamese review blocks are discovered from installed
               // package metadata, including their actual card counts and paths.
-              if ((language.packageId === "com.sleepymario.language.korean" || language.moduleId === "com.sleepymario.language.korean") && deckType.kind === "review-section") {
+              if (["com.sleepymario.language.korean", "com.sleepymario.language.vietnamese"].includes(language.packageId ?? language.moduleId ?? "") && deckType.kind === "review-section") {
                 const roman = (value: number): string => {
                   if (!Number.isSafeInteger(value) || value < 1 || value > 3999) return String(value);
                   let result = "";

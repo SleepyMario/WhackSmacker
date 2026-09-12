@@ -223,6 +223,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
+    artifactRevision: 2,
     sourcePath: "../vietnamese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
     languages: ["vi", "en"],
@@ -496,7 +497,7 @@ const coreReviewTargets: readonly {
   readonly artifactRevision?: number;
   readonly interactionProfile?: DeckInteractionProfile;
 }[] = [
-  { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.1.0" },
+  { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.1.0", artifactRevision: 2 },
   { slug: "dutch", name: "Dutch", readingId: "com.sleepymario.language.dutch", languages: ["nl", "en"], packageVersion: "0.1.0" },
   { slug: "arabic", name: "Arabic", readingId: "com.sleepymario.language.arabic", languages: ["ar", "en"], packageVersion: "0.1.0" },
   { slug: "french", name: "French", readingId: "com.sleepymario.language.french", languages: ["fr", "en"], packageVersion: "0.1.0" },
@@ -1407,10 +1408,6 @@ function japaneseExpressionContainsKanjiForPackage(value: string): boolean {
 }
 
 const readingSupportPackages: Readonly<Record<string, readonly { readonly source: string; readonly destination: string }[]>> = {
-  "vietnamese-curriculum": Array.from({ length: 30 }, (_, index) => index + 1).map((chapter) => ({
-    source: `curriculum-support/vietnamese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
-    destination: `units/vietnamese-core/chapter-${String(chapter).padStart(3, "0")}-basic-sentences-${chapter}/reading-support.json`
-  })),
   "arabic-curriculum": [
     [1, "chapter-001-greetings-and-identity"],
     [2, "chapter-002-layla-s-room"],

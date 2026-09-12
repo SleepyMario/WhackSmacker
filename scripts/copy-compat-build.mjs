@@ -86,3 +86,14 @@ await mkdir("dist/apps/cli/content/vietnamese/chapter-002/media", { recursive: t
 for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json", "media/scene.png"]) {
   await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-002-marias-introduction/${file}`, `dist/apps/cli/content/vietnamese/chapter-002/${file}`);
 }
+
+// Current Vietnamese first block, with colocated authored support and artwork.
+for (const [number, slug] of [["003", "tea-with-minh-anh"], ["004", "in-the-kitchen"], ["005", "a-neighborhood-walk"]]) {
+  await mkdir(`dist/apps/cli/content/vietnamese/chapter-${number}/media`, { recursive: true });
+  for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json", "chapter-participants.json", "media/scene.png"]) {
+    await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-${number}-${slug}/${file}`, `dist/apps/cli/content/vietnamese/chapter-${number}/${file}`);
+  }
+}
+for (const variant of ["easy", "hard"]) {
+  await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-001-005-grammar-${variant}/chapter.md`, `dist/apps/cli/content/vietnamese/grammar-001-005-${variant}.md`);
+}

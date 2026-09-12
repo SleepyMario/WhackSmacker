@@ -1,3 +1,11 @@
+# Current Vietnamese block — September 12, 2026
+
+Current source has Chapters I–V, illustrated III–V, and paired Grammar I - V. Reading review:36lexical identities/72bidirectional cards with1–3exact primary examples. Normal/Expert and independent translation/breakdown/Sino-Vietnamese views are supported. The approved I–II regional notes are preserved, with minimal direct-reader wording/grammar introduction cleanup; their primary readings are unchanged. Reconciled39vocabulary rows; là, ạ and location-marker ở remain teaching metadata rather than isolated grammar review cards.
+
+Prior30-chapter counts and reset statements below are historical and superseded for the current five-chapter source. No claim of language-wide completion. Current source and recovery publication are recorded independently from local installation and user validation.
+
+---
+
 # Vietnamese Core Reviews
 
 <!-- curriculum-reset-status:2026-09-11 -->
