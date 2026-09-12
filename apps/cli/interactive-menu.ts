@@ -1977,7 +1977,18 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                 previewArtworkPath: join(__dirname, "content/japanese/chapter-006/media/scene.png") },
               { id: `${submenu.id}:chapter-007`, label: "Chapter VII — Misaki’s Pottery", kind: "message" as const,
                 authoredReadingDirectory: join(__dirname, "content/japanese/chapter-007"),
-                previewArtworkPath: join(__dirname, "content/japanese/chapter-007/media/scene.png") }
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-007/media/scene.png") },
+              { id: `${submenu.id}:chapter-008`, label: "Chapter VIII — Misaki’s Pottery Studio", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-008"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-008/media/scene.png") },
+              { id: `${submenu.id}:chapter-009`, label: "Chapter IX — Choosing a Study Day", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-009"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-009/media/scene.png") },
+              { id: `${submenu.id}:chapter-010`, label: "Chapter X — Misaki’s Saturday", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-010"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-010/media/scene.png") },
+              { id: `${submenu.id}:grammar-006-010`, label: "Grammar VI - X", kind: "message" as const,
+                authoredGrammarPaths: [join(__dirname, "content/japanese/grammar-006-010-easy.md"), join(__dirname, "content/japanese/grammar-006-010-hard.md")] as const }
             ]
           };
         }
@@ -2022,6 +2033,11 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                   id: `${deckType.id}:chapter-001-005`, label: "Chapter I - V", kind: "review-source" as const,
                   packageId: "com.sleepymario.language.japanese", packageVersion: "0.1.0",
                   packageLabel: "Japanese", sourcePath: "review-decks/chapter-001-005/cards.tsv", itemCount: 102,
+                  contentDataDir: join(__dirname, "../../../.local-content/japanese-reviews")
+                }, {
+                  id: `${deckType.id}:chapter-006-010`, label: "Chapter VI - X", kind: "review-source" as const,
+                  packageId: "com.sleepymario.language.japanese", packageVersion: "0.1.0",
+                  packageLabel: "Japanese", sourcePath: "review-decks/chapter-006-010/cards.tsv", itemCount: 111,
                   contentDataDir: join(__dirname, "../../../.local-content/japanese-reviews")
                 }] };
               }

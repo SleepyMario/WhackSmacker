@@ -11,10 +11,14 @@ await cp("../japanese-curriculum/introductions/cast-introduction-ii.md", "dist/a
 await mkdir("dist/apps/cli/content/media", { recursive: true });
 await cp("../japanese-curriculum/introductions/media/cast-introduction-i.png", "dist/apps/cli/content/media/cast-introduction-i.png");
 await cp("../japanese-curriculum/introductions/media/cast-introduction-ii.png", "dist/apps/cli/content/media/cast-introduction-ii.png");
-for (const [chapter, source] of [["001", "chapter-001-a-first-meeting"], ["002", "chapter-002-akis-introduction"], ["003", "chapter-003-checking-study-supplies"], ["004", "chapter-004-rens-study-materials"], ["005", "chapter-005-at-the-cafe"], ["006", "chapter-006-meeting-misaki"], ["007", "chapter-007-misakis-pottery"]]) {
+for (const [chapter, source] of [["001", "chapter-001-a-first-meeting"], ["002", "chapter-002-akis-introduction"], ["003", "chapter-003-checking-study-supplies"], ["004", "chapter-004-rens-study-materials"], ["005", "chapter-005-at-the-cafe"], ["006", "chapter-006-meeting-misaki"], ["007", "chapter-007-misakis-pottery"], ["008", "chapter-008-misakis-pottery-studio"], ["009", "chapter-009-choosing-a-study-day"], ["010", "chapter-010-misakis-saturday"]]) {
   await mkdir(`dist/apps/cli/content/japanese/chapter-${chapter}`, { recursive: true });
   for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json"]) {
     await cp(`../japanese-curriculum/units/japanese-core/${source}/${file}`, `dist/apps/cli/content/japanese/chapter-${chapter}/${file}`);
+  }
+  if (Number(chapter) >= 8) {
+    await mkdir(`dist/apps/cli/content/japanese/chapter-${chapter}/media`, { recursive: true });
+    await cp(`../japanese-curriculum/units/japanese-core/${source}/media/scene.png`, `dist/apps/cli/content/japanese/chapter-${chapter}/media/scene.png`);
   }
 }
 
@@ -38,6 +42,7 @@ await cp("../japanese-curriculum/units/japanese-core/chapter-006-meeting-misaki/
 
 for (const variant of ["easy", "hard"]) {
   await cp(`../japanese-curriculum/units/japanese-core/chapter-001-005-grammar-${variant}/chapter.md`, `dist/apps/cli/content/japanese/grammar-001-005-${variant}.md`);
+  await cp(`../japanese-curriculum/units/japanese-core/chapter-006-010-grammar-${variant}/chapter.md`, `dist/apps/cli/content/japanese/grammar-006-010-${variant}.md`);
 }
 
 for (const person of ["aki", "ren", "yuki"]) {

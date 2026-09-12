@@ -492,6 +492,7 @@ const coreReviewTargets: readonly {
   readonly readingId?: string;
   readonly languages: readonly string[];
   readonly packageVersion: string;
+  readonly artifactRevision?: number;
   readonly interactionProfile?: DeckInteractionProfile;
 }[] = [
   { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.1.0" },
@@ -501,7 +502,7 @@ const coreReviewTargets: readonly {
   { slug: "german", name: "German", readingId: "com.sleepymario.language.german", languages: ["de", "en"], packageVersion: "0.1.0" },
   { slug: "hindi", name: "Hindi", readingId: "com.sleepymario.language.hindi", languages: ["hi", "en"], packageVersion: "0.1.0" },
   {
-    slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0",
+    slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0", artifactRevision: 2,
     interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent" }
   },
   { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0" },
@@ -511,7 +512,7 @@ const coreReviewTargets: readonly {
   { slug: "zulu", name: "Zulu", readingId: "com.sleepymario.language.zulu", languages: ["zu", "en"], packageVersion: "0.1.0" }
 ];
 
-const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = coreReviewTargets.map(({ slug, name, readingId, languages, packageVersion, interactionProfile }) => ({
+const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = coreReviewTargets.map(({ slug, name, readingId, languages, packageVersion, artifactRevision, interactionProfile }) => ({
   id: `${slug}-core-reviews`,
   packageId: readingId === undefined ? `com.sleepymario.language.${slug}.reviews` : `${readingId}.reviews`,
   displayName: `${name} Core Reviews`,
@@ -523,6 +524,7 @@ const generatedCoreReviewTargets: readonly ContentPackageGeneratorTarget[] = cor
   ...(readingId === undefined ? {} : { relatedPackageIds: [readingId] }),
   contentSchemaVersion: slug === "vietnamese" || slug === "dutch" ? "2.0.0" : "1.0.0",
   packageVersion,
+  ...(artifactRevision === undefined ? {} : { artifactRevision }),
   ...(interactionProfile === undefined ? {} : { interactionProfile }),
   sourcePath: `review-content/${slug}`,
   sourceRepository: "https://github.com/SleepyMario/whacksmacker",
