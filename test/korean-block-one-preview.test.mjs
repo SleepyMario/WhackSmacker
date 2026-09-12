@@ -77,3 +77,35 @@ test('portable Korean reading package retains every chapter scene with its sourc
     }
   } finally { await rm(outputDirectory, { recursive: true, force: true }); }
 });
+
+test('reading discovery selects the newest retained revision once without changing the registry', async () => {
+  const { generateLocalContentPackageCatalogue } = await import('../dist/packages/core/index.js');
+  const { installContentPackage } = await import('../dist/packages/core/content-package-manager.js');
+  const { listInstalledReadablePackages } = await import('../dist/packages/core/content-package-reader.js');
+  const { cp, writeFile, chmod } = await import('node:fs/promises');
+  const root = await mkdtemp(join(tmpdir(), 'korean-revisions-'));
+  try {
+    const packages = join(root, 'packages'), dataDir = join(root, 'data'), cataloguePath = join(root, 'catalogue.json');
+    await generateContentPackage({ targetId: 'korean-curriculum', outputDirectory: packages, generatedAt: '2026-09-12T00:00:00Z' });
+    await generateLocalContentPackageCatalogue({ packagesDirectory: packages, outputPath: cataloguePath, generatedAt: '2026-09-12T00:00:00Z' });
+    await installContentPackage({ cataloguePath, dataDir, packageId: 'com.sleepymario.language.korean', installedAt: '2026-09-12T00:00:00Z' });
+    const path = join(dataDir, 'registry.json');
+    const registry = JSON.parse(await readFile(path, 'utf8'));
+    const record = registry.packages[0];
+    const newer = { ...record, artifactRevision: record.artifactRevision + 1, installPath: record.installPath + '-newer' };
+    await cp(join(dataDir, record.installPath), join(dataDir, newer.installPath), { recursive: true });
+    const manifestPath = join(dataDir, newer.installPath, 'manifest.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+    manifest.displayName = 'Current Korean Curriculum';
+    manifest.artifactRevision = newer.artifactRevision;
+    await chmod(manifestPath, 0o600);
+    await writeFile(manifestPath, JSON.stringify(manifest));
+    registry.packages.push(newer);
+    const before = JSON.stringify(registry);
+    await writeFile(path, before);
+    const found = await listInstalledReadablePackages(dataDir);
+    assert.equal(found.length, 1);
+    assert.equal(found[0].displayName, 'Current Korean Curriculum');
+    assert.equal(await readFile(path, 'utf8'), before);
+  } finally { await rm(root, { recursive: true, force: true }); }
+});

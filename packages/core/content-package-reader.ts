@@ -164,7 +164,10 @@ export async function readInstalledLanguageCurriculumChapter(options: {
 
 export async function listInstalledReadablePackages(dataDir?: string, locale = "en-US"): Promise<readonly InstalledReadablePackage[]> {
   return perfSpan("package.discovery.readable", { dataDir: dataDir ?? "default", locale }, async () =>
-    Promise.all((await listInstalledContentPackages(dataDir)).filter(record => record.contentType !== "curriculum-source-language-pack" && record.contentType !== "core-review" && record.contentType !== "topic-review" && record.contentType !== "specialized-review").map(async (record) => {
+    Promise.all([...(await listInstalledContentPackages(dataDir))]
+      .sort((left, right) => compareDeckFrameworkVersions(right, left))
+      .filter((record, index, records) => records.findIndex(candidate => candidate.packageId === record.packageId) === index)
+      .filter(record => record.contentType !== "curriculum-source-language-pack" && record.contentType !== "core-review" && record.contentType !== "topic-review" && record.contentType !== "specialized-review").map(async (record) => {
       const manifest = await readInstalledManifest(installedPackageRoot(record, dataDir));
       return toReadablePackage(record, manifest, locale);
     }))
