@@ -45,5 +45,5 @@ SPDX-License-Identifier: LicenseRef-Whacksmacker-Curriculum-Content
 Chapter I - V contains 34 lexical identities and 68 ordinary bidirectional
 cards. It covers only the current five reauthored chapters, with 1–3 exact
 primary-reading examples per card. Package deck version 0.0.1 artifact revision
-2 supersedes the old course’s revision 1. Learner-facing location is Decks →
+3 contains individual sentence examples and supersedes revisions 1–2. Learner-facing location is Decks →
 Reading → Chapter I - V. Older course descriptions below are historical.

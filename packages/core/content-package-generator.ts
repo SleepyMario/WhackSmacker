@@ -506,7 +506,7 @@ const coreReviewTargets: readonly {
     slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0", artifactRevision: 2,
     interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent" }
   },
-  { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0", artifactRevision: 2 },
+  { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0", artifactRevision: 3 },
   { slug: "russian", name: "Russian", readingId: "com.sleepymario.language.russian", languages: ["ru", "en"], packageVersion: "0.1.0" },
   { slug: "spanish", name: "Spanish", readingId: "com.sleepymario.language.spanish", languages: ["es", "en"], packageVersion: "0.1.0" },
   { slug: "thai", name: "Thai", readingId: "com.sleepymario.language.thai", languages: ["th", "en"], packageVersion: "0.1.0" },
