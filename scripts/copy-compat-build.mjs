@@ -65,6 +65,16 @@ for (const file of ["chapter.md", "reading-support.json", "reading-translation.e
   await cp(`../korean-curriculum/units/korean-core/chapter-002-seoyeons-introduction/${file}`, `dist/apps/cli/content/korean/chapter-002/${file}`);
 }
 
+for (const [number, slug] of [["003", "at-the-campus-club-table"], ["004", "seoyeons-design-desk"], ["005", "a-cafe-break"]]) {
+  await mkdir(`dist/apps/cli/content/korean/chapter-${number}/media`, { recursive: true });
+  for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json", "chapter-participants.json", "media/scene.png"]) {
+    await cp(`../korean-curriculum/units/korean-core/chapter-${number}-${slug}/${file}`, `dist/apps/cli/content/korean/chapter-${number}/${file}`);
+  }
+}
+for (const variant of ["easy", "hard"]) {
+  await cp(`../korean-curriculum/units/korean-core/chapter-001-005-grammar-${variant}/chapter.md`, `dist/apps/cli/content/korean/grammar-001-005-${variant}.md`);
+}
+
 await cp("../vietnamese-curriculum/introductions/cast-introduction-i.md", "dist/apps/cli/content/vietnamese-cast-introduction-i.md");
 await cp("../vietnamese-curriculum/introductions/media/cast-introduction-i.png", "dist/apps/cli/content/media/vietnamese-cast-introduction-i.png");
 await mkdir("dist/apps/cli/content/vietnamese/chapter-001/media", { recursive: true });

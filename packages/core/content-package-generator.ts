@@ -380,10 +380,11 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     id: "korean-curriculum",
     packageId: "com.sleepymario.language.korean",
     displayName: "Korean",
-    description: "Korean language curriculum content generated from the canonical Chapters 1 through 15 source.",
+    description: "Korean language curriculum content from the reauthored Chapters I–V and paired grammar summaries.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
+    artifactRevision: 2,
     sourcePath: "../korean-curriculum",
     sourceRepository: "https://github.com/SleepyMario/korean-curriculum",
     languages: ["ko", "en"],
@@ -505,7 +506,7 @@ const coreReviewTargets: readonly {
     slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0", artifactRevision: 2,
     interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent" }
   },
-  { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0" },
+  { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0", artifactRevision: 2 },
   { slug: "russian", name: "Russian", readingId: "com.sleepymario.language.russian", languages: ["ru", "en"], packageVersion: "0.1.0" },
   { slug: "spanish", name: "Spanish", readingId: "com.sleepymario.language.spanish", languages: ["es", "en"], packageVersion: "0.1.0" },
   { slug: "thai", name: "Thai", readingId: "com.sleepymario.language.thai", languages: ["th", "en"], packageVersion: "0.1.0" },
@@ -1474,26 +1475,9 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     source: `curriculum-support/japanese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/japanese-core/${directory}/reading-support.json`
   })),
-  "korean-curriculum": [
-    [1, "chapter-001-a-polite-first-meeting"],
-    [2, "chapter-002-a-room-at-home"],
-    [3, "chapter-003-what-is-this"],
-    [4, "chapter-004-minji-s-morning"],
-    [5, "chapter-005-going-out-together"],
-    [6, "chapter-006-a-new-classroom"],
-    [7, "chapter-007-ordering-a-snack"],
-    [8, "chapter-008-a-simple-daily-schedule"],
-    [9, "chapter-009-a-quiet-weekend"],
-    [10, "chapter-010-yesterday-at-the-market"],
-    [11, "chapter-011-books-at-the-library"],
-    [12, "chapter-012-after-class"],
-    [13, "chapter-013-choosing-dinner"],
-    [14, "chapter-014-a-saturday-outing"],
-    [15, "chapter-015-planning-tomorrow"]
-  ].map(([chapter, directory]) => ({
-    source: `curriculum-support/korean/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
-    destination: `units/korean-core/${directory}/reading-support.json`
-  })),
+  // Reauthored Korean chapters own their colocated support. Never inject the
+  // retired fifteen-chapter course or overwrite its replacement Chapter I.
+  "korean-curriculum": [],
   "russian-curriculum": [
     [1, "chapter-001-meeting-at-home"],
     [2, "chapter-002-anna-s-room"],

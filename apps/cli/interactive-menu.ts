@@ -2005,7 +2005,15 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
             { id: `${submenu.id}:chapter-002`, label: "Chapter II — Seoyeon’s Introduction", kind: "message" as const,
               packageId: "com.sleepymario.language.korean",
               authoredReadingDirectory: join(__dirname, "content/korean/chapter-002"),
-              previewArtworkPath: join(__dirname, "content/korean/chapter-002/media/scene.png") }
+              previewArtworkPath: join(__dirname, "content/korean/chapter-002/media/scene.png") },
+            ...[["003", "III", "At the Campus Club Table"], ["004", "IV", "Seoyeon’s Design Desk"], ["005", "V", "A Café Break"]].map(([number, roman, title]) => ({
+              id: `${submenu.id}:chapter-${number}`, label: `Chapter ${roman} — ${title}`, kind: "message" as const,
+              packageId: "com.sleepymario.language.korean",
+              authoredReadingDirectory: join(__dirname, `content/korean/chapter-${number}`),
+              previewArtworkPath: join(__dirname, `content/korean/chapter-${number}/media/scene.png`)
+            })),
+            { id: `${submenu.id}:grammar-001-005`, label: "Grammar I - V", kind: "message" as const,
+              authoredGrammarPaths: [join(__dirname, "content/korean/grammar-001-005-easy.md"), join(__dirname, "content/korean/grammar-001-005-hard.md")] as const }
           ] };
         }
         if ((language.packageId === "com.sleepymario.language.vietnamese" || language.moduleId === "com.sleepymario.language.vietnamese") && submenu.kind === "read-section") {
@@ -2028,6 +2036,21 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
           return {
             ...submenu,
             children: (submenu.children ?? []).map((deckType) => {
+              // Korean's rebuilt review blocks are discovered from installed
+              // package metadata, including their actual card counts and paths.
+              if ((language.packageId === "com.sleepymario.language.korean" || language.moduleId === "com.sleepymario.language.korean") && deckType.kind === "review-section") {
+                const roman = (value: number): string => {
+                  if (!Number.isSafeInteger(value) || value < 1 || value > 3999) return String(value);
+                  let result = "";
+                  for (const [amount, symbol] of [[1000, "M"], [900, "CM"], [500, "D"], [400, "CD"], [100, "C"], [90, "XC"], [50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]] as const) {
+                    while (value >= amount) { result += symbol; value -= amount; }
+                  }
+                  return result;
+                };
+                return { ...deckType, children: deckType.children?.map(child => ({ ...child,
+                  label: child.label.replace(/^Chapter (\d+)\s*[-–]\s*(\d+)$/u, (_match, first: string, last: string) => `Chapter ${roman(Number(first))} - ${roman(Number(last))}`)
+                })) };
+              }
               if ((language.packageId === "com.sleepymario.language.japanese" || language.moduleId === "com.sleepymario.language.japanese") && deckType.kind === "review-section") {
                 return { ...deckType, children: [{
                   id: `${deckType.id}:chapter-001-005`, label: "Chapter I - V", kind: "review-source" as const,

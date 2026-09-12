@@ -225,7 +225,7 @@ Use \`N + particle\` in the taught pattern.
   }));
 });
 
-test("shared Chapters 1-25 validation requires the canonical four-item Simple Exercises section", () => {
+test("early chapters omit exercises while existing legacy exercises remain validated", () => {
   const valid = `---
 chapter: 12
 ---
@@ -260,12 +260,11 @@ Use \`N + verb\` in a simple clause.
 4. Write one new sentence.
 `;
   assert.doesNotThrow(() => assertCanonicalSectionAndGrammarRules({ markdown: valid, source: "exercise-fixture/chapter.md" }));
-  assert.throws(
+  assert.doesNotThrow(
     () => assertCanonicalSectionAndGrammarRules({
       markdown: valid.replace(/\n### Simple Exercises[\s\S]*$/u, "\n"),
       source: "missing-exercises-fixture/chapter.md"
-    }),
-    /require an exact .*Simple Exercises section/u
+    })
   );
   assert.throws(
     () => assertCanonicalSectionAndGrammarRules({

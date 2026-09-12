@@ -40,3 +40,10 @@ Completed consecutive five-chapter inventory:
 Every ordinary deck contains vocabulary/function-word cards only and requires one to three literal examples from primary Dialogue or Narrative content.
 
 SPDX-License-Identifier: LicenseRef-Whacksmacker-Curriculum-Content
+# Current Korean review status — September 12, 2026
+
+Chapter I - V contains 34 lexical identities and 68 ordinary bidirectional
+cards. It covers only the current five reauthored chapters, with 1–3 exact
+primary-reading examples per card. Package deck version 0.0.1 artifact revision
+2 supersedes the old course’s revision 1. Learner-facing location is Decks →
+Reading → Chapter I - V. Older course descriptions below are historical.

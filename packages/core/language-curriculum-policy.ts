@@ -36,7 +36,7 @@ export const canonicalSectionAndGrammarRuleIds = [
   "WSM-BRIEF-GRAMMAR-001",
   "WSM-BRIEF-PARTICIPANTS-001",
   "WSM-PRIMARY-SETUP-001",
-  "WSM-SIMPLE-EXERCISES-001",
+  "WSM-EXERCISES-SEPARATE-001",
   "WSM-GRAMMAR-PROSE-001",
   "WSM-GRAMMAR-INVENTORY-PROJECTION-001"
 ] as const;
@@ -140,9 +140,9 @@ function chapterNumberFromMarkdown(markdown: string): number | undefined {
 
 function assertSimpleExercises(markdown: string, source: string, chapter: number): void {
   const exerciseOffset = markdown.search(/^### Simple Exercises\s*$/mu);
-  if (exerciseOffset < 0) {
-    throw new Error(`${source}: Chapters 1-25 require an exact ### Simple Exercises section by WSM-SIMPLE-EXERCISES-001.`);
-  }
+  // New chapters keep exercises separate. Retain validation for an existing
+  // legacy section without requiring authors to recreate the retired section.
+  if (exerciseOffset < 0) return;
   const exercises = markdownSection(markdown, "Simple Exercises");
   if (exercises === undefined) {
     throw new Error(`${source}: Chapter ${chapter} Simple Exercises content cannot be read.`);
