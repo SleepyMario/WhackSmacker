@@ -1205,7 +1205,8 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     ? await collectReviewEvidenceFiles(target, options.env)
     : [];
   const memorizationFiles = isReviewPackageTarget(target) ? buildMemorizationFiles(target, sourceFiles, reviewEvidenceFiles, options.generatedAt) : [];
-  const packagedMediaFiles = await collectReferencedPackageMedia(sourceRoot, memorizationFiles);
+  const packagedMediaFiles = await collectReferencedPackageMedia(sourceRoot, memorizationFiles,
+    target.contentType === "language-curriculum" ? sourceFiles.filter(file => isReadableChapterMarkdownPath(file.path)) : []);
   const packagedSourceFiles = sourceFiles
     .filter((file) => packagedCurriculumMetadataPaths.has(file.path) || file.path === target.license?.path || file.path === "NOTICE")
     .map((file) => ({ record: createFileRecord(file.path, file.mediaType, file.buffer), buffer: file.buffer }));
@@ -1765,9 +1766,18 @@ interface GeneratedMemorizationFile {
 
 async function collectReferencedPackageMedia(
   sourceRoot: string,
-  memorizationFiles: readonly GeneratedMemorizationFile[]
+  memorizationFiles: readonly GeneratedMemorizationFile[],
+  readingFiles: readonly SourceFile[] = []
 ): Promise<readonly GeneratedMemorizationFile[]> {
   const paths = new Set<string>();
+  for (const file of readingFiles) {
+    for (const match of file.text.matchAll(/!\[[^\]]*\]\(([^\s)]+)\)/gu)) {
+      const imagePath = match[1];
+      if (imagePath === undefined || /^https?:\/\//u.test(imagePath)) continue;
+      if (isAbsolute(imagePath)) throw new Error(`Chapter image must be source-relative: ${imagePath}`);
+      paths.add(join(dirname(file.path), imagePath).split(sep).join("/"));
+    }
+  }
   for (const file of memorizationFiles) {
     const value = JSON.parse(file.buffer.toString("utf8")) as unknown;
     for (const reference of memorizationMediaReferences(value)) paths.add(reference.path);

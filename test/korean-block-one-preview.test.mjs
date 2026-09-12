@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, mkdtemp, rm } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { renderLanguageTreeRightPane, renderTwoPaneLanguageTree } from '../dist/apps/cli/interactive-menu.js';
+import { generateContentPackage } from '../dist/packages/core/content-package-generator.js';
 
 for (const [number, count] of [['003', 12], ['004', 9], ['005', 10]]) {
   test(`Korean ${number}: complete reading, independent translation/breakdown/Hanja and artwork`, async () => {
@@ -58,4 +62,18 @@ test('Korean Grammar I-V selects one version with the same five patterns and fif
     for (const e of coverage[0].examples) assert.ok(text.includes(e.example));
     assert.ok(!/KOR-GRAMMAR-|CAST-/.test(text));
   }
+});
+
+test('portable Korean reading package retains every chapter scene with its source checksum', async () => {
+  const outputDirectory = await mkdtemp(join(tmpdir(), 'korean-scene-package-'));
+  try {
+    const result = await generateContentPackage({ targetId: 'korean-curriculum', outputDirectory, generatedAt: '2026-09-12T12:00:00Z' });
+    const scenes = result.manifest.files.filter(file => /\/media\/scene\.png$/u.test(file.path));
+    assert.equal(scenes.length, 5);
+    for (const scene of scenes) {
+      const bytes = await readFile(new URL(`../../korean-curriculum/${scene.path}`, import.meta.url));
+      assert.equal(scene.sha256, createHash('sha256').update(bytes).digest('hex'));
+      assert.equal(scene.size, bytes.length);
+    }
+  } finally { await rm(outputDirectory, { recursive: true, force: true }); }
 });
