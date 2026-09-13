@@ -89,7 +89,7 @@ for (const file of ["chapter.md", "reading-support.json", "reading-translation.e
 }
 
 // Current Vietnamese first block, with colocated authored support and artwork.
-for (const [number, slug] of [["003", "tea-with-minh-anh"], ["004", "in-the-kitchen"], ["005", "a-neighborhood-walk"], ["006", "gia-bao-in-the-garden"]]) {
+for (const [number, slug] of [["003", "tea-with-minh-anh"], ["004", "in-the-kitchen"], ["005", "a-neighborhood-walk"], ["006", "gia-bao-in-the-garden"], ["007", "gia-baos-history-book"], ["008", "a-small-garden"]]) {
   await mkdir(`dist/apps/cli/content/vietnamese/chapter-${number}/media`, { recursive: true });
   for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json", "chapter-participants.json", "media/scene.png"]) {
     await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-${number}-${slug}/${file}`, `dist/apps/cli/content/vietnamese/chapter-${number}/${file}`);

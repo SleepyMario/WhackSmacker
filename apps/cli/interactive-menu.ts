@@ -2059,7 +2059,13 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
             { id: `${submenu.id}:chapter-006`, label: "Chapter VI — Gia Bảo in the Garden", kind: "message" as const,
               packageId: "com.sleepymario.language.vietnamese",
               authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-006"),
-              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-006/media/scene.png") }
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-006/media/scene.png") },
+            ...[["007", "VII", "Gia Bảo’s History Book"], ["008", "VIII", "A Small Garden"]].map(([number, roman, title]) => ({
+              id: `${submenu.id}:chapter-${number}`, label: `Chapter ${roman} — ${title}`, kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, `content/vietnamese/chapter-${number}`),
+              previewArtworkPath: join(__dirname, `content/vietnamese/chapter-${number}/media/scene.png`)
+            }))
           ] };
         }
         if (submenu.id.endsWith(":decks")) {

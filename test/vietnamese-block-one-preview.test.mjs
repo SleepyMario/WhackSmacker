@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { renderLanguageTreeRightPane, renderTwoPaneLanguageTree } from '../dist/apps/cli/interactive-menu.js';
 import { generateContentPackage } from '../dist/packages/core/content-package-generator.js';
-for (const [number,count] of [['003',10],['004',9],['005',10],['006',13]]) {
+for (const [number,count] of [['003',10],['004',9],['005',10],['006',13],['007',14],['008',11]]) {
  test(`Vietnamese ${number}: complete reading, regional guide and independent support views`, async()=>{
   const dir=new URL(`../dist/apps/cli/content/vietnamese/chapter-${number}/`,import.meta.url).pathname;
   const src=await readFile(join(dir,'chapter.md'),'utf8');
@@ -28,7 +28,7 @@ for (const [number,count] of [['003',10],['004',9],['005',10],['006',13]]) {
   }
   if(kind==='Dialogue'){
    const support=JSON.parse(await readFile(join(dir,'reading-support.json'),'utf8'));
-   for(const label of ['English']) for(const name of ['Maria','Minh Anh'])assert.ok(support.breakdown.normal.includes(`${label}: ${name}:`));
+   for(const label of ['English']) for(const name of (number==='007'?['Maria','Gia Bảo']:['Maria','Minh Anh']))assert.ok(support.breakdown.normal.includes(`${label}: ${name}:`));
   }
  });
 }
@@ -53,10 +53,10 @@ test('Vietnamese block review has exactly paired lexical cards and exact bounded
   for(const c of pair)for(const ex of JSON.parse(c.examples))assert.ok(entry.evidence.some(e=>e.sentence===ex));
  }
 });
-test('portable Vietnamese reading package contains all six scenes and the new cast portrait',async()=>{
+test('portable Vietnamese reading package contains all eight scenes and the new cast portrait',async()=>{
  const output=await mkdtemp(join(tmpdir(),'vi-scenes-'));
  try{const result=await generateContentPackage({targetId:'vietnamese-curriculum',outputDirectory:output,generatedAt:'2026-09-12T12:00:00Z'});
-  assert.equal(result.manifest.files.filter(f=>/chapter-00[1-6]-[^/]+\/media\/scene\.png$/.test(f.path)).length,6);
+  assert.equal(result.manifest.files.filter(f=>/chapter-00[1-8]-[^/]+\/media\/scene\.png$/.test(f.path)).length,8);
   assert.ok(result.manifest.files.some(f=>f.path.endsWith("introductions/media/gia-bao.png")));
  }finally{await rm(output,{recursive:true,force:true});}
 });
@@ -65,7 +65,7 @@ test('Vietnamese examples have adjacent original-English rows with no redundant 
  const root=new URL('../../vietnamese-curriculum/units/vietnamese-core/',import.meta.url).pathname;
  const {readdir}=await import('node:fs/promises');
  for(const name of await readdir(root)){
-  if(!/^chapter-00[1-6]-/.test(name)||name.includes('grammar'))continue;
+  if(!/^chapter-00[1-8]-/.test(name)||name.includes('grammar'))continue;
   const support=JSON.parse(await readFile(join(root,name,'reading-support.json'),'utf8'));
   for(const mode of ['normal','expert']){
    const text='### Line-by-line Breakdown\n\n'+support.breakdown[mode];
