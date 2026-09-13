@@ -30,16 +30,9 @@ cleanup() {
 }
 
 remote_digest() {
-  DOCKER_CONFIG=$clean_docker_config docker manifest inspect --verbose "$1" | node -e '
-let input = "";
-process.stdin.setEncoding("utf8");
-process.stdin.on("data", chunk => input += chunk);
-process.stdin.on("end", () => {
-  const value = JSON.parse(input);
-  const descriptor = Array.isArray(value) ? value[0]?.Descriptor : value.Descriptor;
-  if (!descriptor?.digest) process.exit(1);
-  process.stdout.write(descriptor.digest);
-});'
+  # Read the top-level registry digest, not one child platform manifest.
+  DOCKER_CONFIG=$clean_docker_config docker buildx imagetools inspect "$1" |
+    awk '$1 == "Digest:" && !found { print $2; found=1 }'
 }
 
 smoke_image() {

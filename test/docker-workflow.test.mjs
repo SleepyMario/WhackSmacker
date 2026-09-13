@@ -103,3 +103,11 @@ test('Docker gate retains installer safety and supplies all compiled curriculum 
   assert.match(feed,/selectCoreReviewTargets/);
   assert.match(feed,/--production/);
 });
+
+test('publication verifies the top-level registry digest instead of a platform child',async()=>{
+ for(const kind of ['daily','release']) {
+  const source=await readFile(`scripts/operations/whacksmacker-docker-${kind}.sh`,'utf8');
+  assert.match(source,/docker buildx imagetools inspect/);
+  assert.doesNotMatch(source,/value\[0\]\?\.Descriptor/);
+ }
+});
