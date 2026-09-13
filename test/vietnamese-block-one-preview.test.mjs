@@ -28,7 +28,7 @@ for (const [number,count] of [['003',10],['004',9],['005',10],['006',13]]) {
   }
   if(kind==='Dialogue'){
    const support=JSON.parse(await readFile(join(dir,'reading-support.json'),'utf8'));
-   for(const label of ['Reading','English']) for(const name of ['Maria','Minh Anh'])assert.ok(support.breakdown.normal.includes(`${label}: ${name}:`));
+   for(const label of ['English']) for(const name of ['Maria','Minh Anh'])assert.ok(support.breakdown.normal.includes(`${label}: ${name}:`));
   }
  });
 }
@@ -59,4 +59,34 @@ test('portable Vietnamese reading package contains all six scenes and the new ca
   assert.equal(result.manifest.files.filter(f=>/chapter-00[1-6]-[^/]+\/media\/scene\.png$/.test(f.path)).length,6);
   assert.ok(result.manifest.files.some(f=>f.path.endsWith("introductions/media/gia-bao.png")));
  }finally{await rm(output,{recursive:true,force:true});}
+});
+
+test('Vietnamese examples have adjacent original-English rows with no redundant reading',async()=>{
+ const root=new URL('../../vietnamese-curriculum/units/vietnamese-core/',import.meta.url).pathname;
+ const {readdir}=await import('node:fs/promises');
+ for(const name of await readdir(root)){
+  if(!/^chapter-00[1-6]-/.test(name)||name.includes('grammar'))continue;
+  const support=JSON.parse(await readFile(join(root,name,'reading-support.json'),'utf8'));
+  for(const mode of ['normal','expert']){
+   const text='### Line-by-line Breakdown\n\n'+support.breakdown[mode];
+   assert.ok(!text.includes('Reading:'));
+   for(const spacing of ['compact','separated']){
+    const node={id:'vi-pairs',label:'Vietnamese',kind:'message'};
+    const rendered=renderTwoPaneLanguageTree(node,new Set(),0,text,true,0,500,'en-US','navigation',240,0,mode,false,true,false,false,true,spacing);
+    const lines=rendered.split('\n');
+    const first=lines.findIndex(l=>l.includes('\x1b[38;5;213m 1. '));
+    assert.ok(first>=0);assert.ok(lines[first+1].includes('\x1b[33m    '));
+    assert.ok(!rendered.includes('Reading:'));assert.ok(!rendered.includes('Transliteration:'));
+   }
+  }
+ }
+ for(const variant of ['easy','hard']){
+  const text=await readFile(join(root,`chapter-001-005-grammar-${variant}`,'chapter.md'),'utf8');
+  assert.ok(!text.includes('Reading:'));
+  assert.equal((text.match(/\*\*\nEnglish:/g)||[]).length,15);
+  const node={id:'vi-grammar-pairs',label:'Grammar I - V',kind:'message'};
+  const rendered=renderTwoPaneLanguageTree(node,new Set(),0,text,true,0,1600,'en-US','navigation',240,0,'normal');
+  const lines=rendered.split('\n');
+  for(let i=0;i<lines.length;i++)if(/\x1b\[38;5;213m\s*\d+\./.test(lines[i]))assert.ok(lines[i+1].includes('\x1b[33m'));
+ }
 });
