@@ -6036,8 +6036,7 @@ function learnerReadingSectionForHeading(title: string): LearnerReadingSection {
 }
 
 function isDialogueSpeakerLine(line: string): boolean {
-  const semanticText = stripInlineMarkdown(line, false);
-  return /^(?:\s*)(?:\S(?:.*?\S)?)(?:\s*)[:：](?:\s*)\S/u.test(semanticText);
+  return dialogueSpeakerLabel(line) !== undefined;
 }
 
 function dialogueLabelWidthsByLine(lines: readonly string[]): ReadonlyMap<number, number> {
@@ -6072,7 +6071,11 @@ function dialogueLabelWidthsByLine(lines: readonly string[]): ReadonlyMap<number
 
 function dialogueSpeakerLabel(line: string): string | undefined {
   const plain = stripInlineMarkdown(line, false);
-  return /^(?:\s*)(\S(?:.*?\S)?)(?:\s*)[:：](?:\s*)\S/u.exec(plain)?.[1]?.trim();
+  const label = /^(?:\s*)(\S(?:.*?\S)?)(?:\s*)[:：](?:\s*)\S/u.exec(plain)?.[1]?.trim();
+  // A prose paragraph can contain a colon. Never let its entire opening
+  // become a speaker column shared by all the real dialogue turns.
+  // Leave generous room for full names, titles and non-Latin scripts.
+  return label !== undefined && displayWidth(label) <= 80 ? label : undefined;
 }
 
 function formatLearnerDialogueLine(rawLine: string, width: number, colorsEnabled: boolean, alignedLabelWidth?: number): readonly string[] {

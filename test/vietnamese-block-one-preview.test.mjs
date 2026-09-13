@@ -90,3 +90,19 @@ test('Vietnamese examples have adjacent original-English rows with no redundant 
   for(let i=0;i<lines.length;i++)if(/\x1b\[38;5;213m\s*\d+\./.test(lines[i]))assert.ok(lines[i+1].includes('\x1b[33m'));
  }
 });
+
+test('VII prose colon does not become the dialogue speaker alignment column', async () => {
+ const dir=new URL('../dist/apps/cli/content/vietnamese/chapter-007/',import.meta.url).pathname;
+ const node={id:'vi-seven-layout',label:'Chapter VII',kind:'message',authoredReadingDirectory:dir};
+ for(const mode of ['normal','expert']) for(const spacing of ['compact','separated']) {
+  const text=await renderLanguageTreeRightPane(node,{displayMode:mode,translationsEnabled:true,locale:'en-US'});
+  for(const width of [100,160,240]) {
+   const rendered=renderTwoPaneLanguageTree(node,new Set(),0,text,true,0,1600,'en-US','navigation',width,0,mode,false,true,false,false,true,spacing);
+   const plain=rendered.replace(/\x1b\[[0-9;]*m/g,'');
+   assert.match(plain,/Maria\s{0,4}: Sách của em ở đâu\?/u);
+   assert.match(plain,/Gia Bảo: Sách của em ở đây\./u);
+   assert.ok(rendered.includes('\x1b[38;5;141mMaria'), 'real speaker retains speaker colour');
+   assert.ok(!rendered.includes('\x1b[38;5;141mMaria Garcia visits'), 'setup remains ordinary prose');
+  }
+ }
+});
