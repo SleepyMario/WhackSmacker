@@ -2052,7 +2052,14 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
               previewArtworkPath: join(__dirname, `content/vietnamese/chapter-${number}/media/scene.png`)
             })),
             { id: `${submenu.id}:grammar-001-005`, label: "Grammar I - V", kind: "message" as const,
-              authoredGrammarPaths: [join(__dirname, "content/vietnamese/grammar-001-005-easy.md"), join(__dirname, "content/vietnamese/grammar-001-005-hard.md")] as const }
+              authoredGrammarPaths: [join(__dirname, "content/vietnamese/grammar-001-005-easy.md"), join(__dirname, "content/vietnamese/grammar-001-005-hard.md")] as const },
+            { id: `${submenu.id}:cast-gia-bao`, label: "Meet Gia Bảo — Nguyễn Gia Bảo", kind: "message" as const,
+              previewArtworkPath: join(__dirname, "content/media/vietnamese-gia-bao.png"),
+              previewText: readFileSync(join(__dirname, "content/vietnamese-cast-gia-bao.md"), "utf8") },
+            { id: `${submenu.id}:chapter-006`, label: "Chapter VI — Gia Bảo in the Garden", kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-006"),
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-006/media/scene.png") }
           ] };
         }
         if (submenu.id.endsWith(":decks")) {

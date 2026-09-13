@@ -223,7 +223,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
-    artifactRevision: 2,
+    artifactRevision: 3,
     sourcePath: "../vietnamese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
     languages: ["vi", "en"],
@@ -231,6 +231,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     license: { spdx: null, name: null, path: null },
     include: [
       "README.md",
+      "introductions",
       "philosophy.md",
       "scope.md",
       "curriculum-map.md",
@@ -252,6 +253,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     ],
     readingContentInclude: [
       "README.md",
+      "introductions",
       "philosophy.md",
       "scope.md",
       "curriculum-map.md",
@@ -1206,7 +1208,7 @@ export async function generateContentPackage(options: GenerateContentPackageOpti
     : [];
   const memorizationFiles = isReviewPackageTarget(target) ? buildMemorizationFiles(target, sourceFiles, reviewEvidenceFiles, options.generatedAt) : [];
   const packagedMediaFiles = await collectReferencedPackageMedia(sourceRoot, memorizationFiles,
-    target.contentType === "language-curriculum" ? sourceFiles.filter(file => isReadableChapterMarkdownPath(file.path)) : []);
+    target.contentType === "language-curriculum" ? sourceFiles.filter(file => isReadableChapterMarkdownPath(file.path) || (file.path.startsWith("introductions/") && file.path.endsWith(".md"))) : []);
   const packagedSourceFiles = sourceFiles
     .filter((file) => packagedCurriculumMetadataPaths.has(file.path) || file.path === target.license?.path || file.path === "NOTICE")
     .map((file) => ({ record: createFileRecord(file.path, file.mediaType, file.buffer), buffer: file.buffer }));

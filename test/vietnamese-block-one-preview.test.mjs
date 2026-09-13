@@ -5,11 +5,11 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { renderLanguageTreeRightPane, renderTwoPaneLanguageTree } from '../dist/apps/cli/interactive-menu.js';
 import { generateContentPackage } from '../dist/packages/core/content-package-generator.js';
-for (const [number,count] of [['003',10],['004',9],['005',10]]) {
+for (const [number,count] of [['003',10],['004',9],['005',10],['006',13]]) {
  test(`Vietnamese ${number}: complete reading, regional guide and independent support views`, async()=>{
   const dir=new URL(`../dist/apps/cli/content/vietnamese/chapter-${number}/`,import.meta.url).pathname;
   const src=await readFile(join(dir,'chapter.md'),'utf8');
-  const kind=number==='004'?'Narrative':'Dialogue';
+  const kind=Number(number)%2===0?'Narrative':'Dialogue';
   const primary=src.split(`### ${kind}\n`)[1].split('\n### ')[0].trim().split('\n\n').slice(1).join('\n\n');
   const lines=primary.split('\n').filter(Boolean); assert.equal(lines.length,count);
   assert.ok([...new Intl.Segmenter('vi',{granularity:'sentence'}).segment(primary)].length>=6);
@@ -53,9 +53,10 @@ test('Vietnamese block review has exactly paired lexical cards and exact bounded
   for(const c of pair)for(const ex of JSON.parse(c.examples))assert.ok(entry.evidence.some(e=>e.sentence===ex));
  }
 });
-test('portable Vietnamese reading package contains all five scenes',async()=>{
+test('portable Vietnamese reading package contains all six scenes and the new cast portrait',async()=>{
  const output=await mkdtemp(join(tmpdir(),'vi-scenes-'));
  try{const result=await generateContentPackage({targetId:'vietnamese-curriculum',outputDirectory:output,generatedAt:'2026-09-12T12:00:00Z'});
-  assert.equal(result.manifest.files.filter(f=>/chapter-00[1-5]-[^/]+\/media\/scene\.png$/.test(f.path)).length,5);
+  assert.equal(result.manifest.files.filter(f=>/chapter-00[1-6]-[^/]+\/media\/scene\.png$/.test(f.path)).length,6);
+  assert.ok(result.manifest.files.some(f=>f.path.endsWith("introductions/media/gia-bao.png")));
  }finally{await rm(output,{recursive:true,force:true});}
 });
