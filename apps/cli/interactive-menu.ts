@@ -5838,6 +5838,20 @@ function formatPaneText(
       continue;
     }
     if (rawLine.length === 0) {
+      // Authored gaps between reading units obey Spaces just like adjacent
+      // source lines. Preserve the reading state so the next unit inserts
+      // exactly one gap for separated mode and none for compact mode.
+      if (learnerReadingSection !== undefined && previousReadingLine) {
+        let next = index + 1;
+        while (next < rawLines.length && (rawLines[next] ?? "").trim() === "") next += 1;
+        const nextLine = rawLines[next] ?? "";
+        const nextReadingUnit = learnerReadingSection === "dialogue"
+          ? isDialogueSpeakerLine(nextLine)
+          : nextLine.trim().length > 0
+            && !/^\s*(?:#{1,6}\s|```)/u.test(nextLine)
+            && !isMarkdownTableLine(nextLine);
+        if (nextReadingUnit) continue;
+      }
       if (breakdownSection && vocabularyEntrySpacing === "compact") {
         let previous = index - 1;
         let next = index + 1;
