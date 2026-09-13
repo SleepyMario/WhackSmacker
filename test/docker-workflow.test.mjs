@@ -100,6 +100,6 @@ test('Docker gate retains installer safety and supplies all compiled curriculum 
   const gate = await readFile('scripts/test-docker.mjs','utf8');
   for (const name of ['content-package-manager','content-package-spec','review-scheduler','web','postgres-auth']) assert.ok(gate.includes(`'${name}'`));
   const feed = await readFile('scripts/build-core-review-feed.mjs','utf8');
-  assert.match(feed,/hasCards/);
+  assert.match(feed,/selectCoreReviewTargets/);
   assert.match(feed,/--production/);
 });

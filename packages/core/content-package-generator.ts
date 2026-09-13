@@ -267,9 +267,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "sino-vietnamese-audit.json",
       "sino-vietnamese-audit.md",
       "name-pools",
-      "units/README.md",
-      "units/vietnamese-foundation",
-      "units/vietnamese-core"
+      "units"
     ]
   },
   {

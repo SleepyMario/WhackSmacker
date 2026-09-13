@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 const files = [
   'architecture', 'brief-introduction-setting-validation',
   'chess-cli','chess-core','chess-desktop','cli',
-  'content-package-manager','content-package-source-path','content-package-spec',
+  'core-review-feed','content-package-manager','content-package-source-path','content-package-spec',
   'curriculum-display','deck-family','deck-framework','deploy-production',
   'docker-workflow','east-asian-name-policy','exercise-renderer',
   'geography-renderer','geography-review','i18n',
