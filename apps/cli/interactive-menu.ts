@@ -2013,7 +2013,14 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
               previewArtworkPath: join(__dirname, `content/korean/chapter-${number}/media/scene.png`)
             })),
             { id: `${submenu.id}:grammar-001-005`, label: "Grammar I - V", kind: "message" as const,
-              authoredGrammarPaths: [join(__dirname, "content/korean/grammar-001-005-easy.md"), join(__dirname, "content/korean/grammar-001-005-hard.md")] as const }
+              authoredGrammarPaths: [join(__dirname, "content/korean/grammar-001-005-easy.md"), join(__dirname, "content/korean/grammar-001-005-hard.md")] as const },
+            { id: `${submenu.id}:cast-doyun`, label: "Meet Doyun — 최도윤", kind: "message" as const,
+              previewArtworkPath: join(__dirname, "content/media/korean-doyun.png"),
+              previewText: readFileSync(join(__dirname, "content/korean-cast-doyun.md"), "utf8") },
+            { id: `${submenu.id}:chapter-006`, label: "Chapter VI — Doyun’s Cooking Bag", kind: "message" as const,
+              packageId: "com.sleepymario.language.korean",
+              authoredReadingDirectory: join(__dirname, "content/korean/chapter-006"),
+              previewArtworkPath: join(__dirname, "content/korean/chapter-006/media/scene.png") }
           ] };
         }
         if ((language.packageId === "com.sleepymario.language.vietnamese" || language.moduleId === "com.sleepymario.language.vietnamese") && submenu.kind === "read-section") {

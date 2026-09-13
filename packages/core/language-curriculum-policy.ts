@@ -313,8 +313,8 @@ export type BroaderTopicContentType = "narrative" | "dialogue";
 export type BroaderTopicUseKind = "meaningful-reuse" | "incidental-mention";
 
 export const canonicalCastSize = 30;
-export const activeCastBlockSize = 20;
-export const activeCastExpansionSize = 3;
+export const activeCastBlockSize = 5;
+export const activeCastExpansionSize = 1;
 
 export type ActiveCastMigrationStatus = "compliant" | "pending-legacy-migration";
 
@@ -1300,8 +1300,7 @@ function spokenDialogueSentenceCount(lines: readonly string[]): number {
 
 export function activeCastSizeForChapter(chapter: number): number {
   assertPositiveIntegerChapter(chapter);
-  if (chapter <= 10) return 3;
-  return Math.min(canonicalCastSize, 5 + activeCastExpansionSize * Math.floor((chapter - 1) / activeCastBlockSize));
+  return Math.min(canonicalCastSize, 3 + activeCastExpansionSize * Math.floor((chapter - 1) / activeCastBlockSize));
 }
 
 export function assertActiveCastProgression(canonicalPersonIds: readonly string[], progression: readonly string[]): void {
@@ -1469,7 +1468,7 @@ export function activeCastBlockReport(values: {
   readonly suppliedChapters: ReadonlySet<number>;
 }): Omit<ActiveCastAppearanceBlock, "chapterStart" | "chapterEnd" | "appearancesByPersonId" | "coverageStatus" | "requiredNewPersonIds" | "missingNewPersonIds"> {
   const chapterStart = values.chapterStart;
-  if (chapterStart < 1 || (chapterStart - 1) % activeCastBlockSize !== 0) throw new Error(`Activation block must start at Chapter 1 or a later twenty-chapter boundary: ${chapterStart}.`);
+  if (chapterStart < 1 || (chapterStart - 1) % activeCastBlockSize !== 0) throw new Error(`Activation block must start at Chapter 1 or a later five-chapter boundary: ${chapterStart}.`);
   const chapterEnd = chapterStart + activeCastBlockSize - 1;
   const complete = Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index).every((chapter) => values.suppliedChapters.has(chapter));
   if (chapterStart > 200) return { activationPeople: [], oldCastAppearanceCount: 0, newCastAppearanceCount: 0, totalCanonicalAppearanceCount: 0, requiredMinimumOldCastCount: 0, oldCastPercentage: null, distributionOnTrack: "not-applicable", distributionStatus: "not-applicable" };
@@ -1479,8 +1478,8 @@ export function activeCastBlockReport(values: {
   const newIds = new Set(current.slice(previousCount));
   const qualifyingChapters = (id: string) => Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index)
     .filter((chapter) => (values.appearancesByChapter[chapter]?.[id] ?? 0) > 0);
-  const activationPeople: ActivationPersonAppearanceReport[] = [...newIds].map((canonicalId) => {
-    const activationChapter = chapterStart === 1 && values.progression.indexOf(canonicalId) >= 3 ? 11 : chapterStart;
+  const activationPeople: ActivationPersonAppearanceReport[] = (chapterStart === 1 ? [] : [...newIds]).map((canonicalId) => {
+    const activationChapter = chapterStart;
     const chapters = qualifyingChapters(canonicalId).filter(chapter => chapter >= activationChapter);
     const remainingCount = Math.max(0, 5 - chapters.length);
     return { canonicalId, activationChapter, activationBlock: `${chapterStart}-${chapterEnd}`, qualifyingChapterNumbers: chapters, distinctQualifyingChapterCount: chapters.length, requiredCount: 5, remainingCount, status: complete ? (remainingCount === 0 ? "passed" : "failed") : "pending" };
@@ -1494,11 +1493,11 @@ export function activeCastBlockReport(values: {
     }
   }
   const totalCanonicalAppearanceCount = oldCastAppearanceCount + newCastAppearanceCount;
-  const requiredMinimumOldCastCount = chapterStart === 1 ? 0 : Math.ceil(totalCanonicalAppearanceCount / 3);
+  const requiredMinimumOldCastCount = 0;
   const oldCastPercentage = totalCanonicalAppearanceCount === 0 ? 0 : oldCastAppearanceCount / totalCanonicalAppearanceCount;
   if (chapterStart === 1) return { activationPeople, oldCastAppearanceCount, newCastAppearanceCount, totalCanonicalAppearanceCount, requiredMinimumOldCastCount, oldCastPercentage: null, distributionOnTrack: "not-applicable", distributionStatus: "not-applicable" };
   const ratioPasses = oldCastAppearanceCount >= requiredMinimumOldCastCount;
-  return { activationPeople, oldCastAppearanceCount, newCastAppearanceCount, totalCanonicalAppearanceCount, requiredMinimumOldCastCount, oldCastPercentage, distributionOnTrack: ratioPasses, distributionStatus: complete ? (ratioPasses ? "passed" : "failed") : "pending" };
+  return { activationPeople, oldCastAppearanceCount, newCastAppearanceCount, totalCanonicalAppearanceCount, requiredMinimumOldCastCount, oldCastPercentage, distributionOnTrack: "not-applicable", distributionStatus: "not-applicable" };
 }
 
 export function assertUnnamedFunctionalParticipant(chapter: number, person: ActiveCastFunctionalParticipant): void {

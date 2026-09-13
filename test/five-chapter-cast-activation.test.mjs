@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { activeCastSizeForChapter, auditActiveCast } from '../dist/packages/core/index.js';
+const ids=Array.from({length:30},(_,i)=>`CAST-${String(i+1).padStart(3,'0')}`);
+for(const [c,n] of [[1,3],[5,3],[6,4],[10,4],[11,5],[135,29],[136,30],[999,30]])assert.equal(activeCastSizeForChapter(c),n);
+const record=(chapter, people)=>({chapter,authorship:'new',migrationStatus:'compliant',participatingPersonIds:people,meaningfulPersonIds:people});
+const chapters=Array.from({length:10},(_,i)=>record(i+1,i<5?[ids[i%3]]:[ids[3],ids[i%3]]));
+const run=x=>auditActiveCast({canonicalPersonIds:ids,progression:ids,chapters:x});
+assert.doesNotThrow(()=>run(chapters));
+assert.throws(()=>run(chapters.map(x=>x.chapter===8?record(8,[ids[0]]):x)),/5 required/);
+assert.throws(()=>run([record(5,[ids[3]])]),/inactive/);
+assert.doesNotThrow(()=>run(chapters.slice(0,6)));
+console.log('Five-chapter activation boundaries, initial cohort exemption, newcomer minimum and incomplete block checks passed.');
