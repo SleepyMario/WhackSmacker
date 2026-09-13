@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import { renderLanguageTreeRightPane, renderTwoPaneLanguageTree } from '../dist/apps/cli/interactive-menu.js';
 import { generateContentPackage } from '../dist/packages/core/content-package-generator.js';
 
-for (const [number, count] of [['003', 12], ['004', 9], ['005', 10], ['006', 10], ['007', 12], ['008', 12]]) {
+for (const [number, count] of [['003', 12], ['004', 9], ['005', 10], ['006', 10], ['007', 12], ['008', 12], ['009', 14], ['010', 12]]) {
   test(`Korean ${number}: complete reading, independent translation/breakdown/Hanja and artwork`, async () => {
     const directory = new URL(`../dist/apps/cli/content/korean/chapter-${number}/`, import.meta.url).pathname;
     const source = await readFile(`${directory}/chapter.md`, 'utf8');
@@ -39,7 +39,7 @@ for (const [number, count] of [['003', 12], ['004', 9], ['005', 10], ['006', 10]
         assert.ok(coloured.includes('\x1b[33m'));
         if (mode === 'Dialogue') {
           const support = JSON.parse(await readFile(`${directory}/reading-support.json`, 'utf8'));
-          for (const speaker of (number === '007' ? ['최도윤', '박서연'] : ['김민지', '박서연'])) for (const label of ['English']) assert.ok(support.breakdown.normal.includes(`${label}: ${speaker}:`));
+          for (const speaker of (['007','009'].includes(number) ? ['최도윤', '박서연'] : ['김민지', '박서연'])) for (const label of ['English']) assert.ok(support.breakdown.normal.includes(`${label}: ${speaker}:`));
         }
       }
     }
@@ -69,7 +69,7 @@ test('portable Korean reading package retains every chapter scene with its sourc
   try {
     const result = await generateContentPackage({ targetId: 'korean-curriculum', outputDirectory, generatedAt: '2026-09-12T12:00:00Z' });
     const scenes = result.manifest.files.filter(file => /\/media\/scene\.png$/u.test(file.path));
-    assert.equal(scenes.length, 8);
+    assert.equal(scenes.length, 10);
     for (const scene of scenes) {
       const bytes = await readFile(new URL(`../../korean-curriculum/${scene.path}`, import.meta.url));
       assert.equal(scene.sha256, createHash('sha256').update(bytes).digest('hex'));
@@ -111,7 +111,7 @@ test('reading discovery selects the newest retained revision once without changi
 });
 
 test('all Korean breakdowns use aligned coloured original/translation pairs without visible labels', async () => {
-  for (const number of ['001','002','003','004','005','006','007','008']) {
+  for (const number of ['001','002','003','004','005','006','007','008','009','010']) {
     const directory=new URL(`../dist/apps/cli/content/korean/chapter-${number}/`,import.meta.url).pathname;
     const support=JSON.parse(await readFile(join(directory,'reading-support.json'),'utf8'));
     for(const mode of ['normal','expert']) {
@@ -128,5 +128,24 @@ test('all Korean breakdowns use aligned coloured original/translation pairs with
         if(spacing==='compact')assert.ok(lines[original+1].includes('\x1b[33m    '));
       }
     }
+  }
+});
+
+test('Korean Grammar VI-X selects the intended explanation depth and preserves paired example colours', async () => {
+  const versions=['easy','hard'];
+  const coverage=await Promise.all(versions.map(async v=>JSON.parse(await readFile(new URL(`../../korean-curriculum/units/korean-core/chapter-006-010-grammar-${v}/coverage.json`,import.meta.url),'utf8'))));
+  assert.deepEqual(coverage[0],coverage[1]);assert.equal(coverage[0].examples.length,15);
+  assert.deepEqual(coverage[0].grammarIds,['006','007','010','011','012'].map(n=>'KOR-GRAMMAR-'+n));
+  const node={id:'korean:grammar:006-010',label:'Grammar VI - X',kind:'message',authoredGrammarPaths:versions.map(v=>new URL(`../dist/apps/cli/content/korean/grammar-006-010-${v}.md`,import.meta.url).pathname)};
+  for(const displayMode of ['normal','expert']) {
+    const text=await renderLanguageTreeRightPane(node,{displayMode,locale:'en-US'});
+    assert.equal((text.match(/^### /gm)||[]).length,5);
+    assert.equal(text.includes('source/starting-point use'),displayMode==='expert');
+    assert.ok(!/KOR-GRAMMAR-|CAST-|Reading:/.test(text));
+    for(const e of coverage[0].examples) assert.ok(text.includes(e.example));
+    const output=renderTwoPaneLanguageTree(node,new Set(),0,text,true,0,1600,'en-US','navigation',240,0,displayMode);
+    assert.ok(output.includes('\x1b[34m'));
+    assert.ok(output.includes('\x1b[38;5;213m'));
+    assert.ok(output.includes('\x1b[33m'));
   }
 });

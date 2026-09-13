@@ -2021,12 +2021,14 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
               packageId: "com.sleepymario.language.korean",
               authoredReadingDirectory: join(__dirname, "content/korean/chapter-006"),
               previewArtworkPath: join(__dirname, "content/korean/chapter-006/media/scene.png") },
-            ...[["007", "VII", "Choosing Something to Cook"], ["008", "VIII", "What’s in the Kitchen?"]].map(([number, roman, title]) => ({
+            ...[["007", "VII", "Choosing Something to Cook"], ["008", "VIII", "What’s in the Kitchen?"], ["009", "IX", "Finding the Swimming Pool"], ["010", "X", "A Break After Swimming"]].map(([number, roman, title]) => ({
               id: `${submenu.id}:chapter-${number}`, label: `Chapter ${roman} — ${title}`, kind: "message" as const,
               packageId: "com.sleepymario.language.korean",
               authoredReadingDirectory: join(__dirname, `content/korean/chapter-${number}`),
               previewArtworkPath: join(__dirname, `content/korean/chapter-${number}/media/scene.png`)
-            }))
+            })),
+            { id: `${submenu.id}:grammar-006-010`, label: "Grammar VI - X", kind: "message" as const,
+              authoredGrammarPaths: [join(__dirname, "content/korean/grammar-006-010-easy.md"), join(__dirname, "content/korean/grammar-006-010-hard.md")] as const }
           ] };
         }
         if ((language.packageId === "com.sleepymario.language.vietnamese" || language.moduleId === "com.sleepymario.language.vietnamese") && submenu.kind === "read-section") {
