@@ -7,7 +7,7 @@ import { test } from 'node:test';
 import { renderLanguageTreeRightPane, renderTwoPaneLanguageTree } from '../dist/apps/cli/interactive-menu.js';
 import { generateContentPackage } from '../dist/packages/core/content-package-generator.js';
 
-for (const [number, count] of [['003', 12], ['004', 9], ['005', 10], ['006', 10]]) {
+for (const [number, count] of [['003', 12], ['004', 9], ['005', 10], ['006', 10], ['007', 12], ['008', 12]]) {
   test(`Korean ${number}: complete reading, independent translation/breakdown/Hanja and artwork`, async () => {
     const directory = new URL(`../dist/apps/cli/content/korean/chapter-${number}/`, import.meta.url).pathname;
     const source = await readFile(`${directory}/chapter.md`, 'utf8');
@@ -39,7 +39,7 @@ for (const [number, count] of [['003', 12], ['004', 9], ['005', 10], ['006', 10]
         assert.ok(coloured.includes('\x1b[33m'));
         if (mode === 'Dialogue') {
           const support = JSON.parse(await readFile(`${directory}/reading-support.json`, 'utf8'));
-          for (const speaker of ['김민지', '박서연']) for (const label of ['English']) assert.ok(support.breakdown.normal.includes(`${label}: ${speaker}:`));
+          for (const speaker of (number === '007' ? ['최도윤', '박서연'] : ['김민지', '박서연'])) for (const label of ['English']) assert.ok(support.breakdown.normal.includes(`${label}: ${speaker}:`));
         }
       }
     }
@@ -69,7 +69,7 @@ test('portable Korean reading package retains every chapter scene with its sourc
   try {
     const result = await generateContentPackage({ targetId: 'korean-curriculum', outputDirectory, generatedAt: '2026-09-12T12:00:00Z' });
     const scenes = result.manifest.files.filter(file => /\/media\/scene\.png$/u.test(file.path));
-    assert.equal(scenes.length, 6);
+    assert.equal(scenes.length, 8);
     for (const scene of scenes) {
       const bytes = await readFile(new URL(`../../korean-curriculum/${scene.path}`, import.meta.url));
       assert.equal(scene.sha256, createHash('sha256').update(bytes).digest('hex'));
@@ -111,7 +111,7 @@ test('reading discovery selects the newest retained revision once without changi
 });
 
 test('all Korean breakdowns use aligned coloured original/translation pairs without visible labels', async () => {
-  for (const number of ['001','002','003','004','005','006']) {
+  for (const number of ['001','002','003','004','005','006','007','008']) {
     const directory=new URL(`../dist/apps/cli/content/korean/chapter-${number}/`,import.meta.url).pathname;
     const support=JSON.parse(await readFile(join(directory,'reading-support.json'),'utf8'));
     for(const mode of ['normal','expert']) {

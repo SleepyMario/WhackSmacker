@@ -2020,7 +2020,13 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
             { id: `${submenu.id}:chapter-006`, label: "Chapter VI — Doyun’s Cooking Bag", kind: "message" as const,
               packageId: "com.sleepymario.language.korean",
               authoredReadingDirectory: join(__dirname, "content/korean/chapter-006"),
-              previewArtworkPath: join(__dirname, "content/korean/chapter-006/media/scene.png") }
+              previewArtworkPath: join(__dirname, "content/korean/chapter-006/media/scene.png") },
+            ...[["007", "VII", "Choosing Something to Cook"], ["008", "VIII", "What’s in the Kitchen?"]].map(([number, roman, title]) => ({
+              id: `${submenu.id}:chapter-${number}`, label: `Chapter ${roman} — ${title}`, kind: "message" as const,
+              packageId: "com.sleepymario.language.korean",
+              authoredReadingDirectory: join(__dirname, `content/korean/chapter-${number}`),
+              previewArtworkPath: join(__dirname, `content/korean/chapter-${number}/media/scene.png`)
+            }))
           ] };
         }
         if ((language.packageId === "com.sleepymario.language.vietnamese" || language.moduleId === "com.sleepymario.language.vietnamese") && submenu.kind === "read-section") {
