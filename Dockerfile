@@ -6,6 +6,8 @@ RUN npm ci
 COPY whacksmacker/ .
 COPY dutch-curriculum/ /dutch-curriculum/
 COPY vietnamese-curriculum/ /vietnamese-curriculum/
+COPY japanese-curriculum/ /japanese-curriculum/
+COPY korean-curriculum/ /korean-curriculum/
 RUN npm run build && node scripts/build-core-review-feed.mjs /core-feed && npm prune --omit=dev
 
 FROM node:22-bookworm-slim AS runtime

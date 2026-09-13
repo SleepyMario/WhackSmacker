@@ -86,3 +86,20 @@ test("Docker build context supplies both sibling Review sources at legacy genera
   assert.match(ignore, /!dutch-curriculum\/\*\*/);
   assert.match(ignore, /!vietnamese-curriculum\/\*\*/);
 });
+
+test('Docker gate retains installer safety and supplies all compiled curriculum sources', async () => {
+  const dockerfile = await readFile('Dockerfile','utf8');
+  const ignore = await readFile('Dockerfile.dockerignore','utf8');
+  for (const language of ['japanese','korean']) {
+    assert.ok(dockerfile.includes(`COPY ${language}-curriculum/ /${language}-curriculum/`));
+    assert.ok(ignore.includes(`!${language}-curriculum/**`));
+  }
+  const daily = await readFile('scripts/operations/whacksmacker-docker-daily.sh','utf8');
+  assert.match(daily,/npm run test:docker/);
+  assert.match(daily,/docker run --rm "\$IMAGE_REMOTE" --help/);
+  const gate = await readFile('scripts/test-docker.mjs','utf8');
+  for (const name of ['content-package-manager','content-package-spec','review-scheduler','web','postgres-auth']) assert.ok(gate.includes(`'${name}'`));
+  const feed = await readFile('scripts/build-core-review-feed.mjs','utf8');
+  assert.match(feed,/hasCards/);
+  assert.match(feed,/--production/);
+});

@@ -43,7 +43,8 @@
     "sync-linguistic-terminology": "node scripts/sync-linguistic-terminology.mjs",
     "test": "node --test --test-concurrency=1 test/*.test.mjs",
     "test:web:e2e": "npm run build && playwright test",
-    "test:web:e2e:headed": "npm run build && playwright test --headed --project=chromium-desktop"
+    "test:web:e2e:headed": "npm run build && playwright test --headed --project=chromium-desktop",
+    "test:docker": "npm run build && node scripts/test-docker.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

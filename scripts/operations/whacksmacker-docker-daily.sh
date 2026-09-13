@@ -34,7 +34,7 @@ command -v git >/dev/null || die 'git is required'
 command -v npm >/dev/null || die 'npm is required'
 command -v docker >/dev/null || die 'docker is required'
 [[ -d "$APP/.git" ]] || die "application checkout is missing: $APP"
-for repository in dutch-curriculum vietnamese-curriculum; do
+for repository in dutch-curriculum vietnamese-curriculum japanese-curriculum korean-curriculum; do
   [[ -d "$SOURCE_ROOT/$repository/.git" ]] || die "required image source checkout is missing: $SOURCE_ROOT/$repository"
   [[ -z "$(git -C "$SOURCE_ROOT/$repository" status --porcelain)" ]] || die "required image source checkout is dirty: $repository"
 done
@@ -58,10 +58,8 @@ log 'installing exact npm dependencies'
 npm ci
 log 'auditing high-severity npm vulnerabilities'
 npm audit --audit-level=high
-log 'building application'
-npm run build
-log 'running application tests'
-npm test
+log 'building and testing application release contract'
+npm run test:docker
 
 log "building $IMAGE_REMOTE"
 docker build \
@@ -81,6 +79,13 @@ image_id=$(docker image inspect --format '{{.Id}}' "$IMAGE_REMOTE")
 image_arch=$(docker image inspect --format '{{.Architecture}}/{{.Os}}' "$IMAGE_REMOTE")
 image_created=$(docker image inspect --format '{{.Created}}' "$IMAGE_REMOTE")
 log "built image id=$image_id platform=$image_arch created=$image_created revision=$built_revision"
+
+log 'checking image entrypoint and empty-data initialization'
+docker run --rm "$IMAGE_REMOTE" --help >/dev/null
+if [[ ${WHACKSMACKER_VALIDATE_ONLY:-0} == 1 ]]; then
+  log "PASS: application tests, Docker build and entrypoint smoke test; no publication"
+  exit 0
+fi
 
 log "pushing $IMAGE_REMOTE"
 push_output=$(docker push "$IMAGE_REMOTE")
