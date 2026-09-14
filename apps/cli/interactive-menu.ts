@@ -343,7 +343,7 @@ export function shouldUseTerminalColors(outputIsTty: boolean, env: Record<string
 const mainMenuItems: readonly MenuItem[] = [
   { label: "Language", kind: "language", moduleId: "language" },
   { label: "Chess", kind: "chess", moduleId: "chess" },
-  { label: "Geography", kind: "geography", moduleId: "geography" },
+  { label: "Wandering the World", kind: "geography", moduleId: "geography" },
   { label: "Mathematics", kind: "mathematics", moduleId: "mathematics" }
 ];
 
@@ -955,7 +955,7 @@ async function runGeographyMenu(registry: InMemoryCliCommandRegistry, terminal: 
   let selection = 0;
 
   while (true) {
-    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nGeography\n`, geographyMenuItems, selection);
+    renderMenu(terminal, `${renderWhackSmackerHeader(terminal.colorsEnabled)}\nWandering the World\n`, geographyMenuItems, selection);
     const key = await terminal.readKey();
 
     if (isCtrlC(key)) {
@@ -1882,7 +1882,6 @@ function buildInstalledModulesTree(
     previewText: `${translate(locale, "menu.installedModules")}\n\n${translate(locale, "pane.installedModulesHelp")}`,
     children: [
       languages,
-      buildModuleCategoryTree("Games", descriptors, locale),
       buildModuleCategoryTree("Geography", descriptors, locale)
     ]
   };
@@ -2193,7 +2192,6 @@ function buildAvailableModulesTree(
       previewText: translate(locale, "pane.noCatalogue")
     }] : [
       buildAvailableCategoryTree("Languages", descriptors, cataloguePath, locale),
-      buildAvailableCategoryTree("Games", descriptors, cataloguePath, locale),
       buildAvailableCategoryTree("Geography", descriptors, cataloguePath, locale)
     ]
   };
@@ -2206,15 +2204,15 @@ function buildAvailableCategoryTree(
   locale: SourceLocale
 ): LanguageTreeNode {
   const children = descriptors
-    .filter((descriptor) => descriptor.category === category)
+    .filter((descriptor) => descriptor.category === category && descriptor.moduleId !== "com.sleepymario.geography")
     .map((descriptor) => buildAvailableModuleTreeNode(descriptor, cataloguePath, locale));
 
   return {
     id: `available:${category.toLowerCase()}`,
     label: categoryLabel(category, locale),
     kind: "category",
-    previewText: `${category}\n\nAvailable first-party modules from the selected catalogue or built-in registry.`,
-    children: children.length > 0 ? children : [{
+    previewText: `${categoryLabel(category, locale)}\n\nAvailable first-party modules from the selected catalogue or built-in registry.`,
+    children: category === "Geography" || children.length > 0 ? children : [{
       id: `available:${category.toLowerCase()}:none`,
       label: `No available ${category} modules`,
       kind: "message",
@@ -3106,15 +3104,15 @@ function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): Men
 
 function buildModuleCategoryTree(category: FirstClassModuleDescriptor["category"], descriptors: readonly FirstClassModuleDescriptor[], locale: SourceLocale): LanguageTreeNode {
   const children = descriptors
-    .filter((descriptor) => descriptor.category === category)
+    .filter((descriptor) => descriptor.category === category && descriptor.moduleId !== "com.sleepymario.geography")
     .map((descriptor) => buildBuiltInModuleTreeNode(descriptor));
 
   return {
     id: category.toLowerCase(),
     label: categoryLabel(category, locale),
     kind: "category",
-    previewText: `${category}\n\nFirst-class WhackSmacker modules in this category.`,
-    children: children.length > 0 ? children : [{
+    previewText: `${categoryLabel(category, locale)}\n\nFirst-class WhackSmacker modules in this category.`,
+    children: category === "Geography" || children.length > 0 ? children : [{
       id: `${category.toLowerCase()}:none`,
       label: `No ${category} modules`,
       kind: "message",

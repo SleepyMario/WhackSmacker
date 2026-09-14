@@ -228,7 +228,7 @@ export function getBuiltInFirstClassModules(): readonly FirstClassModuleDescript
           kind: "command",
           commandPath: ["geography", "continents"],
           commandArgs: [],
-          launchTitle: "Geography -- Continents",
+          launchTitle: "Wandering the World -- Continents",
           previewText: "Continents\n\nPress Enter to launch the existing six-continent terminal map review.\n\nEquivalent command:\nwhacksmacker geography continents"
         }
       ]

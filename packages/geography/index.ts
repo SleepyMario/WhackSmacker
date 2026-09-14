@@ -18,7 +18,7 @@ export interface GeographyQuiz {
 
 export const geographyModule: DomainModule = {
   id: "geography",
-  displayName: "Geography",
+  displayName: "Wandering the World",
   providerFeatures: [],
   register(context) {
     context.cli.register({

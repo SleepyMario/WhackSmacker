@@ -157,7 +157,7 @@ export async function runContinentReview(options: ContinentReviewOptions = {}): 
 function writeQuestion(card: ContinentReviewCard, current: number, total: number, options: Required<ContinentReviewOptions>): void {
   const map = renderContinentMap({ highlight: card.answer, width: options.width, height: options.height, colorsEnabled: options.colorsEnabled });
 
-  console.log(`Geography — Continents\n\nQuestion ${current} of ${total}\n`);
+  console.log(`Wandering the World — Continents\n\nQuestion ${current} of ${total}\n`);
   console.log(map.text);
   console.log("\nWhich continent is highlighted?");
 }

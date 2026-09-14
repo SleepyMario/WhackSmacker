@@ -188,7 +188,7 @@ test("arguments continue to select normal CLI routing", () => {
 test("main menu exposes all registered domain modules", () => {
   assert.deepEqual(
     getMainMenuItems().map((item) => item.label),
-    ["Language", "Chess", "Geography", "Mathematics"]
+    ["Language", "Chess", "Wandering the World", "Mathematics"]
   );
 });
 
@@ -330,7 +330,7 @@ test("the installed-module skeleton keeps Level I directly below the conversion 
   const tree = await buildModuleTree();
   const languages = tree.children
     .find((node) => node.label === "Installed modules")
-    .children.find((node) => node.label === "Languages");
+    .children.find((node) => node.label === "LingoLand");
   const conversion = languages.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
 
   assert.deepEqual(conversion.children.map((node) => node.label), ["Level I"]);
@@ -444,7 +444,7 @@ test("the application-data launcher layout opens the installed Level I conversio
     const tree = await buildModuleTree({ dataDir: applicationDataDir });
     const languages = tree.children
       .find((node) => node.label === "Installed modules")
-      .children.find((node) => node.label === "Languages");
+      .children.find((node) => node.label === "LingoLand");
     const conversion = languages.children.find((node) => node.label === "Chinese (Simplified <-> Traditional)");
 
     assert.equal(conversion.children[0].kind, "review-source");
@@ -554,9 +554,9 @@ test("interactive menu opens the module three-pane tree", async () => {
     assert.match(terminal.output, /Installed modules/);
     assert.match(terminal.output, /Modules available/);
     assert.match(terminal.output, /Language backup/);
-    assert.match(terminal.output, /Languages/);
+    assert.match(terminal.output, /LingoLand/);
     assert.match(terminal.output, /Games/);
-    assert.match(terminal.output, /Geography/);
+    assert.match(terminal.output, /Wandering the World/);
     assert.match(terminal.output, /Mathematics/);
     assert.doesNotMatch(terminal.output, /mouse/i);
     assert.match(terminal.output, /Space activate\/install/);
@@ -576,17 +576,17 @@ test("module tree lists top-level categories and installed language packages", a
   try {
     const tree = await buildModuleTree(fixture.dataDir);
     const installed = tree.children.find((node) => node.label === "Installed modules");
-    const languages = installed.children.find((node) => node.label === "Languages");
+    const languages = installed.children.find((node) => node.label === "LingoLand");
 
     assert.equal(tree.label, "WhackSmacker");
     const backupLanguages = tree.children
       .find((node) => node.label === "Language backup")
-      .children.find((node) => node.label === "Languages");
+      .children.find((node) => node.label === "LingoLand");
     const installedDutch = languages.children.find((node) => node.label === "Dutch");
     const backupDutch = backupLanguages.children.find((node) => node.label === "Dutch");
 
     assert.deepEqual(tree.children.map((node) => node.label), ["Installed modules", "Modules available", "Language backup"]);
-    assert.deepEqual(installed.children.map((node) => node.label), ["Languages", "Games", "Geography"]);
+    assert.deepEqual(installed.children.map((node) => node.label), ["LingoLand", "Wandering the World"]);
     assert.deepEqual(languages.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
     assert.deepEqual(languages.children.map((node) => node.moduleId), [
       "com.sleepymario.language.chinese-classical",
@@ -787,23 +787,11 @@ test("language menu exposes the planned Chinese, Greek Classical, and Latin entr
   }
 });
 
-test("module tree exposes Games and Geography while keeping Mathematics out of the module listings", async () => {
+test("module tree shows renamed learning categories without Games or legacy Continents", async () => {
   const tree = await buildModuleTree();
   const installed = tree.children.find((node) => node.label === "Installed modules");
-  const games = installed.children.find((node) => node.label === "Games");
-  const geography = installed.children.find((node) => node.label === "Geography");
-  const chess = games.children.find((node) => node.label === "Chess");
-  const continents = geography.children.find((node) => node.label === "Continents");
-
-  assert.equal(installed.children.some((node) => node.label === "Mathematics"), false);
-  assert.deepEqual(games.children.map((node) => node.label), ["Chess"]);
-  assert.equal(chess.moduleId, "com.sleepymario.game.chess");
-  assert.deepEqual(chess.children.map((node) => node.label), ["Play / Board", "Legal moves", "Module info"]);
-  assert.deepEqual(geography.children.map((node) => node.label), ["Continents"]);
-  assert.equal(continents.moduleId, "com.sleepymario.geography");
-  assert.deepEqual(continents.children.map((node) => node.label), ["Continents"]);
-  assert.match(chess.previewText, /whacksmacker chess/);
-  assert.match(continents.children[0].previewText, /whacksmacker geography continents/);
+  assert.deepEqual(installed.children.map((node) => node.label), ["LingoLand", "Wandering the World"]);
+  assert.deepEqual(installed.children.find((node) => node.label === "Wandering the World").children, []);
 });
 
 test("language category can expand installed package nodes in the module tree", async () => {
@@ -817,7 +805,7 @@ test("language category can expand installed package nodes in the module tree", 
   try {
     await runInteractiveMenu(createStubRegistry([]), terminal, { dataDir: fixture.dataDir });
 
-    assert.match(terminal.output, /Languages/);
+    assert.match(terminal.output, /LingoLand/);
     assert.match(terminal.output, /Dutch/);
     assert.match(terminal.output, /Space activate\/install/);
   } finally {
@@ -848,7 +836,7 @@ test("language tree lists installed packages and package sections", async () => 
     const tree = await buildLanguageTree(fixture.dataDir);
     const treesByMode = new Map([["normal", tree]]);
 
-    assert.equal(tree.label, "Languages");
+    assert.equal(tree.label, "LingoLand");
     assert.deepEqual(tree.children.map((node) => node.label), ["Chinese (Classical)", "Chinese (Simplified <-> Traditional)", "Chinese (Simplified)", "Dutch", "Greek (Classical)", "Latin", "Vietnamese"]);
     const installedCurricula = tree.children.filter((node) => node.sourceKind === "content-package");
     for (const languagePackage of installedCurricula) {
@@ -2049,9 +2037,9 @@ test("module tree includes available modules from a catalogue with install statu
     const descriptors = await listAvailableModuleDescriptors(fixture.cataloguePath, fixture.dataDir);
     const tree = await buildModuleTree({ dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
     const available = tree.children.find((node) => node.label === "Modules available");
-    const availableLanguages = available.children.find((node) => node.label === "Languages");
+    const availableLanguages = available.children.find((node) => node.label === "LingoLand");
 
-    assert.deepEqual(available.children.map((node) => node.label), ["Languages", "Games", "Geography"]);
+    assert.deepEqual(available.children.map((node) => node.label), ["LingoLand", "Wandering the World"]);
     assert.deepEqual(descriptors.filter((descriptor) => descriptor.category === "Languages").map((descriptor) => `${descriptor.displayName}:${descriptor.availableStatus}`), [
       "Dutch:installed",
       "Vietnamese:available"
@@ -3653,7 +3641,7 @@ test("Enter on an available module does not install but Space installs and refre
     ]);
     await runInteractiveMenu(createStubRegistry([]), enterOnly, { dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
     let tree = await buildModuleTree({ dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
-    let installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "Languages");
+    let installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "LingoLand");
 
     assert.equal(installedLanguages.children.some((node) => node.label === "Vietnamese"), false);
     assert.match(enterOnly.output, /Modules available/u);
@@ -3673,8 +3661,8 @@ test("Enter on an available module does not install but Space installs and refre
     ]);
     await runInteractiveMenu(createStubRegistry([]), install, { dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
     tree = await buildModuleTree({ dataDir: fixture.dataDir, cataloguePath: fixture.cataloguePath });
-    installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "Languages");
-    const availableLanguages = tree.children.find((node) => node.label === "Modules available").children.find((node) => node.label === "Languages");
+    installedLanguages = tree.children.find((node) => node.label === "Installed modules").children.find((node) => node.label === "LingoLand");
+    const availableLanguages = tree.children.find((node) => node.label === "Modules available").children.find((node) => node.label === "LingoLand");
 
     assert.ok(installedLanguages.children.some((node) => node.label === "Vietnamese"));
     assert.ok(availableLanguages.children.some((node) => node.label === "Vietnamese [Installed]"));
@@ -3874,7 +3862,7 @@ test("geography menu routes continents to the registered command", async () => {
   await runInteractiveMenu(createStubRegistry(calls), terminal);
 
   assert.deepEqual(calls, [{ path: "geography continents", args: [] }]);
-  assert.match(terminal.output, /Geography/);
+  assert.match(terminal.output, /Wandering the World/);
   assert.match(terminal.output, /Continents/);
 });
 
@@ -3965,8 +3953,8 @@ test("interactive menu starts with the module tree", async () => {
   assert.match(stripAnsi(terminal.output), /WhackSmacker/);
   assert.match(stripAnsi(terminal.output), />\s+v Installed modules/);
   assert.match(stripAnsi(terminal.output), /Modules available/);
-  assert.match(stripAnsi(terminal.output), /Games/);
-  assert.match(stripAnsi(terminal.output), /Geography/);
+  assert.doesNotMatch(stripAnsi(terminal.output), /Games/);
+  assert.match(stripAnsi(terminal.output), /Wandering the World/);
   assert.doesNotMatch(stripAnsi(terminal.output), /Mathematics/);
   assert.doesNotMatch(stripAnsi(terminal.output), /^\|[^\n]*\bSettings\b/mu);
   assert.doesNotMatch(stripAnsi(terminal.output), /^\|[^\n]*\bSource language\b/mu);

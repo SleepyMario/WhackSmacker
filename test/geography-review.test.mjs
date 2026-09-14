@@ -52,7 +52,7 @@ test("question hides answer name before reveal and answer shows it after Enter",
   const [question, answer] = result.stdout.split("Answer");
 
   assert.equal(result.exitCode, 0);
-  assert.match(question, /Geography — Continents/);
+  assert.match(question, /Wandering the World — Continents/);
   assert.match(question, /Question 1 of 6/);
   assert.match(question, /Which continent is highlighted/);
   assert.doesNotMatch(question, /Africa/);

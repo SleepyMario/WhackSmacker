@@ -252,7 +252,7 @@ test("geography continents runs without external services", async () => {
   const result = await runCli(["geography", "continents"], { input: "q\n" });
 
   assert.equal(result.exitCode, 0);
-  assert.match(result.stdout, /Geography — Continents/);
+  assert.match(result.stdout, /Wandering the World — Continents/);
   assert.match(result.stdout, /Question 1 of 6/);
   assert.match(result.stdout, /Cards reviewed: 0/);
   assert.equal(result.stderr, "");
