@@ -1,0 +1,237 @@
+[
+  {
+    "id": "hokkaido-highlight",
+    "answer": "Hokkaido",
+    "japanese": "北海道"
+  },
+  {
+    "id": "aomori-highlight",
+    "answer": "Aomori",
+    "japanese": "青森県"
+  },
+  {
+    "id": "iwate-highlight",
+    "answer": "Iwate",
+    "japanese": "岩手県"
+  },
+  {
+    "id": "miyagi-highlight",
+    "answer": "Miyagi",
+    "japanese": "宮城県"
+  },
+  {
+    "id": "akita-highlight",
+    "answer": "Akita",
+    "japanese": "秋田県"
+  },
+  {
+    "id": "yamagata-highlight",
+    "answer": "Yamagata",
+    "japanese": "山形県"
+  },
+  {
+    "id": "fukushima-highlight",
+    "answer": "Fukushima",
+    "japanese": "福島県"
+  },
+  {
+    "id": "ibaraki-highlight",
+    "answer": "Ibaraki",
+    "japanese": "茨城県"
+  },
+  {
+    "id": "tochigi-highlight",
+    "answer": "Tochigi",
+    "japanese": "栃木県"
+  },
+  {
+    "id": "gunma-highlight",
+    "answer": "Gunma",
+    "japanese": "群馬県"
+  },
+  {
+    "id": "saitama-highlight",
+    "answer": "Saitama",
+    "japanese": "埼玉県"
+  },
+  {
+    "id": "chiba-highlight",
+    "answer": "Chiba",
+    "japanese": "千葉県"
+  },
+  {
+    "id": "tokyo-highlight",
+    "answer": "Tokyo",
+    "japanese": "東京都"
+  },
+  {
+    "id": "kanagawa-highlight",
+    "answer": "Kanagawa",
+    "japanese": "神奈川県"
+  },
+  {
+    "id": "niigata-highlight",
+    "answer": "Niigata",
+    "japanese": "新潟県"
+  },
+  {
+    "id": "toyama-highlight",
+    "answer": "Toyama",
+    "japanese": "富山県"
+  },
+  {
+    "id": "ishikawa-highlight",
+    "answer": "Ishikawa",
+    "japanese": "石川県"
+  },
+  {
+    "id": "fukui-highlight",
+    "answer": "Fukui",
+    "japanese": "福井県"
+  },
+  {
+    "id": "yamanashi-highlight",
+    "answer": "Yamanashi",
+    "japanese": "山梨県"
+  },
+  {
+    "id": "nagano-highlight",
+    "answer": "Nagano",
+    "japanese": "長野県"
+  },
+  {
+    "id": "gifu-highlight",
+    "answer": "Gifu",
+    "japanese": "岐阜県"
+  },
+  {
+    "id": "shizuoka-highlight",
+    "answer": "Shizuoka",
+    "japanese": "静岡県"
+  },
+  {
+    "id": "aichi-highlight",
+    "answer": "Aichi",
+    "japanese": "愛知県"
+  },
+  {
+    "id": "mie-highlight",
+    "answer": "Mie",
+    "japanese": "三重県"
+  },
+  {
+    "id": "shiga-highlight",
+    "answer": "Shiga",
+    "japanese": "滋賀県"
+  },
+  {
+    "id": "kyoto-highlight",
+    "answer": "Kyoto",
+    "japanese": "京都府"
+  },
+  {
+    "id": "osaka-highlight",
+    "answer": "Osaka",
+    "japanese": "大阪府"
+  },
+  {
+    "id": "hyogo-highlight",
+    "answer": "Hyogo",
+    "japanese": "兵庫県"
+  },
+  {
+    "id": "nara-highlight",
+    "answer": "Nara",
+    "japanese": "奈良県"
+  },
+  {
+    "id": "wakayama-highlight",
+    "answer": "Wakayama",
+    "japanese": "和歌山県"
+  },
+  {
+    "id": "tottori-highlight",
+    "answer": "Tottori",
+    "japanese": "鳥取県"
+  },
+  {
+    "id": "shimane-highlight",
+    "answer": "Shimane",
+    "japanese": "島根県"
+  },
+  {
+    "id": "okayama-highlight",
+    "answer": "Okayama",
+    "japanese": "岡山県"
+  },
+  {
+    "id": "hiroshima-highlight",
+    "answer": "Hiroshima",
+    "japanese": "広島県"
+  },
+  {
+    "id": "yamaguchi-highlight",
+    "answer": "Yamaguchi",
+    "japanese": "山口県"
+  },
+  {
+    "id": "tokushima-highlight",
+    "answer": "Tokushima",
+    "japanese": "徳島県"
+  },
+  {
+    "id": "kagawa-highlight",
+    "answer": "Kagawa",
+    "japanese": "香川県"
+  },
+  {
+    "id": "ehime-highlight",
+    "answer": "Ehime",
+    "japanese": "愛媛県"
+  },
+  {
+    "id": "kochi-highlight",
+    "answer": "Kochi",
+    "japanese": "高知県"
+  },
+  {
+    "id": "fukuoka-highlight",
+    "answer": "Fukuoka",
+    "japanese": "福岡県"
+  },
+  {
+    "id": "saga-highlight",
+    "answer": "Saga",
+    "japanese": "佐賀県"
+  },
+  {
+    "id": "nagasaki-highlight",
+    "answer": "Nagasaki",
+    "japanese": "長崎県"
+  },
+  {
+    "id": "kumamoto-highlight",
+    "answer": "Kumamoto",
+    "japanese": "熊本県"
+  },
+  {
+    "id": "oita-highlight",
+    "answer": "Oita",
+    "japanese": "大分県"
+  },
+  {
+    "id": "miyazaki-highlight",
+    "answer": "Miyazaki",
+    "japanese": "宮崎県"
+  },
+  {
+    "id": "kagoshima-highlight",
+    "answer": "Kagoshima",
+    "japanese": "鹿児島県"
+  },
+  {
+    "id": "okinawa-highlight",
+    "answer": "Okinawa",
+    "japanese": "沖縄県"
+  }
+]

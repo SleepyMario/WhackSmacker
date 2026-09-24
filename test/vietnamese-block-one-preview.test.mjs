@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { renderLanguageTreeRightPane, renderTwoPaneLanguageTree } from '../dist/apps/cli/interactive-menu.js';
 import { generateContentPackage } from '../dist/packages/core/content-package-generator.js';
-for (const [number,count] of [['003',10],['004',9],['005',10],['006',13],['007',14],['008',11]]) {
+for (const [number,count] of [['003',10],['004',9],['005',10],['006',13],['007',14],['008',11],['009',15],['010',10],['011',14],['012',13],['013',14],['014',15],['015',16]]) {
  test(`Vietnamese ${number}: complete reading, regional guide and independent support views`, async()=>{
   const dir=new URL(`../dist/apps/cli/content/vietnamese/chapter-${number}/`,import.meta.url).pathname;
   const src=await readFile(join(dir,'chapter.md'),'utf8');
@@ -28,7 +28,8 @@ for (const [number,count] of [['003',10],['004',9],['005',10],['006',13],['007',
   }
   if(kind==='Dialogue'){
    const support=JSON.parse(await readFile(join(dir,'reading-support.json'),'utf8'));
-   for(const label of ['English']) for(const name of (number==='007'?['Maria','Gia Bảo']:['Maria','Minh Anh']))assert.ok(support.breakdown.normal.includes(`${label}: ${name}:`));
+   const dialogueNames=number==='007'?['Maria','Gia Bảo']:number==='009'?['Minh Anh','Gia Bảo','Seller']:number==='011'?['Minh Anh','Quốc Huy','Thu Hà']:number==='013'?['Quốc Huy','Gia Bảo','Minh Anh']:number==='015'?['Thu Hà','Quốc Huy','Minh Anh']:['Maria','Minh Anh'];
+   for(const name of dialogueNames)assert.ok(support.breakdown.normal.includes(`English: ${name}:`));
   }
  });
 }
@@ -42,6 +43,28 @@ test('Vietnamese Grammar I-V covers the same five IDs and fifteen examples in bo
  const n=await renderLanguageTreeRightPane(node,{displayMode:'normal',locale:'en-US'}),e=await renderLanguageTreeRightPane(node,{displayMode:'expert',locale:'en-US'});
  assert.notEqual(n,e);for(const x of easy.examples){assert.ok(n.includes(x.example));assert.ok(e.includes(x.example));}
 });
+test('Vietnamese Grammar VI-X covers the same five IDs and fourteen exact examples in both views',async()=>{
+ const root=new URL('../../vietnamese-curriculum/units/vietnamese-core/',import.meta.url).pathname;
+ const easy=JSON.parse(await readFile(join(root,'chapter-006-010-grammar-easy/coverage.json'),'utf8'));
+ const hard=JSON.parse(await readFile(join(root,'chapter-006-010-grammar-hard/coverage.json'),'utf8'));
+ assert.deepEqual(easy,hard);assert.equal(easy.grammarIds.length,5);assert.equal(easy.examples.length,14);
+ const base=new URL('../dist/apps/cli/content/vietnamese/',import.meta.url).pathname;
+ const node={id:'vi:grammar-006-010',label:'Grammar VI - X',kind:'message',authoredGrammarPaths:[join(base,'grammar-006-010-easy.md'),join(base,'grammar-006-010-hard.md')]};
+ const normal=await renderLanguageTreeRightPane(node,{displayMode:'normal',locale:'en-US'}),expert=await renderLanguageTreeRightPane(node,{displayMode:'expert',locale:'en-US'});
+ assert.notEqual(normal,expert);
+ for(const item of easy.examples){assert.ok(normal.includes(item.example));assert.ok(expert.includes(item.example));}
+});
+test('Vietnamese Grammar XI-XV covers the same five IDs and fifteen exact examples in both views',async()=>{
+ const root=new URL('../../vietnamese-curriculum/units/vietnamese-core/',import.meta.url).pathname;
+ const easy=JSON.parse(await readFile(join(root,'chapter-011-015-grammar-easy/coverage.json'),'utf8'));
+ const hard=JSON.parse(await readFile(join(root,'chapter-011-015-grammar-hard/coverage.json'),'utf8'));
+ assert.deepEqual(easy,hard);assert.equal(easy.grammarIds.length,5);assert.equal(easy.examples.length,15);
+ const base=new URL('../dist/apps/cli/content/vietnamese/',import.meta.url).pathname;
+ const node={id:'vi:grammar-011-015',label:'Grammar XI - XV',kind:'message',authoredGrammarPaths:[join(base,'grammar-011-015-easy.md'),join(base,'grammar-011-015-hard.md')]};
+ const normal=await renderLanguageTreeRightPane(node,{displayMode:'normal',locale:'en-US'}),expert=await renderLanguageTreeRightPane(node,{displayMode:'expert',locale:'en-US'});
+ assert.notEqual(normal,expert);
+ for(const item of easy.examples){assert.ok(normal.includes(item.example));assert.ok(expert.includes(item.example));}
+});
 test('Vietnamese block review has exactly paired lexical cards and exact bounded source examples',async()=>{
  const tsv=await readFile(new URL('../review-content/vietnamese/review-decks/chapter-001-005/cards.tsv',import.meta.url),'utf8');
  const [header,...rows]=tsv.trim().split('\n').map(x=>x.split('\t').map(v=>v.startsWith('"')&&v.endsWith('"')?v.slice(1,-1).replaceAll('""','"'):v));const cards=rows.map(r=>Object.fromEntries(header.map((h,i)=>[h,r[i]])));
@@ -53,11 +76,52 @@ test('Vietnamese block review has exactly paired lexical cards and exact bounded
   for(const c of pair)for(const ex of JSON.parse(c.examples))assert.ok(entry.evidence.some(e=>e.sentence===ex));
  }
 });
-test('portable Vietnamese reading package contains all eight scenes and the new cast portrait',async()=>{
+test('Vietnamese VI-X review has 27 exact paired lexical senses and no post-block material',async()=>{
+ const sourceRoot=new URL('../../vietnamese-curriculum/',import.meta.url).pathname;
+ const forms=JSON.parse(await readFile(join(sourceRoot,'vocabulary-forms.json'),'utf8'));
+ const occurrences=new Map(forms.occurrences.map(item=>[item.id,item]));
+ const eligible=forms.displayRows.filter(item=>item.chapter>=6&&item.chapter<=10&&item.reviewEligible);
+ const tsv=await readFile(new URL('../review-content/vietnamese/review-decks/chapter-006-010/cards.tsv',import.meta.url),'utf8');
+ const [header,...rows]=tsv.trim().split('\n').map(x=>x.split('\t').map(v=>v.startsWith('"')&&v.endsWith('"')?v.slice(1,-1).replaceAll('""','"'):v));
+ const cards=rows.map(row=>Object.fromEntries(header.map((name,index)=>[name,row[index]])));
+ assert.equal(eligible.length,27);assert.equal(cards.length,54);assert.equal(new Set(cards.map(card=>card.card_id)).size,54);
+ for(const entry of eligible){
+  const pair=cards.filter(card=>JSON.parse(card.lexical_ids).includes(entry.canonicalSenseId));
+  assert.equal(pair.length,2);assert.deepEqual(new Set(pair.map(card=>card.tags.includes('target-to-source')?'target-to-source':'source-to-target')),new Set(['target-to-source','source-to-target']));
+  for(const card of pair){
+   assert.ok(Number(card.source_chapter)>=6&&Number(card.source_chapter)<=10);
+   assert.equal(card.provenance_evidence,occurrences.get(entry.occurrenceId).sentenceOrExample);
+   const examples=JSON.parse(card.examples);assert.ok(examples.length>=1&&examples.length<=3);
+   const chapter=await readFile(join(sourceRoot,entry.sourcePath),'utf8');for(const example of examples)assert.ok(chapter.includes(example));
+  }
+ }
+});
+test('Vietnamese XI-XV review has 71 exact paired lexical senses and no post-block material',async()=>{
+ const sourceRoot=new URL('../../vietnamese-curriculum/',import.meta.url).pathname;
+ const forms=JSON.parse(await readFile(join(sourceRoot,'vocabulary-forms.json'),'utf8'));
+ const occurrences=new Map(forms.occurrences.map(item=>[item.id,item]));
+ const eligible=forms.displayRows.filter(item=>item.chapter>=11&&item.chapter<=15&&item.reviewEligible);
+ const tsv=await readFile(new URL('../review-content/vietnamese/review-decks/chapter-011-015/cards.tsv',import.meta.url),'utf8');
+ const [header,...rows]=tsv.trim().split('\n').map(x=>x.split('\t').map(v=>v.startsWith('"')&&v.endsWith('"')?v.slice(1,-1).replaceAll('""','"'):v));
+ const cards=rows.map(row=>Object.fromEntries(header.map((name,index)=>[name,row[index]])));
+ assert.equal(eligible.length,71);assert.equal(cards.length,142);assert.equal(new Set(cards.map(card=>card.card_id)).size,142);
+ for(const entry of eligible){
+  const pair=cards.filter(card=>JSON.parse(card.lexical_ids).includes(entry.canonicalSenseId));
+  assert.equal(pair.length,2);assert.deepEqual(new Set(pair.map(card=>card.tags.includes('target-to-source')?'target-to-source':'source-to-target')),new Set(['target-to-source','source-to-target']));
+  for(const card of pair){
+   assert.ok(Number(card.source_chapter)>=11&&Number(card.source_chapter)<=15);
+   assert.equal(card.provenance_evidence,occurrences.get(entry.occurrenceId).sentenceOrExample);
+   const examples=JSON.parse(card.examples);assert.ok(examples.length>=1&&examples.length<=3);
+   const chapter=await readFile(join(sourceRoot,entry.sourcePath),'utf8');for(const example of examples)assert.ok(chapter.includes(example));
+  }
+ }
+});
+test('portable Vietnamese reading package contains all fifteen scenes and both later cast portraits',async()=>{
  const output=await mkdtemp(join(tmpdir(),'vi-scenes-'));
  try{const result=await generateContentPackage({targetId:'vietnamese-curriculum',outputDirectory:output,generatedAt:'2026-09-12T12:00:00Z'});
-  assert.equal(result.manifest.files.filter(f=>/chapter-00[1-8]-[^/]+\/media\/scene\.png$/.test(f.path)).length,8);
+  assert.equal(result.manifest.files.filter(f=>/chapter-(?:00[1-9]|01[0-5])-[^/]+\/media\/scene\.png$/.test(f.path)).length,15);
   assert.ok(result.manifest.files.some(f=>f.path.endsWith("introductions/media/gia-bao.png")));
+  assert.ok(result.manifest.files.some(f=>f.path.endsWith("introductions/media/quoc-huy.png")));
  }finally{await rm(output,{recursive:true,force:true});}
 });
 
@@ -65,7 +129,7 @@ test('Vietnamese examples have adjacent original-English rows with no redundant 
  const root=new URL('../../vietnamese-curriculum/units/vietnamese-core/',import.meta.url).pathname;
  const {readdir}=await import('node:fs/promises');
  for(const name of await readdir(root)){
-  if(!/^chapter-00[1-8]-/.test(name)||name.includes('grammar'))continue;
+  if(!/^chapter-(?:00[1-9]|01[0-5])-/.test(name)||name.includes('grammar'))continue;
   const support=JSON.parse(await readFile(join(root,name,'reading-support.json'),'utf8'));
   for(const mode of ['normal','expert']){
    const text='### Line-by-line Breakdown\n\n'+support.breakdown[mode];
@@ -80,15 +144,15 @@ test('Vietnamese examples have adjacent original-English rows with no redundant 
    }
   }
  }
- for(const variant of ['easy','hard']){
-  const text=await readFile(join(root,`chapter-001-005-grammar-${variant}`,'chapter.md'),'utf8');
-  assert.ok(!text.includes('Reading:'));
-  assert.equal((text.match(/\*\*\nEnglish:/g)||[]).length,15);
-  const node={id:'vi-grammar-pairs',label:'Grammar I - V',kind:'message'};
-  const rendered=renderTwoPaneLanguageTree(node,new Set(),0,text,true,0,1600,'en-US','navigation',240,0,'normal');
-  const lines=rendered.split('\n');
-  for(let i=0;i<lines.length;i++)if(/\x1b\[38;5;213m\s*\d+\./.test(lines[i]))assert.ok(lines[i+1].includes('\x1b[33m'));
- }
+ for(const [block,count] of [['001-005',15],['006-010',14],['011-015',15]])for(const variant of ['easy','hard']){
+   const text=await readFile(join(root,`chapter-${block}-grammar-${variant}`,'chapter.md'),'utf8');
+   assert.ok(!text.includes('Reading:'));
+   assert.equal((text.match(/\*\*\nEnglish:/g)||[]).length,count);
+   const node={id:`vi-grammar-pairs-${block}`,label:`Grammar ${block}`,kind:'message'};
+   const rendered=renderTwoPaneLanguageTree(node,new Set(),0,text,true,0,1600,'en-US','navigation',240,0,'normal');
+   const lines=rendered.split('\n');
+   for(let i=0;i<lines.length;i++)if(/\x1b\[38;5;213m\s*\d+\./.test(lines[i]))assert.ok(lines[i+1].includes('\x1b[33m'));
+  }
 });
 
 test('VII prose colon does not become the dialogue speaker alignment column', async () => {

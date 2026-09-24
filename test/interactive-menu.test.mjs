@@ -24,6 +24,7 @@ import {
   groupLanguageDeckBranches,
   groupExplicitTopicMenuLeaves,
   formatEmbeddedReviewReveal,
+  generateDeckProgressResetCode,
   isEmbeddedReviewItemUsable,
   installedLanguagePackagesToMenuItems,
   interleaveReviewSources,
@@ -791,7 +792,9 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   const tree = await buildModuleTree();
   const installed = tree.children.find((node) => node.label === "Installed modules");
   assert.deepEqual(installed.children.map((node) => node.label), ["LingoLand", "Wandering the World"]);
-  assert.deepEqual(installed.children.find((node) => node.label === "Wandering the World").children, []);
+  const geography = installed.children.find((node) => node.label === "Wandering the World");
+  assert.deepEqual(geography.children.map((node) => node.label), ["World", "Countries"]);
+  assert.deepEqual(geography.children[0].children.map((node) => node.label), ["Continents - Easy", "Continents - Hard"]);
 });
 
 test("language category can expand installed package nodes in the module tree", async () => {
@@ -2145,6 +2148,14 @@ test("three-pane renderer separates navigation output and toggles", () => {
   assert.match(englishPlain, /View mode: Normal/u);
   assert.match(englishPlain, /Translation: Off/u);
   assert.doesNotMatch(englishPlain, /● Normal|○ Developer/u);
+  assert.match(englishPlain, /Reset Deck Progress: Off/u);
+  const paneRows = englishPlain.split("\n").filter((line) => line.startsWith("| "));
+  assert.match(paneRows.at(-1) ?? "", /Reset Deck Progress: Off/u);
+});
+
+test("deck reset confirmation codes are six unambiguous characters", () => {
+  assert.equal(generateDeckProgressResetCode(() => 0), "AAAAAA");
+  assert.match(generateDeckProgressResetCode(() => 0.999), /^[A-HJ-NP-Z2-9]{6}$/u);
 });
 
 test("Normal is the default and the view mode uses one toggle row", () => {
@@ -4032,6 +4043,29 @@ test("left and right arrows focus Toggles while Enter and Space cycle its langua
     assert.match(stripAnsi(terminal.output), /Installed modules/u);
   } finally {
     await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
+test("bottom-right Reset Deck Progress toggle enters safe selection mode", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-reset-mode-"));
+  try {
+    const terminal = new FakeTerminal([
+      key("right"),
+      ...Array.from({ length: 7 }, () => key("down")),
+      key("return"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, {
+      dataDir: join(root, "content"),
+      settingsDir: join(root, "settings")
+    });
+
+    assert.match(terminal.output, /Reset Deck Progress: On/u);
+    assert.match(terminal.output, /Choose exactly one deck in the navigation pane/u);
+    assert.match(terminal.output, /Selecting a deck does not reset it immediately/u);
+  } finally {
+    await rm(root, { recursive: true, force: true });
   }
 });
 

@@ -279,7 +279,8 @@ export async function readInstalledMemorizationItems(
     }
   }
   const items = await applySourceReviewOverlay(collection.items, selected, sourceLocale, dataDir);
-  if (collection.schemaVersion === 2 && items.every((item) => item.schemaVersion === 2 && item.language?.target === "ja")) {
+  // Standalone prefecture kanji/kana pairs intentionally have two directions, without a meaning card.
+  if (selected.packageId !== "com.sleepymario.language.japanese.prefectures-kanji" && collection.schemaVersion === 2 && items.every((item) => item.schemaVersion === 2 && item.language?.target === "ja")) {
     const contextualReadings = await installedJapaneseContextualReadings(manifest, dataDir, items as readonly MemorizationItemV2[]);
     assertValidJapaneseStructuredReviewItems((items as readonly MemorizationItemV2[]).map((item) => ({
       cardId: item.cardId,
@@ -353,8 +354,9 @@ async function installedJapaneseContextualReadings(
 ): Promise<JapaneseContextualReadingDocument | undefined> {
   const relatedId = reviewManifest.relatedPackageIds?.find((packageId) => packageId === "com.sleepymario.language.japanese");
   if (relatedId === undefined) return undefined;
-  const reading = (await listInstalledContentPackages(dataDir)).find((record) => record.packageId === relatedId);
-  if (reading === undefined) return undefined;
+  const relatedInstalled = (await listInstalledContentPackages(dataDir)).some((record) => record.packageId === relatedId);
+  if (!relatedInstalled) return undefined;
+  const reading = await selectInstalledPackage(relatedId, dataDir);
   const snapshot = JSON.parse((await readFile(join(installedPackageRoot(reading, dataDir), "content", "content.json"))).toString("utf8")) as {
     files?: readonly { path?: string; text?: unknown }[];
   };

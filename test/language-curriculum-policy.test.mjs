@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  artworkStyleForChapter,
   assertCanonicalCumulativeContinuity,
   assertCanonicalGrammarPatternRecord,
   assertGrammarSummaryPatternAgreement,
@@ -38,6 +39,42 @@ test("canonical cumulative continuity begins at Chapter 1 and Chapter 16 inherit
   assert.match(languageCurriculumPolicy.cumulativeContinuityRules.join("\n"), /Chapter 1 through the immediately preceding chapter/u);
 });
 
+test("canonical artwork styles rotate in six ten-chapter blocks without redesigning the cast", () => {
+  assert.deepEqual(languageCurriculumPolicy.artworkStyleRotation.map((style) => style.id), [
+    "warm-hand-painted-editorial",
+    "cool-modern-architectural",
+    "watercolour-environment",
+    "clean-cel-environment",
+    "cinematic-naturalism",
+    "ink-and-colour-print"
+  ]);
+  const expected = new Map([
+    [1, "warm-hand-painted-editorial"],
+    [10, "warm-hand-painted-editorial"],
+    [11, "cool-modern-architectural"],
+    [20, "cool-modern-architectural"],
+    [21, "watercolour-environment"],
+    [31, "clean-cel-environment"],
+    [41, "cinematic-naturalism"],
+    [51, "ink-and-colour-print"],
+    [60, "ink-and-colour-print"],
+    [61, "warm-hand-painted-editorial"],
+    [71, "cool-modern-architectural"],
+    [121, "warm-hand-painted-editorial"]
+  ]);
+  for (const [chapter, styleId] of expected) assert.equal(artworkStyleForChapter(chapter).id, styleId);
+  assert.deepEqual(
+    (({ chapterBlockStart, chapterBlockEnd, cycleNumber }) => ({ chapterBlockStart, chapterBlockEnd, cycleNumber }))(artworkStyleForChapter(121)),
+    { chapterBlockStart: 121, chapterBlockEnd: 130, cycleNumber: 3 }
+  );
+  const rules = languageCurriculumPolicy.artworkRules.join("\n");
+  assert.match(rules, /applies to every language curriculum without a language-specific opt-out/u);
+  assert.match(rules, /environment, palette, texture, lighting, and architectural treatment/u);
+  assert.match(rules, /do not redesign the cast/u);
+  assert.match(rules, /face, hair, apparent age, build/u);
+  assert.match(rules, /provenance records the exact canonical style ID/u);
+});
+
 test("language curriculum policy hardcodes chapter pacing bands", () => {
   assert.deepEqual(languageCurriculumPolicy.pacingRules.map((rule) => ({
     label: rule.label,
@@ -52,7 +89,7 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       chapterStart: 1,
       chapterEnd: 25,
       grammarPoints: { min: 1, max: 1 },
-      readContentLines: { min: 6, max: 20 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 6, max: 10 }
     },
     {
@@ -60,7 +97,7 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       chapterStart: 26,
       chapterEnd: 30,
       grammarPoints: { min: 1, max: 2 },
-      readContentLines: { min: 10, max: 30 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 6, max: 20 }
     },
     {
@@ -68,7 +105,7 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       chapterStart: 31,
       chapterEnd: 50,
       grammarPoints: { min: 2, max: 2 },
-      readContentLines: { min: 10, max: 30 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 6, max: 20 }
     },
     {
@@ -76,7 +113,7 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       chapterStart: 51,
       chapterEnd: 70,
       grammarPoints: { min: 2, max: 2 },
-      readContentLines: { min: 15, max: 30 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 10, max: 30 }
     },
     {
@@ -84,7 +121,7 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       chapterStart: 71,
       chapterEnd: 75,
       grammarPoints: { min: 2, max: 2 },
-      readContentLines: { min: 16, max: 40 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 10, max: 30 }
     },
     {
@@ -92,7 +129,7 @@ test("language curriculum policy hardcodes chapter pacing bands", () => {
       chapterStart: 76,
       chapterEnd: 140,
       grammarPoints: { min: 1, max: 1 },
-      readContentLines: { min: 20, max: 40 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 10, max: 30 }
     }
   ]);
@@ -245,13 +282,13 @@ test("language curriculum pacing validates early and advanced chapters", () => {
   assert.throws(() => assertLanguageCurriculumPacing({
     chapter: 26,
     grammarPointCount: 2,
-    readContentLineCount: 9,
+    readContentLineCount: 5,
     newVocabularyItemCount: 10
-  }), /read-content line count must be 10-30/u);
+  }), /read-content line count must be at least 6/u);
   assert.doesNotThrow(() => assertLanguageCurriculumPacing({
     chapter: 51,
     grammarPointCount: 2,
-    readContentLineCount: 15,
+    readContentLineCount: 80,
     newVocabularyItemCount: 10
   }));
 });
@@ -263,29 +300,26 @@ test("language curriculum policy records continuity and strict example rules", (
   assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /newly authored violations are blocking/u.test(rule)));
   assert.ok(languageCurriculumPolicy.chapterFormatRules.some((rule) => /Odd-numbered chapters are dialogues/u.test(rule)));
   assert.ok(languageCurriculumPolicy.chapterFormatRules.some((rule) => /Even-numbered chapters are narratives/u.test(rule)));
-  assert.ok(languageCurriculumPolicy.numberContinuationRules.some((rule) => /51-55.*56-60.*100 through 999/u.test(rule)));
-  assert.ok(languageCurriculumPolicy.numberContinuationRules.some((rule) => /61-65.*66-70.*1000 through 9999/u.test(rule)));
-  assert.ok(languageCurriculumPolicy.numberContinuationRules.some((rule) => /any one chapter.*not required in every chapter/u.test(rule)));
-  assert.ok(languageCurriculumPolicy.numberContinuationRules.some((rule) => /Metadata.*review material.*do not satisfy/u.test(rule)));
-  assert.ok(languageCurriculumPolicy.numberContinuationRules.some((rule) => /numbers of any value remain permitted/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.readContentLengthRules.some((rule) => /at least six complete spoken turns/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.readContentLengthRules.some((rule) => /no universal upper limit/u.test(rule)));
   assert.deepEqual(languageCurriculumPolicy.chapterSizeRules, [
     {
       chapterStart: 51,
       chapterEnd: 70,
       newVocabularyItems: { min: 10, max: 30 },
-      learnerFacingReadContentLines: { min: 15, max: 30 }
+      learnerFacingReadContentLines: { min: 6 }
     },
     {
       chapterStart: 71,
       chapterEnd: 75,
       newVocabularyItems: { min: 10, max: 30 },
-      learnerFacingReadContentLines: { min: 16, max: 40 }
+      learnerFacingReadContentLines: { min: 6 }
     },
     {
       chapterStart: 76,
       chapterEnd: 140,
       newVocabularyItems: { min: 10, max: 30 },
-      learnerFacingReadContentLines: { min: 20, max: 40 }
+      learnerFacingReadContentLines: { min: 6 }
     }
   ]);
   assert.deepEqual(languageCurriculumPolicy.grammarSummaryAfterChapters, [75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140]);
@@ -353,9 +387,10 @@ test("Chapters 31-50 supporting variants do not inflate the count and reused gra
   ]), /new principal grammar point count must be 2-2; got 0/u);
 });
 
-test("Chapters 31-50 retain vocabulary, line, and odd-even limits", () => {
+test("Chapters 31-50 retain vocabulary, minimum-line, and odd-even rules", () => {
   assert.throws(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 31, vocabulary: vocabularyItems(5) })]), /vocabulary item count must be 6-20/u);
-  assert.throws(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 40, lineCount: 9 })]), /line count must be 10-30/u);
+  assert.throws(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 40, lineCount: 5 })]), /line count must be at least 6/u);
+  assert.doesNotThrow(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 40, lineCount: 80 })]));
   assert.throws(() => assertLanguageCurriculumChapter3150Requirements([chapter3150Markdown({ chapter: 41, format: "narrative" })]), /must use learner-facing dialogue/u);
 });
 
@@ -434,31 +469,28 @@ test("metadata grammar reviews and developer content do not count as Chapters 51
   assert.throws(() => assertLanguageCurriculumChapter5170Requirements([chapter]), /got 9/u);
 });
 
-test("Chapters 51-70 accept 15 and 30 learner-facing content lines", () => {
+test("Chapters 51-70 accept six or any larger purposeful learner-facing line count", () => {
   assert.doesNotThrow(() => assertLanguageCurriculumChapter5170Requirements([
-    chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 15 }),
-    chapter5170Markdown({ chapter: 52, vocabulary: vocabularyItems(10, "second"), lineCount: 30 })
+    chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 6 }),
+    chapter5170Markdown({ chapter: 52, vocabulary: vocabularyItems(10, "second"), lineCount: 80 })
   ]));
 });
 
-test("Chapters 51-70 reject fewer than 15 or more than 30 learner-facing content lines", () => {
+test("Chapters 51-70 reject fewer than six learner-facing content lines", () => {
   assert.throws(() => assertLanguageCurriculumChapter5170Requirements([
-    chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 14 })
-  ]), /learner-facing dialogue or narrative line count must be 15-30; got 14/u);
-  assert.throws(() => assertLanguageCurriculumChapter5170Requirements([
-    chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 31 })
-  ]), /learner-facing dialogue or narrative line count must be 15-30; got 31/u);
+    chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 5 })
+  ]), /learner-facing dialogue or narrative line count must be at least 6; got 5/u);
 });
 
 test("non-read-content material does not inflate Chapters 51-70 line counts", () => {
-  const source = chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 14 });
+  const source = chapter5170Markdown({ chapter: 51, vocabulary: vocabularyItems(10), lineCount: 5 });
   const chapter = {
     ...source,
     markdown: source.markdown
       .replace("### New Vocabulary", "Speaker Only:\n\n---\n\n### New Vocabulary")
       .replace("### New Grammar", "### Review\nReview exercise.\n\n### Developer Notes\nGenerated summary.\n\n### New Grammar")
   };
-  assert.throws(() => assertLanguageCurriculumChapter5170Requirements([chapter]), /line count must be 15-30; got 14/u);
+  assert.throws(() => assertLanguageCurriculumChapter5170Requirements([chapter]), /line count must be at least 6; got 5/u);
 });
 
 test("Chapters 51-70 retain odd dialogue and even narrative formats", () => {
@@ -487,115 +519,6 @@ function chapter5170Markdown({ chapter, vocabulary, lineCount, format = chapter 
 
 function vocabularyItems(count, prefix = "term") {
   return Array.from({ length: count }, (_, index) => `${prefix}-${index + 1}`);
-}
-
-test("number continuation is cumulative by five-chapter block and uses only learner-facing content", () => {
-  const chapters = new Map([
-    [51, chapterWithNarrative("The shop has 12 baskets.")],
-    [52, chapterWithNarrative("A train leaves at 8.")],
-    [53, chapterWithNarrative("The hall seats 240 people.")],
-    [54, chapterWithNarrative("The guide has 4 maps.")],
-    [55, chapterWithNarrative("She buys 20 tickets.")],
-    [56, chapterWithDialogue("Mina: I need 700 labels.\nJo: I can bring them.")],
-    [57, chapterWithNarrative("There are 3 boxes by the door.")],
-    [58, chapterWithNarrative("The room has 40 chairs.")],
-    [59, chapterWithNarrative("We meet at 6.")],
-    [60, chapterWithNarrative("He writes 9 notes.")],
-    [61, chapterWithNarrative("The library received 1,200 books.")],
-    [62, chapterWithNarrative("The desk has 2 lamps.")],
-    [63, chapterWithNarrative("They wait 10 minutes.")],
-    [64, chapterWithNarrative("I bring 3 folders.")],
-    [65, chapterWithNarrative("We need 7 keys.")],
-    [66, chapterWithNarrative("The stadium holds 5000 guests.")],
-    [67, chapterWithNarrative("Two buses arrive.")],
-    [68, chapterWithNarrative("The cafe opens at 9.")],
-    [69, chapterWithNarrative("She has 12 coins.")],
-    [70, chapterWithNarrative("We read 25 pages.")]
-  ]);
-
-  assert.deepEqual(numberContinuationFailures(chapters), []);
-});
-
-test("number continuation does not require a qualifying number in every chapter", () => {
-  const chapters = new Map([
-    [51, chapterWithNarrative("The address is 321 River Road.")],
-    [56, chapterWithNarrative("The address is 654 River Road.")],
-    [61, chapterWithNarrative("The address is 1234 River Road.")],
-    [66, chapterWithNarrative("The address is 5678 River Road.")]
-  ]);
-
-  assert.deepEqual(numberContinuationFailures(chapters), []);
-});
-
-test("number continuation rejects qualifying values outside learner-facing dialogue or narrative", () => {
-  const chapters = new Map([
-    [51, "---\nchapter: 51\nroom: 321\n---\n\n### New Grammar\nUse 321 as an example.\n\n### Review\n321\n"],
-    [56, chapterWithNarrative("The address is 654 River Road.")],
-    [61, chapterWithNarrative("The address is 1234 River Road.")],
-    [66, chapterWithNarrative("The address is 5678 River Road.")]
-  ]);
-
-  assert.deepEqual(numberContinuationFailures(chapters), ["Chapters 51-55 need a learner-facing number from 100 through 999."]);
-});
-
-test("number continuation permits every numeric value throughout Chapters 51-70", () => {
-  const chapters = new Map([
-    [51, chapterWithNarrative("The shop has 12 baskets and 321 tags.")],
-    [56, chapterWithNarrative("The shop has 10000 boxes and 654 tags.")],
-    [61, chapterWithNarrative("The shop has 99 baskets and 1234 tags.")],
-    [66, chapterWithNarrative("The shop has 100000 boxes and 5678 tags.")]
-  ]);
-
-  assert.deepEqual(numberContinuationFailures(chapters), []);
-});
-
-function chapterWithNarrative(content) {
-  return `---\nchapter: 51\n---\n\n### Learner-facing Controlled Reading\n${content}\n\n### New Grammar\nExplanation.`;
-}
-
-function chapterWithDialogue(content) {
-  return `---\nchapter: 51\n---\n\n### Learner-facing Dialogue\n${content}\n\n### New Vocabulary\nVocabulary.`;
-}
-
-function numberContinuationFailures(chapters) {
-  const requirements = [
-    { start: 51, end: 55, min: 100, max: 999 },
-    { start: 56, end: 60, min: 100, max: 999 },
-    { start: 61, end: 65, min: 1000, max: 9999 },
-    { start: 66, end: 70, min: 1000, max: 9999 }
-  ];
-  const failures = [];
-
-  for (const requirement of requirements) {
-    const qualifies = [...chapters.entries()]
-      .filter(([chapter]) => chapter >= requirement.start && chapter <= requirement.end)
-      .flatMap(([, markdown]) => learnerFacingLines(markdown))
-      .flatMap((line) => [...line.matchAll(/(?<!\d)\d+(?:,\d{3})*(?!\d)/gu)])
-      .map(([value]) => Number(value.replace(/,/gu, "")))
-      .some((value) => value >= requirement.min && value <= requirement.max);
-    if (!qualifies) {
-      failures.push(`Chapters ${requirement.start}-${requirement.end} need a learner-facing number from ${requirement.min} through ${requirement.max}.`);
-    }
-  }
-  return failures;
-}
-
-function learnerFacingLines(markdown) {
-  const lines = [];
-  let inLearnerFacingContent = false;
-  for (const rawLine of markdown.split(/\r?\n/u)) {
-    const line = rawLine.trim();
-    if (/^#{2,4}\s+Learner-facing (?:Dialogue|Controlled Reading)\s*$/iu.test(line)) {
-      inLearnerFacingContent = true;
-      continue;
-    }
-    if (/^#{2,4}\s+/u.test(line)) {
-      inLearnerFacingContent = false;
-      continue;
-    }
-    if (inLearnerFacingContent && line !== "") lines.push(line);
-  }
-  return lines;
 }
 
 test("Chapters 71-140 include Chapters 131-140 under unchanged per-chapter limits", () => {
@@ -638,12 +561,10 @@ test("non-learner-facing vocabulary and structural lines do not inflate counts",
   assert.throws(() => validate71140(inflated), /vocabulary item count must be 10-30; got 9/u);
 });
 
-test("Chapters 71-140 enforce learner-facing line boundaries", () => {
-  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 20 })));
-  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 140, lineCount: 40 })));
-  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 16 })));
-  assert.throws(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 15 })), /got 15/u);
-  assert.throws(() => validate71140(chapter71140Markdown({ chapter: 140, lineCount: 41 })), /got 41/u);
+test("Chapters 71-140 enforce only the shared six-unit minimum", () => {
+  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 6 })));
+  assert.doesNotThrow(() => validate71140(chapter71140Markdown({ chapter: 140, lineCount: 80 })));
+  assert.throws(() => validate71140(chapter71140Markdown({ chapter: 71, lineCount: 5 })), /at least 6; got 5/u);
 });
 
 test("odd dialogues are named and situational while even narratives remain prose", () => {
@@ -716,19 +637,6 @@ test("year requires introduction or review plus two distributed learner-facing r
   assert.doesNotThrow(() => assertLanguageCurriculumStage71140Coverage(coverageFixture({ yearUses: [[71, "review"], [81, "reuse"], [91, "reuse"]] })));
   const metadataOnly = coverageFixture().map((source) => source.chapter === 71 ? { ...source, markdown: source.markdown.replace("year-form-71", "absent-year-form") } : source);
   assert.throws(() => assertLanguageCurriculumStage71140Coverage(metadataOnly), /year evidence must occur literally/u);
-});
-
-test("all five large-number blocks accept inclusive endpoints and Chapter 110 overlap", () => {
-  assert.doesNotThrow(() => assertLanguageCurriculumStage71140Coverage(coverageFixture()));
-  assert.doesNotThrow(() => assertLanguageCurriculumStage71140Coverage(coverageFixture({ numbers: [10_000, 100_000, 10_000_000, 100_000_000, 1_000_000_000] })));
-  assert.throws(() => assertLanguageCurriculumStage71140Coverage(coverageFixture({ numbers: [9_998, 99_999, 9_999_999, 99_999_999, 999_999_999] })), /Chapters 71-80/u);
-  const overlap = coverageFixture({ numberChapters: [71, 81, 91, 110, 110] });
-  assert.doesNotThrow(() => assertLanguageCurriculumStage71140Coverage(overlap));
-  const metadataOnly = coverageFixture().map((source) => source.chapter === 81 ? { ...source, markdown: source.markdown.replace("number-99999", "number-not-present") } : source);
-  assert.throws(() => assertLanguageCurriculumStage71140Coverage(metadataOnly), /large-number evidence must occur literally/u);
-  const arbitrary = coverageFixture().map((source) => source.chapter === 71 ? { ...source, markdown: source.markdown.replaceAll("time-71", "time-71 and arbitrary number 42424242") } : source);
-  assert.doesNotThrow(() => assertLanguageCurriculumStage71140Coverage(arbitrary));
-  assert.equal(languageCurriculumPolicy.largeNumberCoverageRules.some((rule) => rule.chapterStart > 120), false);
 });
 
 test("broader-topic inventory schema is Draft 2020-12 and stage-scoped", async () => {
@@ -805,21 +713,17 @@ function topicRecord(id, firstIntroductionChapter, overrides = {}) {
 
 function coverageFixture({
   timeChapters = [71, 81, 91, 101, 110],
-  yearUses = [[71, "introduction"], [81, "reuse"], [91, "reuse"]],
-  numbers = [9_999, 99_999, 9_999_999, 99_999_999, 999_999_999],
-  numberChapters = [71, 81, 91, 101, 110]
+  yearUses = [[71, "introduction"], [81, "reuse"], [91, "reuse"]]
 } = {}) {
-  const chapters = new Set([...timeChapters, ...yearUses.map(([chapter]) => chapter), ...numberChapters]);
+  const chapters = new Set([...timeChapters, ...yearUses.map(([chapter]) => chapter)]);
   return [...chapters].map((chapter) => {
     const time = timeChapters.includes(chapter) ? `time-${chapter}` : undefined;
     const year = yearUses.find(([candidate]) => candidate === chapter);
-    const numberEntries = numberChapters.flatMap((candidate, index) => candidate === chapter ? [[numbers[index], `number-${numbers[index]}`]] : []);
     const metadata = [
       time === undefined ? undefined : `time_date_evidence: ${time}`,
-      year === undefined ? undefined : `year_use: ${year[1]}\nyear_evidence: year-form-${chapter}`,
-      numberEntries.length === 0 ? undefined : `large_number_evidence: ${numberEntries.map(([value, surface]) => `${value} | ${surface}`).join("; ")}`
+      year === undefined ? undefined : `year_use: ${year[1]}\nyear_evidence: year-form-${chapter}`
     ].filter(Boolean).join("\n");
-    const content = [time, year === undefined ? undefined : `year-form-${chapter}`, ...numberEntries.map(([, surface]) => surface)].filter(Boolean).join(" ");
+    const content = [time, year === undefined ? undefined : `year-form-${chapter}`].filter(Boolean).join(" ");
     return { chapter, markdown: `---\nchapter: ${chapter}\n${metadata}\n---\n\n### Learner-facing ${chapter % 2 === 1 ? "Dialogue" : "Controlled Reading"}\n${content}` };
   });
 }

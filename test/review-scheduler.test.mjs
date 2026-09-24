@@ -160,6 +160,37 @@ test("package review progress removal deletes only matching package state and ev
   }
 });
 
+test("deck progress removal preserves other sources in the same package", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-review-remove-deck-"));
+  const progressDir = join(root, "progress");
+  const first = createInitialReviewState({ ...identity(), sourcePath: "deck-one.tsv" }, now);
+  const second = createInitialReviewState({ ...identity(), sourcePath: "deck-two.tsv", itemId: "second/card" }, now);
+  try {
+    await saveReviewProgressStore({
+      reviewProgressFormatVersion,
+      updatedAt: now,
+      items: [first, second],
+      events: [recordReviewOutcome(first, "good", now).event, recordReviewOutcome(second, "good", now).event]
+    }, progressDir);
+
+    const result = await removeReviewProgressForPackage({
+      progressDir,
+      packageId: first.packageId,
+      packageVersion: first.packageVersion,
+      sourcePath: "deck-one.tsv",
+      removedAt: "2026-07-07T00:00:00Z"
+    });
+    const store = await loadReviewProgressStore(progressDir);
+
+    assert.equal(result.removedItemCount, 1);
+    assert.equal(result.removedEventCount, 1);
+    assert.deepEqual(store.items.map((item) => item.sourcePath), ["deck-two.tsv"]);
+    assert.deepEqual(store.events.map((event) => event.sourcePath), ["deck-two.tsv"]);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("missing installed packages do not corrupt existing progress", async () => {
   const root = await mkdtemp(join(tmpdir(), "wsm-review-missing-"));
   const contentDataDir = join(root, "content");

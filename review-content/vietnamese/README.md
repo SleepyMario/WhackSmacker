@@ -1,4 +1,12 @@
-# Current Vietnamese block — September 12, 2026
+# Current Vietnamese blocks — September 24, 2026
+
+Current source now has Chapters I–XV and one authoritative vocabulary deck for each completed five-chapter range. `Chapter XI - XV` contains 71 canonical lexical senses and 142 ordinary bidirectional cards, each with one to three exact primary-reading examples from Chapters XI–XV. Paired Grammar XI - XV sources remain in the Vietnamese curriculum repository and are selected by the learner's Normal or Expert view.
+
+The older current-state and historical records below remain preserved for provenance. Where their counts or completion claims conflict with this September 24 section, this section controls.
+
+---
+
+# Earlier current Vietnamese block — September 12, 2026
 
 Current source has Chapters I–V, illustrated III–V, and paired Grammar I - V. Reading review:36lexical identities/72bidirectional cards with1–3exact primary examples. Normal/Expert and independent translation/breakdown/Sino-Vietnamese views are supported. The approved I–II regional notes are preserved, with minimal direct-reader wording/grammar introduction cleanup; their primary readings are unchanged. Reconciled39vocabulary rows; là, ạ and location-marker ở remain teaching metadata rather than isolated grammar review cards.
 

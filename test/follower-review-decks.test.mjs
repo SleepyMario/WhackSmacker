@@ -159,17 +159,13 @@ test("ledger and Review agreement cannot conceal an omitted taught sense", () =>
   );
 });
 
-test("grammar-only particles and classifiers cannot enter follower lexical Review", async () => {
+test("grammar-only particles and postpositions cannot enter follower lexical Review", async () => {
   const forbiddenByLanguage = {
     arabic: ["ar.particle.hal.yes-no-question", "ar.verb.nadhhabu.we-go"],
     hindi: ["hi.particle.kya.yes-no-question", "hi.postposition.ka.of-possessive", "hi.postposition.mem.in", "hi.postposition.par.on", "hi.postposition.se.from"],
     thai: [
       "th.particle.kha-f.polite-particle-female-statement",
       "th.particle.khrap.polite-particle-male",
-      "th.classifier.hong.rooms",
-      "th.classifier.tua.furniture",
-      "th.classifier.lem.books",
-      "th.classifier.kaeo.glasses-of-drink",
       "th.particle.kha-question.female-question",
       "th.particle.mai.yes-no-question",
       "th.particle.kan.together-invitation"

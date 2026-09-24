@@ -1,6 +1,6 @@
 # Current Korean reviews — September 13, 2026
 
-Chapter I - V: 34 senses / 68 bidirectional cards. Chapter VI - X: 38 senses / 76 bidirectional cards. Each card includes 1–3 literal chapter examples. These are lexical reviews; grammar has separate Normal/Easy and Expert/Hard reading entries. Earlier reset counts below are historical.
+Chapter I - V: 34 senses / 72 cards. Chapter VI - X: 38 senses / 98 cards. Both decks separately test Korean dictionary forms and the inflected forms taught in their chapters: English infinitives answer dictionary forms, while natural meanings plus the speech level answer inflected forms. Each card includes 1–3 literal chapter examples. These are lexical reviews; grammar has separate Normal/Easy and Expert/Hard reading entries. Earlier reset counts below are historical.
 
 # Korean Core Reviews
 

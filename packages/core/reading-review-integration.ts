@@ -79,6 +79,7 @@ export interface RecordReadingReviewAnswerOptions extends ReadingReviewOptions {
 
 export interface RemoveReadingReviewProgressOptions extends ReadingReviewOptions {
   readonly packageId: string;
+  readonly sourcePath?: string;
   readonly removedAt: string;
 }
 
@@ -381,6 +382,7 @@ export async function removeReadingReviewProgressForPackage(
     progressDir,
     packageId: options.packageId,
     packageVersion: options.packageVersion,
+    sourcePath: options.sourcePath,
     removedAt: options.removedAt
   });
 }

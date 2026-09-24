@@ -1,6 +1,7 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
 import { dirname, join } from "node:path";
 import { readFileSync } from "node:fs";
+import { stat } from "node:fs/promises";
 import {
   displayLabelForModulePackage,
   formatFirstClassModuleInfo,
@@ -17,6 +18,7 @@ import {
   listReadingReviewSources,
   localized,
   loadReviewProgressStore,
+  resolveReviewProgressDirectory,
   mergeFirstClassModules,
   defaultReviewProgressDirectoryForContentDataDirectory,
   defaultCurriculumDisplayMode,
@@ -296,6 +298,22 @@ export interface EmbeddedReviewSession {
 interface PendingUninstallSession {
   readonly nodeId: string;
   readonly node: LanguageTreeNode;
+}
+
+interface ResetDeckProgressTarget {
+  readonly nodeId: string;
+  readonly label: string;
+  readonly packageId: string;
+  readonly packageVersion?: string;
+  readonly sourcePath?: string;
+  readonly progressDir?: string;
+}
+
+interface PendingDeckProgressReset {
+  readonly target: ResetDeckProgressTarget;
+  readonly confirmationCode: string;
+  readonly typedCode: string;
+  readonly error?: string;
 }
 
 const ansi = {
@@ -1018,6 +1036,60 @@ async function runGeographyAction(registry: InMemoryCliCommandRegistry, terminal
   return showMessage(terminal, "Press Escape or Enter to return.", { clear: false });
 }
 
+export interface DueDeckEntry { readonly node: LanguageTreeNode; readonly label: string; readonly due: number; readonly ancestors: readonly string[]; }
+
+const dueDeckStoreCache = new Map<string, { stamp: string; store: Awaited<ReturnType<typeof loadReviewProgressStore>> }>();
+
+export async function collectDueDecks(root: LanguageTreeNode, options: InteractiveMenuOptions = {}, now = new Date().toISOString().replace(/\.\d{3}Z$/, "Z")): Promise<DueDeckEntry[]> {
+  const stores = new Map<string, Awaited<ReturnType<typeof loadReviewProgressStore>>>();
+  const result: DueDeckEntry[] = []; const seen = new Set<string>();
+  const walk = async (node: LanguageTreeNode, parents: LanguageTreeNode[]): Promise<void> => {
+    if (node.id.startsWith("available") || node.id.startsWith("language-backup")) return;
+    let packageId = node.packageId, count = node.itemCount ?? 0;
+    let progressDir = node.contentDataDir ?? options.dataDir;
+    progressDir = progressDir === undefined ? resolveReviewProgressDirectory() : defaultReviewProgressDirectoryForContentDataDirectory(progressDir);
+    const command = node.commandPath?.join(" ") ?? "";
+    if (node.kind === "command" && /^geography (?:continents|japan-prefectures|japanese-prefectures)-(?:easy|hard)$/.test(command)) {
+      const id = node.commandPath![1], hard = id.endsWith("hard"), japanese = id.startsWith("japanese-");
+      const prefecture = id.includes("prefectures");
+      packageId = prefecture ? `com.sleepymario.${japanese ? "language.japanese" : "geography"}.japan-prefectures-${hard ? "hard" : "easy"}` : `com.sleepymario.geography.continents-${hard ? "hard" : "easy"}`;
+      count = prefecture ? (hard ? 47 : 94) : (hard ? 7 : 14);
+      progressDir = join(resolveReviewProgressDirectory(), "wandering-the-world");
+    } else if (node.kind !== "review-source") {
+      for (const child of node.children ?? []) await walk(child, [...parents, node]);
+      return;
+    }
+    if (!packageId) return;
+    const identity = `${progressDir}|${packageId}|${node.sourcePath ?? command}`;
+    if (seen.has(identity)) return; seen.add(identity);
+    if (!stores.has(progressDir)) {
+      const info = await stat(join(progressDir, "review-progress.json"), { bigint: true }).catch(() => undefined);
+      const stamp = info ? `${info.mtimeNs}:${info.size}` : "missing";
+      let cached = dueDeckStoreCache.get(progressDir);
+      if (!cached || cached.stamp !== stamp) { cached = { stamp, store: await loadReviewProgressStore(progressDir) }; dueDeckStoreCache.set(progressDir, cached); }
+      stores.set(progressDir, cached.store);
+    }
+    const states = stores.get(progressDir)!.items.filter(item => item.packageId === packageId && !item.retiredAt && (node.kind !== "review-source" || item.sourcePath === node.sourcePath));
+    if (!states.some(item => item.reviewCount > 0)) return;
+    const due = Math.max(0, count - states.length) + listDueReviewStates(states, now).length;
+    if (due === 0) return;
+    const context = [...parents].reverse().find(parent => parent.packageId?.startsWith("com.sleepymario.language.") || parent.label === "Japan" || parent.label === "World");
+    result.push({ node, label: `${context?.label ?? "Geography"} · ${node.label}`, due, ancestors: parents.map(parent => parent.id) });
+  };
+  await walk(root, []);
+  return result;
+}
+
+export function markLanguagesWithDueDecks(root: LanguageTreeNode, decks: readonly DueDeckEntry[]): LanguageTreeNode {
+  const dueAncestors = new Set(decks.flatMap(deck => deck.ancestors));
+  const walk = (node: LanguageTreeNode): LanguageTreeNode => ({
+    ...node,
+    ...(node.packageId?.startsWith("com.sleepymario.language.") && node.kind !== "review-source" ? { dueCardCount: dueAncestors.has(node.id) ? 1 : 0 } : {}),
+    ...(node.children ? { children: node.children.map(walk) } : {})
+  });
+  return walk(root);
+}
+
 async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
   if (options.settingsDir === undefined && options.dataDir !== undefined) {
     options = { ...options, settingsDir: defaultSettingsDirectoryForContentDataDirectory(options.dataDir) };
@@ -1039,6 +1111,8 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let embeddedReview: EmbeddedReviewSession | null = null;
   let pendingUninstall: PendingUninstallSession | null = null;
+  let resetDeckProgressMode = false;
+  let pendingDeckProgressReset: PendingDeckProgressReset | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
   let rightPaneOffset = 0;
   let focusedPane: FocusablePane = "navigation";
@@ -1048,13 +1122,14 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 
   try {
   while (true) {
+    tree = markLanguagesWithDueDecks(tree, await collectDueDecks(tree, options));
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
     selection = Math.min(selection, visible.length - 1);
     const selectedNode = visible[selection]?.node ?? tree;
     const charactersApplicable = charactersToggleAppliesToNode(selectedNode);
-    const toggleCount = charactersApplicable ? 8 : 7;
+    const toggleCount = charactersApplicable ? 9 : 8;
     toggleSelection = Math.min(toggleSelection, toggleCount - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode);
     const artworkSync: EmbeddedReviewArtworkSyncResult = embeddedReview === null
       ? await artworkManager.syncPreview(selectedNode, rightPaneText, rightPaneOffset)
       : await artworkManager.sync(embeddedReview, rightPaneText);
@@ -1072,7 +1147,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     )) {
       embeddedReview = { ...currentEmbeddedReview, promptArtworkRendered, answerArtworkRendered, artworkNotice: artworkSync.notice };
       rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-      renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
+      renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode);
       // Updating the fallback state redraws the entire terminal after the first
       // successful placement. Re-place the image above that final frame;
       // otherwise Kitty's freshly drawn terminal cells can cover the image.
@@ -1085,7 +1160,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
             artworkNotice: redrawSync.notice
           };
           rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
-          renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend);
+          renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode);
         }
       }
     }
@@ -1115,6 +1190,53 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       continue;
     }
 
+    if (pendingDeckProgressReset !== null) {
+      const activeReset: PendingDeckProgressReset = pendingDeckProgressReset;
+      if (isEscape(key)) {
+        pendingDeckProgressReset = null;
+        resetDeckProgressMode = false;
+        rightPaneText = "Deck progress reset cancelled. No progress was changed.";
+      } else if (key.name === "backspace") {
+        const updatedReset: PendingDeckProgressReset = { ...activeReset, typedCode: activeReset.typedCode.slice(0, -1), error: undefined };
+        pendingDeckProgressReset = updatedReset;
+        rightPaneText = renderDeckProgressResetConfirmation(updatedReset, terminal.colorsEnabled);
+      } else if (isEnter(key)) {
+        if (activeReset.typedCode === activeReset.confirmationCode) {
+          const result = await resetDeckProgress(activeReset.target);
+          const resetNodeId = activeReset.target.nodeId;
+          pendingDeckProgressReset = null;
+          resetDeckProgressMode = false;
+          tree = await buildModuleTree(options);
+          expandedIds = keepExistingExpandedIds(tree, expandedIds);
+          const resetVisible = flattenVisibleLanguageTree(tree, expandedIds);
+          const resetSelection = resetVisible.findIndex((entry) => entry.node.id === resetNodeId);
+          if (resetSelection >= 0) selection = resetSelection;
+          rightPaneText = renderDeckProgressResetComplete(result);
+        } else {
+          const updatedReset: PendingDeckProgressReset = { ...activeReset, typedCode: "", error: "The confirmation code did not match. Nothing was reset." };
+          pendingDeckProgressReset = updatedReset;
+          rightPaneText = renderDeckProgressResetConfirmation(updatedReset, terminal.colorsEnabled);
+        }
+      } else {
+        const typed = printableConfirmationCharacter(key);
+        if (typed !== null && activeReset.typedCode.length < activeReset.confirmationCode.length) {
+          const updatedReset: PendingDeckProgressReset = { ...activeReset, typedCode: activeReset.typedCode + typed.toUpperCase(), error: undefined };
+          pendingDeckProgressReset = updatedReset;
+          rightPaneText = renderDeckProgressResetConfirmation(updatedReset, terminal.colorsEnabled);
+        }
+      }
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (isEscape(key) && resetDeckProgressMode && focusedPane === "navigation") {
+      resetDeckProgressMode = false;
+      rightPaneText = "Deck progress reset mode cancelled. No progress was changed.";
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (isEscape(key) && focusedPane === "toggles") { focusedPane = "navigation"; continue; }
     if (isEscape(key)) {
       if (pendingUninstall !== null) {
         rightPaneText = renderUninstallCancelled(pendingUninstall.node, options.locale);
@@ -1216,7 +1338,20 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         toggleSelection = wrapSelection(toggleSelection + (isUp(key) ? -1 : 1), toggleCount);
         continue;
       }
-      if (isEnter(key) || isSpace(key)) {
+      if ((isEnter(key) || isSpace(key)) && toggleSelection < toggleCount) {
+        const resetIndex = toggleCount - 1;
+        if (toggleSelection === resetIndex) {
+          resetDeckProgressMode = !resetDeckProgressMode;
+          pendingDeckProgressReset = null;
+          embeddedReview = null;
+          pendingUninstall = null;
+          focusedPane = resetDeckProgressMode ? "navigation" : "toggles";
+          rightPaneText = resetDeckProgressMode
+            ? renderDeckProgressResetModeHelp()
+            : "Deck progress reset mode is off. No progress was changed.";
+          rightPaneOffset = 0;
+          continue;
+        }
         const sourceChanged = toggleSelection === 0;
         const notesIndex = charactersApplicable ? 5 : 4;
         const spacesIndex = charactersApplicable ? 6 : 5;
@@ -1325,6 +1460,29 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         continue;
       }
       rightPaneText = renderUninstallConfirmation(pendingUninstall.node, terminal.colorsEnabled, options.locale, "Choose K to keep saved data, D to delete saved data too, Enter for the safe default, or Esc to cancel.");
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (resetDeckProgressMode && (isEnter(key) || isSpace(key))) {
+      const target = resetDeckProgressTarget(selectedNode, options);
+      embeddedReview = null;
+      pendingUninstall = null;
+      if (target === null) {
+        rightPaneText = [
+          "Reset Deck Progress mode",
+          "",
+          "The selected item is not a deck.",
+          "Choose a review deck and press Enter or Space, or press Esc to cancel reset mode."
+        ].join("\n");
+      } else {
+        pendingDeckProgressReset = {
+          target,
+          confirmationCode: generateDeckProgressResetCode(),
+          typedCode: ""
+        };
+        rightPaneText = renderDeckProgressResetConfirmation(pendingDeckProgressReset, terminal.colorsEnabled);
+      }
       rightPaneOffset = 0;
       continue;
     }
@@ -1747,6 +1905,101 @@ function renderUninstallConfirmation(node: LanguageTreeNode, colorsEnabled: bool
   ].filter((line) => line.length > 0).join("\n");
 }
 
+export function generateDeckProgressResetCode(random: () => number = Math.random): string {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return Array.from({ length: 6 }, () => alphabet[Math.floor(random() * alphabet.length)] ?? "A").join("");
+}
+
+function resetDeckProgressTarget(node: LanguageTreeNode, options: InteractiveMenuOptions): ResetDeckProgressTarget | null {
+  if (node.kind === "review-source" && node.packageId !== undefined) {
+    const contentDataDir = node.contentDataDir ?? options.dataDir;
+    return {
+      nodeId: node.id,
+      label: node.label,
+      packageId: node.packageId,
+      packageVersion: node.packageVersion,
+      sourcePath: node.sourcePath,
+      progressDir: contentDataDir === undefined
+        ? resolveReviewProgressDirectory()
+        : defaultReviewProgressDirectoryForContentDataDirectory(contentDataDir)
+    };
+  }
+
+  const command = node.commandPath?.join(" ") ?? "";
+  if (node.kind !== "command" || !/^geography (?:continents|japan-prefectures|japanese-prefectures)-(?:easy|hard)$/u.test(command)) return null;
+  const id = node.commandPath?.[1] ?? "";
+  const hard = id.endsWith("hard");
+  const japanese = id.startsWith("japanese-");
+  const prefecture = id.includes("prefectures");
+  return {
+    nodeId: node.id,
+    label: node.label,
+    packageId: prefecture
+      ? `com.sleepymario.${japanese ? "language.japanese" : "geography"}.japan-prefectures-${hard ? "hard" : "easy"}`
+      : `com.sleepymario.geography.continents-${hard ? "hard" : "easy"}`,
+    progressDir: join(resolveReviewProgressDirectory(), "wandering-the-world")
+  };
+}
+
+async function resetDeckProgress(target: ResetDeckProgressTarget): Promise<{ readonly target: ResetDeckProgressTarget; readonly removedItemCount: number; readonly removedEventCount: number }> {
+  const result = await removeReadingReviewProgressForPackage({
+    progressDir: target.progressDir,
+    packageId: target.packageId,
+    packageVersion: target.packageVersion,
+    sourcePath: target.sourcePath,
+    removedAt: currentReviewTimestamp()
+  });
+  return { target, removedItemCount: result.removedItemCount, removedEventCount: result.removedEventCount };
+}
+
+function renderDeckProgressResetModeHelp(): string {
+  return [
+    "Reset Deck Progress mode",
+    "",
+    "Choose exactly one deck in the navigation pane.",
+    "Press Enter or Space to select it for reset.",
+    "Press Esc to leave reset mode without changing anything.",
+    "",
+    "Selecting a deck does not reset it immediately. You must type a randomly generated confirmation code first."
+  ].join("\n");
+}
+
+function renderDeckProgressResetConfirmation(pending: PendingDeckProgressReset, colorsEnabled: boolean): string {
+  const warning = (value: string): string => colorsEnabled ? `${ansi.bold}${ansi.red}${value}${ansi.reset}` : value;
+  const typed = pending.typedCode.length === 0 ? "_" : pending.typedCode;
+  return [
+    warning("WARNING 1 OF 2 — RESET DECK PROGRESS"),
+    "",
+    `Deck: ${pending.target.label}`,
+    "",
+    warning("WARNING 2 OF 2 — THIS DELETES THIS DECK'S COMPLETE REVIEW HISTORY."),
+    "The reset cannot be undone from inside WhackSmacker.",
+    "No other deck will be changed.",
+    "",
+    `To confirm, type ${pending.confirmationCode} and press Enter.`,
+    `Confirmation: ${typed}`,
+    "Press Esc to cancel.",
+    ...(pending.error === undefined ? [] : ["", warning(pending.error)])
+  ].join("\n");
+}
+
+function renderDeckProgressResetComplete(result: { readonly target: ResetDeckProgressTarget; readonly removedItemCount: number; readonly removedEventCount: number }): string {
+  return [
+    "Deck progress reset",
+    "",
+    `Deck: ${result.target.label}`,
+    `Removed card states: ${result.removedItemCount}`,
+    `Removed review events: ${result.removedEventCount}`,
+    "",
+    "This deck will start again as a new deck. No other deck was changed."
+  ].join("\n");
+}
+
+function printableConfirmationCharacter(key: KeyPress): string | null {
+  const value = key.sequence ?? "";
+  return key.ctrl !== true && /^[A-Za-z0-9]$/u.test(value) ? value : null;
+}
+
 function renderUninstallCancelled(node: LanguageTreeNode, locale: SourceLocale = "en-US"): string {
   return [
     `${translate(locale, "menu.uninstall")} cancelled: ${node.packageLabel ?? node.label}`,
@@ -1946,7 +2199,10 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                     previewText: readFileSync(join(__dirname, "content/japanese-cast-yuki.md"), "utf8") },
                   { id: `${submenu.id}:full-cast:misaki`, label: "Misaki Itō — 伊藤美咲", kind: "message" as const,
                     previewArtworkPath: join(__dirname, "content/media/cast-introduction-ii.png"),
-                    previewText: readFileSync(join(__dirname, "content/japanese-cast-introduction-ii.md"), "utf8") }
+                    previewText: readFileSync(join(__dirname, "content/japanese-cast-introduction-ii.md"), "utf8") },
+                  { id: `${submenu.id}:full-cast:koji`, label: "Kōji Yamada — 山田浩司", kind: "message" as const,
+                    previewArtworkPath: join(__dirname, "content/media/cast-koji.png"),
+                    previewText: readFileSync(join(__dirname, "content/japanese-cast-koji.md"), "utf8") }
                 ] },
               { id: `${submenu.id}:hiragana`, label: "Hiragana", kind: "message" as const, previewText: "" },
               { id: `${submenu.id}:katakana`, label: "Katakana", kind: "message" as const, previewText: "" },
@@ -1987,7 +2243,24 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                 authoredReadingDirectory: join(__dirname, "content/japanese/chapter-010"),
                 previewArtworkPath: join(__dirname, "content/japanese/chapter-010/media/scene.png") },
               { id: `${submenu.id}:grammar-006-010`, label: "Grammar VI - X", kind: "message" as const,
-                authoredGrammarPaths: [join(__dirname, "content/japanese/grammar-006-010-easy.md"), join(__dirname, "content/japanese/grammar-006-010-hard.md")] as const }
+                authoredGrammarPaths: [join(__dirname, "content/japanese/grammar-006-010-easy.md"), join(__dirname, "content/japanese/grammar-006-010-hard.md")] as const },
+              { id: `${submenu.id}:chapter-011`, label: "Chapter XI — Meeting Kōji at the Library", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-011"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-011/media/scene.png") },
+              { id: `${submenu.id}:chapter-012`, label: "Chapter XII — Borrowing a Book", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-012"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-012/media/scene.png") },
+              { id: `${submenu.id}:chapter-013`, label: "Chapter XIII — Which Way to the Station?", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-013"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-013/media/scene.png") },
+              { id: `${submenu.id}:chapter-014`, label: "Chapter XIV — Kōji’s Train Journey", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-014"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-014/media/scene.png") },
+              { id: `${submenu.id}:chapter-015`, label: "Chapter XV — Shall We Walk by the River?", kind: "message" as const,
+                authoredReadingDirectory: join(__dirname, "content/japanese/chapter-015"),
+                previewArtworkPath: join(__dirname, "content/japanese/chapter-015/media/scene.png") },
+              { id: `${submenu.id}:grammar-011-015`, label: "Grammar XI - XV", kind: "message" as const,
+                authoredGrammarPaths: [join(__dirname, "content/japanese/grammar-011-015-easy.md"), join(__dirname, "content/japanese/grammar-011-015-hard.md")] as const }
             ]
           };
         }
@@ -2059,12 +2332,39 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
               packageId: "com.sleepymario.language.vietnamese",
               authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-006"),
               previewArtworkPath: join(__dirname, "content/vietnamese/chapter-006/media/scene.png") },
-            ...[["007", "VII", "Gia Bảo’s History Book"], ["008", "VIII", "A Small Garden"]].map(([number, roman, title]) => ({
+            ...[["007", "VII", "Gia Bảo’s History Book"], ["008", "VIII", "A Small Garden"], ["009", "IX", "At the Morning Market"], ["010", "X", "A Simple Meal"]].map(([number, roman, title]) => ({
               id: `${submenu.id}:chapter-${number}`, label: `Chapter ${roman} — ${title}`, kind: "message" as const,
               packageId: "com.sleepymario.language.vietnamese",
               authoredReadingDirectory: join(__dirname, `content/vietnamese/chapter-${number}`),
               previewArtworkPath: join(__dirname, `content/vietnamese/chapter-${number}/media/scene.png`)
-            }))
+            })),
+            { id: `${submenu.id}:grammar-006-010`, label: "Grammar VI - X", kind: "message" as const,
+              authoredGrammarPaths: [join(__dirname, "content/vietnamese/grammar-006-010-easy.md"), join(__dirname, "content/vietnamese/grammar-006-010-hard.md")] as const },
+            { id: `${submenu.id}:cast-quoc-huy`, label: "Meet Quốc Huy — Nguyễn Quốc Huy", kind: "message" as const,
+              previewArtworkPath: join(__dirname, "content/media/vietnamese-quoc-huy.png"),
+              previewText: readFileSync(join(__dirname, "content/vietnamese-cast-quoc-huy.md"), "utf8") },
+            { id: `${submenu.id}:chapter-011`, label: "Chapter XI — Quốc Huy Comes Home", kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-011"),
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-011/media/scene.png") },
+            { id: `${submenu.id}:chapter-012`, label: "Chapter XII — A Day in Quốc Huy’s Life", kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-012"),
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-012/media/scene.png") },
+            { id: `${submenu.id}:chapter-013`, label: "Chapter XIII — Badminton in the Park", kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-013"),
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-013/media/scene.png") },
+            { id: `${submenu.id}:chapter-014`, label: "Chapter XIV — A Family Film Night", kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-014"),
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-014/media/scene.png") },
+            { id: `${submenu.id}:chapter-015`, label: "Chapter XV — Planning a Family Outing", kind: "message" as const,
+              packageId: "com.sleepymario.language.vietnamese",
+              authoredReadingDirectory: join(__dirname, "content/vietnamese/chapter-015"),
+              previewArtworkPath: join(__dirname, "content/vietnamese/chapter-015/media/scene.png") },
+            { id: `${submenu.id}:grammar-011-015`, label: "Grammar XI - XV", kind: "message" as const,
+              authoredGrammarPaths: [join(__dirname, "content/vietnamese/grammar-011-015-easy.md"), join(__dirname, "content/vietnamese/grammar-011-015-hard.md")] as const }
           ] };
         }
         if (submenu.id.endsWith(":decks")) {
@@ -2097,6 +2397,11 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                   packageId: "com.sleepymario.language.japanese", packageVersion: "0.1.0",
                   packageLabel: "Japanese", sourcePath: "review-decks/chapter-006-010/cards.tsv", itemCount: 111,
                   contentDataDir: join(__dirname, "../../../.local-content/japanese-reviews")
+                }, {
+                  id: `${deckType.id}:chapter-011-015`, label: "Chapter XI - XV", kind: "review-source" as const,
+                  packageId: "com.sleepymario.language.japanese", packageVersion: "0.1.0",
+                  packageLabel: "Japanese", sourcePath: "review-decks/chapter-011-015/cards.tsv", itemCount: 138,
+                  contentDataDir: join(__dirname, "../../../.local-content/japanese-reviews")
                 }] };
               }
               // Custom is a standard, learner-managed deck family. Installed
@@ -2112,6 +2417,21 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
               }
               // Newly installed General decks are live content, not the archived curriculum.
               if (deckType.id.includes(":deck-family:general") || deckType.id.endsWith(":decks:general")) {
+                if (language.packageId === "com.sleepymario.language.japanese" || language.moduleId === "com.sleepymario.language.japanese") {
+                  const current = keepNewGeneralDecks(deckType);
+                  return { ...deckType, children: [
+                    ...(current?.children ?? []).filter(n => !n.id.includes("prefectures")),
+                    ...(["easy", "hard"] as const).map(mode => ({
+                      id: `${deckType.id}:prefectures-${mode}`, label: `Prefectures - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
+                      commandPath: ["geography", `japanese-prefectures-${mode}`], commandArgs: [],
+                      previewText: mode === "easy" ? "94 questions: kanji name choices and numbered map questions." : "47 highlighted prefectures. Type the prefecture name in kanji."
+                    })), {
+                      id: `${deckType.id}:prefectures-kanji`, label: "Prefectures - 漢字", kind: "review-source" as const,
+                      packageId: "com.sleepymario.language.japanese.prefectures-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 94,
+                      contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                    }
+                  ] };
+                }
                 const current = keepNewGeneralDecks(deckType);
                 if (current !== undefined) return current;
               }
@@ -2206,6 +2526,8 @@ function buildAvailableCategoryTree(
   const children = descriptors
     .filter((descriptor) => descriptor.category === category && descriptor.moduleId !== "com.sleepymario.geography")
     .map((descriptor) => buildAvailableModuleTreeNode(descriptor, cataloguePath, locale));
+
+  if (category === "Geography") children.unshift(buildWorldGeographyNode("available:geography:world"), buildCountriesGeographyNode("available:geography:countries"));
 
   return {
     id: `available:${category.toLowerCase()}`,
@@ -3102,10 +3424,53 @@ function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): Men
   };
 }
 
+function buildCountriesGeographyNode(id: string): LanguageTreeNode {
+  return {
+    id, label: "Countries", kind: "category", previewText: "Countries",
+    children: [{ id: `${id}:japan`, label: "Japan", kind: "category", previewText: "Japan", children: [{
+      id: `${id}:japan:prefectures-easy`, label: "Prefectures - Easy", kind: "command",
+      commandPath: ["geography", "japan-prefectures-easy"], commandArgs: [], launchTitle: "Prefectures - Easy",
+      previewText: "Prefectures - Easy\n\n94 questions: identify highlighted prefectures with choices 1–4, and locate named prefectures by entering map numbers 1–47. Names are revealed after answering."
+    }, {
+      id: `${id}:japan:prefectures-hard`, label: "Prefectures - Hard", kind: "command",
+      commandPath: ["geography", "japan-prefectures-hard"], commandArgs: [], launchTitle: "Prefectures - Hard",
+      previewText: "Prefectures - Hard\n\nIdentify all 47 prefectures using a highlighted map and the Japanese Prefectures reference, including an Okinawa inset. Type the romanized name; macrons are optional. Review progress is separate from the continent decks."
+    }] }]
+  };
+}
+
+function buildWorldGeographyNode(id: string): LanguageTreeNode {
+  return {
+    id,
+    label: "World",
+    kind: "category",
+    previewText: "World",
+    children: [{
+      id: `${id}:continents-easy`,
+      label: "Continents - Easy",
+      kind: "command",
+      commandPath: ["geography", "continents-easy"],
+      commandArgs: [],
+      launchTitle: "Continents - Easy",
+      previewText: "Continents - Easy\n\nFourteen questions: identify seven highlighted continents with choices 1–4, and locate seven named continents by entering their map number (1–7). Answers reveal the names.\n\nIncorrect answers use the same spaced repetition scheduler as LingoLand."
+    }, {
+      id: `${id}:continents-hard`,
+      label: "Continents - Hard",
+      kind: "command",
+      commandPath: ["geography", "continents-hard"],
+      commandArgs: [],
+      launchTitle: "Continents - Hard",
+      previewText: "Continents - Hard\n\nType the highlighted continent name and press Enter. Capitalization and extra spaces are ignored. Review progress is separate from Easy."
+    }]
+  };
+}
+
 function buildModuleCategoryTree(category: FirstClassModuleDescriptor["category"], descriptors: readonly FirstClassModuleDescriptor[], locale: SourceLocale): LanguageTreeNode {
   const children = descriptors
     .filter((descriptor) => descriptor.category === category && descriptor.moduleId !== "com.sleepymario.geography")
     .map((descriptor) => buildBuiltInModuleTreeNode(descriptor));
+
+  if (category === "Geography") children.unshift(buildWorldGeographyNode("geography:world"), buildCountriesGeographyNode("geography:countries"));
 
   return {
     id: category.toLowerCase(),
@@ -3632,6 +3997,14 @@ async function runModuleTreeCommandAction(
     return showMessage(terminal, `Command is not registered: ${node.commandPath.join(" ")}`);
   }
 
+  if (["geography continents-easy", "geography continents-hard", "geography japan-prefectures-hard", "geography japan-prefectures-easy", "geography japanese-prefectures-easy", "geography japanese-prefectures-hard"].includes(node.commandPath.join(" "))) {
+    terminal.restore();
+    let failure: string | undefined;
+    try { await command.run(node.commandArgs ?? []); }
+    catch (error) { failure = error instanceof Error ? error.message : String(error); }
+    finally { terminal.enter(); }
+    return failure === undefined ? false : showMessage(terminal, failure);
+  }
   const output = await runCapturedLanguageCommand(terminal, command, node.commandArgs ?? []);
   return showPagedMessage(terminal, renderLanguageActionResult(node.launchTitle ?? node.label, output));
 }
@@ -5283,11 +5656,12 @@ function renderLanguageTreeMenu(
   charactersApplicable = false,
   notesEnabled = true,
   vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing,
-  terminalArtworkBackend: TerminalArtworkBackend = "auto"
+  terminalArtworkBackend: TerminalArtworkBackend = "auto",
+  resetDeckProgressMode = false
 ): void {
   const frame = perfSpanSync("terminal.frame.generate", {}, () => {
     perfCount("render.count");
-    return `\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, terminalBodyHeight(terminal.height), sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend)}`;
+    return `\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, terminalBodyHeight(terminal.height), sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend, resetDeckProgressMode)}`;
   });
   perfSpanSync("terminal.write", { bytes: frame.length }, () => terminal.write(frame));
 }
@@ -5317,7 +5691,8 @@ export function renderTwoPaneLanguageTree(
   charactersApplicable = false,
   notesEnabled = true,
   vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing,
-  terminalArtworkBackend: TerminalArtworkBackend = "auto"
+  terminalArtworkBackend: TerminalArtworkBackend = "auto",
+  resetDeckProgressMode = false
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
   const layout = threePaneLayout(terminalWidth);
@@ -5352,7 +5727,7 @@ export function renderTwoPaneLanguageTree(
   lines.push(`${separator} ${padRight(navigationTitle, leftWidth)} ${separator} ${padRight(outputTitle, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(togglesTitle, layout.toggleWidth)} ${separator}` : ""}`);
   lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}${layout.showToggles ? ` ${" ".repeat(layout.toggleWidth)} ${separator}` : ""}`);
 
-  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth);
+  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend, resetDeckProgressMode, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth, bodyHeight);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
@@ -5377,7 +5752,7 @@ export function renderSourceLanguageToggle(sourceLocale: SourceLocale, colorsEna
   return colorsEnabled ? `${ansi.bold}${ansi.orange}${label}${ansi.reset}` : label;
 }
 
-function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, vocabularyEntrySpacing: VocabularyEntrySpacing, terminalArtworkBackend: TerminalArtworkBackend, colorsEnabled: boolean, focused: boolean, selection: number, width: number): readonly string[] {
+function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, vocabularyEntrySpacing: VocabularyEntrySpacing, terminalArtworkBackend: TerminalArtworkBackend, resetDeckProgressMode: boolean, colorsEnabled: boolean, focused: boolean, selection: number, width: number, height: number): readonly string[] {
   const viewLabel: Record<CurriculumDisplayMode, string> = { normal: "Normal", expert: "Expert", developer: "Developer" };
   const raw = [
     `Source: ${sourceLocaleLabel(sourceLocale, sourceLocale)}`,
@@ -5389,13 +5764,20 @@ function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDi
     `Spaces: ${vocabularyEntrySpacing === "separated" ? "Yes" : "No"}`,
     `Artwork: ${terminalArtworkBackendLabels[terminalArtworkBackend]}`
   ];
-  return raw.map((value, index) => {
+  const renderToggle = (value: string, index: number): string => {
     const selected = focused && selection === index;
     const line = truncateTextDisplay(`${selected ? ">" : " "} ${value}`, width);
     if (selected) return colorsEnabled ? `${ansi.inverse}${ansi.bold}${line}${ansi.reset}` : line;
     if (colorsEnabled) return `  ${ansi.bold}${ansi.orange}${value}${ansi.reset}`;
     return line;
-  });
+  };
+  const resetIndex = raw.length;
+  const reset = renderToggle(`Reset Deck Progress: ${resetDeckProgressMode ? "On" : "Off"}`, resetIndex);
+  return [
+    ...raw.map(renderToggle),
+    ...Array.from({ length: Math.max(0, height - raw.length - 1) }, () => ""),
+    reset
+  ];
 }
 
 export function shouldShowTogglesPane(terminalWidth?: number): boolean {
@@ -5411,7 +5793,7 @@ function threePaneLayout(terminalWidth?: number): { readonly showToggles: boolea
   }
   const width = Math.max(minimumThreePaneWidth, terminalWidth ?? 160);
   const available = width - 10;
-  const toggleWidth = 22;
+  const toggleWidth = 30;
   const leftWidth = Math.min(72, Math.max(30, Math.floor(width * 0.3)));
   return { showToggles: true, leftWidth, outputWidth: Math.max(36, available - leftWidth - toggleWidth), toggleWidth };
 }
@@ -5654,6 +6036,9 @@ function styleTreeLine(plain: string, semanticLabel: string, entry: VisibleLangu
   }
   if (entry.node.kind === "review-source") {
     return styleReviewSourceLine(plain, semanticLabel, entry.node.reviewStatus, selected);
+  }
+  if (entry.node.packageId?.startsWith("com.sleepymario.language.") && (entry.node.dueCardCount ?? 0) > 0) {
+    return `${selected ? ansi.inverse : ""}${ansi.bold}${ansi.blue}${plain}${ansi.reset}`;
   }
   if (entry.node.kind === "backup-root") {
     return selected

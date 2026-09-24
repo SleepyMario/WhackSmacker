@@ -330,12 +330,22 @@ function parseJapaneseToMeaningPrompt(
   sourcePath: string,
   cardId: string
 ): string {
-  if (entry === undefined || (writtenCounts.get(entry.writtenForm) ?? 0) < 2) return prompt;
+  if (entry === undefined) {
+    const standalone = prompt.match(/^Japanese: (.+); Context: (.+)$/u);
+    return standalone?.[1] ?? prompt;
+  }
   const match = prompt.match(/^Japanese: (.+); Context: (.+)$/u);
-  if (match === null || match[1] !== entry.writtenForm || !entry.occurrences.some((occurrence) => occurrence.evidence === match[2])) {
+  if (match !== null) {
+    if (match[1] !== entry.writtenForm || !entry.occurrences.some((occurrence) => occurrence.evidence === match[2])) {
+      throw new Error(`${sourcePath}: ${cardId} has a Japanese/Context discriminator that does not resolve to its own literal occurrence.`);
+    }
+    return match[1];
+  }
+  if ((writtenCounts.get(entry.writtenForm) ?? 0) < 2) return prompt;
+  if (match === null) {
     throw new Error(`${sourcePath}: ${cardId} is an ambiguous C card and requires the deterministic Japanese/Context discriminator from its own literal occurrence.`);
   }
-  return match[1];
+  return prompt;
 }
 
 function countBy(values: readonly string[]): ReadonlyMap<string, number> {

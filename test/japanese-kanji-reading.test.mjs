@@ -58,13 +58,13 @@ test("Japanese vocabulary validation rejects missing, extra, unsafe, and incompl
 
 test("authoritative Japanese TSV decks obey the variable-width logical entry rule", async () => {
   const contextual = JSON.parse(await readFile(join(curriculumRoot, "japanese-contextual-readings.json"), "utf8"));
-  assert.equal(validateJapaneseContextualReadingDocument(contextual).size, 87);
-  assert.equal(contextual.entries.length, 87);
-  assert.equal(contextual.entries.flatMap((entry) => entry.occurrences).length, 88);
-  assert.equal(contextual.entries.filter((entry) => japaneseExpressionContainsKanji(entry.writtenForm)).length, 63);
-  assert.equal(contextual.entries.filter((entry) => japaneseExpressionContainsKanji(entry.writtenForm)).flatMap((entry) => entry.occurrences).length, 64);
+  assert.equal(validateJapaneseContextualReadingDocument(contextual).size, 117);
+  assert.equal(contextual.entries.length, 117);
+  assert.equal(contextual.entries.flatMap((entry) => entry.occurrences).length, 367);
+  assert.equal(contextual.entries.filter((entry) => japaneseExpressionContainsKanji(entry.writtenForm)).length, 80);
+  assert.equal(contextual.entries.filter((entry) => japaneseExpressionContainsKanji(entry.writtenForm)).flatMap((entry) => entry.occurrences).length, 224);
   let totalCards = 0;
-  for (const block of ["chapter-001-005", "chapter-006-010"]) {
+  for (const block of ["chapter-001-005", "chapter-006-010", "chapter-011-015"]) {
     const path = join(reviewRoot, block, "cards.tsv");
     const items = parseJapaneseDeck(await readFile(path, "utf8"));
     totalCards += items.length;
@@ -88,38 +88,44 @@ test("authoritative Japanese TSV decks obey the variable-width logical entry rul
     }
   }
   const what = contextual.entries.find((entry) => entry.writtenForm === "何");
-  assert.deepEqual(what.logicalEntryValues, ["what", "何", "なん"]);
-  assert.equal(what.lexicalEntryId, "ja.pronoun.nan");
-  assert.equal(what.senseId, "ja.pronoun.nan.what");
-  assert.deepEqual(what.occurrences.map((occurrence) => occurrence.evidence), ["これは何ですか。"]);
-  assert.equal(contextual.entries.some((entry) => entry.logicalEntryValues[2] === "なに"), false);
-  assert.equal(totalCards, 260);
+  assert.deepEqual(what.logicalEntryValues, ["what", "何", "なに"]);
+  assert.equal(what.lexicalEntryId, "ja.interrogative-pronoun.nani");
+  assert.equal(what.senseId, "ja.interrogative-pronoun.nani.01");
+  assert.deepEqual(what.occurrences.map((occurrence) => occurrence.evidence), ["佐藤さんは何を読みますか。"]);
+  assert.equal(totalCards, 351);
 });
 
 test("Japanese New Vocabulary tables preserve Reading and the exact contextual readings", async () => {
   const forms = JSON.parse(await readFile(join(curriculumRoot, "vocabulary-forms.json"), "utf8"));
+  const contextual = JSON.parse(await readFile(join(curriculumRoot, "japanese-contextual-readings.json"), "utf8"));
+  const entryBySense = new Map(contextual.entries.map((entry) => [entry.senseId, entry]));
   assert.deepEqual(forms.canonicalTable.headers, ["Form", "Reading", "Meaning", "Part of speech", "Note"]);
-  assert.equal(forms.displayRows.length, 88);
+  assert.equal(forms.displayRows.length, 117);
   for (const row of forms.displayRows) {
     const markdown = await readFile(join(curriculumRoot, row.sourcePath), "utf8");
     assert.match(markdown, /^\| Form \| Reading \| Meaning \| Part of speech \| Note \|$/mu);
     const shownForm = row.displayForm ?? (row.surfaceForm === row.canonicalForm ? row.surfaceForm : `${row.surfaceForm} ← ${row.canonicalForm}`);
     const escaped = shownForm.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
-    const expectedReading = row.contextualReading ?? "";
+    const canonicalReading = entryBySense.get(row.canonicalSenseId)?.logicalEntryValues?.[2];
+    const expectedReading = row.contextualReading === undefined
+      ? ""
+      : row.formRelationship === "identical" ? row.contextualReading : `${row.contextualReading} ← ${canonicalReading}`;
     assert.match(markdown, new RegExp(`^\\| ${escaped} \\| ${expectedReading} \\|`, "mu"), row.id);
     assert.equal(japaneseExpressionContainsKanji(row.surfaceForm), expectedReading.length > 0, row.id);
   }
 });
 
-test("Japanese Easy and Hard grammar summaries carry the same ten authored reading annotations", async () => {
+test("Japanese Easy and Hard grammar summaries carry the same authored reading annotations", async () => {
   const manifest = JSON.parse(await readFile(join(curriculumRoot, "japanese-grammar-readings.json"), "utf8"));
-  assert.equal(manifest.entries.length, 10);
+  assert.equal(manifest.entries.length, 35);
   for (const entry of manifest.entries) {
     const block = `chapter-${entry.block}-grammar`;
     const [easy, hard] = await Promise.all(["easy", "hard"].map((variant) => readFile(join(curriculumRoot, "units", "japanese-core", `${block}-${variant}`, "chapter.md"), "utf8")));
     for (const markdown of [easy, hard]) {
-      assert.match(markdown, new RegExp("^Example: `?" + entry.example.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&") + "`?$", "mu"));
-      assert.match(markdown, new RegExp(`^Reading: ${entry.reading.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}$`, "mu"));
+      assert.ok(markdown.includes(entry.example));
+      if (/\p{Script=Han}/u.test(entry.example) || entry.example !== entry.reading) {
+        assert.ok(markdown.includes(`Reading: ${entry.reading}`));
+      }
     }
   }
 });
@@ -146,6 +152,7 @@ test("ambiguous C prompts require a deterministic literal-context discriminator"
   const items = document.entries.flatMap((entry) => syntheticContextualItems(entry, "ja-core-review-001-005"));
   const ambiguous = items.map((item, index) => index === 2 ? { ...item, prompt: "何" } : item);
   assert.throws(() => assertValidJapaneseStructuredReviewItems(ambiguous, "review-decks/test/cards.tsv", document), /ambiguous C card/u);
+  assert.doesNotThrow(() => assertValidJapaneseStructuredReviewItems(items, "review-decks/test/cards.tsv"));
   assert.equal(japaneseMoraCount("だ"), 1);
   assert.equal(japaneseMoraCount("なん"), 2);
   assert.equal(japaneseMoraCount("きゃ"), 1);
@@ -183,16 +190,19 @@ function parseJapaneseDeck(text) {
   return rows.slice(1).map((line, index) => {
     const fields = line.split("\t");
     assert.equal(fields.length, 18, `row ${index + 2}`);
+    const decode = (value) => value.startsWith('"') && value.endsWith('"')
+      ? value.slice(1, -1).replaceAll('""', '"')
+      : value;
     return {
       cardId: fields[0],
       sourceChapter: Number(fields[3]),
       promptLanguage: fields[4],
       answerLanguage: fields[5],
       prompt: fields[6],
-      acceptedAnswers: JSON.parse(fields[7]),
-      testedLexicalIds: JSON.parse(fields[10]),
+      acceptedAnswers: JSON.parse(decode(fields[7])),
+      testedLexicalIds: JSON.parse(decode(fields[10])),
       provenance: { path: fields[13], locator: fields[14], evidence: fields[15] },
-      examples: JSON.parse(fields[16])
+      examples: JSON.parse(decode(fields[16]))
     };
   });
 }

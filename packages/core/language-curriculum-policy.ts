@@ -3,12 +3,16 @@ export interface InclusiveRange {
   readonly max: number;
 }
 
+export interface MinimumCount {
+  readonly min: number;
+}
+
 export interface LanguageCurriculumPacingRule {
   readonly label: string;
   readonly chapterStart: number;
   readonly chapterEnd: number;
   readonly grammarPoints: InclusiveRange;
-  readonly readContentLines: InclusiveRange;
+  readonly readContentLines: MinimumCount;
   readonly newVocabularyItems: InclusiveRange;
 }
 
@@ -16,7 +20,7 @@ export interface LanguageCurriculumChapterSizeRule {
   readonly chapterStart: number;
   readonly chapterEnd: number;
   readonly newVocabularyItems: InclusiveRange;
-  readonly learnerFacingReadContentLines: InclusiveRange;
+  readonly learnerFacingReadContentLines: MinimumCount;
 }
 
 export interface LanguageCurriculumChapterSource {
@@ -535,13 +539,6 @@ export interface BroaderTopicRecord {
   readonly meaningfulDialogueReuseOccurred: boolean;
 }
 
-export interface LargeNumberCoverageRule {
-  readonly chapterStart: number;
-  readonly chapterEnd: number;
-  readonly min: number;
-  readonly max: number;
-}
-
 export interface CanonicalGrammarPatternRecord {
   readonly grammarId: string;
   readonly learnerFacingPattern?: string;
@@ -592,6 +589,8 @@ function normalizeGrammarPattern(value: string): string {
 
 export interface LanguageCurriculumPolicy {
   readonly cumulativeContinuityRules: readonly string[];
+  readonly artworkRules: readonly string[];
+  readonly artworkStyleRotation: readonly LanguageCurriculumArtworkStyle[];
   readonly activeCastRules: readonly string[];
   readonly lexicalFoundationRules: readonly string[];
   readonly normalViewVoiceRules: readonly string[];
@@ -599,20 +598,74 @@ export interface LanguageCurriculumPolicy {
   readonly grammarPatternDisplayRules: readonly string[];
   readonly pacingRules: readonly LanguageCurriculumPacingRule[];
   readonly chapterFormatRules: readonly string[];
+  readonly readContentLengthRules: readonly string[];
   readonly registerSelectionRules: readonly string[];
-  readonly numberContinuationRules: readonly string[];
   readonly chapterSizeRules: readonly LanguageCurriculumChapterSizeRule[];
   readonly unifiedGrammar3150Rules: readonly string[];
   readonly intensiveGrammar5170Rules: readonly string[];
   readonly expandedGrammarAndDiscourseRules: readonly string[];
   readonly broaderTopicDomains: readonly BroaderTopicDomain[];
   readonly grammarSummaryAfterChapters: readonly number[];
-  readonly largeNumberCoverageRules: readonly LargeNumberCoverageRule[];
   readonly vocabularyContinuityRules: readonly string[];
   readonly reviewDeckRules: readonly string[];
   readonly strictExampleRules: readonly string[];
   readonly surfaceFormRules: readonly string[];
 }
+
+export type LanguageCurriculumArtworkStyleId =
+  | "warm-hand-painted-editorial"
+  | "cool-modern-architectural"
+  | "watercolour-environment"
+  | "clean-cel-environment"
+  | "cinematic-naturalism"
+  | "ink-and-colour-print";
+
+export interface LanguageCurriculumArtworkStyle {
+  readonly id: LanguageCurriculumArtworkStyleId;
+  readonly displayName: string;
+  readonly environmentDirection: string;
+}
+
+export interface LanguageCurriculumArtworkStyleSelection extends LanguageCurriculumArtworkStyle {
+  readonly chapter: number;
+  readonly rotationIndex: number;
+  readonly cycleNumber: number;
+  readonly chapterBlockStart: number;
+  readonly chapterBlockEnd: number;
+}
+
+export const languageCurriculumArtworkStyleRotation: readonly LanguageCurriculumArtworkStyle[] = [
+  {
+    id: "warm-hand-painted-editorial",
+    displayName: "Warm hand-painted editorial",
+    environmentDirection: "Soft warm natural colours, restrained painterly texture, gentle daylight, and an approachable editorial storybook setting."
+  },
+  {
+    id: "cool-modern-architectural",
+    displayName: "Cool modern architectural",
+    environmentDirection: "Cool white, slate blue, desaturated teal, soft grey, limited neutral wood, clear perspective, and recognizable contemporary architecture."
+  },
+  {
+    id: "watercolour-environment",
+    displayName: "Watercolour environment",
+    environmentDirection: "Visible paper texture, loose blue-green watercolour edges, subdued washes, and selectively described environmental detail."
+  },
+  {
+    id: "clean-cel-environment",
+    displayName: "Clean cel environment",
+    environmentDirection: "Crisp outlines, controlled flat colour areas, cool blue-violet shadows, minimal gradients, and high legibility at small display sizes."
+  },
+  {
+    id: "cinematic-naturalism",
+    displayName: "Cinematic naturalism",
+    environmentDirection: "Believable depth and perspective, desaturated natural colour, layered foreground and background, and context-supported mixed natural and artificial light."
+  },
+  {
+    id: "ink-and-colour-print",
+    displayName: "Ink-and-colour print",
+    environmentDirection: "Fine environmental ink lines, sparse colour fields, controlled print texture, deliberate empty space, and a restrained cool-led palette."
+  }
+] as const;
 
 export const grammarEasyMenuLabel = "Grammar - Easy";
 export const grammarHardMenuLabel = "Grammar - Hard";
@@ -622,6 +675,16 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Every chapter through Chapter 140 inherits the complete curriculum state from Chapter 1 through the immediately preceding chapter.",
     "Five-chapter blocks, reviews, summaries, units, packages, and installation boundaries never reset cumulative curriculum identity or history."
   ],
+  artworkRules: [
+    "The canonical artwork rotation applies to every language curriculum without a language-specific opt-out.",
+    "Every chapter scene keeps each canonical person recognizably consistent in face, hair, apparent age, build, and other established identity cues; clothing and props may change only when the scene supports them.",
+    "The six canonical artwork directions govern the environment, palette, texture, lighting, and architectural treatment; they do not redesign the cast.",
+    "One artwork direction applies to each consecutive ten-chapter block, beginning with rotation entry one for Chapters 1-10 and advancing at Chapters 11, 21, 31, 41, and 51.",
+    "After Chapters 51-60, the six-style sequence repeats from entry one for Chapters 61-70 and continues cyclically without creating additional styles.",
+    "Artwork provenance records the exact canonical style ID selected for the chapter and identifies any existing cast artwork used as an identity reference.",
+    "A shared block style does not require repeated scenery: each chapter uses the setting demanded by its reading while retaining that block's canonical environmental direction."
+  ],
+  artworkStyleRotation: languageCurriculumArtworkStyleRotation,
   activeCastRules: [
     "The canonical thirty-person cast is mandatory Phase 0: it must be fully authored and validated before Chapter 1 creation, generation, acceptance, packaging, or installation; a valid zero-chapter cast source remains package-less.",
     "Every ordinary target-language curriculum begins with a schema-v2 canonical cast of exactly thirty people, even before Chapter 1 exists; schema v1 is historical diagnostic data only and no repository retains a compatibility path.",
@@ -642,7 +705,6 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Chapter 1 introduces citation-form definite articles and noun categories where the language has them, without inventing gender for languages that do not.",
     "This mandatory lexical-system guidance may coexist with the principal grammar point and does not automatically add a principal grammar ID.",
     "Applicable isolated learner-facing nouns use article-bearing citation forms and explicit category markers where elision or syncretism hides the category.",
-    "Grammatical measure words, classifiers, and counters state concise semantic scope; transparent ordinary measure nouns remain simple vocabulary.",
     "Lexical identity uses stable entry and sense IDs, so identical surface forms may carry genuinely distinct senses or parts of speech without being merged.",
     "An encountered inflected verb form and its language-appropriate citation form are one lexical introduction; ordinary later inflections are reuse.",
     "Lexicalized multiword expressions have their own complete entry and sense; internal untaught morphology remains fixed or unanalyzed rather than implicitly productive.",
@@ -663,8 +725,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "A lexical topic may remain represented by one sense for any number of chapters; there is no expansion quota, deadline, required interval, or penalty for deferral.",
     "Topic expansion is gradual and opportunistic in later natural chapters; vocabulary is never added where the Dialogue or Narrative cannot support a literal attestation.",
     "Every newly introduced topic expansion sense retains canonical lexical/sense identity, chapter and cumulative ledger inclusion, literal examples, and exactly two cards in its first-introduction five-chapter review block.",
-    "Reinforcement retains the original first-introduction chapter and is not counted as newly introduced or added again to a later inventory-derived review block.",
-    "Measurement units, container nouns, classifiers/counters, quantity expressions, and dimension/weight vocabulary remain separate lexical topics even when one reading uses several together."
+    "Reinforcement retains the original first-introduction chapter and is not counted as newly introduced or added again to a later inventory-derived review block."
   ],
   normalViewVoiceRules: [
     "Normal-view instructional prose uses direct address, neutral reference to the language/construction/example, or an ordinary imperative.",
@@ -690,7 +751,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       chapterStart: 1,
       chapterEnd: 25,
       grammarPoints: { min: 1, max: 1 },
-      readContentLines: { min: 6, max: 20 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 6, max: 10 }
     },
     {
@@ -698,7 +759,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       chapterStart: 26,
       chapterEnd: 30,
       grammarPoints: { min: 1, max: 2 },
-      readContentLines: { min: 10, max: 30 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 6, max: 20 }
     },
     {
@@ -706,7 +767,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       chapterStart: 31,
       chapterEnd: 50,
       grammarPoints: { min: 2, max: 2 },
-      readContentLines: { min: 10, max: 30 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 6, max: 20 }
     },
     {
@@ -714,7 +775,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       chapterStart: 51,
       chapterEnd: 70,
       grammarPoints: { min: 2, max: 2 },
-      readContentLines: { min: 15, max: 30 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 10, max: 30 }
     },
     {
@@ -722,7 +783,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       chapterStart: 71,
       chapterEnd: 75,
       grammarPoints: { min: 2, max: 2 },
-      readContentLines: { min: 16, max: 40 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 10, max: 30 }
     },
     {
@@ -730,7 +791,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
       chapterStart: 76,
       chapterEnd: 140,
       grammarPoints: { min: 1, max: 1 },
-      readContentLines: { min: 20, max: 40 },
+      readContentLines: { min: 6 },
       newVocabularyItems: { min: 10, max: 30 }
     }
   ],
@@ -741,6 +802,11 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Chapter 26 onward remains topic-centered: odd chapters are topic-centered dialogues; even chapters are topic-centered narratives.",
     "Generation, package tests, and audits must check the chapter format rule before accepting chapters."
   ],
+  readContentLengthRules: [
+    "Every ordinary learner-facing Dialogue contains at least six complete spoken turns, and every ordinary learner-facing Narrative contains at least six complete sentences.",
+    "Dialogue and Narrative length has no universal upper limit in any language or chapter range; add as many purposeful turns or sentences as the context, scene, and teaching purpose support.",
+    "Do not lengthen a Dialogue or Narrative mechanically: every turn or sentence must contribute meaning, context, characterization, reinforcement, or new teaching evidence."
+  ],
   registerSelectionRules: [
     "Every learner-facing dialogue, narrative, reading passage, explanation, letter, report, message, or other text uses the register appropriate to its situation, participants, relationships, purpose, medium, and genre.",
     "Informal, neutral, formal, and mixed registers are all valid; different participants in the same text may naturally use different registers, and a text may shift register when its context changes.",
@@ -750,33 +816,24 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Formality remains natural and supported by the chapter's grammar and vocabulary; it must not become archaic, needlessly bureaucratic, inflated, or harder than that support.",
     "Register choice preserves authentic differences between spoken and written language and among private, public, professional, institutional, academic, and everyday contexts."
   ],
-  numberContinuationRules: [
-    "Numbers may be used freely in every chapter; Chapters 51-70 have no upper or lower numeric restriction.",
-    "Across Chapters 51-55 and 56-60, learner-facing dialogue or narrative content must cumulatively introduce and use at least one number from 100 through 999 in each five-chapter block.",
-    "Across Chapters 61-65 and 66-70, learner-facing dialogue or narrative content must cumulatively introduce and use at least one number from 1000 through 9999 in each five-chapter block.",
-    "A qualifying number may appear in any one chapter of its five-chapter block and is not required in every chapter.",
-    "Metadata, validation fixtures, grammar explanations, generated notes, vocabulary bookkeeping, and review material do not satisfy number-continuation coverage.",
-    "These are minimum coverage rules only; numbers of any value remain permitted throughout Chapters 51-70.",
-    "Handle language-specific number formation, classifiers, counters, agreement, case marking, irregular forms, and parallel number systems naturally where relevant."
-  ],
   chapterSizeRules: [
     {
       chapterStart: 51,
       chapterEnd: 70,
       newVocabularyItems: { min: 10, max: 30 },
-      learnerFacingReadContentLines: { min: 15, max: 30 }
+      learnerFacingReadContentLines: { min: 6 }
     },
     {
       chapterStart: 71,
       chapterEnd: 75,
       newVocabularyItems: { min: 10, max: 30 },
-      learnerFacingReadContentLines: { min: 16, max: 40 }
+      learnerFacingReadContentLines: { min: 6 }
     },
     {
       chapterStart: 76,
       chapterEnd: 140,
       newVocabularyItems: { min: 10, max: 30 },
-      learnerFacingReadContentLines: { min: 20, max: 40 }
+      learnerFacingReadContentLines: { min: 6 }
     }
   ],
   unifiedGrammar3150Rules: [
@@ -784,7 +841,7 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Exactly one principal point is a connector, conjunction, linking form, sequencing construction, or comparable discourse-linking point.",
     "Exactly one principal point belongs to a different broad grammatical domain; two connector-domain points fail.",
     "Reused grammar satisfies neither point and supporting variants or morphology do not increase the count.",
-    "Each chapter retains 6-20 genuinely new vocabulary items, 10-30 learner-facing lines, topic-centered content, and odd dialogue / even narrative."
+    "Each chapter retains 6-20 genuinely new vocabulary items, at least six learner-facing Dialogue turns or Narrative sentences with no universal upper limit, topic-centered content, and odd dialogue / even narrative."
   ],
   intensiveGrammar5170Rules: [
     "Every Chapter 51-70 introduces exactly two genuinely new principal grammar points; zero, one, or three or more fail.",
@@ -808,13 +865,6 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
   ],
   broaderTopicDomains: ["social", "cultural", "ethical", "institutional", "environmental", "conceptual"],
   grammarSummaryAfterChapters: [75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140],
-  largeNumberCoverageRules: [
-    { chapterStart: 71, chapterEnd: 80, min: 9_999, max: 10_000 },
-    { chapterStart: 81, chapterEnd: 90, min: 99_999, max: 100_000 },
-    { chapterStart: 91, chapterEnd: 100, min: 9_999_999, max: 10_000_000 },
-    { chapterStart: 101, chapterEnd: 110, min: 99_999_999, max: 100_000_000 },
-    { chapterStart: 110, chapterEnd: 120, min: 999_999_999, max: 1_000_000_000 }
-  ],
   vocabularyContinuityRules: [
     "Only Chapter 1 may establish the initial base vocabulary.",
     "Later chapters must build cumulatively on previous chapters.",
@@ -846,6 +896,23 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
   ]
 };
 
+export function artworkStyleForChapter(chapter: number): LanguageCurriculumArtworkStyleSelection {
+  assertPositiveIntegerChapter(chapter);
+  const tenChapterBlock = Math.floor((chapter - 1) / 10);
+  const rotationIndex = tenChapterBlock % languageCurriculumArtworkStyleRotation.length;
+  const style = languageCurriculumArtworkStyleRotation[rotationIndex];
+  if (style === undefined) throw new Error(`No language curriculum artwork style exists for chapter ${chapter}.`);
+  const chapterBlockStart = tenChapterBlock * 10 + 1;
+  return {
+    ...style,
+    chapter,
+    rotationIndex,
+    cycleNumber: Math.floor(tenChapterBlock / languageCurriculumArtworkStyleRotation.length) + 1,
+    chapterBlockStart,
+    chapterBlockEnd: chapterBlockStart + 9
+  };
+}
+
 export function pacingRuleForChapter(chapter: number): LanguageCurriculumPacingRule {
   assertPositiveIntegerChapter(chapter);
   const matches = languageCurriculumPolicy.pacingRules
@@ -865,7 +932,7 @@ export function assertLanguageCurriculumPacing(values: {
 }): void {
   const rule = pacingRuleForChapter(values.chapter);
   assertInRange(values.grammarPointCount, rule.grammarPoints, `Chapter ${values.chapter} grammar point count`);
-  assertInRange(values.readContentLineCount, rule.readContentLines, `Chapter ${values.chapter} read-content line count`);
+  assertAtLeast(values.readContentLineCount, rule.readContentLines, `Chapter ${values.chapter} read-content line count`);
   assertInRange(values.newVocabularyItemCount, rule.newVocabularyItems, `Chapter ${values.chapter} new vocabulary item count`);
 }
 
@@ -892,7 +959,7 @@ export function assertLanguageCurriculumChapter3150Requirements(
       assertInRange(newPrincipalGrammar.length, { min: 2, max: 2 }, `Chapter ${source.chapter} new principal grammar point count`);
       assertInRange(connectorCount, { min: 1, max: 1 }, `Chapter ${source.chapter} connector-domain principal grammar point count`);
       assertInRange(newVocabulary.size, { min: 6, max: 20 }, `Chapter ${source.chapter} new learner-facing vocabulary item count`);
-      assertInRange(readContent.lines.length, { min: 10, max: 30 }, `Chapter ${source.chapter} learner-facing dialogue or narrative line count`);
+      assertAtLeast(readContent.lines.length, { min: 6 }, `Chapter ${source.chapter} learner-facing dialogue or narrative line count`);
       if (readContent.format !== expectedFormat) throw new Error(`Chapter ${source.chapter} must use learner-facing ${expectedFormat} content; detected ${readContent.format}.`);
       results.push({
         chapter: source.chapter,
@@ -950,7 +1017,7 @@ export function assertLanguageCurriculumChapter5170Requirements(
       };
       assertInRange(result.newPrincipalGrammarPointCount, { min: 2, max: 2 }, `Chapter ${source.chapter} new principal grammar point count`);
       assertInRange(result.newVocabularyItemCount, rule.newVocabularyItems, `Chapter ${source.chapter} new learner-facing vocabulary item count`);
-      assertInRange(result.learnerFacingReadContentLineCount, rule.learnerFacingReadContentLines, `Chapter ${source.chapter} learner-facing dialogue or narrative line count`);
+      assertAtLeast(result.learnerFacingReadContentLineCount, rule.learnerFacingReadContentLines, `Chapter ${source.chapter} learner-facing dialogue or narrative line count`);
       if (result.format !== expectedFormat) {
         throw new Error(`Chapter ${source.chapter} must use learner-facing ${expectedFormat} content; detected ${result.format}.`);
       }
@@ -1001,7 +1068,7 @@ export function assertLanguageCurriculumChapter71140Requirements(
       const grammarRange = source.chapter <= 75 ? { min: 2, max: 2 } : { min: 1, max: 1 };
       assertInRange(newPrincipalGrammar.size, grammarRange, `Chapter ${source.chapter} new principal grammar point count`);
       assertInRange(newVocabulary.size, rule.newVocabularyItems, `Chapter ${source.chapter} new learner-facing vocabulary item count`);
-      assertInRange(readContentUnitCount, rule.learnerFacingReadContentLines, `Chapter ${source.chapter} learner-facing dialogue or narrative unit count`);
+      assertAtLeast(readContentUnitCount, rule.learnerFacingReadContentLines, `Chapter ${source.chapter} learner-facing dialogue or narrative unit count`);
       if (readContent.format !== expectedFormat) throw new Error(`Chapter ${source.chapter} must use learner-facing ${expectedFormat} content; detected ${readContent.format}.`);
 
       let narrativeScope: NarrativeScope | undefined;
@@ -1183,7 +1250,6 @@ export function assertLanguageCurriculumStage71140Coverage(
   const timeDateChapters = new Set<number>();
   const yearIntroductionOrReview = new Set<number>();
   const yearReuse = new Set<number>();
-  const largeNumberUses: Array<{ chapter: number; value: number }> = [];
 
   for (const source of stage) {
     const lines = readContentByChapter.get(source.chapter) ?? [];
@@ -1200,10 +1266,6 @@ export function assertLanguageCurriculumStage71140Coverage(
       assertLiteralLearnerFacingEvidence(source.chapter, "year", yearEvidence, lines);
       (yearUse === "reuse" ? yearReuse : yearIntroductionOrReview).add(source.chapter);
     }
-    for (const use of parseLargeNumberEvidence(source.chapter, source.markdown)) {
-      assertLiteralLearnerFacingEvidence(source.chapter, "large-number", use.surface, lines);
-      largeNumberUses.push({ chapter: source.chapter, value: use.value });
-    }
   }
 
   if (timeDateChapters.size < 5) throw new Error(`Chapters 71-140 require time/date evidence in at least five distinct chapters; got ${timeDateChapters.size}.`);
@@ -1212,27 +1274,12 @@ export function assertLanguageCurriculumStage71140Coverage(
   const allYearChapters = [...yearIntroductionOrReview, ...yearReuse];
   if (new Set(allYearChapters.map((chapter) => Math.floor((chapter - 71) / 5))).size < 2) throw new Error("Qualifying year uses must not all be concentrated in one five-chapter block.");
 
-  for (const rule of languageCurriculumPolicy.largeNumberCoverageRules) {
-    const qualifies = largeNumberUses.some((use) => use.chapter >= rule.chapterStart && use.chapter <= rule.chapterEnd && use.value >= rule.min && use.value <= rule.max);
-    if (!qualifies) throw new Error(`Chapters ${rule.chapterStart}-${rule.chapterEnd} require learner-facing large-number evidence from ${rule.min} through ${rule.max}.`);
-  }
 }
 
 function assertLiteralLearnerFacingEvidence(chapter: number, kind: string, evidence: string, lines: readonly string[]): void {
   if (!lines.some((line) => line.includes(evidence))) throw new Error(`Chapter ${chapter} ${kind} evidence must occur literally in learner-facing dialogue or narrative content.`);
 }
 
-function parseLargeNumberEvidence(chapter: number, markdown: string): readonly { value: number; surface: string }[] {
-  const declaration = frontmatterValue(markdown, "large_number_evidence");
-  if (declaration === undefined) return [];
-  return declaration.split(";").map((part) => {
-    const match = part.trim().match(/^(\d+)\s*\|\s*(.+)$/u);
-    if (match === null) throw new Error(`Chapter ${chapter} large_number_evidence must use canonical-value | literal surface form.`);
-    const value = Number(match[1]);
-    if (!Number.isSafeInteger(value) || value < 0) throw new Error(`Chapter ${chapter} large-number canonical value must be a nonnegative safe integer.`);
-    return { value, surface: match[2].trim() };
-  });
-}
 
 function declaredLearnerFacingVocabulary(markdown: string): readonly string[] {
   const entries: string[] = [];
@@ -1541,11 +1588,6 @@ export function assertLearnerFacingVocabularyRecord(record: LearnerFacingVocabul
     if (!record.learnerFacingForm.startsWith(`${record.definiteArticle} `) && !record.learnerFacingForm.startsWith(record.definiteArticle)) throw new Error(`${policy.language} noun ${record.lemma}: learner-facing form must include its definite article.`);
     if (record.explicitCategoryMarkerRequired && (!record.grammaticalCategory || !record.learnerFacingForm.endsWith(`(${record.grammaticalCategory})`))) throw new Error(`${policy.language} noun ${record.lemma}: missing required ambiguity marker.`);
   }
-  if (record.lexicalType === "measure-expression") {
-    if (!policy.grammaticalMeasureExpressions) throw new Error(`${record.lexicalForm}: transparent or non-grammatical measure expressions must remain simple vocabulary.`);
-    if (record.semanticScope.trim() === "") throw new Error(`${record.lexicalForm}: grammatical ${record.grammaticalType} requires semantic scope.`);
-    if (record.grammaticalType === "MW" && /(?:^|\s)M(?:\s|:|$)/u.test(record.learnerFacingForm)) throw new Error(`${record.lexicalForm}: use MW for measure word; M is reserved for masculine gender.`);
-  }
   if (hasCanonicalLexicalIdentity(record)) assertCanonicalLexicalRecord(record);
 }
 
@@ -1674,5 +1716,11 @@ function assertPositiveIntegerChapter(chapter: number): void {
 function assertInRange(value: number, range: InclusiveRange, label: string): void {
   if (!Number.isInteger(value) || value < range.min || value > range.max) {
     throw new Error(`${label} must be ${range.min}-${range.max}; got ${value}.`);
+  }
+}
+
+function assertAtLeast(value: number, minimum: MinimumCount, label: string): void {
+  if (!Number.isInteger(value) || value < minimum.min) {
+    throw new Error(`${label} must be at least ${minimum.min}; got ${value}.`);
   }
 }

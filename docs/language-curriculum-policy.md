@@ -28,6 +28,45 @@ noun/article state, cast and relationship history, topic history,
 broader-topic reuse, or cumulative difficulty. Validation processes chapters in
 one ordered Chapter-1-origin sequence and rejects missing earlier state.
 
+## Canonical ten-chapter artwork rotation
+
+Chapter scene artwork uses six canonical environmental directions. One style
+applies to each consecutive ten-chapter block; after the sixth style, the same
+sequence repeats from the beginning. The chapter-to-style mapping is
+deterministic and shared by every language curriculum without a
+language-specific opt-out:
+
+1. Chapters 1-10: `warm-hand-painted-editorial` — soft warm natural colour,
+   restrained painterly texture, gentle daylight, and an approachable editorial
+   storybook environment.
+2. Chapters 11-20: `cool-modern-architectural` — cool white, slate blue,
+   desaturated teal, soft grey, limited neutral wood, clear perspective, and
+   recognizable contemporary architecture.
+3. Chapters 21-30: `watercolour-environment` — visible paper texture, loose
+   blue-green watercolour edges, subdued washes, and selectively described
+   environmental detail.
+4. Chapters 31-40: `clean-cel-environment` — crisp outlines, controlled flat
+   colour areas, cool blue-violet shadows, minimal gradients, and strong
+   small-display legibility.
+5. Chapters 41-50: `cinematic-naturalism` — believable depth, desaturated
+   natural colour, layered foreground and background, and setting-supported
+   natural or artificial light.
+6. Chapters 51-60: `ink-and-colour-print` — fine environmental ink lines,
+   sparse colour fields, controlled print texture, deliberate empty space, and
+   a restrained cool-led palette.
+
+Chapters 61-70 return to the first style, Chapters 71-80 use the second, and
+the cycle continues in ten-chapter blocks. The rotation changes the background
+environment, palette, texture, lighting, and architectural treatment. It does
+not redesign the cast. Every recurring person retains the established face,
+hair, apparent age, build, and other identity cues. Clothing and props may vary
+when the scene supports them.
+
+Artwork provenance records the selected canonical style ID and any cast artwork
+used as an identity reference. Chapters within one block may and should use
+different places appropriate to their readings; a shared style never requires
+repeated scenery.
+
 ## Canonical cast and active cast
 
 Every ordinary target-language curriculum starts with
@@ -177,15 +216,6 @@ prepend articles to non-nouns or running text, and add `M`, `F`, or `N` when an
 elided/syncretic display hides the category (`l’eau (F)`). Other noun-class
 systems use stable language-specific labels.
 
-Grammatical measure-word/classifier/counter records preserve lexical form,
-learner-facing form, optional pronunciation, grammatical type (`MW`,
-`classifier`, or `counter`), concise semantic scope, representative noun
-classes, restrictions, and usage status. Scope appears in every isolated
-learner-facing listing and survives package/index generation. `M` is reserved
-for masculine. Transparent ordinary measures such as spoonful, glass, kilo, or
-box remain simple vocabulary unless their selection is grammaticalized and
-must be memorized.
-
 ## Lexical identity, verb forms, and expressions
 
 ### Canonical lexical-topic expansion
@@ -213,14 +243,6 @@ Canonical sense metadata may additionally carry
 `lexical_topic`, `topic_role`, `topic_first_chapter`, and
 `topic_expansion_stage`; `topic_role` is one of `anchor`,
 `initial-expansion`, `later-expansion`, or `reinforcement`.
-
-The following remain distinct internal topics even when closely related:
-measurement units, container nouns, classifiers/counters, quantity
-expressions, and dimension/weight vocabulary. Language-specific citation,
-article, classifier, regional-variant, and lexical-identity rules continue to
-apply. Regional variants share an identity only when they are variants of the
-same lexical sense; culturally or semantically distinct words retain distinct
-identities.
 
 A canonical sense may be assigned to more than one genuinely applicable topic
 without creating a second lexical sense or a second review card. Topic
@@ -255,8 +277,8 @@ subject to human linguistic review, never automatic inference from prose.
 ## Learner-facing lexical display
 
 Normal learner-facing vocabulary Notes use accessible concise labels: `Noun`, `Verb`, `Infinitive`,
-`Adjective`, `Adverb`, `Preposition`, `Conjunction`, `Pronoun`, `Numeral`, `Phrase`, `Sequence word`, `Classifier`,
-`Counter`, or `Measure word`. They do not expose lemma, lexical-entry or sense
+`Adjective`, `Adverb`, `Preposition`, `Conjunction`, `Pronoun`, `Numeral`,
+`Phrase`, or `Sequence word`. They do not expose lemma, lexical-entry or sense
 IDs, surface/citation-form terminology, introduction status, first-introduction
 chapter, attestations, or morphology classifications. Internal structured
 metadata retains all of those fields.
@@ -312,7 +334,7 @@ developer-only blocks.
 ### Audience-specific language notes
 
 Vietnamese ordinary reading support projects usage, spelling, word-boundary,
-register, address-form, classifier, particle, and natural-phrasing sections
+register, address-form, particle, and natural-phrasing sections
 under the exact Normal heading `Language Notes`. The authoritative support
 record uses `audienceSections[].normalHeading`; Expert retains the source
 heading and technical explanation, while Developer exposes the separate Normal
@@ -351,16 +373,18 @@ not mutate their repositories automatically.
 
 ## Pacing
 
+Across every language and chapter range, a Dialogue contains at least six complete spoken turns and a Narrative contains at least six complete sentences. There is no universal upper limit. Longer texts are welcome when every added unit serves the context, scene, characterization, reinforcement, or teaching purpose; mechanical padding is invalid.
+
 Chapters 1-25:
 
 - 1 main grammar point per chapter.
-- 6-20 lines of read content per chapter.
+- At least 6 read-content units per chapter, with no universal upper limit.
 - 6-10 new vocabulary items per chapter.
 
 Chapters 26-30:
 
 - 1-2 main grammar patterns per chapter.
-- 10-30 lines of read content per chapter.
+- At least 6 read-content units per chapter, with no universal upper limit.
 - 6-20 new vocabulary items per chapter.
 
 Chapters 31-50:
@@ -368,19 +392,17 @@ Chapters 31-50:
 - exactly 2 genuinely new principal grammar points per chapter;
 - exactly 1 connector, conjunction, linking form, sequencing construction, or comparable discourse-linking point;
 - exactly 1 genuinely new point from a different broad grammatical domain;
-- 10-30 learner-facing read lines and 6-20 genuinely new vocabulary items;
+- At least 6 learner-facing read-content units with no universal upper limit, and 6-20 genuinely new vocabulary items;
 - topic-centred content and odd dialogue / even narrative.
 
 Two connector-domain points fail. Reused grammar satisfies neither slot, and
 supporting morphology, agreement, pronunciation, spelling, or required
-inflectional variants do not increase the count. The Chapters 41-50 numbers and
-quantity focus remains content inside this unified grammar stage, not a separate
-grammar band.
+inflectional variants do not increase the count.
 
 Chapters 51-70:
 
 - exactly 2 genuinely new principal grammar points per chapter;
-- 15-30 learner-facing dialogue or narrative lines;
+- At least 6 learner-facing dialogue turns or narrative sentences, with no universal upper limit;
 - 10-30 genuinely new learner-facing vocabulary items;
 - odd dialogue / even narrative and topic-centred content.
 
@@ -394,34 +416,10 @@ not force English tense categories onto languages organized differently or
 combine two extremely difficult distinctions from one narrow subsystem unless
 the language requires them together.
 
-## Number Continuation: Chapters 51-70
-
-Numbers may be used freely in every chapter. There is no restriction on using
-numbers below, within, or above the ranges specified here.
-
-Each five-chapter block must cumulatively introduce and use at least one
-learner-facing number in its assigned range:
-
-- Chapters 51-55: 100-999.
-- Chapters 56-60: 100-999.
-- Chapters 61-65: 1000-9999.
-- Chapters 66-70: 1000-9999.
-
-The qualifying number may occur in any single chapter in its block; it is not
-required in every chapter. It must appear naturally in learner-facing dialogue
-or narrative content. Numbers found only in metadata, validation fixtures,
-grammar explanations, generated notes, vocabulary bookkeeping, or review
-material do not qualify.
-
-These are minimum coverage rules only: numbers of any value remain permitted
-throughout Chapters 51-70. Handle language-specific number formation,
-classifiers, counters, agreement, case marking, irregular forms, and parallel
-number systems naturally where relevant.
-
 ## Chapter Size: Chapters 51-70
 
 Every chapter must introduce 10-30 genuinely new learner-facing vocabulary
-items and contain 15-30 learner-facing dialogue or narrative lines.
+items and contain at least six learner-facing dialogue turns or narrative sentences, with no universal upper limit.
 
 Only explicitly introduced `New Vocabulary` entries count, after excluding
 duplicates within the chapter and items introduced earlier in the curriculum.
@@ -445,11 +443,12 @@ never inflate or satisfy the count.
 ## Expanded Grammar and Broader Discourse: Chapters 71-140
 
 Chapters 71-140 form one seventy-chapter stage. Chapters 71-75 introduce exactly
-two genuinely new principal grammar points, 10-30 genuinely new learner-facing
-vocabulary items, and 16-40 learner-facing dialogue or narrative structural units
-per chapter; their authored readings may contain multiple aligned sentences per
-line or paragraph. Chapters 76-140 introduce exactly one new principal grammar
-point, 10-30 vocabulary items, and 20-40 learner-facing lines per chapter.
+two genuinely new principal grammar points and 10-30 genuinely new
+learner-facing vocabulary items. Chapters 76-140 introduce exactly one new
+principal grammar point and 10-30 vocabulary items. Both ranges retain the
+shared minimum of six complete Dialogue turns or Narrative sentences and have
+no universal upper limit; authored readings may contain multiple aligned
+sentences per line or paragraph.
 
 This is a transition to slower new-grammar intake, not easier content. Increase
 text length, discourse complexity, clause depth, topic breadth, cumulative
@@ -531,7 +530,7 @@ narrative; later narrative reuse must be explicitly recorded. Dialogue reuse is
 supported by the schema but is not required in Chapters 71-140. Concrete
 narratives need no broader-topic record.
 
-## Time, date, year, and large-number continuation
+## Time, date, and year continuation
 
 Stage-wide coverage is validated when Chapter 140 is present. At least five
 distinct chapters declare `time_date_evidence`, and each declared literal form
@@ -539,28 +538,9 @@ must occur inside learner-facing dialogue or narrative content.
 
 Year requires at least one `year_use: introduction` or `year_use: review`, plus
 at least two additional `year_use: reuse` chapters. Every use supplies literal
-`year_evidence` found in read content. Normal inflected, declined,
-classifier-attached, counter-marked, and other language-specific surface forms
-qualify. The qualifying chapters must span at least two five-chapter blocks.
-
-Large-number use is declared as
-`large_number_evidence: canonical-value | literal surface form`; multiple uses
-are separated by semicolons. The surface form must occur in read content. This
-allows language-specific ten-thousand or hundred-million organization while
-retaining a canonical numeric value for inclusive range validation.
-
-Independent minimum blocks are:
-
-- Chapters 71-80: 9,999-10,000;
-- Chapters 81-90: 99,999-100,000;
-- Chapters 91-100: 9,999,999-10,000,000;
-- Chapters 101-110: 99,999,999-100,000,000;
-- Chapters 110-120: 999,999,999-1,000,000,000.
-
-Chapter 110 participates independently in both overlapping blocks. Numbers of
-all other values remain permitted, and Chapters 121-140 have no additional
-large-number minimum. Metadata-only declarations never qualify because every
-evidence form is checked against learner-facing content.
+`year_evidence` found in read content. Normal inflected, declined, and other
+language-specific surface forms qualify. The qualifying chapters must span at
+least two five-chapter blocks.
 
 ## Odd/Even Format
 

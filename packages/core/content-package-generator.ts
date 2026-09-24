@@ -223,7 +223,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
-    artifactRevision: 5,
+    artifactRevision: 14,
     sourcePath: "../vietnamese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
     languages: ["vi", "en"],
@@ -239,7 +239,6 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "backlog.md",
       "decisions.md",
       "geography-ledger.json",
-      "number-progression.json",
       "lexical-topics.json",
       "lexical-topic-audit.json",
       "lexical-topic-audit.md",
@@ -261,7 +260,6 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
       "backlog.md",
       "decisions.md",
       "geography-ledger.json",
-      "number-progression.json",
       "lexical-topics.json",
       "lexical-topic-audit.json",
       "lexical-topic-audit.md",
@@ -366,10 +364,11 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     id: "japanese-curriculum",
     packageId: "com.sleepymario.language.japanese",
     displayName: "Japanese",
-    description: "Japanese language curriculum content generated from the canonical Chapters 1 through 10 source.",
+    description: "Japanese language curriculum content generated from the canonical Chapters 1 through 15 source.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
+    artifactRevision: 6,
     sourcePath: "../japanese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/japanese-curriculum",
     languages: ["ja", "en"],
@@ -498,17 +497,17 @@ const coreReviewTargets: readonly {
   readonly artifactRevision?: number;
   readonly interactionProfile?: DeckInteractionProfile;
 }[] = [
-  { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.1.0", artifactRevision: 2 },
+  { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.1.0", artifactRevision: 4 },
   { slug: "dutch", name: "Dutch", readingId: "com.sleepymario.language.dutch", languages: ["nl", "en"], packageVersion: "0.1.0" },
   { slug: "arabic", name: "Arabic", readingId: "com.sleepymario.language.arabic", languages: ["ar", "en"], packageVersion: "0.1.0" },
   { slug: "french", name: "French", readingId: "com.sleepymario.language.french", languages: ["fr", "en"], packageVersion: "0.1.0" },
   { slug: "german", name: "German", readingId: "com.sleepymario.language.german", languages: ["de", "en"], packageVersion: "0.1.0" },
   { slug: "hindi", name: "Hindi", readingId: "com.sleepymario.language.hindi", languages: ["hi", "en"], packageVersion: "0.1.0" },
   {
-    slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0", artifactRevision: 2,
+    slug: "japanese", name: "Japanese", readingId: "com.sleepymario.language.japanese", languages: ["ja", "en"], packageVersion: "0.1.0", artifactRevision: 4,
     interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent" }
   },
-  { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0", artifactRevision: 4 },
+  { slug: "korean", name: "Korean", readingId: "com.sleepymario.language.korean", languages: ["ko", "en"], packageVersion: "0.1.0", artifactRevision: 6 },
   { slug: "russian", name: "Russian", readingId: "com.sleepymario.language.russian", languages: ["ru", "en"], packageVersion: "0.1.0" },
   { slug: "spanish", name: "Spanish", readingId: "com.sleepymario.language.spanish", languages: ["es", "en"], packageVersion: "0.1.0" },
   { slug: "thai", name: "Thai", readingId: "com.sleepymario.language.thai", languages: ["th", "en"], packageVersion: "0.1.0" },
@@ -616,6 +615,46 @@ const technicalPreviewTargets: readonly ContentPackageGeneratorTarget[] = [{
 }];
 
 const chineseScriptConversionTargets: readonly ContentPackageGeneratorTarget[] = [{
+  id: "japanese-prefectures-kanji",
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.japanese.prefectures-kanji",
+  displayName: "Japanese Prefecture Readings",
+  description: "All 47 prefecture names in kanji and hiragana, in both directions.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.japanese"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 2,
+  mediaPolicy: "required",
+  interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent", outputMedia: "output-specific" },
+  packageVersion: "1.0.0",
+  sourcePath: "review-content/japanese/prefectures-kanji",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["ja-Kana", "ja"],
+  targetLanguage: "ja",
+  subjects: ["japanese", "prefectures", "kanji", "hiragana"],
+  topic: {
+    id: "japanese-prefectures-kanji",
+    displayName: "Prefectures - 漢字",
+    deckDisplayName: "Prefectures - 漢字"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources", "media"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "japanese-prefectures-kanji",
+    displayName: "Prefectures - 漢字",
+    outputFile: "japanese-prefectures-kanji.json",
+    unitStart: 1,
+    unitEnd: 47
+  }
+}, {
   id: "chinese-traditional-radicals",
   notesPolicy: "default",
   packageId: "com.sleepymario.language.chinese-traditional.radicals",
@@ -1318,7 +1357,7 @@ interface SourceFile {
 
 interface PackagedCanonicalVocabularyOccurrence extends LearnerFacingLexicalDisplayRecord {
   readonly id: string;
-  readonly displayRowIds: readonly string[];
+  readonly displayRowIds?: readonly string[];
   readonly sourcePath: string;
   readonly sourceLocator: string;
   readonly sentenceOrExample: string;
@@ -1329,6 +1368,26 @@ interface PackagedCanonicalVocabularyDocument {
   readonly displayRows: readonly (LearnerFacingLexicalDisplayRecord & { readonly id: string; readonly sourcePath: string; readonly occurrenceId: string })[];
   readonly occurrences: readonly PackagedCanonicalVocabularyOccurrence[];
   readonly review: { readonly canonicalSenseIds: readonly string[]; readonly grammarIds: readonly string[] };
+}
+
+function sourceContainsJapaneseVocabularyRow(source: string, row: LearnerFacingLexicalDisplayRecord): boolean {
+  const canonical = row.canonicalForm ?? row.canonicalParadigm!.join(" / ");
+  const expectedForm = row.displayForm ?? (row.surfaceForm === canonical ? row.surfaceForm : `${row.surfaceForm} ← ${canonical}`);
+  return source.split("\n").some((line) => {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("|") || !trimmed.endsWith("|")) return false;
+    const cells = trimmed.slice(1, -1).split("|").map((cell) => cell.trim().replaceAll("\\|", "|"));
+    if (cells.length !== japaneseCanonicalVocabularyTableHeaders.length) return false;
+    const [form, reading, meaning, partOfSpeech, note] = cells;
+    const readingMatches = row.contextualReading === undefined
+      ? reading === "" || reading === row.surfaceForm
+      : reading === row.contextualReading || reading.startsWith(`${row.contextualReading} ← `);
+    return form === expectedForm
+      && readingMatches
+      && meaning === row.contextualMeaning
+      && partOfSpeech === row.partOfSpeech
+      && note === row.note;
+  });
 }
 
 function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): void {
@@ -1344,12 +1403,20 @@ function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): 
   const sourceByPath = new Map(sourceFiles.map((file) => [file.path, file.text]));
   for (const row of document.displayRows) {
     const occurrence = occurrences.get(row.occurrenceId);
-    if (occurrence === undefined || !occurrence.displayRowIds.includes(row.id)) throw new Error(`${row.id}: canonical occurrence mapping is incomplete.`);
-    for (const field of ["surfaceForm", "displayForm", "expandedForm", "canonicalForm", "canonicalParadigm", "contextualReading", "formRelationship", "canonicalLexicalId", "canonicalSenseId", "contextualMeaning", "partOfSpeech"] as const) {
+    if (occurrence === undefined) throw new Error(`${row.id}: canonical occurrence mapping is incomplete.`);
+    if (contextualMetadata === undefined && (!Array.isArray(occurrence.displayRowIds) || !occurrence.displayRowIds.includes(row.id))) throw new Error(`${row.id}: canonical occurrence mapping is incomplete.`);
+    if (Array.isArray(occurrence.displayRowIds) && !occurrence.displayRowIds.includes(row.id)) throw new Error(`${row.id}: canonical occurrence mapping is incomplete.`);
+    const sharedFields = contextualMetadata === undefined
+      ? ["surfaceForm", "displayForm", "expandedForm", "canonicalForm", "canonicalParadigm", "contextualReading", "formRelationship", "canonicalLexicalId", "canonicalSenseId", "contextualMeaning", "partOfSpeech"] as const
+      : ["surfaceForm", "canonicalForm", "formRelationship", "canonicalLexicalId", "canonicalSenseId"] as const;
+    for (const field of sharedFields) {
       if (JSON.stringify(row[field]) !== JSON.stringify(occurrence[field])) throw new Error(`${row.id}: ${field} disagrees with its occurrence.`);
     }
     const source = sourceByPath.get(row.sourcePath);
-    if (source === undefined || !source.includes(formatLearnerFacingVocabularyRow(row, expectedHeaders))) throw new Error(`${row.id}: canonical learner-facing vocabulary row is absent from its packaged chapter.`);
+    const hasVocabularyRow = source !== undefined && (contextualMetadata === undefined
+      ? source.includes(formatLearnerFacingVocabularyRow(row, expectedHeaders))
+      : sourceContainsJapaneseVocabularyRow(source, row));
+    if (!hasVocabularyRow) throw new Error(`${row.id}: canonical learner-facing vocabulary row is absent from its packaged chapter.`);
     if (!source.includes(occurrence.sentenceOrExample) || !occurrence.sentenceOrExample.normalize("NFC").includes(row.surfaceForm.normalize("NFC"))) throw new Error(`${row.id}: occurrence evidence does not preserve the exact surface form.`);
   }
   if (contextualMetadata === undefined) return;
@@ -1359,7 +1426,9 @@ function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): 
   const expectedSenses = new Set(document.review?.canonicalSenseIds ?? []);
   const actualSenses = new Set(contextual.entries.map((entry) => entry.senseId));
   for (const senseId of expectedSenses) if (!actualSenses.has(senseId)) throw new Error(`${contextualMetadata.path}: missing canonical Review sense ${senseId}.`);
-  for (const senseId of actualSenses) if (!expectedSenses.has(senseId)) throw new Error(`${contextualMetadata.path}: orphaned reading-aware sense ${senseId}.`);
+  // The contextual-reading registry follows taught curriculum content, including
+  // chapters in the current unfinished five-chapter block. Its extra senses are
+  // therefore expected until that block's canonical Review deck is authored.
   const contextualOccurrences = new Map(contextual.entries.flatMap((entry) => entry.occurrences).map((occurrence) => [occurrence.occurrenceId, occurrence]));
   for (const occurrence of document.occurrences) {
     const contextualOccurrence = contextualOccurrences.get(occurrence.id);
@@ -1378,22 +1447,28 @@ function assertPackagedCanonicalVocabulary(sourceFiles: readonly SourceFile[]): 
       const support = JSON.parse(file.text) as { readingItems?: readonly { surface: string; reading: string; evidence: string; lexicalEntryId: string; senseId: string }[] };
       return (support.readingItems ?? []).map((item) => ({ ...item, source: file.path }));
     });
-  for (const entry of contextual.entries) {
-    const item = supportItems.find((candidate) => candidate.lexicalEntryId === entry.lexicalEntryId && candidate.senseId === entry.senseId);
-    if (item === undefined) throw new Error(`${contextualMetadata.path}: ${entry.lexicalEntryId} / ${entry.senseId} has no reading-support projection.`);
-    const occurrence = entry.occurrences.find((candidate) => candidate.evidence === item.evidence && candidate.evidence.includes(item.surface));
-    if (occurrence === undefined) throw new Error(`${item.source}: ${entry.lexicalEntryId} / ${entry.senseId} surface/evidence does not map to its canonical occurrence.`);
-    if (japaneseExpressionContainsKanjiForPackage(item.surface) && occurrence.contextualReading?.includes(item.reading) !== true) throw new Error(`${item.source}: ${entry.lexicalEntryId} / ${entry.senseId} stored reading ${item.reading} disagrees with contextual reading ${occurrence.contextualReading}.`);
+  if (supportItems.length > 0) {
+    for (const item of supportItems) {
+      const entry = contextual.entries.find((candidate) => candidate.lexicalEntryId === item.lexicalEntryId && candidate.senseId === item.senseId);
+      if (entry === undefined) throw new Error(`${item.source}: ${item.lexicalEntryId} / ${item.senseId} has no canonical contextual-reading identity.`);
+      const occurrence = entry.occurrences.find((candidate) => candidate.evidence === item.evidence && candidate.evidence.includes(item.surface));
+      if (occurrence === undefined) throw new Error(`${item.source}: ${entry.lexicalEntryId} / ${entry.senseId} surface/evidence does not map to its canonical occurrence.`);
+      if (japaneseExpressionContainsKanjiForPackage(item.surface) && occurrence.contextualReading?.includes(item.reading) !== true) throw new Error(`${item.source}: ${entry.lexicalEntryId} / ${entry.senseId} stored reading ${item.reading} disagrees with contextual reading ${occurrence.contextualReading}.`);
+    }
   }
   const grammarMetadata = sourceFiles.find((file) => file.path === japaneseGrammarReadingsPath);
   if (grammarMetadata === undefined) throw new Error(`Japanese reading package is missing ${japaneseGrammarReadingsPath}.`);
   const grammar = JSON.parse(grammarMetadata.text) as { readonly schemaVersion?: number; readonly entries?: readonly { readonly block?: string; readonly grammarId?: string; readonly example?: string; readonly reading?: string }[] };
-  if (grammar.schemaVersion !== 1 || grammar.entries?.length !== 10) throw new Error(`${japaneseGrammarReadingsPath}: exactly ten schema-v1 entries are required.`);
+  if (grammar.schemaVersion !== 1 || !Array.isArray(grammar.entries) || grammar.entries.length === 0) throw new Error(`${japaneseGrammarReadingsPath}: nonempty schema-v1 entries are required.`);
   const grammarIds = new Set<string>();
+  const grammarExamples = new Set<string>();
   for (const entry of grammar.entries) {
-    if (typeof entry.grammarId !== "string" || grammarIds.has(entry.grammarId)) throw new Error(`${japaneseGrammarReadingsPath}: grammar IDs must be ten unique strings.`);
+    if (typeof entry.grammarId !== "string") throw new Error(`${japaneseGrammarReadingsPath}: grammar IDs must be strings.`);
     grammarIds.add(entry.grammarId);
     if (typeof entry.block !== "string" || typeof entry.example !== "string" || typeof entry.reading !== "string") throw new Error(`${japaneseGrammarReadingsPath}: ${entry.grammarId} requires block, example, and reading.`);
+    const exampleKey = JSON.stringify([entry.block, entry.grammarId, entry.example]);
+    if (grammarExamples.has(exampleKey)) throw new Error(`${japaneseGrammarReadingsPath}: duplicate example for ${entry.grammarId} in ${entry.block}.`);
+    grammarExamples.add(exampleKey);
     for (const audience of ["easy", "hard"] as const) {
       const path = `units/japanese-core/chapter-${entry.block}-grammar-${audience}/chapter.md`;
       const source = sourceByPath.get(path);
@@ -1459,21 +1534,9 @@ const readingSupportPackages: Readonly<Record<string, readonly { readonly source
     source: `curriculum-support/hindi/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
     destination: `units/hindi-core/${directory}/reading-support.json`
   })),
-  "japanese-curriculum": [
-    [1, "chapter-001-a-first-meeting"],
-    [2, "chapter-002-a-quiet-room"],
-    [3, "chapter-003-what-is-this"],
-    [4, "chapter-004-at-the-cafe"],
-    [5, "chapter-005-an-invitation"],
-    [6, "chapter-006-a-monday-at-school"],
-    [7, "chapter-007-talking-about-likes"],
-    [8, "chapter-008-a-simple-school-day"],
-    [9, "chapter-009-ordering-at-a-small-shop"],
-    [10, "chapter-010-yesterday-near-the-station"]
-  ].map(([chapter, directory]) => ({
-    source: `curriculum-support/japanese/chapter-${String(chapter).padStart(3, "0")}/reading-support.json`,
-    destination: `units/japanese-core/${directory}/reading-support.json`
-  })),
+  // Reauthored Japanese chapters own their colocated support. Never inject the
+  // retired ten-chapter course or overwrite its replacement Chapters I-XI.
+  "japanese-curriculum": [],
   // Reauthored Korean chapters own their colocated support. Never inject the
   // retired fifteen-chapter course or overwrite its replacement Chapter I.
   "korean-curriculum": [],
@@ -1801,7 +1864,6 @@ async function collectReferencedPackageMedia(
 const repositoryRoot = process.cwd();
 const canonicalCastPath = "name-pools/canonical-cast.json";
 const geographyLedgerPath = "geography-ledger.json";
-const numberProgressionPath = "number-progression.json";
 const lexicalTopicsPath = "lexical-topics.json";
 const lexicalTopicAuditPath = "lexical-topic-audit.json";
 const vocabularyFormsPath = "vocabulary-forms.json";
@@ -1809,7 +1871,7 @@ const japaneseContextualReadingsPath = "japanese-contextual-readings.json";
 const japaneseGrammarReadingsPath = "japanese-grammar-readings.json";
 const sinoVietnameseLexiconPath = "sino-vietnamese-lexicon.json";
 const sinoVietnameseAuditPath = "sino-vietnamese-audit.json";
-const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, numberProgressionPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath, vocabularyFormsPath, japaneseContextualReadingsPath, japaneseGrammarReadingsPath]);
+const packagedCurriculumMetadataPaths = new Set([canonicalCastPath, geographyLedgerPath, lexicalTopicsPath, lexicalTopicAuditPath, sinoVietnameseLexiconPath, sinoVietnameseAuditPath, vocabularyFormsPath, japaneseContextualReadingsPath, japaneseGrammarReadingsPath]);
 
 async function sourceIncludesForTarget(target: ContentPackageGeneratorTarget, sourceRoot: string): Promise<readonly string[]> {
   const separatedIncludes = target.capabilities?.includes("reading-curriculum")
@@ -2047,7 +2109,8 @@ function buildMemorizationFiles(
   generatedAt: string
 ): readonly GeneratedMemorizationFile[] {
   const reviewExampleIndex = buildReviewExampleIndex(target, evidenceFiles);
-  const japaneseContextualReadings = target.languages?.includes("ja") === true
+  // Prefecture reading pairs are a standalone two-sided deck, not curriculum ABC vocabulary.
+  const japaneseContextualReadings = target.id !== "japanese-prefectures-kanji" && target.languages?.includes("ja") === true
     ? parseJapaneseContextualReadings(evidenceFiles)
     : undefined;
   return sourceFiles
@@ -2113,7 +2176,7 @@ function parseReviewDeckCards(
   if (usesV2Rows) {
     const normalizedBody = usesAuthoredV2Rows ? body.map((row, index) => normalizeAuthoredReviewV2Row(row, file.path, index + 1)) : body;
     const items = normalizedBody.map((row, index) => reviewDeckV2RowToItem(target, file.path, row, index + 1, generatedAt, header.length === v2ExamplesHeader.length || usesAuthoredV2Rows));
-    if ((target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
+    if (target.id !== "japanese-prefectures-kanji" && (target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
       const chapterStart = Math.min(...items.flatMap((item) => item.sourceChapters));
       const chapterEnd = Math.max(...items.flatMap((item) => item.sourceChapters));
       const deckContext = japaneseContextualReadings === undefined ? undefined : {

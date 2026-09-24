@@ -64,6 +64,68 @@ test('Korean Grammar I-V selects one version with the same five patterns and fif
   }
 });
 
+test('Korean Chapter I-V Review distinguishes dictionary and taught inflected predicate forms', async () => {
+  const path = new URL('../review-content/korean/review-decks/chapter-001-005/cards.tsv', import.meta.url);
+  const lines = (await readFile(path, 'utf8')).trimEnd().split('\n');
+  const rows = lines.slice(1).map(line => line.split('\t'));
+  const answers = value => JSON.parse(value.startsWith('"') && value.endsWith('"')
+    ? value.slice(1, -1).replaceAll('""', '"')
+    : value);
+  const lookup = (promptLanguage, prompt) => rows.find(row => row[4] === promptLanguage && row[6] === prompt);
+  const expected = [
+    ['ko', '반갑다', ['to be glad; to be pleased']],
+    ['en', 'to be glad; to be pleased', ['반갑다']],
+    ['ko', '반갑습니다', ['pleased to meet you (deferential)']],
+    ['en', 'pleased to meet you (deferential)', ['반갑습니다']],
+    ['ko', '감사하다', ['to thank']],
+    ['en', 'to thank', ['감사하다']],
+    ['ko', '감사합니다', ['thank you (deferential)']],
+    ['en', 'thank you (deferential)', ['감사합니다']]
+  ];
+  assert.equal(rows.length, 72);
+  for (const [language, prompt, accepted] of expected) {
+    const row = lookup(language, prompt);
+    assert.ok(row, `missing ${prompt}`);
+    assert.deepEqual(answers(row[7]), accepted);
+  }
+});
+
+test('Korean Chapter VI-X Review distinguishes dictionary and taught polite predicate forms', async () => {
+  const path = new URL('../review-content/korean/review-decks/chapter-006-010/cards.tsv', import.meta.url);
+  const lines = (await readFile(path, 'utf8')).trimEnd().split('\n');
+  const rows = lines.slice(1).map(line => line.split('\t'));
+  const answers = value => JSON.parse(value.startsWith('"') && value.endsWith('"')
+    ? value.slice(1, -1).replaceAll('""', '"')
+    : value);
+  const lookup = (promptLanguage, prompt) => rows.find(row => row[4] === promptLanguage && row[6] === prompt);
+  const forms = [
+    ['좋아하다', 'to like', '좋아해요', 'like (polite)'],
+    ['좋다', 'to be good', '좋아요', 'good; sounds good (polite)'],
+    ['만들다', 'to make', '만들어요', 'make (polite)'],
+    ['먹다', 'to eat', '먹어요', 'eat (polite)'],
+    ['있다', 'to be present; to be available', '있어요', 'be present; be available (polite)'],
+    ['없다', 'to be absent; to be unavailable', '없어요', 'be absent; be unavailable (polite)'],
+    ['쉬다', 'to rest; to take a break', '쉬어요', 'rest; take a break (polite)'],
+    ['마시다', 'to drink', '마셔요', 'drink (polite)'],
+    ['읽다', 'to read', '읽어요', 'read (polite)'],
+    ['보다', 'to look at; to see', '봐요', 'look at; see (polite)'],
+    ['이야기하다', 'to talk; to converse', '이야기해요', 'talk; converse (polite)']
+  ];
+  assert.equal(rows.length, 98);
+  for (const [dictionary, infinitive, inflected, politeMeaning] of forms) {
+    for (const [language, prompt, accepted] of [
+      ['ko', dictionary, [infinitive]],
+      ['en', infinitive, [dictionary]],
+      ['ko', inflected, [politeMeaning]],
+      ['en', politeMeaning, [inflected]]
+    ]) {
+      const row = lookup(language, prompt);
+      assert.ok(row, `missing ${prompt}`);
+      assert.deepEqual(answers(row[7]), accepted);
+    }
+  }
+});
+
 test('portable Korean reading package retains every chapter scene with its source checksum', async () => {
   const outputDirectory = await mkdtemp(join(tmpdir(), 'korean-scene-package-'));
   try {

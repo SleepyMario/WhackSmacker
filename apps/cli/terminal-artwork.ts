@@ -774,6 +774,7 @@ export function kittyArtworkSequences(options: {
   readonly pngData: Uint8Array;
   readonly rectangle: TerminalArtworkRectangle;
   readonly chunkSize?: number;
+  readonly imageId?: number;
 }): readonly string[] {
   // Kitty limits each encoded payload to 4096 bytes. Split the original data
   // on a three-byte boundary and encode each part independently, matching the
@@ -790,14 +791,14 @@ export function kittyArtworkSequences(options: {
     const first = index === 0;
     const more = index < chunks.length - 1 ? 1 : 0;
     const keys = first
-      ? `a=T,f=100,i=${kittyImageId},p=${kittyPlacementId},c=${options.rectangle.widthColumns},r=${options.rectangle.heightRows},C=1,m=${more},q=2`
+      ? `a=T,f=100,i=${options.imageId ?? kittyImageId},p=${kittyPlacementId},c=${options.rectangle.widthColumns},r=${options.rectangle.heightRows},C=1,m=${more},q=2`
       : `q=2,m=${more}`;
     return `\x1b_G${keys};${payload}\x1b\\`;
   });
 }
 
-export function kittyArtworkDeleteSequence(): string {
-  return `\x1b_Ga=d,d=I,i=${kittyImageId},q=2;\x1b\\`;
+export function kittyArtworkDeleteSequence(imageId = kittyImageId): string {
+  return `\x1b_Ga=d,d=I,i=${imageId},q=2;\x1b\\`;
 }
 
 export function kittyIcatInvocation(assetPath: string, rectangle: TerminalArtworkRectangle): {

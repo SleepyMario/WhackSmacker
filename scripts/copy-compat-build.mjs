@@ -11,7 +11,7 @@ await cp("../japanese-curriculum/introductions/cast-introduction-ii.md", "dist/a
 await mkdir("dist/apps/cli/content/media", { recursive: true });
 await cp("../japanese-curriculum/introductions/media/cast-introduction-i.png", "dist/apps/cli/content/media/cast-introduction-i.png");
 await cp("../japanese-curriculum/introductions/media/cast-introduction-ii.png", "dist/apps/cli/content/media/cast-introduction-ii.png");
-for (const [chapter, source] of [["001", "chapter-001-a-first-meeting"], ["002", "chapter-002-akis-introduction"], ["003", "chapter-003-checking-study-supplies"], ["004", "chapter-004-rens-study-materials"], ["005", "chapter-005-at-the-cafe"], ["006", "chapter-006-meeting-misaki"], ["007", "chapter-007-misakis-pottery"], ["008", "chapter-008-misakis-pottery-studio"], ["009", "chapter-009-choosing-a-study-day"], ["010", "chapter-010-misakis-saturday"]]) {
+for (const [chapter, source] of [["001", "chapter-001-a-first-meeting"], ["002", "chapter-002-akis-introduction"], ["003", "chapter-003-checking-study-supplies"], ["004", "chapter-004-rens-study-materials"], ["005", "chapter-005-at-the-cafe"], ["006", "chapter-006-meeting-misaki"], ["007", "chapter-007-misakis-pottery"], ["008", "chapter-008-misakis-pottery-studio"], ["009", "chapter-009-choosing-a-study-day"], ["010", "chapter-010-misakis-saturday"], ["011", "chapter-011-meeting-koji-at-the-library"], ["012", "chapter-012-borrowing-a-book"], ["013", "chapter-013-which-way-to-the-station"], ["014", "chapter-014-kojis-train-journey"], ["015", "chapter-015-shall-we-walk-by-the-river"]]) {
   await mkdir(`dist/apps/cli/content/japanese/chapter-${chapter}`, { recursive: true });
   for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json"]) {
     await cp(`../japanese-curriculum/units/japanese-core/${source}/${file}`, `dist/apps/cli/content/japanese/chapter-${chapter}/${file}`);
@@ -43,11 +43,14 @@ await cp("../japanese-curriculum/units/japanese-core/chapter-006-meeting-misaki/
 for (const variant of ["easy", "hard"]) {
   await cp(`../japanese-curriculum/units/japanese-core/chapter-001-005-grammar-${variant}/chapter.md`, `dist/apps/cli/content/japanese/grammar-001-005-${variant}.md`);
   await cp(`../japanese-curriculum/units/japanese-core/chapter-006-010-grammar-${variant}/chapter.md`, `dist/apps/cli/content/japanese/grammar-006-010-${variant}.md`);
+  await cp(`../japanese-curriculum/units/japanese-core/chapter-011-015-grammar-${variant}/chapter.md`, `dist/apps/cli/content/japanese/grammar-011-015-${variant}.md`);
 }
 
 for (const person of ["aki", "ren", "yuki"]) {
   await cp(`../japanese-curriculum/introductions/cast-${person}.md`, `dist/apps/cli/content/japanese-cast-${person}.md`);
 }
+await cp("../japanese-curriculum/introductions/cast-koji.md", "dist/apps/cli/content/japanese-cast-koji.md");
+await cp("../japanese-curriculum/introductions/media/cast-koji.png", "dist/apps/cli/content/media/cast-koji.png");
 
 await mkdir("dist/apps/cli/content/japanese/chapter-007/media", { recursive: true });
 await cp("../japanese-curriculum/units/japanese-core/chapter-007-misakis-pottery/media/scene.png", "dist/apps/cli/content/japanese/chapter-007/media/scene.png");
@@ -89,7 +92,7 @@ for (const file of ["chapter.md", "reading-support.json", "reading-translation.e
 }
 
 // Current Vietnamese first block, with colocated authored support and artwork.
-for (const [number, slug] of [["003", "tea-with-minh-anh"], ["004", "in-the-kitchen"], ["005", "a-neighborhood-walk"], ["006", "gia-bao-in-the-garden"], ["007", "gia-baos-history-book"], ["008", "a-small-garden"]]) {
+for (const [number, slug] of [["003", "tea-with-minh-anh"], ["004", "in-the-kitchen"], ["005", "a-neighborhood-walk"], ["006", "gia-bao-in-the-garden"], ["007", "gia-baos-history-book"], ["008", "a-small-garden"], ["009", "at-the-morning-market"], ["010", "a-simple-meal"]]) {
   await mkdir(`dist/apps/cli/content/vietnamese/chapter-${number}/media`, { recursive: true });
   for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json", "chapter-participants.json", "media/scene.png"]) {
     await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-${number}-${slug}/${file}`, `dist/apps/cli/content/vietnamese/chapter-${number}/${file}`);
@@ -97,6 +100,21 @@ for (const [number, slug] of [["003", "tea-with-minh-anh"], ["004", "in-the-kitc
 }
 for (const variant of ["easy", "hard"]) {
   await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-001-005-grammar-${variant}/chapter.md`, `dist/apps/cli/content/vietnamese/grammar-001-005-${variant}.md`);
+  await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-006-010-grammar-${variant}/chapter.md`, `dist/apps/cli/content/vietnamese/grammar-006-010-${variant}.md`);
+  await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-011-015-grammar-${variant}/chapter.md`, `dist/apps/cli/content/vietnamese/grammar-011-015-${variant}.md`);
+}
+
+await cp("../vietnamese-curriculum/introductions/cast-quoc-huy.md", "dist/apps/cli/content/vietnamese-cast-quoc-huy.md");
+await cp("../vietnamese-curriculum/introductions/media/quoc-huy.png", "dist/apps/cli/content/media/vietnamese-quoc-huy.png");
+await mkdir("dist/apps/cli/content/vietnamese/chapter-011/media", { recursive: true });
+for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json", "chapter-participants.json", "media/scene.png"]) {
+  await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-011-quoc-huy-comes-home/${file}`, `dist/apps/cli/content/vietnamese/chapter-011/${file}`);
+}
+for (const [number, slug] of [["012", "a-day-in-quoc-huys-life"], ["013", "badminton-in-the-park"], ["014", "a-family-film-night"], ["015", "planning-a-family-outing"]]) {
+  await mkdir(`dist/apps/cli/content/vietnamese/chapter-${number}/media`, { recursive: true });
+  for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json", "chapter-participants.json", "media/scene.png"]) {
+    await cp(`../vietnamese-curriculum/units/vietnamese-core/chapter-${number}-${slug}/${file}`, `dist/apps/cli/content/vietnamese/chapter-${number}/${file}`);
+  }
 }
 
 await cp("../korean-curriculum/introductions/cast-doyun.md", "dist/apps/cli/content/korean-cast-doyun.md");
@@ -104,3 +122,12 @@ await cp("../korean-curriculum/introductions/media/doyun.png", "dist/apps/cli/co
 
 await cp("../vietnamese-curriculum/introductions/cast-gia-bao.md", "dist/apps/cli/content/vietnamese-cast-gia-bao.md");
 await cp("../vietnamese-curriculum/introductions/media/gia-bao.png", "dist/apps/cli/content/media/vietnamese-gia-bao.png");
+
+await mkdir("dist/packages/geography/data", { recursive: true });
+await cp("packages/geography/data/world-seven-continents-numbered.png", "dist/packages/geography/data/world-seven-continents-numbered.png");
+
+await cp("packages/geography/data/world-seven-continents.png", "dist/packages/geography/data/world-seven-continents.png");
+
+await cp("packages/geography/data/paired", "dist/packages/geography/data/paired", { recursive: true });
+
+await cp("packages/geography/data/japan-hard", "dist/packages/geography/data/japan-hard", { recursive: true });

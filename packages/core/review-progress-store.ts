@@ -69,6 +69,7 @@ export interface RemoveReviewProgressForPackageOptions {
   readonly progressDir?: string;
   readonly packageId: string;
   readonly packageVersion?: string;
+  readonly sourcePath?: string;
   readonly removedAt: string;
 }
 
@@ -189,8 +190,8 @@ export async function removeReviewProgressForPackage(
   options: RemoveReviewProgressForPackageOptions
 ): Promise<RemoveReviewProgressForPackageResult> {
   const store = await loadReviewProgressStore(options.progressDir);
-  const keepItem = (state: ReviewItemState): boolean => !matchesPackage(state, options.packageId, options.packageVersion);
-  const keepEvent = (event: ReviewEvent): boolean => !matchesPackage(event, options.packageId, options.packageVersion);
+  const keepItem = (state: ReviewItemState): boolean => !matchesPackage(state, options.packageId, options.packageVersion, options.sourcePath);
+  const keepEvent = (event: ReviewEvent): boolean => !matchesPackage(event, options.packageId, options.packageVersion, options.sourcePath);
   const items = store.items.filter(keepItem);
   const events = store.events.filter(keepEvent);
   const removedItemCount = store.items.length - items.length;
@@ -221,11 +222,14 @@ function migrateLegacyReviewProgressStore(value: unknown): unknown {
 }
 
 function matchesPackage(
-  identity: Pick<ReviewItemIdentity, "packageId" | "packageVersion">,
+  identity: Pick<ReviewItemIdentity, "packageId" | "packageVersion" | "sourcePath">,
   packageId: string,
-  packageVersion?: string
+  packageVersion?: string,
+  sourcePath?: string
 ): boolean {
-  return identity.packageId === packageId && (packageVersion === undefined || identity.packageVersion === packageVersion);
+  return identity.packageId === packageId
+    && (packageVersion === undefined || identity.packageVersion === packageVersion)
+    && (sourcePath === undefined || identity.sourcePath === sourcePath);
 }
 
 function ensureInside(root: string, path: string): void {

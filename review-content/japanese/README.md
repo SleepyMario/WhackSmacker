@@ -1,12 +1,13 @@
 # Japanese Core Reviews
 
-## Current status — September 12, 2026
+## Current status — September 24, 2026
 
-Two current blocks: Chapter I - V has 34 identities / 102 A/B/C cards;
-Chapter VI - X has 37 identities / 111 A/B/C cards. Every card uses 1–3
-literal chapter examples. Japanese review version 0.0.1 artifact revision 2
-is installed in the local Japanese review store, preserving revision 1.
-The second block is ready for user review. This overrides older status below.
+Three current blocks: Chapter I - V has 34 identities / 102 A/B/C cards;
+Chapter VI - X has 37 identities / 111 A/B/C cards; Chapter XI - XV has
+46 identities / 138 A/B/C cards. Every card uses 1–3 literal chapter examples.
+The third block includes the reading-aware A/B/C form of all vocabulary first
+introduced in Chapters XI–XV. Source authoring and local package installation
+remain distinct from Git publication. This overrides older status below.
 
 <!-- curriculum-reset-status:2026-09-11 -->
 ## Current source status — September 11, 2026

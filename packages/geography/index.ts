@@ -1,4 +1,5 @@
 import type { DomainModule } from "../core";
+import { runContinentsEasy } from "./continents-easy";
 import { runContinentReview } from "./continent-review";
 
 export interface GeographyDataset {
@@ -21,6 +22,31 @@ export const geographyModule: DomainModule = {
   displayName: "Wandering the World",
   providerFeatures: [],
   register(context) {
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `japanese-prefectures-${mode}`],
+      summary: `Japanese prefectures in kanji (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "japan", mode, nameScript: "kanji" }); }
+    });
+    context.cli.register({
+      path: ["geography", "japan-prefectures-easy"],
+      summary: "Japan prefectures: four choices and numbered-map questions",
+      run: async () => { await runContinentsEasy({ dataset: "japan", mode: "easy" }); }
+    });
+    context.cli.register({
+      path: ["geography", "japan-prefectures-hard"],
+      summary: "Japan prefectures: highlighted maps with romanized typed answers",
+      run: async () => { await runContinentsEasy({ dataset: "japan", mode: "hard" }); }
+    });
+    context.cli.register({
+      path: ["geography", "continents-hard"],
+      summary: "Continents - Hard: type the highlighted continent name",
+      run: async () => { await runContinentsEasy({ mode: "hard" }); }
+    });
+    context.cli.register({
+      path: ["geography", "continents-easy"],
+      summary: "Continents - Easy: find the named continent on a numbered map",
+      run: async () => { await runContinentsEasy(); }
+    });
     context.cli.register({
       path: ["geography", "continents"],
       summary: "Six-continent terminal map review",

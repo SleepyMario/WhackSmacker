@@ -283,16 +283,11 @@ test("all sense and Review card IDs remain unique and proposed lexical IDs do no
   assert.equal([...senses].filter((senseId) => /(?:wandelroute|pleeggezin|verjaardagsdiner|pottenbakkerij|wifi-lampje)/u.test(senseId)).length, 5);
 });
 
-test("topic diversity, cast continuity, and number continuity are recorded through Chapter 75", async () => {
+test("topic diversity and cast continuity are recorded through Chapter 75", async () => {
   const topics = JSON.parse(await readFile(join(curriculumRoot, "lexical-topics.json"), "utf8"));
   const cast = JSON.parse(await readFile(join(curriculumRoot, "name-pools", "canonical-cast.json"), "utf8"));
-  const numbers = JSON.parse(await readFile(join(curriculumRoot, "number-progression.json"), "utf8"));
   const reviewRows = (await readFile(join(reviewRoot, "chapter-071-075", "cards.tsv"), "utf8")).trimEnd().split("\n").slice(1).map((line) => line.split("\t"));
   assert.equal(topics.max_ordinary_chapter, 85);
-  assert.equal(numbers.highestCompletedChapter, 75);
-  assert.equal(numbers.magnitudeBlocks.at(-1).status, "in-progress");
-  assert.deepEqual(numbers.reviewDecks.at(-1).cards.map((card) => card.mode).sort(), ["contextual", "digits-to-words", "words-to-digits"]);
-  assert.deepEqual(numbers.reviewDecks.at(-1).cards.map((card) => card.testedValues), [[24, 40], [24, 40], [24, 40]]);
   assert.equal(reviewRows.some((row) => JSON.parse(row[10]).some((id) => id.startsWith("nl.numeral."))), false, "inherited number evidence is not relabelled as a new lexical sense");
   assert.equal(cast.schemaVersion, 2);
   assert.equal(Object.hasOwn(cast.activeCast, "legacyMigration"), false);

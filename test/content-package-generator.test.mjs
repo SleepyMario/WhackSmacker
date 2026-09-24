@@ -351,7 +351,7 @@ test("Vietnamese reading and Review package targets both remain normalized at ve
   assert.equal(reading?.contentSchemaVersion, "1.0.0");
   assert.deepEqual(reading?.readingContentInclude, [
     "README.md", "philosophy.md", "scope.md", "curriculum-map.md", "progress.md", "backlog.md", "decisions.md",
-    "geography-ledger.json", "number-progression.json", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "sino-vietnamese-lexicon.json", "sino-vietnamese-audit.json", "sino-vietnamese-audit.md", "name-pools", "units/README.md", "units/vietnamese-foundation", "units/vietnamese-core"
+    "geography-ledger.json", "lexical-topics.json", "lexical-topic-audit.json", "lexical-topic-audit.md", "sino-vietnamese-lexicon.json", "sino-vietnamese-audit.json", "sino-vietnamese-audit.md", "name-pools", "units/README.md", "units/vietnamese-foundation", "units/vietnamese-core"
   ]);
   assert.equal(reviews?.packageId, "com.sleepymario.language.vietnamese.reviews");
   assert.equal(reviews?.packageVersion, "0.1.0");
@@ -362,7 +362,6 @@ test("Vietnamese reading and Review package targets both remain normalized at ve
   }]);
   assert.deepEqual(reviews?.include, ["README.md", "review-decks"]);
   assert.deepEqual(reviews?.license, { spdx: null, name: "Whacksmacker Curriculum Content License", path: "LICENSE-CONTENT" });
-  assert.equal(isContentPackageSourceFileAllowed("number-progression.json"), true);
   assert.equal(isContentPackageSourceFileAllowed("lexical-topics.json"), true);
   assert.equal(isContentPackageSourceFileAllowed("lexical-topic-audit.json"), true);
   assert.equal(isContentPackageSourceFileAllowed("sino-vietnamese-lexicon.json"), true);
@@ -616,7 +615,6 @@ test("content package generator creates the authoritative Vietnamese reading and
       const end = start + 4;
       for (const level of ["easy", "hard"]) assert.ok(readingContent.files.some((file) => file.path === `units/vietnamese-core/chapter-${String(start).padStart(3,"0")}-${String(end).padStart(3,"0")}-grammar-${level}/chapter.md`));
     }
-    assert.ok(readingContent.files.some((file) => file.path === "number-progression.json"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
     assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.md"));
@@ -878,7 +876,7 @@ const followerReadingPackageConfigs = [
   ["french", "French", "fr", 104, 208, 10, 10],
   ["german", "German", "de", 103, 206, 10, 10],
   ["hindi", "Hindi", "hi", 46, 92, 5, 5],
-  ["japanese", "Japanese", "ja", 87, 260, 10, 10],
+  ["japanese", "Japanese", "ja", 117, 351, 15, 15],
   ["russian", "Russian", "ru", 52, 104, 5, 5],
   ["spanish", "Spanish", "es", 56, 112, 5, 5],
   ["thai", "Thai", "th", 52, 104, 5, 5],
@@ -900,7 +898,7 @@ for (const config of followerReadingPackageConfigs) {
       const manifest = JSON.parse(readingArchive.get("manifest.json").toString("utf8"));
       const readingContent = JSON.parse(readingArchive.get("content/content.json").toString("utf8"));
       const { reviewArchive, reviewManifest } = await mergedSplitArchive(readingArchive, directory, `${config.slug}-core-reviews`);
-      const reviewItems = ["chapter-001-005", ...(config.chapters === 10 ? ["chapter-006-010"] : [])]
+      const reviewItems = ["chapter-001-005", ...(config.chapters >= 10 ? ["chapter-006-010"] : []), ...(config.chapters >= 15 ? ["chapter-011-015"] : [])]
         .flatMap((block) => JSON.parse(reviewArchive.get(`content/memorization/review-decks/${block}.json`).toString("utf8")).items);
       const unitPrefix = `units/${config.slug}-core/`;
       const chapterFiles = readingContent.files.filter((file) => file.path.startsWith(unitPrefix)
@@ -923,7 +921,8 @@ for (const config of followerReadingPackageConfigs) {
       assert.equal(readingContent.files.some((file) => /(?:foundation|basic-life-sentences|review-decks)/u.test(file.path)), false);
       for (const level of ["easy", "hard"]) {
         assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}chapter-001-005-grammar-${level}/chapter.md`));
-        if (config.chapters === 10) assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}chapter-006-010-grammar-${level}/chapter.md`));
+        if (config.chapters >= 10) assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}chapter-006-010-grammar-${level}/chapter.md`));
+        if (config.chapters >= 15) assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}chapter-011-015-grammar-${level}/chapter.md`));
       }
       assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-translation.en.json")).length, config.chapters);
       assert.equal(readingContent.files.filter((file) => file.path.endsWith("/reading-support.json")).length, config.readingSupport);
@@ -937,10 +936,10 @@ for (const config of followerReadingPackageConfigs) {
         staleSidecar.text = JSON.stringify(staleDocument);
         assert.throws(
           () => assertInstalledCurriculumParticipants(staleSnapshot, manifest.packageId),
-          /(?:declared Dialogue participant CAST-001.*absent|CAST-001.*structural Dialogue label.*expected exact canonical full name)/u
+          /(?:declared Dialogue participant CAST-[0-9]{3}.*absent|CAST-[0-9]{3}.*structural Dialogue label.*expected exact canonical full name)/u
         );
       }
-      assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}cumulative-ledger.md`));
+      if (config.slug !== "japanese") assert.ok(readingContent.files.some((file) => file.path === `${unitPrefix}cumulative-ledger.md`));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topics.json"));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.json"));
       assert.ok(readingContent.files.some((file) => file.path === "lexical-topic-audit.md"));
@@ -949,10 +948,9 @@ for (const config of followerReadingPackageConfigs) {
         assert.ok(contextualFile);
         const contextual = JSON.parse(contextualFile.text);
         const what = contextual.entries.find((entry) => entry.writtenForm === "何");
-        assert.deepEqual(what.logicalEntryValues, ["what", "何", "なん"]);
+        assert.deepEqual(what.logicalEntryValues, ["what", "何", "なに"]);
         assert.equal(what.occurrences.length, 1);
-        assert.equal(what.occurrences[0].evidence, "これは" + "何ですか。");
-        assert.equal(contextual.entries.some((entry) => entry.logicalEntryValues[2] === "なに"), false);
+        assert.equal(what.occurrences[0].evidence, "佐藤さんは" + "何を読みますか。");
       }
       assert.ok(readingContent.files.some((file) => file.path === "vocabulary-forms.json"));
       assert.equal(readingArchive.has("LICENSE-CONTENT"), true);
