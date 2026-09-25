@@ -223,7 +223,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
-    artifactRevision: 15,
+    artifactRevision: 16,
     sourcePath: "../vietnamese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
     languages: ["vi", "en"],
@@ -497,7 +497,7 @@ const coreReviewTargets: readonly {
   readonly artifactRevision?: number;
   readonly interactionProfile?: DeckInteractionProfile;
 }[] = [
-  { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.1.0", artifactRevision: 5 },
+  { slug: "vietnamese", name: "Vietnamese", readingId: "com.sleepymario.language.vietnamese", languages: ["vi", "en"], packageVersion: "0.1.0", artifactRevision: 6 },
   { slug: "dutch", name: "Dutch", readingId: "com.sleepymario.language.dutch", languages: ["nl", "en"], packageVersion: "0.1.0" },
   { slug: "arabic", name: "Arabic", readingId: "com.sleepymario.language.arabic", languages: ["ar", "en"], packageVersion: "0.1.0" },
   { slug: "french", name: "French", readingId: "com.sleepymario.language.french", languages: ["fr", "en"], packageVersion: "0.1.0" },
