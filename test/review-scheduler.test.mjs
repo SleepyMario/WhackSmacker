@@ -7,9 +7,11 @@ import { test } from "node:test";
 
 import {
   createInitialReviewState,
+  isReviewDue,
   listDueReviewItems,
   listDueReviewStates,
   loadReviewProgressStore,
+  masteredReviewIntervalDays,
   recordReviewOutcome,
   recordStoredReviewOutcome,
   removeReviewProgressForPackage,
@@ -58,10 +60,37 @@ test("due-item filtering is deterministic", () => {
   const due = createInitialReviewState(identity("hangul/vowels/a"), now);
   const future = { ...createInitialReviewState(identity("hangul/vowels/eo"), now), nextReviewAt: "2026-07-07T00:00:00Z" };
   const suspended = { ...createInitialReviewState(identity("hangul/vowels/i"), now), status: "suspended" };
+  const mastered = { ...createInitialReviewState(identity("hangul/vowels/eu"), now), status: "mastered", intervalDays: masteredReviewIntervalDays };
 
-  const result = listDueReviewStates([future, suspended, due], now);
+  const result = listDueReviewStates([future, suspended, mastered, due], now);
 
   assert.deepEqual(result.map((state) => state.itemId), ["hangul/vowels/a"]);
+});
+
+test("a newly calculated five-year interval masters the card", () => {
+  const almostMastered = {
+    ...createInitialReviewState(identity(), now),
+    intervalDays: 730,
+    status: "review"
+  };
+  const result = recordReviewOutcome(almostMastered, "good", now);
+
+  assert.equal(result.state.intervalDays, masteredReviewIntervalDays);
+  assert.equal(result.state.status, "mastered");
+  assert.equal(isReviewDue(result.state, "2036-07-06T00:00:00Z"), false);
+  assert.equal(result.event.nextState.status, "mastered");
+});
+
+test("an interval below five years remains in review", () => {
+  const reviewing = {
+    ...createInitialReviewState(identity(), now),
+    intervalDays: 729,
+    status: "review"
+  };
+  const result = recordReviewOutcome(reviewing, "good", now);
+
+  assert.equal(result.state.intervalDays, 1823);
+  assert.equal(result.state.status, "review");
 });
 
 test("review ratings update nextReviewAt as expected", () => {

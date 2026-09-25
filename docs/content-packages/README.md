@@ -162,7 +162,7 @@ Point 12 removes the old Anki-backed review path. `whacksmacker review` now refe
 - [Backups and Migration](../backups-and-migration.md)
 - [Anki Parity](../anki-parity.md)
 - [Memorization Item Schema](../../schemas/memorization-item-v1.schema.json)
-- [Review Progress Schema](../../schemas/review-progress-v1.schema.json)
+- [Review Progress Schema](../../schemas/review-progress-v2.schema.json)
 - [User Data Backup Schema](../../schemas/user-data-backup-v1.schema.json)
 - [Manifest Schema](../../schemas/content-package-manifest-v1.schema.json)
 - [Catalogue Schema](../../schemas/content-package-catalogue-v1.schema.json)

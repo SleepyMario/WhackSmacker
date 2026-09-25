@@ -28,7 +28,7 @@ Installed package content remains under the content data directory and is not mo
 The progress schema is:
 
 ```text
-schemas/review-progress-v1.schema.json
+schemas/review-progress-v2.schema.json
 ```
 
 The store contains:
@@ -56,6 +56,12 @@ The v1 scheduler supports:
 - `easy`
 
 The algorithm is intentionally simple and deterministic. It is not an Anki clone.
+
+Review state uses `new`, `learning`, `review`, `mastered`, and `suspended`.
+After a successful answer, a newly calculated interval of at least 1,825 days
+marks the card as `mastered`. Mastered cards are no longer due for ordinary
+review. A deck is finished when every current card is either mastered or
+manually suspended.
 
 New items are due immediately when first synchronized from installed memorization items. Recording a review outcome updates:
 

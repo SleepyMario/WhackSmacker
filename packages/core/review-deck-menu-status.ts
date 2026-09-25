@@ -56,12 +56,15 @@ export function hasGenuineReviewActivity(state: ReviewItemState): boolean {
   return state.reviewCount > 0 || state.lastReviewedAt !== undefined || state.status !== "new";
 }
 
-/** Existing canonical completion semantics: every current deck card is suspended. */
+/** A deck is complete once every current card is mastered or manually suspended. */
 export function isReviewDeckFinished(
   cardIdentities: readonly ReviewItemIdentity[],
   deckStates: readonly ReviewItemState[]
 ): boolean {
   if (cardIdentities.length === 0 || deckStates.length !== cardIdentities.length) return false;
   const cardKeys = new Set(cardIdentities.map(reviewIdentityKey));
-  return deckStates.every((state) => cardKeys.has(reviewIdentityKey(state)) && state.status === "suspended");
+  return deckStates.every((state) =>
+    cardKeys.has(reviewIdentityKey(state))
+    && (state.status === "mastered" || state.status === "suspended")
+  );
 }

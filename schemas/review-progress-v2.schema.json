@@ -43,7 +43,7 @@
       }]
     },
     "summary": { "type": "object", "additionalProperties": false, "required": ["nextReviewAt", "reviewCount", "lapseCount", "intervalDays", "easeFactor", "status"], "properties": { "nextReviewAt": { "$ref": "#/$defs/timestamp" }, "reviewCount": { "type": "integer", "minimum": 0 }, "lapseCount": { "type": "integer", "minimum": 0 }, "intervalDays": { "type": "number", "minimum": 0 }, "easeFactor": { "type": "number", "minimum": 0 }, "status": { "$ref": "#/$defs/status" } } },
-    "status": { "enum": ["new", "learning", "review", "suspended"] },
+    "status": { "enum": ["new", "learning", "review", "mastered", "suspended"] },
     "packageId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*(?:\\.[a-z0-9][a-z0-9-]*){2,}$" },
     "semver": { "type": "string", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$" },
     "itemId": { "type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//)[a-z0-9](?:[a-z0-9._/-]*[a-z0-9])?$" },

@@ -2,7 +2,8 @@ import { isContentPackageId, isSafeContentPackagePath, isSemver } from "./conten
 
 export const reviewProgressFormatVersion = 2;
 export const reviewRatings = ["again", "hard", "good", "easy"] as const;
-export const reviewStatuses = ["new", "learning", "review", "suspended"] as const;
+export const reviewStatuses = ["new", "learning", "review", "mastered", "suspended"] as const;
+export const masteredReviewIntervalDays = 1825;
 
 export type ReviewRating = (typeof reviewRatings)[number];
 export type ReviewStatus = (typeof reviewStatuses)[number];
@@ -77,7 +78,10 @@ export function createInitialReviewState(identity: ReviewItemIdentity, now: stri
 
 export function isReviewDue(state: ReviewItemState, now: string): boolean {
   assertValidTimestamp(now, "now");
-  return state.retiredAt === undefined && state.status !== "suspended" && Date.parse(state.nextReviewAt) <= Date.parse(now);
+  return state.retiredAt === undefined
+    && state.status !== "mastered"
+    && state.status !== "suspended"
+    && Date.parse(state.nextReviewAt) <= Date.parse(now);
 }
 
 export function listDueReviewStates(
@@ -210,7 +214,11 @@ function scheduleNextState(state: ReviewItemState, rating: ReviewRating, reviewe
     lapseCount: rating === "again" ? state.lapseCount + 1 : state.lapseCount,
     intervalDays,
     easeFactor,
-    status: rating === "again" ? "learning" : "review"
+    status: rating === "again"
+      ? "learning"
+      : intervalDays >= masteredReviewIntervalDays
+        ? "mastered"
+        : "review"
   };
 }
 

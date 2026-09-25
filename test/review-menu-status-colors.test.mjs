@@ -90,6 +90,19 @@ test("one canonical classifier provides the permanent four-state precedence", ()
   assert.deepEqual(classify(target, cards, finished), { status: "finished", dueCardCount: 0 }, "finished overrides anomalously old due timestamps");
 });
 
+test("a deck is finished when every card is mastered or suspended", () => {
+  const target = deck("vietnamese");
+  const cards = [identity(target, "card-1"), identity(target, "card-2"), identity(target, "card-3")];
+  const completed = cards.map((card, index) => ({
+    ...createInitialReviewState(card, now),
+    reviewCount: 1,
+    intervalDays: index === 0 ? 1825 : 0,
+    status: index === 0 ? "mastered" : "suspended"
+  }));
+
+  assert.deepEqual(classify(target, cards, completed), { status: "finished", dueCardCount: 0 });
+});
+
 test("the one style helper maps exact status colours and complete rendered labels", () => {
   assert.equal(reviewDeckStatusStyle("not_started"), "\x1b[35m");
   assert.equal(reviewDeckStatusStyle("no_cards_to_review"), menuStyles.defaultForeground);
