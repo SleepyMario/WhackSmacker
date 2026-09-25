@@ -82,9 +82,23 @@ export function projectCurriculumMarkdown(
   const readerSafe = projectReadContentInternalFields(withoutGrammarIdentifiers, mode);
   const audienceVocabulary = mode === "developer" ? readerSafe : projectVocabularyNotes(readerSafe, mode);
   const withoutRawUsage = mode === "developer" ? audienceVocabulary : hideRawVocabularyUsage(audienceVocabulary);
-  const notesProjected = options.notesEnabled === false ? hideNewVocabularyNoteColumn(withoutRawUsage) : withoutRawUsage;
+  const notesProjected = options.notesEnabled === false
+    ? hideLearnerNotes(hideNewVocabularyNoteColumn(withoutRawUsage))
+    : withoutRawUsage;
   const grammarProjected = projectGrammarRole(notesProjected, mode, options.contentRole ?? "reading");
   return normalizeReadContentHeadingSpacing(collapseExcessBlankLines(simplifyReadingHeadings(grammarProjected)));
+}
+
+/**
+ * Removes prose sections presented as optional learner notes. Regional
+ * guidance belongs to that support layer rather than to the primary reading,
+ * vocabulary, or grammar lesson.
+ */
+export function hideLearnerNotes(text: string): string {
+  return removeNamedMarkdownSection(
+    removeNamedMarkdownSection(text, /^Language Notes$/iu),
+    /^Regional Guide$/iu
+  );
 }
 
 export function hideNewVocabularyNoteColumn(text: string): string {

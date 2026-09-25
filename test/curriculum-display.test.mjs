@@ -194,7 +194,7 @@ test("Normal reading vocabulary tables hide raw Usage while Developer preserves 
   assert.doesNotMatch(expert, /\bUsage\b|compressed editorial metadata/u);
 });
 
-test("Notes default On and Off reclaims only the New Vocabulary Note column in every view", () => {
+test("Notes default On and Off reclaims the New Vocabulary Note column in every view", () => {
   const vocabulary = [
     "### New Vocabulary", "",
     "| Form | Reading | Meaning | Part of speech | Note |",
@@ -216,6 +216,27 @@ test("Notes default On and Off reclaims only the New Vocabulary Note column in e
     const offVocabularyLine = off.split("\n").find((line) => line.includes("学生"));
     assert.ok(offVocabularyLine.length < onVocabularyLine.length, `${mode} reclaims Note width`);
   }
+});
+
+test("Notes Off removes learner note sections while preserving the lesson", () => {
+  const chapter = [
+    "# Chapter II", "",
+    "### Narrative", "", "Tôi học tiếng Việt.", "",
+    "### New Vocabulary", "",
+    "| Form | Meaning | Note |", "| --- | --- | --- |",
+    "| học | study | Followed by what is studied. |", "",
+    "### Grammar", "", "Use the verb directly.", "",
+    "### Language Notes", "", "Vietnamese uses Latin-based spelling.", "",
+    "### Regional Guide", "", "This wording is understood nationwide."
+  ].join("\n");
+
+  const projected = projectCurriculumMarkdown(chapter, "normal", { notesEnabled: false });
+  assert.match(projected, /^### Narrative$/mu);
+  assert.match(projected, /^### New Vocabulary$/mu);
+  assert.match(projected, /^### Grammar$/mu);
+  assert.doesNotMatch(projected, /^### (?:Language Notes|Regional Guide)$/mu);
+  assert.doesNotMatch(projected, /Latin-based spelling|understood nationwide/u);
+  assert.doesNotMatch(projected, /\| Note \|/u);
 });
 
 test("Characters tables hide internal identity in every view and use learner-facing Usage", () => {
