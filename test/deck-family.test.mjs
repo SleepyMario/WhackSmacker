@@ -56,6 +56,25 @@ test("deck family package ordering is deterministic and retains only the newest 
   );
 });
 
+test("KGfIL custom decks use chapter order and place Vocabulary before Sentences", () => {
+  const packages = [
+    familyPackage("local.user.decks.korean-kgfil-iv-sentences", "KGfIL - IV - Sentences", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-i-sentences", "KGfIL - I - Sentences", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-iv-vocabulary", "KGfIL - IV - Vocabulary", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-i-vocabulary", "KGfIL - I - Vocabulary", "custom", [languageOne])
+  ];
+
+  assert.deepEqual(
+    packagesForLanguageAndDeckFamily(packages, languageOne, "custom").map((entry) => entry.displayName),
+    [
+      "KGfIL - I - Vocabulary",
+      "KGfIL - I - Sentences",
+      "KGfIL - IV - Vocabulary",
+      "KGfIL - IV - Sentences"
+    ]
+  );
+});
+
 test("installed family reconciliation uses exact current package identity and never display titles", () => {
   const installed = [
     legacyPackage("com.example.medical.nl", "Medical I", "0.1.0", "specialized-review"),

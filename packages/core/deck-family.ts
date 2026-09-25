@@ -82,11 +82,20 @@ export function packagesForLanguageAndDeckFamily<T extends DeckFamilyPackageReco
     }
   }
 
-  return [...newestByPackageId.values()].sort((left, right) =>
-    left.displayName.localeCompare(right.displayName)
+  return [...newestByPackageId.values()].sort((left, right) => {
+    const kgfilOrder = [
+      "local.user.decks.korean-kgfil-i-vocabulary",
+      "local.user.decks.korean-kgfil-i-sentences",
+      "local.user.decks.korean-kgfil-iv-vocabulary",
+      "local.user.decks.korean-kgfil-iv-sentences"
+    ];
+    const leftKgfilOrder = kgfilOrder.indexOf(left.packageId);
+    const rightKgfilOrder = kgfilOrder.indexOf(right.packageId);
+    if (leftKgfilOrder >= 0 && rightKgfilOrder >= 0) return leftKgfilOrder - rightKgfilOrder;
+    return left.displayName.localeCompare(right.displayName)
       || left.packageId.localeCompare(right.packageId)
-      || compareDeckFrameworkVersions(right, left)
-  );
+      || compareDeckFrameworkVersions(right, left);
+  });
 }
 
 export function deckFamilyPackageMenuPresentation(
