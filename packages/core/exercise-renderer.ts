@@ -30,6 +30,7 @@ export interface RenderedExercise {
   readonly hintLines: readonly string[];
   readonly noteLines: readonly string[];
   readonly exampleLines: readonly string[];
+  readonly exampleTranslationLines?: readonly string[];
   readonly metadataLines: readonly string[];
   readonly warnings: readonly string[];
   readonly topicReview?: TopicReviewPresentation;
@@ -77,6 +78,7 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
     hintLines: (item.hints ?? []).flatMap((hint) => normalizeLines(localized(hint, locale))),
     noteLines: item.notes === undefined ? [] : normalizeLines(localized(item.notes, locale)),
     exampleLines: (item.examples ?? []).flatMap((example) => normalizeExampleLines(example)).slice(0, 3),
+    exampleTranslationLines: (item.exampleTranslations ?? []).flatMap((translation) => normalizeExampleLines(translation)).slice(0, 3),
     metadataLines: metadataLinesFor(item, identity, locale),
     warnings: warningsFor(item, locale),
     ...(topicReview === undefined ? {} : { topicReview })

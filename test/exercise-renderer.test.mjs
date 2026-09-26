@@ -60,6 +60,20 @@ test("vocabulary renders hints notes tags source language and difficulty", () =>
   assert.match(rendered.metadataLines.join("\n"), /Difficulty: level=1, label=foundation/);
 });
 
+test("vocabulary preserves optional translations paired with examples", () => {
+  const rendered = renderMemorizationExercise({
+    ...identity,
+    item: {
+      ...item("vocabulary"),
+      examples: ["빵 하나를 주세요.", "사탕 하나 줄까?"],
+      exampleTranslations: ["Please give me a loaf of bread.", "Shall I give you a piece of candy?"]
+    }
+  });
+
+  assert.deepEqual(rendered.exampleLines, ["빵 하나를 주세요.", "사탕 하나 줄까?"]);
+  assert.deepEqual(rendered.exampleTranslationLines, ["Please give me a loaf of bread.", "Shall I give you a piece of candy?"]);
+});
+
 test("formatted vocabulary examples render as bullets", () => {
   const rendered = renderMemorizationExercise({
     ...identity,

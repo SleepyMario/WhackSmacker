@@ -3078,9 +3078,104 @@ test("embedded review hides internal notes and renders compact learner notes and
   assert.doesNotMatch(output, /Simple review entry/);
   assert.doesNotMatch(output, /not a grammar-pattern card/);
   assert.doesNotMatch(output, /template generated/);
-  assert.match(output, /Notes\n  - noun\n  - kinship noun\n\nExamples:\n  - Ik ben student\.\n  - De student is hier\.\n  - Sophie is student\./);
+  assert.match(output, /Notes:\n  - noun\n  - kinship noun\n\nExamples:\n  - Ik ben student\.\n  - De student is hier\.\n  - Sophie is student\./);
   assert.doesNotMatch(output, /Extra example should be capped/);
   assert.doesNotMatch(output, /\x1b\[[0-9;]*m/);
+});
+
+test("embedded review keeps Notes orange and renders target-language and concrete-meaning spans blue", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "ko",
+    answerLanguage: "en",
+    promptLines: ["때"],
+    answerLines: ["time; occasion; when"],
+    noteLines: ["[[target:N 때]] or [[target:V-(으)ㄹ 때]] means [[meaning:at the time of]] or [[meaning:when]]."],
+    exampleLines: []
+  });
+
+  const color = formatEmbeddedReviewReveal(exercise, exercise, true, "local.user.decks.korean-kgfil-ii-b-vocabulary");
+  assert.match(color, /- \x1b\[33m\x1b\[34mN 때\x1b\[33m or \x1b\[34mV-\(으\)ㄹ 때\x1b\[33m means \x1b\[34mat the time of\x1b\[33m or \x1b\[34mwhen\x1b\[33m\.\x1b\[0m/u);
+  assert.doesNotMatch(color, /\[\[(?:target|meaning):/u);
+  assert.doesNotMatch(color.slice(color.indexOf("Notes")), /\x1b\[32m/u);
+
+  const plain = formatEmbeddedReviewReveal(exercise, exercise, false, "local.user.decks.korean-kgfil-ii-b-vocabulary");
+  assert.match(plain, /N 때 or V-\(으\)ㄹ 때 means at the time of or when\./u);
+  assert.doesNotMatch(plain, /\[\[(?:target|meaning):|\x1b\[[0-9;]*m/u);
+});
+
+test("ordinary Note bullets restore their orange base after every blue semantic span", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const note = "- A number word that shows order, such as [[meaning:first]] or [[meaning:second]].";
+  const color = renderTwoPaneLanguageTree(tree, new Set(), 0, note, true, 0, 20, "en-US", "navigation", 180);
+
+  assert.match(color, /\x1b\[33m• A number word that shows order, such as \x1b\[34mfirst\x1b\[33m or \x1b\[34msecond\x1b\[33m\./u);
+  assert.doesNotMatch(color, /\[\[(?:target|meaning):/u);
+});
+
+test("wrapped embedded Notes preserve orange and blue semantic colours on continuation lines", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const orangeExercise = reviewExercise({
+    promptLanguage: "en",
+    answerLanguage: "ko",
+    promptLines: ["adverb"],
+    answerLines: ["부사"],
+    noteLines: ["A word that adds information about an action, quality, or sentence."],
+    exampleLines: []
+  });
+  const orangeReveal = formatEmbeddedReviewReveal(orangeExercise, orangeExercise, true);
+  const orangeFrame = renderTwoPaneLanguageTree(tree, new Set(), 0, orangeReveal, true, 0, 20, "en-US", "navigation", 150);
+  const orangeContinuation = orangeFrame.split("\n").map((line) => line.split("|")[2] ?? "").find((line) => line.includes("sentence."));
+  assert.ok(orangeContinuation, "the fixture wraps onto the expected continuation line");
+  assert.match(orangeContinuation.slice(0, orangeContinuation.indexOf("sentence.")), /\x1b\[33m/u);
+
+  const longBlueNote = "\x1b[33m- Orange introduction before \x1b[34ma deliberately long highlighted explanation containing enough words to wrap across the output pane width safely\x1b[33m.\x1b[0m";
+  const blueFrame = renderTwoPaneLanguageTree(tree, new Set(), 0, longBlueNote, true, 0, 20, "en-US", "navigation", 150);
+  const blueContinuation = blueFrame.split("\n").map((line) => line.split("|")[2] ?? "").find((line) => line.includes("enough words to wrap across"));
+  assert.ok(blueContinuation, "the semantic fixture wraps inside the blue span");
+  assert.match(blueContinuation.slice(0, blueContinuation.indexOf("enough words to wrap across")), /\x1b\[34m/u);
+});
+
+test("Translation toggle projection reveals paired example translations without replacing the source examples", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "ko",
+    answerLanguage: "en",
+    promptLines: ["하나"],
+    answerLines: ["one"],
+    exampleLines: ["빵 하나를 주세요.", "사탕 하나 줄까?"],
+    exampleTranslationLines: ["Please give me a loaf of bread.", "Shall I give you a piece of candy?"]
+  });
+
+  const hidden = formatEmbeddedReviewReveal(exercise, exercise, false);
+  assert.match(hidden, /Examples:\n  - 빵 하나를 주세요\.\n  - 사탕 하나 줄까\?/u);
+  assert.doesNotMatch(hidden, /Please give me|Shall I give/u);
+
+  const visible = formatEmbeddedReviewReveal(exercise, exercise, false, undefined, undefined, "normal", false, false, true);
+  assert.match(visible, /Examples:\n  - 빵 하나를 주세요\.\n  - Please give me a loaf of bread\.\n  - 사탕 하나 줄까\?\n  - Shall I give you a piece of candy\?/u);
+});
+
+test("embedded review Notes, examples, and translations use separate headings with bullet rows", () => {
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const exercise = reviewExercise({
+    promptLanguage: "ko",
+    answerLanguage: "en",
+    promptLines: ["하나"],
+    answerLines: ["one"],
+    noteLines: ["A native Korean number used when counting."],
+    exampleLines: ["빵 하나를 주세요."],
+    exampleTranslationLines: ["Please give me a loaf of bread."]
+  });
+  const reveal = formatEmbeddedReviewReveal(exercise, exercise, true, undefined, undefined, "normal", false, false, true);
+  const frame = renderTwoPaneLanguageTree(tree, new Set(), 0, reveal, true, 0, 24, "en-US", "navigation", 180);
+  const outputLines = frame.split("\n")
+    .map((line) => (line.split("|")[2] ?? "").replace(/\x1b\[[0-9;]*m/gu, "").trim());
+  const notesIndex = outputLines.indexOf("Notes:");
+  const examplesIndex = outputLines.indexOf("Examples:");
+
+  assert.ok(notesIndex >= 0, "Notes uses its own colon-terminated heading row");
+  assert.equal(outputLines[notesIndex + 1], "• A native Korean number used when counting.");
+  assert.ok(examplesIndex > notesIndex, "Examples uses its own colon-terminated heading row");
+  assert.equal(outputLines[examplesIndex + 1], "• 빵 하나를 주세요.");
+  assert.equal(outputLines[examplesIndex + 2], "• Please give me a loaf of bread.");
 });
 
 test("normal five-chapter review reveal hides raw Notes but retains literal examples", () => {
@@ -4411,7 +4506,8 @@ function reviewExercise({
   promptLines,
   answerLines,
   noteLines = [],
-  exampleLines = []
+  exampleLines = [],
+  exampleTranslationLines = []
 }) {
   return {
     itemIdentity: {
@@ -4428,6 +4524,7 @@ function reviewExercise({
     hintLines: [],
     noteLines,
     exampleLines,
+    exampleTranslationLines,
     metadataLines: [],
     warnings: []
   };

@@ -1146,7 +1146,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       || answerArtworkRendered !== currentEmbeddedReview.answerArtworkRendered
     )) {
       embeddedReview = { ...currentEmbeddedReview, promptArtworkRendered, answerArtworkRendered, artworkNotice: artworkSync.notice };
-      rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+      rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
       renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode);
       // Updating the fallback state redraws the entire terminal after the first
       // successful placement. Re-place the image above that final frame;
@@ -1159,7 +1159,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
             ...(embeddedReview.side === "prompt" ? { promptArtworkRendered: false } : { answerArtworkRendered: false }),
             artworkNotice: redrawSync.notice
           };
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
           renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode);
         }
       }
@@ -1300,9 +1300,17 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       return true;
     }
 
-    if (isTranslationToggle(key) && embeddedReview === null && pendingUninstall === null) {
+    if (isTranslationToggle(key) && pendingUninstall === null) {
       options = { ...options, translationsEnabled: options.translationsEnabled !== true };
-      rightPaneText = await renderLanguageTreeRightPane(selectedNode, options);
+      rightPaneText = embeddedReview === null
+        ? await renderLanguageTreeRightPane(selectedNode, options)
+        : renderEmbeddedReviewSession(
+          embeddedReview,
+          terminal.colorsEnabled,
+          options.locale,
+          options.displayMode ?? defaultCurriculumDisplayMode,
+          options.translationsEnabled === true
+        );
       rightPaneOffset = 0;
       continue;
     }
@@ -1378,9 +1386,10 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           await saveTerminalArtworkBackend(terminalArtworkBackend, options.settingsDir);
           await artworkManager.configure(terminalArtworkBackend);
         }
+        const translationChanged = toggleSelection === 2;
         if (sourceChanged && embeddedReview !== null) {
           embeddedReview = await reprojectEmbeddedReviewSession(embeddedReview, options);
-        } else {
+        } else if (!translationChanged) {
           embeddedReview = null;
         }
         pendingUninstall = null;
@@ -1392,7 +1401,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         }
         rightPaneText = embeddedReview === null
           ? await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options)
-          : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+          : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
         rightPaneOffset = 0;
       }
       continue;
@@ -1496,9 +1505,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
             ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
         } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
         }
         rightPaneOffset = 0;
         continue;
@@ -1536,9 +1545,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
             ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
-            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+            : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
         } else {
-          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+          rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
         }
         rightPaneOffset = 0;
         continue;
@@ -1573,9 +1582,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
         rightPaneText = refreshedNode?.kind === "review-source"
           ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
-          : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+          : renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
       } else {
-        rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode);
+        rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
       }
       rightPaneOffset = 0;
       continue;
@@ -4227,7 +4236,13 @@ async function reprojectEmbeddedReviewSession(session: EmbeddedReviewSession, op
   return session.side === "answer" ? renderEmbeddedReviewAnswer(prompt, options) : prompt;
 }
 
-export function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colorsEnabled: boolean, locale: SourceLocale = "en-US", displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode): string {
+export function renderEmbeddedReviewSession(
+  session: EmbeddedReviewSession,
+  colorsEnabled: boolean,
+  locale: SourceLocale = "en-US",
+  displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode,
+  translationsEnabled = false
+): string {
   const packageLabel = session.node.packageLabel ?? session.node.packageId ?? "Installed package";
   const header = [
     `Review: ${packageLabel} / ${session.node.label}`,
@@ -4256,7 +4271,8 @@ export function renderEmbeddedReviewSession(session: EmbeddedReviewSession, colo
       session.node.sourcePath,
       displayMode,
       session.promptArtworkRendered === true,
-      session.answerArtworkRendered === true
+      session.answerArtworkRendered === true,
+      translationsEnabled
     )];
   const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled, locale);
   const currentItem = session.developerItems?.find(candidate => candidate.item.id === session.items[session.index]?.itemId)?.item;
@@ -4321,13 +4337,13 @@ export function formatEmbeddedReviewExercise(exercise: RenderedExercise, side: "
   }
   if (side === "answer") {
     if (exercise.topicReview === undefined) {
-      appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(exercise, !isFiveChapterReviewSource(sourcePath)));
+      appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(exercise, !isFiveChapterReviewSource(sourcePath)), colorsEnabled);
     }
   }
   return lines.join("\n");
 }
 
-export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode, promptArtworkRendered = false, answerArtworkRendered = promptArtworkRendered): string {
+export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: RenderedExercise, colorsEnabled: boolean, packageId?: string, sourcePath?: string, displayMode: CurriculumDisplayMode = defaultCurriculumDisplayMode, promptArtworkRendered = false, answerArtworkRendered = promptArtworkRendered, translationsEnabled = false): string {
   void packageId;
   const promptLines = prompt.topicReview === undefined
     ? projectReviewLinesForMode(prompt.promptLines, displayMode)
@@ -4341,7 +4357,7 @@ export function formatEmbeddedReviewReveal(prompt: RenderedExercise, answer: Ren
     colorsEnabled
   });
   if (answer.topicReview === undefined) {
-    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(answer, !isFiveChapterReviewSource(sourcePath)));
+    appendEmbeddedReviewSupplement(lines, embeddedReviewSupplementFromExercise(answer, !isFiveChapterReviewSource(sourcePath)), colorsEnabled, translationsEnabled);
   }
   return lines.join("\n");
 }
@@ -4386,14 +4402,26 @@ function formatEmbeddedReviewBody(options: {
 
 interface EmbeddedReviewSupplement {
   readonly notes: readonly string[];
-  readonly examples: readonly string[];
+  readonly examples: readonly EmbeddedReviewExample[];
+}
+
+interface EmbeddedReviewExample {
+  readonly text: string;
+  readonly translation?: string;
 }
 
 function embeddedReviewSupplementFromExercise(exercise: RenderedExercise, includeNotes = true): EmbeddedReviewSupplement {
   const fromNotes = embeddedReviewSupplementFromNotes(exercise.noteLines);
+  const structuredExamples = exercise.exampleLines.map((text, index) => ({
+    text,
+    ...(exercise.exampleTranslationLines?.[index] === undefined ? {} : { translation: exercise.exampleTranslationLines[index] })
+  }));
+  const examples = [...fromNotes.examples, ...structuredExamples]
+    .filter((example, index, all) => all.findIndex((candidate) => candidate.text === example.text) === index)
+    .slice(0, 3);
   return {
     notes: includeNotes ? fromNotes.notes : [],
-    examples: [...fromNotes.examples, ...exercise.exampleLines].filter((example, index, all) => all.indexOf(example) === index).slice(0, 3)
+    examples
   };
 }
 
@@ -4405,7 +4433,7 @@ function isFiveChapterReviewSource(sourcePath?: string): boolean {
 
 function embeddedReviewSupplementFromNotes(lines: readonly string[]): EmbeddedReviewSupplement {
   const notes: string[] = [];
-  const examples: string[] = [];
+  const examples: EmbeddedReviewExample[] = [];
 
   for (const rawLine of lines) {
     for (const candidate of splitEmbeddedReviewNoteLine(rawLine)) {
@@ -4416,7 +4444,7 @@ function embeddedReviewSupplementFromNotes(lines: readonly string[]): EmbeddedRe
       const example = embeddedReviewExampleSentence(line);
       if (example !== undefined) {
         if (examples.length < 3) {
-          examples.push(example);
+          examples.push({ text: example });
         }
         continue;
       }
@@ -4429,12 +4457,19 @@ function embeddedReviewSupplementFromNotes(lines: readonly string[]): EmbeddedRe
   return { notes, examples };
 }
 
-function appendEmbeddedReviewSupplement(lines: string[], supplement: EmbeddedReviewSupplement): void {
+function appendEmbeddedReviewSupplement(lines: string[], supplement: EmbeddedReviewSupplement, colorsEnabled: boolean, translationsEnabled = false): void {
   if (supplement.notes.length > 0) {
-    lines.push("", "Notes", ...prefixReviewCardLines(supplement.notes.map((note) => `- ${note}`)));
+    lines.push("", "Notes:", ...prefixReviewCardLines(supplement.notes.map((note) => {
+      const rendered = stripInlineMarkdown(note, colorsEnabled, colorsEnabled ? ansi.yellow : "");
+      return colorsEnabled ? `- ${ansi.yellow}${rendered}${ansi.reset}` : `- ${rendered}`;
+    })));
   }
   if (supplement.examples.length > 0) {
-    lines.push("", "Examples:", ...prefixReviewCardLines(supplement.examples.slice(0, 3).map((example) => `- ${example}`)));
+    const exampleLines = supplement.examples.slice(0, 3).flatMap((example) => [
+      `- ${example.text}`,
+      ...(translationsEnabled && example.translation !== undefined ? [`- ${example.translation}`] : [])
+    ]);
+    lines.push("", "Examples:", ...prefixReviewCardLines(exampleLines));
   }
 }
 
@@ -4474,13 +4509,14 @@ function isInternalEmbeddedReviewNote(line: string): boolean {
 
 function isLearnerFacingEmbeddedReviewNote(line: string): boolean {
   const normalized = normalizeEmbeddedReviewNote(line);
-  if (normalized.length === 0 || normalized.length > 80) {
+  const visible = stripInlineMarkdown(normalized, false);
+  if (visible.length === 0 || visible.length > 80) {
     return false;
   }
-  if ((normalized.match(/[.!?]/gu) ?? []).length > 1) {
+  if ((visible.match(/[.!?]/gu) ?? []).length > 1) {
     return false;
   }
-  const lower = normalized.toLowerCase();
+  const lower = visible.toLowerCase();
   return lower.length > 0;
 }
 
@@ -6667,10 +6703,10 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
       };
     }
     return {
-      text: `${bullet[1] ?? ""}• ${stripInlineMarkdown(bullet[2] ?? "", colorsEnabled)}`,
+      text: `${bullet[1] ?? ""}• ${stripInlineMarkdown(bullet[2] ?? "", colorsEnabled, colorsEnabled ? ansi.yellow : "")}`,
       firstPrefix: `${bullet[1] ?? ""}• `,
       continuationPrefix: `${bullet[1] ?? ""}  `,
-      content: stripInlineMarkdown(bullet[2] ?? "", colorsEnabled),
+      content: stripInlineMarkdown(bullet[2] ?? "", colorsEnabled, colorsEnabled ? ansi.yellow : ""),
       style: (line) => ordinaryReadingLearnerTextStyle(line, colorsEnabled)
     };
   }
@@ -6684,12 +6720,18 @@ function ordinaryReadingLearnerTextStyle(text: string, colorsEnabled: boolean): 
   return colorsEnabled ? `${ansi.yellow}${text}${ansi.reset}` : text;
 }
 
-function stripInlineMarkdown(text: string, colorsEnabled: boolean): string {
-  let result = text.replace(/\[\[grammar:([^\]\n]+)\]\]/gu, colorsEnabled ? `${ansi.blue}$1${ansi.reset}` : "$1");
+function stripInlineMarkdown(text: string, colorsEnabled: boolean, restoreColor = ansi.reset): string {
+  const blueRole = colorsEnabled ? `${ansi.blue}$1${restoreColor}` : "$1";
+  const restoreAfterStyle = restoreColor === ansi.reset ? ansi.reset : `${ansi.reset}${restoreColor}`;
+  let result = text.replace(/\[\[grammar:([^\]\n]+)\]\]/gu, blueRole);
   result = result.replace(/\[\[grammar:\s*\]\]/gu, "");
-  result = result.replace(/\[\[emphasis:([^\]\n]+)\]\]/gu, colorsEnabled ? `${ansi.bold}$1${ansi.reset}` : "$1");
-  result = result.replace(/\*\*([^*]+)\*\*/gu, colorsEnabled ? `${ansi.bold}$1${ansi.reset}` : "$1");
-  result = result.replace(/`([^`]+)`/gu, colorsEnabled ? `${ansi.blue}$1${ansi.reset}` : "$1");
+  result = result.replace(/\[\[target:([^\]\n]+)\]\]/gu, blueRole);
+  result = result.replace(/\[\[target:\s*\]\]/gu, "");
+  result = result.replace(/\[\[meaning:([^\]\n]+)\]\]/gu, blueRole);
+  result = result.replace(/\[\[meaning:\s*\]\]/gu, "");
+  result = result.replace(/\[\[emphasis:([^\]\n]+)\]\]/gu, colorsEnabled ? `${ansi.bold}$1${restoreAfterStyle}` : "$1");
+  result = result.replace(/\*\*([^*]+)\*\*/gu, colorsEnabled ? `${ansi.bold}$1${restoreAfterStyle}` : "$1");
+  result = result.replace(/`([^`]+)`/gu, colorsEnabled ? `${ansi.blue}$1${restoreColor}` : "$1");
   result = result.replace(/\*([^*]+)\*/gu, "$1");
   return result;
 }
@@ -6734,14 +6776,32 @@ function wrapDisplayText(text: string, width: number): readonly string[] {
   let remaining = text;
   while (strippedLength(remaining) > width) {
     const breakIndex = findDisplayBreakIndex(remaining, width);
-    lines.push(remaining.slice(0, breakIndex).trimEnd());
+    const currentLine = remaining.slice(0, breakIndex).trimEnd();
+    const continuationStyle = activeAnsiStylePrefix(currentLine);
+    lines.push(currentLine);
     remaining = remaining.slice(breakIndex).trimStart();
     if (remaining.length === 0) {
       break;
     }
+    if (continuationStyle.length > 0) {
+      remaining = `${continuationStyle}${remaining}`;
+    }
   }
   lines.push(remaining);
   return lines;
+}
+
+function activeAnsiStylePrefix(text: string): string {
+  const activeSequences: string[] = [];
+  for (const match of text.matchAll(/\x1b\[([0-9;]*)m/gu)) {
+    const codes = match[1] ?? "";
+    if (codes === "" || codes.split(";").includes("0")) {
+      activeSequences.length = 0;
+      continue;
+    }
+    activeSequences.push(match[0]);
+  }
+  return activeSequences.join("");
 }
 
 function findDisplayBreakIndex(text: string, width: number): number {

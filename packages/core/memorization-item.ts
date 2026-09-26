@@ -66,6 +66,8 @@ export interface MemorizationItemV1 {
   readonly hints?: readonly LocalizedContentValue[];
   readonly notes?: LocalizedContentValue;
   readonly examples?: readonly string[];
+  /** Optional translations paired by index with examples. */
+  readonly exampleTranslations?: readonly string[];
   readonly tags?: readonly string[];
   readonly source?: MemorizationItemSource;
   readonly language?: MemorizationLanguageMetadata;
@@ -413,6 +415,7 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     "hints",
     "notes",
     "examples",
+    "exampleTranslations",
     "tags",
     "source",
     "language",
@@ -448,6 +451,14 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     errors.push(`${field}.notes must be a string or locale-to-string object when present.`);
   }
   validateStringArray(value.examples, `${field}.examples`, errors, false);
+  validateStringArray(value.exampleTranslations, `${field}.exampleTranslations`, errors, false, true);
+  if (value.exampleTranslations !== undefined) {
+    if (!Array.isArray(value.examples)) {
+      errors.push(`${field}.exampleTranslations requires ${field}.examples.`);
+    } else if (Array.isArray(value.exampleTranslations) && value.exampleTranslations.length !== value.examples.length) {
+      errors.push(`${field}.exampleTranslations must contain exactly one translation for each example.`);
+    }
+  }
   if (value.schemaVersion === 2 && value.examples !== undefined) {
     const specializedDeck = isRecord(value.deck) && value.deck.scope === "specialized";
     if (!Array.isArray(value.examples) || (!specializedDeck && value.examples.length < 1) || value.examples.length > 3) {
@@ -458,6 +469,17 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
       for (const [index, example] of value.examples.entries()) {
         if (typeof example === "string" && (example !== example.normalize("NFC") || example !== example.trim())) {
           errors.push(`${field}.examples[${index}] must use NFC with no leading or trailing whitespace.`);
+        }
+      }
+    }
+  }
+  if (value.schemaVersion === 2 && Array.isArray(value.exampleTranslations)) {
+    if (value.exampleTranslations.length < 1 || value.exampleTranslations.length > 3) {
+      errors.push(`${field}.exampleTranslations must contain between one and three translations when present.`);
+    } else {
+      for (const [index, translation] of value.exampleTranslations.entries()) {
+        if (typeof translation === "string" && (translation !== translation.normalize("NFC") || translation !== translation.trim())) {
+          errors.push(`${field}.exampleTranslations[${index}] must use NFC with no leading or trailing whitespace.`);
         }
       }
     }
@@ -796,7 +818,7 @@ function validateDifficulty(value: unknown, field: string, errors: string[]): vo
   }
 }
 
-function validateStringArray(value: unknown, field: string, errors: string[], tagSyntax: boolean): void {
+function validateStringArray(value: unknown, field: string, errors: string[], tagSyntax: boolean, allowDuplicates = false): void {
   if (value === undefined) {
     return;
   }
@@ -813,7 +835,7 @@ function validateStringArray(value: unknown, field: string, errors: string[], ta
     if (tagSyntax && !/^[a-z0-9][a-z0-9._-]*$/u.test(item)) {
       errors.push(`${field}[${index}] must use lowercase tag syntax.`);
     }
-    if (seen.has(item)) {
+    if (!allowDuplicates && seen.has(item)) {
       errors.push(`${field} contains duplicate value: ${item}`);
     }
     seen.add(item);

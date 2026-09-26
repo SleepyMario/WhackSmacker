@@ -56,11 +56,34 @@ test("deck family package ordering is deterministic and retains only the newest 
   );
 });
 
+test("a package moved to another deck family appears only in its newest family", () => {
+  const packages = [
+    {
+      ...familyPackage("local.user.decks.korean-kgfil-iv-vocabulary", "KGfIL - IV - Vocabulary", "general", [languageOne]),
+      deckVersion: "0.1.0",
+      artifactRevision: 1
+    },
+    {
+      ...familyPackage("local.user.decks.korean-kgfil-iv-vocabulary", "KGfIL - IV - Vocabulary", "custom", [languageOne]),
+      deckVersion: "0.1.0",
+      artifactRevision: 2
+    }
+  ];
+
+  assert.deepEqual(packagesForLanguageAndDeckFamily(packages, languageOne, "general"), []);
+  assert.deepEqual(
+    packagesForLanguageAndDeckFamily(packages, languageOne, "custom").map((entry) => entry.artifactRevision),
+    [2]
+  );
+});
+
 test("KGfIL custom decks use chapter order and place Vocabulary before Sentences", () => {
   const packages = [
     familyPackage("local.user.decks.korean-kgfil-iv-sentences", "KGfIL - IV - Sentences", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-iii-sentences", "KGfIL - III - Sentences", "custom", [languageOne]),
     familyPackage("local.user.decks.korean-kgfil-i-sentences", "KGfIL - I - Sentences", "custom", [languageOne]),
     familyPackage("local.user.decks.korean-kgfil-iv-vocabulary", "KGfIL - IV - Vocabulary", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-iii-vocabulary", "KGfIL - III - Vocabulary", "custom", [languageOne]),
     familyPackage("local.user.decks.korean-kgfil-i-vocabulary", "KGfIL - I - Vocabulary", "custom", [languageOne])
   ];
 
@@ -69,6 +92,8 @@ test("KGfIL custom decks use chapter order and place Vocabulary before Sentences
     [
       "KGfIL - I - Vocabulary",
       "KGfIL - I - Sentences",
+      "KGfIL - III - Vocabulary",
+      "KGfIL - III - Sentences",
       "KGfIL - IV - Vocabulary",
       "KGfIL - IV - Sentences"
     ]

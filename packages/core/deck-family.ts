@@ -73,7 +73,7 @@ export function packagesForLanguageAndDeckFamily<T extends DeckFamilyPackageReco
   const newestByPackageId = new Map<string, T>();
 
   for (const candidate of packages) {
-    if (candidate.deckFamily !== deckFamily || candidate.relatedPackageIds?.includes(languagePackageId) !== true) {
+    if (candidate.relatedPackageIds?.includes(languagePackageId) !== true) {
       continue;
     }
     const current = newestByPackageId.get(candidate.packageId);
@@ -82,10 +82,16 @@ export function packagesForLanguageAndDeckFamily<T extends DeckFamilyPackageReco
     }
   }
 
-  return [...newestByPackageId.values()].sort((left, right) => {
+  return [...newestByPackageId.values()].filter((candidate) => candidate.deckFamily === deckFamily).sort((left, right) => {
     const kgfilOrder = [
       "local.user.decks.korean-kgfil-i-vocabulary",
       "local.user.decks.korean-kgfil-i-sentences",
+      "local.user.decks.korean-kgfil-ii-a-vocabulary",
+      "local.user.decks.korean-kgfil-ii-a-sentences",
+      "local.user.decks.korean-kgfil-ii-b-vocabulary",
+      "local.user.decks.korean-kgfil-ii-b-sentences",
+      "local.user.decks.korean-kgfil-iii-vocabulary",
+      "local.user.decks.korean-kgfil-iii-sentences",
       "local.user.decks.korean-kgfil-iv-vocabulary",
       "local.user.decks.korean-kgfil-iv-sentences"
     ];

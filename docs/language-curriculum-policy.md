@@ -732,6 +732,18 @@ or speaker-label purple. These colors are renderer-only: curriculum sources and
 generated packages contain no ANSI styling. `NO_COLOR` and non-TTY output emit
 the same content and layout without ANSI escapes.
 
+Learner-facing Note prose uses orange as its base colour. A span changes to
+blue only when it contains target-language material (`[[target:...]]` or an
+applicable grammar role) or the specific lexical value being illustrated
+(`[[meaning:...]]`), such as `first` and `second` in an ordinal example. A
+technical term's explanatory definition remains orange; the marker must not
+cover the whole definition. Closing either blue span restores orange for the
+surrounding explanation; it never resets the remainder of the Note to the
+terminal default. This is a semantic authoring rule rather than script
+detection, so it applies equally to languages written in Latin and non-Latin
+scripts. Plain and `NO_COLOR` output remove the authoring markers without
+changing the text.
+
 ## CLI translation visibility
 
 The far-right Toggles pane has independent `Source` and `Translation`

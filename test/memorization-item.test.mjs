@@ -51,6 +51,21 @@ test("v2 review examples allow one to three literal NFC strings", () => {
   assertInvalidItem({ ...item, examples: [" Xin chào."] }, /no leading or trailing whitespace/u);
 });
 
+test("optional example translations must pair one-to-one with source examples", () => {
+  const item = validV2Item();
+  assertValidItem({
+    ...item,
+    examples: ["빵 하나를 주세요.", "사탕 하나 줄까?"],
+    exampleTranslations: ["Please give me a loaf of bread.", "Shall I give you a piece of candy?"]
+  });
+  assertInvalidItem({ ...item, exampleTranslations: ["Translation without an example."] }, /requires .*examples/u);
+  assertInvalidItem({
+    ...item,
+    examples: ["빵 하나를 주세요.", "사탕 하나 줄까?"],
+    exampleTranslations: ["Only one translation."]
+  }, /exactly one translation for each example/u);
+});
+
 test("v2 specialized decks may preserve an explicitly empty examples array", () => {
   const item = validV2Item();
   assertValidItem({
