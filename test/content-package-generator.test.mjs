@@ -393,7 +393,7 @@ test("Medical I generator targets retain exact specialized family and language p
   }
   const traditionalChineseMedical = targets.get("chinese-traditional-specialized-medical-1");
   assert.deepEqual(traditionalChineseMedical?.languages, ["en", "zh-Latn-pinyin", "zh-Hant"]);
-  assert.equal(traditionalChineseMedical?.artifactRevision, 23);
+  assert.equal(traditionalChineseMedical?.artifactRevision, 24);
 });
 
 test("animal preview target is explicit-only general Dutch topic Review metadata", () => {

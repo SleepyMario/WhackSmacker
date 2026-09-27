@@ -557,7 +557,7 @@ const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = speci
   contentSchemaVersion: "2.0.0",
   ...(definition.targetLanguage === "zh-Hant" ? {
     deckVersion: "0.1.0",
-      artifactRevision: 23,
+      artifactRevision: 24,
     mediaPolicy: "required" as const,
     interactionProfile: { ...defaultDeckInteractionProfile, outputMedia: "output-specific" as const }
   } : {}),
