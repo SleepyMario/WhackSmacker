@@ -92,7 +92,10 @@ test("content package generator exposes the supported local package targets", ()
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1")?.artifactRevision, 3);
   assert.equal(contentPackageGeneratorTargets.every((target) => Number.isSafeInteger(target.artifactRevision) && target.artifactRevision > 0), true);
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "dutch-general-animals-preview-001-100")?.artifactRevision, 3);
-  assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "vietnamese-custom-animals")?.artifactRevision, 4);
+  const vietnameseAnimals = contentPackageGeneratorTargets.find((target) => target.id === "vietnamese-custom-animals");
+  assert.equal(vietnameseAnimals?.artifactRevision, 5);
+  assert.equal(vietnameseAnimals?.displayName, "Animals I");
+  assert.equal(vietnameseAnimals?.deckFamily, "general");
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "japanese-core-reviews")?.interactionProfile?.labels, "independent");
   const vietnamese123Lessons = contentPackageGeneratorTargets.filter((target) => target.id.startsWith("vietnamese-custom-123-lesson-"));
   assert.deepEqual(vietnamese123Lessons.map((target) => target.topic?.deckDisplayName), [

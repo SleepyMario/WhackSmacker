@@ -987,7 +987,7 @@ const vietnameseCustomDeckDefinitions = [
   ["food-drink-restaurants", "Food, Drink & Restaurants"],
   ["shopping-clothing", "Shopping & Clothing"],
   ["classifiers-common-objects", "Classifiers & Common Objects"],
-  ["animals", "Animals"],
+  ["animals", "Animals I"],
   ["descriptions-opposites", "Descriptions & Opposites"],
   ["common-confusions", "Common Confusions"]
 ] as const;
@@ -997,14 +997,16 @@ const vietnameseCustomDeckTargets: readonly ContentPackageGeneratorTarget[] = vi
   explicitOnly: true,
   packageId: `local.user.decks.vietnamese-${slug}`,
   displayName,
-  description: `Private bidirectional Vietnamese deck derived from the user's handwritten notes: ${displayName}.`,
+  description: slug === "animals"
+    ? "Bidirectional Vietnamese general animal vocabulary deck derived from the user's handwritten notes."
+    : `Private bidirectional Vietnamese deck derived from the user's handwritten notes: ${displayName}.`,
   contentType: "topic-review",
   capabilities: ["topic-review"],
-  deckFamily: "custom",
+  deckFamily: slug === "animals" ? "general" : "custom",
   relatedPackageIds: ["com.sleepymario.language.vietnamese"],
   contentSchemaVersion: "2.0.0",
   deckVersion: "0.1.0",
-  artifactRevision: slug === "animals" ? 4 : slug === "classifiers-common-objects" ? 3 : 2,
+  artifactRevision: slug === "animals" ? 5 : slug === "classifiers-common-objects" ? 3 : 2,
   mediaPolicy: slug === "animals" ? "required" : "none",
   interactionProfile: defaultDeckInteractionProfile,
   notesPolicy: "omit",
@@ -1013,7 +1015,7 @@ const vietnameseCustomDeckTargets: readonly ContentPackageGeneratorTarget[] = vi
   sourceRepository: "local-only:whacksmacker-decks-private",
   languages: ["en", "vi"],
   targetLanguage: "vi",
-  subjects: ["vietnamese", "custom", "handwritten-notes", slug],
+  subjects: ["vietnamese", slug === "animals" ? "general" : "custom", "handwritten-notes", slug],
   dependencies: [],
   include: ["README.md", "cards.tsv"],
   topicDeck: {
