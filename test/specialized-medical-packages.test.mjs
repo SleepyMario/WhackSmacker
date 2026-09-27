@@ -28,23 +28,29 @@ const packages = [
     target: "dutch-specialized-medical-1",
     packageId: "com.sleepymario.language.dutch.specialized.medical-1",
     languagePackageId: "com.sleepymario.language.dutch",
-    directions: ["en-to-nl", "nl-to-en"]
+    directions: ["en-to-nl", "nl-to-en"],
+    cardCount: 712,
+    conceptCount: 356,
+    sourceDirections: ["source-to-target", "target-to-source"]
   },
   {
     source: "english-chinese-traditional",
     target: "chinese-traditional-specialized-medical-1",
     packageId: "com.sleepymario.language.chinese-traditional.specialized.medical-1",
     languagePackageId: "com.sleepymario.language.chinese-traditional",
-    directions: ["en-to-zh-Hant", "zh-Hant-to-en"]
+    directions: ["en-to-zh-Hant", "zh-Hant-to-en", "zh-Latn-pinyin-to-zh-Hant"],
+    cardCount: 1029,
+    conceptCount: 343,
+    sourceDirections: ["pinyin-to-target", "source-to-target", "target-to-source"]
   }
 ];
 
-test("supplied specialized medical TSVs preserve the exact v2 contract and paired identities", async () => {
+test("supplied specialized medical TSVs preserve the exact v2 contract and declared identities", async () => {
   for (const definition of packages) {
     const rows = parseTsv(await readFile(join(sourceRoot, definition.source, "cards.tsv"), "utf8"));
     assert.deepEqual(rows[0], exactHeader);
     const body = rows.slice(1);
-    assert.equal(body.length, 712);
+    assert.equal(body.length, definition.cardCount);
     assert.equal(body.every((row) => row.length === 18), true);
     assert.equal(body.every((row) => row.every((field) => field === field.normalize("NFC"))), true);
     assert.equal(new Set(body.map((row) => row[0])).size, body.length);
@@ -58,9 +64,10 @@ test("supplied specialized medical TSVs preserve the exact v2 contract and paire
       const [concept, direction] = splitCardId(row[0]);
       directionsByConcept.set(concept, new Set([...(directionsByConcept.get(concept) ?? []), direction]));
     }
-    assert.equal(directionsByConcept.size, 356);
+    assert.equal(directionsByConcept.size, definition.conceptCount);
     assert.equal([...directionsByConcept.values()].every((directions) =>
-      directions.size === 2 && directions.has("target-to-source") && directions.has("source-to-target")), true);
+      directions.size === definition.sourceDirections.length
+      && definition.sourceDirections.every((direction) => directions.has(direction))), true);
   }
 });
 
@@ -102,8 +109,8 @@ test("specialized packages load beneath Dutch and empty Traditional Chinese with
       const sourceRows = parseTsv(await readFile(join(sourceRoot, definition.source, "cards.tsv"), "utf8")).slice(1);
       const sourceById = new Map(sourceRows.map((row) => [row[0], row]));
       const items = await listReadingReviewItems({ dataDir, packageId: definition.packageId, packageVersion: "0.1.0" });
-      assert.equal(items.length, 712);
-      assert.equal(new Set(items.map((entry) => entry.item.cardId)).size, 712);
+      assert.equal(items.length, definition.cardCount);
+      assert.equal(new Set(items.map((entry) => entry.item.cardId)).size, definition.cardCount);
       assert.deepEqual([...new Set(items.map((entry) => entry.item.reviewDirection))].sort(), definition.directions);
       assert.equal(items.every((entry) => entry.packageId === definition.packageId), true);
       assert.equal(items.every((entry) => entry.packageVersion === "0.1.0"), true);
@@ -150,7 +157,7 @@ test("specialized packages load beneath Dutch and empty Traditional Chinese with
     assert.equal(chineseMedicalPackage.packageVersion, "0.1.0");
     assert.equal(chineseMedical.kind, "review-source");
     assert.equal(chineseMedical.packageId, packages[1].packageId);
-    assert.equal(chineseMedical.itemCount, 712);
+    assert.equal(chineseMedical.itemCount, packages[1].cardCount);
     assert.deepEqual(child(chinese, "General Decks").children.map((node) => node.label), ["No General decks available"]);
 
     const allLabels = allNodes(tree).map((node) => node.label);

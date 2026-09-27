@@ -27,7 +27,7 @@ export const specializedReviewPackageDefinitions: readonly SpecializedReviewPack
     languageDisplayName: "Chinese (Traditional)",
     deckDisplayName: "Medical I",
     targetLanguage: "zh-Hant",
-    languages: ["en", "zh-Hant"],
+    languages: ["en", "zh-Latn-pinyin", "zh-Hant"],
     sourcePath: "../language-curriculum-specialized/specialized-content/medical/english-chinese-traditional"
   }
 ];

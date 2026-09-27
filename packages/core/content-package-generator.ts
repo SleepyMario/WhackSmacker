@@ -549,7 +549,7 @@ const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = speci
   displayName: `${definition.languageDisplayName} Specialized ${definition.deckDisplayName}`,
   description: definition.targetLanguage === "nl"
     ? "Private specialized Dutch and English medical terminology deck, separate from the ordinary Dutch curriculum."
-    : "Private specialized English and Traditional Chinese medical terminology deck; no ordinary Traditional Chinese curriculum is included.",
+    : "Private specialized English, Hanyu Pinyin, and Traditional Chinese medical terminology ABC deck; no ordinary Traditional Chinese curriculum is included.",
   contentType: "specialized-review",
   capabilities: ["specialized-review"],
   deckFamily: "specialized",
@@ -557,7 +557,7 @@ const specializedReviewTargets: readonly ContentPackageGeneratorTarget[] = speci
   contentSchemaVersion: "2.0.0",
   ...(definition.targetLanguage === "zh-Hant" ? {
     deckVersion: "0.1.0",
-      artifactRevision: 22,
+      artifactRevision: 23,
     mediaPolicy: "required" as const,
     interactionProfile: { ...defaultDeckInteractionProfile, outputMedia: "output-specific" as const }
   } : {}),
