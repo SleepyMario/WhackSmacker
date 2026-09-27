@@ -20,6 +20,7 @@ test("content package generator exposes the supported local package targets", ()
   assert.deepEqual(
     contentPackageGeneratorTargets.map((target) => [target.id, target.packageId]),
     [
+      ["japanese-general-animals-i", "com.sleepymario.language.japanese.general.animals-i"],
       ["korean-general-animals-i", "com.sleepymario.language.korean.general.animals-i"],
       ["linguistic-terminology", "com.sleepymario.language.linguistic-terminology"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],

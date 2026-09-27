@@ -1080,6 +1080,32 @@ const vietnamese123LessonTargets: readonly ContentPackageGeneratorTarget[] = vie
 
 const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
   {
+    id: "japanese-general-animals-i",
+    explicitOnly: true,
+    packageId: "com.sleepymario.language.japanese.general.animals-i",
+    displayName: "Animals I",
+    description: "ABC-style Japanese general animal vocabulary using the established Animals I concept list.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "general",
+    relatedPackageIds: ["com.sleepymario.language.japanese"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "required",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "japanese-general/animals-i",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ja", "ja-Kana"],
+    targetLanguage: "ja",
+    subjects: ["japanese", "general", "animals", "abc"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "japanese-general-animals-i", displayName: "Animals I", outputFile: "animals-i.json", unitStart: 1, unitEnd: 1 }
+  },
+  {
     id: "korean-general-animals-i",
     explicitOnly: true,
     packageId: "com.sleepymario.language.korean.general.animals-i",
