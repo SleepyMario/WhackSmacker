@@ -11,6 +11,7 @@ import {
   buildLanguageTree,
   buildLanguageMenuItems,
   buildModuleTree,
+  collectDueDecks,
   flattenVisibleLanguageTree,
   getDynamicLanguageMenuItems,
   getBeginnerMathematicsMenuItems,
@@ -32,6 +33,7 @@ import {
   languageMenuHeading,
   listAvailableModuleDescriptors,
   menuStyles,
+  markLanguagesWithDueDecks,
   projectionToggleRequiresModuleTreeRefresh,
   renderTwoPaneLanguageTree,
   renderLanguageTreeRightPane,
@@ -2464,6 +2466,50 @@ test("review deck menu status distinguishes not started finished waiting and due
     status: "not_started",
     dueCardCount: 0
   }, "progress remains isolated by deck item identity");
+});
+
+test("new cards mark built-in language ancestors as due", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-built-in-due-"));
+  const contentDataDir = join(root, "content");
+  const progressDir = join(root, "progress");
+  const now = "2026-09-27T00:00:00Z";
+  const languageId = "com.sleepymario.language.chinese-traditional";
+  const packageId = `${languageId}.radicals`;
+  const sourcePath = "cards.tsv";
+  const tree = {
+    id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
+      id: languageId,
+      label: "Chinese (Traditional)",
+      kind: "module",
+      moduleId: languageId,
+      children: [{
+        id: `${languageId}:general`, label: "General", kind: "category", moduleId: languageId,
+        children: [{
+          id: `${packageId}:review`, label: "Radicals", kind: "review-source",
+          packageId, packageVersion: "1.0.0", sourcePath, itemCount: 1, contentDataDir
+        }]
+      }]
+    }]
+  };
+  const identity = { packageId, packageVersion: "1.0.0", sourcePath, itemId: "radical-1" };
+  try {
+    await mkdir(progressDir, { recursive: true });
+    await writeFile(join(progressDir, "review-progress.json"), `${JSON.stringify({
+      reviewProgressFormatVersion: 2,
+      updatedAt: now,
+      items: [createInitialReviewState(identity, now)],
+      events: []
+    }, null, 2)}\n`);
+    const due = await collectDueDecks(tree, { dataDir: contentDataDir }, now);
+    assert.equal(due.length, 1);
+    assert.equal(due[0].due, 1);
+    const marked = markLanguagesWithDueDecks(tree, due);
+    assert.equal(marked.children[0].dueCardCount, 1);
+    const output = renderTwoPaneLanguageTree(marked, new Set(["whacksmacker"]), 0, "", true);
+    assert.match(output, /\x1b\[34m[^\n]*Chinese \(Traditional\)/u);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });
 
 test("two-pane renderer colors review deck rows by review status", () => {

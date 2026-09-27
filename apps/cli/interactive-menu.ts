@@ -1070,7 +1070,6 @@ export async function collectDueDecks(root: LanguageTreeNode, options: Interacti
       stores.set(progressDir, cached.store);
     }
     const states = stores.get(progressDir)!.items.filter(item => item.packageId === packageId && !item.retiredAt && (node.kind !== "review-source" || item.sourcePath === node.sourcePath));
-    if (!states.some(item => item.reviewCount > 0)) return;
     const due = Math.max(0, count - states.length) + listDueReviewStates(states, now).length;
     if (due === 0) return;
     const context = [...parents].reverse().find(parent => parent.packageId?.startsWith("com.sleepymario.language.") || parent.label === "Japan" || parent.label === "World");
@@ -1082,11 +1081,14 @@ export async function collectDueDecks(root: LanguageTreeNode, options: Interacti
 
 export function markLanguagesWithDueDecks(root: LanguageTreeNode, decks: readonly DueDeckEntry[]): LanguageTreeNode {
   const dueAncestors = new Set(decks.flatMap(deck => deck.ancestors));
-  const walk = (node: LanguageTreeNode): LanguageTreeNode => ({
-    ...node,
-    ...(node.packageId?.startsWith("com.sleepymario.language.") && node.kind !== "review-source" ? { dueCardCount: dueAncestors.has(node.id) ? 1 : 0 } : {}),
-    ...(node.children ? { children: node.children.map(walk) } : {})
-  });
+  const walk = (node: LanguageTreeNode): LanguageTreeNode => {
+    const languageId = node.packageId ?? node.moduleId;
+    return {
+      ...node,
+      ...(languageId?.startsWith("com.sleepymario.language.") && node.kind !== "review-source" ? { dueCardCount: dueAncestors.has(node.id) ? 1 : 0 } : {}),
+      ...(node.children ? { children: node.children.map(walk) } : {})
+    };
+  };
   return walk(root);
 }
 
@@ -6073,7 +6075,7 @@ function styleTreeLine(plain: string, semanticLabel: string, entry: VisibleLangu
   if (entry.node.kind === "review-source") {
     return styleReviewSourceLine(plain, semanticLabel, entry.node.reviewStatus, selected);
   }
-  if (entry.node.packageId?.startsWith("com.sleepymario.language.") && (entry.node.dueCardCount ?? 0) > 0) {
+  if ((entry.node.packageId ?? entry.node.moduleId)?.startsWith("com.sleepymario.language.") && (entry.node.dueCardCount ?? 0) > 0) {
     return `${selected ? ansi.inverse : ""}${ansi.bold}${ansi.blue}${plain}${ansi.reset}`;
   }
   if (entry.node.kind === "backup-root") {
