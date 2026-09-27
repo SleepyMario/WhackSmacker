@@ -2468,7 +2468,7 @@ test("review deck menu status distinguishes not started finished waiting and due
   }, "progress remains isolated by deck item identity");
 });
 
-test("new cards mark built-in language ancestors as due", async () => {
+test("only started due cards mark built-in language ancestors as due", async () => {
   const root = await mkdtemp(join(tmpdir(), "wsm-built-in-due-"));
   const contentDataDir = join(root, "content");
   const progressDir = join(root, "progress");
@@ -2498,6 +2498,22 @@ test("new cards mark built-in language ancestors as due", async () => {
       reviewProgressFormatVersion: 2,
       updatedAt: now,
       items: [createInitialReviewState(identity, now)],
+      events: []
+    }, null, 2)}\n`);
+    const unstarted = await collectDueDecks(tree, { dataDir: contentDataDir }, now);
+    assert.deepEqual(unstarted, []);
+    const reviewed = {
+      ...createInitialReviewState(identity, now),
+      lastReviewedAt: "2026-09-26T00:00:00Z",
+      nextReviewAt: now,
+      reviewCount: 1,
+      intervalDays: 1,
+      status: "review"
+    };
+    await writeFile(join(progressDir, "review-progress.json"), `${JSON.stringify({
+      reviewProgressFormatVersion: 2,
+      updatedAt: now,
+      items: [reviewed],
       events: []
     }, null, 2)}\n`);
     const due = await collectDueDecks(tree, { dataDir: contentDataDir }, now);

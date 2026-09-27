@@ -1070,6 +1070,7 @@ export async function collectDueDecks(root: LanguageTreeNode, options: Interacti
       stores.set(progressDir, cached.store);
     }
     const states = stores.get(progressDir)!.items.filter(item => item.packageId === packageId && !item.retiredAt && (node.kind !== "review-source" || item.sourcePath === node.sourcePath));
+    if (!states.some(item => item.reviewCount > 0)) return;
     const due = Math.max(0, count - states.length) + listDueReviewStates(states, now).length;
     if (due === 0) return;
     const context = [...parents].reverse().find(parent => parent.packageId?.startsWith("com.sleepymario.language.") || parent.label === "Japan" || parent.label === "World");
