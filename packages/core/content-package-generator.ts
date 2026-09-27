@@ -786,7 +786,7 @@ const chineseScriptConversionTargets: readonly ContentPackageGeneratorTarget[] =
   relatedPackageIds: ["com.sleepymario.language.chinese-simplified-traditional"],
   contentSchemaVersion: "2.0.0",
   deckVersion: "1.0.0",
-  artifactRevision: 2,
+  artifactRevision: 3,
   mediaPolicy: "none",
   interactionProfile: defaultDeckInteractionProfile,
   packageVersion: "1.0.0",

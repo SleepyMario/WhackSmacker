@@ -143,6 +143,19 @@ const vocabularyOverrides = new Map(Object.entries({
   "赣州": { pinyin: "Gan4 zhou1", meaning: "Ganzhou" },
 }));
 
+// Some valid vocabulary items occur only as a substring of a different name
+// in the source corpus. Give those items an unambiguous authored example
+// instead of teaching the dictionary meaning through the wrong proper noun.
+const exampleOverrides = new Map(Object.entries({
+  "阿曼": {
+    simplifiedSentence: "阿曼位于阿拉伯半岛东南部。",
+    traditionalSentence: "阿曼位於阿拉伯半島東南部。",
+    sourceType: "authored",
+    sourceId: "level-1-vocabulary-oman",
+    sourceSentence: "Oman is located in the southeastern part of the Arabian Peninsula.",
+  },
+}));
+
 // Where the MOE dictionary records several readings, these select the one
 // matching the meaning used by the Level I sentence.
 const taiwanPinyinOverrides = new Map(Object.entries({
@@ -264,7 +277,10 @@ for (const row of mappings.rows) {
     const numberedPinyin = override?.pinyin ?? entry.pinyin;
     const mainlandPinyin = toneMarkedPinyin(numberedPinyin);
     const taiwanPinyin = taiwanPinyinFor(word, traditional, mainlandPinyin, entry);
-    const exampleProvenance = provenanceByMapping.get(mappingCode) ?? { sourceType: "preexisting", sourceId: "", sourceSentence: "" };
+    const exampleOverride = exampleOverrides.get(word);
+    const exampleProvenance = exampleOverride
+      ?? provenanceByMapping.get(mappingCode)
+      ?? { sourceType: "preexisting", sourceId: "", sourceSentence: "" };
     inventory.set(word, {
       mappingCode,
       simplified: word,
@@ -273,8 +289,8 @@ for (const row of mappings.rows) {
       taiwanPinyin: taiwanPinyin?.pinyin ?? "",
       taiwanPinyinSource: taiwanPinyin?.source ?? "",
       meaning: override?.meaning ?? shortGloss(entry.definitions),
-      simplifiedSentence,
-      traditionalSentence,
+      simplifiedSentence: exampleOverride?.simplifiedSentence ?? simplifiedSentence,
+      traditionalSentence: exampleOverride?.traditionalSentence ?? traditionalSentence,
       ...exampleProvenance,
     });
   }
