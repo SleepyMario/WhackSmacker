@@ -2559,7 +2559,10 @@ function parseReviewDeckCards(
       header.length === v2ExamplesHeader.length || header.length === v2TranslatedExamplesHeader.length || usesAuthoredV2Rows,
       includesExampleTranslations
     ));
-    if (target.id !== "japanese-prefectures-kanji" && (target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
+    // Finite Animals I is an explicitly authored General ABC topic deck. Its
+    // one-syllable/kana C values follow the topic-deck exception rather than
+    // the curriculum occurrence ledger and two-mora distinctiveness rule.
+    if (target.id !== "japanese-prefectures-kanji" && target.id !== "japanese-general-animals-i" && (target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
       const chapterStart = Math.min(...items.flatMap((item) => item.sourceChapters));
       const chapterEnd = Math.max(...items.flatMap((item) => item.sourceChapters));
       const deckContext = japaneseContextualReadings === undefined ? undefined : {
