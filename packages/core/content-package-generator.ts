@@ -1080,6 +1080,32 @@ const vietnamese123LessonTargets: readonly ContentPackageGeneratorTarget[] = vie
 
 const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
   {
+    id: "korean-general-animals-i",
+    explicitOnly: true,
+    packageId: "com.sleepymario.language.korean.general.animals-i",
+    displayName: "Animals I",
+    description: "Bidirectional Korean general animal vocabulary using the established Animals I concept list.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "general",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "required",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-general/animals-i",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "general", "animals"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-general-animals-i", displayName: "Animals I", outputFile: "animals-i.json", unitStart: 1, unitEnd: 1 }
+  },
+  {
     id: "chinese-traditional-specialized-medical-tmp",
     explicitOnly: true,
     packageId: "com.sleepymario.language.chinese-traditional.specialized.medical-tmp",
