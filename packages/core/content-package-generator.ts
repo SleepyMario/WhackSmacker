@@ -2476,7 +2476,8 @@ function buildMemorizationFiles(
 ): readonly GeneratedMemorizationFile[] {
   const reviewExampleIndex = buildReviewExampleIndex(target, evidenceFiles);
   // Prefecture reading pairs are a standalone two-sided deck, not curriculum ABC vocabulary.
-  const japaneseContextualReadings = target.id !== "japanese-prefectures-kanji" && target.languages?.includes("ja") === true
+  const standaloneJapaneseTopicDeck = target.id === "japanese-prefectures-kanji" || target.id === "japanese-general-animals-i";
+  const japaneseContextualReadings = !standaloneJapaneseTopicDeck && target.languages?.includes("ja") === true
     ? parseJapaneseContextualReadings(evidenceFiles)
     : undefined;
   return sourceFiles
