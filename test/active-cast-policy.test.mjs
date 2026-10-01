@@ -32,6 +32,27 @@ test("progression must be an exact permutation of the canonical thirty", () => {
   assert.throws(() => assertActiveCastProgression([...ids.slice(0, 29), "CAST-031"], ids), /unknown/u);
 });
 
+test("a validated paired introduction activates one later person early without reactivating them", () => {
+  const earlyActivations = [{
+    personId: ids[5],
+    chapter: 11,
+    reason: "A grandmother and grandson need to enter together in one natural family scene."
+  }];
+  assert.deepEqual(activePersonIdsForChapter(10, ids, earlyActivations), ids.slice(0, 4));
+  assert.deepEqual(activePersonIdsForChapter(11, ids, earlyActivations), ids.slice(0, 6));
+  assert.deepEqual(activePersonIdsForChapter(16, ids, earlyActivations), ids.slice(0, 6));
+  assert.deepEqual(activePersonIdsForChapter(21, ids, earlyActivations), ids.slice(0, 7));
+
+  const report = activeCastBlockReport({
+    chapterStart: 11,
+    progression: ids,
+    earlyActivations,
+    appearancesByChapter: {},
+    suppliedChapters: new Set([11])
+  });
+  assert.deepEqual(report.activationPeople.map((person) => person.canonicalId), [ids[4], ids[5]]);
+});
+
 test("dialogue and narrative identities are checked while unrelated proper nouns are outside cast-ID scope", () => {
   assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(1, [], { dialogueSpeakerIds: [ids[5]] })] }), /inactive canonical person/u);
   assert.throws(() => auditActiveCast({ canonicalPersonIds: ids, progression: ids, chapters: [record(2, [], { narrativePersonIds: [ids[6]] })] }), /inactive canonical person/u);

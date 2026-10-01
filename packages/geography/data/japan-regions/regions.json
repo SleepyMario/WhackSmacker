@@ -1,0 +1,97 @@
+[
+  {
+    "id": "hokkaido-highlight",
+    "answer": "Hokkaidō",
+    "prefectures": [
+      "Hokkaido"
+    ]
+  },
+  {
+    "id": "tohoku-highlight",
+    "answer": "Tōhoku",
+    "prefectures": [
+      "Aomori",
+      "Iwate",
+      "Miyagi",
+      "Akita",
+      "Yamagata",
+      "Fukushima"
+    ]
+  },
+  {
+    "id": "kanto-highlight",
+    "answer": "Kantō",
+    "prefectures": [
+      "Ibaraki",
+      "Tochigi",
+      "Gunma",
+      "Saitama",
+      "Chiba",
+      "Tokyo",
+      "Kanagawa"
+    ]
+  },
+  {
+    "id": "chubu-highlight",
+    "answer": "Chūbu",
+    "prefectures": [
+      "Niigata",
+      "Toyama",
+      "Ishikawa",
+      "Fukui",
+      "Yamanashi",
+      "Nagano",
+      "Gifu",
+      "Shizuoka",
+      "Aichi"
+    ]
+  },
+  {
+    "id": "kansai-highlight",
+    "answer": "Kansai",
+    "prefectures": [
+      "Mie",
+      "Shiga",
+      "Kyoto",
+      "Osaka",
+      "Hyogo",
+      "Nara",
+      "Wakayama"
+    ]
+  },
+  {
+    "id": "chugoku-highlight",
+    "answer": "Chūgoku",
+    "prefectures": [
+      "Tottori",
+      "Shimane",
+      "Okayama",
+      "Hiroshima",
+      "Yamaguchi"
+    ]
+  },
+  {
+    "id": "shikoku-highlight",
+    "answer": "Shikoku",
+    "prefectures": [
+      "Tokushima",
+      "Kagawa",
+      "Ehime",
+      "Kochi"
+    ]
+  },
+  {
+    "id": "kyushu-highlight",
+    "answer": "Kyūshū",
+    "prefectures": [
+      "Fukuoka",
+      "Saga",
+      "Nagasaki",
+      "Kumamoto",
+      "Oita",
+      "Miyazaki",
+      "Kagoshima",
+      "Okinawa"
+    ]
+  }
+]

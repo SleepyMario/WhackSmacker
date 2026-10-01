@@ -66,6 +66,19 @@ test("optional example translations must pair one-to-one with source examples", 
   }, /exactly one translation for each example/u);
 });
 
+test("structured example groups preserve one leading line and one to three nested replies", () => {
+  const item = validV2Item();
+  assertValidItem({
+    ...item,
+    exampleGroups: [{
+      text: "Anh có phải là người Việt Nam không?",
+      responses: ["Vâng, tôi là người Việt Nam.", "Không, tôi không phải là người Việt Nam."]
+    }]
+  });
+  assertInvalidItem({ ...item, exampleGroups: [{ text: "Question", responses: [] }] }, /between one and three replies/u);
+  assertInvalidItem({ ...item, exampleGroups: [{ text: " Question", responses: ["Reply"] }] }, /one NFC line/u);
+});
+
 test("v2 specialized decks may preserve an explicitly empty examples array", () => {
   const item = validV2Item();
   assertValidItem({

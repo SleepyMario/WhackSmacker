@@ -92,6 +92,14 @@ from display text. Topics are family-local, so the same topic ID can appear
 under both families without changing lexical IDs, entry IDs, media identities,
 or progress.
 
+Reading, General, Specialized, and Custom are independent content scopes.
+Custom decks are private material authored specifically for Ashwin. Work in
+one scope does not establish prerequisites, vocabulary coverage, progression,
+cast obligations, validation ledgers, or content requirements for any other
+scope unless Ashwin explicitly connects them for the current task. Shared
+schemas, rendering, scheduling, packaging, and other technical framework
+behavior remain reusable across scopes without creating a content dependency.
+
 The builder reports language-content, output-structure, interaction-metadata,
 optional-media, required-media, and package-metadata readiness independently.
 Language text, outputs, examples, IDs, artwork, approvals, and family-boundary

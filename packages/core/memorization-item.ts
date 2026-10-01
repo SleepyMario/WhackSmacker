@@ -68,6 +68,8 @@ export interface MemorizationItemV1 {
   readonly examples?: readonly string[];
   /** Optional translations paired by index with examples. */
   readonly exampleTranslations?: readonly string[];
+  /** Structured examples whose replies are rendered beneath a leading line. */
+  readonly exampleGroups?: readonly MemorizationExampleGroup[];
   readonly tags?: readonly string[];
   readonly source?: MemorizationItemSource;
   readonly language?: MemorizationLanguageMetadata;
@@ -76,6 +78,13 @@ export interface MemorizationItemV1 {
   readonly lexicalMetadata?: LearnerFacingVocabularyRecord;
   readonly createdAt?: string;
   readonly updatedAt?: string;
+}
+
+export interface MemorizationExampleGroup {
+  readonly text: string;
+  readonly responses: readonly string[];
+  readonly translation?: string;
+  readonly responseTranslations?: readonly string[];
 }
 
 export interface MemorizationItemV2 extends Omit<MemorizationItemV1, "schemaVersion"> {
@@ -284,6 +293,9 @@ export async function readInstalledMemorizationItems(
   // Standalone prefecture kanji/kana pairs intentionally have two directions, without a meaning card.
   if (selected.packageId !== "com.sleepymario.language.japanese.prefectures-kanji"
     && selected.packageId !== "com.sleepymario.language.japanese.general.animals-i"
+    // Private Custom decks are finite source-based collections rather than
+    // projections of the canonical Japanese curriculum occurrence ledger.
+    && manifest.deckFamily !== "custom"
     && collection.schemaVersion === 2
     && items.every((item) => item.schemaVersion === 2 && item.language?.target === "ja")) {
     const contextualReadings = await installedJapaneseContextualReadings(manifest, dataDir, items as readonly MemorizationItemV2[]);
@@ -419,6 +431,7 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     "notes",
     "examples",
     "exampleTranslations",
+    "exampleGroups",
     "tags",
     "source",
     "language",
@@ -455,6 +468,7 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
   }
   validateStringArray(value.examples, `${field}.examples`, errors, false);
   validateStringArray(value.exampleTranslations, `${field}.exampleTranslations`, errors, false, true);
+  validateExampleGroups(value.exampleGroups, `${field}.exampleGroups`, errors);
   if (value.exampleTranslations !== undefined) {
     if (!Array.isArray(value.examples)) {
       errors.push(`${field}.exampleTranslations requires ${field}.examples.`);
@@ -498,6 +512,54 @@ function validateItem(value: unknown, field: string, errors: string[]): void {
     if (forbidden in value) {
       errors.push(`${field}.${forbidden} is user progress, scheduler state, settings, or provider-specific data and is not allowed.`);
     }
+  }
+}
+
+function validateExampleGroups(value: unknown, field: string, errors: string[]): void {
+  if (value === undefined) return;
+  if (!Array.isArray(value) || value.length < 1 || value.length > 3) {
+    errors.push(`${field} must contain between one and three structured example groups when present.`);
+    return;
+  }
+  for (const [index, group] of value.entries()) {
+    const groupField = `${field}[${index}]`;
+    if (!isRecord(group)) {
+      errors.push(`${groupField} must be an object.`);
+      continue;
+    }
+    const allowed = new Set(["text", "responses", "translation", "responseTranslations"]);
+    for (const key of Object.keys(group)) {
+      if (!allowed.has(key)) errors.push(`${groupField}.${key} is not allowed.`);
+    }
+    validateCanonicalExampleText(group.text, `${groupField}.text`, errors);
+    if (!Array.isArray(group.responses) || group.responses.length < 1 || group.responses.length > 3) {
+      errors.push(`${groupField}.responses must contain between one and three replies.`);
+    } else {
+      for (const [responseIndex, response] of group.responses.entries()) {
+        validateCanonicalExampleText(response, `${groupField}.responses[${responseIndex}]`, errors);
+      }
+    }
+    if (group.translation !== undefined) validateCanonicalExampleText(group.translation, `${groupField}.translation`, errors);
+    if (group.responseTranslations !== undefined) {
+      if (!Array.isArray(group.responses) || !Array.isArray(group.responseTranslations)
+        || group.responseTranslations.length !== group.responses.length) {
+        errors.push(`${groupField}.responseTranslations must contain exactly one translation for each reply.`);
+      } else {
+        for (const [translationIndex, translation] of group.responseTranslations.entries()) {
+          validateCanonicalExampleText(translation, `${groupField}.responseTranslations[${translationIndex}]`, errors);
+        }
+      }
+    }
+  }
+}
+
+function validateCanonicalExampleText(value: unknown, field: string, errors: string[]): void {
+  if (typeof value !== "string" || value.length === 0) {
+    errors.push(`${field} must be a non-empty string.`);
+    return;
+  }
+  if (value !== value.normalize("NFC") || value !== value.trim() || /[\r\n]/u.test(value)) {
+    errors.push(`${field} must be one NFC line with no leading or trailing whitespace.`);
   }
 }
 

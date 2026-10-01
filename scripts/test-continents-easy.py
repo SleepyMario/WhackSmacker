@@ -39,9 +39,10 @@ def start():
  return p,m
 p,m=start()
 try:
- b=read_until(m,b'Type the romanized');assert b'Prefectures - Hard' in b
+ b=read_until(m,b'Type the romanized');assert b'Prefectures - All - Hard' in b
  os.write(m,'Hokkaidō\r'.encode());read_until(m,b'Correct!');os.write(m,b' ')
- read_until(m,b'Type the romanized');os.write(m,b'wrong\r');read_until(m,b'Wrong. The highlighted prefecture is Aomori');os.write(m,b'\x1b');p.wait(timeout=5);assert p.returncode==0
+ read_until(m,b'Type the romanized');os.write(m,b'wrong\r');read_until(m,b'Wrong. The highlighted prefecture is Aomori');os.write(m,b' ')
+ read_until(m,b'Type the romanized');os.write(m,b'\x1b');p.wait(timeout=5);assert p.returncode==0
 finally:
  if p.poll() is None:p.kill()
  os.close(m)

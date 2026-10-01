@@ -1,4 +1,5 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
+import { japanRegionDecks } from "../../packages/geography/japan-regions";
 import { dirname, join } from "node:path";
 import { readFileSync } from "node:fs";
 import { stat } from "node:fs/promises";
@@ -12,6 +13,7 @@ import {
   listAvailableContentPackages,
   listInstalledContentPackages,
   listDueReviewStates,
+  isReviewItemBuryEligible,
   listReadableContentEntries,
   listInstalledReadablePackages,
   listReadingReviewItems,
@@ -44,6 +46,7 @@ import {
   readInstalledContentEntry,
   readingReviewSourcesFromItems,
   recordReadingReviewAnswer,
+  buryReadingReviewItem,
   resolveReadingReviewArtwork,
   resolveContentDataDirectory,
   removeContentPackage,
@@ -1038,6 +1041,71 @@ async function runGeographyAction(registry: InMemoryCliCommandRegistry, terminal
 
 export interface DueDeckEntry { readonly node: LanguageTreeNode; readonly label: string; readonly due: number; readonly ancestors: readonly string[]; }
 
+interface GeographyReviewTarget {
+  readonly packageId: string;
+  readonly packageVersion: "0.1.0";
+  readonly itemIds: readonly string[];
+  readonly count: number;
+}
+
+interface GeographyPrefectureMetadata {
+  readonly id: string;
+  readonly answer: string;
+}
+
+interface GeographyRegionMetadata {
+  readonly id: string;
+  readonly prefectures: readonly string[];
+}
+
+let geographyPrefectureMetadata: readonly GeographyPrefectureMetadata[] | undefined;
+let geographyRegionMetadata: readonly GeographyRegionMetadata[] | undefined;
+
+function loadGeographyPrefectureMetadata(): readonly GeographyPrefectureMetadata[] {
+  geographyPrefectureMetadata ??= JSON.parse(readFileSync(join(__dirname, "../../packages/geography/data/japan-hard/prefectures.json"), "utf8")) as readonly GeographyPrefectureMetadata[];
+  return geographyPrefectureMetadata;
+}
+
+function loadGeographyRegionMetadata(): readonly GeographyRegionMetadata[] {
+  geographyRegionMetadata ??= JSON.parse(readFileSync(join(__dirname, "../../packages/geography/data/japan-regions/regions.json"), "utf8")) as readonly GeographyRegionMetadata[];
+  return geographyRegionMetadata;
+}
+
+function geographyReviewTarget(packageId: string, highlightIds: readonly string[], hard: boolean): GeographyReviewTarget {
+  const itemIds = hard ? [...highlightIds] : [...highlightIds, ...highlightIds.map((id) => id.replace(/-highlight$/u, "-locate"))];
+  return { packageId, packageVersion: "0.1.0", itemIds, count: itemIds.length };
+}
+
+function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | undefined {
+  const hard = id.endsWith("-hard");
+  if (!hard && !id.endsWith("-easy")) return undefined;
+  if (id === `continents-${hard ? "hard" : "easy"}`) {
+    const continentIds = ["north-america", "south-america", "africa", "europe", "asia", "oceania", "antarctica"].map((slug) => `${slug}-highlight`);
+    return geographyReviewTarget(`com.sleepymario.geography.continents-${hard ? "hard" : "easy"}`, continentIds, hard);
+  }
+  if (id === `japan-regions-${hard ? "hard" : "easy"}` || id === `japanese-regions-${hard ? "hard" : "easy"}`) {
+    const japanese = id.startsWith("japanese-");
+    return geographyReviewTarget(`com.sleepymario.${japanese ? "language.japanese" : "geography"}.japan-regions-${hard ? "hard" : "easy"}`, loadGeographyRegionMetadata().map((region) => region.id), hard);
+  }
+  if (id === `japan-prefectures-${hard ? "hard" : "easy"}` || id === `japanese-prefectures-${hard ? "hard" : "easy"}`) {
+    const japanese = id.startsWith("japanese-");
+    return geographyReviewTarget(
+      `com.sleepymario.${japanese ? "language.japanese" : "geography"}.japan-prefectures-${hard ? "hard" : "easy"}`,
+      loadGeographyPrefectureMetadata().map((prefecture) => prefecture.id),
+      hard
+    );
+  }
+  const japanese = id.startsWith("japanese-");
+  const region = japanRegionDecks.find(candidate => id === `${japanese ? "japanese" : "japan"}-prefectures-${candidate.slug}-${hard ? "hard" : "easy"}`);
+  if (region === undefined) return undefined;
+  const memberNames = new Set(loadGeographyRegionMetadata().find((candidate) => candidate.id === `${region.slug}-highlight`)?.prefectures ?? []);
+  return geographyReviewTarget(
+    `com.sleepymario.${japanese ? "language.japanese" : "geography"}.japan-prefectures-${region.slug}-${hard ? "hard" : "easy"}`,
+    loadGeographyPrefectureMetadata().filter((prefecture) => memberNames.has(prefecture.answer)).map((prefecture) => prefecture.id),
+    hard
+  );
+}
+
 const dueDeckStoreCache = new Map<string, { stamp: string; store: Awaited<ReturnType<typeof loadReviewProgressStore>> }>();
 
 export async function collectDueDecks(root: LanguageTreeNode, options: InteractiveMenuOptions = {}, now = new Date().toISOString().replace(/\.\d{3}Z$/, "Z")): Promise<DueDeckEntry[]> {
@@ -1049,11 +1117,10 @@ export async function collectDueDecks(root: LanguageTreeNode, options: Interacti
     let progressDir = node.contentDataDir ?? options.dataDir;
     progressDir = progressDir === undefined ? resolveReviewProgressDirectory() : defaultReviewProgressDirectoryForContentDataDirectory(progressDir);
     const command = node.commandPath?.join(" ") ?? "";
-    if (node.kind === "command" && /^geography (?:continents|japan-prefectures|japanese-prefectures)-(?:easy|hard)$/.test(command)) {
-      const id = node.commandPath![1], hard = id.endsWith("hard"), japanese = id.startsWith("japanese-");
-      const prefecture = id.includes("prefectures");
-      packageId = prefecture ? `com.sleepymario.${japanese ? "language.japanese" : "geography"}.japan-prefectures-${hard ? "hard" : "easy"}` : `com.sleepymario.geography.continents-${hard ? "hard" : "easy"}`;
-      count = prefecture ? (hard ? 47 : 94) : (hard ? 7 : 14);
+    const geographyTarget = node.kind === "command" ? geographyReviewTargetForCommand(node.commandPath?.[1] ?? "") : undefined;
+    if (node.kind === "command" && geographyTarget !== undefined) {
+      packageId = geographyTarget.packageId;
+      count = geographyTarget.count;
       progressDir = join(resolveReviewProgressDirectory(), "wandering-the-world");
     } else if (node.kind !== "review-source") {
       for (const child of node.children ?? []) await walk(child, [...parents, node]);
@@ -1069,9 +1136,14 @@ export async function collectDueDecks(root: LanguageTreeNode, options: Interacti
       if (!cached || cached.stamp !== stamp) { cached = { stamp, store: await loadReviewProgressStore(progressDir) }; dueDeckStoreCache.set(progressDir, cached); }
       stores.set(progressDir, cached.store);
     }
-    const states = stores.get(progressDir)!.items.filter(item => item.packageId === packageId && !item.retiredAt && (node.kind !== "review-source" || item.sourcePath === node.sourcePath));
+    const states = stores.get(progressDir)!.items.filter(item => item.packageId === packageId
+      && !item.retiredAt
+      && (node.kind !== "review-source" || item.sourcePath === node.sourcePath)
+      && (node.kind !== "command" || /-(?:highlight|locate)$/u.test(item.itemId)));
     if (!states.some(item => item.reviewCount > 0)) return;
-    const due = Math.max(0, count - states.length) + listDueReviewStates(states, now).length;
+    const dueStates = node.kind === "review-source" ? states : states.filter(item => item.reviewCount > 0);
+    const due = listDueReviewStates(dueStates, now).length
+      + (node.kind === "review-source" ? Math.max(0, count - states.length) : 0);
     if (due === 0) return;
     const context = [...parents].reverse().find(parent => parent.packageId?.startsWith("com.sleepymario.language.") || parent.label === "Japan" || parent.label === "World");
     result.push({ node, label: `${context?.label ?? "Geography"} · ${node.label}`, due, ancestors: parents.map(parent => parent.id) });
@@ -1082,15 +1154,65 @@ export async function collectDueDecks(root: LanguageTreeNode, options: Interacti
 
 export function markLanguagesWithDueDecks(root: LanguageTreeNode, decks: readonly DueDeckEntry[]): LanguageTreeNode {
   const dueAncestors = new Set(decks.flatMap(deck => deck.ancestors));
-  const walk = (node: LanguageTreeNode): LanguageTreeNode => {
+  const dueByNode = new Map(decks.map(deck => [deck.node.id, deck.due]));
+  const walk = (node: LanguageTreeNode, insideLanguage = false): LanguageTreeNode => {
     const languageId = node.packageId ?? node.moduleId;
+    const languageAncestor = languageId?.startsWith("com.sleepymario.language.");
+    const inLanguageTree = insideLanguage || languageAncestor === true;
+    const geographyDeckDue = node.id.startsWith("geography:") ? dueByNode.get(node.id) : undefined;
     return {
       ...node,
-      ...(languageId?.startsWith("com.sleepymario.language.") && node.kind !== "review-source" ? { dueCardCount: dueAncestors.has(node.id) ? 1 : 0 } : {}),
-      ...(node.children ? { children: node.children.map(walk) } : {})
+      ...(inLanguageTree && node.kind !== "review-source" ? { dueCardCount: dueAncestors.has(node.id) ? 1 : 0 } : {}),
+      ...(geographyDeckDue === undefined ? {} : { dueCardCount: geographyDeckDue }),
+      ...(node.children ? { children: node.children.map(child => walk(child, inLanguageTree)) } : {})
     };
   };
   return walk(root);
+}
+
+export function markGeographyDeckReviewStatuses(
+  root: LanguageTreeNode,
+  progressItems: readonly ReviewItemState[],
+  locale: SourceLocale = "en-US",
+  now = currentReviewTimestamp()
+): LanguageTreeNode {
+  const walk = (node: LanguageTreeNode): LanguageTreeNode => {
+    const target = node.kind === "command" ? geographyReviewTargetForCommand(node.commandPath?.[1] ?? "") : undefined;
+    const children = node.children?.map(walk);
+    if (target === undefined) return { ...node, ...(children === undefined ? {} : { children }) };
+    const cardIdentities: ReviewItemIdentity[] = target.itemIds.map((itemId) => ({
+      packageId: target.packageId,
+      packageVersion: target.packageVersion,
+      itemId
+    }));
+    const classification = classifyReviewDeckMenuStatus({
+      deckId: `${target.packageId}@${target.packageVersion}`,
+      cardIdentities,
+      savedProgress: progressItems,
+      now
+    });
+    const status = localizeReviewDeckMenuStatus(classification, locale);
+    return {
+      ...node,
+      reviewStatus: status.kind,
+      dueCardCount: status.dueCardCount,
+      reviewStatusText: status.text,
+      ...(children === undefined ? {} : { children })
+    };
+  };
+  return walk(root);
+}
+
+async function refreshMenuReviewStatuses(
+  root: LanguageTreeNode,
+  options: InteractiveMenuOptions,
+  now = currentReviewTimestamp()
+): Promise<LanguageTreeNode> {
+  const dueDecks = await collectDueDecks(root, options, now);
+  const withLanguageDueMarkers = markLanguagesWithDueDecks(root, dueDecks);
+  const progressDir = join(resolveReviewProgressDirectory(), "wandering-the-world");
+  const progress = await loadReviewProgressStore(progressDir);
+  return markGeographyDeckReviewStatuses(withLanguageDueMarkers, progress.items, options.locale ?? "en-US", now);
 }
 
 async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
@@ -1125,7 +1247,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 
   try {
   while (true) {
-    tree = markLanguagesWithDueDecks(tree, await collectDueDecks(tree, options));
+    tree = await refreshMenuReviewStatuses(tree, options);
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
     selection = Math.min(selection, visible.length - 1);
     const selectedNode = visible[selection]?.node ?? tree;
@@ -1602,7 +1724,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     }
     if (selected.node.kind === "command") {
       const quit = await runModuleTreeCommandAction(registry, terminal, selected.node);
-      rightPaneText = await renderLanguageTreeRightPane(selected.node, options);
+      tree = await refreshMenuReviewStatuses(tree, options);
+      const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? selected.node;
+      rightPaneText = await renderLanguageTreeRightPane(refreshedNode, options);
       rightPaneOffset = 0;
       if (quit) {
         return true;
@@ -1938,17 +2062,14 @@ function resetDeckProgressTarget(node: LanguageTreeNode, options: InteractiveMen
   }
 
   const command = node.commandPath?.join(" ") ?? "";
-  if (node.kind !== "command" || !/^geography (?:continents|japan-prefectures|japanese-prefectures)-(?:easy|hard)$/u.test(command)) return null;
+  if (node.kind !== "command") return null;
   const id = node.commandPath?.[1] ?? "";
-  const hard = id.endsWith("hard");
-  const japanese = id.startsWith("japanese-");
-  const prefecture = id.includes("prefectures");
+  const geographyTarget = geographyReviewTargetForCommand(id);
+  if (geographyTarget === undefined) return null;
   return {
     nodeId: node.id,
     label: node.label,
-    packageId: prefecture
-      ? `com.sleepymario.${japanese ? "language.japanese" : "geography"}.japan-prefectures-${hard ? "hard" : "easy"}`
-      : `com.sleepymario.geography.continents-${hard ? "hard" : "easy"}`,
+    packageId: geographyTarget.packageId,
     progressDir: join(resolveReviewProgressDirectory(), "wandering-the-world")
   };
 }
@@ -2312,7 +2433,15 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
               previewArtworkPath: join(__dirname, `content/korean/chapter-${number}/media/scene.png`)
             })),
             { id: `${submenu.id}:grammar-006-010`, label: "Grammar VI - X", kind: "message" as const,
-              authoredGrammarPaths: [join(__dirname, "content/korean/grammar-006-010-easy.md"), join(__dirname, "content/korean/grammar-006-010-hard.md")] as const }
+              authoredGrammarPaths: [join(__dirname, "content/korean/grammar-006-010-easy.md"), join(__dirname, "content/korean/grammar-006-010-hard.md")] as const },
+            { id: `${submenu.id}:chapter-011`, label: "Chapter XI — Grandmother's Sewing Box", kind: "message" as const,
+              packageId: "com.sleepymario.language.korean",
+              authoredReadingDirectory: join(__dirname, "content/korean/chapter-011"),
+              previewArtworkPath: join(__dirname, "content/korean/chapter-011/media/scene.png") },
+            { id: `${submenu.id}:chapter-012`, label: "Chapter XII — Grandmother's Market List", kind: "message" as const,
+              packageId: "com.sleepymario.language.korean",
+              authoredReadingDirectory: join(__dirname, "content/korean/chapter-012"),
+              previewArtworkPath: join(__dirname, "content/korean/chapter-012/media/scene.png") }
           ] };
         }
         if ((language.packageId === "com.sleepymario.language.vietnamese" || language.moduleId === "com.sleepymario.language.vietnamese") && submenu.kind === "read-section") {
@@ -2433,14 +2562,47 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                   const current = keepNewGeneralDecks(deckType);
                   return { ...deckType, children: [
                     ...(current?.children ?? []).filter(n => !n.id.includes("prefectures")),
-                    ...(["easy", "hard"] as const).map(mode => ({
-                      id: `${deckType.id}:prefectures-${mode}`, label: `Prefectures - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
-                      commandPath: ["geography", `japanese-prefectures-${mode}`], commandArgs: [],
-                      previewText: mode === "easy" ? "94 questions: kanji name choices and numbered map questions." : "47 highlighted prefectures. Type the prefecture name in kanji."
-                    })), {
-                      id: `${deckType.id}:prefectures-kanji`, label: "Prefectures - 漢字", kind: "review-source" as const,
-                      packageId: "com.sleepymario.language.japanese.prefectures-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 94,
-                      contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                    {
+                      id: `${deckType.id}:topography`, label: "Topography", kind: "category" as const,
+                      children: [
+                        ...(["easy", "hard"] as const).map(mode => ({
+                          id: `${deckType.id}:prefectures-${mode}`, label: `Prefectures - All - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
+                          commandPath: ["geography", `japanese-prefectures-${mode}`], commandArgs: [],
+                          previewText: mode === "easy" ? "94 questions: kanji name choices and numbered map questions." : "47 highlighted prefectures. Type the prefecture name in kanji."
+                        })), {
+                          id: `${deckType.id}:prefectures-kanji`, label: "Prefectures - All - 漢字", kind: "review-source" as const,
+                          packageId: "com.sleepymario.language.japanese.prefectures-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 94,
+                          contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                        },
+                        ...(["easy", "hard"] as const).map(mode => ({
+                          id: `${deckType.id}:regions-${mode}`, label: `Prefectures - Regions - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
+                          commandPath: ["geography", `japanese-regions-${mode}`], commandArgs: [],
+                          previewText: mode === "easy" ? "16 questions covering Japan's eight regions in Japanese." : "8 highlighted regions. Type the region name in Japanese."
+                        })), {
+                          id: `${deckType.id}:regions-kanji`, label: "Prefectures - Regions - 漢字", kind: "review-source" as const,
+                          packageId: "com.sleepymario.language.japanese.regions-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 16,
+                          contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                        },
+                        ...japanRegionDecks.flatMap(region => {
+                          const prefectureCount = loadGeographyRegionMetadata().find(candidate => candidate.id === `${region.slug}-highlight`)?.prefectures.length ?? 0;
+                          return [
+                            ...(["easy", "hard"] as const).map(mode => ({
+                              id: `${deckType.id}:prefectures-${region.slug}-${mode}`,
+                              label: `Prefectures - ${region.japanese} - ${mode === "easy" ? "Easy" : "Hard"}`,
+                              kind: "command" as const,
+                              commandPath: ["geography", `japanese-prefectures-${region.slug}-${mode}`], commandArgs: [],
+                              previewText: mode === "easy"
+                                ? `${prefectureCount * 2} questions covering the prefectures of ${region.japanese} in Japanese.`
+                                : `${prefectureCount} highlighted prefectures of ${region.japanese}. Type the name in Japanese.`
+                            })),
+                            {
+                              id: `${deckType.id}:prefectures-${region.slug}-kanji`, label: `Prefectures - ${region.japanese} - 漢字`, kind: "review-source" as const,
+                              packageId: `com.sleepymario.language.japanese.${region.slug}-kanji`, packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: prefectureCount * 2,
+                              contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                            }
+                          ];
+                        })
+                      ]
                     }
                   ] };
                 }
@@ -3325,12 +3487,23 @@ export function groupExplicitTopicMenuLeaves(
 }
 
 function compareExplicitTopicLeafLabels(left: LanguageTreeNode, right: LanguageTreeNode): number {
+  const leftPairedDeck = pairedVocabularySentenceLabel(left.label);
+  const rightPairedDeck = pairedVocabularySentenceLabel(right.label);
+  if (leftPairedDeck !== undefined && rightPairedDeck !== undefined && leftPairedDeck.group === rightPairedDeck.group) {
+    return leftPairedDeck.order - rightPairedDeck.order || left.id.localeCompare(right.id);
+  }
   const leftLesson = numberedLessonLabel(left.label);
   const rightLesson = numberedLessonLabel(right.label);
   if (leftLesson !== undefined && rightLesson !== undefined) {
     return leftLesson - rightLesson || left.id.localeCompare(right.id);
   }
   return left.label.localeCompare(right.label) || left.id.localeCompare(right.id);
+}
+
+function pairedVocabularySentenceLabel(label: string): { readonly group: string; readonly order: number } | undefined {
+  const match = label.match(/^(.+?) - (Vocabulary|Sentences)$/u);
+  if (match === null) return undefined;
+  return { group: match[1] ?? "", order: match[2] === "Vocabulary" ? 0 : 1 };
 }
 
 function numberedLessonLabel(label: string): number | undefined {
@@ -3440,14 +3613,30 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
   return {
     id, label: "Countries", kind: "category", previewText: "Countries",
     children: [{ id: `${id}:japan`, label: "Japan", kind: "category", previewText: "Japan", children: [{
-      id: `${id}:japan:prefectures-easy`, label: "Prefectures - Easy", kind: "command",
-      commandPath: ["geography", "japan-prefectures-easy"], commandArgs: [], launchTitle: "Prefectures - Easy",
-      previewText: "Prefectures - Easy\n\n94 questions: identify highlighted prefectures with choices 1–4, and locate named prefectures by entering map numbers 1–47. Names are revealed after answering."
+      id: `${id}:japan:prefectures-easy`, label: "Prefectures - All - Easy", kind: "command",
+      commandPath: ["geography", "japan-prefectures-easy"], commandArgs: [], launchTitle: "Prefectures - All - Easy",
+      previewText: "Prefectures - All - Easy\n\n94 questions: identify highlighted prefectures with choices 1–4, and locate named prefectures by entering map numbers 1–47. Names are revealed after answering."
     }, {
-      id: `${id}:japan:prefectures-hard`, label: "Prefectures - Hard", kind: "command",
-      commandPath: ["geography", "japan-prefectures-hard"], commandArgs: [], launchTitle: "Prefectures - Hard",
-      previewText: "Prefectures - Hard\n\nIdentify all 47 prefectures using a highlighted map and the Japanese Prefectures reference, including an Okinawa inset. Type the romanized name; macrons are optional. Review progress is separate from the continent decks."
-    }] }]
+      id: `${id}:japan:prefectures-hard`, label: "Prefectures - All - Hard", kind: "command",
+      commandPath: ["geography", "japan-prefectures-hard"], commandArgs: [], launchTitle: "Prefectures - All - Hard",
+      previewText: "Prefectures - All - Hard\n\nIdentify all 47 prefectures using a highlighted map and the Japanese Prefectures reference, including an Okinawa inset. Type the romanized name; macrons are optional. Review progress is separate from the continent decks."
+    }, {
+      id: `${id}:japan:regions-easy`, label: "Prefectures - Regions - Easy", kind: "command",
+      commandPath: ["geography", "japan-regions-easy"], commandArgs: [], launchTitle: "Prefectures - Regions - Easy",
+      previewText: "Prefectures - Regions - Easy\n\n16 questions: identify eight highlighted regions using romanized choices, and locate named regions by entering map numbers 1–8. Macron-free answers are accepted."
+    }, {
+      id: `${id}:japan:regions-hard`, label: "Prefectures - Regions - Hard", kind: "command",
+      commandPath: ["geography", "japan-regions-hard"], commandArgs: [], launchTitle: "Prefectures - Regions - Hard",
+      previewText: "Prefectures - Regions - Hard\n\nIdentify eight highlighted regions by typing their romanized names. Macron-free answers are accepted. Review progress is separate from the All decks."
+    }, ...japanRegionDecks.flatMap(region => ([{
+      id: `${id}:japan:${region.slug}-easy`, label: `Prefectures - ${region.label} - Easy`, kind: "command" as const,
+      commandPath: ["geography", `japan-prefectures-${region.slug}-easy`], commandArgs: [], launchTitle: `Prefectures - ${region.label} - Easy`,
+      previewText: `Prefectures - ${region.label} - Easy\n\nIdentify highlighted prefectures in ${region.label} using romanized choices, and locate them on a region-limited numbered map.`
+    }, {
+      id: `${id}:japan:${region.slug}-hard`, label: `Prefectures - ${region.label} - Hard`, kind: "command" as const,
+      commandPath: ["geography", `japan-prefectures-${region.slug}-hard`], commandArgs: [], launchTitle: `Prefectures - ${region.label} - Hard`,
+      previewText: `Prefectures - ${region.label} - Hard\n\nIdentify highlighted ${region.label} prefectures by typing their romanized names. Macron-free answers are accepted.`
+    }]))] }]
   };
 }
 
@@ -3720,7 +3909,10 @@ export async function renderLanguageTreeRightPane(node: LanguageTreeNode, option
     return node.previewText ?? `${node.label}\n\nPress Space to install if this module is available. Enter does not install.`;
   }
   if (node.kind === "installed-root" || node.kind === "available-root" || node.kind === "category" || node.kind === "module" || node.kind === "command") {
-    return node.previewText ?? `${node.label}\n\nSelect or expand items in the tree.`;
+    const preview = node.previewText ?? `${node.label}\n\nSelect or expand items in the tree.`;
+    return node.kind === "command" && node.reviewStatusText !== undefined
+      ? `${preview}\n\n${node.reviewStatusText}`
+      : preview;
   }
   return [
     "WhackSmacker",
@@ -4009,7 +4201,7 @@ async function runModuleTreeCommandAction(
     return showMessage(terminal, `Command is not registered: ${node.commandPath.join(" ")}`);
   }
 
-  if (["geography continents-easy", "geography continents-hard", "geography japan-prefectures-hard", "geography japan-prefectures-easy", "geography japanese-prefectures-easy", "geography japanese-prefectures-hard"].includes(node.commandPath.join(" "))) {
+  if (node.commandPath[0] === "geography" && geographyReviewTargetForCommand(node.commandPath[1] ?? "") !== undefined) {
     terminal.restore();
     let failure: string | undefined;
     try { await command.run(node.commandArgs ?? []); }
@@ -4105,17 +4297,31 @@ async function advanceEmbeddedReviewSession(
     return { ...session, message: "Press Enter or Space to reveal the answer. Press Esc to leave review." };
   }
 
+  const current = session.items[session.index];
+  if (current === undefined) {
+    return { ...session, side: "complete", message: `Completed review deck: ${session.node.label}` };
+  }
+
+  if (isBuryReviewKey(key) && isReviewItemBuryEligible(current)) {
+    await buryReadingReviewItem({
+      dataDir: session.node.contentDataDir ?? options.dataDir,
+      packageId: current.packageId,
+      packageVersion: current.packageVersion,
+      ...(current.sourcePath === undefined ? {} : { sourcePath: current.sourcePath }),
+      itemId: current.itemId,
+      buriedAt: currentReviewTimestamp()
+    });
+    return advanceToNextEmbeddedReviewCard(session, options);
+  }
+
   const rating = reviewRatingForKey(key);
   if (rating === null) {
     return {
       ...session,
-      message: "Choose 1 again, 2 hard, 3 good, or 4 easy. Esc leaves review."
+      message: isReviewItemBuryEligible(current)
+        ? "Choose 1 again, 2 hard, 3 good, 4 easy, or Shift+B to bury permanently. Esc leaves review."
+        : "Choose 1 again, 2 hard, 3 good, or 4 easy. Esc leaves review."
     };
-  }
-
-  const current = session.items[session.index];
-  if (current === undefined) {
-    return { ...session, side: "complete", message: `Completed review deck: ${session.node.label}` };
   }
 
   await recordReadingReviewAnswer({
@@ -4128,6 +4334,13 @@ async function advanceEmbeddedReviewSession(
     reviewedAt: currentReviewTimestamp()
   });
 
+  return advanceToNextEmbeddedReviewCard(session, options);
+}
+
+async function advanceToNextEmbeddedReviewCard(
+  session: EmbeddedReviewSession,
+  options: InteractiveMenuOptions
+): Promise<EmbeddedReviewSession> {
   const nextIndex = session.index + 1;
   if (nextIndex >= session.items.length) {
     return {
@@ -4277,7 +4490,10 @@ export function renderEmbeddedReviewSession(
       session.answerArtworkRendered === true,
       translationsEnabled
     )];
-  const controls = session.side === "prompt" ? formatPromptControls(colorsEnabled) : formatRatingControls(colorsEnabled, locale);
+  const currentState = session.items[session.index];
+  const controls = session.side === "prompt"
+    ? formatPromptControls(colorsEnabled)
+    : formatRatingControls(colorsEnabled, locale, currentState !== undefined && isReviewItemBuryEligible(currentState));
   const currentItem = session.developerItems?.find(candidate => candidate.item.id === session.items[session.index]?.itemId)?.item;
   const artworkBelowAnswer = session.side === "answer"
     && currentItem?.tags?.includes("medical") === true
@@ -4411,6 +4627,8 @@ interface EmbeddedReviewSupplement {
 interface EmbeddedReviewExample {
   readonly text: string;
   readonly translation?: string;
+  readonly responses?: readonly string[];
+  readonly responseTranslations?: readonly string[];
 }
 
 function embeddedReviewSupplementFromExercise(exercise: RenderedExercise, includeNotes = true): EmbeddedReviewSupplement {
@@ -4419,7 +4637,13 @@ function embeddedReviewSupplementFromExercise(exercise: RenderedExercise, includ
     text,
     ...(exercise.exampleTranslationLines?.[index] === undefined ? {} : { translation: exercise.exampleTranslationLines[index] })
   }));
-  const examples = [...fromNotes.examples, ...structuredExamples]
+  const groupedExamples = (exercise.exampleGroups ?? []).map((group) => ({
+    text: group.text,
+    responses: group.responses,
+    ...(group.translation === undefined ? {} : { translation: group.translation }),
+    ...(group.responseTranslations === undefined ? {} : { responseTranslations: group.responseTranslations })
+  }));
+  const examples = [...fromNotes.examples, ...structuredExamples, ...groupedExamples]
     .filter((example, index, all) => all.findIndex((candidate) => candidate.text === example.text) === index)
     .slice(0, 3);
   return {
@@ -4470,18 +4694,54 @@ function appendEmbeddedReviewSupplement(lines: string[], supplement: EmbeddedRev
   if (supplement.examples.length > 0) {
     const exampleLines = supplement.examples.slice(0, 3).flatMap((example) => [
       `- ${example.text}`,
-      ...(translationsEnabled && example.translation !== undefined ? [`- ${example.translation}`] : [])
+      ...(translationsEnabled && example.translation !== undefined ? [`  ◦ ${example.translation}`] : []),
+      ...(example.responses ?? []).flatMap((response, index) => [
+        `    ◦ ${response}`,
+        ...(translationsEnabled && example.responseTranslations?.[index] !== undefined
+          ? [`      ◦ ${example.responseTranslations[index]}`]
+          : [])
+      ])
     ]);
     lines.push("", "Examples:", ...prefixReviewCardLines(exampleLines));
   }
 }
 
 function splitEmbeddedReviewNoteLine(line: string): readonly string[] {
-  return line
-    .replace(/\r\n?/gu, "\n")
-    .split(/\n|;/u)
-    .map((part) => part.trim())
-    .filter((part) => part.length > 0);
+  const parts: string[] = [];
+  let current = "";
+  let inSemanticSpan = false;
+  const normalized = line.replace(/\r\n?/gu, "\n");
+
+  for (let index = 0; index < normalized.length; index += 1) {
+    if (normalized.startsWith("[[", index)) {
+      inSemanticSpan = true;
+      current += "[[";
+      index += 1;
+      continue;
+    }
+    if (inSemanticSpan && normalized.startsWith("]]", index)) {
+      inSemanticSpan = false;
+      current += "]]";
+      index += 1;
+      continue;
+    }
+    const character = normalized[index] ?? "";
+    if (character === "\n" || (character === ";" && !inSemanticSpan)) {
+      const part = current.trim();
+      if (part.length > 0) {
+        parts.push(part);
+      }
+      current = "";
+      continue;
+    }
+    current += character;
+  }
+
+  const finalPart = current.trim();
+  if (finalPart.length > 0) {
+    parts.push(finalPart);
+  }
+  return parts;
 }
 
 function stripDeckPrefix(line: string): string {
@@ -4981,21 +5241,23 @@ function formatPromptControls(colorsEnabled: boolean): string {
   return reveal;
 }
 
-function formatRatingControls(colorsEnabled: boolean, locale: SourceLocale = "en-US"): string {
+function formatRatingControls(colorsEnabled: boolean, locale: SourceLocale = "en-US", buryEligible = false): string {
   const labels = ["review.again", "review.hard", "review.good", "review.easy"].map((key) => translate(locale, key));
   if (!colorsEnabled) {
     return [
       `1 ${labels[0]}`,
       `2 ${labels[1]}`,
       `3 ${labels[2]}`,
-      `4 ${labels[3]}`
+      `4 ${labels[3]}`,
+      ...(buryEligible ? ["B Bury"] : [])
     ].join("   ");
   }
   return [
     `${ansi.red}1 ${labels[0]}${ansi.reset}`,
     `${ansi.yellow}2 ${labels[1]}${ansi.reset}`,
     `${ansi.green}3 ${labels[2]}${ansi.reset}`,
-    `${ansi.cyan}4 ${labels[3]}${ansi.reset}`
+    `${ansi.cyan}4 ${labels[3]}${ansi.reset}`,
+    ...(buryEligible ? [`${ansi.magenta}${ansi.bold}B Bury${ansi.reset}`] : [])
   ].join("   ");
 }
 
@@ -5038,6 +5300,10 @@ function reviewRatingForKey(key: KeyPress): ReviewRating | null {
     return "easy";
   }
   return null;
+}
+
+function isBuryReviewKey(key: KeyPress): boolean {
+  return key.sequence === "B";
 }
 
 function currentReviewTimestamp(): string {
@@ -6073,10 +6339,14 @@ function styleTreeLine(plain: string, semanticLabel: string, entry: VisibleLangu
   if (entry.node.kind === "content" && hasReviewDeckColoredMenuToken(plain)) {
     return styleReviewDeckColoredMenuToken(plain, selected);
   }
-  if (entry.node.kind === "review-source") {
+  if (entry.node.kind === "review-source" || (entry.node.kind === "command" && entry.node.reviewStatus !== undefined)) {
     return styleReviewSourceLine(plain, semanticLabel, entry.node.reviewStatus, selected);
   }
-  if ((entry.node.packageId ?? entry.node.moduleId)?.startsWith("com.sleepymario.language.") && (entry.node.dueCardCount ?? 0) > 0) {
+  const dueHighlightId = entry.node.packageId ?? entry.node.moduleId;
+  const supportsDueHighlight = dueHighlightId?.startsWith("com.sleepymario.language.")
+    || entry.node.kind === "category"
+    || (entry.node.kind === "command" && entry.node.id.startsWith("geography:"));
+  if (supportsDueHighlight && (entry.node.dueCardCount ?? 0) > 0) {
     return `${selected ? ansi.inverse : ""}${ansi.bold}${ansi.blue}${plain}${ansi.reset}`;
   }
   if (entry.node.kind === "backup-root") {
@@ -6399,7 +6669,7 @@ function reflowMarkdownSourceLines(sourceLines: readonly string[]): readonly str
         && narrativeSectionHasIntroduction(sourceLines, index);
       narrativeIntroductionStarted = false;
     }
-    if (/^#{1,6}\s+/u.test(trimmed) || isMarkdownTableLine(line) || isDialogueSpeakerLine(line) || /^\s*(?:[-*+] |• |\d+[.)] |>)/u.test(line)) {
+    if (/^#{1,6}\s+/u.test(trimmed) || isMarkdownTableLine(line) || isDialogueSpeakerLine(line) || /^\s*(?:[-*+] |[•◦] |\d+[.)] |>)/u.test(line)) {
       flush();
       output.push(line);
       continue;
@@ -6694,6 +6964,18 @@ function preparePaneLine(rawLine: string, inCodeBlock: boolean, width: number, c
     return {
       text: stripInlineMarkdown(marked.replace(/^(\s*)[-*]\s+/u, "$1• "), colorsEnabled),
       style: (line) => line
+    };
+  }
+  const nestedBullet = rawLine.match(/^(\s*)◦\s+(.+)$/u);
+  if (nestedBullet !== null) {
+    const indent = nestedBullet[1] ?? "";
+    const content = stripInlineMarkdown(nestedBullet[2] ?? "", colorsEnabled);
+    return {
+      text: `${indent}◦ ${content}`,
+      firstPrefix: `${indent}◦ `,
+      continuationPrefix: `${indent}  `,
+      content,
+      style: (line) => ordinaryReadingLearnerTextStyle(line, colorsEnabled)
     };
   }
   const bullet = rawLine.match(/^(\s*)(?:[-*]|•)\s+(.+)$/u);

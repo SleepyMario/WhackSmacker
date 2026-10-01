@@ -380,11 +380,11 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     id: "korean-curriculum",
     packageId: "com.sleepymario.language.korean",
     displayName: "Korean",
-    description: "Korean language curriculum content from the reauthored Chapters I–X and the I–V and VI–X grammar summaries.",
+    description: "Korean language curriculum content from the reauthored Chapters I–XII and the I–V and VI–X grammar summaries.",
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
-    artifactRevision: 8,
+    artifactRevision: 10,
     sourcePath: "../korean-curriculum",
     sourceRepository: "https://github.com/SleepyMario/korean-curriculum",
     languages: ["ko", "en"],
@@ -1052,7 +1052,7 @@ const vietnamese123LessonTargets: readonly ContentPackageGeneratorTarget[] = vie
   relatedPackageIds: ["com.sleepymario.language.vietnamese"],
   contentSchemaVersion: "2.0.0",
   deckVersion: "0.1.0",
-  artifactRevision: lesson === 2 ? 10 : 8,
+  artifactRevision: lesson === 2 ? 12 : 9,
   mediaPolicy: "none",
   interactionProfile: defaultDeckInteractionProfile,
   notesPolicy: "omit",
@@ -1076,6 +1076,50 @@ const vietnamese123LessonTargets: readonly ContentPackageGeneratorTarget[] = vie
     unitStart: lesson,
     unitEnd: lesson
   }
+}));
+
+const japaneseTopographyKanjiDecks = [
+  { id: "regions", label: "Regions", source: "regions-kanji", units: 8 },
+  { id: "hokkaido", label: "北海道", source: "prefectures-kanji-hokkaido", units: 1 },
+  { id: "tohoku", label: "東北", source: "prefectures-kanji-tohoku", units: 6 },
+  { id: "kanto", label: "関東", source: "prefectures-kanji-kanto", units: 7 },
+  { id: "chubu", label: "中部", source: "prefectures-kanji-chubu", units: 9 },
+  { id: "kansai", label: "関西", source: "prefectures-kanji-kansai", units: 7 },
+  { id: "chugoku", label: "中国", source: "prefectures-kanji-chugoku", units: 5 },
+  { id: "shikoku", label: "四国", source: "prefectures-kanji-shikoku", units: 4 },
+  { id: "kyushu", label: "九州", source: "prefectures-kanji-kyushu", units: 8 }
+] as const;
+
+const japaneseTopographyKanjiTargets: readonly ContentPackageGeneratorTarget[] = japaneseTopographyKanjiDecks.map((deck) => ({
+  id: `japanese-${deck.id}-kanji`,
+  notesPolicy: "omit",
+  packageId: `com.sleepymario.language.japanese.${deck.id}-kanji`,
+  displayName: `Prefectures - ${deck.label} - 漢字`,
+  description: `${deck.label} place names in kanji and hiragana, in both directions.`,
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.japanese"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 1,
+  mediaPolicy: "required",
+  interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent", outputMedia: "output-specific" },
+  packageVersion: "1.0.0",
+  sourcePath: `review-content/japanese/${deck.source}`,
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["ja-Kana", "ja"],
+  targetLanguage: "ja",
+  subjects: ["japanese", deck.id === "regions" ? "regions" : "prefectures", "kanji", "hiragana"],
+  topic: { id: `japanese-${deck.id}-kanji`, displayName: `Prefectures - ${deck.label} - 漢字`, deckDisplayName: `Prefectures - ${deck.label} - 漢字` },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources", "media"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: { id: `japanese-${deck.id}-kanji`, displayName: `Prefectures - ${deck.label} - 漢字`, outputFile: `japanese-${deck.id}-kanji.json`, unitStart: 1, unitEnd: deck.units }
 }));
 
 const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
@@ -1182,6 +1226,154 @@ const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[
     dependencies: [],
     include: ["README.md", "cards.tsv"],
     topicDeck: { id: "korean-general-animals-i", displayName: "Animals I", outputFile: "animals-i.json", unitStart: 1, unitEnd: 1 }
+  },
+  {
+    id: "japanese-custom-shokyu-nihongo-shusaku-i-vocabulary",
+    explicitOnly: true,
+    packageId: "local.user.decks.japanese-shokyu-nihongo-shusaku-i-vocabulary",
+    displayName: "初級日本語習作 - I - Vocabulary",
+    description: "Private Traditional-Chinese-source ABC-style Japanese vocabulary deck extracted from the first 初級日本語習作 composition.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.japanese"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 2,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "japanese-shokyu-nihongo-shusaku/i/vocabulary",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["zh-Hant", "ja", "ja-Kana"],
+    targetLanguage: "ja",
+    subjects: ["japanese", "custom", "shokyu-nihongo-shusaku", "composition", "vocabulary", "abc"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topic: {
+      id: "japanese-shokyu-nihongo-shusaku",
+      displayName: "初級日本語習作",
+      deckDisplayName: "I - Vocabulary"
+    },
+    topicDeck: {
+      id: "japanese-shokyu-nihongo-shusaku-i-vocabulary",
+      displayName: "I - Vocabulary",
+      outputFile: "shokyu-nihongo-shusaku-i-vocabulary.json",
+      unitStart: 1,
+      unitEnd: 1
+    }
+  },
+  {
+    id: "japanese-custom-shokyu-nihongo-shusaku-i-sentences",
+    explicitOnly: true,
+    packageId: "local.user.decks.japanese-shokyu-nihongo-shusaku-i-sentences",
+    displayName: "初級日本語習作 - I - Sentences",
+    description: "Private bidirectional Japanese-Traditional-Chinese sentence deck extracted from the first 初級日本語習作 composition, with concise Traditional Chinese grammar notes.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.japanese"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 2,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "default",
+    packageVersion: "0.1.0",
+    sourcePath: "japanese-shokyu-nihongo-shusaku/i/sentences",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["zh-Hant", "ja"],
+    targetLanguage: "ja",
+    subjects: ["japanese", "custom", "shokyu-nihongo-shusaku", "composition", "sentences", "grammar"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topic: {
+      id: "japanese-shokyu-nihongo-shusaku",
+      displayName: "初級日本語習作",
+      deckDisplayName: "I - Sentences"
+    },
+    topicDeck: {
+      id: "japanese-shokyu-nihongo-shusaku-i-sentences",
+      displayName: "I - Sentences",
+      outputFile: "shokyu-nihongo-shusaku-i-sentences.json",
+      unitStart: 1,
+      unitEnd: 1
+    }
+  },
+  {
+    id: "japanese-custom-shokyu-nihongo-shusaku-ii-vocabulary",
+    explicitOnly: true,
+    packageId: "local.user.decks.japanese-shokyu-nihongo-shusaku-ii-vocabulary",
+    displayName: "初級日本語習作 - II - Vocabulary",
+    description: "Private Traditional-Chinese-source ABC-style Japanese vocabulary deck extracted from the second 初級日本語習作 worksheet.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.japanese"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "japanese-shokyu-nihongo-shusaku/ii/vocabulary",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["zh-Hant", "ja", "ja-Kana"],
+    targetLanguage: "ja",
+    subjects: ["japanese", "custom", "shokyu-nihongo-shusaku", "particles", "vocabulary", "abc"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topic: {
+      id: "japanese-shokyu-nihongo-shusaku",
+      displayName: "初級日本語習作",
+      deckDisplayName: "II - Vocabulary"
+    },
+    topicDeck: {
+      id: "japanese-shokyu-nihongo-shusaku-ii-vocabulary",
+      displayName: "II - Vocabulary",
+      outputFile: "shokyu-nihongo-shusaku-ii-vocabulary.json",
+      unitStart: 2,
+      unitEnd: 2
+    }
+  },
+  {
+    id: "japanese-custom-shokyu-nihongo-shusaku-ii-sentences",
+    explicitOnly: true,
+    packageId: "local.user.decks.japanese-shokyu-nihongo-shusaku-ii-sentences",
+    displayName: "初級日本語習作 - II - Sentences",
+    description: "Private bidirectional Japanese-Traditional-Chinese sentence deck extracted from the second 初級日本語習作 worksheet, with concise Traditional Chinese particle notes.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.japanese"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "default",
+    packageVersion: "0.1.0",
+    sourcePath: "japanese-shokyu-nihongo-shusaku/ii/sentences",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["zh-Hant", "ja"],
+    targetLanguage: "ja",
+    subjects: ["japanese", "custom", "shokyu-nihongo-shusaku", "particles", "sentences", "grammar"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topic: {
+      id: "japanese-shokyu-nihongo-shusaku",
+      displayName: "初級日本語習作",
+      deckDisplayName: "II - Sentences"
+    },
+    topicDeck: {
+      id: "japanese-shokyu-nihongo-shusaku-ii-sentences",
+      displayName: "II - Sentences",
+      outputFile: "shokyu-nihongo-shusaku-ii-sentences.json",
+      unitStart: 2,
+      unitEnd: 2
+    }
   },
   {
     id: "chinese-traditional-specialized-medical-tmp",
@@ -1496,6 +1688,266 @@ const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[
     topicDeck: { id: "korean-kgfil-iv-sentences", displayName: "KGfIL - IV - Sentences", outputFile: "kgfil-iv-sentences.json", unitStart: 4, unitEnd: 4 }
   },
   {
+    id: "korean-general-kgfil-v-a-vocabulary",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-v-a-vocabulary",
+    displayName: "KGfIL - V-A - Vocabulary",
+    description: "Private Korean verb terminology, conjugational forms, and example-sentence vocabulary deck from Korean Grammar for International Learners, Chapter V-A.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 3,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "when-no-examples",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-v/a/vocabulary",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-v", "part-a", "vocabulary", "verbs"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-v-a-vocabulary", displayName: "KGfIL - V-A - Vocabulary", outputFile: "kgfil-v-a-vocabulary.json", unitStart: 5, unitEnd: 5 }
+  },
+  {
+    id: "korean-general-kgfil-v-a-sentences",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-v-a-sentences",
+    displayName: "KGfIL - V-A - Sentences",
+    description: "Private bidirectional Korean-English complete example-sentence deck from Korean Grammar for International Learners, Chapter V-A.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 3,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-v/a/sentences",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-v", "part-a", "sentences", "verbs"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-v-a-sentences", displayName: "KGfIL - V-A - Sentences", outputFile: "kgfil-v-a-sentences.json", unitStart: 5, unitEnd: 5 }
+  },
+  {
+    id: "korean-general-kgfil-v-b-vocabulary",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-v-b-vocabulary",
+    displayName: "KGfIL - V-B - Vocabulary",
+    description: "Private Korean irregular-verb terminology, conjugation-table forms, and example-sentence vocabulary deck from Korean Grammar for International Learners, Chapter V-B.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 2,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "when-no-examples",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-v/b/vocabulary",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-v", "part-b", "vocabulary", "irregular-verbs"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-v-b-vocabulary", displayName: "KGfIL - V-B - Vocabulary", outputFile: "kgfil-v-b-vocabulary.json", unitStart: 5, unitEnd: 5 }
+  },
+  {
+    id: "korean-general-kgfil-v-b-sentences",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-v-b-sentences",
+    displayName: "KGfIL - V-B - Sentences",
+    description: "Private bidirectional Korean-English complete example-sentence deck from Korean Grammar for International Learners, Chapter V-B.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 2,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-v/b/sentences",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-v", "part-b", "sentences", "irregular-verbs"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-v-b-sentences", displayName: "KGfIL - V-B - Sentences", outputFile: "kgfil-v-b-sentences.json", unitStart: 5, unitEnd: 5 }
+  },
+  {
+    id: "korean-general-kgfil-vi-vocabulary",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-vi-vocabulary",
+    displayName: "KGfIL - VI - Vocabulary",
+    description: "Private Korean determiner terminology, table entries, and example-sentence vocabulary deck from Korean Grammar for International Learners, Chapter VI.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "when-no-examples",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-vi/vocabulary",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-vi", "vocabulary", "determiners"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-vi-vocabulary", displayName: "KGfIL - VI - Vocabulary", outputFile: "kgfil-vi-vocabulary.json", unitStart: 6, unitEnd: 6 }
+  },
+  {
+    id: "korean-general-kgfil-vi-sentences",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-vi-sentences",
+    displayName: "KGfIL - VI - Sentences",
+    description: "Private bidirectional Korean-English complete example-sentence deck from Korean Grammar for International Learners, Chapter VI.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-vi/sentences",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-vi", "sentences", "determiners"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-vi-sentences", displayName: "KGfIL - VI - Sentences", outputFile: "kgfil-vi-sentences.json", unitStart: 6, unitEnd: 6 }
+  },
+  {
+    id: "korean-general-kgfil-vii-a-vocabulary",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-vii-a-vocabulary",
+    displayName: "KGfIL - VII-A - Vocabulary",
+    description: "Private Korean adverb terminology, formations, and example-sentence vocabulary deck from Korean Grammar for International Learners, Chapter VII-A.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 2,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "when-no-examples",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-vii/a/vocabulary",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-vii", "part-a", "vocabulary", "adverbs"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-vii-a-vocabulary", displayName: "KGfIL - VII-A - Vocabulary", outputFile: "kgfil-vii-a-vocabulary.json", unitStart: 7, unitEnd: 7 }
+  },
+  {
+    id: "korean-general-kgfil-vii-a-sentences",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-vii-a-sentences",
+    displayName: "KGfIL - VII-A - Sentences",
+    description: "Private bidirectional Korean-English complete example-sentence deck from Korean Grammar for International Learners, Chapter VII-A.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-vii/a/sentences",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-vii", "part-a", "sentences", "adverbs"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-vii-a-sentences", displayName: "KGfIL - VII-A - Sentences", outputFile: "kgfil-vii-a-sentences.json", unitStart: 7, unitEnd: 7 }
+  },
+  {
+    id: "korean-general-kgfil-viii-vocabulary",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-viii-vocabulary",
+    displayName: "KGfIL - VIII - Vocabulary",
+    description: "Private Korean interjection terminology, source expressions, and example-sentence vocabulary deck from Korean Grammar for International Learners, Chapter VIII.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "when-no-examples",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-viii/vocabulary",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-viii", "vocabulary", "interjections"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-viii-vocabulary", displayName: "KGfIL - VIII - Vocabulary", outputFile: "kgfil-viii-vocabulary.json", unitStart: 8, unitEnd: 8 }
+  },
+  {
+    id: "korean-general-kgfil-viii-sentences",
+    explicitOnly: true,
+    packageId: "local.user.decks.korean-kgfil-viii-sentences",
+    displayName: "KGfIL - VIII - Sentences",
+    description: "Private bidirectional Korean-English complete example-sentence deck from Korean Grammar for International Learners, Chapter VIII.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "custom",
+    relatedPackageIds: ["com.sleepymario.language.korean"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "omit",
+    packageVersion: "0.1.0",
+    sourcePath: "korean-kgfil/chapter-viii/sentences",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ko"],
+    targetLanguage: "ko",
+    subjects: ["korean", "custom", "kgfil", "chapter-viii", "sentences", "interjections"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "korean-kgfil-viii-sentences", displayName: "KGfIL - VIII - Sentences", outputFile: "kgfil-viii-sentences.json", unitStart: 8, unitEnd: 8 }
+  },
+  {
     id: "vietnamese-general-colours-vocabulary",
     explicitOnly: true,
     packageId: "com.sleepymario.language.vietnamese.general.colours-vocabulary",
@@ -1602,6 +2054,7 @@ const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[
   ...readingTargets,
   ...generatedCoreReviewTargets,
   ...chineseScriptConversionTargets,
+  ...japaneseTopographyKanjiTargets,
   ...vietnameseCustomDeckTargets,
   ...vietnamese123LessonTargets,
   ...technicalPreviewTargets,
@@ -2528,7 +2981,12 @@ function buildMemorizationFiles(
 ): readonly GeneratedMemorizationFile[] {
   const reviewExampleIndex = buildReviewExampleIndex(target, evidenceFiles);
   // Prefecture reading pairs are a standalone two-sided deck, not curriculum ABC vocabulary.
-  const standaloneJapaneseTopicDeck = target.id === "japanese-prefectures-kanji" || target.id === "japanese-general-animals-i";
+  const standaloneJapaneseTopicDeck = target.id === "japanese-prefectures-kanji"
+    || (target.id.startsWith("japanese-") && target.id.endsWith("-kanji"))
+    || target.id === "japanese-general-animals-i"
+    // Private source-based Custom decks have their own finite identities and
+    // do not participate in the canonical curriculum occurrence ledger.
+    || (target.deckFamily === "custom" && target.targetLanguage === "ja");
   const japaneseContextualReadings = !standaloneJapaneseTopicDeck && target.languages?.includes("ja") === true
     ? parseJapaneseContextualReadings(evidenceFiles)
     : undefined;
@@ -2583,17 +3041,37 @@ function parseReviewDeckCards(
   const v2Header = ["card_id", "deck", "kind", "source_chapter", "prompt_language", "answer_language", "prompt", "accepted_answers", "distractors", "explanation", "lexical_ids", "grammar_ids", "geographic_ids", "provenance_path", "provenance_locator", "provenance_evidence", "tags"];
   const v2ExamplesHeader = [...v2Header.slice(0, -1), "examples", "tags"];
   const v2TranslatedExamplesHeader = [...v2Header.slice(0, -1), "examples", "example_translations", "tags"];
+  const v2GroupedExamplesHeader = [...v2Header.slice(0, -1), "examples", "example_groups", "tags"];
+  const v2TranslatedGroupedExamplesHeader = [...v2Header.slice(0, -1), "examples", "example_translations", "example_groups", "tags"];
   const authoredV2Header = ["card_id", "deck", "kind", "chapter", "source_language", "target_language", "prompt", "answers", "alternatives", "explanation", "identity_ids", "grammar_ids", "person_ids", "source_path", "source_locator", "evidence", "examples", "tags"];
   const authoredV2TranslatedExamplesHeader = [...authoredV2Header.slice(0, -1), "example_translations", "tags"];
+  const authoredV2GroupedExamplesHeader = [...authoredV2Header.slice(0, -1), "example_groups", "tags"];
+  const authoredV2TranslatedGroupedExamplesHeader = [...authoredV2Header.slice(0, -1), "example_translations", "example_groups", "tags"];
   const usesAuthoredV2Rows = (header.length === authoredV2Header.length && header.every((field, index) => field === authoredV2Header[index]))
-    || (header.length === authoredV2TranslatedExamplesHeader.length && header.every((field, index) => field === authoredV2TranslatedExamplesHeader[index]));
+    || (header.length === authoredV2TranslatedExamplesHeader.length && header.every((field, index) => field === authoredV2TranslatedExamplesHeader[index]))
+    || (header.length === authoredV2GroupedExamplesHeader.length && header.every((field, index) => field === authoredV2GroupedExamplesHeader[index]))
+    || (header.length === authoredV2TranslatedGroupedExamplesHeader.length && header.every((field, index) => field === authoredV2TranslatedGroupedExamplesHeader[index]));
   const includesExampleTranslations = (header.length === authoredV2TranslatedExamplesHeader.length
     && header.every((field, index) => field === authoredV2TranslatedExamplesHeader[index]))
     || (header.length === v2TranslatedExamplesHeader.length
-      && header.every((field, index) => field === v2TranslatedExamplesHeader[index]));
+      && header.every((field, index) => field === v2TranslatedExamplesHeader[index]))
+    || (header.length === authoredV2TranslatedGroupedExamplesHeader.length
+      && header.every((field, index) => field === authoredV2TranslatedGroupedExamplesHeader[index]))
+    || (header.length === v2TranslatedGroupedExamplesHeader.length
+      && header.every((field, index) => field === v2TranslatedGroupedExamplesHeader[index]));
+  const includesExampleGroups = (header.length === authoredV2GroupedExamplesHeader.length
+    && header.every((field, index) => field === authoredV2GroupedExamplesHeader[index]))
+    || (header.length === authoredV2TranslatedGroupedExamplesHeader.length
+      && header.every((field, index) => field === authoredV2TranslatedGroupedExamplesHeader[index]))
+    || (header.length === v2GroupedExamplesHeader.length
+      && header.every((field, index) => field === v2GroupedExamplesHeader[index]))
+    || (header.length === v2TranslatedGroupedExamplesHeader.length
+      && header.every((field, index) => field === v2TranslatedGroupedExamplesHeader[index]));
   const usesV2Rows = (header.length === v2Header.length && header.every((field, index) => field === v2Header[index]))
     || (header.length === v2ExamplesHeader.length && header.every((field, index) => field === v2ExamplesHeader[index]))
     || (header.length === v2TranslatedExamplesHeader.length && header.every((field, index) => field === v2TranslatedExamplesHeader[index]))
+    || (header.length === v2GroupedExamplesHeader.length && header.every((field, index) => field === v2GroupedExamplesHeader[index]))
+    || (header.length === v2TranslatedGroupedExamplesHeader.length && header.every((field, index) => field === v2TranslatedGroupedExamplesHeader[index]))
     || usesAuthoredV2Rows;
   const usesLocalizedRows = header.length === localizedHeader.length && header.every((field, index) => field === localizedHeader[index]);
   if (!usesV2Rows && !usesLocalizedRows && (header.length !== legacyHeader.length || header.some((field, index) => field !== legacyHeader[index]))) {
@@ -2601,20 +3079,25 @@ function parseReviewDeckCards(
   }
 
   if (usesV2Rows) {
-    const normalizedBody = usesAuthoredV2Rows ? body.map((row, index) => normalizeAuthoredReviewV2Row(row, file.path, index + 1, includesExampleTranslations)) : body;
+    const normalizedBody = usesAuthoredV2Rows ? body.map((row, index) => normalizeAuthoredReviewV2Row(row, file.path, index + 1, includesExampleTranslations, includesExampleGroups)) : body;
     const items = normalizedBody.map((row, index) => reviewDeckV2RowToItem(
       target,
       file.path,
       row,
       index + 1,
       generatedAt,
-      header.length === v2ExamplesHeader.length || header.length === v2TranslatedExamplesHeader.length || usesAuthoredV2Rows,
-      includesExampleTranslations
+      header.length !== v2Header.length || usesAuthoredV2Rows,
+      includesExampleTranslations,
+      includesExampleGroups
     ));
     // Finite Animals I is an explicitly authored General ABC topic deck. Its
     // one-syllable/kana C values follow the topic-deck exception rather than
     // the curriculum occurrence ledger and two-mora distinctiveness rule.
-    if (target.id !== "japanese-prefectures-kanji" && target.id !== "japanese-general-animals-i" && (target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
+    const standaloneJapaneseTopicDeck = target.id === "japanese-prefectures-kanji"
+      || (target.id.startsWith("japanese-") && target.id.endsWith("-kanji"))
+      || target.id === "japanese-general-animals-i"
+      || (target.deckFamily === "custom" && target.targetLanguage === "ja");
+    if (!standaloneJapaneseTopicDeck && (target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
       const chapterStart = Math.min(...items.flatMap((item) => item.sourceChapters));
       const chapterEnd = Math.max(...items.flatMap((item) => item.sourceChapters));
       const deckContext = japaneseContextualReadings === undefined ? undefined : {
@@ -2641,8 +3124,8 @@ function parseReviewDeckCards(
   return { schemaVersion: 1, items };
 }
 
-function normalizeAuthoredReviewV2Row(row: readonly string[], sourcePath: string, rowNumber: number, includesExampleTranslations: boolean): readonly string[] {
-  const expectedLength = includesExampleTranslations ? 19 : 18;
+function normalizeAuthoredReviewV2Row(row: readonly string[], sourcePath: string, rowNumber: number, includesExampleTranslations: boolean, includesExampleGroups: boolean): readonly string[] {
+  const expectedLength = 18 + Number(includesExampleTranslations) + Number(includesExampleGroups);
   if (row.length !== expectedLength) throw new Error(`Authored Review deck row ${rowNumber + 1} has the wrong number of tab-separated fields in ${sourcePath}`);
   const decoded = row.map((value) => decodeAuthoredTsvField(value));
   const personIds = parseV2StringArray(decoded[12] ?? "", "person_ids", sourcePath, rowNumber);
@@ -2651,7 +3134,9 @@ function normalizeAuthoredReviewV2Row(row: readonly string[], sourcePath: string
     decoded[0] ?? "", decoded[1] ?? "", decoded[2] ?? "", decoded[3] ?? "", decoded[4] ?? "", decoded[5] ?? "",
     decoded[6] ?? "", decoded[7] ?? "", decoded[8] ?? "", decoded[9] ?? "", decoded[10] ?? "", decoded[11] ?? "", "[]",
     decoded[13] ?? "", decoded[14] ?? "", decoded[15] ?? "", decoded[16] ?? "",
-    ...(includesExampleTranslations ? [decoded[17] ?? "", decoded[18] ?? ""] : [decoded[17] ?? ""])
+    ...(includesExampleTranslations ? [decoded[17] ?? ""] : []),
+    ...(includesExampleGroups ? [decoded[17 + Number(includesExampleTranslations)] ?? ""] : []),
+    decoded[17 + Number(includesExampleTranslations) + Number(includesExampleGroups)] ?? ""
   ];
 }
 
@@ -2716,9 +3201,10 @@ function reviewDeckV2RowToItem(
   rowNumber: number,
   generatedAt: string,
   includesExamples: boolean,
-  includesExampleTranslations = false
+  includesExampleTranslations = false,
+  includesExampleGroups = false
 ): MemorizationItemV2 {
-  const expectedLength = includesExampleTranslations ? 19 : includesExamples ? 18 : 17;
+  const expectedLength = 17 + Number(includesExamples) + Number(includesExampleTranslations) + Number(includesExampleGroups);
   if (row.length !== expectedLength) throw new Error(`Review deck v2 row ${rowNumber + 1} has the wrong number of tab-separated fields in ${sourcePath}`);
   const [cardId, deckTitle, kind, chapterText, promptLanguage, answerLanguage, promptField, acceptedJson, distractorsJson,
     explanation, lexicalJson, grammarJson, geographicJson, provenancePath, provenanceLocator, provenanceEvidence] = row;
@@ -2728,7 +3214,11 @@ function reviewDeckV2RowToItem(
   const exampleTranslations = includesExampleTranslations
     ? parseV2StringArray(row[17] ?? "", "example_translations", sourcePath, rowNumber)
     : [];
-  const tagsJson = row[includesExampleTranslations ? 18 : includesExamples ? 17 : 16] ?? "";
+  const exampleGroupsIndex = 17 + Number(includesExampleTranslations);
+  const exampleGroups = includesExampleGroups
+    ? parseV2ExampleGroups(row[exampleGroupsIndex] ?? "", "example_groups", sourcePath, rowNumber)
+    : [];
+  const tagsJson = row[16 + Number(includesExamples) + Number(includesExampleTranslations) + Number(includesExampleGroups)] ?? "";
   const prompt = decodeReviewDeckField(promptField);
   const specialized = target.capabilities?.includes("specialized-review") === true;
   const topic = target.capabilities?.includes("topic-review") === true;
@@ -2813,6 +3303,7 @@ function reviewDeckV2RowToItem(
     provenance: { path: provenancePath, locator: provenanceLocator, evidence: provenanceEvidence },
     ...(examples.length === 0 ? {} : { examples }),
     ...(exampleTranslations.length === 0 ? {} : { exampleTranslations }),
+    ...(exampleGroups.length === 0 ? {} : { exampleGroups }),
     ...(target.notesPolicy === "omit" || (target.notesPolicy === "when-no-examples" && examples.length > 0)
       ? {}
       : { notes: resolvedExplanation }),
@@ -2839,6 +3330,31 @@ function parseV2StringArray(value: string, field: string, sourcePath: string, ro
     return parsed;
   } catch (error) {
     throw new Error(`Review deck v2 row ${rowNumber + 1} ${field} must be a JSON string array in ${sourcePath}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+function parseV2ExampleGroups(
+  value: string,
+  field: string,
+  sourcePath: string,
+  rowNumber: number
+): NonNullable<MemorizationItemV2["exampleGroups"]> {
+  try {
+    const parsed = JSON.parse(decodeAuthoredTsvField(value)) as unknown;
+    if (!Array.isArray(parsed) || parsed.some((group) => {
+      if (typeof group !== "object" || group === null || Array.isArray(group)) return true;
+      const record = group as Record<string, unknown>;
+      return typeof record.text !== "string"
+        || !Array.isArray(record.responses)
+        || record.responses.some((response) => typeof response !== "string")
+        || (record.translation !== undefined && typeof record.translation !== "string")
+        || (record.responseTranslations !== undefined
+          && (!Array.isArray(record.responseTranslations)
+            || record.responseTranslations.some((translation) => typeof translation !== "string")));
+    })) throw new Error("not a structured example-group array");
+    return parsed as NonNullable<MemorizationItemV2["exampleGroups"]>;
+  } catch (error) {
+    throw new Error(`Review deck v2 row ${rowNumber + 1} ${field} must be a JSON structured example-group array in ${sourcePath}: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

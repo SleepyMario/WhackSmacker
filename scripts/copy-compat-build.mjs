@@ -68,7 +68,7 @@ for (const file of ["chapter.md", "reading-support.json", "reading-translation.e
   await cp(`../korean-curriculum/units/korean-core/chapter-002-seoyeons-introduction/${file}`, `dist/apps/cli/content/korean/chapter-002/${file}`);
 }
 
-for (const [number, slug] of [["003", "at-the-campus-club-table"], ["004", "seoyeons-design-desk"], ["005", "a-cafe-break"], ["006", "doyuns-cooking-bag"], ["007", "choosing-something-to-cook"], ["008", "whats-in-the-kitchen"], ["009", "finding-the-swimming-pool"], ["010", "a-break-after-swimming"]]) {
+for (const [number, slug] of [["003", "at-the-campus-club-table"], ["004", "seoyeons-design-desk"], ["005", "a-cafe-break"], ["006", "doyuns-cooking-bag"], ["007", "choosing-something-to-cook"], ["008", "whats-in-the-kitchen"], ["009", "finding-the-swimming-pool"], ["010", "a-break-after-swimming"], ["011", "grandmothers-sewing-box"], ["012", "grandmothers-market-list"]]) {
   await mkdir(`dist/apps/cli/content/korean/chapter-${number}/media`, { recursive: true });
   for (const file of ["chapter.md", "reading-support.json", "reading-translation.en.json", "chapter-participants.json", "media/scene.png"]) {
     await cp(`../korean-curriculum/units/korean-core/chapter-${number}-${slug}/${file}`, `dist/apps/cli/content/korean/chapter-${number}/${file}`);
@@ -131,3 +131,4 @@ await cp("packages/geography/data/world-seven-continents.png", "dist/packages/ge
 await cp("packages/geography/data/paired", "dist/packages/geography/data/paired", { recursive: true });
 
 await cp("packages/geography/data/japan-hard", "dist/packages/geography/data/japan-hard", { recursive: true });
+await cp("packages/geography/data/japan-regions", "dist/packages/geography/data/japan-regions", { recursive: true });

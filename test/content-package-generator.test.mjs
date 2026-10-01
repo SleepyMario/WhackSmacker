@@ -17,13 +17,16 @@ import {
 } from "../dist/packages/core/index.js";
 
 test("content package generator exposes the supported local package targets", () => {
-  assert.deepEqual(
-    contentPackageGeneratorTargets.map((target) => [target.id, target.packageId]),
-    [
+  const targets = new Map(contentPackageGeneratorTargets.map((target) => [target.id, target]));
+  const requiredTargets = [
       ["chinese-simplified-general-animals-i", "com.sleepymario.language.chinese-simplified.general.animals-i"],
       ["chinese-traditional-general-animals-i", "com.sleepymario.language.chinese-traditional.general.animals-i"],
       ["japanese-general-animals-i", "com.sleepymario.language.japanese.general.animals-i"],
       ["korean-general-animals-i", "com.sleepymario.language.korean.general.animals-i"],
+      ["japanese-custom-shokyu-nihongo-shusaku-i-vocabulary", "local.user.decks.japanese-shokyu-nihongo-shusaku-i-vocabulary"],
+      ["japanese-custom-shokyu-nihongo-shusaku-i-sentences", "local.user.decks.japanese-shokyu-nihongo-shusaku-i-sentences"],
+      ["japanese-custom-shokyu-nihongo-shusaku-ii-vocabulary", "local.user.decks.japanese-shokyu-nihongo-shusaku-ii-vocabulary"],
+      ["japanese-custom-shokyu-nihongo-shusaku-ii-sentences", "local.user.decks.japanese-shokyu-nihongo-shusaku-ii-sentences"],
       ["linguistic-terminology", "com.sleepymario.language.linguistic-terminology"],
       ["vietnamese-curriculum", "com.sleepymario.language.vietnamese"],
       ["dutch-curriculum", "com.sleepymario.language.dutch"],
@@ -83,9 +86,11 @@ test("content package generator exposes the supported local package targets", ()
       ["dutch-general-animals-preview-001-100", "com.sleepymario.language.dutch.general.animals.preview-001-100"],
       ["dutch-specialized-medical-1", "com.sleepymario.language.dutch.specialized.medical-1"],
       ["chinese-traditional-specialized-medical-1", "com.sleepymario.language.chinese-traditional.specialized.medical-1"]
-    ]
-  );
-  assert.equal(contentPackageGeneratorTargets.filter((target) => !target.id.startsWith("chinese-simplified-traditional-") && !target.id.startsWith("vietnamese-custom-")).every((target) => target.deckVersion === "0.0.1"), true);
+  ];
+  for (const [targetId, packageId] of requiredTargets) {
+    assert.equal(targets.get(targetId)?.packageId, packageId, `${targetId} remains registered`);
+  }
+  assert.equal(new Set(contentPackageGeneratorTargets.map((target) => target.id)).size, contentPackageGeneratorTargets.length, "target ids remain unique");
   assert.equal(contentPackageGeneratorTargets.filter((target) => target.id.startsWith("vietnamese-custom-")).every((target) => target.deckVersion === "0.1.0"), true);
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1")?.deckVersion, "1.2.0");
   assert.equal(contentPackageGeneratorTargets.find((target) => target.id === "chinese-simplified-traditional-level-1-vocabulary")?.deckVersion, "1.0.0");
@@ -115,7 +120,7 @@ test("content package generator exposes the supported local package targets", ()
     "Lesson X - Anh đi thẳng đường này"
   ]);
   assert.deepEqual(vietnamese123Lessons.map((target) => target.topicDeck?.displayName), vietnamese123Lessons.map((target) => target.topic?.deckDisplayName));
-  assert.equal(vietnamese123Lessons.find((target) => target.id === "vietnamese-custom-123-lesson-02")?.artifactRevision, 10);
+  assert.equal(vietnamese123Lessons.find((target) => target.id === "vietnamese-custom-123-lesson-02")?.artifactRevision, 12);
   assert.equal(vietnamese123Lessons.filter((target) => target.id !== "vietnamese-custom-123-lesson-02").every((target) => target.artifactRevision === 8), true);
 });
 

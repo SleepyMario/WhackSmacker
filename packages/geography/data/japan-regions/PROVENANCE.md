@@ -1,0 +1,9 @@
+# Japan regions maps
+
+The Regions decks group Japan's 47 prefectures into the conventional eight geographic regions: Hokkaidō, Tōhoku, Kantō, Chūbu, Kansai, Chūgoku, Shikoku, and Kyūshū. Mie is classified under Kansai; Okinawa is classified under Kyūshū. These are geographic teaching regions rather than formal administrative divisions.
+
+Source geometry: Geospatial Information Authority of Japan, Global Map Japan, via `https://github.com/dataofjapan/land` (`japan.geojson`). Adaptations: simplified prefecture geometry, grouped regional highlighting, romanized labels, numbered and named references, and an Okinawa inset. North remains up. Some small islands are omitted.
+
+The reproducible source renderer is retained at `/home/ashwin/Documents/Codex/2026-09-09/nm/outputs/japan-prefectures/render_regions.py`, beside the retained source GeoJSON. It generates eight question/answer pairs, one neutral reference, numbered and named regional maps, and three region-cropped prefecture maps for each region: neutral reference, locally numbered, and named.
+
+The sixteen region-specific prefecture decks reuse the established individual-prefecture question and answer images. Their supporting reference and reverse-question maps are cropped to the applicable region. Local numbering restarts at 1 for every region; Kyuushuu retains a separate Okinawa inset. Menu labels use ASCII Japanese-style romanization (`Hokkaidou`, `Touhoku`, `Kantou`, `Chuubu`, `Kansai`, `Chuugoku`, `Shikoku`, and `Kyuushuu`).

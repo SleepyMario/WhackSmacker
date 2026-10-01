@@ -128,6 +128,7 @@ export function assertCanonicalCastBootstrapBeforeOrdinaryContent(
         chapterMarkdown: chapterText,
         canonicalCast: cast.cast,
         activeCastProgression: cast.activeCast.progression,
+        ...(cast.activeCast.earlyActivations === undefined ? {} : { activeCastEarlyActivations: cast.activeCast.earlyActivations }),
         ...(options.curriculumIdentity === undefined ? {} : { curriculumIdentity: options.curriculumIdentity }),
         ...(options.chineseScriptVariant === undefined ? {} : { chineseScriptVariant: options.chineseScriptVariant }),
         ...(translationText === undefined ? {} : { translationText }),
@@ -150,6 +151,7 @@ export function assertCanonicalCastBootstrapBeforeOrdinaryContent(
     auditWarnings = auditActiveCast({
       canonicalPersonIds: cast.cast.map((person) => person.id),
       progression: cast.activeCast.progression,
+      ...(cast.activeCast.earlyActivations === undefined ? {} : { earlyActivations: cast.activeCast.earlyActivations }),
       chapters: auditChapters
     }).warnings;
   } catch (error) {

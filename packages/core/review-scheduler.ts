@@ -4,6 +4,7 @@ export const reviewProgressFormatVersion = 2;
 export const reviewRatings = ["again", "hard", "good", "easy"] as const;
 export const reviewStatuses = ["new", "learning", "review", "mastered", "suspended"] as const;
 export const masteredReviewIntervalDays = 1825;
+export const buryReviewIntervalDays = 30;
 
 export type ReviewRating = (typeof reviewRatings)[number];
 export type ReviewStatus = (typeof reviewStatuses)[number];
@@ -82,6 +83,21 @@ export function isReviewDue(state: ReviewItemState, now: string): boolean {
     && state.status !== "mastered"
     && state.status !== "suspended"
     && Date.parse(state.nextReviewAt) <= Date.parse(now);
+}
+
+export function isReviewItemBuryEligible(state: ReviewItemState): boolean {
+  return state.retiredAt === undefined
+    && state.status !== "mastered"
+    && state.status !== "suspended"
+    && state.intervalDays > buryReviewIntervalDays;
+}
+
+export function buryReviewItem(state: ReviewItemState): ReviewItemState {
+  assertValidReviewItemState(state, "state");
+  if (!isReviewItemBuryEligible(state)) {
+    throw new Error(`Review item may only be buried after its interval exceeds ${buryReviewIntervalDays} days.`);
+  }
+  return { ...state, status: "suspended" };
 }
 
 export function listDueReviewStates(

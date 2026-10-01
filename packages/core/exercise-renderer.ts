@@ -2,6 +2,7 @@ import {
   assertValidMemorizationItem,
   memorizationOutputsFromAnswer,
   type MemorizationContentBlock,
+  type MemorizationExampleGroup,
   type MemorizationItem
 } from "./memorization-item";
 import { localized } from "./localized-content";
@@ -31,6 +32,7 @@ export interface RenderedExercise {
   readonly noteLines: readonly string[];
   readonly exampleLines: readonly string[];
   readonly exampleTranslationLines?: readonly string[];
+  readonly exampleGroups?: readonly MemorizationExampleGroup[];
   readonly metadataLines: readonly string[];
   readonly warnings: readonly string[];
   readonly topicReview?: TopicReviewPresentation;
@@ -79,6 +81,7 @@ export function renderMemorizationExercise(options: RenderExerciseOptions): Rend
     noteLines: item.notes === undefined ? [] : normalizeLines(localized(item.notes, locale)),
     exampleLines: (item.examples ?? []).flatMap((example) => normalizeExampleLines(example)).slice(0, 3),
     exampleTranslationLines: (item.exampleTranslations ?? []).flatMap((translation) => normalizeExampleLines(translation)).slice(0, 3),
+    exampleGroups: item.exampleGroups ?? [],
     metadataLines: metadataLinesFor(item, identity, locale),
     warnings: warningsFor(item, locale),
     ...(topicReview === undefined ? {} : { topicReview })
@@ -138,8 +141,15 @@ export function formatRenderedExercise(exercise: RenderedExercise, side: "prompt
     if (exercise.noteLines.length > 0) {
       sections.push("", "Notes", ...prefixLines(exercise.noteLines));
     }
-    if (exercise.exampleLines.length > 0) {
-      sections.push("", "Example", ...prefixLines(exercise.exampleLines.map((example) => `- ${example}`)));
+    if (exercise.exampleLines.length > 0 || (exercise.exampleGroups?.length ?? 0) > 0) {
+      const exampleLines = [
+        ...exercise.exampleLines.map((example) => `- ${example}`),
+        ...(exercise.exampleGroups ?? []).flatMap((group) => [
+          `- ${group.text}`,
+          ...group.responses.map((response) => `  ◦ ${response}`)
+        ])
+      ];
+      sections.push("", (exercise.exampleGroups?.length ?? 0) > 0 ? "Examples" : "Example", ...prefixLines(exampleLines));
     }
   }
   if (side === "full" && exercise.metadataLines.length > 0) {

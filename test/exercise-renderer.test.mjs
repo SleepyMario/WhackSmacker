@@ -87,6 +87,21 @@ test("formatted vocabulary examples render as bullets", () => {
   assert.match(output, /Example\n  - 아 is a vowel\.\n  - 아 is a syllable block\./);
 });
 
+test("structured dialogue examples render replies as nested bullets", () => {
+  const rendered = renderMemorizationExercise({
+    ...identity,
+    item: {
+      ...item("vocabulary"),
+      exampleGroups: [{
+        text: "Anh có phải là người Việt Nam không?",
+        responses: ["Vâng, tôi là người Việt Nam.", "Không, tôi không phải là người Việt Nam."]
+      }]
+    }
+  });
+  const output = formatRenderedExercise(rendered, "answer");
+  assert.match(output, /Examples\n  - Anh có phải là người Việt Nam không\?\n    ◦ Vâng, tôi là người Việt Nam\.\n    ◦ Không, tôi không phải là người Việt Nam\./u);
+});
+
 test("formatted examples preserve internal source spacing", () => {
   const rendered = renderMemorizationExercise({
     ...identity,

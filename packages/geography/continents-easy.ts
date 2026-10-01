@@ -1,9 +1,10 @@
 import { readFile, mkdir, open, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { emitKeypressEvents } from "node:readline";
-import { isReviewDue } from "../core/review-scheduler";
-import { loadReviewProgressStore, recordStoredReviewOutcome, resolveReviewProgressDirectory } from "../core/review-progress-store";
+import { isReviewDue, isReviewItemBuryEligible } from "../core/review-scheduler";
+import { buryStoredReviewItem, loadReviewProgressStore, recordStoredReviewOutcome, resolveReviewProgressDirectory } from "../core/review-progress-store";
 import { kittyArtworkSequences, kittyArtworkDeleteSequence } from "../../apps/cli/terminal-artwork";
+import { japanRegionDecks, type JapanRegionSlug } from "./japan-regions";
 
 const continents = [
   { id: "north-america", number: 1, answer: "North America" },
@@ -37,6 +38,23 @@ export function continentEasyChoices(answer: string, random = Math.random): stri
   return shuffled([answer, ...others], random);
 }
 
+export function formatGeographySessionScore(correct: number, incorrect: number, total: number): string {
+  const answered = correct + incorrect;
+  const unanswered = Math.max(0, total - answered);
+  if (answered === 0) {
+    return [
+      "Session ended before any questions were answered.",
+      `0 correct, 0 incorrect${unanswered > 0 ? `, ${unanswered} unanswered` : ""}.`
+    ].join("\n");
+  }
+  const percentage = Math.round((correct / answered) * 100);
+  return [
+    `You scored ${percentage}%.`,
+    `${correct} correct, ${incorrect} incorrect${unanswered > 0 ? `, ${unanswered} unanswered` : ""}.`,
+    ...(unanswered > 0 ? ["Session ended early."] : [])
+  ].join("\n");
+}
+
 export function normalizePrefectureAnswer(value: string): string {
   const normalized = value.normalize("NFD").replace(/\p{M}/gu, "").trim().toLowerCase()
     .replace(/(?:[ -]+(?:prefecture|ken|fu|to|do))$/, "").replace(/[ -]+/g, "");
@@ -44,33 +62,58 @@ export function normalizePrefectureAnswer(value: string): string {
   return aliases[normalized] ?? normalized;
 }
 
-export async function runContinentsEasy(options: { progressDir?: string; mode?: "easy" | "hard"; dataset?: "japan"; nameScript?: "kanji" } = {}): Promise<void> {
+export async function runContinentsEasy(options: { progressDir?: string; mode?: "easy" | "hard"; dataset?: "japan" | "japan-regions"; region?: JapanRegionSlug; nameScript?: "kanji" } = {}): Promise<void> {
   const kanji = options.nameScript === "kanji";
   const japan = options.dataset === "japan";
+  const regions = options.dataset === "japan-regions";
+  const japanMap = japan || regions;
+  const prefectureRegion = options.region === undefined ? undefined : japanRegionDecks.find(region => region.slug === options.region);
   const hard = options.mode === "hard";
-  const title = japan ? (hard ? "Prefectures - Hard" : "Prefectures - Easy") : hard ? "Continents - Hard" : "Continents - Easy";
-  const packageId = japan ? `com.sleepymario.${kanji ? "language.japanese" : "geography"}.japan-prefectures-${hard ? "hard" : "easy"}` : hard ? "com.sleepymario.geography.continents-hard" : continentEasyPackageId;
+  const title = prefectureRegion !== undefined
+    ? `Prefectures - ${kanji ? prefectureRegion.japanese : prefectureRegion.label} - ${hard ? "Hard" : "Easy"}`
+    : regions
+    ? `Prefectures - Regions - ${hard ? "Hard" : "Easy"}`
+    : japan ? (hard ? "Prefectures - All - Hard" : "Prefectures - All - Easy") : hard ? "Continents - Hard" : "Continents - Easy";
+  const packageId = prefectureRegion !== undefined
+    ? `com.sleepymario.${kanji ? "language.japanese" : "geography"}.japan-prefectures-${prefectureRegion.slug}-${hard ? "hard" : "easy"}`
+    : regions
+    ? `com.sleepymario.${kanji ? "language.japanese" : "geography"}.japan-regions-${hard ? "hard" : "easy"}`
+    : japan ? `com.sleepymario.${kanji ? "language.japanese" : "geography"}.japan-prefectures-${hard ? "hard" : "easy"}` : hard ? "com.sleepymario.geography.continents-hard" : continentEasyPackageId;
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     throw new Error(`${title} needs an interactive Kitty terminal.`);
   }
   if (!(process.env.KITTY_WINDOW_ID || process.env.TERM?.includes("kitty"))) {
     throw new Error("Open this deck in Kitty to display the maps.");
   }
-  let cards = japan
-    ? (JSON.parse(await readFile(join(__dirname, "data", "japan-hard", "prefectures.json"), "utf8")) as { id: string; answer: string; japanese: string }[])
+  const regionMetadata = prefectureRegion === undefined ? undefined
+    : (JSON.parse(await readFile(join(__dirname, "data", "japan-regions", "regions.json"), "utf8")) as { id: string; answer: string; prefectures: string[] }[])
+      .find(region => region.id === `${prefectureRegion.slug}-highlight`);
+  let cards = regions
+    ? (JSON.parse(await readFile(join(__dirname, "data", "japan-regions", "regions.json"), "utf8")) as { id: string; answer: string }[])
+      .map(c => {
+        const answer = kanji ? japanRegionDecks.find(region => `${region.slug}-highlight` === c.id)!.japanese : c.answer;
+        return { ...c, answer, prompt: "Which region is highlighted?", explanation: `The highlighted region is ${answer}.` };
+      })
+    : japan
+      ? (JSON.parse(await readFile(join(__dirname, "data", "japan-hard", "prefectures.json"), "utf8")) as { id: string; answer: string; japanese: string }[])
+        .filter(card => regionMetadata === undefined || regionMetadata.prefectures.includes(card.answer))
       .map(c => ({ ...c, answer: kanji ? c.japanese : c.answer, prompt: "Which prefecture is highlighted?", explanation: kanji ? `The highlighted prefecture is ${c.japanese}.` : `The highlighted prefecture is ${c.answer} (${c.japanese}).` }))
     : hard ? continentEasyCards : [...continentEasyCards, ...continents.map(c => ({
       id: `${c.id}-locate`, answer: String(c.number), prompt: `Which number marks ${c.answer}?`,
       explanation: `${c.answer} is number ${c.number}.`
     }))];
   const namePool = cards.map(c => c.answer);
-  if (japan && !hard) cards = [...cards, ...cards.map((c, i) => ({
+  if (japanMap && !hard) cards = [...cards, ...cards.map((c, i) => ({
     id: c.id.replace(/-highlight$/, "-locate"), answer: String(i + 1),
     prompt: `Which number marks ${c.answer}?`, explanation: `${c.answer} is number ${i + 1}.`
   }))];
   const progressDir = options.progressDir ?? join(resolveReviewProgressDirectory(), "wandering-the-world");
   await mkdir(progressDir, { recursive: true });
-  const lockPath = join(progressDir, japan ? `japan-prefectures-${kanji ? "kanji-" : ""}${hard ? "hard" : "easy"}.lock` : hard ? "continents-hard.lock" : "continents-easy.lock");
+  const lockPath = join(progressDir, prefectureRegion !== undefined
+    ? `${kanji ? "japanese" : "japan"}-prefectures-${prefectureRegion.slug}-${hard ? "hard" : "easy"}.lock`
+    : regions
+    ? `${kanji ? "japanese" : "japan"}-regions-${hard ? "hard" : "easy"}.lock`
+    : japan ? `japan-prefectures-${kanji ? "kanji-" : ""}${hard ? "hard" : "easy"}.lock` : hard ? "continents-hard.lock" : "continents-easy.lock");
   let lock;
   try { lock = await open(lockPath, "wx"); }
   catch (error) {
@@ -88,7 +131,8 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
     if ((key.ctrl && key.name === "c") || key.name === "escape" || (!typing && text === "q")) { quit(); return; }
     if (typing) {
       if (key.name === "return") {
-        if (!typedAnswer.trim() || (numericEntry && (!/^\d{1,2}$/.test(typedAnswer) || Number(typedAnswer) < 1 || Number(typedAnswer) > 47)) || (process.stdout.rows || 40) < 20 || (process.stdout.columns || 100) < 55) return;
+        const maximumMapNumber = prefectureRegion !== undefined ? namePool.length : regions ? 8 : 47;
+        if (!typedAnswer.trim() || (numericEntry && (!/^\d{1,2}$/.test(typedAnswer) || Number(typedAnswer) < 1 || Number(typedAnswer) > maximumMapNumber)) || (process.stdout.rows || 40) < 20 || (process.stdout.columns || 100) < 55) return;
         typing = false;
         const resolve = pending; pending = undefined; resolve?.(typedAnswer); return;
       }
@@ -96,7 +140,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
       else if (!key.ctrl && text && (numericEntry ? /^\d+$/.test(text) && typedAnswer.length + text.length <= 2 : /^[\p{L}\p{M} -]+$/u.test(text))) typedAnswer += text;
       currentDraw?.(); return;
     }
-    if (pending) { const resolve = pending; pending = undefined; resolve(key.name === "return" ? "enter" : (text ?? "").toLowerCase()); }
+    if (pending) { const resolve = pending; pending = undefined; resolve(key.name === "return" ? "enter" : text === "B" ? "B" : (text ?? "").toLowerCase()); }
   };
   const readKey = async (allowed: readonly string[]): Promise<string> => {
     while (!ended) {
@@ -116,22 +160,40 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
     process.stdout.on("resize", onResize);
     const sessionTime = now();
     const store = await loadReviewProgressStore(progressDir);
+    const statesByItemId = new Map(store.items.filter(state => state.packageId === packageId).map(state => [state.itemId, state]));
     const dueCards = cards.filter(card => {
-      const state = store.items.find(s => s.packageId === packageId && s.itemId === card.id);
+      const state = statesByItemId.get(card.id);
       return !state || isReviewDue(state, sessionTime);
     });
-    const queue = kanji ? dueCards : shuffled(dueCards, Math.random);
+    const queue = shuffled(dueCards, Math.random);
     for (const card of queue) {
       if (ended) break;
       const directNumber = !hard && card.id.endsWith("-locate");
-      const choices = hard || directNumber ? [] : japan ? shuffled([card.answer, ...shuffled(namePool.filter(n => n !== card.answer), Math.random).slice(0, 3)], Math.random) : continentEasyChoices(card.answer);
-      const textEntry = hard || (japan && directNumber);
-      const answerKeys = directNumber ? ["1", "2", "3", "4", "5", "6", "7"] : continentEasyAnswerKeys;
-      const instruction = japan && directNumber ? "Enter the map number (1–47) and press Enter. Escape returns to the menu." : japan && hard ? (kanji ? "Type the prefecture name in kanji and press Enter. Escape returns to the menu." : "Type the romanized prefecture name and press Enter. Escape returns to the menu.") : hard ? "Type the continent name and press Enter. Escape returns to the menu." : directNumber ? "Press the map number (1–7) to answer." : "Press 1–4 to answer.";
+      const choicePool = namePool.filter(name => name !== card.answer);
+      const choices = hard || directNumber ? [] : japanMap ? shuffled([card.answer, ...shuffled(choicePool, Math.random).slice(0, 3)], Math.random) : continentEasyChoices(card.answer);
+      const textEntry = hard || (japanMap && directNumber);
+      const answerKeys = directNumber
+        ? ["1", "2", "3", "4", "5", "6", "7"]
+        : continentEasyAnswerKeys.slice(0, choices.length);
+      const instruction = prefectureRegion !== undefined && directNumber ? `Enter the map number (1–${namePool.length}) and press Enter. Escape returns to the menu.`
+        : regions && directNumber ? "Enter the map number (1–8) and press Enter. Escape returns to the menu."
+        : japan && directNumber ? "Enter the map number (1–47) and press Enter. Escape returns to the menu."
+        : regions && hard ? (kanji ? "Type the region name in Japanese and press Enter. Escape returns to the menu." : "Type the romanized region name and press Enter. Escape returns to the menu.")
+        : japan && hard ? (kanji ? "Type the prefecture name in kanji and press Enter. Escape returns to the menu." : "Type the romanized prefecture name and press Enter. Escape returns to the menu.")
+        : hard ? "Type the continent name and press Enter. Escape returns to the menu." : directNumber ? "Press the map number (1–7) to answer." : "Press 1–4 to answer.";
       const stem = card.id.replace(/-highlight$/, "");
-      const questionPng = await readFile(directNumber ? join(__dirname, "data", japan ? "japan-hard/japan-prefectures-numbered.png" : "world-seven-continents-numbered.png") : join(__dirname, "data", japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : "paired", `${stem}-question.png`));
-      const answerPng = await readFile(directNumber ? join(__dirname, "data", japan ? (kanji ? "japan-hard/japan-prefectures-kanji.png" : "japan-hard/japan-prefectures-named.png") : "world-seven-continents.png") : join(__dirname, "data", japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : "paired", `${stem}-answer.png`));
-      const referencePng = japan && !directNumber ? await readFile(join(__dirname, "data", "japan-hard", "split", "reference.png")) : undefined;
+      const regionalPrefectureAsset = prefectureRegion === undefined ? undefined : join("japan-regions", "prefecture-decks", `${prefectureRegion.slug}`);
+      const questionPng = await readFile(directNumber
+        ? join(__dirname, "data", regionalPrefectureAsset !== undefined ? `${regionalPrefectureAsset}-numbered.png` : regions ? "japan-regions/japan-regions-numbered.png" : japan ? "japan-hard/japan-prefectures-numbered.png" : "world-seven-continents-numbered.png")
+        : join(__dirname, "data", regions ? "japan-regions" : japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : "paired", `${stem}-question.png`));
+      const answerPng = await readFile(directNumber
+        ? join(__dirname, "data", regionalPrefectureAsset !== undefined ? `${regionalPrefectureAsset}-${kanji ? "kanji" : "named"}.png` : regions ? `japan-regions/japan-regions-${kanji ? "kanji" : "named"}.png` : japan ? (kanji ? "japan-hard/japan-prefectures-kanji.png" : "japan-hard/japan-prefectures-named.png") : "world-seven-continents.png")
+        : join(__dirname, "data", regions ? "japan-regions" : japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : "paired", `${stem}-${regions && kanji ? "answer-kanji" : "answer"}.png`));
+      const referencePng = japanMap && !directNumber
+        ? await readFile(regionalPrefectureAsset !== undefined
+          ? join(__dirname, "data", `${regionalPrefectureAsset}-reference.png`)
+          : join(__dirname, "data", regions ? "japan-regions" : kanji ? "japan-hard/split-kanji" : "japan-hard/split", "reference.png"))
+        : undefined;
       let feedback = "";
       const draw = () => {
         const rows = process.stdout.rows || 40, columns = process.stdout.columns || 100;
@@ -140,7 +202,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
           process.stdout.write("Please enlarge the terminal to at least 55 columns and 20 rows.\n");
           return;
         }
-        if (japan) {
+        if (japanMap) {
           const leftWidth = Math.floor(columns / 2) - 2;
           const rightStart = Math.floor(columns / 2) + 2;
           const rightWidth = columns - rightStart;
@@ -188,25 +250,36 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
       };
       typedAnswer = "";
       typing = textEntry;
-      numericEntry = japan && directNumber;
+      numericEntry = japanMap && directNumber;
       currentDraw = draw; draw();
       let key: string;
       do { key = textEntry ? await new Promise<string>(resolve => { pending = resolve; }) : await readKey(answerKeys); }
       while (key !== "q" && ((process.stdout.rows || 40) < 20 || (process.stdout.columns || 100) < 55));
       if (ended || (!hard && key === "q")) break;
       const selected = numericEntry ? String(Number(key)) : hard || directNumber ? key : choices[continentEasyAnswerKeys.indexOf(key as typeof continentEasyAnswerKeys[number])];
-      const right = kanji && !directNumber ? selected?.normalize("NFKC").trim().replace(/[都府県]$/, "") === card.answer.replace(/[都府県]$/, "") : japan ? normalizePrefectureAnswer(selected ?? "") === normalizePrefectureAnswer(card.answer) : selected?.trim().replace(/\s+/g, " ").toLowerCase() === card.answer.toLowerCase();
-      await recordStoredReviewOutcome({ ...continentEasyIdentity(card.id), packageId, progressDir, reviewedAt: now(), rating: right ? "good" : "again" });
+      const right = kanji && !directNumber ? selected?.normalize("NFKC").trim().replace(/[都府県]$/, "") === card.answer.replace(/[都府県]$/, "") : japanMap ? normalizePrefectureAnswer(selected ?? "") === normalizePrefectureAnswer(card.answer) : selected?.trim().replace(/\s+/g, " ").toLowerCase() === card.answer.toLowerCase();
       if (right) correct++; else wrong++;
+      const currentState = statesByItemId.get(card.id);
+      const buryEligible = currentState !== undefined && isReviewItemBuryEligible(currentState);
       const color = process.env.NO_COLOR === undefined ? (right ? "\x1b[32m" : "\x1b[31m") : "";
-      feedback = `${color}${right ? "Correct!" : `Wrong. ${card.explanation}`}${color ? "\x1b[0m" : ""}  Enter / Space: next`;
+      feedback = `${color}${right ? "Correct!" : `Wrong. ${card.explanation}`}${color ? "\x1b[0m" : ""}  Enter / Space: next${buryEligible ? "   B Bury permanently" : ""}`;
       draw();
-      if (await readKey(["enter", " "]) === "q") break;
+      const action = await readKey(buryEligible ? ["enter", " ", "B"] : ["enter", " "]);
+      if (action === "q") break;
+      if (action === "B") {
+        await buryStoredReviewItem({ ...continentEasyIdentity(card.id), packageId, progressDir, buriedAt: now() });
+      } else {
+        await recordStoredReviewOutcome({ ...continentEasyIdentity(card.id), packageId, progressDir, reviewedAt: now(), rating: right ? "good" : "again" });
+      }
     }
     currentDraw = undefined;
+    process.stdout.write(kittyArtworkDeleteSequence() + kittyArtworkDeleteSequence(19394562) + `\x1b[2J\x1b[H${title}\n\n`);
+    if (queue.length > 0) {
+      process.stdout.write(`${formatGeographySessionScore(correct, wrong, queue.length)}\nIncorrect answers are due again after 10 minutes.\n`);
+    } else {
+      process.stdout.write("No cards are due for review right now.\n");
+    }
     if (!ended) {
-      process.stdout.write(kittyArtworkDeleteSequence() + kittyArtworkDeleteSequence(19394562) + `\x1b[2J\x1b[H${title}\n\n`);
-      process.stdout.write(queue.length ? `${correct} correct, ${wrong} incorrect.\nIncorrect answers are due again after 10 minutes.\n` : "No cards are due for review right now.\n");
       process.stdout.write("\nPress Enter or Space to return.\n");
       await readKey(["enter", " "]);
     }

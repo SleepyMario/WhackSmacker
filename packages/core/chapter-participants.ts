@@ -1,4 +1,5 @@
 import {
+  type ActiveCastEarlyActivation,
   activePersonIdsForChapter,
   activeCastSizeForChapter
 } from "./language-curriculum-policy";
@@ -51,6 +52,7 @@ export interface ChapterParticipantReconciliationOptions {
   readonly chapterMarkdown: string;
   readonly canonicalCast: readonly Pick<CanonicalPersonV2, "id" | "displayName" | "traditionalDisplayName" | "simplifiedDisplayName">[];
   readonly activeCastProgression: readonly string[];
+  readonly activeCastEarlyActivations?: readonly ActiveCastEarlyActivation[];
   readonly curriculumIdentity?: string;
   readonly chineseScriptVariant?: ChineseScriptVariant;
   readonly translationText?: string;
@@ -251,7 +253,7 @@ export function reconcileChapterParticipants(
   // Narrative participants are reconciled above; references do not become
   // participants or qualifying appearances merely because their name occurs.
 
-  const active = new Set(activePersonIdsForChapter(chapter, options.activeCastProgression));
+  const active = new Set(activePersonIdsForChapter(chapter, options.activeCastProgression, options.activeCastEarlyActivations ?? []));
   for (const id of castIds) {
     if (!active.has(id)) {
       throw new Error(`${source}: Chapter ${chapter} canonical participant ${id} is outside the active progression prefix; pre-activation canonical appearances are prohibited`);
@@ -261,7 +263,7 @@ export function reconcileChapterParticipants(
   if (castIds.length > ceiling) {
     throw new Error(`${source}: Chapter ${chapter} declares ${castIds.length} canonical cast participants; named-cast ceiling is ${ceiling}. Unnamed functional participants are excluded from this count.`);
   }
-  if (active.size !== activeCastSizeForChapter(chapter)) throw new Error(`${source}: internal active-cast calculation disagrees with Chapter ${chapter}`);
+  if (active.size < activeCastSizeForChapter(chapter)) throw new Error(`${source}: internal active-cast calculation disagrees with Chapter ${chapter}`);
 
   return {
     chapter,

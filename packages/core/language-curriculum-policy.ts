@@ -16,6 +16,10 @@ export interface LanguageCurriculumPacingRule {
   readonly newVocabularyItems: InclusiveRange;
 }
 
+export interface GrammarPacingException {
+  readonly reason: string;
+}
+
 export interface LanguageCurriculumChapterSizeRule {
   readonly chapterStart: number;
   readonly chapterEnd: number;
@@ -325,6 +329,12 @@ export type ActiveCastMigrationStatus = "compliant" | "pending-legacy-migration"
 export interface ActiveCastMetadata {
   readonly schemaVersion: 1;
   readonly progression: readonly string[];
+}
+
+export interface ActiveCastEarlyActivation {
+  readonly personId: string;
+  readonly chapter: number;
+  readonly reason: string;
 }
 
 export interface ActiveCastChapterRecord {
@@ -690,7 +700,8 @@ export const languageCurriculumPolicy: LanguageCurriculumPolicy = {
     "Every ordinary target-language curriculum begins with a schema-v2 canonical cast of exactly thirty people, even before Chapter 1 exists; schema v1 is historical diagnostic data only and no repository retains a compatibility path.",
     "Canonical-cast metadata declares one explicit versioned progression and one deck-person pool, each an exact permutation of exactly thirty unique canonical person IDs.",
     "Every strengthened person has typed plausible age, explicit controlled gender, substantive background/household/role/interest/personality/continuity data, and reciprocal structured stable-ID relationships.",
-    "Chapters 1-10 use the first three progression IDs; Chapters 11-20 use the first five. From Chapter 21 the active pool is the first min(30, 5 + 3 * floor((chapter - 1) / 20)) progression IDs.",
+    "Chapters 1-5 use the first three progression IDs; each later five-chapter boundary normally activates the next progression ID, up to thirty people.",
+    "A validated activeCast.earlyActivations declaration may move a later progression member to an earlier five-chapter boundary for a substantive relationship or story reason; that person assumes the earlier block obligation and is not activated twice when the default prefix catches up.",
     "Previously active people remain active; Chapter 201 onward retains the same thirty people.",
     "Dialogue, narrative, metadata, and review cast IDs must be active; only meaningful learner-facing dialogue or narrative appearances satisfy block coverage.",
     "In each person's first activation block, that person appears meaningfully in at least five distinct ordinary chapters; duplicate lines in one chapter count once.",
@@ -929,9 +940,18 @@ export function assertLanguageCurriculumPacing(values: {
   readonly grammarPointCount: number;
   readonly readContentLineCount: number;
   readonly newVocabularyItemCount: number;
+  readonly grammarPacingException?: GrammarPacingException;
 }): void {
   const rule = pacingRuleForChapter(values.chapter);
-  assertInRange(values.grammarPointCount, rule.grammarPoints, `Chapter ${values.chapter} grammar point count`);
+  const ordinaryRuleSatisfied = values.grammarPointCount >= rule.grammarPoints.min
+    && values.grammarPointCount <= rule.grammarPoints.max;
+  const validatedSecondPoint = values.grammarPointCount === 2;
+  if (!ordinaryRuleSatisfied && validatedSecondPoint) {
+    const reason = values.grammarPacingException?.reason.trim() ?? "";
+    if (reason.length < 20) throw new Error(`Chapter ${values.chapter} requires a substantive grammar-pacing exception reason when a second grammar point exceeds the ordinary pacing rule.`);
+  } else if (!ordinaryRuleSatisfied) {
+    assertInRange(values.grammarPointCount, rule.grammarPoints, `Chapter ${values.chapter} grammar point count`);
+  }
   assertAtLeast(values.readContentLineCount, rule.readContentLines, `Chapter ${values.chapter} read-content line count`);
   assertInRange(values.newVocabularyItemCount, rule.newVocabularyItems, `Chapter ${values.chapter} new vocabulary item count`);
 }
@@ -1371,11 +1391,17 @@ export function assertActiveCastProgression(canonicalPersonIds: readonly string[
   }
 }
 
-export function activePersonIdsForChapter(chapter: number, progression: readonly string[]): readonly string[] {
+export function activePersonIdsForChapter(
+  chapter: number,
+  progression: readonly string[],
+  earlyActivations: readonly ActiveCastEarlyActivation[] = []
+): readonly string[] {
   if (progression.length !== canonicalCastSize || new Set(progression).size !== canonicalCastSize) {
     throw new Error(`Active-cast progression must contain exactly ${canonicalCastSize} unique IDs before calculating an active pool.`);
   }
-  return progression.slice(0, activeCastSizeForChapter(chapter));
+  const active = new Set(progression.slice(0, activeCastSizeForChapter(chapter)));
+  for (const activation of earlyActivations) if (activation.chapter <= chapter) active.add(activation.personId);
+  return progression.filter((id) => active.has(id));
 }
 
 export function leastUsedSuitableActivePersonIds(values: {
@@ -1400,6 +1426,7 @@ export function leastUsedSuitableActivePersonIds(values: {
 export function auditActiveCast(values: {
   readonly canonicalPersonIds: readonly string[];
   readonly progression: readonly string[];
+  readonly earlyActivations?: readonly ActiveCastEarlyActivation[];
   readonly chapters: readonly ActiveCastChapterRecord[];
 }): ActiveCastAuditResult {
   assertActiveCastProgression(values.canonicalPersonIds, values.progression);
@@ -1416,7 +1443,7 @@ export function auditActiveCast(values: {
     if (record.migrationStatus === "pending-legacy-migration" && record.authorship !== "legacy") {
       throw new Error(`Chapter ${record.chapter}: newly authored content cannot be marked pending legacy migration.`);
     }
-    const active = new Set(activePersonIdsForChapter(record.chapter, values.progression));
+    const active = new Set(activePersonIdsForChapter(record.chapter, values.progression, values.earlyActivations ?? []));
     const declared = [
       ...(record.participatingPersonIds ?? []),
       ...(record.dialogueSpeakerIds ?? []),
@@ -1467,7 +1494,7 @@ export function auditActiveCast(values: {
     for (let chapter = chapterStart; chapter <= chapterEnd; chapter += 1) {
       for (const [id, count] of Object.entries(appearancesByChapter[chapter] ?? {})) appearancesByPersonId[id] = (appearancesByPersonId[id] ?? 0) + count;
     }
-    const report = activeCastBlockReport({ chapterStart, progression: values.progression, appearancesByChapter, suppliedChapters });
+    const report = activeCastBlockReport({ chapterStart, progression: values.progression, earlyActivations: values.earlyActivations ?? [], appearancesByChapter, suppliedChapters });
     const trajectoryCheckpoint = chapterStart + 14;
     if (suppliedChapters.has(trajectoryCheckpoint)) {
       const absentAtCheckpoint = report.activationPeople.find((person) => person.distinctQualifyingChapterCount === 0);
@@ -1485,7 +1512,7 @@ export function auditActiveCast(values: {
     }
     if (coverageStatus === "pending" && report.distributionOnTrack === false) warnings.push(`Chapters ${chapterStart}-${chapterEnd}: pending old-cast distribution is below one third and may be difficult to recover without prompt older-cast use.`);
     blocks.push({ chapterStart, chapterEnd, appearancesByPersonId, coverageStatus, requiredNewPersonIds, missingNewPersonIds, ...report });
-    const counts = activePersonIdsForChapter(chapterStart, values.progression).map((id) => appearancesByPersonId[id] ?? 0);
+    const counts = activePersonIdsForChapter(chapterStart, values.progression, values.earlyActivations ?? []).map((id) => appearancesByPersonId[id] ?? 0);
     const total = counts.reduce((sum, count) => sum + count, 0);
     const min = Math.min(...counts);
     const max = Math.max(...counts);
@@ -1511,6 +1538,7 @@ export function auditActiveCast(values: {
 export function activeCastBlockReport(values: {
   readonly chapterStart: number;
   readonly progression: readonly string[];
+  readonly earlyActivations?: readonly ActiveCastEarlyActivation[];
   readonly appearancesByChapter: Readonly<Record<number, Readonly<Record<string, number>>>>;
   readonly suppliedChapters: ReadonlySet<number>;
 }): Omit<ActiveCastAppearanceBlock, "chapterStart" | "chapterEnd" | "appearancesByPersonId" | "coverageStatus" | "requiredNewPersonIds" | "missingNewPersonIds"> {
@@ -1519,10 +1547,10 @@ export function activeCastBlockReport(values: {
   const chapterEnd = chapterStart + activeCastBlockSize - 1;
   const complete = Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index).every((chapter) => values.suppliedChapters.has(chapter));
   if (chapterStart > 200) return { activationPeople: [], oldCastAppearanceCount: 0, newCastAppearanceCount: 0, totalCanonicalAppearanceCount: 0, requiredMinimumOldCastCount: 0, oldCastPercentage: null, distributionOnTrack: "not-applicable", distributionStatus: "not-applicable" };
-  const current = activePersonIdsForChapter(chapterEnd, values.progression);
-  const previousCount = chapterStart === 1 ? 0 : activeCastSizeForChapter(chapterStart - 1);
-  const oldIds = new Set(current.slice(0, previousCount));
-  const newIds = new Set(current.slice(previousCount));
+  const current = activePersonIdsForChapter(chapterEnd, values.progression, values.earlyActivations ?? []);
+  const previous = chapterStart === 1 ? [] : activePersonIdsForChapter(chapterStart - 1, values.progression, values.earlyActivations ?? []);
+  const oldIds = new Set(previous);
+  const newIds = new Set(current.filter((id) => !oldIds.has(id)));
   const qualifyingChapters = (id: string) => Array.from({ length: activeCastBlockSize }, (_, index) => chapterStart + index)
     .filter((chapter) => (values.appearancesByChapter[chapter]?.[id] ?? 0) > 0);
   const activationPeople: ActivationPersonAppearanceReport[] = (chapterStart === 1 ? [] : [...newIds]).map((canonicalId) => {

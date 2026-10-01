@@ -1,0 +1,3 @@
+card_id	deck	kind	source_chapter	prompt_language	answer_language	prompt	accepted_answers	distractors	explanation	lexical_ids	grammar_ids	geographic_ids	provenance_path	provenance_locator	provenance_evidence	examples	tags
+ja-prefecture/01/reading	Prefectures - 北海道 - 漢字	vocabulary	1	ja	ja-Kana	北海道	"[""ほっかいどう\n\n![Highlighted prefecture](media/01.png)""]"	[]		"[""ja.prefecture.01""]"	[]	[]	sources/prefectures.tsv	Prefecture 01	北海道 = ほっかいどう	[]	"[""japanese"", ""prefectures"", ""reading""]"
+ja-prefecture/01/kanji	Prefectures - 北海道 - 漢字	vocabulary	1	ja-Kana	ja	ほっかいどう	"[""北海道\n\n![Highlighted prefecture](media/01.png)""]"	[]		"[""ja.prefecture.01""]"	[]	[]	sources/prefectures.tsv	Prefecture 01	北海道 = ほっかいどう	[]	"[""japanese"", ""prefectures"", ""kanji""]"

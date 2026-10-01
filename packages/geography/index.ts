@@ -1,6 +1,7 @@
 import type { DomainModule } from "../core";
 import { runContinentsEasy } from "./continents-easy";
 import { runContinentReview } from "./continent-review";
+import { japanRegionDecks } from "./japan-regions";
 
 export interface GeographyDataset {
   readonly id: string;
@@ -27,6 +28,16 @@ export const geographyModule: DomainModule = {
       summary: `Japanese prefectures in kanji (${mode})`,
       run: async () => { await runContinentsEasy({ dataset: "japan", mode, nameScript: "kanji" }); }
     });
+    for (const region of japanRegionDecks) for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `japan-prefectures-${region.slug}-${mode}`],
+      summary: `${region.label} prefectures (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "japan", region: region.slug, mode }); }
+    });
+    for (const region of japanRegionDecks) for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `japanese-prefectures-${region.slug}-${mode}`],
+      summary: `${region.japanese} prefectures in Japanese (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "japan", region: region.slug, mode, nameScript: "kanji" }); }
+    });
     context.cli.register({
       path: ["geography", "japan-prefectures-easy"],
       summary: "Japan prefectures: four choices and numbered-map questions",
@@ -36,6 +47,16 @@ export const geographyModule: DomainModule = {
       path: ["geography", "japan-prefectures-hard"],
       summary: "Japan prefectures: highlighted maps with romanized typed answers",
       run: async () => { await runContinentsEasy({ dataset: "japan", mode: "hard" }); }
+    });
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `japan-regions-${mode}`],
+      summary: `Japan regions: highlighted maps with romanized ${mode === "easy" ? "choices and numbered-map questions" : "typed answers"}`,
+      run: async () => { await runContinentsEasy({ dataset: "japan-regions", mode }); }
+    });
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `japanese-regions-${mode}`],
+      summary: `Japan regions in Japanese (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "japan-regions", mode, nameScript: "kanji" }); }
     });
     context.cli.register({
       path: ["geography", "continents-hard"],

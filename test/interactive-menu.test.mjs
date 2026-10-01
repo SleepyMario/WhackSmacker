@@ -33,6 +33,7 @@ import {
   languageMenuHeading,
   listAvailableModuleDescriptors,
   menuStyles,
+  markGeographyDeckReviewStatuses,
   markLanguagesWithDueDecks,
   projectionToggleRequiresModuleTreeRefresh,
   renderTwoPaneLanguageTree,
@@ -706,6 +707,30 @@ test("123Vietnamese Custom lessons stay grouped and ordered by Roman numeral", (
   ]);
 });
 
+test("paired Custom topic decks place each Vocabulary deck before its Sentences deck", () => {
+  const grouped = groupExplicitTopicMenuLeaves("com.sleepymario.language.japanese", "custom", [{
+    topicId: "japanese-shokyu-nihongo-shusaku",
+    topicLabel: "初級日本語習作",
+    leaf: { id: "ii-sentences", label: "II - Sentences", kind: "review-source" }
+  }, {
+    topicId: "japanese-shokyu-nihongo-shusaku",
+    topicLabel: "初級日本語習作",
+    leaf: { id: "i-sentences", label: "I - Sentences", kind: "review-source" }
+  }, {
+    topicId: "japanese-shokyu-nihongo-shusaku",
+    topicLabel: "初級日本語習作",
+    leaf: { id: "ii-vocabulary", label: "II - Vocabulary", kind: "review-source" }
+  }, {
+    topicId: "japanese-shokyu-nihongo-shusaku",
+    topicLabel: "初級日本語習作",
+    leaf: { id: "i-vocabulary", label: "I - Vocabulary", kind: "review-source" }
+  }]);
+
+  assert.equal(grouped.length, 1);
+  assert.equal(grouped[0].label, "初級日本語習作");
+  assert.deepEqual(grouped[0].children.map((node) => node.label), ["I - Vocabulary", "I - Sentences", "II - Vocabulary", "II - Sentences"]);
+});
+
 test("normal launch resolves the dedicated language backup directory", async () => {
   const xdgRoot = await mkdtemp(join(tmpdir(), "wsm-menu-default-data-"));
   const defaultDataDir = join(xdgRoot, "whacksmacker", "content");
@@ -795,8 +820,23 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   const installed = tree.children.find((node) => node.label === "Installed modules");
   assert.deepEqual(installed.children.map((node) => node.label), ["LingoLand", "Wandering the World"]);
   const geography = installed.children.find((node) => node.label === "Wandering the World");
+  assert.equal(geography.kind, installed.children[0].kind, "installed top-level modules share one ordinary colour class");
   assert.deepEqual(geography.children.map((node) => node.label), ["World", "Countries"]);
   assert.deepEqual(geography.children[0].children.map((node) => node.label), ["Continents - Easy", "Continents - Hard"]);
+  assert.deepEqual(geography.children[1].children[0].children.map((node) => node.label), [
+    "Prefectures - All - Easy",
+    "Prefectures - All - Hard",
+    "Prefectures - Regions - Easy",
+    "Prefectures - Regions - Hard",
+    "Prefectures - Hokkaidou - Easy", "Prefectures - Hokkaidou - Hard",
+    "Prefectures - Touhoku - Easy", "Prefectures - Touhoku - Hard",
+    "Prefectures - Kantou - Easy", "Prefectures - Kantou - Hard",
+    "Prefectures - Chuubu - Easy", "Prefectures - Chuubu - Hard",
+    "Prefectures - Kansai - Easy", "Prefectures - Kansai - Hard",
+    "Prefectures - Chuugoku - Easy", "Prefectures - Chuugoku - Hard",
+    "Prefectures - Shikoku - Easy", "Prefectures - Shikoku - Hard",
+    "Prefectures - Kyuushuu - Easy", "Prefectures - Kyuushuu - Hard"
+  ]);
 });
 
 test("language category can expand installed package nodes in the module tree", async () => {
@@ -2528,6 +2568,138 @@ test("only started due cards mark built-in language ancestors as due", async () 
   }
 });
 
+test("only the due Wandering the World exercise turns blue", () => {
+  const exercise = {
+    id: "geography:world:continents-easy",
+    label: "Continents - Easy",
+    kind: "command",
+    commandPath: ["geography", "continents-easy"]
+  };
+  const tree = {
+    id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
+      id: "geography", label: "Wandering the World", kind: "category", children: [{
+        id: "geography:world", label: "World", kind: "category", children: [exercise]
+      }]
+    }]
+  };
+  const marked = markLanguagesWithDueDecks(tree, [{
+    node: exercise,
+    label: "World · Continents - Easy",
+    due: 4,
+    ancestors: ["whacksmacker", "geography", "geography:world"]
+  }]);
+  assert.equal(marked.children[0].dueCardCount, undefined);
+  assert.equal(marked.children[0].children[0].dueCardCount, undefined);
+  assert.equal(marked.children[0].children[0].children[0].dueCardCount, 4);
+
+  const output = renderTwoPaneLanguageTree(
+    marked,
+    new Set(["whacksmacker", "geography", "geography:world"]),
+    0,
+    "",
+    true
+  );
+  assert.doesNotMatch(output, /\x1b\[34m[^\n]*Wandering the World/u);
+  assert.doesNotMatch(output, /\x1b\[34m[^\n]*World/u);
+  assert.match(output, /\x1b\[34m[^\n]*Continents - Easy/u);
+});
+
+test("Wandering the World decks use the same four review states and due counts as LingoLand", async () => {
+  const command = {
+    id: "geography:countries:japan:regions-easy",
+    label: "Prefectures - Regions - Easy",
+    kind: "command",
+    commandPath: ["geography", "japan-regions-easy"],
+    previewText: "Prefectures - Regions - Easy"
+  };
+  const tree = {
+    id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
+      id: "geography", label: "Wandering the World", kind: "category", children: [command]
+    }]
+  };
+  const now = "2026-10-01T00:00:00Z";
+  const ids = ["hokkaido", "tohoku", "kanto", "chubu", "kansai", "chugoku", "shikoku", "kyushu"]
+    .flatMap((slug) => [`${slug}-highlight`, `${slug}-locate`]);
+  const identity = (itemId) => ({
+    packageId: "com.sleepymario.geography.japan-regions-easy",
+    packageVersion: "0.1.0",
+    itemId
+  });
+  const findCommand = (root) => root.children[0].children[0];
+
+  const notStarted = markGeographyDeckReviewStatuses(tree, [], "en-US", now);
+  assert.equal(findCommand(notStarted).reviewStatus, "not_started");
+  assert.equal(findCommand(notStarted).dueCardCount, 0);
+  assert.equal(findCommand(notStarted).reviewStatusText, "Not started yet.");
+  assert.match(renderTwoPaneLanguageTree(notStarted, new Set(["whacksmacker", "geography"]), 0, "", true), /\x1b\[35m[^\n]*Prefectures - Regions - Easy/u);
+
+  const dueState = {
+    ...createInitialReviewState(identity(ids[0]), now),
+    lastReviewedAt: "2026-09-30T00:00:00Z",
+    reviewCount: 1,
+    intervalDays: 1,
+    status: "review"
+  };
+  const due = markGeographyDeckReviewStatuses(tree, [dueState], "en-US", now);
+  assert.equal(findCommand(due).reviewStatus, "has_cards_to_review");
+  assert.equal(findCommand(due).dueCardCount, 16);
+  assert.equal(findCommand(due).reviewStatusText, "There are 16 cards to review.");
+  assert.match(renderTwoPaneLanguageTree(due, new Set(["whacksmacker", "geography"]), 0, "", true), /\x1b\[34m[^\n]*Prefectures - Regions - Easy/u);
+  assert.match(await renderLanguageTreeRightPane(findCommand(due), { locale: "en-US" }), /There are 16 cards to review\./u);
+
+  const waitingStates = ids.map((itemId) => ({
+    ...createInitialReviewState(identity(itemId), now),
+    lastReviewedAt: now,
+    nextReviewAt: "2026-10-02T00:00:00Z",
+    reviewCount: 1,
+    intervalDays: 1,
+    status: "review"
+  }));
+  const waiting = markGeographyDeckReviewStatuses(tree, waitingStates, "en-US", now);
+  assert.equal(findCommand(waiting).reviewStatus, "no_cards_to_review");
+  assert.equal(findCommand(waiting).dueCardCount, 0);
+  assert.equal(findCommand(waiting).reviewStatusText, "No new cards to review right now.");
+  const waitingLine = renderTwoPaneLanguageTree(waiting, new Set(["whacksmacker", "geography"]), 0, "", true)
+    .split("\n").find((line) => stripAnsi(line).includes("Prefectures - Regions - Easy"));
+  assert.ok(waitingLine);
+  assert.doesNotMatch(statusSequenceBeforeLabel(waitingLine, "Prefectures - Regions - Easy"), /\x1b\[(?:3[2-5]|38;5;\d+)m/u);
+
+  const finishedStates = waitingStates.map((state) => ({ ...state, status: "suspended" }));
+  const finished = markGeographyDeckReviewStatuses(tree, finishedStates, "en-US", now);
+  assert.equal(findCommand(finished).reviewStatus, "finished");
+  assert.match(renderTwoPaneLanguageTree(finished, new Set(["whacksmacker", "geography"]), 0, "", true), /\x1b\[32m[^\n]*Prefectures - Regions - Easy/u);
+});
+
+test("due Japanese General geography cards colour the General and Topography parents blue", () => {
+  const command = {
+    id: "ja:general:regions-easy", label: "Prefectures - Regions - Easy", kind: "command",
+    commandPath: ["geography", "japanese-regions-easy"]
+  };
+  const tree = {
+    id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
+      id: "japanese", label: "Japanese", kind: "module", packageId: "com.sleepymario.language.japanese", children: [{
+        id: "ja:decks", label: "Decks", kind: "category", children: [{
+          id: "ja:general", label: "General", kind: "category", children: [{
+            id: "ja:topography", label: "Topography", kind: "category", children: [command]
+          }]
+        }]
+      }]
+    }]
+  };
+  const marked = markLanguagesWithDueDecks(tree, [{
+    node: command, label: "Japanese · Prefectures - Regions - Easy", due: 16,
+    ancestors: ["whacksmacker", "japanese", "ja:decks", "ja:general", "ja:topography"]
+  }]);
+  const general = marked.children[0].children[0].children[0];
+  const topography = general.children[0];
+  assert.equal(general.dueCardCount, 1);
+  assert.equal(topography.dueCardCount, 1);
+  const output = renderTwoPaneLanguageTree(marked, new Set(["whacksmacker", "japanese", "ja:decks"]), 0, "", true);
+  assert.match(output, /\x1b\[34m[^\n]*General/u);
+  const expanded = renderTwoPaneLanguageTree(marked, new Set(["whacksmacker", "japanese", "ja:decks", "ja:general"]), 1, "", true);
+  assert.match(expanded, /\x1b\[34m[^\n]*Topography/u);
+});
+
 test("two-pane renderer colors review deck rows by review status", () => {
   const tree = {
     id: "whacksmacker",
@@ -3165,6 +3337,42 @@ test("embedded review keeps Notes orange and renders target-language and concret
   assert.doesNotMatch(plain, /\[\[(?:target|meaning):|\x1b\[[0-9;]*m/u);
 });
 
+test("embedded review keeps semicolon-separated meanings inside one blue Note span", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "en",
+    answerLanguage: "ko",
+    promptLines: ["cleanly; completely"],
+    answerLines: ["깨끗이"],
+    noteLines: ["An adverb meaning [[meaning:cleanly; completely]]."],
+    exampleLines: []
+  });
+
+  const color = formatEmbeddedReviewReveal(exercise, exercise, true, "local.user.decks.korean-kgfil-vii-a-vocabulary");
+  assert.match(color, /Notes:\n\s+- \x1b\[33mAn adverb meaning \x1b\[34mcleanly; completely\x1b\[33m\.\x1b\[0m/u);
+  assert.equal((color.match(/^\s+- /gmu) ?? []).length, 1, "the semicolon does not create a second Note bullet");
+  assert.doesNotMatch(color, /\[\[(?:target|meaning):/u);
+
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const frame = renderTwoPaneLanguageTree(tree, new Set(), 0, color, true, 0, 20, "en-US", "navigation", 124);
+  const renderedMeaning = frame.split("\n").map((line) => line.split("|")[2] ?? "").filter((line) => line.includes("completely")).at(-1);
+  assert.ok(renderedMeaning, "the highlighted meaning is present in the rendered Note");
+  assert.match(renderedMeaning.slice(0, renderedMeaning.indexOf("completely")), /\x1b\[34m/u);
+});
+
+test("embedded review still separates ordinary semicolon-delimited Note bullets", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "en",
+    answerLanguage: "ko",
+    promptLines: ["teacher"],
+    answerLines: ["선생님"],
+    noteLines: ["noun; honorific reference"],
+    exampleLines: []
+  });
+
+  const plain = formatEmbeddedReviewReveal(exercise, exercise, false);
+  assert.match(plain, /Notes:\n\s+- noun\n\s+- honorific reference/u);
+});
+
 test("ordinary Note bullets restore their orange base after every blue semantic span", () => {
   const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
   const note = "- A number word that shows order, such as [[meaning:first]] or [[meaning:second]].";
@@ -3238,6 +3446,34 @@ test("embedded review Notes, examples, and translations use separate headings wi
   assert.ok(examplesIndex > notesIndex, "Examples uses its own colon-terminated heading row");
   assert.equal(outputLines[examplesIndex + 1], "• 빵 하나를 주세요.");
   assert.equal(outputLines[examplesIndex + 2], "• Please give me a loaf of bread.");
+});
+
+test("embedded review renders structured dialogue replies as nested bullets", () => {
+  const exercise = reviewExercise({
+    promptLanguage: "vi",
+    answerLanguage: "en",
+    promptLines: ["không"],
+    answerLines: ["no/not"],
+    exampleGroups: [{
+      text: "Anh có phải là người Việt Nam không?",
+      responses: ["Vâng, tôi là người Việt Nam.", "Không, tôi không phải là người Việt Nam."]
+    }]
+  });
+  const output = formatEmbeddedReviewReveal(exercise, exercise, false);
+  assert.match(output, /Examples:\n  - Anh có phải là người Việt Nam không\?\n      ◦ Vâng, tôi là người Việt Nam\.\n      ◦ Không, tôi không phải là người Việt Nam\./u);
+  const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root" };
+  const frame = renderTwoPaneLanguageTree(tree, new Set(), 0, output, false, 0, 24, "en-US", "navigation", 180);
+  const paneLines = frame.split("\n").map((line) => line.split("|")[2] ?? "");
+  const question = paneLines.find((line) => line.includes("Anh có phải là người Việt Nam không?"));
+  const response = paneLines.find((line) => line.includes("Vâng, tôi là người Việt Nam."));
+  assert.ok(question !== undefined && response !== undefined);
+  assert.ok(response.indexOf("◦") > question.indexOf("•"), "nested reply must begin to the right of its question");
+  const coloredFrame = renderTwoPaneLanguageTree(tree, new Set(), 0, output, true, 0, 24, "en-US", "navigation", 180);
+  const coloredPaneLines = coloredFrame.split("\n").map((line) => line.split("|")[2] ?? "");
+  const coloredQuestion = coloredPaneLines.find((line) => line.includes("Anh có phải là người Việt Nam không?"));
+  const coloredResponse = coloredPaneLines.find((line) => line.includes("Vâng, tôi là người Việt Nam."));
+  assert.match(coloredQuestion ?? "", /\x1b\[33m.*Anh có phải là người Việt Nam không\?/u);
+  assert.match(coloredResponse ?? "", /\x1b\[33m.*Vâng, tôi là người Việt Nam\./u);
 });
 
 test("normal five-chapter review reveal hides raw Notes but retains literal examples", () => {
@@ -4569,7 +4805,8 @@ function reviewExercise({
   answerLines,
   noteLines = [],
   exampleLines = [],
-  exampleTranslationLines = []
+  exampleTranslationLines = [],
+  exampleGroups = []
 }) {
   return {
     itemIdentity: {
@@ -4587,6 +4824,7 @@ function reviewExercise({
     noteLines,
     exampleLines,
     exampleTranslationLines,
+    exampleGroups,
     metadataLines: [],
     warnings: []
   };

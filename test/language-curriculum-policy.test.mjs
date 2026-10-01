@@ -278,7 +278,20 @@ test("language curriculum pacing validates early and advanced chapters", () => {
     grammarPointCount: 2,
     readContentLineCount: 6,
     newVocabularyItemCount: 6
-  }), /grammar point count must be 1-1/u);
+  }), /requires a substantive grammar-pacing exception reason/u);
+  assert.doesNotThrow(() => assertLanguageCurriculumPacing({
+    chapter: 11,
+    grammarPointCount: 2,
+    readContentLineCount: 12,
+    newVocabularyItemCount: 10,
+    grammarPacingException: { reason: "Natural family dialogue requires an explicit speech-level contrast." }
+  }));
+  assert.throws(() => assertLanguageCurriculumPacing({
+    chapter: 11,
+    grammarPointCount: 2,
+    readContentLineCount: 12,
+    newVocabularyItemCount: 10
+  }), /requires a substantive grammar-pacing exception reason/u);
   assert.throws(() => assertLanguageCurriculumPacing({
     chapter: 26,
     grammarPointCount: 2,
@@ -294,7 +307,8 @@ test("language curriculum pacing validates early and advanced chapters", () => {
 });
 
 test("language curriculum policy records continuity and strict example rules", () => {
-  assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /min\(30, 5 \+ 3 \* floor\(\(chapter - 1\) \/ 20\)\)/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /each later five-chapter boundary normally activates the next progression ID/u.test(rule)));
+  assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /validated activeCast\.earlyActivations declaration/u.test(rule)));
   assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /schema-v2 canonical cast of exactly thirty people, even before Chapter 1 exists/u.test(rule)));
   assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /Chapter 1 onward.*unnamed functional participants/u.test(rule)));
   assert.ok(languageCurriculumPolicy.activeCastRules.some((rule) => /newly authored violations are blocking/u.test(rule)));

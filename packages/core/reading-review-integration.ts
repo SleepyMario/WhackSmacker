@@ -19,6 +19,7 @@ import { parseMemorizationMarkdownImages } from "./package-media";
 import { compareDeckFrameworkVersions } from "./deck-framework";
 import {
   defaultReviewProgressDirectoryForContentDataDirectory,
+  buryStoredReviewItem,
   listDueReviewItems,
   recordStoredReviewOutcome,
   reviewProgressStorePath,
@@ -75,6 +76,13 @@ export interface RecordReadingReviewAnswerOptions extends ReadingReviewOptions {
   readonly itemId: string;
   readonly rating: ReviewRating;
   readonly reviewedAt: string;
+}
+
+export interface BuryReadingReviewItemOptions extends ReadingReviewOptions {
+  readonly packageId: string;
+  readonly sourcePath?: string;
+  readonly itemId: string;
+  readonly buriedAt: string;
 }
 
 export interface RemoveReadingReviewProgressOptions extends ReadingReviewOptions {
@@ -371,6 +379,20 @@ export async function recordReadingReviewAnswer(options: RecordReadingReviewAnsw
     ...(reviewItem.item.schemaVersion === 2 ? { pedagogicalFingerprint: reviewItem.item.pedagogicalFingerprint } : {}),
     rating: options.rating,
     reviewedAt: options.reviewedAt
+  });
+}
+
+export async function buryReadingReviewItem(options: BuryReadingReviewItemOptions): Promise<import("./review-progress-store").BuryStoredReviewItemResult> {
+  const reviewItem = await findReadingReviewItem(options);
+  const progressDir = resolveIntegrationProgressDir(options.dataDir, options.progressDir);
+  return buryStoredReviewItem({
+    progressDir,
+    packageId: reviewItem.packageId,
+    packageVersion: reviewItem.packageVersion,
+    ...(reviewItem.sourcePath === undefined ? {} : { sourcePath: reviewItem.sourcePath }),
+    itemId: reviewItem.item.id,
+    ...(reviewItem.item.schemaVersion === 2 ? { pedagogicalFingerprint: reviewItem.item.pedagogicalFingerprint } : {}),
+    buriedAt: options.buriedAt
   });
 }
 

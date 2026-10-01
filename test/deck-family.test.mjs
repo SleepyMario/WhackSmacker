@@ -83,6 +83,16 @@ test("KGfIL custom decks use chapter order and place Vocabulary before Sentences
     familyPackage("local.user.decks.korean-kgfil-iii-sentences", "KGfIL - III - Sentences", "custom", [languageOne]),
     familyPackage("local.user.decks.korean-kgfil-i-sentences", "KGfIL - I - Sentences", "custom", [languageOne]),
     familyPackage("local.user.decks.korean-kgfil-iv-vocabulary", "KGfIL - IV - Vocabulary", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-v-a-sentences", "KGfIL - V-A - Sentences", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-v-a-vocabulary", "KGfIL - V-A - Vocabulary", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-v-b-sentences", "KGfIL - V-B - Sentences", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-v-b-vocabulary", "KGfIL - V-B - Vocabulary", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-vi-sentences", "KGfIL - VI - Sentences", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-vi-vocabulary", "KGfIL - VI - Vocabulary", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-vii-a-sentences", "KGfIL - VII-A - Sentences", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-vii-a-vocabulary", "KGfIL - VII-A - Vocabulary", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-viii-sentences", "KGfIL - VIII - Sentences", "custom", [languageOne]),
+    familyPackage("local.user.decks.korean-kgfil-viii-vocabulary", "KGfIL - VIII - Vocabulary", "custom", [languageOne]),
     familyPackage("local.user.decks.korean-kgfil-iii-vocabulary", "KGfIL - III - Vocabulary", "custom", [languageOne]),
     familyPackage("local.user.decks.korean-kgfil-i-vocabulary", "KGfIL - I - Vocabulary", "custom", [languageOne])
   ];
@@ -95,7 +105,17 @@ test("KGfIL custom decks use chapter order and place Vocabulary before Sentences
       "KGfIL - III - Vocabulary",
       "KGfIL - III - Sentences",
       "KGfIL - IV - Vocabulary",
-      "KGfIL - IV - Sentences"
+      "KGfIL - IV - Sentences",
+      "KGfIL - V-A - Vocabulary",
+      "KGfIL - V-A - Sentences",
+      "KGfIL - V-B - Vocabulary",
+      "KGfIL - V-B - Sentences",
+      "KGfIL - VI - Vocabulary",
+      "KGfIL - VI - Sentences",
+      "KGfIL - VII-A - Vocabulary",
+      "KGfIL - VII-A - Sentences",
+      "KGfIL - VIII - Vocabulary",
+      "KGfIL - VIII - Sentences"
     ]
   );
 });

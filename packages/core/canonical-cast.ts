@@ -47,6 +47,11 @@ export interface CanonicalCastV2 {
   readonly activeCast: {
     readonly schemaVersion: 2;
     readonly progression: readonly string[];
+    readonly earlyActivations?: readonly {
+      readonly personId: string;
+      readonly chapter: number;
+      readonly reason: string;
+    }[];
   };
 }
 
@@ -67,7 +72,7 @@ const profileStringFields = [
   "recurringContexts", "continuityNotes"
 ] as const;
 const documentKeys = new Set(["schemaVersion", "cast", "deckPersonPool", "activeCast"]);
-const activeCastKeys = new Set(["schemaVersion", "progression"]);
+const activeCastKeys = new Set(["schemaVersion", "progression", "earlyActivations"]);
 const personKeys = new Set([
   "id", "displayName", "traditionalDisplayName", "simplifiedDisplayName",
   "age", "gender", "origin", "residence", "dailyRole", "relationshipStatus",
@@ -254,8 +259,36 @@ function validateV2(value: Record<string, unknown>, sourceFile: string): string[
   const ids = [...people.keys()];
   validatePermutation(value.deckPersonPool, ids, `${sourceFile}: deckPersonPool`, errors);
   validatePermutation(isRecord(value.activeCast) ? value.activeCast.progression : undefined, ids, `${sourceFile}: activeCast.progression`, errors);
+  if (isRecord(value.activeCast)) validateEarlyActivations(value.activeCast.earlyActivations, value.activeCast.progression, ids, sourceFile, errors);
   validateRelationshipGraph(people, sourceFile, errors);
   return errors;
+}
+
+function validateEarlyActivations(value: unknown, progressionValue: unknown, ids: readonly string[], sourceFile: string, errors: string[]): void {
+  if (value === undefined) return;
+  if (!Array.isArray(value)) {
+    errors.push(`${sourceFile}: activeCast.earlyActivations must be an array when present`);
+    return;
+  }
+  const progression = Array.isArray(progressionValue) ? progressionValue.filter((id): id is string => typeof id === "string") : [];
+  const canonical = new Set(ids);
+  const seen = new Set<string>();
+  for (const [index, item] of value.entries()) {
+    const where = `${sourceFile}: activeCast.earlyActivations[${index}]`;
+    if (!isRecord(item)) { errors.push(`${where} must be an object`); continue; }
+    validateOnlyKeys(item, new Set(["personId", "chapter", "reason"]), where, errors);
+    if (typeof item.personId !== "string" || !canonical.has(item.personId)) errors.push(`${where}.personId must reference a canonical cast ID`);
+    else if (seen.has(item.personId)) errors.push(`${where}.personId duplicates ${item.personId}`);
+    else seen.add(item.personId);
+    if (!Number.isInteger(item.chapter) || (item.chapter as number) < 1) errors.push(`${where}.chapter must be a positive integer`);
+    if (typeof item.reason !== "string" || item.reason.trim().length < 20) errors.push(`${where}.reason must be substantive`);
+    const position = typeof item.personId === "string" ? progression.indexOf(item.personId) : -1;
+    if (position >= 0 && Number.isInteger(item.chapter)) {
+      const defaultChapter = position < 3 ? 1 : 1 + (position - 2) * 5;
+      if ((item.chapter as number) >= defaultChapter) errors.push(`${where}.chapter must be earlier than default activation Chapter ${defaultChapter}`);
+      if (((item.chapter as number) - 1) % 5 !== 0) errors.push(`${where}.chapter must be a five-chapter boundary`);
+    }
+  }
 }
 
 function hasCanonicalFullNameShape(value: string): boolean {

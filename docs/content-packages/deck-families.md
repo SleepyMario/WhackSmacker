@@ -20,6 +20,17 @@ case for any one language. When no installed package belongs to a family for
 that language, its submenu shows the corresponding empty state. Escape returns
 to the language menu through the normal tree navigation.
 
+## Independent authoring scopes
+
+Custom is private, user-specific material made for Ashwin rather than a shared
+curriculum or public learner audience. Reading, General, Specialized, and
+Custom are independent authoring scopes. Existing work, vocabulary, examples,
+prerequisites, progression, coverage, cast, validation ledgers, and content
+rules from one family must not be treated as requirements or prior context for
+another family unless Ashwin explicitly requests that relationship for the
+current work. A package may reuse shared technical framework behavior, but
+family placement alone never imports pedagogical or content dependencies.
+
 The ordinary memorization entry is learner-facing `Reading Decks`, replacing the former `Review decks` label in every language menu. This is a label-only change: internal Review/memorization terminology, launch behavior, commands, APIs, item kinds, and progress identities remain unchanged.
 
 ## Package metadata

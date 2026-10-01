@@ -6,8 +6,11 @@ import { dirname, join } from "node:path";
 import { test } from "node:test";
 
 import {
+  buryReviewItem,
+  buryStoredReviewItem,
   createInitialReviewState,
   isReviewDue,
+  isReviewItemBuryEligible,
   listDueReviewItems,
   listDueReviewStates,
   loadReviewProgressStore,
@@ -65,6 +68,33 @@ test("due-item filtering is deterministic", () => {
   const result = listDueReviewStates([future, suspended, mastered, due], now);
 
   assert.deepEqual(result.map((state) => state.itemId), ["hangul/vowels/a"]);
+});
+
+test("bury eligibility begins only after the review interval exceeds 30 days", () => {
+  const base = { ...createInitialReviewState(identity(), now), status: "review" };
+
+  assert.equal(isReviewItemBuryEligible({ ...base, intervalDays: 30 }), false);
+  assert.equal(isReviewItemBuryEligible({ ...base, intervalDays: 31 }), true);
+  assert.equal(isReviewItemBuryEligible({ ...base, intervalDays: 31, status: "mastered" }), false);
+  assert.equal(isReviewItemBuryEligible({ ...base, intervalDays: 31, status: "suspended" }), false);
+  assert.equal(isReviewItemBuryEligible({ ...base, intervalDays: 31, retiredAt: now }), false);
+});
+
+test("bury permanently suspends the card without changing its learning history", () => {
+  const current = {
+    ...createInitialReviewState(identity(), now),
+    status: "review",
+    intervalDays: 31,
+    reviewCount: 8,
+    lapseCount: 2
+  };
+  const buried = buryReviewItem(current);
+
+  assert.equal(buried.status, "suspended");
+  assert.equal(buried.retiredAt, undefined);
+  assert.equal(buried.reviewCount, 8);
+  assert.equal(buried.lapseCount, 2);
+  assert.equal(isReviewDue(buried, "2036-07-06T00:00:00Z"), false);
 });
 
 test("a newly calculated five-year interval masters the card", () => {
@@ -147,6 +177,26 @@ test("stored review outcome preserves package id version and item id", async () 
     assert.equal(result.state.itemId, "hangul/vowels/a");
     assert.equal(result.event.rating, "good");
     assert.equal(result.progressPath, join(progressDir, "review-progress.json"));
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("stored bury persists a suspended card without adding a review event", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-review-bury-"));
+  const progressDir = join(root, "progress");
+  const eligible = { ...createInitialReviewState(identity(), now), status: "review", intervalDays: 31, reviewCount: 5 };
+  try {
+    await saveReviewProgressStore({ reviewProgressFormatVersion, updatedAt: now, items: [eligible], events: [] }, progressDir);
+
+    const result = await buryStoredReviewItem({ ...identity(), progressDir, buriedAt: "2026-07-07T00:00:00Z" });
+    const store = await loadReviewProgressStore(progressDir);
+
+    assert.equal(result.state.status, "suspended");
+    assert.equal(store.items[0].status, "suspended");
+    assert.equal(store.items[0].retiredAt, undefined);
+    assert.equal(store.events.length, 0);
+    assert.equal(store.updatedAt, "2026-07-07T00:00:00Z");
   } finally {
     await rm(root, { recursive: true, force: true });
   }

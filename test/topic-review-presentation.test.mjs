@@ -100,6 +100,22 @@ test("topic Review bullets reuse Reading learner yellow and wrap beneath bullet 
   assert.doesNotMatch(lines.find((line) => line.includes("Answer hidden")) ?? "", /\x1b\[33m/u);
 });
 
+test("answer controls expose permanent bury only after a card interval exceeds one month", () => {
+  const exercise = renderTopic(topicItem("en-to-nl", english, dutch));
+  const base = { ...reviewSession(undefined), side: "answer", promptRendered: exercise, answerRendered: exercise };
+  const thirtyDays = renderEmbeddedReviewSession({
+    ...base,
+    items: [{ ...base.items[0], status: "review", intervalDays: 30 }]
+  }, false);
+  const thirtyOneDays = renderEmbeddedReviewSession({
+    ...base,
+    items: [{ ...base.items[0], status: "review", intervalDays: 31 }]
+  }, false);
+
+  assert.doesNotMatch(thirtyDays, /B Bury/u);
+  assert.match(thirtyOneDays, /1 Again\s+2 Hard\s+3 Good\s+4 Easy\s+B Bury/u);
+});
+
 test("topic Review alt text follows per-side successful artwork state", () => {
   const exercise = renderTopic(topicItem("en-to-nl", english, dutch));
   const promptFallback = formatEmbeddedReviewExercise(exercise, "prompt", false);

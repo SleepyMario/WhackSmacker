@@ -2,6 +2,7 @@ import { listInstalledContentPackages, resolveContentDataDirectory, type Install
 import { readInstalledMemorizationItems, listInstalledMemorizationItemFiles } from "./memorization-item";
 import {
   assertValidReviewProgressStore,
+  buryReviewItem,
   createInitialReviewState,
   emptyReviewProgressStore,
   isReviewRating,
@@ -62,6 +63,16 @@ export interface RecordStoredReviewOutcomeOptions extends ReviewItemIdentity {
 export interface RecordStoredReviewOutcomeResult {
   readonly state: ReviewItemState;
   readonly event: ReviewEvent;
+  readonly progressPath: string;
+}
+
+export interface BuryStoredReviewItemOptions extends ReviewItemIdentity {
+  readonly progressDir?: string;
+  readonly buriedAt: string;
+}
+
+export interface BuryStoredReviewItemResult {
+  readonly state: ReviewItemState;
   readonly progressPath: string;
 }
 
@@ -184,6 +195,25 @@ export async function recordStoredReviewOutcome(options: RecordStoredReviewOutco
   const updated = upsertReviewItemState(store, outcome.state, options.reviewedAt, outcome.event);
   const progressPath = await saveReviewProgressStore(updated, options.progressDir);
   return { ...outcome, progressPath };
+}
+
+export async function buryStoredReviewItem(options: BuryStoredReviewItemOptions): Promise<BuryStoredReviewItemResult> {
+  const store = await loadReviewProgressStore(options.progressDir);
+  const identity: ReviewItemIdentity = {
+    packageId: options.packageId,
+    packageVersion: options.packageVersion,
+    ...(options.sourcePath === undefined ? {} : { sourcePath: options.sourcePath }),
+    itemId: options.itemId,
+    ...(options.pedagogicalFingerprint === undefined ? {} : { pedagogicalFingerprint: options.pedagogicalFingerprint })
+  };
+  const current = store.items.find((state) => reviewIdentityKey(state) === reviewIdentityKey(identity));
+  if (current === undefined) {
+    throw new Error(`Cannot bury review item without stored progress: ${reviewIdentityKey(identity)}`);
+  }
+  const state = buryReviewItem(current);
+  const updated = upsertReviewItemState(store, state, options.buriedAt);
+  const progressPath = await saveReviewProgressStore(updated, options.progressDir);
+  return { state, progressPath };
 }
 
 export async function removeReviewProgressForPackage(
