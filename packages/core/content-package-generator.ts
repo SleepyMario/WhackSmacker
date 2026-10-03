@@ -626,7 +626,7 @@ const chineseScriptConversionTargets: readonly ContentPackageGeneratorTarget[] =
   relatedPackageIds: ["com.sleepymario.language.japanese"],
   contentSchemaVersion: "2.0.0",
   deckVersion: "1.0.0",
-  artifactRevision: 3,
+  artifactRevision: 4,
   mediaPolicy: "required",
   interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent", outputMedia: "output-specific" },
   packageVersion: "1.0.0",
@@ -1102,7 +1102,7 @@ const japaneseTopographyKanjiTargets: readonly ContentPackageGeneratorTarget[] =
   relatedPackageIds: ["com.sleepymario.language.japanese"],
   contentSchemaVersion: "2.0.0",
   deckVersion: "1.0.0",
-  artifactRevision: 1,
+  artifactRevision: 2,
   mediaPolicy: "required",
   interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent", outputMedia: "output-specific" },
   packageVersion: "1.0.0",
@@ -1200,6 +1200,32 @@ const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[
     dependencies: [],
     include: ["README.md", "cards.tsv"],
     topicDeck: { id: "japanese-general-animals-i", displayName: "Animals I", outputFile: "animals-i.json", unitStart: 1, unitEnd: 1 }
+  },
+  {
+    id: "japanese-general-topography-main-vocabulary",
+    explicitOnly: true,
+    packageId: "com.sleepymario.language.japanese.general.topography-main-vocabulary",
+    displayName: "Topography - Main Vocabulary",
+    description: "ABC-style Japanese vocabulary used by the General Topography maps and exercises.",
+    contentType: "topic-review",
+    capabilities: ["topic-review"],
+    deckFamily: "general",
+    relatedPackageIds: ["com.sleepymario.language.japanese"],
+    contentSchemaVersion: "2.0.0",
+    deckVersion: "0.1.0",
+    artifactRevision: 1,
+    mediaPolicy: "none",
+    interactionProfile: defaultDeckInteractionProfile,
+    notesPolicy: "default",
+    packageVersion: "0.1.0",
+    sourcePath: "japanese-general/topography-main-vocabulary",
+    sourceRepository: "local-only:whacksmacker-decks-private",
+    languages: ["en", "ja", "ja-Kana"],
+    targetLanguage: "ja",
+    subjects: ["japanese", "general", "topography", "abc", "vocabulary"],
+    dependencies: [],
+    include: ["README.md", "cards.tsv"],
+    topicDeck: { id: "japanese-general-topography-main-vocabulary", displayName: "Topography - Main Vocabulary", outputFile: "topography-main-vocabulary.json", unitStart: 1, unitEnd: 1 }
   },
   {
     id: "korean-general-animals-i",
@@ -2984,6 +3010,7 @@ function buildMemorizationFiles(
   const standaloneJapaneseTopicDeck = target.id === "japanese-prefectures-kanji"
     || (target.id.startsWith("japanese-") && target.id.endsWith("-kanji"))
     || target.id === "japanese-general-animals-i"
+    || target.id === "japanese-general-topography-main-vocabulary"
     // Private source-based Custom decks have their own finite identities and
     // do not participate in the canonical curriculum occurrence ledger.
     || (target.deckFamily === "custom" && target.targetLanguage === "ja");
@@ -3096,6 +3123,7 @@ function parseReviewDeckCards(
     const standaloneJapaneseTopicDeck = target.id === "japanese-prefectures-kanji"
       || (target.id.startsWith("japanese-") && target.id.endsWith("-kanji"))
       || target.id === "japanese-general-animals-i"
+      || target.id === "japanese-general-topography-main-vocabulary"
       || (target.deckFamily === "custom" && target.targetLanguage === "ja");
     if (!standaloneJapaneseTopicDeck && (target.targetLanguage ?? target.languages?.find((language) => language !== "en")) === "ja") {
       const chapterStart = Math.min(...items.flatMap((item) => item.sourceChapters));

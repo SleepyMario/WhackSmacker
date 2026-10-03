@@ -22,6 +22,7 @@ test("content package generator exposes the supported local package targets", ()
       ["chinese-simplified-general-animals-i", "com.sleepymario.language.chinese-simplified.general.animals-i"],
       ["chinese-traditional-general-animals-i", "com.sleepymario.language.chinese-traditional.general.animals-i"],
       ["japanese-general-animals-i", "com.sleepymario.language.japanese.general.animals-i"],
+      ["japanese-general-topography-main-vocabulary", "com.sleepymario.language.japanese.general.topography-main-vocabulary"],
       ["korean-general-animals-i", "com.sleepymario.language.korean.general.animals-i"],
       ["japanese-custom-shokyu-nihongo-shusaku-i-vocabulary", "local.user.decks.japanese-shokyu-nihongo-shusaku-i-vocabulary"],
       ["japanese-custom-shokyu-nihongo-shusaku-i-sentences", "local.user.decks.japanese-shokyu-nihongo-shusaku-i-sentences"],

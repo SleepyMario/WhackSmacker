@@ -104,15 +104,15 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
   const koreaRegion = options.koreaRegion === undefined ? undefined : koreaRegionDecks.find(region => region.slug === options.koreaRegion);
   const hard = options.mode === "hard";
   const title = prefectureRegion !== undefined
-    ? `Prefectures - ${kanji ? prefectureRegion.japanese : prefectureRegion.label} - ${hard ? "Hard" : "Easy"}`
+    ? kanji ? `都道府県 - ${prefectureRegion.japanese} - ${hard ? "上級" : "初級"}` : `Prefectures - ${prefectureRegion.label} - ${hard ? "Hard" : "Easy"}`
     : regions
-    ? `Prefectures - Regions - ${hard ? "Hard" : "Easy"}`
+    ? kanji ? `都道府県 - 地方 - ${hard ? "上級" : "初級"}` : `Prefectures - Regions - ${hard ? "Hard" : "Easy"}`
     : netherlands ? `Provinces - All - ${hard ? "Hard" : "Easy"}`
     : germany ? `States - All - ${hard ? "Hard" : "Easy"}`
     : countryDivision !== undefined ? `${countryDivision.deck} - All - ${hard ? "Hard" : "Easy"}`
     : vietnam ? `Provincial-level Divisions - ${vietnamRegion?.label ?? "All"} - ${hard ? "Hard" : "Easy"}`
     : korea ? `Provincial-level Divisions - ${koreaRegion?.label ?? "All"} - ${hard ? "Hard" : "Easy"}`
-    : japan ? (hard ? "Prefectures - All - Hard" : "Prefectures - All - Easy") : hard ? "Continents - Hard" : "Continents - Easy";
+    : japan ? kanji ? `都道府県 - 全国 - ${hard ? "上級" : "初級"}` : (hard ? "Prefectures - All - Hard" : "Prefectures - All - Easy") : hard ? "Continents - Hard" : "Continents - Easy";
   const packageId = prefectureRegion !== undefined
     ? `com.sleepymario.${kanji ? "language.japanese" : "geography"}.japan-prefectures-${prefectureRegion.slug}-${hard ? "hard" : "easy"}`
     : regions
@@ -136,7 +136,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
     ? (JSON.parse(await readFile(join(__dirname, "data", "japan-regions", "regions.json"), "utf8")) as { id: string; answer: string }[])
       .map(c => {
         const answer = kanji ? japanRegionDecks.find(region => `${region.slug}-highlight` === c.id)!.japanese : c.answer;
-        return { ...c, answer, prompt: "Which region is highlighted?", explanation: `The highlighted region is ${answer}.` };
+        return { ...c, answer, prompt: kanji ? "色が付いている地方はどこですか。" : "Which region is highlighted?", explanation: kanji ? `色が付いている地方は${answer}です。` : `The highlighted region is ${answer}.` };
       })
     : vietnam
       ? (JSON.parse(await readFile(join(__dirname, "data", "vietnam-provinces", ...(vietnamRegion === undefined ? [] : ["regions", vietnamRegion.slug]), "provinces.json"), "utf8")) as { id: string; answer: string; kind: string }[])
@@ -156,7 +156,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
     : japan
       ? (JSON.parse(await readFile(join(__dirname, "data", "japan-hard", "prefectures.json"), "utf8")) as { id: string; answer: string; japanese: string }[])
         .filter(card => regionMetadata === undefined || regionMetadata.prefectures.includes(card.answer))
-      .map(c => ({ ...c, answer: kanji ? c.japanese : c.answer, prompt: "Which prefecture is highlighted?", explanation: kanji ? `The highlighted prefecture is ${c.japanese}.` : `The highlighted prefecture is ${c.answer} (${c.japanese}).` }))
+      .map(c => ({ ...c, answer: kanji ? c.japanese : c.answer, prompt: kanji ? "色が付いている都道府県はどこですか。" : "Which prefecture is highlighted?", explanation: kanji ? `色が付いている都道府県は${c.japanese}です。` : `The highlighted prefecture is ${c.answer} (${c.japanese}).` }))
     : hard ? continentEasyCards : [...continentEasyCards, ...continents.map(c => ({
       id: `${c.id}-locate`, answer: String(c.number), prompt: `Which number marks ${c.answer}?`,
       explanation: `${c.answer} is number ${c.number}.`
@@ -164,7 +164,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
   const namePool = cards.map(c => c.answer);
   if (administrativeMap && !hard) cards = [...cards, ...cards.map((c, i) => ({
     id: c.id.replace(/-highlight$/, "-locate"), answer: String(i + 1),
-    prompt: `Which number marks ${c.answer}?`, explanation: `${c.answer} is number ${i + 1}.`
+    prompt: kanji ? `${c.answer}は何番ですか。` : `Which number marks ${c.answer}?`, explanation: kanji ? `${c.answer}は${i + 1}番です。` : `${c.answer} is number ${i + 1}.`
   }))];
   const progressDir = options.progressDir ?? join(resolveReviewProgressDirectory(), "wandering-the-world");
   await mkdir(progressDir, { recursive: true });
@@ -239,7 +239,9 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
       const answerKeys = directNumber
         ? ["1", "2", "3", "4", "5", "6", "7"]
         : continentEasyAnswerKeys.slice(0, choices.length);
-      const instruction = prefectureRegion !== undefined && directNumber ? `Enter the map number (1–${namePool.length}) and press Enter. Escape returns to the menu.`
+      const instruction = kanji && directNumber ? `地図の番号（1〜${namePool.length}）を入力して、Enterキーを押してください。Escapeキーでメニューに戻ります。`
+        : kanji && hard ? `${regions ? "地方名" : "都道府県名"}を日本語で入力して、Enterキーを押してください。Escapeキーでメニューに戻ります。`
+        : prefectureRegion !== undefined && directNumber ? `Enter the map number (1–${namePool.length}) and press Enter. Escape returns to the menu.`
         : regions && directNumber ? "Enter the map number (1–8) and press Enter. Escape returns to the menu."
         : japan && directNumber ? "Enter the map number (1–47) and press Enter. Escape returns to the menu."
         : vietnam && directNumber ? `Enter the map number (1–${namePool.length}) and press Enter. Escape returns to the menu.`
@@ -265,15 +267,15 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
       const koreaNumberedAsset = join(koreaAssetRoot, koreaRegion === undefined ? "korea-provinces-numbered.png" : "provinces-numbered.png");
       const koreaNamedAsset = join(koreaAssetRoot, koreaRegion === undefined ? "korea-provinces-named.png" : "provinces-named.png");
       const questionPng = await readFile(directNumber
-        ? join(__dirname, "data", regionalPrefectureAsset !== undefined ? `${regionalPrefectureAsset}-numbered.png` : regions ? "japan-regions/japan-regions-numbered.png" : japan ? "japan-hard/japan-prefectures-numbered.png" : vietnam ? vietnamNumberedAsset : korea ? koreaNumberedAsset : netherlands ? "netherlands-provinces/netherlands-provinces-numbered.png" : germany ? "germany-states/germany-states-numbered.png" : countryDivision !== undefined ? `${countryDivision.directory}/divisions-numbered.png` : "world-seven-continents-numbered.png")
-        : join(__dirname, "data", regionalPrefectureSplit ?? (regions ? "japan-regions" : japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : vietnam ? join(vietnamAssetRoot, "split") : korea ? join(koreaAssetRoot, "split") : netherlands ? "netherlands-provinces/split" : germany ? "germany-states/split" : countryDivision !== undefined ? `${countryDivision.directory}/split` : "paired"), `${stem}-question.png`));
+        ? join(__dirname, "data", regionalPrefectureAsset !== undefined ? `${regionalPrefectureAsset}-numbered${kanji ? "-kanji" : ""}.png` : regions ? `japan-regions/japan-regions-numbered${kanji ? "-kanji" : ""}.png` : japan ? `japan-hard/japan-prefectures-numbered${kanji ? "-kanji" : ""}.png` : vietnam ? vietnamNumberedAsset : korea ? koreaNumberedAsset : netherlands ? "netherlands-provinces/netherlands-provinces-numbered.png" : germany ? "germany-states/germany-states-numbered.png" : countryDivision !== undefined ? `${countryDivision.directory}/divisions-numbered.png` : "world-seven-continents-numbered.png")
+        : join(__dirname, "data", regionalPrefectureSplit ?? (regions ? "japan-regions" : japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : vietnam ? join(vietnamAssetRoot, "split") : korea ? join(koreaAssetRoot, "split") : netherlands ? "netherlands-provinces/split" : germany ? "germany-states/split" : countryDivision !== undefined ? `${countryDivision.directory}/split` : "paired"), `${stem}-question${regions && kanji ? "-kanji" : ""}.png`));
       const answerPng = await readFile(directNumber
         ? join(__dirname, "data", regionalPrefectureAsset !== undefined ? `${regionalPrefectureAsset}-${kanji ? "kanji" : "named"}.png` : regions ? `japan-regions/japan-regions-${kanji ? "kanji" : "named"}.png` : japan ? (kanji ? "japan-hard/japan-prefectures-kanji.png" : "japan-hard/japan-prefectures-named.png") : vietnam ? vietnamNamedAsset : korea ? koreaNamedAsset : netherlands ? "netherlands-provinces/netherlands-provinces-named.png" : germany ? "germany-states/germany-states-named.png" : countryDivision !== undefined ? `${countryDivision.directory}/divisions-named.png` : "world-seven-continents.png")
         : join(__dirname, "data", regionalPrefectureSplit ?? (regions ? "japan-regions" : japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : vietnam ? join(vietnamAssetRoot, "split") : korea ? join(koreaAssetRoot, "split") : netherlands ? "netherlands-provinces/split" : germany ? "germany-states/split" : countryDivision !== undefined ? `${countryDivision.directory}/split` : "paired"), `${stem}-${regions && kanji ? "answer-kanji" : "answer"}.png`));
       const referencePng = administrativeMap && !directNumber
         ? await readFile(regionalPrefectureAsset !== undefined
           ? join(__dirname, "data", `${regionalPrefectureAsset}-reference.png`)
-          : join(__dirname, "data", regions ? "japan-regions" : japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : vietnam ? join(vietnamAssetRoot, "split") : korea ? join(koreaAssetRoot, "split") : netherlands ? "netherlands-provinces/split" : germany ? "germany-states/split" : `${countryDivision!.directory}/split`, "reference.png"))
+          : join(__dirname, "data", regions ? "japan-regions" : japan ? (kanji ? "japan-hard/split-kanji" : "japan-hard/split") : vietnam ? join(vietnamAssetRoot, "split") : korea ? join(koreaAssetRoot, "split") : netherlands ? "netherlands-provinces/split" : germany ? "germany-states/split" : `${countryDivision!.directory}/split`, regions && kanji ? "reference-kanji.png" : "reference.png"))
         : undefined;
       let feedback = "";
       const draw = () => {

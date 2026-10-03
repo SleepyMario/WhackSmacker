@@ -2600,7 +2600,7 @@ test("only started due cards mark built-in language ancestors as due", async () 
   }
 });
 
-test("only the due Wandering the World exercise turns blue", () => {
+test("due Wandering the World exercises turn every containing submenu blue", () => {
   const exercise = {
     id: "geography:world:continents-easy",
     label: "Continents - Easy",
@@ -2620,8 +2620,8 @@ test("only the due Wandering the World exercise turns blue", () => {
     due: 4,
     ancestors: ["whacksmacker", "geography", "geography:world"]
   }]);
-  assert.equal(marked.children[0].dueCardCount, undefined);
-  assert.equal(marked.children[0].children[0].dueCardCount, undefined);
+  assert.equal(marked.children[0].dueCardCount, 1);
+  assert.equal(marked.children[0].children[0].dueCardCount, 1);
   assert.equal(marked.children[0].children[0].children[0].dueCardCount, 4);
 
   const output = renderTwoPaneLanguageTree(
@@ -2631,8 +2631,8 @@ test("only the due Wandering the World exercise turns blue", () => {
     "",
     true
   );
-  assert.doesNotMatch(output, /\x1b\[34m[^\n]*Wandering the World/u);
-  assert.doesNotMatch(output, /\x1b\[34m[^\n]*World/u);
+  assert.match(output, /\x1b\[34m[^\n]*Wandering the World/u);
+  assert.match(output, /\x1b\[34m[^\n]*World/u);
   assert.match(output, /\x1b\[34m[^\n]*Continents - Easy/u);
 });
 

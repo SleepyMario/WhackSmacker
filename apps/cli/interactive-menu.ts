@@ -1204,16 +1204,17 @@ export async function collectDueDecks(root: LanguageTreeNode, options: Interacti
 export function markLanguagesWithDueDecks(root: LanguageTreeNode, decks: readonly DueDeckEntry[]): LanguageTreeNode {
   const dueAncestors = new Set(decks.flatMap(deck => deck.ancestors));
   const dueByNode = new Map(decks.map(deck => [deck.node.id, deck.due]));
-  const walk = (node: LanguageTreeNode, insideLanguage = false): LanguageTreeNode => {
+  const walk = (node: LanguageTreeNode, insideDueAwareTree = false): LanguageTreeNode => {
     const languageId = node.packageId ?? node.moduleId;
     const languageAncestor = languageId?.startsWith("com.sleepymario.language.");
-    const inLanguageTree = insideLanguage || languageAncestor === true;
+    const geographyAncestor = node.id === "geography" || node.id.startsWith("geography:");
+    const inDueAwareTree = insideDueAwareTree || languageAncestor === true || geographyAncestor;
     const geographyDeckDue = node.id.startsWith("geography:") ? dueByNode.get(node.id) : undefined;
     return {
       ...node,
-      ...(inLanguageTree && node.kind !== "review-source" ? { dueCardCount: dueAncestors.has(node.id) ? 1 : 0 } : {}),
+      ...(inDueAwareTree && node.kind !== "review-source" ? { dueCardCount: dueAncestors.has(node.id) ? 1 : 0 } : {}),
       ...(geographyDeckDue === undefined ? {} : { dueCardCount: geographyDeckDue }),
-      ...(node.children ? { children: node.children.map(child => walk(child, inLanguageTree)) } : {})
+      ...(node.children ? { children: node.children.map(child => walk(child, inDueAwareTree)) } : {})
     };
   };
   return walk(root);
@@ -2610,48 +2611,46 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                 if (language.packageId === "com.sleepymario.language.japanese" || language.moduleId === "com.sleepymario.language.japanese") {
                   const current = keepNewGeneralDecks(deckType);
                   return { ...deckType, children: [
-                    ...(current?.children ?? []).filter(n => !n.id.includes("prefectures")),
+                    ...(current?.children ?? []).filter(n => !n.id.includes("prefectures") && !n.id.includes("topography-main-vocabulary")),
                     {
                       id: `${deckType.id}:topography`, label: "Topography", kind: "category" as const,
                       children: [
-                        ...(["easy", "hard"] as const).map(mode => ({
+                        {
+                          id: `${deckType.id}:topography-main-vocabulary`, label: "Topography - Main Vocabulary", kind: "review-source" as const,
+                          packageId: "com.sleepymario.language.japanese.general.topography-main-vocabulary", packageVersion: "0.1.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 105,
+                          contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                        }, ...(["easy", "hard"] as const).map(mode => ({
                           id: `${deckType.id}:prefectures-${mode}`, label: `Prefectures - All - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
                           commandPath: ["geography", `japanese-prefectures-${mode}`], commandArgs: [],
-                          previewText: mode === "easy" ? "94 questions: kanji name choices and numbered map questions." : "47 highlighted prefectures. Type the prefecture name in kanji."
+                          previewText: mode === "easy" ? "94 questions: Japanese name choices and numbered-map questions." : "47 highlighted prefectures. Type the name in Japanese."
                         })), {
-                          id: `${deckType.id}:prefectures-kanji`, label: "Prefectures - All - 漢字", kind: "review-source" as const,
-                          packageId: "com.sleepymario.language.japanese.prefectures-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 94,
-                          contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
-                        },
-                        ...(["easy", "hard"] as const).map(mode => ({
-                          id: `${deckType.id}:regions-${mode}`, label: `Prefectures - Regions - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
-                          commandPath: ["geography", `japanese-regions-${mode}`], commandArgs: [],
-                          previewText: mode === "easy" ? "16 questions covering Japan's eight regions in Japanese." : "8 highlighted regions. Type the region name in Japanese."
-                        })), {
-                          id: `${deckType.id}:regions-kanji`, label: "Prefectures - Regions - 漢字", kind: "review-source" as const,
-                          packageId: "com.sleepymario.language.japanese.regions-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 16,
-                          contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
-                        },
-                        ...japanRegionDecks.flatMap(region => {
-                          const prefectureCount = loadGeographyRegionMetadata().find(candidate => candidate.id === `${region.slug}-highlight`)?.prefectures.length ?? 0;
-                          return [
-                            ...(["easy", "hard"] as const).map(mode => ({
-                              id: `${deckType.id}:prefectures-${region.slug}-${mode}`,
-                              label: `Prefectures - ${region.japanese} - ${mode === "easy" ? "Easy" : "Hard"}`,
-                              kind: "command" as const,
-                              commandPath: ["geography", `japanese-prefectures-${region.slug}-${mode}`], commandArgs: [],
-                              previewText: mode === "easy"
-                                ? `${prefectureCount * 2} questions covering the prefectures of ${region.japanese} in Japanese.`
-                                : `${prefectureCount} highlighted prefectures of ${region.japanese}. Type the name in Japanese.`
-                            })),
-                            {
-                              id: `${deckType.id}:prefectures-${region.slug}-kanji`, label: `Prefectures - ${region.japanese} - 漢字`, kind: "review-source" as const,
-                              packageId: `com.sleepymario.language.japanese.${region.slug}-kanji`, packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: prefectureCount * 2,
-                              contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
-                            }
-                          ];
-                        })
-                      ]
+                        id: `${deckType.id}:prefectures-kanji`, label: "Prefectures - All - 漢字", kind: "review-source" as const,
+                        packageId: "com.sleepymario.language.japanese.prefectures-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 94,
+                        contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                      }, ...(["easy", "hard"] as const).map(mode => ({
+                        id: `${deckType.id}:regions-${mode}`, label: `Prefectures - Regions - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
+                        commandPath: ["geography", `japanese-regions-${mode}`], commandArgs: [],
+                        previewText: mode === "easy" ? "16 questions covering Japan's eight regions in Japanese." : "8 highlighted regions. Type the name in Japanese."
+                      })), {
+                        id: `${deckType.id}:regions-kanji`, label: "Prefectures - Regions - 漢字", kind: "review-source" as const,
+                        packageId: "com.sleepymario.language.japanese.regions-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 16,
+                        contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                      }, ...japanRegionDecks.flatMap(region => {
+                        const prefectureCount = loadGeographyRegionMetadata().find(candidate => candidate.id === `${region.slug}-highlight`)?.prefectures.length ?? 0;
+                        return [
+                          ...(["easy", "hard"] as const).map(mode => ({
+                            id: `${deckType.id}:prefectures-${region.slug}-${mode}`,
+                            label: `Prefectures - ${region.japanese} - ${mode === "easy" ? "Easy" : "Hard"}`,
+                            kind: "command" as const,
+                            commandPath: ["geography", `japanese-prefectures-${region.slug}-${mode}`], commandArgs: [],
+                            previewText: mode === "easy" ? `${prefectureCount * 2} questions in Japanese.` : `${prefectureCount} highlighted prefectures. Type the name in Japanese.`
+                          })), {
+                            id: `${deckType.id}:prefectures-${region.slug}-kanji`, label: `Prefectures - ${region.japanese} - 漢字`, kind: "review-source" as const,
+                            packageId: `com.sleepymario.language.japanese.${region.slug}-kanji`, packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: prefectureCount * 2,
+                            contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                          }
+                        ];
+                      })]
                     }
                   ] };
                 }
