@@ -1,0 +1,206 @@
+[
+  {
+    "id": "ha-noi-highlight",
+    "answer": "Hà Nội",
+    "kind": "Thành phố",
+    "code": "01"
+  },
+  {
+    "id": "cao-bang-highlight",
+    "answer": "Cao Bằng",
+    "kind": "Tỉnh",
+    "code": "04"
+  },
+  {
+    "id": "tuyen-quang-highlight",
+    "answer": "Tuyên Quang",
+    "kind": "Tỉnh",
+    "code": "08"
+  },
+  {
+    "id": "dien-bien-highlight",
+    "answer": "Điện Biên",
+    "kind": "Tỉnh",
+    "code": "11"
+  },
+  {
+    "id": "lai-chau-highlight",
+    "answer": "Lai Châu",
+    "kind": "Tỉnh",
+    "code": "12"
+  },
+  {
+    "id": "son-la-highlight",
+    "answer": "Sơn La",
+    "kind": "Tỉnh",
+    "code": "14"
+  },
+  {
+    "id": "lao-cai-highlight",
+    "answer": "Lào Cai",
+    "kind": "Tỉnh",
+    "code": "15"
+  },
+  {
+    "id": "thai-nguyen-highlight",
+    "answer": "Thái Nguyên",
+    "kind": "Tỉnh",
+    "code": "19"
+  },
+  {
+    "id": "lang-son-highlight",
+    "answer": "Lạng Sơn",
+    "kind": "Tỉnh",
+    "code": "20"
+  },
+  {
+    "id": "quang-ninh-highlight",
+    "answer": "Quảng Ninh",
+    "kind": "Tỉnh",
+    "code": "22"
+  },
+  {
+    "id": "bac-ninh-highlight",
+    "answer": "Bắc Ninh",
+    "kind": "Tỉnh",
+    "code": "24"
+  },
+  {
+    "id": "phu-tho-highlight",
+    "answer": "Phú Thọ",
+    "kind": "Tỉnh",
+    "code": "25"
+  },
+  {
+    "id": "hai-phong-highlight",
+    "answer": "Hải Phòng",
+    "kind": "Thành phố",
+    "code": "31"
+  },
+  {
+    "id": "hung-yen-highlight",
+    "answer": "Hưng Yên",
+    "kind": "Tỉnh",
+    "code": "33"
+  },
+  {
+    "id": "ninh-binh-highlight",
+    "answer": "Ninh Bình",
+    "kind": "Tỉnh",
+    "code": "37"
+  },
+  {
+    "id": "thanh-hoa-highlight",
+    "answer": "Thanh Hóa",
+    "kind": "Tỉnh",
+    "code": "38"
+  },
+  {
+    "id": "nghe-an-highlight",
+    "answer": "Nghệ An",
+    "kind": "Tỉnh",
+    "code": "40"
+  },
+  {
+    "id": "ha-tinh-highlight",
+    "answer": "Hà Tĩnh",
+    "kind": "Tỉnh",
+    "code": "42"
+  },
+  {
+    "id": "quang-tri-highlight",
+    "answer": "Quảng Trị",
+    "kind": "Tỉnh",
+    "code": "44"
+  },
+  {
+    "id": "hue-highlight",
+    "answer": "Huế",
+    "kind": "Thành phố",
+    "code": "46"
+  },
+  {
+    "id": "da-nang-highlight",
+    "answer": "Đà Nẵng",
+    "kind": "Thành phố",
+    "code": "48"
+  },
+  {
+    "id": "quang-ngai-highlight",
+    "answer": "Quảng Ngãi",
+    "kind": "Tỉnh",
+    "code": "51"
+  },
+  {
+    "id": "gia-lai-highlight",
+    "answer": "Gia Lai",
+    "kind": "Tỉnh",
+    "code": "52"
+  },
+  {
+    "id": "khanh-hoa-highlight",
+    "answer": "Khánh Hòa",
+    "kind": "Tỉnh",
+    "code": "56"
+  },
+  {
+    "id": "dak-lak-highlight",
+    "answer": "Đắk Lắk",
+    "kind": "Tỉnh",
+    "code": "66"
+  },
+  {
+    "id": "lam-dong-highlight",
+    "answer": "Lâm Đồng",
+    "kind": "Tỉnh",
+    "code": "68"
+  },
+  {
+    "id": "dong-nai-highlight",
+    "answer": "Đồng Nai",
+    "kind": "Tỉnh",
+    "code": "75"
+  },
+  {
+    "id": "ho-chi-minh-highlight",
+    "answer": "Hồ Chí Minh",
+    "kind": "Thành phố",
+    "code": "79"
+  },
+  {
+    "id": "tay-ninh-highlight",
+    "answer": "Tây Ninh",
+    "kind": "Tỉnh",
+    "code": "80"
+  },
+  {
+    "id": "dong-thap-highlight",
+    "answer": "Đồng Tháp",
+    "kind": "Tỉnh",
+    "code": "82"
+  },
+  {
+    "id": "vinh-long-highlight",
+    "answer": "Vĩnh Long",
+    "kind": "Tỉnh",
+    "code": "86"
+  },
+  {
+    "id": "an-giang-highlight",
+    "answer": "An Giang",
+    "kind": "Tỉnh",
+    "code": "91"
+  },
+  {
+    "id": "can-tho-highlight",
+    "answer": "Cần Thơ",
+    "kind": "Thành phố",
+    "code": "92"
+  },
+  {
+    "id": "ca-mau-highlight",
+    "answer": "Cà Mau",
+    "kind": "Tỉnh",
+    "code": "96"
+  }
+]

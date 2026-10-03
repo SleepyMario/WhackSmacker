@@ -1,0 +1,68 @@
+[
+  {
+    "id": "thanh-hoa-highlight",
+    "answer": "Thanh Hóa",
+    "kind": "Tỉnh",
+    "code": "38"
+  },
+  {
+    "id": "nghe-an-highlight",
+    "answer": "Nghệ An",
+    "kind": "Tỉnh",
+    "code": "40"
+  },
+  {
+    "id": "ha-tinh-highlight",
+    "answer": "Hà Tĩnh",
+    "kind": "Tỉnh",
+    "code": "42"
+  },
+  {
+    "id": "quang-tri-highlight",
+    "answer": "Quảng Trị",
+    "kind": "Tỉnh",
+    "code": "44"
+  },
+  {
+    "id": "hue-highlight",
+    "answer": "Huế",
+    "kind": "Thành phố",
+    "code": "46"
+  },
+  {
+    "id": "da-nang-highlight",
+    "answer": "Đà Nẵng",
+    "kind": "Thành phố",
+    "code": "48"
+  },
+  {
+    "id": "quang-ngai-highlight",
+    "answer": "Quảng Ngãi",
+    "kind": "Tỉnh",
+    "code": "51"
+  },
+  {
+    "id": "gia-lai-highlight",
+    "answer": "Gia Lai",
+    "kind": "Tỉnh",
+    "code": "52"
+  },
+  {
+    "id": "khanh-hoa-highlight",
+    "answer": "Khánh Hòa",
+    "kind": "Tỉnh",
+    "code": "56"
+  },
+  {
+    "id": "dak-lak-highlight",
+    "answer": "Đắk Lắk",
+    "kind": "Tỉnh",
+    "code": "66"
+  },
+  {
+    "id": "lam-dong-highlight",
+    "answer": "Lâm Đồng",
+    "kind": "Tỉnh",
+    "code": "68"
+  }
+]

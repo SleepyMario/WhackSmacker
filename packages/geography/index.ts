@@ -1,5 +1,5 @@
 import type { DomainModule } from "../core";
-import { runContinentsEasy } from "./continents-easy";
+import { countryDivisionDecks, koreaRegionDecks, runContinentsEasy, vietnamRegionDecks } from "./continents-easy";
 import { runContinentReview } from "./continent-review";
 import { japanRegionDecks } from "./japan-regions";
 
@@ -47,6 +47,41 @@ export const geographyModule: DomainModule = {
       path: ["geography", "japan-prefectures-hard"],
       summary: "Japan prefectures: highlighted maps with romanized typed answers",
       run: async () => { await runContinentsEasy({ dataset: "japan", mode: "hard" }); }
+    });
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `vietnam-provincial-divisions-${mode}`],
+      summary: `Vietnam provincial-level divisions (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "vietnam", mode }); }
+    });
+    for (const region of vietnamRegionDecks) for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `vietnam-provincial-divisions-${region.slug}-${mode}`],
+      summary: `Vietnam ${region.label} provincial-level divisions (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "vietnam", vietnamRegion: region.slug, mode }); }
+    });
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `korea-provincial-divisions-${mode}`],
+      summary: `Korea provincial-level divisions (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "korea", mode }); }
+    });
+    for (const region of koreaRegionDecks) for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `korea-provincial-divisions-${region.slug}-${mode}`],
+      summary: `Korea ${region.label} provincial-level divisions (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "korea", koreaRegion: region.slug, mode }); }
+    });
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `netherlands-provinces-${mode}`],
+      summary: `Netherlands provinces (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "netherlands", mode }); }
+    });
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `germany-states-${mode}`],
+      summary: `Germany states (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "germany", mode }); }
+    });
+    for (const country of countryDivisionDecks) for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `${country.dataset}-divisions-${mode}`],
+      summary: `${country.label} ${country.deck.toLowerCase()} (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: country.dataset, mode }); }
     });
     for (const mode of ["easy", "hard"] as const) context.cli.register({
       path: ["geography", `japan-regions-${mode}`],

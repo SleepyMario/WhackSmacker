@@ -1,0 +1,453 @@
+#!/usr/bin/env python3
+"""Generate consistent country first-level administrative geography artwork."""
+
+from __future__ import annotations
+
+import colorsys
+import json
+import math
+import os
+import re
+import sys
+from pathlib import Path
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/whacksmacker-country-maps-mpl")
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.patheffects as path_effects
+from matplotlib.patches import Polygon
+
+ROOT = Path(__file__).resolve().parents[1]
+CONFIGS = {
+    "united-kingdom": {"source": "source-GBR-adm1.geojson", "title": "United Kingdom — Constituent Countries", "unit": "constituent country"},
+    "belgium": {
+        "directory": "belgium-provinces",
+        "source": "source-BEL-nuts2-2024.geojson",
+        "title": "Belgium — Provinces and Brussels",
+        "unit": "province or region",
+        "count_label": "10 provinces + Brussels",
+        "inline_names": True,
+        "inline_name_labels": {
+            "West Flanders": "West\nFlanders", "East Flanders": "East\nFlanders",
+            "Flemish Brabant": "Flemish\nBrabant", "Walloon Brabant": "Walloon\nBrabant",
+        },
+        "inline_name_font_sizes": {
+            "Antwerp": 25, "West Flanders": 22, "East Flanders": 21,
+            "Limburg": 23, "Flemish Brabant": 17, "Walloon Brabant": 15,
+            "Liège": 25, "Hainaut": 28, "Namur": 24, "Luxembourg": 23,
+        },
+        "wide": True,
+    },
+    "france": {"source": "source-FRA-adm1.geojson", "title": "France — Metropolitan Regions", "unit": "region"},
+    "spain": {
+        "source": "source-ESP-adm1.geojson",
+        "title": "Spain — Autonomous-level Divisions",
+        "unit": "autonomous-level division",
+        "figure_inset": "Canarias",
+        "context_sources": [
+            {"source": "context/source-MAR-adm0.geojson", "fill": "#d8dedc", "linewidth": .75},
+            {"source": "context/source-GIB-adm0.geojson", "fill": "#f5f1e8", "linewidth": 1.25},
+        ],
+        "fixed_callouts": {
+            "Ciudad Autónoma de Ceuta": (-5.85, 35.43),
+            "Ciudad Autónoma de Melilla": (-2.35, 34.90),
+        },
+    },
+    "italy": {
+        "directory": "italy-regions",
+        "source": "source-ITA-regions.geojson",
+        "title": "Italy — Regions",
+        "unit": "region",
+        # Lampedusa and Linosa are the two tiny southernmost source components.
+        # Omitting them from this regional study map recovers enough vertical
+        # extent to make mainland Italy, Sicily and Sardinia substantially
+        # larger without changing their geographic aspect ratio.
+        "drop_components_below": {"Sicilia": 36.0},
+        "margin_x": .035,
+        "margin_y": .035,
+    },
+    "china": {"source": "source-CHN-adm1.geojson", "title": "China — Provincial-level Divisions", "unit": "provincial-level division", "exclude": ["Taiwan Province"], "rename": {"Guangzhou Province": "Guangdong Province", "Ningxia Ningxia Hui Autonomous Region": "Ningxia Hui Autonomous Region"}, "wide": True, "named_layout": "below", "legend_columns": 3},
+    "china-taiwan": {
+        "directory": "china-roc-divisions",
+        "source": "source-TWN-adm1.geojson",
+        "title": "China (Taiwan) — First-level Divisions",
+        "unit": "first-level division",
+        "rename": {
+            "Matsu Islands": "Lienchiang County",
+            "Kinmen": "Kinmen County",
+            "Penghu": "Penghu County",
+            "Keelung": "Keelung City",
+            "Taipei": "Taipei City",
+            "New Taipei": "New Taipei City",
+            "Taoyuan": "Taoyuan City",
+            "Hsinchu": "Hsinchu City",
+            "Taichung": "Taichung City",
+            "Chiayi": "Chiayi City",
+            "Tainan": "Tainan City",
+            "Kaohsiung": "Kaohsiung City",
+        },
+        # Keep the established IDs and asset stems so this naming correction
+        # does not reset learner progress.
+        "id_stems": {
+            "Matsu Islands": "matsu-islands", "Kinmen": "kinmen", "Penghu": "penghu",
+            "Keelung": "keelung", "Taipei": "taipei", "New Taipei": "new-taipei",
+            "Taoyuan": "taoyuan", "Hsinchu": "hsinchu", "Taichung": "taichung",
+            "Chiayi": "chiayi", "Tainan": "tainan", "Kaohsiung": "kaohsiung",
+        },
+        # Remote jurisdictions and Dongsha are displayed in stable figure-level
+        # insets. The principal island can therefore fill the study canvas.
+        "component_insets": [
+            {"feature": "Lienchiang County", "label": "Lienchiang County"},
+            {"feature": "Kinmen County", "label": "Kinmen County"},
+            {"feature": "Penghu County", "label": "Penghu County"},
+            {"feature": "Kaohsiung City", "label": "Dongsha Islands", "max_x_below": 119.0},
+        ],
+        "margin_x": .035,
+        "margin_y": .025,
+        "callout_offset": .025,
+    },
+    "india": {"source": "source-IND-adm1.geojson", "title": "India — States and Union Territories", "unit": "state or union territory"},
+    "australia": {"source": "source-AUS-adm1.geojson", "title": "Australia — States and Territories", "unit": "state or territory", "exclude": ["Other Territories"], "wide": True},
+    "yugoslavia-former": {"source": "source-former-yugoslavia-republics.geojson", "title": "Yugoslavia (Former) — Constituent Republics", "unit": "constituent republic"},
+}
+
+
+def rings(geometry: dict) -> list[list[list[float]]]:
+    coordinates = geometry["coordinates"]
+    if geometry["type"] == "Polygon": return [coordinates[0]]
+    if geometry["type"] == "MultiPolygon": return [polygon[0] for polygon in coordinates]
+    raise ValueError(f"Unsupported geometry: {geometry['type']}")
+
+
+def display_ring(ring: list[list[float]]) -> list[list[float]]:
+    """Bound render cost while retaining small administrative units."""
+    if len(ring) <= 500: return ring
+    step = math.ceil(len(ring) / 500)
+    reduced = ring[::step]
+    if reduced[-1] != ring[-1]: reduced.append(ring[-1])
+    return reduced
+
+
+def polygon_area(ring: list[list[float]]) -> float:
+    return abs(sum(ring[i][0] * ring[(i + 1) % len(ring)][1] - ring[(i + 1) % len(ring)][0] * ring[i][1]
+                   for i in range(len(ring)))) / 2
+
+
+def feature_area(feature: dict) -> float:
+    return sum(polygon_area(ring) for ring in rings(feature["geometry"]))
+
+
+def label_point(feature: dict) -> tuple[float, float]:
+    ring = max(rings(feature["geometry"]), key=polygon_area)
+    return (sum(p[0] for p in ring) / len(ring), sum(p[1] for p in ring) / len(ring))
+
+
+def slug(value: str) -> str:
+    value = value.lower().translate(str.maketrans({"ä":"ae","ö":"oe","ü":"ue","ß":"ss","đ":"d"}))
+    return re.sub(r"[^a-z0-9]+", "-", value).strip("-")
+
+
+def transform_geometry(feature: dict, key: str) -> None:
+    """Place geographically detached units in conventional readable insets."""
+    name = feature["answer"]
+    def transform(point: list[float]) -> list[float]:
+        x, y = point[:2]
+        if key == "spain" and name == "Canarias":
+            x = -9.08 + (x + 18.16) * .70
+            y = 33.62 + (y - 27.64) * .70
+            point[0], point[1] = x, y
+        return point
+    geometry = feature["geometry"]
+    if geometry["type"] == "Polygon":
+        geometry["coordinates"] = [[transform(point) for point in ring] for ring in geometry["coordinates"]]
+    elif geometry["type"] == "MultiPolygon":
+        geometry["coordinates"] = [[[transform(point) for point in ring] for ring in polygon] for polygon in geometry["coordinates"]]
+
+
+def filter_geometry_components(feature: dict, config: dict) -> None:
+    """Remove explicitly excluded remote components without reshaping retained land."""
+    cutoff = config.get("drop_components_below", {}).get(feature["answer"])
+    geometry = feature["geometry"]
+    if cutoff is None or geometry["type"] != "MultiPolygon":
+        return
+    geometry["coordinates"] = [
+        polygon for polygon in geometry["coordinates"]
+        if max(point[1] for ring in polygon for point in ring) >= cutoff
+    ]
+
+
+def spread(values: list[tuple[float, dict]], minimum: float, maximum: float, gap: float) -> dict[str, float]:
+    if not values: return {}
+    ordered = sorted(values, key=lambda item: item[0])
+    ys = [max(minimum, min(maximum, value)) for value, _ in ordered]
+    for i in range(1, len(ys)): ys[i] = max(ys[i], ys[i - 1] + gap)
+    overflow = ys[-1] - maximum
+    if overflow > 0: ys = [y - overflow for y in ys]
+    for i in range(len(ys) - 2, -1, -1): ys[i] = min(ys[i], ys[i + 1] - gap)
+    return {feature["answer"]: y for y, (_, feature) in zip(ys, ordered)}
+
+
+def generate(key: str) -> None:
+    config = CONFIGS[key]
+    directory = config.get("directory", f"{key}-divisions")
+    data = ROOT / "packages/geography/data" / directory
+    split = data / "split"
+    source = json.loads((data / config["source"]).read_text(encoding="utf-8"))
+    context_features = []
+    for context in config.get("context_sources", []):
+        context_source = json.loads((data / context["source"]).read_text(encoding="utf-8"))
+        context_features.extend((feature, context) for feature in context_source["features"])
+    excluded = set(config.get("exclude", [])); rename = config.get("rename", {})
+    features = []
+    for feature in source["features"]:
+        original = feature["properties"]["shapeName"]
+        if original in excluded: continue
+        feature["answer"] = rename.get(original, original)
+        feature["idStem"] = config.get("id_stems", {}).get(original, slug(feature["answer"]))
+        transform_geometry(feature, key)
+        filter_geometry_components(feature, config)
+        feature["center"] = label_point(feature)
+        features.append(feature)
+    features.sort(key=lambda item: (-item["center"][1], item["center"][0], item["answer"]))
+    component_insets = config.get("component_insets", [])
+    full_inset_answers = {spec["feature"] for spec in component_insets if "max_x_below" not in spec}
+
+    def ring_in_component_inset(feature: dict, ring: list[list[float]]) -> bool:
+        for spec in component_insets:
+            if spec["feature"] != feature["answer"] or "max_x_below" not in spec:
+                continue
+            if max(point[0] for point in ring) < spec["max_x_below"]:
+                return True
+        return False
+
+    def primary_rings(feature: dict) -> list[list[list[float]]]:
+        if feature["answer"] in full_inset_answers:
+            return []
+        return [ring for ring in rings(feature["geometry"]) if not ring_in_component_inset(feature, ring)]
+
+    inset_name = config.get("figure_inset")
+    inset_feature = next((feature for feature in features if feature["answer"] == inset_name), None)
+    extent_features = [feature for feature in features if feature is not inset_feature]
+    all_points = [p for feature in extent_features for ring in primary_rings(feature) for p in ring]
+    min_x,max_x=min(p[0] for p in all_points),max(p[0] for p in all_points)
+    min_y,max_y=min(p[1] for p in all_points),max(p[1] for p in all_points)
+    width,height=max_x-min_x,max_y-min_y
+    colors={f["answer"]:colorsys.hsv_to_rgb((i*.61803398875)%1,.38,.84) for i,f in enumerate(features,1)}
+    tiny=[]
+    for feature in extent_features:
+        pts=[p for ring in primary_rings(feature) for p in ring]
+        if not pts: continue
+        fw=max(p[0] for p in pts)-min(p[0] for p in pts); fh=max(p[1] for p in pts)-min(p[1] for p in pts)
+        if not config.get("disable_callouts") and (fw < width*.032 or fh < height*.032 or feature_area(feature) < width*height*.0007): tiny.append(feature)
+    left=[(f["center"][1],f) for f in tiny if f["center"][0] < (min_x+max_x)/2]
+    right=[(f["center"][1],f) for f in tiny if f["center"][0] >= (min_x+max_x)/2]
+    callout_positions: dict[str, tuple[float, float]] = {}
+    left_columns = int(config.get("left_callout_columns", 0))
+    if left_columns:
+        # Preserve north-to-south ordering while alternating between adjacent
+        # columns. Each column therefore needs only half as many labels and the
+        # leader lines remain short around the crowded western edge.
+        ordered_left = sorted(left, key=lambda item: item[0])
+        groups = [ordered_left[index::left_columns] for index in range(left_columns)]
+        offsets = config.get("callout_offsets", [.045 + .075 * index for index in range(left_columns)])
+        gap = height * config.get("callout_gap", .045)
+        for column, group in enumerate(groups):
+            positions = spread(group, min_y, max_y, gap)
+            tx = min_x - width * offsets[column]
+            for answer, ty in positions.items():
+                callout_positions[answer] = (tx, ty)
+        right_positions = spread(right, min_y, max_y, gap)
+        for _, feature in right:
+            answer = feature["answer"]
+            tx = feature["center"][0] + width * config.get("right_callout_offset", .035)
+            callout_positions[answer] = (tx, right_positions[answer])
+    else:
+        left_y=spread(left,min_y,max_y,height*.045); right_y=spread(right,min_y,max_y,height*.045)
+        callout_offset = config.get("callout_offset", .10)
+        for answer, ty in left_y.items(): callout_positions[answer] = (min_x-width*callout_offset, ty)
+        for answer, ty in right_y.items(): callout_positions[answer] = (max_x+width*callout_offset, ty)
+    callout_positions.update(config.get("fixed_callouts", {}))
+
+    def draw(path: Path, target: str|None=None, labels: str|None=None, title: str|None=None):
+        aspect=width/max(height,1e-9)
+        fig_w=max(10,min(24,11*aspect)); fig_h=max(10,min(18,11/aspect))
+        if config.get("compact_wide"):
+            fig_h=max(5.5,min(12,fig_w/aspect+1.4))
+        named_below = labels == "name" and config.get("named_layout") == "below"
+        legend_columns = config.get("legend_columns", 1)
+        legend_rows = math.ceil(len(features) / legend_columns)
+        inline_names = labels == "name" and config.get("inline_names")
+        if labels=="name" and not inline_names:
+            if named_below: fig_h += max(3.2, legend_rows * .34)
+            else: fig_w += 7
+        fig,ax=plt.subplots(figsize=(fig_w,fig_h),dpi=180)
+        for context_feature, context in context_features:
+            for ring in rings(context_feature["geometry"]):
+                if polygon_area(ring) < .000002: continue
+                ax.add_patch(Polygon(
+                    display_ring(ring), closed=True, facecolor=context["fill"],
+                    edgecolor="#304247", linewidth=context["linewidth"], zorder=0,
+                ))
+        for feature in sorted(features,key=feature_area,reverse=True):
+            if feature is inset_feature: continue
+            selected=feature["answer"]==target
+            fill="#e98255" if selected else (colors[feature["answer"]] if target is None else "#dce1df")
+            feature_rings = primary_rings(feature)
+            if not feature_rings: continue
+            largest = max(polygon_area(ring) for ring in feature_rings)
+            for ring in feature_rings:
+                if polygon_area(ring) < max(width * height * 0.000002, largest * 0.00001): continue
+                ax.add_patch(Polygon(display_ring(ring),closed=True,facecolor=fill,edgecolor="#304247",linewidth=.65))
+        if inline_names:
+            inline_labels = config.get("inline_name_labels", {})
+            inline_sizes = config.get("inline_name_font_sizes", {})
+            for feature in features:
+                x,y=feature["center"]
+                answer=feature["answer"]
+                if answer == "Brussels":
+                    ax.annotate("Brussels",xy=(x,y),xytext=(x,max_y+height*.075),ha="center",va="center",
+                                fontsize=18,fontweight="bold",color="#142429",
+                                bbox=dict(boxstyle="round,pad=.16",facecolor="#fffdf4",alpha=.94,linewidth=0),
+                                arrowprops=dict(arrowstyle="-",color="#142429",linewidth=1.4,shrinkA=5,shrinkB=2),zorder=20)
+                    continue
+                label = inline_labels.get(answer, answer)
+                text = ax.text(x,y,label,ha="center",va="center",fontsize=inline_sizes.get(answer,20),
+                               linespacing=.9,fontweight="bold",color="#142429",zorder=20)
+                text.set_path_effects([path_effects.withStroke(linewidth=3.2,foreground="#fffdf4",alpha=.86)])
+        elif labels:
+            for index,feature in enumerate(features,1):
+                if feature is inset_feature: continue
+                if feature["answer"] in full_inset_answers: continue
+                x,y=feature["center"]
+                if feature["answer"] in callout_positions:
+                    tx,ty=callout_positions[feature["answer"]]
+                    ax.annotate(str(index),xy=(x,y),xytext=(tx,ty),ha="center",va="center",
+                                fontsize=config.get("callout_font_size",14),fontweight="bold",color="#142429",
+                                bbox=dict(boxstyle=f"round,pad={config.get('callout_box_pad',.18)}",facecolor="#fffdf4",alpha=.92,linewidth=0),
+                                arrowprops=dict(arrowstyle="-",color="#142429",linewidth=1.1,shrinkA=4,shrinkB=2),zorder=20)
+                else:
+                    ax.text(x,y,str(index),ha="center",va="center",fontsize=14,fontweight="bold",color="#142429",
+                            bbox=dict(boxstyle="round,pad=.18",facecolor="#fffdf4",alpha=.84,linewidth=0),zorder=20)
+        if labels=="name" and not inline_names:
+            if named_below:
+                legend_fraction = max(3.2, legend_rows * .34) / fig_h
+                map_bottom = legend_fraction + .055
+                ax.set_position([.035,map_bottom,.93,.91-map_bottom])
+                per_column=math.ceil(len(features)/legend_columns)
+                column_width=.94/legend_columns
+                legend_top=legend_fraction+.018
+                legend_bottom=.045
+                for index,feature in enumerate(features,1):
+                    col=(index-1)//per_column; row=(index-1)%per_column
+                    x=.035+col*column_width
+                    y=legend_top-row*((legend_top-legend_bottom)/max(per_column-1,1))
+                    fig.text(x,y,f"{index}. {feature['answer']}",ha="left",va="center",fontsize=8.8,fontweight="bold",color="#142429")
+            else:
+                ax.set_position([.03,.06,.58,.88])
+                columns=1 if len(features)<=24 else 2
+                per_column=math.ceil(len(features)/columns)
+                for index,feature in enumerate(features,1):
+                    col=(index-1)//per_column; row=(index-1)%per_column
+                    x=.64+col*(.34/columns); y=.91-row*(.84/max(per_column-1,1))
+                    default_legend_font = 10 if len(features)<=36 else 8.2
+                    fig.text(x,y,f"{index}. {feature['answer']}",ha="left",va="center",fontsize=config.get("legend_font_size",default_legend_font),fontweight="bold",color="#142429")
+        margin_x=width*config.get("margin_x", .14)
+        margin_y=height*config.get("margin_y", .06)
+        if inline_names: margin_y=max(margin_y,height*.14)
+        ax.set_xlim(min_x-margin_x,max_x+margin_x); ax.set_ylim(min_y-margin_y,max_y+margin_y)
+        ax.set_aspect("equal"); ax.axis("off"); ax.set_title(title or config["title"],fontsize=17,pad=12,fontweight="bold")
+        if component_insets:
+            if labels == "name":
+                ax.set_position([.18,.06,.43,.88])
+                inset_x, inset_width = .018, .14
+            else:
+                ax.set_position([.23,.06,.74,.88])
+                inset_x, inset_width = .02, .18
+            inset_positions = [.755, .555, .355, .155]
+            for spec, inset_y in zip(component_insets, inset_positions):
+                feature = next(item for item in features if item["answer"] == spec["feature"])
+                inset_rings = [
+                    ring for ring in rings(feature["geometry"])
+                    if "max_x_below" not in spec or max(point[0] for point in ring) < spec["max_x_below"]
+                ]
+                inset_ax = fig.add_axes([inset_x, inset_y, inset_width, .15], facecolor="#eee9df")
+                selected = feature["answer"] == target
+                fill = "#e98255" if selected else (colors[feature["answer"]] if target is None else "#dce1df")
+                points = [point for ring in inset_rings for point in ring]
+                inset_min_x, inset_max_x = min(p[0] for p in points), max(p[0] for p in points)
+                inset_min_y, inset_max_y = min(p[1] for p in points), max(p[1] for p in points)
+                inset_w, inset_h = inset_max_x-inset_min_x, inset_max_y-inset_min_y
+                for ring in inset_rings:
+                    inset_ax.add_patch(Polygon(display_ring(ring),closed=True,facecolor=fill,
+                                               edgecolor="#304247",linewidth=.8))
+                if labels is not None:
+                    index = features.index(feature)+1
+                    inset_ax.text((inset_min_x+inset_max_x)/2,(inset_min_y+inset_max_y)/2,str(index),
+                                  ha="center",va="center",fontsize=15,fontweight="bold",color="#142429",
+                                  bbox=dict(boxstyle="round,pad=.16",facecolor="#fffdf4",alpha=.9,linewidth=0),zorder=20)
+                inset_ax.set_xlim(inset_min_x-inset_w*.08,inset_max_x+inset_w*.08)
+                inset_ax.set_ylim(inset_min_y-inset_h*.28,inset_max_y+inset_h*.08)
+                inset_ax.set_aspect("equal"); inset_ax.set_xticks([]); inset_ax.set_yticks([])
+                for spine in inset_ax.spines.values():
+                    spine.set_color("#607176"); spine.set_linewidth(1); spine.set_linestyle((0,(5,4)))
+                inset_ax.text(.5,.025,spec["label"],transform=inset_ax.transAxes,ha="center",va="bottom",
+                              fontsize=8.5,fontweight="bold",color="#46585d")
+        if inset_feature is not None:
+            # Keep the remote archipelago out of the main geographic extent.
+            # A compact figure-level inset reserves only the lower-left space
+            # actually needed by the islands, their number and their border.
+            if labels == "name":
+                ax.set_position([.035, .245, .57, .69])
+                inset_position = [.035, .045, .205, .17]
+            else:
+                ax.set_position([.045, .225, .91, .715])
+                inset_position = [.035, .04, .22, .17]
+            inset_ax = fig.add_axes(inset_position, facecolor="#eee9df")
+            selected = inset_feature["answer"] == target
+            fill = "#e98255" if selected else (colors[inset_feature["answer"]] if target is None else "#dce1df")
+            inset_rings = rings(inset_feature["geometry"])
+            inset_points = [point for ring in inset_rings for point in ring]
+            inset_min_x, inset_max_x = min(p[0] for p in inset_points), max(p[0] for p in inset_points)
+            inset_min_y, inset_max_y = min(p[1] for p in inset_points), max(p[1] for p in inset_points)
+            inset_width, inset_height = inset_max_x - inset_min_x, inset_max_y - inset_min_y
+            for ring in inset_rings:
+                inset_ax.add_patch(Polygon(display_ring(ring), closed=True, facecolor=fill,
+                                           edgecolor="#304247", linewidth=.75))
+            if labels is not None:
+                inset_index = features.index(inset_feature) + 1
+                inset_x, inset_y = inset_feature["center"]
+                inset_ax.text(inset_x, inset_y, str(inset_index), ha="center", va="center",
+                              fontsize=15, fontweight="bold", color="#142429",
+                              bbox=dict(boxstyle="round,pad=.16", facecolor="#fffdf4", alpha=.9, linewidth=0),
+                              zorder=20)
+            inset_ax.set_xlim(inset_min_x - inset_width * .055, inset_max_x + inset_width * .055)
+            inset_ax.set_ylim(inset_min_y - inset_height * .22, inset_max_y + inset_height * .08)
+            inset_ax.set_aspect("equal")
+            inset_ax.set_xticks([]); inset_ax.set_yticks([])
+            for spine in inset_ax.spines.values():
+                spine.set_color("#607176"); spine.set_linewidth(1.0); spine.set_linestyle((0, (5, 4)))
+            inset_ax.text(.5, .025, "Canary Islands", transform=inset_ax.transAxes,
+                          ha="center", va="bottom", fontsize=8.5, fontweight="bold", color="#46585d")
+        count_label = config.get("count_label", f"{len(features)} {config['unit']}s")
+        fig.text(.5,.014,f"{count_label} • north is up",ha="center",fontsize=7,color="#46585d")
+        if labels!="name" and inset_feature is None and not component_insets: fig.tight_layout(rect=(0,.03,1,.97))
+        path.parent.mkdir(parents=True,exist_ok=True); fig.savefig(path,bbox_inches="tight",facecolor="#f5f1e8"); plt.close(fig)
+
+    split.mkdir(parents=True,exist_ok=True)
+    draw(split/"reference.png")
+    draw(data/"divisions-numbered.png",labels="number")
+    draw(data/"divisions-named.png",labels="name")
+    metadata=[]
+    for feature in features:
+        stem=feature["idStem"]
+        metadata.append({"id":f"{stem}-highlight","answer":feature["answer"],"kind":config["unit"].title(),"sourceCode":feature["properties"].get("shapeISO","")})
+        draw(split/f"{stem}-question.png",target=feature["answer"],title=f"Which {config['unit']} is highlighted?")
+        draw(split/f"{stem}-answer.png",target=feature["answer"],title=feature["answer"])
+    (data/"divisions.json").write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+
+
+if __name__ == "__main__":
+    requested=sys.argv[1:] or list(CONFIGS)
+    for country in requested:
+        print(f"Generating {country}...",flush=True); generate(country)

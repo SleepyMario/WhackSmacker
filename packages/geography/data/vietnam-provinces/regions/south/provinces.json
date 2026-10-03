@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dong-nai-highlight",
+    "answer": "Đồng Nai",
+    "kind": "Tỉnh",
+    "code": "75"
+  },
+  {
+    "id": "ho-chi-minh-highlight",
+    "answer": "Hồ Chí Minh",
+    "kind": "Thành phố",
+    "code": "79"
+  },
+  {
+    "id": "tay-ninh-highlight",
+    "answer": "Tây Ninh",
+    "kind": "Tỉnh",
+    "code": "80"
+  },
+  {
+    "id": "dong-thap-highlight",
+    "answer": "Đồng Tháp",
+    "kind": "Tỉnh",
+    "code": "82"
+  },
+  {
+    "id": "vinh-long-highlight",
+    "answer": "Vĩnh Long",
+    "kind": "Tỉnh",
+    "code": "86"
+  },
+  {
+    "id": "an-giang-highlight",
+    "answer": "An Giang",
+    "kind": "Tỉnh",
+    "code": "91"
+  },
+  {
+    "id": "can-tho-highlight",
+    "answer": "Cần Thơ",
+    "kind": "Thành phố",
+    "code": "92"
+  },
+  {
+    "id": "ca-mau-highlight",
+    "answer": "Cà Mau",
+    "kind": "Tỉnh",
+    "code": "96"
+  }
+]

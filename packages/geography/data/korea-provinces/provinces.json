@@ -1,0 +1,198 @@
+[
+  {
+    "id": "north-hamgyong-highlight",
+    "answer": "North Hamgyong",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP02"
+  },
+  {
+    "id": "ryanggang-highlight",
+    "answer": "Ryanggang",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP01"
+  },
+  {
+    "id": "jagang-highlight",
+    "answer": "Jagang",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP05"
+  },
+  {
+    "id": "south-hamgyong-highlight",
+    "answer": "South Hamgyong",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP03"
+  },
+  {
+    "id": "north-pyongan-highlight",
+    "answer": "North Pyongan",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP06"
+  },
+  {
+    "id": "south-pyongan-highlight",
+    "answer": "South Pyongan",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP07"
+  },
+  {
+    "id": "pyongyang-highlight",
+    "answer": "Pyongyang",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP10"
+  },
+  {
+    "id": "kangwon-highlight",
+    "answer": "Kangwon",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP04"
+  },
+  {
+    "id": "nampo-highlight",
+    "answer": "Nampo",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP11"
+  },
+  {
+    "id": "north-hwanghae-highlight",
+    "answer": "North Hwanghae",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP08"
+  },
+  {
+    "id": "south-hwanghae-highlight",
+    "answer": "South Hwanghae",
+    "kind": "Province or first-level city",
+    "area": "north",
+    "sourceCode": "KP09"
+  },
+  {
+    "id": "seoul-highlight",
+    "answer": "Seoul",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-11"
+  },
+  {
+    "id": "gangwon-highlight",
+    "answer": "Gangwon",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-42"
+  },
+  {
+    "id": "gyeonggi-highlight",
+    "answer": "Gyeonggi",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-41"
+  },
+  {
+    "id": "incheon-highlight",
+    "answer": "Incheon",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-28"
+  },
+  {
+    "id": "north-chungcheong-highlight",
+    "answer": "North Chungcheong",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-43"
+  },
+  {
+    "id": "south-chungcheong-highlight",
+    "answer": "South Chungcheong",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-44"
+  },
+  {
+    "id": "sejong-highlight",
+    "answer": "Sejong",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-50"
+  },
+  {
+    "id": "daejeon-highlight",
+    "answer": "Daejeon",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-30"
+  },
+  {
+    "id": "north-gyeongsang-highlight",
+    "answer": "North Gyeongsang",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-47"
+  },
+  {
+    "id": "daegu-highlight",
+    "answer": "Daegu",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-27"
+  },
+  {
+    "id": "north-jeolla-highlight",
+    "answer": "North Jeolla",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-45"
+  },
+  {
+    "id": "ulsan-highlight",
+    "answer": "Ulsan",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-31"
+  },
+  {
+    "id": "south-gyeongsang-highlight",
+    "answer": "South Gyeongsang",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-48"
+  },
+  {
+    "id": "gwangju-highlight",
+    "answer": "Gwangju",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-29"
+  },
+  {
+    "id": "busan-highlight",
+    "answer": "Busan",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-26"
+  },
+  {
+    "id": "south-jeolla-highlight",
+    "answer": "South Jeolla",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-46"
+  },
+  {
+    "id": "jeju-highlight",
+    "answer": "Jeju",
+    "kind": "Province or first-level city",
+    "area": "south",
+    "sourceCode": "KR-49"
+  }
+]

@@ -1,0 +1,200 @@
+[
+  {
+    "id": "heilongjiang-province-highlight",
+    "answer": "Heilongjiang Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "inner-mongolia-autonomous-region-highlight",
+    "answer": "Inner Mongolia Autonomous Region",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "jilin-province-highlight",
+    "answer": "Jilin Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "liaoning-province-highlight",
+    "answer": "Liaoning Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "beijing-municipality-highlight",
+    "answer": "Beijing Municipality",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "xinjiang-uyghur-autonomous-region-highlight",
+    "answer": "Xinjiang Uyghur Autonomous Region",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "hebei-province-highlight",
+    "answer": "Hebei Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "tianjin-municipality-highlight",
+    "answer": "Tianjin Municipality",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "shanxi-province-highlight",
+    "answer": "Shanxi Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "ningxia-hui-autonomous-region-highlight",
+    "answer": "Ningxia Hui Autonomous Region",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "gansu-province-highlight",
+    "answer": "Gansu Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "shandong-province-highlight",
+    "answer": "Shandong Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "shaanxi-province-highlight",
+    "answer": "Shaanxi Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "qinghai-province-highlight",
+    "answer": "Qinghai Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "henan-province-highlight",
+    "answer": "Henan Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "jiangsu-province-highlight",
+    "answer": "Jiangsu Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "anhui-province-highlight",
+    "answer": "Anhui Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "tibet-autonomous-region-highlight",
+    "answer": "Tibet Autonomous Region",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "shanghai-municipality-highlight",
+    "answer": "Shanghai Municipality",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "hubei-province-highlight",
+    "answer": "Hubei Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "sichuan-province-highlight",
+    "answer": "Sichuan Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "chongqing-municipality-highlight",
+    "answer": "Chongqing Municipality",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "zhejiang-province-highlight",
+    "answer": "Zhejiang Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "jiangxi-province-highlight",
+    "answer": "Jiangxi Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "hunan-province-highlight",
+    "answer": "Hunan Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "guizhou-province-highlight",
+    "answer": "Guizhou Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "yunnan-province-highlight",
+    "answer": "Yunnan Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "fujian-province-highlight",
+    "answer": "Fujian Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "guangxi-zhuang-autonomous-region-highlight",
+    "answer": "Guangxi Zhuang Autonomous Region",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "guangdong-province-highlight",
+    "answer": "Guangdong Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "hong-kong-special-administrative-region-highlight",
+    "answer": "Hong Kong Special Administrative Region",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "macau-special-administrative-region-highlight",
+    "answer": "Macau Special Administrative Region",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  },
+  {
+    "id": "hainan-province-highlight",
+    "answer": "Hainan Province",
+    "kind": "Provincial-Level Division",
+    "sourceCode": "CHN"
+  }
+]

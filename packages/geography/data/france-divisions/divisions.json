@@ -1,0 +1,80 @@
+[
+  {
+    "id": "hauts-de-france-highlight",
+    "answer": "Hauts-de-France",
+    "kind": "Region",
+    "sourceCode": "FR-HDF"
+  },
+  {
+    "id": "normandie-highlight",
+    "answer": "Normandie",
+    "kind": "Region",
+    "sourceCode": "FR-NOR"
+  },
+  {
+    "id": "le-de-france-highlight",
+    "answer": "Île-de-France",
+    "kind": "Region",
+    "sourceCode": "FR-IDF"
+  },
+  {
+    "id": "grand-est-highlight",
+    "answer": "Grand Est",
+    "kind": "Region",
+    "sourceCode": "FR-GES"
+  },
+  {
+    "id": "bretagne-highlight",
+    "answer": "Bretagne",
+    "kind": "Region",
+    "sourceCode": "FR-BRE"
+  },
+  {
+    "id": "centre-val-de-loire-highlight",
+    "answer": "Centre-Val de Loire",
+    "kind": "Region",
+    "sourceCode": "FR-CVL"
+  },
+  {
+    "id": "pays-de-la-loire-highlight",
+    "answer": "Pays de la Loire",
+    "kind": "Region",
+    "sourceCode": "FR-PDL"
+  },
+  {
+    "id": "bourgogne-franche-comt-highlight",
+    "answer": "Bourgogne-Franche-Comté",
+    "kind": "Region",
+    "sourceCode": "FR-BFC"
+  },
+  {
+    "id": "auvergne-rh-ne-alpes-highlight",
+    "answer": "Auvergne-Rhône-Alpes",
+    "kind": "Region",
+    "sourceCode": "FR-ARA"
+  },
+  {
+    "id": "nouvelle-aquitaine-highlight",
+    "answer": "Nouvelle-Aquitaine",
+    "kind": "Region",
+    "sourceCode": "FR-NAQ"
+  },
+  {
+    "id": "occitanie-highlight",
+    "answer": "Occitanie",
+    "kind": "Region",
+    "sourceCode": "FR-OCC"
+  },
+  {
+    "id": "provence-alpes-c-te-d-azur-highlight",
+    "answer": "Provence-Alpes-Côte d'Azur",
+    "kind": "Region",
+    "sourceCode": "FR-PAC"
+  },
+  {
+    "id": "corse-highlight",
+    "answer": "Corse",
+    "kind": "Region",
+    "sourceCode": "FR-20R"
+  }
+]

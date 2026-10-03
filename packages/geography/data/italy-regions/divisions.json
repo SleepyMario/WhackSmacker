@@ -1,0 +1,122 @@
+[
+  {
+    "id": "trentino-alto-adige-highlight",
+    "answer": "Trentino-Alto Adige",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "veneto-highlight",
+    "answer": "Veneto",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "friuli-venezia-giulia-highlight",
+    "answer": "Friuli-Venezia Giulia",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "valle-d-aosta-highlight",
+    "answer": "Valle d'Aosta",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "lombardia-highlight",
+    "answer": "Lombardia",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "piemonte-highlight",
+    "answer": "Piemonte",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "liguria-highlight",
+    "answer": "Liguria",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "emilia-romagna-highlight",
+    "answer": "Emilia-Romagna",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "marche-highlight",
+    "answer": "Marche",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "umbria-highlight",
+    "answer": "Umbria",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "toscana-highlight",
+    "answer": "Toscana",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "abruzzo-highlight",
+    "answer": "Abruzzo",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "lazio-highlight",
+    "answer": "Lazio",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "molise-highlight",
+    "answer": "Molise",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "puglia-highlight",
+    "answer": "Puglia",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "campania-highlight",
+    "answer": "Campania",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "basilicata-highlight",
+    "answer": "Basilicata",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "calabria-highlight",
+    "answer": "Calabria",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "sardegna-highlight",
+    "answer": "Sardegna",
+    "kind": "Region",
+    "sourceCode": ""
+  },
+  {
+    "id": "sicilia-highlight",
+    "answer": "Sicilia",
+    "kind": "Region",
+    "sourceCode": ""
+  }
+]

@@ -1,5 +1,6 @@
 import type { CliCommand, InMemoryCliCommandRegistry } from "../../packages/core";
 import { japanRegionDecks } from "../../packages/geography/japan-regions";
+import { countryDivisionDecks, koreaRegionDecks, vietnamRegionDecks } from "../../packages/geography/continents-easy";
 import { dirname, join } from "node:path";
 import { readFileSync } from "node:fs";
 import { stat } from "node:fs/promises";
@@ -1060,6 +1061,7 @@ interface GeographyRegionMetadata {
 
 let geographyPrefectureMetadata: readonly GeographyPrefectureMetadata[] | undefined;
 let geographyRegionMetadata: readonly GeographyRegionMetadata[] | undefined;
+const geographyCountryMetadata = new Map<string, readonly GeographyPrefectureMetadata[]>();
 
 function loadGeographyPrefectureMetadata(): readonly GeographyPrefectureMetadata[] {
   geographyPrefectureMetadata ??= JSON.parse(readFileSync(join(__dirname, "../../packages/geography/data/japan-hard/prefectures.json"), "utf8")) as readonly GeographyPrefectureMetadata[];
@@ -1069,6 +1071,16 @@ function loadGeographyPrefectureMetadata(): readonly GeographyPrefectureMetadata
 function loadGeographyRegionMetadata(): readonly GeographyRegionMetadata[] {
   geographyRegionMetadata ??= JSON.parse(readFileSync(join(__dirname, "../../packages/geography/data/japan-regions/regions.json"), "utf8")) as readonly GeographyRegionMetadata[];
   return geographyRegionMetadata;
+}
+
+function loadGeographyCountryMetadata(directory: string, filename = "provinces.json"): readonly GeographyPrefectureMetadata[] {
+  const key = `${directory}/${filename}`;
+  let metadata = geographyCountryMetadata.get(key);
+  if (metadata === undefined) {
+    metadata = JSON.parse(readFileSync(join(__dirname, "../../packages/geography/data", directory, filename), "utf8")) as readonly GeographyPrefectureMetadata[];
+    geographyCountryMetadata.set(key, metadata);
+  }
+  return metadata;
 }
 
 function geographyReviewTarget(packageId: string, highlightIds: readonly string[], hard: boolean): GeographyReviewTarget {
@@ -1092,6 +1104,43 @@ function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | un
     return geographyReviewTarget(
       `com.sleepymario.${japanese ? "language.japanese" : "geography"}.japan-prefectures-${hard ? "hard" : "easy"}`,
       loadGeographyPrefectureMetadata().map((prefecture) => prefecture.id),
+      hard
+    );
+  }
+  const country = [
+    { command: "vietnam-provincial-divisions", packageName: "vietnam-provincial-divisions", directory: "vietnam-provinces" },
+    { command: "korea-provincial-divisions", packageName: "korea-provincial-divisions", directory: "korea-provinces" },
+    { command: "netherlands-provinces", packageName: "netherlands-provinces", directory: "netherlands-provinces" }
+    ,{ command: "germany-states", packageName: "germany-states", directory: "germany-states", metadata: "states.json" }
+  ].find(candidate => id === `${candidate.command}-${hard ? "hard" : "easy"}`);
+  if (country !== undefined) {
+    return geographyReviewTarget(
+      `com.sleepymario.geography.${country.packageName}-${hard ? "hard" : "easy"}`,
+      loadGeographyCountryMetadata(country.directory, country.metadata).map(item => item.id),
+      hard
+    );
+  }
+  const vietnamRegion = vietnamRegionDecks.find(candidate => id === `vietnam-provincial-divisions-${candidate.slug}-${hard ? "hard" : "easy"}`);
+  if (vietnamRegion !== undefined) {
+    return geographyReviewTarget(
+      `com.sleepymario.geography.vietnam-provincial-divisions-${vietnamRegion.slug}-${hard ? "hard" : "easy"}`,
+      loadGeographyCountryMetadata(`vietnam-provinces/regions/${vietnamRegion.slug}`).map(item => item.id),
+      hard
+    );
+  }
+  const koreaRegion = koreaRegionDecks.find(candidate => id === `korea-provincial-divisions-${candidate.slug}-${hard ? "hard" : "easy"}`);
+  if (koreaRegion !== undefined) {
+    return geographyReviewTarget(
+      `com.sleepymario.geography.korea-provincial-divisions-${koreaRegion.slug}-${hard ? "hard" : "easy"}`,
+      loadGeographyCountryMetadata(`korea-provinces/regions/${koreaRegion.slug}`).map(item => item.id),
+      hard
+    );
+  }
+  const genericCountry = countryDivisionDecks.find(candidate => id === `${candidate.dataset}-divisions-${hard ? "hard" : "easy"}`);
+  if (genericCountry !== undefined) {
+    return geographyReviewTarget(
+      `com.sleepymario.geography.${genericCountry.dataset}-divisions-${hard ? "hard" : "easy"}`,
+      loadGeographyCountryMetadata(genericCountry.directory, "divisions.json").map(item => item.id),
       hard
     );
   }
@@ -3610,6 +3659,12 @@ function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): Men
 }
 
 function buildCountriesGeographyNode(id: string): LanguageTreeNode {
+  const groupedCountryDecks = [...countryDivisionDecks.reduce((groups, country) => {
+    const existing = groups.get(country.label);
+    if (existing === undefined) groups.set(country.label, [country]);
+    else existing.push(country);
+    return groups;
+  }, new Map<string, (typeof countryDivisionDecks[number])[]>()).entries()];
   return {
     id, label: "Countries", kind: "category", previewText: "Countries",
     children: [{ id: `${id}:japan`, label: "Japan", kind: "category", previewText: "Japan", children: [{
@@ -3636,7 +3691,73 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
       id: `${id}:japan:${region.slug}-hard`, label: `Prefectures - ${region.label} - Hard`, kind: "command" as const,
       commandPath: ["geography", `japan-prefectures-${region.slug}-hard`], commandArgs: [], launchTitle: `Prefectures - ${region.label} - Hard`,
       previewText: `Prefectures - ${region.label} - Hard\n\nIdentify highlighted ${region.label} prefectures by typing their romanized names. Macron-free answers are accepted.`
-    }]))] }]
+    }]))] }, {
+      id: `${id}:vietnam`, label: "Vietnam", kind: "category", previewText: "Vietnam", children: [{
+        id: `${id}:vietnam:provincial-divisions-easy`, label: "Provincial-level Divisions - All - Easy", kind: "command",
+        commandPath: ["geography", "vietnam-provincial-divisions-easy"], commandArgs: [], launchTitle: "Provincial-level Divisions - All - Easy",
+        previewText: "Provincial-level Divisions - All - Easy\n\n68 questions covering Vietnam's current 34 provincial-level units: 28 provinces and six centrally governed cities. Identify highlighted units with choices 1–4, and locate named units by entering map numbers 1–34."
+      }, {
+        id: `${id}:vietnam:provincial-divisions-hard`, label: "Provincial-level Divisions - All - Hard", kind: "command",
+        commandPath: ["geography", "vietnam-provincial-divisions-hard"], commandArgs: [], launchTitle: "Provincial-level Divisions - All - Hard",
+        previewText: "Provincial-level Divisions - All - Hard\n\nIdentify Vietnam's current 34 provincial-level units by typing their Vietnamese names. Diacritics are optional."
+      }, ...vietnamRegionDecks.flatMap(region => ([{
+        id: `${id}:vietnam:${region.slug}-easy`, label: `Provincial-level Divisions - ${region.label} - Easy`, kind: "command" as const,
+        commandPath: ["geography", `vietnam-provincial-divisions-${region.slug}-easy`], commandArgs: [], launchTitle: `Provincial-level Divisions - ${region.label} - Easy`,
+        previewText: `Provincial-level Divisions - ${region.label} - Easy\n\n${region.count * 2} questions: identify ${region.count} highlighted divisions with regional choices, and locate them on a region-only numbered map.`
+      }, {
+        id: `${id}:vietnam:${region.slug}-hard`, label: `Provincial-level Divisions - ${region.label} - Hard`, kind: "command" as const,
+        commandPath: ["geography", `vietnam-provincial-divisions-${region.slug}-hard`], commandArgs: [], launchTitle: `Provincial-level Divisions - ${region.label} - Hard`,
+        previewText: `Provincial-level Divisions - ${region.label} - Hard\n\nIdentify the ${region.count} divisions in ${region.label} Vietnam by typing their Vietnamese names. Diacritics are optional.`
+      }]))] }, {
+      id: `${id}:korea`, label: "Korea", kind: "category", previewText: "Korea", children: [{
+        id: `${id}:korea:provincial-divisions-easy`, label: "Provincial-level Divisions - All - Easy", kind: "command",
+        commandPath: ["geography", "korea-provincial-divisions-easy"], commandArgs: [], launchTitle: "Provincial-level Divisions - All - Easy",
+        previewText: "Provincial-level Divisions - All - Easy\n\n56 questions covering 28 first-level divisions across the Korean peninsula. Identify highlighted divisions with choices 1–4, and locate named divisions by entering map numbers 1–28."
+      }, {
+        id: `${id}:korea:provincial-divisions-hard`, label: "Provincial-level Divisions - All - Hard", kind: "command",
+        commandPath: ["geography", "korea-provincial-divisions-hard"], commandArgs: [], launchTitle: "Provincial-level Divisions - All - Hard",
+        previewText: "Provincial-level Divisions - All - Hard\n\nIdentify 28 first-level divisions across the Korean peninsula by typing their romanized names."
+      }, ...koreaRegionDecks.flatMap(region => ([{
+        id: `${id}:korea:${region.slug}-easy`, label: `Provincial-level Divisions - ${region.label} - Easy`, kind: "command" as const,
+        commandPath: ["geography", `korea-provincial-divisions-${region.slug}-easy`], commandArgs: [], launchTitle: `Provincial-level Divisions - ${region.label} - Easy`,
+        previewText: `Provincial-level Divisions - ${region.label} - Easy\n\n${region.count * 2} questions: identify ${region.count} highlighted divisions with regional choices, and locate them on a region-only numbered map.`
+      }, {
+        id: `${id}:korea:${region.slug}-hard`, label: `Provincial-level Divisions - ${region.label} - Hard`, kind: "command" as const,
+        commandPath: ["geography", `korea-provincial-divisions-${region.slug}-hard`], commandArgs: [], launchTitle: `Provincial-level Divisions - ${region.label} - Hard`,
+        previewText: `Provincial-level Divisions - ${region.label} - Hard\n\nIdentify the ${region.count} divisions in ${region.label} Korea by typing their romanized names.`
+      }]))]
+    }, {
+      id: `${id}:germany`, label: "Germany", kind: "category", previewText: "Germany", children: [{
+        id: `${id}:germany:states-easy`, label: "States - All - Easy", kind: "command",
+        commandPath: ["geography", "germany-states-easy"], commandArgs: [], launchTitle: "States - All - Easy",
+        previewText: "States - All - Easy\n\n32 questions covering Germany's 16 states. Identify highlighted states with choices 1–4, and locate named states by entering map numbers 1–16."
+      }, {
+        id: `${id}:germany:states-hard`, label: "States - All - Hard", kind: "command",
+        commandPath: ["geography", "germany-states-hard"], commandArgs: [], launchTitle: "States - All - Hard",
+        previewText: "States - All - Hard\n\nIdentify Germany's 16 states by typing their German names. Umlauts are optional."
+      }]
+    }, ...groupedCountryDecks.map(([label, decks]) => ({
+      id: `${id}:${decks[0]!.dataset}`, label, kind: "category" as const, previewText: label,
+      children: decks.flatMap(country => ([{
+          id: `${id}:${country.dataset}:divisions-easy`, label: `${country.deck} - All - Easy`, kind: "command" as const,
+          commandPath: ["geography", `${country.dataset}-divisions-easy`], commandArgs: [], launchTitle: `${country.deck} - All - Easy`,
+          previewText: `${country.deck} - All - Easy\n\n${country.count * 2} questions covering ${country.count} ${country.singular}s. Identify highlighted divisions with choices 1–4, and locate named divisions by entering map numbers 1–${country.count}.`
+        }, {
+          id: `${id}:${country.dataset}:divisions-hard`, label: `${country.deck} - All - Hard`, kind: "command" as const,
+          commandPath: ["geography", `${country.dataset}-divisions-hard`], commandArgs: [], launchTitle: `${country.deck} - All - Hard`,
+          previewText: `${country.deck} - All - Hard\n\nIdentify all ${country.count} ${country.singular}s by typing their names.`
+        }]))
+    })), {
+      id: `${id}:netherlands`, label: "Netherlands", kind: "category", previewText: "Netherlands", children: [{
+        id: `${id}:netherlands:provinces-easy`, label: "Provinces - All - Easy", kind: "command",
+        commandPath: ["geography", "netherlands-provinces-easy"], commandArgs: [], launchTitle: "Provinces - All - Easy",
+        previewText: "Provinces - All - Easy\n\n24 questions covering the Netherlands' 12 provinces. Identify highlighted provinces with choices 1–4, and locate named provinces by entering map numbers 1–12."
+      }, {
+        id: `${id}:netherlands:provinces-hard`, label: "Provinces - All - Hard", kind: "command",
+        commandPath: ["geography", "netherlands-provinces-hard"], commandArgs: [], launchTitle: "Provinces - All - Hard",
+        previewText: "Provinces - All - Hard\n\nIdentify the Netherlands' 12 provinces by typing their Dutch names. Diacritics are optional."
+      }]
+    }]
   };
 }
 

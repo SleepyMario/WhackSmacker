@@ -1,0 +1,218 @@
+[
+  {
+    "id": "lad-kh-highlight",
+    "answer": "Ladākh",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-LA"
+  },
+  {
+    "id": "jammu-and-kashm-r-highlight",
+    "answer": "Jammu and Kashmīr",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-JK"
+  },
+  {
+    "id": "him-chal-pradesh-highlight",
+    "answer": "Himāchal Pradesh",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-HP"
+  },
+  {
+    "id": "punjab-highlight",
+    "answer": "Punjab",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-PB"
+  },
+  {
+    "id": "chand-garh-highlight",
+    "answer": "Chandīgarh",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-CH"
+  },
+  {
+    "id": "uttar-khand-highlight",
+    "answer": "Uttarākhand",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-UT"
+  },
+  {
+    "id": "hary-na-highlight",
+    "answer": "Haryāna",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-HR"
+  },
+  {
+    "id": "delhi-highlight",
+    "answer": "Delhi",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-DL"
+  },
+  {
+    "id": "arun-chal-pradesh-highlight",
+    "answer": "Arunāchal Pradesh",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-AR"
+  },
+  {
+    "id": "sikkim-highlight",
+    "answer": "Sikkim",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-SK"
+  },
+  {
+    "id": "uttar-pradesh-highlight",
+    "answer": "Uttar Pradesh",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-UP"
+  },
+  {
+    "id": "n-g-land-highlight",
+    "answer": "Nāgāland",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-NL"
+  },
+  {
+    "id": "assam-highlight",
+    "answer": "Assam",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-AS"
+  },
+  {
+    "id": "r-jasth-n-highlight",
+    "answer": "Rājasthān",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-RJ"
+  },
+  {
+    "id": "bih-r-highlight",
+    "answer": "Bihār",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-BR"
+  },
+  {
+    "id": "megh-laya-highlight",
+    "answer": "Meghālaya",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-ML"
+  },
+  {
+    "id": "manipur-highlight",
+    "answer": "Manipur",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-MN"
+  },
+  {
+    "id": "west-bengal-highlight",
+    "answer": "West Bengal",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-WB"
+  },
+  {
+    "id": "madhya-pradesh-highlight",
+    "answer": "Madhya Pradesh",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-MP"
+  },
+  {
+    "id": "jh-rkhand-highlight",
+    "answer": "Jhārkhand",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-JH"
+  },
+  {
+    "id": "tripura-highlight",
+    "answer": "Tripura",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-TR"
+  },
+  {
+    "id": "mizoram-highlight",
+    "answer": "Mizoram",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-MZ"
+  },
+  {
+    "id": "gujar-t-highlight",
+    "answer": "Gujarāt",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-GJ"
+  },
+  {
+    "id": "chhatt-sgarh-highlight",
+    "answer": "Chhattīsgarh",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-CT"
+  },
+  {
+    "id": "odisha-highlight",
+    "answer": "Odisha",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-OR"
+  },
+  {
+    "id": "d-dra-and-nagar-haveli-and-dam-n-and-diu-highlight",
+    "answer": "Dādra and Nagar Haveli and Damān and Diu",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-DH"
+  },
+  {
+    "id": "mah-r-shtra-highlight",
+    "answer": "Mahārāshtra",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-MH"
+  },
+  {
+    "id": "telang-na-highlight",
+    "answer": "Telangāna",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-TG"
+  },
+  {
+    "id": "andhra-pradesh-highlight",
+    "answer": "Andhra Pradesh",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-AP"
+  },
+  {
+    "id": "goa-highlight",
+    "answer": "Goa",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-GA"
+  },
+  {
+    "id": "karn-taka-highlight",
+    "answer": "Karnātaka",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-KA"
+  },
+  {
+    "id": "andaman-and-nicobar-islands-highlight",
+    "answer": "Andaman and Nicobar Islands",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-AN"
+  },
+  {
+    "id": "tamil-n-du-highlight",
+    "answer": "Tamil Nādu",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-TN"
+  },
+  {
+    "id": "puducherry-highlight",
+    "answer": "Puducherry",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-PY"
+  },
+  {
+    "id": "kerala-highlight",
+    "answer": "Kerala",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-KL"
+  },
+  {
+    "id": "lakshadweep-highlight",
+    "answer": "Lakshadweep",
+    "kind": "State Or Union Territory",
+    "sourceCode": "IN-LD"
+  }
+]

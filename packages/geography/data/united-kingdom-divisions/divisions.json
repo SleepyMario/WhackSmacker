@@ -1,0 +1,26 @@
+[
+  {
+    "id": "scotland-highlight",
+    "answer": "Scotland",
+    "kind": "Constituent Country",
+    "sourceCode": "GB-SCT"
+  },
+  {
+    "id": "northern-ireland-highlight",
+    "answer": "Northern Ireland",
+    "kind": "Constituent Country",
+    "sourceCode": "GB-NIR"
+  },
+  {
+    "id": "england-highlight",
+    "answer": "England",
+    "kind": "Constituent Country",
+    "sourceCode": "GB-ENG"
+  },
+  {
+    "id": "wales-highlight",
+    "answer": "Wales",
+    "kind": "Constituent Country",
+    "sourceCode": "GB-WLS"
+  }
+]

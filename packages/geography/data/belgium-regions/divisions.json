@@ -1,0 +1,17 @@
+[
+  {
+    "id": "flanders-highlight",
+    "answer": "Flanders",
+    "kind": "Region"
+  },
+  {
+    "id": "brussels-highlight",
+    "answer": "Brussels",
+    "kind": "Region"
+  },
+  {
+    "id": "wallonia-highlight",
+    "answer": "Wallonia",
+    "kind": "Region"
+  }
+]

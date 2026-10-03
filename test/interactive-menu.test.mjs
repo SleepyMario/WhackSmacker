@@ -823,6 +823,11 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   assert.equal(geography.kind, installed.children[0].kind, "installed top-level modules share one ordinary colour class");
   assert.deepEqual(geography.children.map((node) => node.label), ["World", "Countries"]);
   assert.deepEqual(geography.children[0].children.map((node) => node.label), ["Continents - Easy", "Continents - Hard"]);
+  assert.deepEqual(geography.children[1].children.map((node) => node.label), [
+    "Japan", "Vietnam", "Korea", "Germany", "United Kingdom", "Belgium", "France", "Spain", "Italy",
+    "China", "China (Taiwan)", "India", "Australia",
+    "Yugoslavia (Former)", "Netherlands"
+  ]);
   assert.deepEqual(geography.children[1].children[0].children.map((node) => node.label), [
     "Prefectures - All - Easy",
     "Prefectures - All - Hard",
@@ -836,6 +841,33 @@ test("module tree shows renamed learning categories without Games or legacy Cont
     "Prefectures - Chuugoku - Easy", "Prefectures - Chuugoku - Hard",
     "Prefectures - Shikoku - Easy", "Prefectures - Shikoku - Hard",
     "Prefectures - Kyuushuu - Easy", "Prefectures - Kyuushuu - Hard"
+  ]);
+  assert.deepEqual(geography.children[1].children[1].children.map((node) => node.label), [
+    "Provincial-level Divisions - All - Easy",
+    "Provincial-level Divisions - All - Hard",
+    "Provincial-level Divisions - North - Easy", "Provincial-level Divisions - North - Hard",
+    "Provincial-level Divisions - Central - Easy", "Provincial-level Divisions - Central - Hard",
+    "Provincial-level Divisions - South - Easy", "Provincial-level Divisions - South - Hard"
+  ]);
+  assert.deepEqual(geography.children[1].children[2].children.map((node) => node.label), [
+    "Provincial-level Divisions - All - Easy",
+    "Provincial-level Divisions - All - Hard",
+    "Provincial-level Divisions - North - Easy", "Provincial-level Divisions - North - Hard",
+    "Provincial-level Divisions - South - Easy", "Provincial-level Divisions - South - Hard"
+  ]);
+  assert.deepEqual(geography.children[1].children[3].children.map((node) => node.label), [
+    "States - All - Easy",
+    "States - All - Hard"
+  ]);
+  assert.deepEqual(geography.children[1].children[5].children.map((node) => node.label), [
+    "Regions - All - Easy",
+    "Regions - All - Hard",
+    "Provinces and Brussels - All - Easy",
+    "Provinces and Brussels - All - Hard"
+  ]);
+  assert.deepEqual(geography.children[1].children.at(-1).children.map((node) => node.label), [
+    "Provinces - All - Easy",
+    "Provinces - All - Hard"
   ]);
 });
 
@@ -2668,6 +2700,47 @@ test("Wandering the World decks use the same four review states and due counts a
   const finished = markGeographyDeckReviewStatuses(tree, finishedStates, "en-US", now);
   assert.equal(findCommand(finished).reviewStatus, "finished");
   assert.match(renderTwoPaneLanguageTree(finished, new Set(["whacksmacker", "geography"]), 0, "", true), /\x1b\[32m[^\n]*Prefectures - Regions - Easy/u);
+});
+
+test("country decks receive the same menu review colours as Japan", () => {
+  const countries = [
+    ["vietnam", "vietnam-provincial-divisions", 34, "ha-noi-highlight"],
+    ["korea", "korea-provincial-divisions", 28, "north-hamgyong-highlight"],
+    ["korea", "korea-provincial-divisions-north", 11, "north-hamgyong-highlight"],
+    ["korea", "korea-provincial-divisions-south", 17, "gangwon-highlight"],
+    ["netherlands", "netherlands-provinces", 12, "groningen-highlight"]
+    ,["germany", "germany-states", 16, "schleswig-holstein-highlight"]
+    ,["vietnam", "vietnam-provincial-divisions-north", 15, "ha-noi-highlight"]
+    ,["vietnam", "vietnam-provincial-divisions-central", 11, "thanh-hoa-highlight"]
+    ,["vietnam", "vietnam-provincial-divisions-south", 8, "dong-nai-highlight"]
+  ];
+  for (const [country, command, count, firstItemId] of countries) {
+    for (const mode of ["easy", "hard"]) {
+      const node = {
+        id: `geography:countries:${country}:${mode}`,
+        label: `${country} ${mode}`,
+        kind: "command",
+        commandPath: ["geography", `${command}-${mode}`]
+      };
+      const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [node] };
+      const marked = markGeographyDeckReviewStatuses(tree, [], "en-US", "2026-10-03T00:00:00Z");
+      assert.equal(marked.children[0].reviewStatus, "not_started");
+      assert.equal(marked.children[0].dueCardCount, 0);
+      assert.equal(marked.children[0].reviewStatusText, "Not started yet.");
+      assert.equal(marked.children[0].commandPath[1], `${command}-${mode}`);
+      assert.match(renderTwoPaneLanguageTree(marked, new Set(["whacksmacker"]), 0, "", true), /\x1b\[35m/u);
+      const expectedCards = mode === "easy" ? count * 2 : count;
+      const packageId = `com.sleepymario.geography.${command}-${mode}`;
+      const dueState = {
+        ...createInitialReviewState({ packageId, packageVersion: "0.1.0", itemId: firstItemId }, "2026-10-01T00:00:00Z"),
+        lastReviewedAt: "2026-10-01T00:00:00Z", reviewCount: 1, intervalDays: 1, status: "review"
+      };
+      const due = markGeographyDeckReviewStatuses(tree, [dueState], "en-US", "2026-10-03T00:00:00Z");
+      assert.equal(due.children[0].reviewStatus, "has_cards_to_review");
+      assert.equal(due.children[0].dueCardCount, expectedCards);
+      assert.match(renderTwoPaneLanguageTree(due, new Set(["whacksmacker"]), 0, "", true), /\x1b\[34m/u);
+    }
+  }
 });
 
 test("due Japanese General geography cards colour the General and Topography parents blue", () => {

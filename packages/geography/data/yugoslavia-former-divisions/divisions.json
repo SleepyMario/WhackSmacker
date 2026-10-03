@@ -1,0 +1,38 @@
+[
+  {
+    "id": "slovenia-highlight",
+    "answer": "Slovenia",
+    "kind": "Constituent Republic",
+    "sourceCode": "SVN"
+  },
+  {
+    "id": "croatia-highlight",
+    "answer": "Croatia",
+    "kind": "Constituent Republic",
+    "sourceCode": "HRV"
+  },
+  {
+    "id": "bosnia-and-herzegovina-highlight",
+    "answer": "Bosnia and Herzegovina",
+    "kind": "Constituent Republic",
+    "sourceCode": "BIH"
+  },
+  {
+    "id": "serbia-highlight",
+    "answer": "Serbia",
+    "kind": "Constituent Republic",
+    "sourceCode": "SRB"
+  },
+  {
+    "id": "montenegro-highlight",
+    "answer": "Montenegro",
+    "kind": "Constituent Republic",
+    "sourceCode": "MNE"
+  },
+  {
+    "id": "macedonia-highlight",
+    "answer": "Macedonia",
+    "kind": "Constituent Republic",
+    "sourceCode": "MKD"
+  }
+]

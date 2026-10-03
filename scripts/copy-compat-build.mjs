@@ -132,3 +132,12 @@ await cp("packages/geography/data/paired", "dist/packages/geography/data/paired"
 
 await cp("packages/geography/data/japan-hard", "dist/packages/geography/data/japan-hard", { recursive: true });
 await cp("packages/geography/data/japan-regions", "dist/packages/geography/data/japan-regions", { recursive: true });
+await cp("packages/geography/data/vietnam-provinces", "dist/packages/geography/data/vietnam-provinces", { recursive: true });
+await cp("packages/geography/data/korea-provinces", "dist/packages/geography/data/korea-provinces", { recursive: true });
+await cp("packages/geography/data/netherlands-provinces", "dist/packages/geography/data/netherlands-provinces", { recursive: true });
+await cp("packages/geography/data/germany-states", "dist/packages/geography/data/germany-states", { recursive: true });
+for (const directory of [
+  "united-kingdom-divisions", "belgium-regions", "belgium-provinces", "france-divisions", "spain-divisions", "italy-regions",
+  "china-divisions", "china-roc-divisions", "india-divisions",
+  "australia-divisions", "yugoslavia-former-divisions"
+]) await cp(`packages/geography/data/${directory}`, `dist/packages/geography/data/${directory}`, { recursive: true });

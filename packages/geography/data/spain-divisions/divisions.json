@@ -1,0 +1,116 @@
+[
+  {
+    "id": "principado-de-asturias-highlight",
+    "answer": "Principado de Asturias",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "cantabria-highlight",
+    "answer": "Cantabria",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "pa-s-vasco-euskadi-highlight",
+    "answer": "País Vasco/Euskadi",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "galicia-highlight",
+    "answer": "Galicia",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "comunidad-foral-de-navarra-highlight",
+    "answer": "Comunidad Foral de Navarra",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "la-rioja-highlight",
+    "answer": "La Rioja",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "castilla-y-le-n-highlight",
+    "answer": "Castilla y León",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "catalu-a-catalunya-highlight",
+    "answer": "Cataluña/Catalunya",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "arag-n-highlight",
+    "answer": "Aragón",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "comunidad-de-madrid-highlight",
+    "answer": "Comunidad de Madrid",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "castilla-la-mancha-highlight",
+    "answer": "Castilla-La Mancha",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "illes-balears-highlight",
+    "answer": "Illes Balears",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "comunitat-valenciana-highlight",
+    "answer": "Comunitat Valenciana",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "extremadura-highlight",
+    "answer": "Extremadura",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "regi-n-de-murcia-highlight",
+    "answer": "Región de Murcia",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "andaluc-a-highlight",
+    "answer": "Andalucía",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "ciudad-aut-noma-de-ceuta-highlight",
+    "answer": "Ciudad Autónoma de Ceuta",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "ciudad-aut-noma-de-melilla-highlight",
+    "answer": "Ciudad Autónoma de Melilla",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "canarias-highlight",
+    "answer": "Canarias",
+    "kind": "Autonomous-Level Division",
+    "sourceCode": "ESP"
+  }
+]

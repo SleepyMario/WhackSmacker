@@ -1,0 +1,98 @@
+[
+  {
+    "id": "schleswig-holstein-highlight",
+    "answer": "Schleswig-Holstein",
+    "kind": "Land",
+    "sourceCode": "DE-SH"
+  },
+  {
+    "id": "mecklenburg-vorpommern-highlight",
+    "answer": "Mecklenburg-Vorpommern",
+    "kind": "Land",
+    "sourceCode": "DE-MV"
+  },
+  {
+    "id": "hamburg-highlight",
+    "answer": "Hamburg",
+    "kind": "Land",
+    "sourceCode": "DE-HH"
+  },
+  {
+    "id": "bremen-highlight",
+    "answer": "Bremen",
+    "kind": "Land",
+    "sourceCode": "DE-HB"
+  },
+  {
+    "id": "brandenburg-highlight",
+    "answer": "Brandenburg",
+    "kind": "Land",
+    "sourceCode": "DE-BB"
+  },
+  {
+    "id": "berlin-highlight",
+    "answer": "Berlin",
+    "kind": "Land",
+    "sourceCode": "DE-BE"
+  },
+  {
+    "id": "niedersachsen-highlight",
+    "answer": "Niedersachsen",
+    "kind": "Land",
+    "sourceCode": "DE-NI"
+  },
+  {
+    "id": "sachsen-anhalt-highlight",
+    "answer": "Sachsen-Anhalt",
+    "kind": "Land",
+    "sourceCode": "DE-ST"
+  },
+  {
+    "id": "nordrhein-westfalen-highlight",
+    "answer": "Nordrhein-Westfalen",
+    "kind": "Land",
+    "sourceCode": "DE-NW"
+  },
+  {
+    "id": "sachsen-highlight",
+    "answer": "Sachsen",
+    "kind": "Land",
+    "sourceCode": "DE-SN"
+  },
+  {
+    "id": "thueringen-highlight",
+    "answer": "Thüringen",
+    "kind": "Land",
+    "sourceCode": "DE-TH"
+  },
+  {
+    "id": "hessen-highlight",
+    "answer": "Hessen",
+    "kind": "Land",
+    "sourceCode": "DE-HE"
+  },
+  {
+    "id": "rheinland-pfalz-highlight",
+    "answer": "Rheinland-Pfalz",
+    "kind": "Land",
+    "sourceCode": "DE-RP"
+  },
+  {
+    "id": "saarland-highlight",
+    "answer": "Saarland",
+    "kind": "Land",
+    "sourceCode": "DE-SL"
+  },
+  {
+    "id": "bayern-highlight",
+    "answer": "Bayern",
+    "kind": "Land",
+    "sourceCode": "DE-BY"
+  },
+  {
+    "id": "baden-wuerttemberg-highlight",
+    "answer": "Baden-Württemberg",
+    "kind": "Land",
+    "sourceCode": "DE-BW"
+  }
+]

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "antwerp-highlight",
+    "answer": "Antwerp",
+    "kind": "Province Or Region",
+    "sourceCode": "BE21"
+  },
+  {
+    "id": "west-flanders-highlight",
+    "answer": "West Flanders",
+    "kind": "Province Or Region",
+    "sourceCode": "BE25"
+  },
+  {
+    "id": "east-flanders-highlight",
+    "answer": "East Flanders",
+    "kind": "Province Or Region",
+    "sourceCode": "BE23"
+  },
+  {
+    "id": "limburg-highlight",
+    "answer": "Limburg",
+    "kind": "Province Or Region",
+    "sourceCode": "BE22"
+  },
+  {
+    "id": "flemish-brabant-highlight",
+    "answer": "Flemish Brabant",
+    "kind": "Province Or Region",
+    "sourceCode": "BE24"
+  },
+  {
+    "id": "brussels-highlight",
+    "answer": "Brussels",
+    "kind": "Province Or Region",
+    "sourceCode": "BE10"
+  },
+  {
+    "id": "walloon-brabant-highlight",
+    "answer": "Walloon Brabant",
+    "kind": "Province Or Region",
+    "sourceCode": "BE31"
+  },
+  {
+    "id": "li-ge-highlight",
+    "answer": "Liège",
+    "kind": "Province Or Region",
+    "sourceCode": "BE33"
+  },
+  {
+    "id": "hainaut-highlight",
+    "answer": "Hainaut",
+    "kind": "Province Or Region",
+    "sourceCode": "BE32"
+  },
+  {
+    "id": "namur-highlight",
+    "answer": "Namur",
+    "kind": "Province Or Region",
+    "sourceCode": "BE35"
+  },
+  {
+    "id": "luxembourg-highlight",
+    "answer": "Luxembourg",
+    "kind": "Province Or Region",
+    "sourceCode": "BE34"
+  }
+]

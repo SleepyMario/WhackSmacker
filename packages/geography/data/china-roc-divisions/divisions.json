@@ -1,0 +1,134 @@
+[
+  {
+    "id": "matsu-islands-highlight",
+    "answer": "Lienchiang County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-LIE"
+  },
+  {
+    "id": "keelung-highlight",
+    "answer": "Keelung City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-KEE"
+  },
+  {
+    "id": "taipei-highlight",
+    "answer": "Taipei City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-TPE"
+  },
+  {
+    "id": "new-taipei-highlight",
+    "answer": "New Taipei City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-NWT"
+  },
+  {
+    "id": "taoyuan-highlight",
+    "answer": "Taoyuan City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-TAO"
+  },
+  {
+    "id": "hsinchu-highlight",
+    "answer": "Hsinchu City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-HSZ"
+  },
+  {
+    "id": "hsinchu-county-highlight",
+    "answer": "Hsinchu County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-HSQ"
+  },
+  {
+    "id": "yilan-county-highlight",
+    "answer": "Yilan County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-ILA"
+  },
+  {
+    "id": "miaoli-county-highlight",
+    "answer": "Miaoli County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-MIA"
+  },
+  {
+    "id": "kinmen-highlight",
+    "answer": "Kinmen County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-KIN"
+  },
+  {
+    "id": "taichung-highlight",
+    "answer": "Taichung City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-TXG"
+  },
+  {
+    "id": "changhua-county-highlight",
+    "answer": "Changhua County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-CHA"
+  },
+  {
+    "id": "nantou-county-highlight",
+    "answer": "Nantou County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-NAN"
+  },
+  {
+    "id": "hualien-county-highlight",
+    "answer": "Hualien County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-HUA"
+  },
+  {
+    "id": "yunlin-county-highlight",
+    "answer": "Yunlin County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-YUN"
+  },
+  {
+    "id": "penghu-highlight",
+    "answer": "Penghu County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-PEN"
+  },
+  {
+    "id": "chiayi-highlight",
+    "answer": "Chiayi City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-CYI"
+  },
+  {
+    "id": "chiayi-county-highlight",
+    "answer": "Chiayi County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-CYQ"
+  },
+  {
+    "id": "tainan-highlight",
+    "answer": "Tainan City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-TNN"
+  },
+  {
+    "id": "kaohsiung-highlight",
+    "answer": "Kaohsiung City",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-KHH"
+  },
+  {
+    "id": "taitung-county-highlight",
+    "answer": "Taitung County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-TTT"
+  },
+  {
+    "id": "pingtung-county-highlight",
+    "answer": "Pingtung County",
+    "kind": "First-Level Division",
+    "sourceCode": "TW-PIF"
+  }
+]

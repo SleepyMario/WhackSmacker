@@ -1,0 +1,74 @@
+[
+  {
+    "id": "groningen-highlight",
+    "answer": "Groningen",
+    "kind": "Province",
+    "sourceCode": "NL-GR"
+  },
+  {
+    "id": "frysl-n-highlight",
+    "answer": "Fryslân",
+    "kind": "Province",
+    "sourceCode": "NL-FR"
+  },
+  {
+    "id": "drenthe-highlight",
+    "answer": "Drenthe",
+    "kind": "Province",
+    "sourceCode": "NL-DR"
+  },
+  {
+    "id": "flevoland-highlight",
+    "answer": "Flevoland",
+    "kind": "Province",
+    "sourceCode": "NL-FL"
+  },
+  {
+    "id": "overijssel-highlight",
+    "answer": "Overijssel",
+    "kind": "Province",
+    "sourceCode": "NL-OV"
+  },
+  {
+    "id": "noord-holland-highlight",
+    "answer": "Noord-Holland",
+    "kind": "Province",
+    "sourceCode": "NL-NH"
+  },
+  {
+    "id": "utrecht-highlight",
+    "answer": "Utrecht",
+    "kind": "Province",
+    "sourceCode": "NL-UT"
+  },
+  {
+    "id": "gelderland-highlight",
+    "answer": "Gelderland",
+    "kind": "Province",
+    "sourceCode": "NL-GE"
+  },
+  {
+    "id": "zuid-holland-highlight",
+    "answer": "Zuid-Holland",
+    "kind": "Province",
+    "sourceCode": "NL-ZH"
+  },
+  {
+    "id": "noord-brabant-highlight",
+    "answer": "Noord-Brabant",
+    "kind": "Province",
+    "sourceCode": "NL-NB"
+  },
+  {
+    "id": "zeeland-highlight",
+    "answer": "Zeeland",
+    "kind": "Province",
+    "sourceCode": "NL-ZE"
+  },
+  {
+    "id": "limburg-highlight",
+    "answer": "Limburg",
+    "kind": "Province",
+    "sourceCode": "NL-LI"
+  }
+]

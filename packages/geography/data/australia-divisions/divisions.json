@@ -1,0 +1,50 @@
+[
+  {
+    "id": "northern-territory-highlight",
+    "answer": "Northern Territory",
+    "kind": "State Or Territory",
+    "sourceCode": "AU-NT"
+  },
+  {
+    "id": "western-australia-highlight",
+    "answer": "Western Australia",
+    "kind": "State Or Territory",
+    "sourceCode": "AU-WA"
+  },
+  {
+    "id": "queensland-highlight",
+    "answer": "Queensland",
+    "kind": "State Or Territory",
+    "sourceCode": "AU-QLD"
+  },
+  {
+    "id": "new-south-wales-highlight",
+    "answer": "New South Wales",
+    "kind": "State Or Territory",
+    "sourceCode": "AU-NSW"
+  },
+  {
+    "id": "south-australia-highlight",
+    "answer": "South Australia",
+    "kind": "State Or Territory",
+    "sourceCode": "AU-SA"
+  },
+  {
+    "id": "australian-capital-territory-highlight",
+    "answer": "Australian Capital Territory",
+    "kind": "State Or Territory",
+    "sourceCode": "AU-ACT"
+  },
+  {
+    "id": "victoria-highlight",
+    "answer": "Victoria",
+    "kind": "State Or Territory",
+    "sourceCode": "AU-VIC"
+  },
+  {
+    "id": "tasmania-highlight",
+    "answer": "Tasmania",
+    "kind": "State Or Territory",
+    "sourceCode": "AU-TAS"
+  }
+]
