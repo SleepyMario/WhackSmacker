@@ -1102,7 +1102,7 @@ const japaneseTopographyKanjiTargets: readonly ContentPackageGeneratorTarget[] =
   relatedPackageIds: ["com.sleepymario.language.japanese"],
   contentSchemaVersion: "2.0.0",
   deckVersion: "1.0.0",
-  artifactRevision: 2,
+  artifactRevision: deck.id === "regions" ? 3 : 2,
   mediaPolicy: "required",
   interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent", outputMedia: "output-specific" },
   packageVersion: "1.0.0",
