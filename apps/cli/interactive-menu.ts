@@ -21,6 +21,7 @@ import {
   listReadingReviewSources,
   localized,
   loadReviewProgressStore,
+  markReviewDeckFinished,
   resolveReviewProgressDirectory,
   mergeFirstClassModules,
   defaultReviewProgressDirectoryForContentDataDirectory,
@@ -55,6 +56,7 @@ import {
   renderReadingReviewItem,
   renderReadingContent,
   reviewIdentityKey,
+  isReviewDeckManuallyFinished,
   sortFirstClassModules,
   specializedReviewPackageDefinitions,
   syncReadingReviewItems,
@@ -79,6 +81,7 @@ import {
   type ReviewDeckMenuStatusClassification,
   type ReviewItemIdentity,
   type ReviewItemState,
+  type ReviewDeckFinishedOverride,
   type ReviewRating,
   type ReadingReviewSource,
   type ResolvedReadingReviewArtwork,
@@ -314,6 +317,13 @@ interface ResetDeckProgressTarget {
 }
 
 interface PendingDeckProgressReset {
+  readonly target: ResetDeckProgressTarget;
+  readonly confirmationCode: string;
+  readonly typedCode: string;
+  readonly error?: string;
+}
+
+interface PendingDeckFinishedConfirmation {
   readonly target: ResetDeckProgressTarget;
   readonly confirmationCode: string;
   readonly typedCode: string;
@@ -1185,7 +1195,13 @@ export async function collectDueDecks(root: LanguageTreeNode, options: Interacti
       if (!cached || cached.stamp !== stamp) { cached = { stamp, store: await loadReviewProgressStore(progressDir) }; dueDeckStoreCache.set(progressDir, cached); }
       stores.set(progressDir, cached.store);
     }
-    const states = stores.get(progressDir)!.items.filter(item => item.packageId === packageId
+    const progressStore = stores.get(progressDir)!;
+    if (isReviewDeckManuallyFinished(progressStore.finishedDecks, {
+      packageId,
+      ...(node.packageVersion === undefined && geographyTarget === undefined ? {} : { packageVersion: node.packageVersion ?? geographyTarget?.packageVersion }),
+      ...(node.kind === "review-source" && node.sourcePath !== undefined ? { sourcePath: node.sourcePath } : {})
+    })) return;
+    const states = progressStore.items.filter(item => item.packageId === packageId
       && !item.retiredAt
       && (node.kind !== "review-source" || item.sourcePath === node.sourcePath)
       && (node.kind !== "command" || /-(?:highlight|locate)$/u.test(item.itemId)));
@@ -1224,7 +1240,8 @@ export function markGeographyDeckReviewStatuses(
   root: LanguageTreeNode,
   progressItems: readonly ReviewItemState[],
   locale: SourceLocale = "en-US",
-  now = currentReviewTimestamp()
+  now = currentReviewTimestamp(),
+  finishedDecks: readonly ReviewDeckFinishedOverride[] = []
 ): LanguageTreeNode {
   const walk = (node: LanguageTreeNode): LanguageTreeNode => {
     const target = node.kind === "command" ? geographyReviewTargetForCommand(node.commandPath?.[1] ?? "") : undefined;
@@ -1239,7 +1256,8 @@ export function markGeographyDeckReviewStatuses(
       deckId: `${target.packageId}@${target.packageVersion}`,
       cardIdentities,
       savedProgress: progressItems,
-      now
+      now,
+      manuallyFinished: isReviewDeckManuallyFinished(finishedDecks, target)
     });
     const status = localizeReviewDeckMenuStatus(classification, locale);
     return {
@@ -1247,6 +1265,36 @@ export function markGeographyDeckReviewStatuses(
       reviewStatus: status.kind,
       dueCardCount: status.dueCardCount,
       reviewStatusText: status.text,
+      ...(children === undefined ? {} : { children })
+    };
+  };
+  return walk(root);
+}
+
+async function markManualDeckFinishedStatuses(
+  root: LanguageTreeNode,
+  options: InteractiveMenuOptions
+): Promise<LanguageTreeNode> {
+  const stores = new Map<string, ReturnType<typeof loadReviewProgressStore>>();
+  const walk = async (node: LanguageTreeNode): Promise<LanguageTreeNode> => {
+    const children = node.children === undefined ? undefined : await Promise.all(node.children.map(walk));
+    const target = resetDeckProgressTarget(node, options);
+    if (target === null) return { ...node, ...(children === undefined ? {} : { children }) };
+    const progressDir = target.progressDir ?? resolveReviewProgressDirectory();
+    let storePromise = stores.get(progressDir);
+    if (storePromise === undefined) {
+      storePromise = loadReviewProgressStore(progressDir);
+      stores.set(progressDir, storePromise);
+    }
+    const store = await storePromise;
+    if (!isReviewDeckManuallyFinished(store.finishedDecks, target)) {
+      return { ...node, ...(children === undefined ? {} : { children }) };
+    }
+    return {
+      ...node,
+      reviewStatus: "finished",
+      dueCardCount: 0,
+      reviewStatusText: translate(options.locale ?? "en-US", "review.finished"),
       ...(children === undefined ? {} : { children })
     };
   };
@@ -1262,7 +1310,8 @@ async function refreshMenuReviewStatuses(
   const withLanguageDueMarkers = markLanguagesWithDueDecks(root, dueDecks);
   const progressDir = join(resolveReviewProgressDirectory(), "wandering-the-world");
   const progress = await loadReviewProgressStore(progressDir);
-  return markGeographyDeckReviewStatuses(withLanguageDueMarkers, progress.items, options.locale ?? "en-US", now);
+  const withGeographyStatuses = markGeographyDeckReviewStatuses(withLanguageDueMarkers, progress.items, options.locale ?? "en-US", now, progress.finishedDecks);
+  return markManualDeckFinishedStatuses(withGeographyStatuses, options);
 }
 
 async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
@@ -1286,6 +1335,8 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let embeddedReview: EmbeddedReviewSession | null = null;
   let pendingUninstall: PendingUninstallSession | null = null;
+  let deckFinishedMode = false;
+  let pendingDeckFinished: PendingDeckFinishedConfirmation | null = null;
   let resetDeckProgressMode = false;
   let pendingDeckProgressReset: PendingDeckProgressReset | null = null;
   let rightPaneText = await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options);
@@ -1302,9 +1353,9 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     selection = Math.min(selection, visible.length - 1);
     const selectedNode = visible[selection]?.node ?? tree;
     const charactersApplicable = charactersToggleAppliesToNode(selectedNode);
-    const toggleCount = charactersApplicable ? 9 : 8;
+    const toggleCount = charactersApplicable ? 10 : 9;
     toggleSelection = Math.min(toggleSelection, toggleCount - 1);
-    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode);
+    renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode, deckFinishedMode);
     const artworkSync: EmbeddedReviewArtworkSyncResult = embeddedReview === null
       ? await artworkManager.syncPreview(selectedNode, rightPaneText, rightPaneOffset)
       : await artworkManager.sync(embeddedReview, rightPaneText);
@@ -1322,7 +1373,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     )) {
       embeddedReview = { ...currentEmbeddedReview, promptArtworkRendered, answerArtworkRendered, artworkNotice: artworkSync.notice };
       rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
-      renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode);
+      renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode, deckFinishedMode);
       // Updating the fallback state redraws the entire terminal after the first
       // successful placement. Re-place the image above that final frame;
       // otherwise Kitty's freshly drawn terminal cells can cover the image.
@@ -1335,7 +1386,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
             artworkNotice: redrawSync.notice
           };
           rightPaneText = renderEmbeddedReviewSession(embeddedReview, terminal.colorsEnabled, options.locale, options.displayMode ?? defaultCurriculumDisplayMode, options.translationsEnabled === true);
-          renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode);
+          renderLanguageTreeMenu(terminal, tree, expandedIds, selection, rightPaneText, rightPaneOffset, options.locale, focusedPane, toggleSelection, options.displayMode, options.translationsEnabled, options.breakdownEnabled, options.charactersEnabled, charactersApplicable, options.notesEnabled, options.vocabularyEntrySpacing, options.terminalArtworkBackend, resetDeckProgressMode, deckFinishedMode);
         }
       }
     }
@@ -1361,6 +1412,51 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     if (isResize(key)) {
       await artworkManager.resize();
       await waitForResizeStabilization();
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (pendingDeckFinished !== null) {
+      const pending: PendingDeckFinishedConfirmation = pendingDeckFinished;
+      if (isEscape(key)) {
+        pendingDeckFinished = null;
+        deckFinishedMode = false;
+        rightPaneText = "Mark deck finished cancelled. No progress was changed.";
+      } else if (key.name === "backspace") {
+        const updated: PendingDeckFinishedConfirmation = { ...pending, typedCode: pending.typedCode.slice(0, -1), error: undefined };
+        pendingDeckFinished = updated;
+        rightPaneText = renderDeckFinishedConfirmation(updated, terminal.colorsEnabled);
+      } else if (isEnter(key)) {
+        if (pending.typedCode === pending.confirmationCode) {
+          await markReviewDeckFinished({
+            progressDir: pending.target.progressDir,
+            packageId: pending.target.packageId,
+            packageVersion: pending.target.packageVersion,
+            sourcePath: pending.target.sourcePath,
+            finishedAt: currentReviewTimestamp()
+          });
+          const finishedNodeId = pending.target.nodeId;
+          pendingDeckFinished = null;
+          deckFinishedMode = false;
+          tree = await buildModuleTree(options);
+          expandedIds = keepExistingExpandedIds(tree, expandedIds);
+          const finishedVisible = flattenVisibleLanguageTree(tree, expandedIds);
+          const finishedSelection = finishedVisible.findIndex((entry) => entry.node.id === finishedNodeId);
+          if (finishedSelection >= 0) selection = finishedSelection;
+          rightPaneText = ["Deck marked finished.", "", `Deck: ${pending.target.label}`, "The deck will no longer appear as due."].join("\n");
+        } else {
+          const updated: PendingDeckFinishedConfirmation = { ...pending, typedCode: "", error: "The confirmation code did not match. The deck was not marked finished." };
+          pendingDeckFinished = updated;
+          rightPaneText = renderDeckFinishedConfirmation(updated, terminal.colorsEnabled);
+        }
+      } else {
+        const typed = printableConfirmationCharacter(key);
+        if (typed !== null && pending.typedCode.length < pending.confirmationCode.length) {
+          const updated: PendingDeckFinishedConfirmation = { ...pending, typedCode: pending.typedCode + typed.toUpperCase(), error: undefined };
+          pendingDeckFinished = updated;
+          rightPaneText = renderDeckFinishedConfirmation(updated, terminal.colorsEnabled);
+        }
+      }
       rightPaneOffset = 0;
       continue;
     }
@@ -1407,6 +1503,13 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     if (isEscape(key) && resetDeckProgressMode && focusedPane === "navigation") {
       resetDeckProgressMode = false;
       rightPaneText = "Deck progress reset mode cancelled. No progress was changed.";
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (isEscape(key) && deckFinishedMode && focusedPane === "navigation") {
+      deckFinishedMode = false;
+      rightPaneText = "Mark deck finished mode cancelled. No progress was changed.";
       rightPaneOffset = 0;
       continue;
     }
@@ -1523,8 +1626,11 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       }
       if ((isEnter(key) || isSpace(key)) && toggleSelection < toggleCount) {
         const resetIndex = toggleCount - 1;
+        const finishedIndex = toggleCount - 2;
         if (toggleSelection === resetIndex) {
           resetDeckProgressMode = !resetDeckProgressMode;
+          deckFinishedMode = false;
+          pendingDeckFinished = null;
           pendingDeckProgressReset = null;
           embeddedReview = null;
           pendingUninstall = null;
@@ -1532,6 +1638,20 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           rightPaneText = resetDeckProgressMode
             ? renderDeckProgressResetModeHelp()
             : "Deck progress reset mode is off. No progress was changed.";
+          rightPaneOffset = 0;
+          continue;
+        }
+        if (toggleSelection === finishedIndex) {
+          deckFinishedMode = !deckFinishedMode;
+          resetDeckProgressMode = false;
+          pendingDeckProgressReset = null;
+          pendingDeckFinished = null;
+          embeddedReview = null;
+          pendingUninstall = null;
+          focusedPane = deckFinishedMode ? "navigation" : "toggles";
+          rightPaneText = deckFinishedMode
+            ? renderDeckFinishedModeHelp()
+            : "Mark deck finished mode is off. No progress was changed.";
           rightPaneOffset = 0;
           continue;
         }
@@ -1666,6 +1786,29 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           typedCode: ""
         };
         rightPaneText = renderDeckProgressResetConfirmation(pendingDeckProgressReset, terminal.colorsEnabled);
+      }
+      rightPaneOffset = 0;
+      continue;
+    }
+
+    if (deckFinishedMode && (isEnter(key) || isSpace(key))) {
+      const target = resetDeckProgressTarget(selectedNode, options);
+      embeddedReview = null;
+      pendingUninstall = null;
+      if (target === null) {
+        rightPaneText = [
+          "Mark Deck Finished mode",
+          "",
+          "The selected item is not a deck.",
+          "Choose a review deck and press Enter or Space, or press Esc to cancel."
+        ].join("\n");
+      } else {
+        pendingDeckFinished = {
+          target,
+          confirmationCode: generateDeckProgressResetCode(),
+          typedCode: ""
+        };
+        rightPaneText = renderDeckFinishedConfirmation(pendingDeckFinished, terminal.colorsEnabled);
       }
       rightPaneOffset = 0;
       continue;
@@ -2144,6 +2287,38 @@ function renderDeckProgressResetModeHelp(): string {
     "Press Esc to leave reset mode without changing anything.",
     "",
     "Selecting a deck does not reset it immediately. You must type a randomly generated confirmation code first."
+  ].join("\n");
+}
+
+function renderDeckFinishedModeHelp(): string {
+  return [
+    "Mark Deck Finished mode",
+    "",
+    "Choose exactly one deck in the navigation pane.",
+    "Press Enter or Space to select it for completion.",
+    "Press Esc to leave this mode without changing anything.",
+    "",
+    "Selecting a deck does not finish it immediately. You must type a randomly generated confirmation code first."
+  ].join("\n");
+}
+
+function renderDeckFinishedConfirmation(pending: PendingDeckFinishedConfirmation, colorsEnabled: boolean): string {
+  const warning = (value: string): string => colorsEnabled ? `${ansi.bold}${ansi.red}${value}${ansi.reset}` : value;
+  const typed = pending.typedCode.length === 0 ? "_" : pending.typedCode;
+  return [
+    warning("WARNING 1 OF 2 — MARK DECK FINISHED"),
+    "",
+    `Deck: ${pending.target.label}`,
+    "",
+    warning("WARNING 2 OF 2 — THIS PERMANENTLY FINISHES THIS DECK."),
+    "Its existing card history is preserved, but the deck will no longer appear as due.",
+    "Reset Deck Progress is the only in-app operation that clears this finished marker.",
+    "No other deck will be changed.",
+    "",
+    `To confirm, type ${pending.confirmationCode} and press Enter.`,
+    `Confirmation: ${typed}`,
+    "Press Esc to cancel.",
+    ...(pending.error === undefined ? [] : ["", warning(pending.error)])
   ].join("\n");
 }
 
@@ -4378,7 +4553,12 @@ async function startEmbeddedReviewSession(node: LanguageTreeNode, options: Inter
     reviewItems: allItems
   });
   const sourceItemIds = new Set(sourceItems.filter((item) => isEmbeddedReviewItemUsable(item, options.locale)).map((item) => item.item.id));
-  const due = listDueReviewStates(synchronized.store.items, now, { packageId: node.packageId })
+  const manuallyFinished = isReviewDeckManuallyFinished(synchronized.store.finishedDecks, {
+    packageId: node.packageId,
+    ...(node.packageVersion === undefined ? {} : { packageVersion: node.packageVersion }),
+    sourcePath: node.sourcePath
+  });
+  const due = manuallyFinished ? [] : listDueReviewStates(synchronized.store.items, now, { packageId: node.packageId })
     .filter((item) => item.packageVersion === node.packageVersion && sourceItemIds.has(item.itemId) && (item.sourcePath === undefined || item.sourcePath === node.sourcePath));
   const items = orderReviewItemsForSession(due) as readonly ReviewItemState[];
 
@@ -6085,11 +6265,12 @@ function renderLanguageTreeMenu(
   notesEnabled = true,
   vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing,
   terminalArtworkBackend: TerminalArtworkBackend = "auto",
-  resetDeckProgressMode = false
+  resetDeckProgressMode = false,
+  deckFinishedMode = false
 ): void {
   const frame = perfSpanSync("terminal.frame.generate", {}, () => {
     perfCount("render.count");
-    return `\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, terminalBodyHeight(terminal.height), sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend, resetDeckProgressMode)}`;
+    return `\x1b[2J\x1b[H${renderTwoPaneLanguageTree(root, expandedIds, selection, rightPaneText, terminal.colorsEnabled, rightPaneOffset, terminalBodyHeight(terminal.height), sourceLocale, focusedPane, terminal.width, toggleSelection, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend, resetDeckProgressMode, deckFinishedMode)}`;
   });
   perfSpanSync("terminal.write", { bytes: frame.length }, () => terminal.write(frame));
 }
@@ -6120,7 +6301,8 @@ export function renderTwoPaneLanguageTree(
   notesEnabled = true,
   vocabularyEntrySpacing: VocabularyEntrySpacing = defaultNewVocabularyDisplayPreferences.entrySpacing,
   terminalArtworkBackend: TerminalArtworkBackend = "auto",
-  resetDeckProgressMode = false
+  resetDeckProgressMode = false,
+  deckFinishedMode = false
 ): string {
   const visible = flattenVisibleLanguageTree(root, expandedIds);
   const layout = threePaneLayout(terminalWidth);
@@ -6155,7 +6337,7 @@ export function renderTwoPaneLanguageTree(
   lines.push(`${separator} ${padRight(navigationTitle, leftWidth)} ${separator} ${padRight(outputTitle, rightWidth)} ${separator}${layout.showToggles ? ` ${padRight(togglesTitle, layout.toggleWidth)} ${separator}` : ""}`);
   lines.push(`${separator} ${" ".repeat(leftWidth)} ${separator} ${" ".repeat(rightWidth)} ${separator}${layout.showToggles ? ` ${" ".repeat(layout.toggleWidth)} ${separator}` : ""}`);
 
-  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend, resetDeckProgressMode, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth, bodyHeight);
+  const toggleLines = renderTogglesPane(sourceLocale, displayMode, translationsEnabled, breakdownEnabled, charactersEnabled, charactersApplicable, notesEnabled, vocabularyEntrySpacing, terminalArtworkBackend, resetDeckProgressMode, deckFinishedMode, colorsEnabled, focusedPane === "toggles", toggleSelection, layout.toggleWidth, bodyHeight);
 
   for (let index = 0; index < bodyHeight; index += 1) {
     const left = leftLines[index] ?? "";
@@ -6180,7 +6362,7 @@ export function renderSourceLanguageToggle(sourceLocale: SourceLocale, colorsEna
   return colorsEnabled ? `${ansi.bold}${ansi.orange}${label}${ansi.reset}` : label;
 }
 
-function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, vocabularyEntrySpacing: VocabularyEntrySpacing, terminalArtworkBackend: TerminalArtworkBackend, resetDeckProgressMode: boolean, colorsEnabled: boolean, focused: boolean, selection: number, width: number, height: number): readonly string[] {
+function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDisplayMode, translationsEnabled: boolean, breakdownEnabled: boolean, charactersEnabled: boolean, charactersApplicable: boolean, notesEnabled: boolean, vocabularyEntrySpacing: VocabularyEntrySpacing, terminalArtworkBackend: TerminalArtworkBackend, resetDeckProgressMode: boolean, deckFinishedMode: boolean, colorsEnabled: boolean, focused: boolean, selection: number, width: number, height: number): readonly string[] {
   const viewLabel: Record<CurriculumDisplayMode, string> = { normal: "Normal", expert: "Expert", developer: "Developer" };
   const raw = [
     `Source: ${sourceLocaleLabel(sourceLocale, sourceLocale)}`,
@@ -6199,11 +6381,14 @@ function renderTogglesPane(sourceLocale: SourceLocale, displayMode: CurriculumDi
     if (colorsEnabled) return `  ${ansi.bold}${ansi.orange}${value}${ansi.reset}`;
     return line;
   };
-  const resetIndex = raw.length;
+  const finishedIndex = raw.length;
+  const resetIndex = raw.length + 1;
+  const finished = renderToggle(`Deck Finished: ${deckFinishedMode ? "On" : "Off"}`, finishedIndex);
   const reset = renderToggle(`Reset Deck Progress: ${resetDeckProgressMode ? "On" : "Off"}`, resetIndex);
   return [
     ...raw.map(renderToggle),
-    ...Array.from({ length: Math.max(0, height - raw.length - 1) }, () => ""),
+    ...Array.from({ length: Math.max(0, height - raw.length - 2) }, () => ""),
+    finished,
     reset
   ];
 }

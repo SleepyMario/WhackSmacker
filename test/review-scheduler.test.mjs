@@ -11,9 +11,11 @@ import {
   createInitialReviewState,
   isReviewDue,
   isReviewItemBuryEligible,
+  isReviewDeckManuallyFinished,
   listDueReviewItems,
   listDueReviewStates,
   loadReviewProgressStore,
+  markReviewDeckFinished,
   masteredReviewIntervalDays,
   recordReviewOutcome,
   recordStoredReviewOutcome,
@@ -197,6 +199,33 @@ test("stored bury persists a suspended card without adding a review event", asyn
     assert.equal(store.items[0].retiredAt, undefined);
     assert.equal(store.events.length, 0);
     assert.equal(store.updatedAt, "2026-07-07T00:00:00Z");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("marking a deck finished persists a deck-level override without rewriting card history", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-review-finished-deck-"));
+  const progressDir = join(root, "progress");
+  const card = createInitialReviewState(identity(), now);
+  const target = {
+    packageId: card.packageId,
+    packageVersion: card.packageVersion,
+    sourcePath: "review-decks/chapter-001-005/cards.tsv"
+  };
+  try {
+    await saveReviewProgressStore({ reviewProgressFormatVersion, updatedAt: now, items: [card], events: [] }, progressDir);
+    await markReviewDeckFinished({ ...target, progressDir, finishedAt: "2026-07-07T00:00:00Z" });
+    const store = await loadReviewProgressStore(progressDir);
+
+    assert.equal(isReviewDeckManuallyFinished(store.finishedDecks, target), true);
+    assert.equal(store.finishedDecks.length, 1);
+    assert.deepEqual(store.items, [card]);
+    assert.deepEqual(store.events, []);
+
+    await removeReviewProgressForPackage({ ...target, progressDir, removedAt: "2026-07-08T00:00:00Z" });
+    const reset = await loadReviewProgressStore(progressDir);
+    assert.equal(isReviewDeckManuallyFinished(reset.finishedDecks, target), false);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

@@ -9,7 +9,8 @@
     "reviewProgressFormatVersion": { "const": 2 },
     "updatedAt": { "$ref": "#/$defs/timestamp" },
     "items": { "type": "array", "items": { "$ref": "#/$defs/itemState" } },
-    "events": { "type": "array", "items": { "$ref": "#/$defs/reviewEvent" } }
+    "events": { "type": "array", "items": { "$ref": "#/$defs/reviewEvent" } },
+    "finishedDecks": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/finishedDeck" } }
   },
   "$defs": {
     "identity": {
@@ -41,6 +42,17 @@
           "reviewedAt": { "$ref": "#/$defs/timestamp" }, "rating": { "enum": ["again", "hard", "good", "easy"] }, "previousState": { "$ref": "#/$defs/summary" }, "nextState": { "$ref": "#/$defs/summary" }
         }
       }]
+    },
+    "finishedDeck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packageId", "finishedAt"],
+      "properties": {
+        "packageId": { "$ref": "#/$defs/packageId" },
+        "packageVersion": { "$ref": "#/$defs/semver" },
+        "sourcePath": { "$ref": "#/$defs/packagePath" },
+        "finishedAt": { "$ref": "#/$defs/timestamp" }
+      }
     },
     "summary": { "type": "object", "additionalProperties": false, "required": ["nextReviewAt", "reviewCount", "lapseCount", "intervalDays", "easeFactor", "status"], "properties": { "nextReviewAt": { "$ref": "#/$defs/timestamp" }, "reviewCount": { "type": "integer", "minimum": 0 }, "lapseCount": { "type": "integer", "minimum": 0 }, "intervalDays": { "type": "number", "minimum": 0 }, "easeFactor": { "type": "number", "minimum": 0 }, "status": { "$ref": "#/$defs/status" } } },
     "status": { "enum": ["new", "learning", "review", "mastered", "suspended"] },

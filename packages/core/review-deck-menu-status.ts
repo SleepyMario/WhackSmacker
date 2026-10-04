@@ -24,6 +24,7 @@ export interface ReviewDeckMenuStatusInput {
   readonly cardIdentities: readonly ReviewItemIdentity[];
   readonly savedProgress: readonly ReviewItemState[];
   readonly now: string;
+  readonly manuallyFinished?: boolean;
 }
 
 /**
@@ -32,6 +33,10 @@ export interface ReviewDeckMenuStatusInput {
  */
 export function classifyReviewDeckMenuStatus(input: ReviewDeckMenuStatusInput): ReviewDeckMenuStatusClassification {
   if (input.deckId.trim() === "") throw new Error("Review deck identity is required for menu-status classification.");
+
+  if (input.manuallyFinished === true) {
+    return { status: "finished", dueCardCount: 0 };
+  }
 
   const cardKeys = new Set(input.cardIdentities.map(reviewIdentityKey));
   const deckStates = input.savedProgress.filter((state) => cardKeys.has(reviewIdentityKey(state)));

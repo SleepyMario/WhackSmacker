@@ -9,6 +9,7 @@ import {
   listDueReviewStates,
   recordReviewOutcome,
   reviewIdentityKey,
+  reviewDeckFinishedOverrideKey,
   reviewProgressFormatVersion,
   upsertReviewItemState,
   type ReviewItemIdentity,
@@ -88,6 +89,14 @@ export interface RemoveReviewProgressForPackageResult {
   readonly removedItemCount: number;
   readonly removedEventCount: number;
   readonly progressPath: string;
+}
+
+export interface MarkReviewDeckFinishedOptions {
+  readonly progressDir?: string;
+  readonly packageId: string;
+  readonly packageVersion?: string;
+  readonly sourcePath?: string;
+  readonly finishedAt: string;
 }
 
 export interface SyncReviewProgressResult {
@@ -224,15 +233,33 @@ export async function removeReviewProgressForPackage(
   const keepEvent = (event: ReviewEvent): boolean => !matchesPackage(event, options.packageId, options.packageVersion, options.sourcePath);
   const items = store.items.filter(keepItem);
   const events = store.events.filter(keepEvent);
+  const finishedDecks = (store.finishedDecks ?? []).filter((deck) => !matchesPackage(deck, options.packageId, options.packageVersion, options.sourcePath));
   const removedItemCount = store.items.length - items.length;
   const removedEventCount = store.events.length - events.length;
   const progressPath = await saveReviewProgressStore({
     reviewProgressFormatVersion,
     updatedAt: options.removedAt,
     items,
-    events
+    events,
+    ...(finishedDecks.length === 0 ? {} : { finishedDecks })
   }, options.progressDir);
   return { removedItemCount, removedEventCount, progressPath };
+}
+
+export async function markReviewDeckFinished(options: MarkReviewDeckFinishedOptions): Promise<string> {
+  const store = await loadReviewProgressStore(options.progressDir);
+  const target = {
+    packageId: options.packageId,
+    ...(options.packageVersion === undefined ? {} : { packageVersion: options.packageVersion }),
+    ...(options.sourcePath === undefined ? {} : { sourcePath: options.sourcePath }),
+    finishedAt: options.finishedAt
+  };
+  const key = reviewDeckFinishedOverrideKey(target);
+  const finishedDecks = [
+    ...(store.finishedDecks ?? []).filter((candidate) => reviewDeckFinishedOverrideKey(candidate) !== key),
+    target
+  ].sort((left, right) => reviewDeckFinishedOverrideKey(left).localeCompare(reviewDeckFinishedOverrideKey(right)));
+  return saveReviewProgressStore({ ...store, updatedAt: options.finishedAt, finishedDecks }, options.progressDir);
 }
 
 function toIdentity(contentPackage: InstalledPackageRecord, itemId: string, sourcePath?: string, pedagogicalFingerprint?: string): ReviewItemIdentity {
@@ -252,7 +279,7 @@ function migrateLegacyReviewProgressStore(value: unknown): unknown {
 }
 
 function matchesPackage(
-  identity: Pick<ReviewItemIdentity, "packageId" | "packageVersion" | "sourcePath">,
+  identity: { readonly packageId: string; readonly packageVersion?: string; readonly sourcePath?: string },
   packageId: string,
   packageVersion?: string,
   sourcePath?: string

@@ -2228,6 +2228,7 @@ test("three-pane renderer separates navigation output and toggles", () => {
   assert.match(englishPlain, /View mode: Normal/u);
   assert.match(englishPlain, /Translation: Off/u);
   assert.doesNotMatch(englishPlain, /● Normal|○ Developer/u);
+  assert.match(englishPlain, /Deck Finished: Off/u);
   assert.match(englishPlain, /Reset Deck Progress: Off/u);
   const paneRows = englishPlain.split("\n").filter((line) => line.startsWith("| "));
   assert.match(paneRows.at(-1) ?? "", /Reset Deck Progress: Off/u);
@@ -4523,7 +4524,7 @@ test("bottom-right Reset Deck Progress toggle enters safe selection mode", async
   try {
     const terminal = new FakeTerminal([
       key("right"),
-      ...Array.from({ length: 7 }, () => key("down")),
+      ...Array.from({ length: 8 }, () => key("down")),
       key("return"),
       key("q", { sequence: "q" })
     ], { colorsEnabled: false, width: 150 });
@@ -4536,6 +4537,29 @@ test("bottom-right Reset Deck Progress toggle enters safe selection mode", async
     assert.match(terminal.output, /Reset Deck Progress: On/u);
     assert.match(terminal.output, /Choose exactly one deck in the navigation pane/u);
     assert.match(terminal.output, /Selecting a deck does not reset it immediately/u);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("Deck Finished toggle enters the same guarded deck-selection flow above reset", async () => {
+  const root = await mkdtemp(join(tmpdir(), "wsm-finished-mode-"));
+  try {
+    const terminal = new FakeTerminal([
+      key("right"),
+      ...Array.from({ length: 7 }, () => key("down")),
+      key("return"),
+      key("q", { sequence: "q" })
+    ], { colorsEnabled: false, width: 150 });
+
+    await runInteractiveMenu(createStubRegistry([]), terminal, {
+      dataDir: join(root, "content"),
+      settingsDir: join(root, "settings")
+    });
+
+    assert.match(terminal.output, /Deck Finished: On/u);
+    assert.match(terminal.output, /Choose exactly one deck in the navigation pane/u);
+    assert.match(terminal.output, /Selecting a deck does not finish it immediately/u);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

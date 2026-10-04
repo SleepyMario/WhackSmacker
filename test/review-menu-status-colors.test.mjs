@@ -103,6 +103,20 @@ test("a deck is finished when every card is mastered or suspended", () => {
   assert.deepEqual(classify(target, cards, completed), { status: "finished", dueCardCount: 0 });
 });
 
+test("a confirmed deck-level completion override finishes a deck without changing card states", () => {
+  const target = deck("korean");
+  const cards = [identity(target, "card-1"), identity(target, "card-2")];
+  const untouched = cards.map(card => createInitialReviewState(card, now));
+  assert.deepEqual(classifyReviewDeckMenuStatus({
+    deckId: target.id,
+    cardIdentities: cards,
+    savedProgress: untouched,
+    now,
+    manuallyFinished: true
+  }), { status: "finished", dueCardCount: 0 });
+  assert.ok(untouched.every(state => state.status === "new"));
+});
+
 test("the one style helper maps exact status colours and complete rendered labels", () => {
   assert.equal(reviewDeckStatusStyle("not_started"), "\x1b[35m");
   assert.equal(reviewDeckStatusStyle("no_cards_to_review"), menuStyles.defaultForeground);

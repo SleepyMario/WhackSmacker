@@ -1,7 +1,7 @@
 import { readFile, mkdir, open, unlink } from "node:fs/promises";
 import { join } from "node:path";
 import { emitKeypressEvents } from "node:readline";
-import { isReviewDue, isReviewItemBuryEligible } from "../core/review-scheduler";
+import { isReviewDeckManuallyFinished, isReviewDue, isReviewItemBuryEligible } from "../core/review-scheduler";
 import { buryStoredReviewItem, loadReviewProgressStore, recordStoredReviewOutcome, resolveReviewProgressDirectory } from "../core/review-progress-store";
 import { kittyArtworkSequences, kittyArtworkDeleteSequence } from "../../apps/cli/terminal-artwork";
 import { japanRegionDecks, japanRegionalPrefectureSplitDirectory, type JapanRegionSlug } from "./japan-regions";
@@ -230,7 +230,8 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
     const sessionTime = now();
     const store = await loadReviewProgressStore(progressDir);
     const statesByItemId = new Map(store.items.filter(state => state.packageId === packageId).map(state => [state.itemId, state]));
-    const dueCards = cards.filter(card => {
+    const manuallyFinished = isReviewDeckManuallyFinished(store.finishedDecks, { packageId, packageVersion: "0.1.0" });
+    const dueCards = manuallyFinished ? [] : cards.filter(card => {
       const state = statesByItemId.get(card.id);
       return !state || isReviewDue(state, sessionTime);
     });

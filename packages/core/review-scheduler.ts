@@ -50,6 +50,14 @@ export interface ReviewProgressStore {
   readonly updatedAt: string;
   readonly items: readonly ReviewItemState[];
   readonly events: readonly ReviewEvent[];
+  readonly finishedDecks?: readonly ReviewDeckFinishedOverride[];
+}
+
+export interface ReviewDeckFinishedOverride {
+  readonly packageId: string;
+  readonly packageVersion?: string;
+  readonly sourcePath?: string;
+  readonly finishedAt: string;
 }
 
 export interface ReviewProgressValidationResult {
@@ -151,6 +159,7 @@ export function validateReviewProgressStore(store: unknown): ReviewProgressValid
   validateTimestamp(store.updatedAt, "updatedAt", errors);
   validateStates(store.items, errors);
   validateEvents(store.events, errors);
+  validateFinishedDecks(store.finishedDecks, errors);
   return { valid: errors.length === 0, errors };
 }
 
@@ -203,7 +212,21 @@ export function upsertReviewItemState(
   items.push(state);
   items.sort(compareReviewStates);
   const events = event === undefined ? [...store.events] : [...store.events, event].sort(compareReviewEvents);
-  return { reviewProgressFormatVersion, updatedAt, items, events };
+  return { ...store, reviewProgressFormatVersion, updatedAt, items, events };
+}
+
+export function reviewDeckFinishedOverrideKey(
+  target: Pick<ReviewDeckFinishedOverride, "packageId" | "packageVersion" | "sourcePath">
+): string {
+  return `${target.packageId}@${target.packageVersion ?? ""}#${target.sourcePath ?? ""}`;
+}
+
+export function isReviewDeckManuallyFinished(
+  finishedDecks: readonly ReviewDeckFinishedOverride[] | undefined,
+  target: Pick<ReviewDeckFinishedOverride, "packageId" | "packageVersion" | "sourcePath">
+): boolean {
+  const key = reviewDeckFinishedOverrideKey(target);
+  return (finishedDecks ?? []).some((candidate) => reviewDeckFinishedOverrideKey(candidate) === key);
 }
 
 export function reviewIdentityKey(identity: ReviewItemIdentity): string {
@@ -309,6 +332,39 @@ function validateEvents(value: unknown, errors: string[]): void {
   }
   for (const [index, event] of value.entries()) {
     validateReviewEvent(event, `events[${index}]`, errors);
+  }
+}
+
+function validateFinishedDecks(value: unknown, errors: string[]): void {
+  if (value === undefined) return;
+  if (!Array.isArray(value)) {
+    errors.push("finishedDecks must be an array when present.");
+    return;
+  }
+  const keys = new Set<string>();
+  for (const [index, candidate] of value.entries()) {
+    const field = `finishedDecks[${index}]`;
+    if (!isRecord(candidate)) {
+      errors.push(`${field} must be an object.`);
+      continue;
+    }
+    if (!isContentPackageId(readString(candidate.packageId))) {
+      errors.push(`${field}.packageId must use package ID syntax.`);
+    }
+    if (candidate.packageVersion !== undefined && !isSemver(readString(candidate.packageVersion))) {
+      errors.push(`${field}.packageVersion must use MAJOR.MINOR.PATCH Semantic Versioning.`);
+    }
+    if (candidate.sourcePath !== undefined && !isSafeContentPackagePath(readString(candidate.sourcePath))) {
+      errors.push(`${field}.sourcePath must be package-relative and safe.`);
+    }
+    validateTimestamp(candidate.finishedAt, `${field}.finishedAt`, errors);
+    const key = reviewDeckFinishedOverrideKey({
+      packageId: readString(candidate.packageId),
+      ...(candidate.packageVersion === undefined ? {} : { packageVersion: readString(candidate.packageVersion) }),
+      ...(candidate.sourcePath === undefined ? {} : { sourcePath: readString(candidate.sourcePath) })
+    });
+    if (keys.has(key)) errors.push(`${field} duplicates another finished-deck override.`);
+    keys.add(key);
   }
 }
 
