@@ -6,6 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 *.log
 *.tgz
+__pycache__/
+*.py[cod]
 node_modules/
 dist/
 apps/chess-desktop/dist-electron/
