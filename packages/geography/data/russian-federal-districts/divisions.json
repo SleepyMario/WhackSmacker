@@ -1,0 +1,50 @@
+[
+  {
+    "id": "central-highlight",
+    "answer": "Central",
+    "kind": "Federal District",
+    "sourceCode": ""
+  },
+  {
+    "id": "northwestern-highlight",
+    "answer": "Northwestern",
+    "kind": "Federal District",
+    "sourceCode": ""
+  },
+  {
+    "id": "southern-highlight",
+    "answer": "Southern",
+    "kind": "Federal District",
+    "sourceCode": ""
+  },
+  {
+    "id": "north-caucasian-highlight",
+    "answer": "North Caucasian",
+    "kind": "Federal District",
+    "sourceCode": ""
+  },
+  {
+    "id": "volga-highlight",
+    "answer": "Volga",
+    "kind": "Federal District",
+    "sourceCode": ""
+  },
+  {
+    "id": "ural-highlight",
+    "answer": "Ural",
+    "kind": "Federal District",
+    "sourceCode": ""
+  },
+  {
+    "id": "siberian-highlight",
+    "answer": "Siberian",
+    "kind": "Federal District",
+    "sourceCode": ""
+  },
+  {
+    "id": "far-eastern-highlight",
+    "answer": "Far Eastern",
+    "kind": "Federal District",
+    "sourceCode": ""
+  }
+]

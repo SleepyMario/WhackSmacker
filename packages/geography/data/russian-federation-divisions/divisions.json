@@ -1,0 +1,536 @@
+[
+  {
+    "id": "belgorod-oblast-highlight",
+    "answer": "Belgorod Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-BEL"
+  },
+  {
+    "id": "bryansk-oblast-highlight",
+    "answer": "Bryansk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-BRY"
+  },
+  {
+    "id": "ivanovo-oblast-highlight",
+    "answer": "Ivanovo Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-IVA"
+  },
+  {
+    "id": "kaluga-oblast-highlight",
+    "answer": "Kaluga Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KLU"
+  },
+  {
+    "id": "kostroma-oblast-highlight",
+    "answer": "Kostroma Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KOS"
+  },
+  {
+    "id": "kursk-oblast-highlight",
+    "answer": "Kursk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KRS"
+  },
+  {
+    "id": "lipetsk-oblast-highlight",
+    "answer": "Lipetsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-LIP"
+  },
+  {
+    "id": "moscow-highlight",
+    "answer": "Moscow",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-MOW"
+  },
+  {
+    "id": "moscow-oblast-highlight",
+    "answer": "Moscow Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-MOS"
+  },
+  {
+    "id": "oryol-oblast-highlight",
+    "answer": "Oryol Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-ORL"
+  },
+  {
+    "id": "ryazan-oblast-highlight",
+    "answer": "Ryazan Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-RYA"
+  },
+  {
+    "id": "smolensk-oblast-highlight",
+    "answer": "Smolensk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-SMO"
+  },
+  {
+    "id": "tambov-oblast-highlight",
+    "answer": "Tambov Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-TAM"
+  },
+  {
+    "id": "tula-oblast-highlight",
+    "answer": "Tula Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-TUL"
+  },
+  {
+    "id": "tver-oblast-highlight",
+    "answer": "Tver Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-TVE"
+  },
+  {
+    "id": "vladimir-oblast-highlight",
+    "answer": "Vladimir Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-VLA"
+  },
+  {
+    "id": "voronezh-oblast-highlight",
+    "answer": "Voronezh Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-VOR"
+  },
+  {
+    "id": "yaroslavl-oblast-highlight",
+    "answer": "Yaroslavl Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-YAR"
+  },
+  {
+    "id": "arkhangelsk-oblast-highlight",
+    "answer": "Arkhangelsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-ARK"
+  },
+  {
+    "id": "kaliningrad-highlight",
+    "answer": "Kaliningrad",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KGD"
+  },
+  {
+    "id": "komi-republic-highlight",
+    "answer": "Komi Republic",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KO"
+  },
+  {
+    "id": "leningrad-oblast-highlight",
+    "answer": "Leningrad oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-LEN"
+  },
+  {
+    "id": "murmansk-oblast-highlight",
+    "answer": "Murmansk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-MUR"
+  },
+  {
+    "id": "nenets-autonomous-okrug-highlight",
+    "answer": "Nenets Autonomous Okrug",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-NEN"
+  },
+  {
+    "id": "novgorod-oblast-highlight",
+    "answer": "Novgorod Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-NGR"
+  },
+  {
+    "id": "pskov-oblast-highlight",
+    "answer": "Pskov Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-PSK"
+  },
+  {
+    "id": "republic-of-karelia-highlight",
+    "answer": "Republic of Karelia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KR"
+  },
+  {
+    "id": "saint-petersburg-highlight",
+    "answer": "Saint Petersburg",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-SPE"
+  },
+  {
+    "id": "vologda-oblast-highlight",
+    "answer": "Vologda Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-VLG"
+  },
+  {
+    "id": "adygea-highlight",
+    "answer": "Adygea",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-AD"
+  },
+  {
+    "id": "astrakhan-oblast-highlight",
+    "answer": "Astrakhan Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-AST"
+  },
+  {
+    "id": "donetsk-people-s-republic-highlight",
+    "answer": "Donetsk People's Republic",
+    "kind": "Federal Subject",
+    "sourceCode": ""
+  },
+  {
+    "id": "kalmykia-highlight",
+    "answer": "Kalmykia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KL"
+  },
+  {
+    "id": "kherson-oblast-highlight",
+    "answer": "Kherson Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": ""
+  },
+  {
+    "id": "krasnodar-krai-highlight",
+    "answer": "Krasnodar Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KDA"
+  },
+  {
+    "id": "luhansk-people-s-republic-highlight",
+    "answer": "Luhansk People's Republic",
+    "kind": "Federal Subject",
+    "sourceCode": ""
+  },
+  {
+    "id": "republic-of-crimea-highlight",
+    "answer": "Republic of Crimea",
+    "kind": "Federal Subject",
+    "sourceCode": ""
+  },
+  {
+    "id": "rostov-oblast-highlight",
+    "answer": "Rostov Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-ROS"
+  },
+  {
+    "id": "sevastopol-highlight",
+    "answer": "Sevastopol",
+    "kind": "Federal Subject",
+    "sourceCode": ""
+  },
+  {
+    "id": "volgograd-oblast-highlight",
+    "answer": "Volgograd Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-VGG"
+  },
+  {
+    "id": "zaporozhye-oblast-highlight",
+    "answer": "Zaporozhye Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": ""
+  },
+  {
+    "id": "chechnya-highlight",
+    "answer": "Chechnya",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-CE"
+  },
+  {
+    "id": "dagestan-highlight",
+    "answer": "Dagestan",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-DA"
+  },
+  {
+    "id": "ingushetia-highlight",
+    "answer": "Ingushetia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-IN"
+  },
+  {
+    "id": "kabardino-balkaria-highlight",
+    "answer": "Kabardino-Balkaria",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KB"
+  },
+  {
+    "id": "karachay-cherkessia-highlight",
+    "answer": "Karachay-Cherkessia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KC"
+  },
+  {
+    "id": "north-ossetia-alania-highlight",
+    "answer": "North Ossetia–Alania",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-SE"
+  },
+  {
+    "id": "stavropol-krai-highlight",
+    "answer": "Stavropol Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-STA"
+  },
+  {
+    "id": "bashkortostan-highlight",
+    "answer": "Bashkortostan",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-BA"
+  },
+  {
+    "id": "chuvashia-highlight",
+    "answer": "Chuvashia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-CU"
+  },
+  {
+    "id": "kirov-oblast-highlight",
+    "answer": "Kirov Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KIR"
+  },
+  {
+    "id": "mari-el-highlight",
+    "answer": "Mari El",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-ME"
+  },
+  {
+    "id": "nizhny-novgorod-oblast-highlight",
+    "answer": "Nizhny Novgorod Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-NIZ"
+  },
+  {
+    "id": "orenburg-oblast-highlight",
+    "answer": "Orenburg Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-ORE"
+  },
+  {
+    "id": "penza-oblast-highlight",
+    "answer": "Penza Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-PNZ"
+  },
+  {
+    "id": "perm-krai-highlight",
+    "answer": "Perm Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-PER"
+  },
+  {
+    "id": "republic-of-mordovia-highlight",
+    "answer": "Republic of Mordovia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-MO"
+  },
+  {
+    "id": "samara-oblast-highlight",
+    "answer": "Samara Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-SAM"
+  },
+  {
+    "id": "saratov-oblast-highlight",
+    "answer": "Saratov Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-SAR"
+  },
+  {
+    "id": "tatarstan-highlight",
+    "answer": "Tatarstan",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-TA"
+  },
+  {
+    "id": "udmurtia-highlight",
+    "answer": "Udmurtia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-UD"
+  },
+  {
+    "id": "ulyanovsk-oblast-highlight",
+    "answer": "Ulyanovsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-ULY"
+  },
+  {
+    "id": "chelyabinsk-oblast-highlight",
+    "answer": "Chelyabinsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-CHE"
+  },
+  {
+    "id": "khanty-mansiysk-autonomous-okrug-ugra-highlight",
+    "answer": "Khanty-Mansiysk Autonomous Okrug – Ugra",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KHM"
+  },
+  {
+    "id": "kurgan-oblast-highlight",
+    "answer": "Kurgan Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KGN"
+  },
+  {
+    "id": "sverdlovsk-oblast-highlight",
+    "answer": "Sverdlovsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-SVE"
+  },
+  {
+    "id": "tyumen-oblast-highlight",
+    "answer": "Tyumen Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-TYU"
+  },
+  {
+    "id": "yamalo-nenets-autonomous-okrug-highlight",
+    "answer": "Yamalo-Nenets Autonomous Okrug",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-YAN"
+  },
+  {
+    "id": "altai-krai-highlight",
+    "answer": "Altai Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-ALT"
+  },
+  {
+    "id": "altai-republic-highlight",
+    "answer": "Altai Republic",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-AL"
+  },
+  {
+    "id": "irkutsk-oblast-highlight",
+    "answer": "Irkutsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-IRK"
+  },
+  {
+    "id": "kemerovo-oblast-highlight",
+    "answer": "Kemerovo Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KEM"
+  },
+  {
+    "id": "khakassia-highlight",
+    "answer": "Khakassia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KK"
+  },
+  {
+    "id": "krasnoyarsk-krai-highlight",
+    "answer": "Krasnoyarsk Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KYA"
+  },
+  {
+    "id": "novosibirsk-oblast-highlight",
+    "answer": "Novosibirsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-NVS"
+  },
+  {
+    "id": "omsk-oblast-highlight",
+    "answer": "Omsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-OMS"
+  },
+  {
+    "id": "tomsk-oblast-highlight",
+    "answer": "Tomsk Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-TOM"
+  },
+  {
+    "id": "tuva-highlight",
+    "answer": "Tuva",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-TY"
+  },
+  {
+    "id": "amur-oblast-highlight",
+    "answer": "Amur Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-AMU"
+  },
+  {
+    "id": "buryatia-highlight",
+    "answer": "Buryatia",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-BU"
+  },
+  {
+    "id": "chukotka-autonomous-okrug-highlight",
+    "answer": "Chukotka Autonomous Okrug",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-CHU"
+  },
+  {
+    "id": "jewish-autonomous-oblast-highlight",
+    "answer": "Jewish Autonomous Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-YEV"
+  },
+  {
+    "id": "kamchatka-krai-highlight",
+    "answer": "Kamchatka Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KAM"
+  },
+  {
+    "id": "khabarovsk-krai-highlight",
+    "answer": "Khabarovsk Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-KHA"
+  },
+  {
+    "id": "magadan-oblast-highlight",
+    "answer": "Magadan Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-MAG"
+  },
+  {
+    "id": "primorsky-krai-highlight",
+    "answer": "Primorsky Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-PRI"
+  },
+  {
+    "id": "sakha-republic-highlight",
+    "answer": "Sakha Republic",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-SA"
+  },
+  {
+    "id": "sakhalin-oblast-highlight",
+    "answer": "Sakhalin Oblast",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-SAK"
+  },
+  {
+    "id": "zabaykalsky-krai-highlight",
+    "answer": "Zabaykalsky Krai",
+    "kind": "Federal Subject",
+    "sourceCode": "RU-ZAB"
+  }
+]

@@ -3737,15 +3737,18 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
       }]
     }, ...groupedCountryDecks.map(([label, decks]) => ({
       id: `${id}:${decks[0]!.dataset}`, label, kind: "category" as const, previewText: label,
-      children: decks.flatMap(country => ([{
-          id: `${id}:${country.dataset}:divisions-easy`, label: `${country.deck} - All - Easy`, kind: "command" as const,
-          commandPath: ["geography", `${country.dataset}-divisions-easy`], commandArgs: [], launchTitle: `${country.deck} - All - Easy`,
-          previewText: `${country.deck} - All - Easy\n\n${country.count * 2} questions covering ${country.count} ${country.singular}s. Identify highlighted divisions with choices 1–4, and locate named divisions by entering map numbers 1–${country.count}.`
+      children: decks.flatMap(country => {
+        const scope = "scope" in country ? country.scope : `${country.deck} - All`;
+        return ([{
+          id: `${id}:${country.dataset}:divisions-easy`, label: `${scope} - Easy`, kind: "command" as const,
+          commandPath: ["geography", `${country.dataset}-divisions-easy`], commandArgs: [], launchTitle: `${scope} - Easy`,
+          previewText: `${scope} - Easy\n\n${country.count * 2} questions covering ${country.count} ${country.singular}s. Identify highlighted divisions with choices 1–4, and locate named divisions by entering map numbers 1–${country.count}.`
         }, {
-          id: `${id}:${country.dataset}:divisions-hard`, label: `${country.deck} - All - Hard`, kind: "command" as const,
-          commandPath: ["geography", `${country.dataset}-divisions-hard`], commandArgs: [], launchTitle: `${country.deck} - All - Hard`,
-          previewText: `${country.deck} - All - Hard\n\nIdentify all ${country.count} ${country.singular}s by typing their names.`
-        }]))
+          id: `${id}:${country.dataset}:divisions-hard`, label: `${scope} - Hard`, kind: "command" as const,
+          commandPath: ["geography", `${country.dataset}-divisions-hard`], commandArgs: [], launchTitle: `${scope} - Hard`,
+          previewText: `${scope} - Hard\n\nIdentify all ${country.count} ${country.singular}s by typing their names.`
+        }]);
+      })
     })), {
       id: `${id}:netherlands`, label: "Netherlands", kind: "category", previewText: "Netherlands", children: [{
         id: `${id}:netherlands:provinces-easy`, label: "Provinces - All - Easy", kind: "command",

@@ -259,6 +259,61 @@ CONFIGS = {
             "Virginia", "Kansas", "Missouri", "Florida", "Alaska", "Hawaii",
         ],
     },
+    "russian-federal-districts": {
+        "directory": "russian-federal-districts",
+        "source": "source-RUS-federal-districts.geojson",
+        "title": "Russian Federation",
+        "unit": "federal district",
+        "count_label": "8 federal districts",
+        "wide": True,
+        "compact_wide": True,
+        "projection": "russia-equirect",
+        "order": [
+            "Central", "Northwestern", "Southern", "North Caucasian",
+            "Volga", "Ural", "Siberian", "Far Eastern",
+        ],
+        "inline_names": True,
+        "inline_name_boxes": True,
+        "feature_colors": {
+            "Central": "#e78b79", "Northwestern": "#83b9dc",
+            "Southern": "#e3bd74", "North Caucasian": "#c386d9",
+            "Volga": "#89c978", "Ural": "#db83ae",
+            "Siberian": "#8b9ed7", "Far Eastern": "#79c9be",
+        },
+        "inline_name_font_sizes": {
+            "Central": 11, "Northwestern": 12, "Southern": 11,
+            "North Caucasian": 8, "Volga": 12, "Ural": 16,
+            "Siberian": 17, "Far Eastern": 17,
+        },
+        "label_positions_lonlat": {
+            "Central": (38.2, 54.6), "Northwestern": (43.0, 64.0),
+            "Southern": (39.0, 47.0), "North Caucasian": (45.0, 43.8),
+            "Volga": (53.0, 55.2), "Ural": (70.0, 61.2),
+            "Siberian": (96.0, 59.0), "Far Eastern": (137.0, 61.0),
+        },
+        "number_font_size": 18,
+        "disable_callouts": True,
+        "margin_x": .025,
+        "margin_y": .08,
+        "hide_footer": True,
+    },
+    "russian-federation": {
+        "directory": "russian-federation-divisions",
+        "source": "source-RUS-claimed-ADM1.geojson",
+        "title": "Russian Federation",
+        "unit": "federal subject",
+        "count_label": "89 federal subjects",
+        "wide": True,
+        "compact_wide": True,
+        "projection": "russia-equirect",
+        "number_font_size": 14,
+        "callout_font_size": 14,
+        "callout_box_pad": .14,
+        "margin_x": .025,
+        "margin_y": .035,
+        "hide_footer": True,
+        "overview_only": True,
+    },
     "yugoslavia-former": {"source": "source-former-yugoslavia-republics.geojson", "title": "Yugoslavia (Former) — Constituent Republics", "unit": "constituent republic"},
 }
 
@@ -301,6 +356,8 @@ def slug(value: str) -> str:
 def project_point(point: tuple[float, float] | list[float], projection: str | None) -> tuple[float, float]:
     """Project lon/lat coordinates while preserving the country's real aspect."""
     lon, lat = point[:2]
+    if projection == "russia-equirect":
+        return (lon + 360 if lon < 0 else lon), lat
     if projection not in {"canada-lambert", "ussr-lambert", "usa-albers"}: return lon, lat
     # Canada uses Statistics Canada's Canada Atlas parameters. The former
     # USSR uses an equivalent Eurasia-centred conic view so its extreme
@@ -422,6 +479,7 @@ def generate(key: str) -> None:
     min_y,max_y=min(p[1] for p in all_points),max(p[1] for p in all_points)
     width,height=max_x-min_x,max_y-min_y
     colors={f["answer"]:colorsys.hsv_to_rgb((i*.61803398875)%1,.38,.84) for i,f in enumerate(features,1)}
+    colors.update(config.get("feature_colors", {}))
     tiny=[]
     for feature in extent_features:
         pts=[p for ring in primary_rings(feature) for p in ring]
@@ -510,8 +568,11 @@ def generate(key: str) -> None:
                     continue
                 label = inline_labels.get(answer, answer)
                 text = ax.text(x,y,label,ha="center",va="center",fontsize=inline_sizes.get(answer,20),
-                               linespacing=.9,fontweight="bold",color="#142429",zorder=20)
-                text.set_path_effects([path_effects.withStroke(linewidth=3.2,foreground="#fffdf4",alpha=.86)])
+                               linespacing=.9,fontweight="bold",color="#142429",zorder=20,
+                               bbox=(dict(boxstyle="round,pad=.20",facecolor="#fffdf4",alpha=.90,linewidth=0)
+                                     if config.get("inline_name_boxes") else None))
+                if not config.get("inline_name_boxes"):
+                    text.set_path_effects([path_effects.withStroke(linewidth=3.2,foreground="#fffdf4",alpha=.86)])
         elif labels:
             for index,feature in enumerate(features,1):
                 if feature is inset_feature: continue
@@ -668,13 +729,16 @@ def generate(key: str) -> None:
             inset_ax.text(.5, .025, "Canary Islands", transform=inset_ax.transAxes,
                           ha="center", va="bottom", fontsize=8.5, fontweight="bold", color="#46585d")
         count_label = config.get("count_label", f"{len(features)} {config['unit']}s")
-        fig.text(.5,.014,f"{count_label} • north is up",ha="center",fontsize=7,color="#46585d")
+        if not config.get("hide_footer"):
+            fig.text(.5,.014,f"{count_label} • north is up",ha="center",fontsize=7,color="#46585d")
         if labels!="name" and inset_feature is None and not component_insets: fig.tight_layout(rect=(0,.03,1,.97))
         path.parent.mkdir(parents=True,exist_ok=True); fig.savefig(path,bbox_inches="tight",facecolor="#f5f1e8"); plt.close(fig)
 
     split.mkdir(parents=True,exist_ok=True)
     draw(split/"reference.png")
     draw(data/"divisions-numbered.png",labels="number")
+    if config.get("overview_only"):
+        return
     draw(data/"divisions-named.png",labels="name")
     metadata=[]
     for feature in features:

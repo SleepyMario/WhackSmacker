@@ -824,8 +824,8 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   assert.deepEqual(geography.children.map((node) => node.label), ["World", "Countries"]);
   assert.deepEqual(geography.children[0].children.map((node) => node.label), ["Continents - Easy", "Continents - Hard"]);
   assert.deepEqual(geography.children[1].children.map((node) => node.label), [
-    "Japan", "Vietnam", "Korea", "Germany", "United Kingdom", "Belgium", "France", "Spain", "Italy",
-    "China", "China (Taiwan)", "India", "Australia",
+    "Japan", "Vietnam", "Korea", "Germany", "United Kingdom", "Belgium", "France", "Spain", "Italy", "Russia",
+    "China", "China (Taiwan)", "India", "Australia", "Canada", "USSR (Former)", "United States",
     "Yugoslavia (Former)", "Netherlands"
   ]);
   assert.deepEqual(geography.children[1].children[0].children.map((node) => node.label), [
@@ -864,6 +864,12 @@ test("module tree shows renamed learning categories without Games or legacy Cont
     "Regions - All - Hard",
     "Provinces and Brussels - All - Easy",
     "Provinces and Brussels - All - Hard"
+  ]);
+  assert.deepEqual(geography.children[1].children[9].children.map((node) => node.label), [
+    "All - Easy",
+    "All - Hard",
+    "Main Regions - Easy",
+    "Main Regions - Hard"
   ]);
   assert.deepEqual(geography.children[1].children.at(-1).children.map((node) => node.label), [
     "Provinces - All - Easy",

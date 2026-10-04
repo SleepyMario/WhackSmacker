@@ -38,6 +38,8 @@ export const countryDivisionDecks = [
   { dataset: "france", label: "France", directory: "france-divisions", deck: "Metropolitan Regions", singular: "region", count: 13, answerHint: "Type the region name; diacritics are optional", mapLayout: "side-by-side" },
   { dataset: "spain", label: "Spain", directory: "spain-divisions", deck: "Autonomous-level Divisions", singular: "autonomous-level division", count: 19, answerHint: "Type the division name; diacritics are optional", mapLayout: "side-by-side" },
   { dataset: "italy", label: "Italy", directory: "italy-regions", deck: "Regions", singular: "region", count: 20, answerHint: "Type the Italian region name", mapLayout: "side-by-side" },
+  { dataset: "russian-federation", label: "Russia", directory: "russian-federation-divisions", deck: "Federal Subjects", scope: "All", singular: "federal subject", count: 89, answerHint: "Type the federal-subject name", mapLayout: "top-down" },
+  { dataset: "russian-federal-districts", label: "Russia", directory: "russian-federal-districts", deck: "Federal Districts", scope: "Main Regions", singular: "federal district", count: 8, answerHint: "Type the federal-district name", mapLayout: "top-down" },
   { dataset: "china", label: "China", directory: "china-divisions", deck: "Provincial-level Divisions", singular: "provincial-level division", count: 33, answerHint: "Type the division name", mapLayout: "top-down" },
   { dataset: "china-taiwan", label: "China (Taiwan)", directory: "china-roc-divisions", deck: "First-level Divisions", singular: "first-level division", count: 22, answerHint: "Type the division name", mapLayout: "side-by-side" },
   { dataset: "india", label: "India", directory: "india-divisions", deck: "States and Union Territories", singular: "state or union territory", count: 36, answerHint: "Type the state or union-territory name; diacritics are optional", mapLayout: "side-by-side" },
@@ -112,7 +114,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
     ? kanji ? `都道府県 - 地方 - ${hard ? "上級" : "初級"}` : `Prefectures - Regions - ${hard ? "Hard" : "Easy"}`
     : netherlands ? `Provinces - All - ${hard ? "Hard" : "Easy"}`
     : germany ? `States - All - ${hard ? "Hard" : "Easy"}`
-    : countryDivision !== undefined ? `${countryDivision.deck} - All - ${hard ? "Hard" : "Easy"}`
+    : countryDivision !== undefined ? `${"scope" in countryDivision ? countryDivision.scope : `${countryDivision.deck} - All`} - ${hard ? "Hard" : "Easy"}`
     : vietnam ? `Provincial-level Divisions - ${vietnamRegion?.label ?? "All"} - ${hard ? "Hard" : "Easy"}`
     : korea ? `Provincial-level Divisions - ${koreaRegion?.label ?? "All"} - ${hard ? "Hard" : "Easy"}`
     : japan ? kanji ? `都道府県 - 全国 - ${hard ? "上級" : "初級"}` : (hard ? "Prefectures - All - Hard" : "Prefectures - All - Easy") : hard ? "Continents - Hard" : "Continents - Easy";
