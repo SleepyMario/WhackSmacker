@@ -5,7 +5,7 @@ data=tempfile.mkdtemp(prefix='wsm-easy-test-')
 def start():
  m,s=pty.openpty();fcntl.ioctl(s,termios.TIOCSWINSZ,struct.pack('HHHH',45,120,0,0))
  env=dict(os.environ,TERM='xterm-kitty',KITTY_WINDOW_ID='test',XDG_DATA_HOME=data)
- p=subprocess.Popen(['node','dist/main.js','geography','japanese-prefectures-easy'],cwd=root,env=env,stdin=s,stdout=s,stderr=s);os.close(s)
+ p=subprocess.Popen(['node','-e',"Math.random=()=>0.999999999; process.argv=['node','dist/main.js','geography','japanese-prefectures-easy']; require('./dist/main.js');"],cwd=root,env=env,stdin=s,stdout=s,stderr=s);os.close(s)
  return p,m
 def read_until(m,needle):
  end=time.time()+15;b=b''
@@ -25,7 +25,7 @@ try:
   os.write(m,next(k for k,v in choices if v.decode()==card['japanese']))
   read_until(m,b'Correct!');os.write(m,b' ')
  for i,card in enumerate(cards,1):
-  b=read_until(m,b'Enter the map number');assert ('Which number marks '+card['japanese']+'?').encode() in b
+  b=read_until(m,'地図の番号'.encode());assert (card['japanese']+'は何番ですか。').encode() in b
   os.write(m,(str(i)+'\r').encode());read_until(m,b'Correct!');os.write(m,b' ')
  read_until(m,b'Press Enter or Space to return.');os.write(m,b' ');p.wait(timeout=5);assert p.returncode==0
 finally:

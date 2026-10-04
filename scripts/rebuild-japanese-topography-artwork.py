@@ -40,10 +40,39 @@ def localized_card(source: Path, destination: Path, title: str, note: str | None
     image.save(destination, optimize=True)
 
 
+def localized_prefecture_numbered_map(source: Path, destination: Path) -> None:
+    """Localize the approved dense WtW overview without changing its map."""
+    image = Image.open(source).convert("RGB")
+    draw = ImageDraw.Draw(image)
+
+    # These rectangles contain only learner-facing English on the approved
+    # direct-canvas map. The geographic drawing, numbers, leader lines and
+    # inset contents remain byte-for-byte in their approved positions.
+    replacements = [
+        ((0, 28, 730, 157), (56, 56), "日本の都道府県", 52, True),
+        ((63, 194, 390, 260), (110, 221), "関東地方（拡大）", 24, False),
+        ((58, 674, 385, 742), (89, 703), "近畿地方（拡大）", 24, False),
+        ((1024, 1188, 1395, 1260), (1063, 1214), "南西諸島（拡大）", 23, False),
+        ((0, 1567, image.width, image.height), (56, 1607), "出典：国土地理院「地球地図日本」／dataofjapan。拡大図は縮尺が異なり、北が上です。", 15, False),
+    ]
+    for rectangle, position, label, size, bold in replacements:
+        draw.rectangle(rectangle, fill=CREAM)
+        draw.text(position, label, font=font(size, bold=bold), fill=INK if bold else MUTED)
+
+    # Retain the useful unit count beneath the localized title.
+    draw.text((56, 121), "47都道府県", font=font(24), fill=MUTED)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    image.save(destination, optimize=True)
+
+
 def main() -> None:
     # Whole-country split artwork is rendered separately in Japanese and copied
     # into split-kanji before this script runs. Keep package media synchronized.
     prefectures = json.loads((JAPAN / "prefectures.json").read_text())
+    localized_prefecture_numbered_map(
+        JAPAN / "japan-prefectures-numbered.png",
+        JAPAN / "japan-prefectures-numbered-kanji.png",
+    )
     for number, entry in enumerate(prefectures, 1):
         stem = entry["id"].removesuffix("-highlight")
         copy2(JAPAN / "split-kanji" / f"{stem}-answer.png", REVIEW / "prefectures-kanji/media" / f"{number:02}.png")
