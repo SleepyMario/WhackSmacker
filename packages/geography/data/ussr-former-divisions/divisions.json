@@ -1,0 +1,92 @@
+[
+  {
+    "id": "russian-soviet-federative-socialist-republic-highlight",
+    "answer": "Russian Soviet Federative Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "RUS"
+  },
+  {
+    "id": "estonian-soviet-socialist-republic-highlight",
+    "answer": "Estonian Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "EST"
+  },
+  {
+    "id": "latvian-soviet-socialist-republic-highlight",
+    "answer": "Latvian Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "LVA"
+  },
+  {
+    "id": "lithuanian-soviet-socialist-republic-highlight",
+    "answer": "Lithuanian Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "LTU"
+  },
+  {
+    "id": "byelorussian-soviet-socialist-republic-highlight",
+    "answer": "Byelorussian Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "BLR"
+  },
+  {
+    "id": "moldavian-soviet-socialist-republic-highlight",
+    "answer": "Moldavian Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "MDA"
+  },
+  {
+    "id": "ukrainian-soviet-socialist-republic-highlight",
+    "answer": "Ukrainian Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "UKR"
+  },
+  {
+    "id": "kazakh-soviet-socialist-republic-highlight",
+    "answer": "Kazakh Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "KAZ"
+  },
+  {
+    "id": "georgian-soviet-socialist-republic-highlight",
+    "answer": "Georgian Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "GEO"
+  },
+  {
+    "id": "armenian-soviet-socialist-republic-highlight",
+    "answer": "Armenian Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "ARM"
+  },
+  {
+    "id": "azerbaijan-soviet-socialist-republic-highlight",
+    "answer": "Azerbaijan Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "AZE"
+  },
+  {
+    "id": "turkmen-soviet-socialist-republic-highlight",
+    "answer": "Turkmen Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "TKM"
+  },
+  {
+    "id": "uzbek-soviet-socialist-republic-highlight",
+    "answer": "Uzbek Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "UZB"
+  },
+  {
+    "id": "kirghiz-soviet-socialist-republic-highlight",
+    "answer": "Kirghiz Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "KGZ"
+  },
+  {
+    "id": "tajik-soviet-socialist-republic-highlight",
+    "answer": "Tajik Soviet Socialist Republic",
+    "kind": "Union Republic",
+    "sourceCode": "TJK"
+  }
+]

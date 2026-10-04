@@ -148,6 +148,49 @@ CONFIGS = {
             "Prince Edward Island": (-59.9, 47.2),
         },
     },
+    "ussr-former": {
+        "source": "source-former-ussr-republics.geojson",
+        "title": "USSR (Former) — Union Republics",
+        "unit": "union republic",
+        "count_label": "15 union republics",
+        "wide": True,
+        "compact_wide": True,
+        "projection": "ussr-lambert",
+        "number_font_size": 20,
+        "callout_font_size": 20,
+        "callout_box_pad": .20,
+        "legend_font_size": 17,
+        "right_legend_columns": 2,
+        "right_legend_width": 14,
+        "named_map_right": .42,
+        "right_legend_start": .45,
+        "margin_x": .045,
+        "margin_y": .045,
+        "label_positions_lonlat": {
+            "Russian Soviet Federative Socialist Republic": (82.0, 61.0),
+            "Ukrainian Soviet Socialist Republic": (31.0, 49.0),
+            "Byelorussian Soviet Socialist Republic": (28.0, 53.7),
+            "Estonian Soviet Socialist Republic": (25.5, 58.6),
+            "Latvian Soviet Socialist Republic": (24.6, 57.0),
+            "Lithuanian Soviet Socialist Republic": (23.8, 55.2),
+            "Moldavian Soviet Socialist Republic": (28.5, 47.1),
+            "Georgian Soviet Socialist Republic": (43.5, 42.1),
+            "Armenian Soviet Socialist Republic": (44.8, 40.2),
+            "Azerbaijan Soviet Socialist Republic": (47.7, 40.5),
+            "Kazakh Soviet Socialist Republic": (68.0, 48.0),
+            "Uzbek Soviet Socialist Republic": (64.0, 41.1),
+            "Turkmen Soviet Socialist Republic": (59.0, 39.1),
+            "Kirghiz Soviet Socialist Republic": (74.5, 41.5),
+            "Tajik Soviet Socialist Republic": (71.0, 38.6),
+        },
+        "fixed_callouts_lonlat": {
+            "Estonian Soviet Socialist Republic": (19.0, 59.7),
+            "Latvian Soviet Socialist Republic": (19.0, 57.8),
+            "Lithuanian Soviet Socialist Republic": (19.0, 55.9),
+            "Moldavian Soviet Socialist Republic": (21.5, 47.3),
+            "Armenian Soviet Socialist Republic": (39.5, 38.7),
+        },
+    },
     "yugoslavia-former": {"source": "source-former-yugoslavia-republics.geojson", "title": "Yugoslavia (Former) — Constituent Republics", "unit": "constituent republic"},
 }
 
@@ -190,18 +233,25 @@ def slug(value: str) -> str:
 def project_point(point: tuple[float, float] | list[float], projection: str | None) -> tuple[float, float]:
     """Project lon/lat coordinates while preserving the country's real aspect."""
     lon, lat = point[:2]
-    if projection != "canada-lambert": return lon, lat
-    # Statistics Canada's Canada Atlas Lambert conformal conic parameters.
+    if projection not in {"canada-lambert", "ussr-lambert"}: return lon, lat
+    # Canada uses Statistics Canada's Canada Atlas parameters. The former
+    # USSR uses an equivalent Eurasia-centred conic view so its extreme
+    # east-west extent remains readable without changing geographic shapes.
     phi = math.radians(lat); lam = math.radians(lon)
-    phi1, phi2 = math.radians(49), math.radians(77)
-    phi0, lam0 = math.radians(49), math.radians(-95)
+    if projection == "canada-lambert":
+        phi1, phi2 = math.radians(49), math.radians(77)
+        phi0, lam0 = math.radians(49), math.radians(-95)
+    else:
+        phi1, phi2 = math.radians(45), math.radians(65)
+        phi0, lam0 = math.radians(55), math.radians(80)
     n = math.log(math.cos(phi1) / math.cos(phi2)) / math.log(
         math.tan(math.pi / 4 + phi2 / 2) / math.tan(math.pi / 4 + phi1 / 2)
     )
     f = math.cos(phi1) * math.tan(math.pi / 4 + phi1 / 2) ** n / n
     rho = f / math.tan(math.pi / 4 + phi / 2) ** n
     rho0 = f / math.tan(math.pi / 4 + phi0 / 2) ** n
-    return rho * math.sin(n * (lam - lam0)), rho0 - rho * math.cos(n * (lam - lam0))
+    delta = (lam - lam0 + math.pi) % (2 * math.pi) - math.pi
+    return rho * math.sin(n * delta), rho0 - rho * math.cos(n * delta)
 
 
 def transform_geometry(feature: dict, key: str, config: dict) -> None:
@@ -346,7 +396,7 @@ def generate(key: str) -> None:
         inline_names = labels == "name" and config.get("inline_names")
         if labels=="name" and not inline_names:
             if named_below: fig_h += max(3.2, legend_rows * .34)
-            else: fig_w += 7
+            else: fig_w += config.get("right_legend_width", 7)
         fig,ax=plt.subplots(figsize=(fig_w,fig_h),dpi=180)
         for context_feature, context in context_features:
             for ring in rings(context_feature["geometry"]):
@@ -410,12 +460,15 @@ def generate(key: str) -> None:
                     y=legend_top-row*((legend_top-legend_bottom)/max(per_column-1,1))
                     fig.text(x,y,f"{index}. {feature['answer']}",ha="left",va="center",fontsize=8.8,fontweight="bold",color="#142429")
             else:
-                ax.set_position([.03,.06,.58,.88])
-                columns=1 if len(features)<=24 else 2
+                map_right = config.get("named_map_right", .61)
+                ax.set_position([.03,.06,map_right-.03,.88])
+                columns=config.get("right_legend_columns", 1 if len(features)<=24 else 2)
                 per_column=math.ceil(len(features)/columns)
+                legend_start=config.get("right_legend_start", .64)
+                legend_width=.98-legend_start
                 for index,feature in enumerate(features,1):
                     col=(index-1)//per_column; row=(index-1)%per_column
-                    x=.64+col*(.34/columns); y=.91-row*(.84/max(per_column-1,1))
+                    x=legend_start+col*(legend_width/columns); y=.91-row*(.84/max(per_column-1,1))
                     default_legend_font = 10 if len(features)<=36 else 8.2
                     fig.text(x,y,f"{index}. {feature['answer']}",ha="left",va="center",fontsize=config.get("legend_font_size",default_legend_font),fontweight="bold",color="#142429")
         margin_x=width*config.get("margin_x", .14)
