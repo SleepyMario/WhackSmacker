@@ -1,0 +1,80 @@
+[
+  {
+    "id": "northwest-territories-highlight",
+    "answer": "Northwest Territories",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-NT"
+  },
+  {
+    "id": "yukon-highlight",
+    "answer": "Yukon",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-YT"
+  },
+  {
+    "id": "nunavut-highlight",
+    "answer": "Nunavut",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-NU"
+  },
+  {
+    "id": "newfoundland-and-labrador-highlight",
+    "answer": "Newfoundland and Labrador",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-NL"
+  },
+  {
+    "id": "quebec-highlight",
+    "answer": "Quebec",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-QC"
+  },
+  {
+    "id": "manitoba-highlight",
+    "answer": "Manitoba",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-MB"
+  },
+  {
+    "id": "british-columbia-highlight",
+    "answer": "British Columbia",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-BC"
+  },
+  {
+    "id": "alberta-highlight",
+    "answer": "Alberta",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-AB"
+  },
+  {
+    "id": "saskatchewan-highlight",
+    "answer": "Saskatchewan",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-SK"
+  },
+  {
+    "id": "prince-edward-island-highlight",
+    "answer": "Prince Edward Island",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-PE"
+  },
+  {
+    "id": "new-brunswick-highlight",
+    "answer": "New Brunswick",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-NB"
+  },
+  {
+    "id": "ontario-highlight",
+    "answer": "Ontario",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-ON"
+  },
+  {
+    "id": "nova-scotia-highlight",
+    "answer": "Nova Scotia",
+    "kind": "Province Or Territory",
+    "sourceCode": "CA-NS"
+  }
+]

@@ -42,6 +42,7 @@ export const countryDivisionDecks = [
   { dataset: "china-taiwan", label: "China (Taiwan)", directory: "china-roc-divisions", deck: "First-level Divisions", singular: "first-level division", count: 22, answerHint: "Type the division name", mapLayout: "side-by-side" },
   { dataset: "india", label: "India", directory: "india-divisions", deck: "States and Union Territories", singular: "state or union territory", count: 36, answerHint: "Type the state or union-territory name; diacritics are optional", mapLayout: "side-by-side" },
   { dataset: "australia", label: "Australia", directory: "australia-divisions", deck: "States and Territories", singular: "state or territory", count: 8, answerHint: "Type the state or territory name", mapLayout: "side-by-side" },
+  { dataset: "canada", label: "Canada", directory: "canada-divisions", deck: "Provinces and Territories", singular: "province or territory", count: 13, answerHint: "Type the province or territory name", mapLayout: "top-down" },
   { dataset: "yugoslavia-former", label: "Yugoslavia (Former)", directory: "yugoslavia-former-divisions", deck: "Constituent Republics", singular: "constituent republic", count: 6, answerHint: "Type the constituent-republic name", mapLayout: "side-by-side" }
 ] as const;
 export type CountryDivisionDataset = typeof countryDivisionDecks[number]["dataset"];

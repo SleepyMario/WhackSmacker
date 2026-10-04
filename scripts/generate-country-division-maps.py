@@ -115,6 +115,39 @@ CONFIGS = {
     },
     "india": {"source": "source-IND-adm1.geojson", "title": "India — States and Union Territories", "unit": "state or union territory"},
     "australia": {"source": "source-AUS-adm1.geojson", "title": "Australia — States and Territories", "unit": "state or territory", "exclude": ["Other Territories"], "wide": True},
+    "canada": {
+        "source": "source-CAN-adm1.geojson",
+        "title": "Canada — Provinces and Territories",
+        "unit": "province or territory",
+        "count_label": "10 provinces + 3 territories",
+        "wide": True,
+        "compact_wide": True,
+        "legend_columns": 1,
+        "margin_x": .035,
+        "margin_y": .035,
+        "projection": "canada-lambert",
+        "number_font_size": 22,
+        "callout_font_size": 22,
+        "callout_box_pad": .22,
+        "legend_font_size": 18,
+        "label_positions_lonlat": {
+            "Yukon": (-135.5, 64.4),
+            "Northwest Territories": (-120.0, 65.1),
+            "Nunavut": (-96.0, 67.4),
+            "British Columbia": (-124.2, 54.8),
+            "Alberta": (-114.4, 54.7),
+            "Saskatchewan": (-106.0, 54.8),
+            "Manitoba": (-97.0, 54.7),
+            "Ontario": (-85.2, 50.5),
+            "Quebec": (-71.8, 52.2),
+            "Newfoundland and Labrador": (-61.8, 53.2),
+            "New Brunswick": (-66.6, 46.5),
+            "Nova Scotia": (-63.6, 44.7),
+        },
+        "fixed_callouts_lonlat": {
+            "Prince Edward Island": (-59.9, 47.2),
+        },
+    },
     "yugoslavia-former": {"source": "source-former-yugoslavia-republics.geojson", "title": "Yugoslavia (Former) — Constituent Republics", "unit": "constituent republic"},
 }
 
@@ -154,7 +187,24 @@ def slug(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value).strip("-")
 
 
-def transform_geometry(feature: dict, key: str) -> None:
+def project_point(point: tuple[float, float] | list[float], projection: str | None) -> tuple[float, float]:
+    """Project lon/lat coordinates while preserving the country's real aspect."""
+    lon, lat = point[:2]
+    if projection != "canada-lambert": return lon, lat
+    # Statistics Canada's Canada Atlas Lambert conformal conic parameters.
+    phi = math.radians(lat); lam = math.radians(lon)
+    phi1, phi2 = math.radians(49), math.radians(77)
+    phi0, lam0 = math.radians(49), math.radians(-95)
+    n = math.log(math.cos(phi1) / math.cos(phi2)) / math.log(
+        math.tan(math.pi / 4 + phi2 / 2) / math.tan(math.pi / 4 + phi1 / 2)
+    )
+    f = math.cos(phi1) * math.tan(math.pi / 4 + phi1 / 2) ** n / n
+    rho = f / math.tan(math.pi / 4 + phi / 2) ** n
+    rho0 = f / math.tan(math.pi / 4 + phi0 / 2) ** n
+    return rho * math.sin(n * (lam - lam0)), rho0 - rho * math.cos(n * (lam - lam0))
+
+
+def transform_geometry(feature: dict, key: str, config: dict) -> None:
     """Place geographically detached units in conventional readable insets."""
     name = feature["answer"]
     def transform(point: list[float]) -> list[float]:
@@ -162,7 +212,8 @@ def transform_geometry(feature: dict, key: str) -> None:
         if key == "spain" and name == "Canarias":
             x = -9.08 + (x + 18.16) * .70
             y = 33.62 + (y - 27.64) * .70
-            point[0], point[1] = x, y
+        x, y = project_point((x, y), config.get("projection"))
+        point[0], point[1] = x, y
         return point
     geometry = feature["geometry"]
     if geometry["type"] == "Polygon":
@@ -211,7 +262,7 @@ def generate(key: str) -> None:
         if original in excluded: continue
         feature["answer"] = rename.get(original, original)
         feature["idStem"] = config.get("id_stems", {}).get(original, slug(feature["answer"]))
-        transform_geometry(feature, key)
+        transform_geometry(feature, key, config)
         filter_geometry_components(feature, config)
         feature["center"] = label_point(feature)
         features.append(feature)
@@ -274,6 +325,15 @@ def generate(key: str) -> None:
         for answer, ty in left_y.items(): callout_positions[answer] = (min_x-width*callout_offset, ty)
         for answer, ty in right_y.items(): callout_positions[answer] = (max_x+width*callout_offset, ty)
     callout_positions.update(config.get("fixed_callouts", {}))
+    callout_positions.update({
+        answer: project_point(point, config.get("projection"))
+        for answer, point in config.get("fixed_callouts_lonlat", {}).items()
+    })
+    label_positions = dict(config.get("label_positions", {}))
+    label_positions.update({
+        answer: project_point(point, config.get("projection"))
+        for answer, point in config.get("label_positions_lonlat", {}).items()
+    })
 
     def draw(path: Path, target: str|None=None, labels: str|None=None, title: str|None=None):
         aspect=width/max(height,1e-9)
@@ -309,7 +369,7 @@ def generate(key: str) -> None:
             inline_labels = config.get("inline_name_labels", {})
             inline_sizes = config.get("inline_name_font_sizes", {})
             for feature in features:
-                x,y=config.get("label_positions", {}).get(feature["answer"], feature["center"])
+                x,y=label_positions.get(feature["answer"], feature["center"])
                 answer=feature["answer"]
                 if answer == "Brussels":
                     ax.annotate("Brussels",xy=(x,y),xytext=(x,max_y+height*.075),ha="center",va="center",
@@ -325,7 +385,7 @@ def generate(key: str) -> None:
             for index,feature in enumerate(features,1):
                 if feature is inset_feature: continue
                 if feature["answer"] in full_inset_answers: continue
-                x,y=feature["center"]
+                x,y=label_positions.get(feature["answer"], feature["center"])
                 if feature["answer"] in callout_positions:
                     tx,ty=callout_positions[feature["answer"]]
                     ax.annotate(str(index),xy=(x,y),xytext=(tx,ty),ha="center",va="center",
@@ -333,7 +393,7 @@ def generate(key: str) -> None:
                                 bbox=dict(boxstyle=f"round,pad={config.get('callout_box_pad',.18)}",facecolor="#fffdf4",alpha=.92,linewidth=0),
                                 arrowprops=dict(arrowstyle="-",color="#142429",linewidth=1.1,shrinkA=4,shrinkB=2),zorder=20)
                 else:
-                    ax.text(x,y,str(index),ha="center",va="center",fontsize=14,fontweight="bold",color="#142429",
+                    ax.text(x,y,str(index),ha="center",va="center",fontsize=config.get("number_font_size",14),fontweight="bold",color="#142429",
                             bbox=dict(boxstyle="round,pad=.18",facecolor="#fffdf4",alpha=.84,linewidth=0),zorder=20)
         if labels=="name" and not inline_names:
             if named_below:
