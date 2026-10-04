@@ -10,6 +10,7 @@ const countries = [
   ["australia-divisions", 8],
   ["canada-divisions", 13],
   ["ussr-former-divisions", 15],
+  ["united-states-divisions", 50],
   ["yugoslavia-former-divisions", 6]
 ];
 
@@ -50,5 +51,5 @@ test("only genuinely horizontal country maps use the top-down study layout", () 
   const topDown = countryDivisionDecks
     .filter(deck => deck.mapLayout === "top-down")
     .map(deck => deck.dataset);
-  assert.deepEqual(topDown, ["belgium", "china", "canada", "ussr-former"]);
+  assert.deepEqual(topDown, ["belgium", "china", "canada", "ussr-former", "united-states"]);
 });

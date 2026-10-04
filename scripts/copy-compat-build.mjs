@@ -139,5 +139,5 @@ await cp("packages/geography/data/germany-states", "dist/packages/geography/data
 for (const directory of [
   "united-kingdom-divisions", "belgium-regions", "belgium-provinces", "france-divisions", "spain-divisions", "italy-regions",
   "china-divisions", "china-roc-divisions", "india-divisions",
-  "australia-divisions", "canada-divisions", "ussr-former-divisions", "yugoslavia-former-divisions"
+  "australia-divisions", "canada-divisions", "ussr-former-divisions", "united-states-divisions", "yugoslavia-former-divisions"
 ]) await cp(`packages/geography/data/${directory}`, `dist/packages/geography/data/${directory}`, { recursive: true });

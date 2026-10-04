@@ -44,6 +44,7 @@ export const countryDivisionDecks = [
   { dataset: "australia", label: "Australia", directory: "australia-divisions", deck: "States and Territories", singular: "state or territory", count: 8, answerHint: "Type the state or territory name", mapLayout: "side-by-side" },
   { dataset: "canada", label: "Canada", directory: "canada-divisions", deck: "Provinces and Territories", singular: "province or territory", count: 13, answerHint: "Type the province or territory name", mapLayout: "top-down" },
   { dataset: "ussr-former", label: "USSR (Former)", directory: "ussr-former-divisions", deck: "Union Republics", singular: "union republic", count: 15, answerHint: "Type the full union-republic name", mapLayout: "top-down" },
+  { dataset: "united-states", label: "United States", directory: "united-states-divisions", deck: "States", singular: "state", count: 50, answerHint: "Type the state name", mapLayout: "top-down" },
   { dataset: "yugoslavia-former", label: "Yugoslavia (Former)", directory: "yugoslavia-former-divisions", deck: "Constituent Republics", singular: "constituent republic", count: 6, answerHint: "Type the constituent-republic name", mapLayout: "side-by-side" }
 ] as const;
 export type CountryDivisionDataset = typeof countryDivisionDecks[number]["dataset"];

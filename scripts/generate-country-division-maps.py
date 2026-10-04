@@ -191,6 +191,74 @@ CONFIGS = {
             "Armenian Soviet Socialist Republic": (39.5, 38.7),
         },
     },
+    "united-states": {
+        "source": "source-USA-adm1.geojson",
+        "title": "United States — States",
+        "unit": "state",
+        "count_label": "50 states",
+        "wide": True,
+        "compact_wide": True,
+        "projection": "usa-albers",
+        "number_font_size": 18,
+        "callout_font_size": 18,
+        "callout_box_pad": .18,
+        "legend_font_size": 18,
+        "right_legend_columns": 2,
+        "right_legend_width": 5,
+        "named_map_right": .57,
+        "named_map_bottom": .205,
+        "named_map_top": .94,
+        "right_legend_start": .59,
+        "right_legend_column_step": .15,
+        "right_legend_top": .84,
+        "right_legend_bottom": .18,
+        "right_legend_side_groups": [
+            list(range(10, 27)),
+            list(range(30, 47)),
+        ],
+        "right_legend_bottom_groups": [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+            [27, 28, 29],
+            [47, 48, 49, 50],
+        ],
+        "right_legend_bottom_start": .045,
+        "right_legend_bottom_column_step": .19,
+        "right_legend_bottom_positions": [.045, .235, .425, .59, .74],
+        "right_legend_bottom_top": .145,
+        "right_legend_bottom_row_step": .043,
+        "margin_x": .035,
+        "margin_y": .035,
+        "label_positions_lonlat": {
+            "Montana": (-109.6, 47.0),
+        },
+        "fixed_callouts": {
+            "Vermont": (0.28737280018338546, 0.49),
+            "New Hampshire": (0.3033392865697186, 0.46),
+        },
+        "fixed_callouts_lonlat": {
+            "Massachusetts": (-65.0, 42.8),
+            "Rhode Island": (-65.0, 41.8),
+            "Connecticut": (-66.0, 40.8),
+            "New Jersey": (-68.0, 39.8),
+            "Delaware": (-69.0, 38.8),
+            "Maryland": (-69.0, 37.8),
+            "Hawaii": (-105.0, 24.7),
+        },
+        "order": [
+            "Kentucky", "North Carolina", "Arizona",
+            "Arkansas", "Oklahoma", "South Carolina",
+            "New Mexico", "Georgia", "Mississippi",
+            "Washington", "North Dakota", "Maine", "Oregon", "Montana", "Minnesota", "Idaho",
+            "Vermont", "New Hampshire", "Michigan", "Wisconsin", "New York", "Massachusetts",
+            "Rhode Island", "Wyoming", "South Dakota", "Connecticut",
+            "Tennessee", "Alabama", "Louisiana", "Texas",
+            "Pennsylvania", "New Jersey", "Iowa", "Nebraska", "Delaware", "Utah", "Ohio",
+            "Maryland", "West Virginia", "Illinois", "Colorado", "Nevada", "California", "Indiana",
+            "Virginia", "Kansas", "Missouri", "Florida", "Alaska", "Hawaii",
+        ],
+    },
     "yugoslavia-former": {"source": "source-former-yugoslavia-republics.geojson", "title": "Yugoslavia (Former) — Constituent Republics", "unit": "constituent republic"},
 }
 
@@ -233,7 +301,7 @@ def slug(value: str) -> str:
 def project_point(point: tuple[float, float] | list[float], projection: str | None) -> tuple[float, float]:
     """Project lon/lat coordinates while preserving the country's real aspect."""
     lon, lat = point[:2]
-    if projection not in {"canada-lambert", "ussr-lambert"}: return lon, lat
+    if projection not in {"canada-lambert", "ussr-lambert", "usa-albers"}: return lon, lat
     # Canada uses Statistics Canada's Canada Atlas parameters. The former
     # USSR uses an equivalent Eurasia-centred conic view so its extreme
     # east-west extent remains readable without changing geographic shapes.
@@ -241,9 +309,12 @@ def project_point(point: tuple[float, float] | list[float], projection: str | No
     if projection == "canada-lambert":
         phi1, phi2 = math.radians(49), math.radians(77)
         phi0, lam0 = math.radians(49), math.radians(-95)
-    else:
+    elif projection == "ussr-lambert":
         phi1, phi2 = math.radians(45), math.radians(65)
         phi0, lam0 = math.radians(55), math.radians(80)
+    else:
+        phi1, phi2 = math.radians(29.5), math.radians(45.5)
+        phi0, lam0 = math.radians(23), math.radians(-96)
     n = math.log(math.cos(phi1) / math.cos(phi2)) / math.log(
         math.tan(math.pi / 4 + phi2 / 2) / math.tan(math.pi / 4 + phi1 / 2)
     )
@@ -262,6 +333,13 @@ def transform_geometry(feature: dict, key: str, config: dict) -> None:
         if key == "spain" and name == "Canarias":
             x = -9.08 + (x + 18.16) * .70
             y = 33.62 + (y - 27.64) * .70
+        elif key == "united-states" and name == "Alaska":
+            if x > 0: x -= 360
+            x = -126.5 + (x + 170) * .28
+            y = 22.0 + (y - 50) * .25
+        elif key == "united-states" and name == "Hawaii":
+            x = -111.0 + (x + 160) * .60
+            y = 23.0 + (y - 18) * .60
         x, y = project_point((x, y), config.get("projection"))
         point[0], point[1] = x, y
         return point
@@ -317,6 +395,9 @@ def generate(key: str) -> None:
         feature["center"] = label_point(feature)
         features.append(feature)
     features.sort(key=lambda item: (-item["center"][1], item["center"][0], item["answer"]))
+    if "order" in config:
+        by_answer = {feature["answer"]: feature for feature in features}
+        features = [by_answer[answer] for answer in config["order"]]
     component_insets = config.get("component_insets", [])
     full_inset_answers = {spec["feature"] for spec in component_insets if "max_x_below" not in spec}
 
@@ -461,16 +542,53 @@ def generate(key: str) -> None:
                     fig.text(x,y,f"{index}. {feature['answer']}",ha="left",va="center",fontsize=8.8,fontweight="bold",color="#142429")
             else:
                 map_right = config.get("named_map_right", .61)
-                ax.set_position([.03,.06,map_right-.03,.88])
+                map_bottom = config.get("named_map_bottom", .06)
+                map_top = config.get("named_map_top", .94)
+                ax.set_position([.03,map_bottom,map_right-.03,map_top-map_bottom])
                 columns=config.get("right_legend_columns", 1 if len(features)<=24 else 2)
                 per_column=math.ceil(len(features)/columns)
                 legend_start=config.get("right_legend_start", .64)
                 legend_width=.98-legend_start
-                for index,feature in enumerate(features,1):
-                    col=(index-1)//per_column; row=(index-1)%per_column
-                    x=legend_start+col*(legend_width/columns); y=.91-row*(.84/max(per_column-1,1))
-                    default_legend_font = 10 if len(features)<=36 else 8.2
-                    fig.text(x,y,f"{index}. {feature['answer']}",ha="left",va="center",fontsize=config.get("legend_font_size",default_legend_font),fontweight="bold",color="#142429")
+                side_groups = config.get("right_legend_side_groups")
+                if side_groups is None:
+                    side_count = config.get("right_legend_side_count", len(features))
+                    side_groups = []
+                    side_per_column = math.ceil(side_count / columns)
+                    for col in range(columns):
+                        start = col * side_per_column + 1
+                        side_groups.append(list(range(start, min(start + side_per_column, side_count + 1))))
+                per_column=max((len(group) for group in side_groups), default=1)
+                for col, group in enumerate(side_groups):
+                    for row, index in enumerate(group):
+                        feature = features[index - 1]
+                        column_step = config.get("right_legend_column_step", legend_width / columns)
+                        legend_top = config.get("right_legend_top", .91)
+                        legend_bottom = config.get("right_legend_bottom", .07)
+                        x=legend_start+col*column_step
+                        y=legend_top-row*((legend_top-legend_bottom)/max(per_column-1,1))
+                        default_legend_font = 10 if len(features)<=36 else 8.2
+                        fig.text(x,y,f"{index}. {feature['answer']}",ha="left",va="center",fontsize=config.get("legend_font_size",default_legend_font),fontweight="bold",color="#142429")
+                bottom_groups = config.get("right_legend_bottom_groups")
+                if bottom_groups is None:
+                    bottom_columns = config.get("right_legend_bottom_columns", [])
+                    bottom_groups = []
+                    bottom_index = side_count + 1
+                    for rows in bottom_columns:
+                        bottom_groups.append(list(range(bottom_index, bottom_index + rows)))
+                        bottom_index += rows
+                bottom_start = config.get("right_legend_bottom_start", legend_start)
+                bottom_step = config.get("right_legend_bottom_column_step", column_step)
+                bottom_positions = config.get("right_legend_bottom_positions")
+                bottom_top = config.get("right_legend_bottom_top", .15)
+                bottom_row_step = config.get("right_legend_bottom_row_step", .045)
+                for col, group in enumerate(bottom_groups):
+                    for row, index in enumerate(group):
+                        feature = features[index - 1]
+                        x = bottom_positions[col] if bottom_positions else bottom_start+col*bottom_step
+                        fig.text(x,bottom_top-row*bottom_row_step,
+                                 f"{index}. {feature['answer']}",ha="left",va="center",
+                                 fontsize=config.get("legend_font_size",default_legend_font),
+                                 fontweight="bold",color="#142429")
         margin_x=width*config.get("margin_x", .14)
         margin_y=height*config.get("margin_y", .06)
         if inline_names: margin_y=max(margin_y,height*.14)

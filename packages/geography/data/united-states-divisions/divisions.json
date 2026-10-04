@@ -1,0 +1,302 @@
+[
+  {
+    "id": "kentucky-highlight",
+    "answer": "Kentucky",
+    "kind": "State",
+    "sourceCode": "US-KY"
+  },
+  {
+    "id": "north-carolina-highlight",
+    "answer": "North Carolina",
+    "kind": "State",
+    "sourceCode": "US-NC"
+  },
+  {
+    "id": "arizona-highlight",
+    "answer": "Arizona",
+    "kind": "State",
+    "sourceCode": "US-AZ"
+  },
+  {
+    "id": "arkansas-highlight",
+    "answer": "Arkansas",
+    "kind": "State",
+    "sourceCode": "US-AR"
+  },
+  {
+    "id": "oklahoma-highlight",
+    "answer": "Oklahoma",
+    "kind": "State",
+    "sourceCode": "US-OK"
+  },
+  {
+    "id": "south-carolina-highlight",
+    "answer": "South Carolina",
+    "kind": "State",
+    "sourceCode": "US-SC"
+  },
+  {
+    "id": "new-mexico-highlight",
+    "answer": "New Mexico",
+    "kind": "State",
+    "sourceCode": "US-NM"
+  },
+  {
+    "id": "georgia-highlight",
+    "answer": "Georgia",
+    "kind": "State",
+    "sourceCode": "US-GA"
+  },
+  {
+    "id": "mississippi-highlight",
+    "answer": "Mississippi",
+    "kind": "State",
+    "sourceCode": "US-MS"
+  },
+  {
+    "id": "washington-highlight",
+    "answer": "Washington",
+    "kind": "State",
+    "sourceCode": "US-WA"
+  },
+  {
+    "id": "north-dakota-highlight",
+    "answer": "North Dakota",
+    "kind": "State",
+    "sourceCode": "US-ND"
+  },
+  {
+    "id": "maine-highlight",
+    "answer": "Maine",
+    "kind": "State",
+    "sourceCode": "US-ME"
+  },
+  {
+    "id": "oregon-highlight",
+    "answer": "Oregon",
+    "kind": "State",
+    "sourceCode": "US-OR"
+  },
+  {
+    "id": "montana-highlight",
+    "answer": "Montana",
+    "kind": "State",
+    "sourceCode": "US-MT"
+  },
+  {
+    "id": "minnesota-highlight",
+    "answer": "Minnesota",
+    "kind": "State",
+    "sourceCode": "US-MN"
+  },
+  {
+    "id": "idaho-highlight",
+    "answer": "Idaho",
+    "kind": "State",
+    "sourceCode": "US-ID"
+  },
+  {
+    "id": "vermont-highlight",
+    "answer": "Vermont",
+    "kind": "State",
+    "sourceCode": "US-VT"
+  },
+  {
+    "id": "new-hampshire-highlight",
+    "answer": "New Hampshire",
+    "kind": "State",
+    "sourceCode": "US-NH"
+  },
+  {
+    "id": "michigan-highlight",
+    "answer": "Michigan",
+    "kind": "State",
+    "sourceCode": "US-MI"
+  },
+  {
+    "id": "wisconsin-highlight",
+    "answer": "Wisconsin",
+    "kind": "State",
+    "sourceCode": "US-WI"
+  },
+  {
+    "id": "new-york-highlight",
+    "answer": "New York",
+    "kind": "State",
+    "sourceCode": "US-NY"
+  },
+  {
+    "id": "massachusetts-highlight",
+    "answer": "Massachusetts",
+    "kind": "State",
+    "sourceCode": "US-MA"
+  },
+  {
+    "id": "rhode-island-highlight",
+    "answer": "Rhode Island",
+    "kind": "State",
+    "sourceCode": "US-RI"
+  },
+  {
+    "id": "wyoming-highlight",
+    "answer": "Wyoming",
+    "kind": "State",
+    "sourceCode": "US-WY"
+  },
+  {
+    "id": "south-dakota-highlight",
+    "answer": "South Dakota",
+    "kind": "State",
+    "sourceCode": "US-SD"
+  },
+  {
+    "id": "connecticut-highlight",
+    "answer": "Connecticut",
+    "kind": "State",
+    "sourceCode": "US-CT"
+  },
+  {
+    "id": "tennessee-highlight",
+    "answer": "Tennessee",
+    "kind": "State",
+    "sourceCode": "US-TN"
+  },
+  {
+    "id": "alabama-highlight",
+    "answer": "Alabama",
+    "kind": "State",
+    "sourceCode": "US-AL"
+  },
+  {
+    "id": "louisiana-highlight",
+    "answer": "Louisiana",
+    "kind": "State",
+    "sourceCode": "US-LA"
+  },
+  {
+    "id": "texas-highlight",
+    "answer": "Texas",
+    "kind": "State",
+    "sourceCode": "US-TX"
+  },
+  {
+    "id": "pennsylvania-highlight",
+    "answer": "Pennsylvania",
+    "kind": "State",
+    "sourceCode": "US-PA"
+  },
+  {
+    "id": "new-jersey-highlight",
+    "answer": "New Jersey",
+    "kind": "State",
+    "sourceCode": "US-NJ"
+  },
+  {
+    "id": "iowa-highlight",
+    "answer": "Iowa",
+    "kind": "State",
+    "sourceCode": "US-IA"
+  },
+  {
+    "id": "nebraska-highlight",
+    "answer": "Nebraska",
+    "kind": "State",
+    "sourceCode": "US-NE"
+  },
+  {
+    "id": "delaware-highlight",
+    "answer": "Delaware",
+    "kind": "State",
+    "sourceCode": "US-DE"
+  },
+  {
+    "id": "utah-highlight",
+    "answer": "Utah",
+    "kind": "State",
+    "sourceCode": "US-UT"
+  },
+  {
+    "id": "ohio-highlight",
+    "answer": "Ohio",
+    "kind": "State",
+    "sourceCode": "US-OH"
+  },
+  {
+    "id": "maryland-highlight",
+    "answer": "Maryland",
+    "kind": "State",
+    "sourceCode": "US-MD"
+  },
+  {
+    "id": "west-virginia-highlight",
+    "answer": "West Virginia",
+    "kind": "State",
+    "sourceCode": "US-WV"
+  },
+  {
+    "id": "illinois-highlight",
+    "answer": "Illinois",
+    "kind": "State",
+    "sourceCode": "US-IL"
+  },
+  {
+    "id": "colorado-highlight",
+    "answer": "Colorado",
+    "kind": "State",
+    "sourceCode": "US-CO"
+  },
+  {
+    "id": "nevada-highlight",
+    "answer": "Nevada",
+    "kind": "State",
+    "sourceCode": "US-NV"
+  },
+  {
+    "id": "california-highlight",
+    "answer": "California",
+    "kind": "State",
+    "sourceCode": "US-CA"
+  },
+  {
+    "id": "indiana-highlight",
+    "answer": "Indiana",
+    "kind": "State",
+    "sourceCode": "US-IN"
+  },
+  {
+    "id": "virginia-highlight",
+    "answer": "Virginia",
+    "kind": "State",
+    "sourceCode": "US-VA"
+  },
+  {
+    "id": "kansas-highlight",
+    "answer": "Kansas",
+    "kind": "State",
+    "sourceCode": "US-KS"
+  },
+  {
+    "id": "missouri-highlight",
+    "answer": "Missouri",
+    "kind": "State",
+    "sourceCode": "US-MO"
+  },
+  {
+    "id": "florida-highlight",
+    "answer": "Florida",
+    "kind": "State",
+    "sourceCode": "US-FL"
+  },
+  {
+    "id": "alaska-highlight",
+    "answer": "Alaska",
+    "kind": "State",
+    "sourceCode": "US-AK"
+  },
+  {
+    "id": "hawaii-highlight",
+    "answer": "Hawaii",
+    "kind": "State",
+    "sourceCode": "US-HI"
+  }
+]
