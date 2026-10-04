@@ -16,3 +16,13 @@ Split terminal layout: question and reference now render as independent Kitty im
 Japanese language variants: split-kanji/ answers reveal only the full Japanese prefecture name; japan-prefectures-kanji.png reveals kanji names on numbered-map questions. These variants have independent language-package progress identities. Existing geography decks remain romanized. The reference-map renderer is render_easy_reference_kanji.py; the split answer renderer is render_quiz_split_kanji.py in the retained workspace source directory.
 
 2026-10-03 whole-country reference revision: the numbered, romanized-name, and kanji-name references are rendered directly on the cream artwork canvas, without the older pale-blue framed map panels. The nationwide bounds and drawing area were tightened to maximize Japan's land area while preserving the Kanto, Kansai, and southern-island enlargements. Current retained renderer: render_easy_reference_canvas.py.
+
+2026-10-04 numbered-overview revision: the Wandering the World All - Easy
+numbered artwork was replaced by the user-validated high-density reference.
+Japan retains its complete studied geography, nationwide numbering, enlarged
+Kanto and Kansai insets, and an enlarged southern-islands inset. Crowded labels
+use individually reviewed leader lines whose origins remain inside their source
+prefectures, whose endpoints remain in open canvas or sea, and whose paths avoid
+unrelated territory with visible clearance at the WhackSmacker display size.
+This approval applies to the numbered overview. Named and highlighted assets
+remain separate artwork types and were not overwritten by the numbered image.

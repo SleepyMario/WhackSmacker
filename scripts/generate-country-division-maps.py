@@ -106,6 +106,12 @@ CONFIGS = {
         "margin_x": .035,
         "margin_y": .025,
         "callout_offset": .025,
+        # Keep the four remote-island insets visual and numbered only. Their
+        # names remain available through the deck answer/legend instead of
+        # being printed beneath the island artwork.
+        "hide_component_inset_names": True,
+        "fixed_callouts": {"Taipei City": (121.30, 25.25)},
+        "label_positions": {"New Taipei City": (121.72, 24.92)},
     },
     "india": {"source": "source-IND-adm1.geojson", "title": "India — States and Union Territories", "unit": "state or union territory"},
     "australia": {"source": "source-AUS-adm1.geojson", "title": "Australia — States and Territories", "unit": "state or territory", "exclude": ["Other Territories"], "wide": True},
@@ -303,7 +309,7 @@ def generate(key: str) -> None:
             inline_labels = config.get("inline_name_labels", {})
             inline_sizes = config.get("inline_name_font_sizes", {})
             for feature in features:
-                x,y=feature["center"]
+                x,y=config.get("label_positions", {}).get(feature["answer"], feature["center"])
                 answer=feature["answer"]
                 if answer == "Brussels":
                     ax.annotate("Brussels",xy=(x,y),xytext=(x,max_y+height*.075),ha="center",va="center",
@@ -391,8 +397,9 @@ def generate(key: str) -> None:
                 inset_ax.set_aspect("equal"); inset_ax.set_xticks([]); inset_ax.set_yticks([])
                 for spine in inset_ax.spines.values():
                     spine.set_color("#607176"); spine.set_linewidth(1); spine.set_linestyle((0,(5,4)))
-                inset_ax.text(.5,.025,spec["label"],transform=inset_ax.transAxes,ha="center",va="bottom",
-                              fontsize=8.5,fontweight="bold",color="#46585d")
+                if not config.get("hide_component_inset_names"):
+                    inset_ax.text(.5,.025,spec["label"],transform=inset_ax.transAxes,ha="center",va="bottom",
+                                  fontsize=8.5,fontweight="bold",color="#46585d")
         if inset_feature is not None:
             # Keep the remote archipelago out of the main geographic extent.
             # A compact figure-level inset reserves only the lower-left space
