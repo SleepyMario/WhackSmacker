@@ -27,8 +27,8 @@ export const vietnamRegionDecks = [
 ] as const;
 export type VietnamRegionSlug = typeof vietnamRegionDecks[number]["slug"];
 export const koreaRegionDecks = [
-  { slug: "north", label: "North", count: 11 },
-  { slug: "south", label: "South", count: 17 }
+  { slug: "north", label: "North", korean: "북부", count: 11 },
+  { slug: "south", label: "South", korean: "남부", count: 17 }
 ] as const;
 export type KoreaRegionSlug = typeof koreaRegionDecks[number]["slug"];
 export const countryDivisionDecks = [
@@ -93,8 +93,25 @@ export function normalizePrefectureAnswer(value: string): string {
   return aliases[normalized] ?? normalized;
 }
 
-export async function runContinentsEasy(options: { progressDir?: string; mode?: "easy" | "hard"; dataset?: "japan" | "japan-regions" | "vietnam" | "korea" | "netherlands" | "germany" | CountryDivisionDataset; region?: JapanRegionSlug; vietnamRegion?: VietnamRegionSlug; koreaRegion?: KoreaRegionSlug; nameScript?: "kanji" } = {}): Promise<void> {
+const koreanDivisionNames: Readonly<Record<string, string>> = {
+  "North Hamgyong": "함경북도", Ryanggang: "량강도", Jagang: "자강도", "South Hamgyong": "함경남도",
+  "North Pyongan": "평안북도", "South Pyongan": "평안남도", Pyongyang: "평양직할시", Kangwon: "강원도",
+  Nampo: "남포특별시", "North Hwanghae": "황해북도", "South Hwanghae": "황해남도", Seoul: "서울특별시",
+  Gangwon: "강원특별자치도", Gyeonggi: "경기도", Incheon: "인천광역시", "North Chungcheong": "충청북도",
+  "South Chungcheong": "충청남도", Sejong: "세종특별자치시", Daejeon: "대전광역시",
+  "North Gyeongsang": "경상북도", Daegu: "대구광역시", "North Jeolla": "전북특별자치도", Ulsan: "울산광역시",
+  "South Gyeongsang": "경상남도", Gwangju: "광주광역시", Busan: "부산광역시", "South Jeolla": "전라남도",
+  Jeju: "제주특별자치도"
+};
+
+function koreanTopicParticle(value: string): "은" | "는" {
+  const final = value.normalize("NFC").codePointAt(value.length - 1);
+  return final !== undefined && final >= 0xac00 && final <= 0xd7a3 && (final - 0xac00) % 28 !== 0 ? "은" : "는";
+}
+
+export async function runContinentsEasy(options: { progressDir?: string; mode?: "easy" | "hard"; dataset?: "japan" | "japan-regions" | "vietnam" | "korea" | "netherlands" | "germany" | CountryDivisionDataset; region?: JapanRegionSlug; vietnamRegion?: VietnamRegionSlug; koreaRegion?: KoreaRegionSlug; nameScript?: "kanji" | "hangul" } = {}): Promise<void> {
   const kanji = options.nameScript === "kanji";
+  const hangul = options.nameScript === "hangul";
   const japan = options.dataset === "japan";
   const regions = options.dataset === "japan-regions";
   const vietnam = options.dataset === "vietnam";
@@ -116,14 +133,16 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
     : germany ? `States - All - ${hard ? "Hard" : "Easy"}`
     : countryDivision !== undefined ? `${"scope" in countryDivision ? countryDivision.scope : `${countryDivision.deck} - All`} - ${hard ? "Hard" : "Easy"}`
     : vietnam ? `Provincial-level Divisions - ${vietnamRegion?.label ?? "All"} - ${hard ? "Hard" : "Easy"}`
-    : korea ? `Provincial-level Divisions - ${koreaRegion?.label ?? "All"} - ${hard ? "Hard" : "Easy"}`
+    : korea ? hangul
+      ? `광역 행정 구역 - ${koreaRegion?.korean ?? "전체"} - ${hard ? "고급" : "초급"}`
+      : `Provincial-level Divisions - ${koreaRegion?.label ?? "All"} - ${hard ? "Hard" : "Easy"}`
     : japan ? kanji ? `都道府県 - 全国 - ${hard ? "上級" : "初級"}` : (hard ? "Prefectures - All - Hard" : "Prefectures - All - Easy") : hard ? "Continents - Hard" : "Continents - Easy";
   const packageId = prefectureRegion !== undefined
     ? `com.sleepymario.${kanji ? "language.japanese" : "geography"}.japan-prefectures-${prefectureRegion.slug}-${hard ? "hard" : "easy"}`
     : regions
     ? `com.sleepymario.${kanji ? "language.japanese" : "geography"}.japan-regions-${hard ? "hard" : "easy"}`
     : vietnam ? `com.sleepymario.geography.vietnam-provincial-divisions-${vietnamRegion === undefined ? "" : `${vietnamRegion.slug}-`}${hard ? "hard" : "easy"}`
-    : korea ? `com.sleepymario.geography.korea-provincial-divisions-${koreaRegion === undefined ? "" : `${koreaRegion.slug}-`}${hard ? "hard" : "easy"}`
+    : korea ? `com.sleepymario.${hangul ? "language.korean" : "geography"}.korea-provincial-divisions-${koreaRegion === undefined ? "" : `${koreaRegion.slug}-`}${hard ? "hard" : "easy"}`
     : netherlands ? `com.sleepymario.geography.netherlands-provinces-${hard ? "hard" : "easy"}`
     : germany ? `com.sleepymario.geography.germany-states-${hard ? "hard" : "easy"}`
     : countryDivision !== undefined ? `com.sleepymario.geography.${countryDivision.dataset}-divisions-${hard ? "hard" : "easy"}`
@@ -148,7 +167,10 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
         .map(c => ({ ...c, prompt: "Which provincial-level division is highlighted?", explanation: `The highlighted division is ${c.answer}.` }))
     : korea
       ? (JSON.parse(await readFile(join(__dirname, "data", "korea-provinces", ...(koreaRegion === undefined ? [] : ["regions", koreaRegion.slug]), "provinces.json"), "utf8")) as { id: string; answer: string; kind: string }[])
-        .map(c => ({ ...c, prompt: "Which provincial-level division is highlighted?", explanation: `The highlighted division is ${c.answer}.` }))
+        .map(c => {
+          const answer = hangul ? koreanDivisionNames[c.answer]! : c.answer;
+          return { ...c, answer, prompt: hangul ? "어느 광역 행정 구역이 색칠되어 있습니까?" : "Which provincial-level division is highlighted?", explanation: hangul ? `색칠된 광역 행정 구역은 ${answer}입니다.` : `The highlighted division is ${answer}.` };
+        })
     : netherlands
       ? (JSON.parse(await readFile(join(__dirname, "data", "netherlands-provinces", "provinces.json"), "utf8")) as { id: string; answer: string; kind: string }[])
         .map(c => ({ ...c, prompt: "Which province is highlighted?", explanation: `The highlighted province is ${c.answer}.` }))
@@ -169,7 +191,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
   const namePool = cards.map(c => c.answer);
   if (administrativeMap && !hard) cards = [...cards, ...cards.map((c, i) => ({
     id: c.id.replace(/-highlight$/, "-locate"), answer: String(i + 1),
-    prompt: kanji ? `${c.answer}は何番ですか。` : `Which number marks ${c.answer}?`, explanation: kanji ? `${c.answer}は${i + 1}番です。` : `${c.answer} is number ${i + 1}.`
+    prompt: kanji ? `${c.answer}は何番ですか。` : hangul ? `${c.answer}${koreanTopicParticle(c.answer)} 몇 번입니까?` : `Which number marks ${c.answer}?`, explanation: kanji ? `${c.answer}は${i + 1}番です。` : hangul ? `${c.answer}${koreanTopicParticle(c.answer)} ${i + 1}번입니다.` : `${c.answer} is number ${i + 1}.`
   }))];
   const progressDir = options.progressDir ?? join(resolveReviewProgressDirectory(), "wandering-the-world");
   await mkdir(progressDir, { recursive: true });
@@ -178,7 +200,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
     : regions
     ? `${kanji ? "japanese" : "japan"}-regions-${hard ? "hard" : "easy"}.lock`
     : vietnam ? `vietnam-provincial-divisions-${vietnamRegion === undefined ? "" : `${vietnamRegion.slug}-`}${hard ? "hard" : "easy"}.lock`
-    : korea ? `korea-provincial-divisions-${koreaRegion === undefined ? "" : `${koreaRegion.slug}-`}${hard ? "hard" : "easy"}.lock`
+    : korea ? `${hangul ? "korean" : "korea"}-provincial-divisions-${koreaRegion === undefined ? "" : `${koreaRegion.slug}-`}${hard ? "hard" : "easy"}.lock`
     : netherlands ? `netherlands-provinces-${hard ? "hard" : "easy"}.lock`
     : germany ? `germany-states-${hard ? "hard" : "easy"}.lock`
     : countryDivision !== undefined ? `${countryDivision.dataset}-divisions-${hard ? "hard" : "easy"}.lock`
@@ -251,6 +273,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
         : regions && directNumber ? "Enter the map number (1–8) and press Enter. Escape returns to the menu."
         : japan && directNumber ? "Enter the map number (1–47) and press Enter. Escape returns to the menu."
         : vietnam && directNumber ? `Enter the map number (1–${namePool.length}) and press Enter. Escape returns to the menu.`
+        : korea && hangul && directNumber ? `지도 번호를 입력하세요: 1~${namePool.length}\nEnter: 확인\nEscape: 메뉴로 돌아가기`
         : korea && directNumber ? `Enter the map number (1–${namePool.length}) and press Enter. Escape returns to the menu.`
         : netherlands && directNumber ? "Enter the map number (1–12) and press Enter. Escape returns to the menu."
         : germany && directNumber ? "Enter the map number (1–16) and press Enter. Escape returns to the menu."
@@ -258,6 +281,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
         : regions && hard ? (kanji ? "Type the region name in Japanese and press Enter. Escape returns to the menu." : "Type the romanized region name and press Enter. Escape returns to the menu.")
         : japan && hard ? (kanji ? "Type the prefecture name in kanji and press Enter. Escape returns to the menu." : "Type the romanized prefecture name and press Enter. Escape returns to the menu.")
         : vietnam && hard ? "Type the Vietnamese name; diacritics are optional. Press Enter to answer. Escape returns to the menu."
+        : korea && hangul && hard ? "광역 행정 구역의 이름을 한국어로 입력하고 Enter 키를 누르세요. Escape 키를 누르면 메뉴로 돌아갑니다."
         : korea && hard ? "Type the romanized division name and press Enter. Escape returns to the menu."
         : netherlands && hard ? "Type the Dutch province name and press Enter. Diacritics are optional. Escape returns to the menu."
         : germany && hard ? "Type the German state name and press Enter. Umlauts are optional. Escape returns to the menu."
@@ -269,7 +293,7 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
       const vietnamAssetRoot = join("vietnam-provinces", ...(vietnamRegion === undefined ? [] : ["regions", vietnamRegion.slug]));
       const vietnamNumberedAsset = join(vietnamAssetRoot, vietnamRegion === undefined ? "vietnam-provinces-numbered.png" : "provinces-numbered.png");
       const vietnamNamedAsset = join(vietnamAssetRoot, vietnamRegion === undefined ? "vietnam-provinces-named.png" : "provinces-named.png");
-      const koreaAssetRoot = join("korea-provinces", ...(koreaRegion === undefined ? [] : ["regions", koreaRegion.slug]));
+      const koreaAssetRoot = join("korea-provinces", ...(hangul ? ["language-korean"] : []), ...(koreaRegion === undefined ? [] : ["regions", koreaRegion.slug]));
       const koreaNumberedAsset = join(koreaAssetRoot, koreaRegion === undefined ? "korea-provinces-numbered.png" : "provinces-numbered.png");
       const koreaNamedAsset = join(koreaAssetRoot, koreaRegion === undefined ? "korea-provinces-named.png" : "provinces-named.png");
       const questionPng = await readFile(directNumber
@@ -346,12 +370,14 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
             for (const sequence of kittyArtworkSequences({ pngData: leftPng, rectangle: { column: 1, row: 3, ...leftSize } })) process.stdout.write(sequence);
             textRow = leftSize.heightRows + 4;
           }
-          const lines = [card.prompt, "", ...(textEntry ? [`Answer: ${typedAnswer}`] : choices.map((choice, i) => `${i + 1}. ${choice}`)), "", feedback || instruction];
+          const lines = [card.prompt, "", ...(textEntry ? [`${hangul ? "답" : "Answer"}: ${typedAnswer}`] : choices.map((choice, i) => `${i + 1}. ${choice}`)), "", ...(feedback || instruction).split("\n")];
           // Wrap all controls inside the left pane without scrolling the reference.
           for (const line of lines) {
             const words = line.split(" "); let part = "";
+            const displayWidth = (value: string) => [...value.replace(/\x1b\[[0-9;]*m/gu, "")]
+              .reduce((width, character) => width + (/[^\u0000-\u00ff\uff61-\uff9f]/u.test(character) ? 2 : 1), 0);
             for (const word of words) {
-              if (part && part.length + word.length + 1 > leftWidth) {
+              if (part && displayWidth(part) + displayWidth(word) + 1 > leftWidth) {
                 if (textRow < rows) process.stdout.write(`\x1b[${textRow++};1H${part}\n`);
                 part = word;
               } else part += (part ? " " : "") + word;
@@ -379,7 +405,12 @@ export async function runContinentsEasy(options: { progressDir?: string; mode?: 
       while (key !== "q" && ((process.stdout.rows || 40) < 20 || (process.stdout.columns || 100) < 55));
       if (ended || (!hard && key === "q")) break;
       const selected = numericEntry ? String(Number(key)) : hard || directNumber ? key : choices[continentEasyAnswerKeys.indexOf(key as typeof continentEasyAnswerKeys[number])];
-      const right = kanji && !directNumber ? selected?.normalize("NFKC").trim().replace(/[都府県]$/, "") === card.answer.replace(/[都府県]$/, "") : administrativeMap ? normalizePrefectureAnswer(selected ?? "") === normalizePrefectureAnswer(card.answer) : selected?.trim().replace(/\s+/g, " ").toLowerCase() === card.answer.toLowerCase();
+      const right = kanji && !directNumber
+        ? selected?.normalize("NFKC").trim().replace(/[都府県]$/, "") === card.answer.replace(/[都府県]$/, "")
+        : hangul && !directNumber
+        ? selected?.normalize("NFKC").trim().replace(/\s+/g, "") === card.answer.normalize("NFKC").replace(/\s+/g, "")
+        : administrativeMap ? normalizePrefectureAnswer(selected ?? "") === normalizePrefectureAnswer(card.answer)
+        : selected?.trim().replace(/\s+/g, " ").toLowerCase() === card.answer.toLowerCase();
       if (right) correct++; else wrong++;
       const currentState = statesByItemId.get(card.id);
       const buryEligible = currentState !== undefined && isReviewItemBuryEligible(currentState);

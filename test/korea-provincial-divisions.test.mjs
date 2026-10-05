@@ -42,3 +42,30 @@ test("Korea regional decks contain only northern or southern divisions and compl
     }
   }
 });
+
+test("Lingoland Korean reuses every validated Korea map with Korean artwork", async () => {
+  const koreanRoot = new URL("language-korean/", root);
+  const divisions = JSON.parse(await readFile(new URL("provinces.json", root), "utf8"));
+  await access(new URL("korea-provinces-numbered.png", koreanRoot));
+  await access(new URL("korea-provinces-named.png", koreanRoot));
+  await access(new URL("split/reference.png", koreanRoot));
+  for (const division of divisions) {
+    const stem = division.id.replace(/-highlight$/, "");
+    await access(new URL(`split/${stem}-question.png`, koreanRoot));
+    await access(new URL(`split/${stem}-answer.png`, koreanRoot));
+  }
+
+  for (const [slug, count] of [["north", 11], ["south", 17]]) {
+    const regionRoot = new URL(`regions/${slug}/`, koreanRoot);
+    const regionDivisions = JSON.parse(await readFile(new URL(`../regions/${slug}/provinces.json`, koreanRoot), "utf8"));
+    assert.equal(regionDivisions.length, count);
+    await access(new URL("provinces-numbered.png", regionRoot));
+    await access(new URL("provinces-named.png", regionRoot));
+    await access(new URL("split/reference.png", regionRoot));
+    for (const division of regionDivisions) {
+      const stem = division.id.replace(/-highlight$/, "");
+      await access(new URL(`split/${stem}-question.png`, regionRoot));
+      await access(new URL(`split/${stem}-answer.png`, regionRoot));
+    }
+  }
+});

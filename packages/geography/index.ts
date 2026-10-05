@@ -69,6 +69,16 @@ export const geographyModule: DomainModule = {
       run: async () => { await runContinentsEasy({ dataset: "korea", koreaRegion: region.slug, mode }); }
     });
     for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `korean-provincial-divisions-${mode}`],
+      summary: `Korea provincial-level divisions in Korean (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "korea", mode, nameScript: "hangul" }); }
+    });
+    for (const region of koreaRegionDecks) for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `korean-provincial-divisions-${region.slug}-${mode}`],
+      summary: `Korea ${region.label} provincial-level divisions in Korean (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "korea", koreaRegion: region.slug, mode, nameScript: "hangul" }); }
+    });
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
       path: ["geography", `netherlands-provinces-${mode}`],
       summary: `Netherlands provinces (${mode})`,
       run: async () => { await runContinentsEasy({ dataset: "netherlands", mode }); }

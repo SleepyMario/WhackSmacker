@@ -1130,6 +1130,13 @@ function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | un
       hard
     );
   }
+  if (id === `korean-provincial-divisions-${hard ? "hard" : "easy"}`) {
+    return geographyReviewTarget(
+      `com.sleepymario.language.korean.korea-provincial-divisions-${hard ? "hard" : "easy"}`,
+      loadGeographyCountryMetadata("korea-provinces").map(item => item.id),
+      hard
+    );
+  }
   const vietnamRegion = vietnamRegionDecks.find(candidate => id === `vietnam-provincial-divisions-${candidate.slug}-${hard ? "hard" : "easy"}`);
   if (vietnamRegion !== undefined) {
     return geographyReviewTarget(
@@ -1143,6 +1150,14 @@ function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | un
     return geographyReviewTarget(
       `com.sleepymario.geography.korea-provincial-divisions-${koreaRegion.slug}-${hard ? "hard" : "easy"}`,
       loadGeographyCountryMetadata(`korea-provinces/regions/${koreaRegion.slug}`).map(item => item.id),
+      hard
+    );
+  }
+  const koreanRegion = koreaRegionDecks.find(candidate => id === `korean-provincial-divisions-${candidate.slug}-${hard ? "hard" : "easy"}`);
+  if (koreanRegion !== undefined) {
+    return geographyReviewTarget(
+      `com.sleepymario.language.korean.korea-provincial-divisions-${koreanRegion.slug}-${hard ? "hard" : "easy"}`,
+      loadGeographyCountryMetadata(`korea-provinces/regions/${koreanRegion.slug}`).map(item => item.id),
       hard
     );
   }
@@ -2827,6 +2842,38 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                         ];
                       })]
                     }
+                  ] };
+                }
+                if (language.packageId === "com.sleepymario.language.korean" || language.moduleId === "com.sleepymario.language.korean") {
+                  const current = keepNewGeneralDecks(deckType);
+                  const topographyChildren = [
+                    {
+                      id: `${deckType.id}:topography-main-vocabulary`, label: "Topography - Main Vocabulary", kind: "review-source" as const,
+                      packageId: "com.sleepymario.language.korean.general.topography-main-vocabulary", packageVersion: "0.1.0", packageLabel: "Korean", sourcePath: "cards.tsv", itemCount: 70,
+                      contentDataDir: join(__dirname, "../../../.local-content/korean-topography")
+                    },
+                    ...(["easy", "hard"] as const).map(mode => ({
+                      id: `${deckType.id}:korean-provincial-divisions-${mode}`,
+                      label: `Provincial-level Divisions - All - ${mode === "easy" ? "Easy" : "Hard"}`,
+                      kind: "command" as const,
+                      commandPath: ["geography", `korean-provincial-divisions-${mode}`], commandArgs: [],
+                      previewText: mode === "easy"
+                        ? "56 questions covering 28 first-level divisions across the Korean peninsula, using Korean names."
+                        : "28 highlighted first-level divisions. Type each name in Korean."
+                    })),
+                    ...koreaRegionDecks.flatMap(region => (["easy", "hard"] as const).map(mode => ({
+                      id: `${deckType.id}:korean-provincial-divisions-${region.slug}-${mode}`,
+                      label: `Provincial-level Divisions - ${region.korean} - ${mode === "easy" ? "Easy" : "Hard"}`,
+                      kind: "command" as const,
+                      commandPath: ["geography", `korean-provincial-divisions-${region.slug}-${mode}`], commandArgs: [],
+                      previewText: mode === "easy"
+                        ? `${region.count * 2} questions covering ${region.count} divisions in Korean.`
+                        : `${region.count} highlighted divisions. Type each name in Korean.`
+                    })))
+                  ];
+                  return { ...deckType, children: [
+                    ...(current?.children ?? []).filter(node => !node.id.includes(":topography")),
+                    { id: `${deckType.id}:topography`, label: "Topography", kind: "category" as const, children: topographyChildren }
                   ] };
                 }
                 const current = keepNewGeneralDecks(deckType);

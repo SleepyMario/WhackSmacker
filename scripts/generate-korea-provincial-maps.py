@@ -19,6 +19,39 @@ from matplotlib.patches import Polygon
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "packages/geography/data/korea-provinces"
 SPLIT = DATA / "split"
+KOREAN_DATA = DATA / "language-korean"
+KOREAN_SPLIT = KOREAN_DATA / "split"
+
+KOREAN_NAMES = {
+    "North Hamgyong": "함경북도",
+    "Ryanggang": "량강도",
+    "Jagang": "자강도",
+    "South Hamgyong": "함경남도",
+    "North Pyongan": "평안북도",
+    "South Pyongan": "평안남도",
+    "Pyongyang": "평양직할시",
+    "Kangwon": "강원도",
+    "Nampo": "남포특별시",
+    "North Hwanghae": "황해북도",
+    "South Hwanghae": "황해남도",
+    "Seoul": "서울특별시",
+    "Gangwon": "강원특별자치도",
+    "Gyeonggi": "경기도",
+    "Incheon": "인천광역시",
+    "North Chungcheong": "충청북도",
+    "South Chungcheong": "충청남도",
+    "Sejong": "세종특별자치시",
+    "Daejeon": "대전광역시",
+    "North Gyeongsang": "경상북도",
+    "Daegu": "대구광역시",
+    "North Jeolla": "전북특별자치도",
+    "Ulsan": "울산광역시",
+    "South Gyeongsang": "경상남도",
+    "Gwangju": "광주광역시",
+    "Busan": "부산광역시",
+    "South Jeolla": "전라남도",
+    "Jeju": "제주특별자치도",
+}
 
 # Canonical Wandering the World map priorities: retain the complete studied
 # geography, maximize its landmass on the canvas, and then maximize readable
@@ -102,7 +135,16 @@ min_lat = min(point[1] for point in all_points)
 max_lat = max(point[1] for point in all_points)
 
 
-def draw_map(path: Path, *, target: str | None = None, labels: str | None = None, title: str = "Korea — Provincial-level Divisions") -> None:
+def draw_map(
+    path: Path,
+    *,
+    target: str | None = None,
+    labels: str | None = None,
+    title: str = "Korea — Provincial-level Divisions",
+    names: dict[str, str] | None = None,
+    font_family: str | None = None,
+) -> None:
+    text_style = {} if font_family is None else {"fontfamily": font_family}
     fig, ax = plt.subplots(figsize=((12 if labels == "name" else 9), 12), dpi=180)
     # Draw enclosing provinces first and tiny metropolitan units last. Some
     # source polygons overlap rather than carrying explicit interior holes.
@@ -141,8 +183,10 @@ def draw_map(path: Path, *, target: str | None = None, labels: str | None = None
         for index, feature in enumerate(features, 1):
             column = 0 if index <= 14 else 1
             row = index - 1 if index <= 14 else index - 15
-            fig.text(.62 + column * .19, .88 - row * .055, f"{index}. {feature['answer']}",
-                     ha="left", va="center", fontsize=8.5, fontweight="bold", color="#142429")
+            answer = names.get(feature["answer"], feature["answer"]) if names else feature["answer"]
+            fig.text(.62 + column * .19, .88 - row * .055, f"{index}. {answer}",
+                     ha="left", va="center", fontsize=8.5, fontweight="bold", color="#142429",
+                     **text_style)
 
     # The whole peninsula uses one visual treatment; the inter-Korean boundary is
     # only where adjacent first-level polygons meet and is not styled specially.
@@ -150,7 +194,7 @@ def draw_map(path: Path, *, target: str | None = None, labels: str | None = None
     ax.set_ylim(min_lat - .35, max_lat + .35)
     ax.set_aspect("equal")
     ax.axis("off")
-    ax.set_title(title, fontsize=17, pad=12, fontweight="bold")
+    ax.set_title(title, fontsize=17, pad=12, fontweight="bold", **text_style)
     fig.text(.5, .018, "Unified teaching map • first-level administrative divisions • north is up",
              ha="center", fontsize=7, color="#46585d")
     if labels != "name":
@@ -180,6 +224,25 @@ for feature in features:
 
 (DATA / "provinces.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
+# Lingoland uses the same validated geography and numbering, with Korean
+# learner-facing labels and titles in a separate artwork family. Stable English
+# stems remain the filenames so the two interfaces can share canonical IDs
+# without sharing progress.
+KOREAN_SPLIT.mkdir(parents=True, exist_ok=True)
+draw_map(KOREAN_SPLIT / "reference.png", title="한국 — 광역 행정 구역", font_family="Noto Sans CJK KR")
+draw_map(KOREAN_DATA / "korea-provinces-numbered.png", labels="number", title="한국 — 광역 행정 구역", font_family="Noto Sans CJK KR")
+draw_map(KOREAN_DATA / "korea-provinces-named.png", labels="name", title="한국 — 광역 행정 구역", names=KOREAN_NAMES, font_family="Noto Sans CJK KR")
+for feature in features:
+    stem = slug(feature["answer"])
+    draw_map(
+        KOREAN_SPLIT / f"{stem}-question.png", target=feature["answer"],
+        title="어느 광역 행정 구역이 색칠되어 있습니까?", font_family="Noto Sans CJK KR",
+    )
+    draw_map(
+        KOREAN_SPLIT / f"{stem}-answer.png", target=feature["answer"],
+        title=KOREAN_NAMES[feature["answer"]], font_family="Noto Sans CJK KR",
+    )
+
 
 def regional_extent(displayed: list[dict]) -> tuple[float, float, float, float]:
     points = [point for feature in displayed for ring in rings(feature["geometry"]) for point in ring]
@@ -198,7 +261,10 @@ def draw_regional_map(
     target: str | None = None,
     labels: str | None = None,
     title: str,
+    names: dict[str, str] | None = None,
+    font_family: str | None = None,
 ) -> None:
+    text_style = {} if font_family is None else {"fontfamily": font_family}
     named = labels == "name"
     map_label_font = 20
     fig = plt.figure(figsize=((14, 10) if named else (10, 10)), dpi=180, facecolor="#f5f1e8")
@@ -239,9 +305,11 @@ def draw_regional_map(
         legend_font = 14
         row_spacing = min(.068, .78 / max(len(displayed) - 1, 1))
         for index, feature in enumerate(displayed, 1):
+            answer = names.get(feature["answer"], feature["answer"]) if names else feature["answer"]
             fig.text(
-                .75, .87 - (index - 1) * row_spacing, f"{index}. {feature['answer']}",
+                .75, .87 - (index - 1) * row_spacing, f"{index}. {answer}",
                 ha="left", va="center", fontsize=legend_font, fontweight="bold", color="#142429",
+                **text_style,
             )
 
     bounds = regional_extent(displayed)
@@ -249,7 +317,7 @@ def draw_regional_map(
     ax.set_ylim(bounds[2:])
     ax.set_aspect("equal")
     ax.axis("off")
-    fig.text(.5, .97, title, ha="center", va="top", fontsize=19, color="#243e48", fontweight="bold")
+    fig.text(.5, .97, title, ha="center", va="top", fontsize=19, color="#243e48", fontweight="bold", **text_style)
     fig.text(
         .5, .02, "First-level administrative divisions • north is up",
         ha="center", fontsize=7, color="#46585d",
@@ -288,3 +356,32 @@ for region_slug, region_label in [("north", "North"), ("south", "South")]:
     (region_dir / "provinces.json").write_text(
         json.dumps(region_metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
+
+    korean_region_dir = KOREAN_DATA / "regions" / region_slug
+    korean_region_split = korean_region_dir / "split"
+    korean_region_title = f"한국 — {'북부' if region_slug == 'north' else '남부'}"
+    draw_regional_map(
+        korean_region_split / "reference.png", region_features,
+        title=korean_region_title, font_family="Noto Sans CJK KR",
+    )
+    draw_regional_map(
+        korean_region_dir / "provinces-numbered.png", region_features,
+        labels="number", title=korean_region_title, font_family="Noto Sans CJK KR",
+    )
+    draw_regional_map(
+        korean_region_dir / "provinces-named.png", region_features,
+        labels="name", title=korean_region_title, names=KOREAN_NAMES,
+        font_family="Noto Sans CJK KR",
+    )
+    for feature in region_features:
+        stem = slug(feature["answer"])
+        draw_regional_map(
+            korean_region_split / f"{stem}-question.png", region_features,
+            target=feature["answer"], title="어느 광역 행정 구역이 색칠되어 있습니까?",
+            font_family="Noto Sans CJK KR",
+        )
+        draw_regional_map(
+            korean_region_split / f"{stem}-answer.png", region_features,
+            target=feature["answer"], title=KOREAN_NAMES[feature["answer"]],
+            font_family="Noto Sans CJK KR",
+        )

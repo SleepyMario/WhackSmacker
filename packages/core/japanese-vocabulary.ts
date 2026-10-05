@@ -24,6 +24,11 @@ export interface JapaneseStructuredReviewItem {
   };
 }
 
+export interface JapaneseStructuredReviewValidationOptions {
+  /** Finite General and Specialized decks may intentionally use a one-mora B prompt. */
+  readonly allowSingleMoraReadingCard?: boolean;
+}
+
 export const japaneseContextualReadingIdentityPolicy = "japanese-contextual-reading-identity-policy";
 
 export interface JapaneseContextualReadingOccurrence {
@@ -146,7 +151,8 @@ export function assertValidJapaneseVocabularyEntry(
 export function assertValidJapaneseStructuredReviewItems(
   items: readonly JapaneseStructuredReviewItem[],
   sourcePath: string,
-  contextualReadings?: JapaneseContextualReadingDocument
+  contextualReadings?: JapaneseContextualReadingDocument,
+  options: JapaneseStructuredReviewValidationOptions = {}
 ): void {
   const byLexicalIdentity = new Map<string, JapaneseStructuredReviewItem[]>();
   for (const item of items) {
@@ -208,7 +214,7 @@ export function assertValidJapaneseStructuredReviewItems(
       if (readingToTarget.prompt !== expectedPrompt) {
         throw new Error(`${sourcePath}: ${readingToTarget.cardId} must prompt with ${containsKanji ? "the complete lexical hiragana reading" : "the kana-only Japanese expression without a separate reading value"}.`);
       }
-      if (japaneseMoraCount(readingToTarget.prompt) < 2) {
+      if (japaneseMoraCount(readingToTarget.prompt) < 2 && options.allowSingleMoraReadingCard !== true) {
         throw new Error(`${sourcePath}: ${readingToTarget.cardId} violates the two-or-more-mora B-card distinctiveness rule.`);
       }
     }

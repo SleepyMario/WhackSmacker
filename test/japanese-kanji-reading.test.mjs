@@ -175,6 +175,20 @@ test("Japanese structured Review validation rejects malformed rows in the actual
   }
 });
 
+test("finite General and Specialized decks may use an explicit one-mora B card", () => {
+  const items = syntheticStructuredItems("都", "と");
+  assert.throws(
+    () => assertValidJapaneseStructuredReviewItems(items, "general/test/cards.tsv"),
+    /two-or-more-mora B-card distinctiveness rule/u
+  );
+  assert.doesNotThrow(() => assertValidJapaneseStructuredReviewItems(
+    items,
+    "general/test/cards.tsv",
+    undefined,
+    { allowSingleMoraReadingCard: true }
+  ));
+});
+
 test("Japanese TSV parsing rejects a malformed fixed-width row", async () => {
   const path = join(reviewRoot, "chapter-001-005", "cards.tsv");
   const lines = (await readFile(path, "utf8")).trimEnd().split("\n");

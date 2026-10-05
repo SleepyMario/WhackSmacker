@@ -669,6 +669,36 @@ test("new General decks survive the curriculum reset without exposing archived d
   assert.deepEqual(archive.children, [old]);
 });
 
+test("Korean General exposes the validated Korea maps in Korean", () => {
+  const animals = { id: "ko:animals", label: "Animals I", kind: "review-source", packageId: "new.animals", itemCount: 70 };
+  const result = languageSubmenuSkeleton({
+    id: "languages", label: "Languages", kind: "category", children: [{
+      id: "korean", label: "Korean", kind: "package", packageId: "com.sleepymario.language.korean", children: [{
+        id: "ko:decks", label: "Decks", kind: "category", children: [{
+          id: "ko:deck-family:general", label: "General", kind: "category", children: [animals]
+        }]
+      }]
+    }]
+  });
+  const general = result.children[0].children[0].children[0];
+  assert.equal(general.children[0], animals);
+  const topography = general.children.find((node) => node.label === "Topography");
+  assert.ok(topography);
+  assert.equal(topography.children[0].label, "Topography - Main Vocabulary");
+  assert.equal(topography.children[0].packageId, "com.sleepymario.language.korean.general.topography-main-vocabulary");
+  assert.equal(topography.children[0].itemCount, 70);
+  assert.deepEqual(topography.children.slice(1).map((node) => node.commandPath[1]), [
+    "korean-provincial-divisions-easy",
+    "korean-provincial-divisions-hard",
+    "korean-provincial-divisions-north-easy",
+    "korean-provincial-divisions-north-hard",
+    "korean-provincial-divisions-south-easy",
+    "korean-provincial-divisions-south-hard"
+  ]);
+  assert.match(topography.children[3].label, /북부/u);
+  assert.match(topography.children[5].label, /남부/u);
+});
+
 test("123Vietnamese Custom lessons stay grouped and ordered by Roman numeral", () => {
   const titles = [
     "Tên tôi là Peter",
@@ -2746,6 +2776,29 @@ test("country decks receive the same menu review colours as Japan", () => {
       assert.equal(due.children[0].reviewStatus, "has_cards_to_review");
       assert.equal(due.children[0].dueCardCount, expectedCards);
       assert.match(renderTwoPaneLanguageTree(due, new Set(["whacksmacker"]), 0, "", true), /\x1b\[34m/u);
+    }
+  }
+});
+
+test("Korean General geography uses language-scoped progress identities", () => {
+  for (const [command, count, firstItemId] of [
+    ["korean-provincial-divisions", 28, "north-hamgyong-highlight"],
+    ["korean-provincial-divisions-north", 11, "north-hamgyong-highlight"],
+    ["korean-provincial-divisions-south", 17, "seoul-highlight"]
+  ]) {
+    for (const mode of ["easy", "hard"]) {
+      const node = { id: `ko:${command}:${mode}`, label: `${command} ${mode}`, kind: "command", commandPath: ["geography", `${command}-${mode}`] };
+      const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [node] };
+      const expectedCards = mode === "easy" ? count * 2 : count;
+      const region = command.endsWith("-north") ? "north-" : command.endsWith("-south") ? "south-" : "";
+      const packageId = `com.sleepymario.language.korean.korea-provincial-divisions-${region}${mode}`;
+      const dueState = {
+        ...createInitialReviewState({ packageId, packageVersion: "0.1.0", itemId: firstItemId }, "2026-10-01T00:00:00Z"),
+        lastReviewedAt: "2026-10-01T00:00:00Z", reviewCount: 1, intervalDays: 1, status: "review"
+      };
+      const due = markGeographyDeckReviewStatuses(tree, [dueState], "en-US", "2026-10-03T00:00:00Z");
+      assert.equal(due.children[0].reviewStatus, "has_cards_to_review");
+      assert.equal(due.children[0].dueCardCount, expectedCards);
     }
   }
 });

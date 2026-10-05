@@ -290,9 +290,20 @@ export async function readInstalledMemorizationItems(
     }
   }
   const items = await applySourceReviewOverlay(collection.items, selected, sourceLocale, dataDir);
-  // Standalone prefecture kanji/kana pairs intentionally have two directions, without a meaning card.
-  if (selected.packageId !== "com.sleepymario.language.japanese.prefectures-kanji"
-    && selected.packageId !== "com.sleepymario.language.japanese.general.animals-i"
+  // Standalone Japanese script-conversion decks intentionally contain only
+  // kanji/kana pairs in two directions. They have no separate meaning card,
+  // regardless of whether the package covers all prefectures or one regional
+  // subset such as Hokkaido.
+  const japaneseScriptConversion = items.length > 0 && items.every((item) => item.schemaVersion === 2
+    && new Set([item.prompt.language, item.answer.language]).size === 2
+    && [item.prompt.language, item.answer.language].every((language) => language === "ja" || language === "ja-Kana"));
+  // These finite General topic packages use an explicitly authored ABC shape,
+  // including optional one-mora and kana-only B cards. The package generator
+  // already validates them outside the canonical curriculum occurrence rules.
+  const standaloneJapaneseGeneralTopic = selected.packageId === "com.sleepymario.language.japanese.general.animals-i"
+    || selected.packageId === "com.sleepymario.language.japanese.general.topography-main-vocabulary";
+  if (!japaneseScriptConversion
+    && !standaloneJapaneseGeneralTopic
     // Private Custom decks are finite source-based collections rather than
     // projections of the canonical Japanese curriculum occurrence ledger.
     && manifest.deckFamily !== "custom"
@@ -309,7 +320,9 @@ export async function readInstalledMemorizationItems(
       testedLexicalIds: item.testedLexicalIds,
       examples: item.examples,
       provenance: item.provenance
-    })), path, contextualReadings);
+    })), path, contextualReadings, {
+      allowSingleMoraReadingCard: manifest.deckFamily === "general" || manifest.deckFamily === "specialized"
+    });
   }
   return {
     packageId: selected.packageId,
