@@ -1,0 +1,158 @@
+[
+  {
+    "id": "aargau-highlight",
+    "answer": "Aargau",
+    "kind": "Canton",
+    "sourceCode": "CH-AG"
+  },
+  {
+    "id": "appenzell-ausserrhoden-highlight",
+    "answer": "Appenzell Ausserrhoden",
+    "kind": "Canton",
+    "sourceCode": "CH-AR"
+  },
+  {
+    "id": "appenzell-innerrhoden-highlight",
+    "answer": "Appenzell Innerrhoden",
+    "kind": "Canton",
+    "sourceCode": "CH-AI"
+  },
+  {
+    "id": "basel-landschaft-highlight",
+    "answer": "Basel-Landschaft",
+    "kind": "Canton",
+    "sourceCode": "CH-BL"
+  },
+  {
+    "id": "basel-stadt-highlight",
+    "answer": "Basel-Stadt",
+    "kind": "Canton",
+    "sourceCode": "CH-BS"
+  },
+  {
+    "id": "bern-highlight",
+    "answer": "Bern",
+    "kind": "Canton",
+    "sourceCode": "CH-BE"
+  },
+  {
+    "id": "fribourg-highlight",
+    "answer": "Fribourg",
+    "kind": "Canton",
+    "sourceCode": "CH-FR"
+  },
+  {
+    "id": "geneva-highlight",
+    "answer": "Geneva",
+    "kind": "Canton",
+    "sourceCode": "CH-GE"
+  },
+  {
+    "id": "glarus-highlight",
+    "answer": "Glarus",
+    "kind": "Canton",
+    "sourceCode": "CH-GL"
+  },
+  {
+    "id": "grisons-highlight",
+    "answer": "Grisons",
+    "kind": "Canton",
+    "sourceCode": "CH-GR"
+  },
+  {
+    "id": "jura-highlight",
+    "answer": "Jura",
+    "kind": "Canton",
+    "sourceCode": "CH-JU"
+  },
+  {
+    "id": "lucerne-highlight",
+    "answer": "Lucerne",
+    "kind": "Canton",
+    "sourceCode": "CH-LU"
+  },
+  {
+    "id": "neuch-tel-highlight",
+    "answer": "Neuchâtel",
+    "kind": "Canton",
+    "sourceCode": "CH-NE"
+  },
+  {
+    "id": "nidwalden-highlight",
+    "answer": "Nidwalden",
+    "kind": "Canton",
+    "sourceCode": "CH-NW"
+  },
+  {
+    "id": "obwalden-highlight",
+    "answer": "Obwalden",
+    "kind": "Canton",
+    "sourceCode": "CH-OW"
+  },
+  {
+    "id": "schaffhausen-highlight",
+    "answer": "Schaffhausen",
+    "kind": "Canton",
+    "sourceCode": "CH-SH"
+  },
+  {
+    "id": "schwyz-highlight",
+    "answer": "Schwyz",
+    "kind": "Canton",
+    "sourceCode": "CH-SZ"
+  },
+  {
+    "id": "solothurn-highlight",
+    "answer": "Solothurn",
+    "kind": "Canton",
+    "sourceCode": "CH-SO"
+  },
+  {
+    "id": "st-gallen-highlight",
+    "answer": "St. Gallen",
+    "kind": "Canton",
+    "sourceCode": "CH-SG"
+  },
+  {
+    "id": "thurgau-highlight",
+    "answer": "Thurgau",
+    "kind": "Canton",
+    "sourceCode": "CH-TG"
+  },
+  {
+    "id": "ticino-highlight",
+    "answer": "Ticino",
+    "kind": "Canton",
+    "sourceCode": "CH-TI"
+  },
+  {
+    "id": "uri-highlight",
+    "answer": "Uri",
+    "kind": "Canton",
+    "sourceCode": "CH-UR"
+  },
+  {
+    "id": "valais-highlight",
+    "answer": "Valais",
+    "kind": "Canton",
+    "sourceCode": "CH-VS"
+  },
+  {
+    "id": "vaud-highlight",
+    "answer": "Vaud",
+    "kind": "Canton",
+    "sourceCode": "CH-VD"
+  },
+  {
+    "id": "zug-highlight",
+    "answer": "Zug",
+    "kind": "Canton",
+    "sourceCode": "CH-ZG"
+  },
+  {
+    "id": "zurich-highlight",
+    "answer": "Zurich",
+    "kind": "Canton",
+    "sourceCode": "CH-ZH"
+  }
+]

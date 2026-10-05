@@ -3927,7 +3927,8 @@ function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): Men
 }
 
 function buildCountriesGeographyNode(id: string): LanguageTreeNode {
-  const groupedCountryDecks = [...countryDivisionDecks.reduce((groups, country) => {
+  const separatelyAuthoredCountryDatasets = new Set(["switzerland"]);
+  const groupedCountryDecks = [...countryDivisionDecks.filter((country) => !separatelyAuthoredCountryDatasets.has(country.dataset)).reduce((groups, country) => {
     const existing = groups.get(country.label);
     if (existing === undefined) groups.set(country.label, [country]);
     else existing.push(country);
@@ -3939,6 +3940,14 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
       id: `${id}:switzerland:language-map`, label: "Language Map", kind: "message",
       previewArtworkPath: join(__dirname, "../../packages/geography/data/switzerland-language/language-map.png"),
       previewText: "Switzerland - Language\n\nReference map of Switzerland's German, French, Italian and Romansh language regions. This is reference material, not a review deck."
+    }, {
+      id: `${id}:switzerland:cantons-easy`, label: "Cantons - All - Easy", kind: "command",
+      commandPath: ["geography", "switzerland-divisions-easy"], commandArgs: [], launchTitle: "Cantons - All - Easy",
+      previewText: "Cantons - All - Easy\n\n52 questions covering Switzerland's 26 cantons. Identify highlighted cantons with choices 1–4, and locate named cantons by entering map numbers 1–26."
+    }, {
+      id: `${id}:switzerland:cantons-hard`, label: "Cantons - All - Hard", kind: "command",
+      commandPath: ["geography", "switzerland-divisions-hard"], commandArgs: [], launchTitle: "Cantons - All - Hard",
+      previewText: "Cantons - All - Hard\n\nIdentify Switzerland's 26 cantons by typing their English names. Diacritics are optional."
     }] }, { id: `${id}:japan`, label: "Japan", kind: "category", previewText: "Japan", children: [{
       id: `${id}:japan:prefectures-easy`, label: "Prefectures - All - Easy", kind: "command",
       commandPath: ["geography", "japan-prefectures-easy"], commandArgs: [], launchTitle: "Prefectures - All - Easy",

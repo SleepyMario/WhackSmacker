@@ -936,6 +936,9 @@ test("module tree shows renamed learning categories without Games or legacy Cont
     "Provinces - All - Hard"
   ]);
   const swissLanguageMap = country("Switzerland").children[0];
+  assert.deepEqual(country("Switzerland").children.map((node) => node.label), [
+    "Language Map", "Cantons - All - Easy", "Cantons - All - Hard"
+  ]);
   assert.equal(swissLanguageMap.label, "Language Map");
   assert.equal(swissLanguageMap.kind, "message");
   assert.match(swissLanguageMap.previewArtworkPath, /switzerland-language\/language-map\.png$/u);

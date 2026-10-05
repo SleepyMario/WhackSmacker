@@ -32,6 +32,7 @@ export const koreaRegionDecks = [
 ] as const;
 export type KoreaRegionSlug = typeof koreaRegionDecks[number]["slug"];
 export const countryDivisionDecks = [
+  { dataset: "switzerland", label: "Switzerland", directory: "switzerland-cantons", deck: "Cantons", singular: "canton", count: 26, answerHint: "Type the canton name; diacritics are optional", mapLayout: "side-by-side" },
   { dataset: "united-kingdom", label: "United Kingdom", directory: "united-kingdom-divisions", deck: "Constituent Countries", singular: "constituent country", count: 4, answerHint: "Type the constituent-country name", mapLayout: "side-by-side" },
   { dataset: "belgium-regions", label: "Belgium", directory: "belgium-regions", deck: "Regions", singular: "region", count: 3, answerHint: "Type the region name", mapLayout: "side-by-side" },
   { dataset: "belgium", label: "Belgium", directory: "belgium-provinces", deck: "Provinces and Brussels", singular: "province or Brussels", count: 11, answerHint: "Type the province name or Brussels", mapLayout: "top-down" },
