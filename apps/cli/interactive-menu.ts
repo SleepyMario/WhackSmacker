@@ -3888,7 +3888,11 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
   }, new Map<string, (typeof countryDivisionDecks[number])[]>()).entries()];
   return {
     id, label: "Countries", kind: "category", previewText: "Countries",
-    children: [{ id: `${id}:japan`, label: "Japan", kind: "category", previewText: "Japan", children: [{
+    children: ([{ id: `${id}:switzerland`, label: "Switzerland", kind: "category", previewText: "Switzerland", children: [{
+      id: `${id}:switzerland:language-map`, label: "Language Map", kind: "message",
+      previewArtworkPath: join(__dirname, "../../packages/geography/data/switzerland-language/language-map.png"),
+      previewText: "Switzerland - Language\n\nReference map of Switzerland's German, French, Italian and Romansh language regions. This is reference material, not a review deck."
+    }] }, { id: `${id}:japan`, label: "Japan", kind: "category", previewText: "Japan", children: [{
       id: `${id}:japan:prefectures-easy`, label: "Prefectures - All - Easy", kind: "command",
       commandPath: ["geography", "japan-prefectures-easy"], commandArgs: [], launchTitle: "Prefectures - All - Easy",
       previewText: "Prefectures - All - Easy\n\n94 questions: identify highlighted prefectures with choices 1–4, and locate named prefectures by entering map numbers 1–47. Names are revealed after answering."
@@ -3981,7 +3985,7 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
         commandPath: ["geography", "netherlands-provinces-hard"], commandArgs: [], launchTitle: "Provinces - All - Hard",
         previewText: "Provinces - All - Hard\n\nIdentify the Netherlands' 12 provinces by typing their Dutch names. Diacritics are optional."
       }]
-    }]
+    }] satisfies LanguageTreeNode[]).sort((left, right) => left.label.localeCompare(right.label))
   };
 }
 

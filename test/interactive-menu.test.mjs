@@ -853,12 +853,14 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   assert.equal(geography.kind, installed.children[0].kind, "installed top-level modules share one ordinary colour class");
   assert.deepEqual(geography.children.map((node) => node.label), ["World", "Countries"]);
   assert.deepEqual(geography.children[0].children.map((node) => node.label), ["Continents - Easy", "Continents - Hard"]);
-  assert.deepEqual(geography.children[1].children.map((node) => node.label), [
-    "Japan", "Vietnam", "Korea", "Germany", "United Kingdom", "Belgium", "France", "Spain", "Italy", "Russia",
-    "China", "China (Taiwan)", "India", "Australia", "Canada", "USSR (Former)", "United States",
-    "Yugoslavia (Former)", "Netherlands"
+  const countries = geography.children[1];
+  const country = (label) => countries.children.find((node) => node.label === label);
+  assert.deepEqual(countries.children.map((node) => node.label), [
+    "Australia", "Belgium", "Canada", "China", "China (Taiwan)", "France", "Germany", "India", "Italy", "Japan",
+    "Korea", "Netherlands", "Russia", "Spain", "Switzerland", "United Kingdom", "United States", "USSR (Former)", "Vietnam",
+    "Yugoslavia (Former)"
   ]);
-  assert.deepEqual(geography.children[1].children[0].children.map((node) => node.label), [
+  assert.deepEqual(country("Japan").children.map((node) => node.label), [
     "Prefectures - All - Easy",
     "Prefectures - All - Hard",
     "Prefectures - Regions - Easy",
@@ -872,39 +874,44 @@ test("module tree shows renamed learning categories without Games or legacy Cont
     "Prefectures - Shikoku - Easy", "Prefectures - Shikoku - Hard",
     "Prefectures - Kyuushuu - Easy", "Prefectures - Kyuushuu - Hard"
   ]);
-  assert.deepEqual(geography.children[1].children[1].children.map((node) => node.label), [
+  assert.deepEqual(country("Vietnam").children.map((node) => node.label), [
     "Provincial-level Divisions - All - Easy",
     "Provincial-level Divisions - All - Hard",
     "Provincial-level Divisions - North - Easy", "Provincial-level Divisions - North - Hard",
     "Provincial-level Divisions - Central - Easy", "Provincial-level Divisions - Central - Hard",
     "Provincial-level Divisions - South - Easy", "Provincial-level Divisions - South - Hard"
   ]);
-  assert.deepEqual(geography.children[1].children[2].children.map((node) => node.label), [
+  assert.deepEqual(country("Korea").children.map((node) => node.label), [
     "Provincial-level Divisions - All - Easy",
     "Provincial-level Divisions - All - Hard",
     "Provincial-level Divisions - North - Easy", "Provincial-level Divisions - North - Hard",
     "Provincial-level Divisions - South - Easy", "Provincial-level Divisions - South - Hard"
   ]);
-  assert.deepEqual(geography.children[1].children[3].children.map((node) => node.label), [
+  assert.deepEqual(country("Germany").children.map((node) => node.label), [
     "States - All - Easy",
     "States - All - Hard"
   ]);
-  assert.deepEqual(geography.children[1].children[5].children.map((node) => node.label), [
+  assert.deepEqual(country("Belgium").children.map((node) => node.label), [
     "Regions - All - Easy",
     "Regions - All - Hard",
     "Provinces and Brussels - All - Easy",
     "Provinces and Brussels - All - Hard"
   ]);
-  assert.deepEqual(geography.children[1].children[9].children.map((node) => node.label), [
+  assert.deepEqual(country("Russia").children.map((node) => node.label), [
     "All - Easy",
     "All - Hard",
     "Main Regions - Easy",
     "Main Regions - Hard"
   ]);
-  assert.deepEqual(geography.children[1].children.at(-1).children.map((node) => node.label), [
+  assert.deepEqual(country("Netherlands").children.map((node) => node.label), [
     "Provinces - All - Easy",
     "Provinces - All - Hard"
   ]);
+  const swissLanguageMap = country("Switzerland").children[0];
+  assert.equal(swissLanguageMap.label, "Language Map");
+  assert.equal(swissLanguageMap.kind, "message");
+  assert.match(swissLanguageMap.previewArtworkPath, /switzerland-language\/language-map\.png$/u);
+  assert.match(swissLanguageMap.previewText, /reference material, not a review deck/iu);
 });
 
 test("language category can expand installed package nodes in the module tree", async () => {

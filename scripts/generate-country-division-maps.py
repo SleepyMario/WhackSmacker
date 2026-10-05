@@ -45,6 +45,18 @@ CONFIGS = {
         "title": "Spain — Autonomous-level Divisions",
         "unit": "autonomous-level division",
         "figure_inset": "Canarias",
+        # Keep the island shapes in the neutral reference, but omit the inset
+        # caption there: spelling out "Canary Islands" beside the active
+        # question gives away that answer in easy mode.
+        "hide_figure_inset_caption_on_reference": True,
+        # Ceuta and Melilla are correct at their real positions on the North
+        # African coast, but are too small for a visible selected-state fill.
+        # Repeat their true outlines at a readable scale in anonymous detail
+        # panels; the answer remains undisclosed on question artwork.
+        "detail_insets": [
+            {"feature": "Ciudad Autónoma de Ceuta"},
+            {"feature": "Ciudad Autónoma de Melilla"},
+        ],
         "context_sources": [
             {"source": "context/source-MAR-adm0.geojson", "fill": "#d8dedc", "linewidth": .75},
             {"source": "context/source-GIB-adm0.geojson", "fill": "#f5f1e8", "linewidth": 1.25},
@@ -456,6 +468,7 @@ def generate(key: str) -> None:
         by_answer = {feature["answer"]: feature for feature in features}
         features = [by_answer[answer] for answer in config["order"]]
     component_insets = config.get("component_insets", [])
+    detail_insets = config.get("detail_insets", [])
     full_inset_answers = {spec["feature"] for spec in component_insets if "max_x_below" not in spec}
 
     def ring_in_component_inset(feature: dict, ring: list[list[float]]) -> bool:
@@ -692,7 +705,8 @@ def generate(key: str) -> None:
                 if not config.get("hide_component_inset_names"):
                     inset_ax.text(.5,.025,spec["label"],transform=inset_ax.transAxes,ha="center",va="bottom",
                                   fontsize=8.5,fontweight="bold",color="#46585d")
-        if inset_feature is not None:
+        show_figure_inset = inset_feature is not None
+        if show_figure_inset:
             # Keep the remote archipelago out of the main geographic extent.
             # A compact figure-level inset reserves only the lower-left space
             # actually needed by the islands, their number and their border.
@@ -726,12 +740,65 @@ def generate(key: str) -> None:
             inset_ax.set_xticks([]); inset_ax.set_yticks([])
             for spine in inset_ax.spines.values():
                 spine.set_color("#607176"); spine.set_linewidth(1.0); spine.set_linestyle((0, (5, 4)))
-            inset_ax.text(.5, .025, "Canary Islands", transform=inset_ax.transAxes,
-                          ha="center", va="bottom", fontsize=8.5, fontweight="bold", color="#46585d")
+            if not (target is None and labels is None and
+                    config.get("hide_figure_inset_caption_on_reference")):
+                inset_ax.text(.5, .025, "Canary Islands", transform=inset_ax.transAxes,
+                              ha="center", va="bottom", fontsize=8.5,
+                              fontweight="bold", color="#46585d")
+        if detail_insets:
+            # These panels enlarge tiny first-level divisions without moving
+            # or inflating their canonical geometry on the main map. Their
+            # captions remain anonymous on question/reference artwork so the
+            # panel itself does not disclose the answer.
+            panel_width = .145
+            panel_gap = .025
+            panel_start = .36
+            for panel_index, spec in enumerate(detail_insets):
+                feature = next(item for item in features if item["answer"] == spec["feature"])
+                # The source may include extremely small detached rocks or
+                # outlying Spanish possessions in the same multipolygon. The
+                # detail panel represents the named city's principal landmass;
+                # use its largest component so those distant points cannot
+                # shrink the city to an unreadable dot.
+                feature_rings = rings(feature["geometry"])
+                detail_rings = [max(feature_rings, key=polygon_area)]
+                detail_points = [point for ring in detail_rings for point in ring]
+                detail_min_x, detail_max_x = min(p[0] for p in detail_points), max(p[0] for p in detail_points)
+                detail_min_y, detail_max_y = min(p[1] for p in detail_points), max(p[1] for p in detail_points)
+                detail_width = detail_max_x - detail_min_x
+                detail_height = detail_max_y - detail_min_y
+                detail_ax = fig.add_axes([
+                    panel_start + panel_index * (panel_width + panel_gap), .04, panel_width, .17
+                ], facecolor="#eee9df")
+                selected = feature["answer"] == target
+                fill = "#e98255" if selected else (colors[feature["answer"]] if target is None else "#dce1df")
+                for ring in detail_rings:
+                    detail_ax.add_patch(Polygon(display_ring(ring), closed=True, facecolor=fill,
+                                                edgecolor="#304247", linewidth=1.0))
+                if labels is not None:
+                    detail_index = features.index(feature) + 1
+                    detail_ax.text((detail_min_x + detail_max_x) / 2, (detail_min_y + detail_max_y) / 2,
+                                   str(detail_index), ha="center", va="center", fontsize=15,
+                                   fontweight="bold", color="#142429",
+                                   bbox=dict(boxstyle="round,pad=.16", facecolor="#fffdf4",
+                                             alpha=.9, linewidth=0), zorder=20)
+                pad_x = max(detail_width * .20, detail_height * .10)
+                pad_y = max(detail_height * .20, detail_width * .10)
+                detail_ax.set_xlim(detail_min_x - pad_x, detail_max_x + pad_x)
+                detail_ax.set_ylim(detail_min_y - pad_y, detail_max_y + pad_y)
+                detail_ax.set_aspect("equal")
+                detail_ax.set_xticks([]); detail_ax.set_yticks([])
+                for spine in detail_ax.spines.values():
+                    spine.set_color("#607176"); spine.set_linewidth(1.0); spine.set_linestyle((0, (5, 4)))
+                caption = feature["answer"] if title == feature["answer"] or labels == "name" else "Enlarged detail"
+                detail_ax.text(.5, .025, caption, transform=detail_ax.transAxes,
+                               ha="center", va="bottom", fontsize=8.0,
+                               fontweight="bold", color="#46585d")
         count_label = config.get("count_label", f"{len(features)} {config['unit']}s")
         if not config.get("hide_footer"):
             fig.text(.5,.014,f"{count_label} • north is up",ha="center",fontsize=7,color="#46585d")
-        if labels!="name" and inset_feature is None and not component_insets: fig.tight_layout(rect=(0,.03,1,.97))
+        if labels!="name" and inset_feature is None and not component_insets and not detail_insets:
+            fig.tight_layout(rect=(0,.03,1,.97))
         path.parent.mkdir(parents=True,exist_ok=True); fig.savefig(path,bbox_inches="tight",facecolor="#f5f1e8"); plt.close(fig)
 
     split.mkdir(parents=True,exist_ok=True)

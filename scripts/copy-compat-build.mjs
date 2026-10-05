@@ -136,6 +136,7 @@ await cp("packages/geography/data/vietnam-provinces", "dist/packages/geography/d
 await cp("packages/geography/data/korea-provinces", "dist/packages/geography/data/korea-provinces", { recursive: true });
 await cp("packages/geography/data/netherlands-provinces", "dist/packages/geography/data/netherlands-provinces", { recursive: true });
 await cp("packages/geography/data/germany-states", "dist/packages/geography/data/germany-states", { recursive: true });
+await cp("packages/geography/data/switzerland-language", "dist/packages/geography/data/switzerland-language", { recursive: true });
 for (const directory of [
   "united-kingdom-divisions", "belgium-regions", "belgium-provinces", "france-divisions", "spain-divisions", "italy-regions", "russian-federation-divisions", "russian-federal-districts",
   "china-divisions", "china-roc-divisions", "india-divisions",
