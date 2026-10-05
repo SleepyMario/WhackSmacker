@@ -699,6 +699,34 @@ test("Korean General exposes the validated Korea maps in Korean", () => {
   assert.match(topography.children[5].label, /남부/u);
 });
 
+test("Vietnamese General exposes the validated Vietnam maps in Vietnamese", () => {
+  const colours = { id: "vi:colours", label: "Colours I", kind: "review-source", packageId: "new.colours", itemCount: 60 };
+  const result = languageSubmenuSkeleton({
+    id: "languages", label: "Languages", kind: "category", children: [{
+      id: "vietnamese", label: "Vietnamese", kind: "package", packageId: "com.sleepymario.language.vietnamese", children: [{
+        id: "vi:decks", label: "Decks", kind: "category", children: [{
+          id: "vi:deck-family:general", label: "General", kind: "category", children: [colours]
+        }]
+      }]
+    }]
+  });
+  const general = result.children[0].children[0].children[0];
+  assert.equal(general.children[0], colours);
+  const topography = general.children.find((node) => node.label === "Topography");
+  assert.ok(topography);
+  assert.equal(topography.children[0].packageId, "com.sleepymario.language.vietnamese.general.topography-main-vocabulary");
+  assert.equal(topography.children[0].itemCount, 70);
+  assert.deepEqual(topography.children.slice(1).map((node) => node.commandPath[1]), [
+    "vietnamese-provincial-divisions-easy", "vietnamese-provincial-divisions-hard",
+    "vietnamese-provincial-divisions-north-easy", "vietnamese-provincial-divisions-north-hard",
+    "vietnamese-provincial-divisions-central-easy", "vietnamese-provincial-divisions-central-hard",
+    "vietnamese-provincial-divisions-south-easy", "vietnamese-provincial-divisions-south-hard"
+  ]);
+  assert.match(topography.children[3].label, /Miền Bắc/u);
+  assert.match(topography.children[5].label, /Miền Trung/u);
+  assert.match(topography.children[7].label, /Miền Nam/u);
+});
+
 test("123Vietnamese Custom lessons stay grouped and ordered by Roman numeral", () => {
   const titles = [
     "Tên tôi là Peter",
@@ -2799,6 +2827,30 @@ test("Korean General geography uses language-scoped progress identities", () => 
       const expectedCards = mode === "easy" ? count * 2 : count;
       const region = command.endsWith("-north") ? "north-" : command.endsWith("-south") ? "south-" : "";
       const packageId = `com.sleepymario.language.korean.korea-provincial-divisions-${region}${mode}`;
+      const dueState = {
+        ...createInitialReviewState({ packageId, packageVersion: "0.1.0", itemId: firstItemId }, "2026-10-01T00:00:00Z"),
+        lastReviewedAt: "2026-10-01T00:00:00Z", reviewCount: 1, intervalDays: 1, status: "review"
+      };
+      const due = markGeographyDeckReviewStatuses(tree, [dueState], "en-US", "2026-10-03T00:00:00Z");
+      assert.equal(due.children[0].reviewStatus, "has_cards_to_review");
+      assert.equal(due.children[0].dueCardCount, expectedCards);
+    }
+  }
+});
+
+test("Vietnamese General geography uses language-scoped progress identities", () => {
+  for (const [command, count, firstItemId] of [
+    ["vietnamese-provincial-divisions", 34, "cao-bang-highlight"],
+    ["vietnamese-provincial-divisions-north", 15, "cao-bang-highlight"],
+    ["vietnamese-provincial-divisions-central", 11, "thanh-hoa-highlight"],
+    ["vietnamese-provincial-divisions-south", 8, "dong-nai-highlight"]
+  ]) {
+    for (const mode of ["easy", "hard"]) {
+      const node = { id: `vi:${command}:${mode}`, label: `${command} ${mode}`, kind: "command", commandPath: ["geography", `${command}-${mode}`] };
+      const tree = { id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [node] };
+      const expectedCards = mode === "easy" ? count * 2 : count;
+      const region = command.endsWith("-north") ? "north-" : command.endsWith("-central") ? "central-" : command.endsWith("-south") ? "south-" : "";
+      const packageId = `com.sleepymario.language.vietnamese.vietnam-provincial-divisions-${region}${mode}`;
       const dueState = {
         ...createInitialReviewState({ packageId, packageVersion: "0.1.0", itemId: firstItemId }, "2026-10-01T00:00:00Z"),
         lastReviewedAt: "2026-10-01T00:00:00Z", reviewCount: 1, intervalDays: 1, status: "review"

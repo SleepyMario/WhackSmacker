@@ -43,3 +43,29 @@ test("Vietnam regional decks contain only their regional divisions and artwork",
     }
   }
 });
+
+test("Vietnamese Lingoland artwork mirrors every validated Vietnam map", async () => {
+  const languageRoot = new URL("language-vietnamese/", root);
+  const divisions = JSON.parse(await readFile(new URL("provinces.json", root), "utf8"));
+  await access(new URL("vietnam-provinces-numbered.png", languageRoot));
+  await access(new URL("vietnam-provinces-named.png", languageRoot));
+  await access(new URL("split/reference.png", languageRoot));
+  for (const division of divisions) {
+    const stem = division.id.replace(/-highlight$/, "");
+    await access(new URL(`split/${stem}-question.png`, languageRoot));
+    await access(new URL(`split/${stem}-answer.png`, languageRoot));
+  }
+  for (const slug of ["north", "central", "south"]) {
+    const regionRoot = new URL(`regions/${slug}/`, root);
+    const localizedRoot = new URL(`regions/${slug}/`, languageRoot);
+    const regional = JSON.parse(await readFile(new URL("provinces.json", regionRoot), "utf8"));
+    await access(new URL("provinces-numbered.png", localizedRoot));
+    await access(new URL("provinces-named.png", localizedRoot));
+    await access(new URL("split/reference.png", localizedRoot));
+    for (const division of regional) {
+      const stem = division.id.replace(/-highlight$/, "");
+      await access(new URL(`split/${stem}-question.png`, localizedRoot));
+      await access(new URL(`split/${stem}-answer.png`, localizedRoot));
+    }
+  }
+});

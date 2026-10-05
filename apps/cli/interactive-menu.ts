@@ -1137,6 +1137,13 @@ function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | un
       hard
     );
   }
+  if (id === `vietnamese-provincial-divisions-${hard ? "hard" : "easy"}`) {
+    return geographyReviewTarget(
+      `com.sleepymario.language.vietnamese.vietnam-provincial-divisions-${hard ? "hard" : "easy"}`,
+      loadGeographyCountryMetadata("vietnam-provinces").map(item => item.id),
+      hard
+    );
+  }
   const vietnamRegion = vietnamRegionDecks.find(candidate => id === `vietnam-provincial-divisions-${candidate.slug}-${hard ? "hard" : "easy"}`);
   if (vietnamRegion !== undefined) {
     return geographyReviewTarget(
@@ -1158,6 +1165,14 @@ function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | un
     return geographyReviewTarget(
       `com.sleepymario.language.korean.korea-provincial-divisions-${koreanRegion.slug}-${hard ? "hard" : "easy"}`,
       loadGeographyCountryMetadata(`korea-provinces/regions/${koreanRegion.slug}`).map(item => item.id),
+      hard
+    );
+  }
+  const vietnameseRegion = vietnamRegionDecks.find(candidate => id === `vietnamese-provincial-divisions-${candidate.slug}-${hard ? "hard" : "easy"}`);
+  if (vietnameseRegion !== undefined) {
+    return geographyReviewTarget(
+      `com.sleepymario.language.vietnamese.vietnam-provincial-divisions-${vietnameseRegion.slug}-${hard ? "hard" : "easy"}`,
+      loadGeographyCountryMetadata(`vietnam-provinces/regions/${vietnameseRegion.slug}`).map(item => item.id),
       hard
     );
   }
@@ -2869,6 +2884,38 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                       previewText: mode === "easy"
                         ? `${region.count * 2} questions covering ${region.count} divisions in Korean.`
                         : `${region.count} highlighted divisions. Type each name in Korean.`
+                    })))
+                  ];
+                  return { ...deckType, children: [
+                    ...(current?.children ?? []).filter(node => !node.id.includes(":topography")),
+                    { id: `${deckType.id}:topography`, label: "Topography", kind: "category" as const, children: topographyChildren }
+                  ] };
+                }
+                if (language.packageId === "com.sleepymario.language.vietnamese" || language.moduleId === "com.sleepymario.language.vietnamese") {
+                  const current = keepNewGeneralDecks(deckType);
+                  const topographyChildren = [
+                    {
+                      id: `${deckType.id}:topography-main-vocabulary`, label: "Topography - Main Vocabulary", kind: "review-source" as const,
+                      packageId: "com.sleepymario.language.vietnamese.general.topography-main-vocabulary", packageVersion: "0.1.0", packageLabel: "Vietnamese", sourcePath: "cards.tsv", itemCount: 70,
+                      contentDataDir: join(__dirname, "../../../.local-content/vietnamese-topography")
+                    },
+                    ...(["easy", "hard"] as const).map(mode => ({
+                      id: `${deckType.id}:vietnamese-provincial-divisions-${mode}`,
+                      label: `Provincial-level Divisions - All - ${mode === "easy" ? "Easy" : "Hard"}`,
+                      kind: "command" as const,
+                      commandPath: ["geography", `vietnamese-provincial-divisions-${mode}`], commandArgs: [],
+                      previewText: mode === "easy"
+                        ? "68 questions covering Vietnam's 34 current provincial-level divisions, using Vietnamese names."
+                        : "34 highlighted provincial-level divisions. Type each name in Vietnamese."
+                    })),
+                    ...vietnamRegionDecks.flatMap(region => (["easy", "hard"] as const).map(mode => ({
+                      id: `${deckType.id}:vietnamese-provincial-divisions-${region.slug}-${mode}`,
+                      label: `Provincial-level Divisions - ${region.vietnamese} - ${mode === "easy" ? "Easy" : "Hard"}`,
+                      kind: "command" as const,
+                      commandPath: ["geography", `vietnamese-provincial-divisions-${region.slug}-${mode}`], commandArgs: [],
+                      previewText: mode === "easy"
+                        ? `${region.count * 2} questions covering ${region.count} divisions in Vietnamese.`
+                        : `${region.count} highlighted divisions. Type each name in Vietnamese.`
                     })))
                   ];
                   return { ...deckType, children: [

@@ -59,6 +59,16 @@ export const geographyModule: DomainModule = {
       run: async () => { await runContinentsEasy({ dataset: "vietnam", vietnamRegion: region.slug, mode }); }
     });
     for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `vietnamese-provincial-divisions-${mode}`],
+      summary: `Vietnam provincial-level divisions in Vietnamese (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "vietnam", mode, nameScript: "vietnamese" }); }
+    });
+    for (const region of vietnamRegionDecks) for (const mode of ["easy", "hard"] as const) context.cli.register({
+      path: ["geography", `vietnamese-provincial-divisions-${region.slug}-${mode}`],
+      summary: `Vietnam ${region.label} provincial-level divisions in Vietnamese (${mode})`,
+      run: async () => { await runContinentsEasy({ dataset: "vietnam", vietnamRegion: region.slug, mode, nameScript: "vietnamese" }); }
+    });
+    for (const mode of ["easy", "hard"] as const) context.cli.register({
       path: ["geography", `korea-provincial-divisions-${mode}`],
       summary: `Korea provincial-level divisions (${mode})`,
       run: async () => { await runContinentsEasy({ dataset: "korea", mode }); }

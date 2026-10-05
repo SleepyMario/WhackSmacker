@@ -57,6 +57,12 @@ label_callouts = {
     "Cần Thơ": (109.65, 9.65),
 }
 
+# A few compact metropolitan shapes need a deliberate point inside the region
+# so their leader line does not appear to stop at a neighbouring border.
+label_anchor_overrides = {
+    "Hồ Chí Minh": (106.62, 10.82),
+}
+
 def visible_parts(province, view_extent=extent):
     result = []
     for ring in province["polygons"]:
@@ -92,7 +98,8 @@ def subset_extent(subset):
 
 def draw_map(path: Path, target=None, labels=None, title="Vietnam — Provincial-level Divisions",
              subset=None, view_extent=extent, legend_columns=2, landscape=False,
-             direct_canvas=False):
+             direct_canvas=False, question_title="Which provincial-level division is highlighted?",
+             footer="Current 34-unit structure (effective 1 July 2025). Remote offshore islands omitted from this learning view."):
     displayed = provinces if subset is None else subset
     if direct_canvas:
         if landscape:
@@ -121,9 +128,11 @@ def draw_map(path: Path, target=None, labels=None, title="Vietnam — Provincial
         for ring in visible_parts(province, view_extent):
             ax.add_patch(Polygon(ring, closed=True, facecolor=fill, edgecolor=edge, linewidth=1.25 if selected else .45))
     if labels:
-        label_font_size = 17 if len(displayed) <= 15 else 14
+        label_font_size = 24 if len(displayed) <= 8 else 17 if len(displayed) <= 15 else 14
         for index, province in enumerate(displayed, 1):
             x, y = label_point(province, view_extent)
+            if len(displayed) <= 8:
+                x, y = label_anchor_overrides.get(province["name"], (x, y))
             if not (view_extent[0] <= x <= view_extent[1] and view_extent[2] <= y <= view_extent[3]):
                 continue
             if province["name"] in label_callouts:
@@ -140,7 +149,7 @@ def draw_map(path: Path, target=None, labels=None, title="Vietnam — Provincial
     if labels == "name":
         rows = (len(displayed) + legend_columns - 1) // legend_columns
         legend_x = .75 if landscape and legend_columns == 1 else .72 if legend_columns == 1 else .72
-        legend_font_size = 12 if len(displayed) <= 15 else 9
+        legend_font_size = 16 if len(displayed) <= 8 else 12 if len(displayed) <= 15 else 9
         for index, province in enumerate(displayed, 1):
             column = (index - 1) // rows
             row = (index - 1) % rows
@@ -149,7 +158,7 @@ def draw_map(path: Path, target=None, labels=None, title="Vietnam — Provincial
                      fontsize=legend_font_size, weight="bold", color="#182f38")
     title_font_size = 19 if len(displayed) <= 15 else 17
     fig.text(.5, .97, title, ha="center", va="top", fontsize=title_font_size, color="#243e48", weight="bold")
-    fig.text(.5, .025, "Current 34-unit structure (effective 1 July 2025). Remote offshore islands omitted from this learning view.",
+    fig.text(.5, .025, footer,
              ha="center", fontsize=6.5, color="#60747b")
     fig.savefig(path, dpi=125)
     plt.close(fig)
@@ -199,3 +208,44 @@ for region_slug, (region_label, region_provinces) in regions.items():
                  direct_canvas=True)
     (region_dir / "provinces.json").write_text(
         json.dumps(region_metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+# Lingoland Vietnamese reuses the validated geometry and label placement, with
+# only learner-facing artwork text localized. This keeps WtW and Lingoland maps
+# visually identical while preserving independent packages and progress.
+VI_DATA = DATA / "language-vietnamese"
+VI_FOOTER = "Cơ cấu 34 đơn vị hiện hành (có hiệu lực từ ngày 1 tháng 7 năm 2025). Không hiển thị các đảo xa bờ trong bản đồ học tập này."
+VI_QUESTION = "Đơn vị hành chính cấp tỉnh nào được tô màu?"
+VI_DATA.mkdir(parents=True, exist_ok=True)
+vi_split = VI_DATA / "split"
+vi_split.mkdir(parents=True, exist_ok=True)
+draw_map(vi_split / "reference.png", title="Việt Nam — Các đơn vị hành chính cấp tỉnh", direct_canvas=True, footer=VI_FOOTER)
+draw_map(VI_DATA / "vietnam-provinces-numbered.png", labels="number", title="Việt Nam — Các đơn vị hành chính cấp tỉnh", direct_canvas=True, footer=VI_FOOTER)
+draw_map(VI_DATA / "vietnam-provinces-named.png", labels="name", title="Việt Nam — Các đơn vị hành chính cấp tỉnh", direct_canvas=True, footer=VI_FOOTER)
+for province in provinces:
+    stem = slug(province["name"])
+    draw_map(vi_split / f"{stem}-question.png", target=province["id"], title=VI_QUESTION, direct_canvas=True, footer=VI_FOOTER)
+    draw_map(vi_split / f"{stem}-answer.png", target=province["id"], title=province["name"], direct_canvas=True, footer=VI_FOOTER)
+
+vi_region_labels = {"north": "Miền Bắc", "central": "Miền Trung", "south": "Miền Nam"}
+for region_slug, (_, region_provinces) in regions.items():
+    region_dir = VI_DATA / "regions" / region_slug
+    region_split = region_dir / "split"
+    region_split.mkdir(parents=True, exist_ok=True)
+    region_extent = subset_extent(region_provinces)
+    region_title = f"Việt Nam — {vi_region_labels[region_slug]}"
+    landscape = region_slug in {"north", "south"}
+    draw_map(region_split / "reference.png", title=region_title, subset=region_provinces,
+             view_extent=region_extent, landscape=landscape, direct_canvas=True, footer=VI_FOOTER)
+    draw_map(region_dir / "provinces-numbered.png", labels="number", title=region_title,
+             subset=region_provinces, view_extent=region_extent, landscape=landscape, direct_canvas=True, footer=VI_FOOTER)
+    draw_map(region_dir / "provinces-named.png", labels="name", title=region_title,
+             subset=region_provinces, view_extent=region_extent, legend_columns=1, landscape=landscape,
+             direct_canvas=True, footer=VI_FOOTER)
+    for province in region_provinces:
+        stem = slug(province["name"])
+        draw_map(region_split / f"{stem}-question.png", target=province["id"], title=VI_QUESTION,
+                 subset=region_provinces, view_extent=region_extent, landscape=landscape,
+                 direct_canvas=True, footer=VI_FOOTER)
+        draw_map(region_split / f"{stem}-answer.png", target=province["id"], title=province["name"],
+                 subset=region_provinces, view_extent=region_extent, landscape=landscape,
+                 direct_canvas=True, footer=VI_FOOTER)
