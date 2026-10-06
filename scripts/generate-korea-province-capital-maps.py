@@ -8,6 +8,8 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.path import Path as MatplotlibPath
+from matplotlib.patches import PathPatch
 from matplotlib.patches import Polygon as PatchPolygon
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,16 +91,33 @@ def bounds(feature):
     )
 
 
-def draw_geometry(ax, feature, fill, linewidth=0.8, zorder=2):
+def province_clip_path(axis, feature):
+    paths = []
     for ring in outer_rings(feature):
-        ax.add_patch(PatchPolygon(
+        vertices = list(ring)
+        if vertices[0] != vertices[-1]:
+            vertices.append(vertices[0])
+        codes = [MatplotlibPath.MOVETO] + [MatplotlibPath.LINETO] * (len(vertices) - 2) + [MatplotlibPath.CLOSEPOLY]
+        paths.append(MatplotlibPath(vertices, codes))
+    path = paths[0] if len(paths) == 1 else MatplotlibPath.make_compound_path(*paths)
+    patch = PathPatch(path, transform=axis.transData, facecolor="none", edgecolor="none")
+    axis.add_patch(patch)
+    return patch
+
+
+def draw_geometry(ax, feature, fill, linewidth=0.8, zorder=2, clip_path=None):
+    for ring in outer_rings(feature):
+        patch = PatchPolygon(
             ring,
             closed=True,
             facecolor=fill,
             edgecolor=BORDER,
             linewidth=linewidth,
             zorder=zorder,
-        ))
+        )
+        if clip_path is not None:
+            patch.set_clip_path(clip_path)
+        ax.add_patch(patch)
 
 
 def assigned_adm2(adm1_features, adm2_features):
@@ -130,21 +149,24 @@ def render(row, province, subdivisions):
         figure = plt.figure(figsize=(16, 10), dpi=100, facecolor=SEA)
         axis = figure.add_axes([0.035, 0.10, 0.93, 0.82], facecolor=SEA)
         draw_geometry(axis, province, PROVINCE_FILL if separate_capital else CAPITAL_FILL, 1.05, 1)
+        clip_path = province_clip_path(axis, province)
 
         # Internal boundaries remain visible, while the capital municipality is
         # laid over the province in the same coral used by the Japanese maps.
         for feature in subdivisions:
             for ring in outer_rings(feature):
-                axis.add_patch(PatchPolygon(
+                boundary = PatchPolygon(
                     ring,
                     closed=True,
                     facecolor="none",
                     edgecolor=BORDER,
                     linewidth=0.38,
                     zorder=2,
-                ))
+                )
+                boundary.set_clip_path(clip_path)
+                axis.add_patch(boundary)
         for feature in capital_matches:
-            draw_geometry(axis, feature, CAPITAL_FILL, 0.8, 3)
+            draw_geometry(axis, feature, CAPITAL_FILL, 0.8, 3, clip_path)
 
         x0, y0, x1, y1 = bounds(province)
         dx = max(x1 - x0, 0.02)
