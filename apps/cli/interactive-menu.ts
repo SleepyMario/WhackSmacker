@@ -3830,6 +3830,11 @@ function compareExplicitTopicLeafLabels(left: LanguageTreeNode, right: LanguageT
   if (leftLesson !== undefined && rightLesson !== undefined) {
     return leftLesson - rightLesson || left.id.localeCompare(right.id);
   }
+  const leftRomanNumeral = standaloneRomanNumeralLabel(left.label);
+  const rightRomanNumeral = standaloneRomanNumeralLabel(right.label);
+  if (leftRomanNumeral !== undefined && rightRomanNumeral !== undefined) {
+    return leftRomanNumeral - rightRomanNumeral || left.id.localeCompare(right.id);
+  }
   return left.label.localeCompare(right.label) || left.id.localeCompare(right.id);
 }
 
@@ -3843,6 +3848,12 @@ function numberedLessonLabel(label: string): number | undefined {
   const match = label.match(/^Lesson (I|II|III|IV|V|VI|VII|VIII|IX|X)(?: - .+)?$/u);
   if (match === null) return undefined;
   return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"].indexOf(match[1]) + 1;
+}
+
+function standaloneRomanNumeralLabel(label: string): number | undefined {
+  const numerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+  const index = numerals.indexOf(label);
+  return index < 0 ? undefined : index + 1;
 }
 
 function newestInstalledPackage(records: readonly InstalledPackageRecord[]): InstalledPackageRecord | undefined {

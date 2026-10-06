@@ -59,6 +59,11 @@ test("content package generator exposes the supported local package targets", ()
       ["chinese-traditional-radicals-frequency-iii", "com.sleepymario.language.chinese-traditional.radicals.frequency-iii"],
       ["chinese-traditional-radicals-frequency-iv", "com.sleepymario.language.chinese-traditional.radicals.frequency-iv"],
       ["chinese-traditional-radicals-frequency-v", "com.sleepymario.language.chinese-traditional.radicals.frequency-v"],
+      ["chinese-traditional-radicals-frequency-vi", "com.sleepymario.language.chinese-traditional.radicals.frequency-vi"],
+      ["chinese-traditional-radicals-frequency-vii", "com.sleepymario.language.chinese-traditional.radicals.frequency-vii"],
+      ["chinese-traditional-radicals-frequency-viii", "com.sleepymario.language.chinese-traditional.radicals.frequency-viii"],
+      ["chinese-traditional-radicals-frequency-ix", "com.sleepymario.language.chinese-traditional.radicals.frequency-ix"],
+      ["chinese-traditional-radicals-frequency-x", "com.sleepymario.language.chinese-traditional.radicals.frequency-x"],
       ["chinese-simplified-radicals", "com.sleepymario.language.chinese-simplified.radicals"],
       ["chinese-simplified-traditional-level-1", "com.sleepymario.language.chinese-simplified-traditional.level-1"],
       ["chinese-simplified-traditional-level-1-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-1-vocabulary"],
@@ -339,6 +344,176 @@ test("Traditional Chinese Radicals V tests common-character frequency-order posi
     assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
     assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["貓", "豸"]);
     assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["箱", "竹"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals VI tests common-character frequency-order positions 1001-1200 one-way", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-vi");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "VI");
+  assert.equal(target?.topicDeck?.displayName, "VI");
+  assert.equal(target?.topicDeck?.unitStart, 1001);
+  assert.equal(target?.topicDeck?.unitEnd, 1200);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-vi-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-vi",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-vi.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["堆", "土"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["退", "辵"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals VII tests common-character frequency-order positions 1201-1400 one-way", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-vii");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "VII");
+  assert.equal(target?.topicDeck?.displayName, "VII");
+  assert.equal(target?.topicDeck?.unitStart, 1201);
+  assert.equal(target?.topicDeck?.unitEnd, 1400);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-vii-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-vii",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-vii.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["徒", "彳"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["螺", "虫"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals VIII tests common-character frequency-order positions 1401-1600 one-way", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-viii");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "VIII");
+  assert.equal(target?.topicDeck?.displayName, "VIII");
+  assert.equal(target?.topicDeck?.unitStart, 1401);
+  assert.equal(target?.topicDeck?.unitEnd, 1600);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-viii-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-viii",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-viii.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["職", "耳"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["蘋", "艸"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals IX tests common-character frequency-order positions 1601-1800 one-way", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-ix");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "IX");
+  assert.equal(target?.topicDeck?.displayName, "IX");
+  assert.equal(target?.topicDeck?.unitStart, 1601);
+  assert.equal(target?.topicDeck?.unitEnd, 1800);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-ix-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-ix",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-ix.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["丙", "一"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["爪", "爪"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals X tests common-character frequency-order positions 1801-2000 one-way", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-x");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "X");
+  assert.equal(target?.topicDeck?.displayName, "X");
+  assert.equal(target?.topicDeck?.unitStart, 1801);
+  assert.equal(target?.topicDeck?.unitEnd, 2000);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-x-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-x",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-x.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["呂", "口"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["哎", "口"]);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

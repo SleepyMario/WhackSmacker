@@ -765,6 +765,17 @@ test("123Vietnamese Custom lessons stay grouped and ordered by Roman numeral", (
   ]);
 });
 
+test("standalone Roman-numeral topic decks stay in numeric order", () => {
+  const grouped = groupExplicitTopicMenuLeaves("com.sleepymario.language.chinese-traditional", "general", [
+    { topicId: "radicals", topicLabel: "Radicals", leaf: { id: "ix", label: "IX", kind: "review-source" } },
+    { topicId: "radicals", topicLabel: "Radicals", leaf: { id: "v", label: "V", kind: "review-source" } },
+    { topicId: "radicals", topicLabel: "Radicals", leaf: { id: "vii", label: "VII", kind: "review-source" } },
+    { topicId: "radicals", topicLabel: "Radicals", leaf: { id: "vi", label: "VI", kind: "review-source" } }
+  ]);
+
+  assert.deepEqual(grouped[0].children.map((node) => node.label), ["V", "VI", "VII", "IX"]);
+});
+
 test("paired Custom topic decks place each Vocabulary deck before its Sentences deck", () => {
   const grouped = groupExplicitTopicMenuLeaves("com.sleepymario.language.japanese", "custom", [{
     topicId: "japanese-shokyu-nihongo-shusaku",
