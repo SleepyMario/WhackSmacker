@@ -25,9 +25,24 @@ export const geographyModule: DomainModule = {
   providerFeatures: [],
   register(context) {
     context.cli.register({
+      path: ["geography", "japan-prefecture-capitals-vocabulary"],
+      summary: "Japan prefectural capitals vocabulary in both directions",
+      run: async () => { await runJapanPrefectureCapitals({ mode: "vocabulary" }); }
+    });
+    context.cli.register({
+      path: ["geography", "japan-prefecture-capitals-map-easy"],
+      summary: "Identify Japanese prefectural capitals from municipality maps with four choices",
+      run: async () => { await runJapanPrefectureCapitals({ mode: "map-easy" }); }
+    });
+    context.cli.register({
+      path: ["geography", "japan-prefecture-capitals-map-hard"],
+      summary: "Identify Japanese prefectural capitals from municipality maps by typing the answer",
+      run: async () => { await runJapanPrefectureCapitals({ mode: "map-hard" }); }
+    });
+    context.cli.register({
       path: ["geography", "japan-prefecture-capitals"],
-      summary: "Japan prefectural capitals in both directions",
-      run: async () => { await runJapanPrefectureCapitals(); }
+      summary: "Legacy alias for Japan prefectural-capitals vocabulary",
+      run: async () => { await runJapanPrefectureCapitals({ mode: "vocabulary" }); }
     });
     for (const mode of ["easy", "hard"] as const) context.cli.register({
       path: ["geography", `japanese-prefectures-${mode}`],

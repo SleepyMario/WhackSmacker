@@ -1099,12 +1099,20 @@ function geographyReviewTarget(packageId: string, highlightIds: readonly string[
 }
 
 function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | undefined {
-  if (id === "japan-prefecture-capitals") {
+  if (id === "japan-prefecture-capitals-vocabulary" || id === "japan-prefecture-capitals") {
     const itemIds = loadGeographyPrefectureMetadata().flatMap(prefecture => {
       const slug = prefecture.id.replace(/-highlight$/u, "");
       return [`${slug}-prefecture-to-capital`, `${slug}-capital-to-prefecture`];
     });
     return { packageId: "com.sleepymario.geography.japan-prefecture-capitals", packageVersion: "0.1.0", itemIds, count: itemIds.length };
+  }
+  if (id === "japan-prefecture-capitals-map-easy") {
+    const itemIds = loadGeographyPrefectureMetadata().map(prefecture => `${prefecture.id.replace(/-highlight$/u, "")}-capital-map`);
+    return { packageId: "com.sleepymario.geography.japan-prefecture-capitals-map-easy", packageVersion: "0.1.0", itemIds, count: itemIds.length };
+  }
+  if (id === "japan-prefecture-capitals-map-hard") {
+    const itemIds = loadGeographyPrefectureMetadata().map(prefecture => `${prefecture.id.replace(/-highlight$/u, "")}-capital-map`);
+    return { packageId: "com.sleepymario.geography.japan-prefecture-capitals-map-hard", packageVersion: "0.1.0", itemIds, count: itemIds.length };
   }
   const hard = id.endsWith("-hard");
   if (!hard && !id.endsWith("-easy")) return undefined;
@@ -3980,9 +3988,17 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
       commandPath: ["geography", "switzerland-divisions-hard"], commandArgs: [], launchTitle: "Cantons - All - Hard",
       previewText: "Cantons - All - Hard\n\nIdentify Switzerland's 26 cantons by typing their English names. Diacritics are optional."
     }] }, { id: `${id}:japan`, label: "Japan", kind: "category", previewText: "Japan", children: [{
-      id: `${id}:japan:prefecture-capitals`, label: "Prefecture Capitals", kind: "command",
-      commandPath: ["geography", "japan-prefecture-capitals"], commandArgs: [], launchTitle: "Prefecture Capitals",
-      previewText: "Prefecture Capitals\n\n94 bidirectional questions: identify each prefecture's capital and identify the prefecture belonging to each capital."
+      id: `${id}:japan:prefecture-capitals-vocabulary`, label: "Prefecture Capitals - Vocabulary", kind: "command",
+      commandPath: ["geography", "japan-prefecture-capitals-vocabulary"], commandArgs: [], launchTitle: "Prefecture Capitals - Vocabulary",
+      previewText: "Prefecture Capitals - Vocabulary\n\n94 bidirectional questions: identify each prefecture's capital and identify the prefecture belonging to each capital."
+    }, {
+      id: `${id}:japan:prefecture-capitals-map-easy`, label: "Prefecture Capitals - Map - Easy", kind: "command",
+      commandPath: ["geography", "japan-prefecture-capitals-map-easy"], commandArgs: [], launchTitle: "Prefecture Capitals - Map - Easy",
+      previewText: "Prefecture Capitals - Map - Easy\n\n47 visual questions with four choices: identify the prefectural capital or administrative seat highlighted within the prefecture's municipal boundaries. Tokyo highlights Shinjuku Ward."
+    }, {
+      id: `${id}:japan:prefecture-capitals-map-hard`, label: "Prefecture Capitals - Map - Hard", kind: "command",
+      commandPath: ["geography", "japan-prefecture-capitals-map-hard"], commandArgs: [], launchTitle: "Prefecture Capitals - Map - Hard",
+      previewText: "Prefecture Capitals - Map - Hard\n\n47 visual questions: type the prefectural capital or administrative seat highlighted within the prefecture's municipal boundaries. Tokyo highlights Shinjuku Ward."
     }, {
       id: `${id}:japan:prefectures-easy`, label: "Prefectures - All - Easy", kind: "command",
       commandPath: ["geography", "japan-prefectures-easy"], commandArgs: [], launchTitle: "Prefectures - All - Easy",
