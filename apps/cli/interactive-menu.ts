@@ -3851,7 +3851,11 @@ function numberedLessonLabel(label: string): number | undefined {
 }
 
 function standaloneRomanNumeralLabel(label: string): number | undefined {
-  const numerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+  const numerals = [
+    "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
+    "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX",
+    "XXI", "XXII", "XXIII", "XXIV", "XXV"
+  ];
   const index = numerals.indexOf(label);
   return index < 0 ? undefined : index + 1;
 }

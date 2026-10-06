@@ -1095,6 +1095,46 @@ const chineseScriptConversionTargets: readonly ContentPackageGeneratorTarget[] =
     unitEnd: 2000
   }
 }, {
+  id: "chinese-traditional-radicals-frequency-xi",
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.chinese-traditional.radicals.frequency-xi",
+  displayName: "Traditional Chinese Radicals XI",
+  description: "Traditional Chinese common-character frequency-order positions 2001–2200, tested one-way from character to Kangxi radical.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent" },
+  packageVersion: "1.0.0",
+  sourcePath: "review-content/chinese-traditional/radicals-frequency-xi",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "traditional", "radicals", "frequency", "character-to-radical", "one-way"],
+  topic: {
+    id: "traditional-chinese-radicals",
+    displayName: "Radicals",
+    deckDisplayName: "XI"
+  },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: {
+    id: "traditional-chinese-radicals-frequency-xi",
+    displayName: "XI",
+    outputFile: "traditional-chinese-radicals-frequency-xi.json",
+    unitStart: 2001,
+    unitEnd: 2200
+  }
+}, {
   id: "chinese-simplified-radicals",
   notesPolicy: "default",
   packageId: "com.sleepymario.language.chinese-simplified.radicals",
