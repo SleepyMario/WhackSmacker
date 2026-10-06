@@ -1,0 +1,425 @@
+[
+  {
+    "id": "hokkaido",
+    "prefectureEnglish": "Hokkaido",
+    "prefectureJapanese": "北海道",
+    "prefectureReading": "ほっかいどう",
+    "capitalEnglish": "Sapporo",
+    "capitalJapanese": "札幌市",
+    "capitalReading": "さっぽろし"
+  },
+  {
+    "id": "aomori",
+    "prefectureEnglish": "Aomori",
+    "prefectureJapanese": "青森県",
+    "prefectureReading": "あおもりけん",
+    "capitalEnglish": "Aomori",
+    "capitalJapanese": "青森市",
+    "capitalReading": "あおもりし"
+  },
+  {
+    "id": "iwate",
+    "prefectureEnglish": "Iwate",
+    "prefectureJapanese": "岩手県",
+    "prefectureReading": "いわてけん",
+    "capitalEnglish": "Morioka",
+    "capitalJapanese": "盛岡市",
+    "capitalReading": "もりおかし"
+  },
+  {
+    "id": "miyagi",
+    "prefectureEnglish": "Miyagi",
+    "prefectureJapanese": "宮城県",
+    "prefectureReading": "みやぎけん",
+    "capitalEnglish": "Sendai",
+    "capitalJapanese": "仙台市",
+    "capitalReading": "せんだいし"
+  },
+  {
+    "id": "akita",
+    "prefectureEnglish": "Akita",
+    "prefectureJapanese": "秋田県",
+    "prefectureReading": "あきたけん",
+    "capitalEnglish": "Akita",
+    "capitalJapanese": "秋田市",
+    "capitalReading": "あきたし"
+  },
+  {
+    "id": "yamagata",
+    "prefectureEnglish": "Yamagata",
+    "prefectureJapanese": "山形県",
+    "prefectureReading": "やまがたけん",
+    "capitalEnglish": "Yamagata",
+    "capitalJapanese": "山形市",
+    "capitalReading": "やまがたし"
+  },
+  {
+    "id": "fukushima",
+    "prefectureEnglish": "Fukushima",
+    "prefectureJapanese": "福島県",
+    "prefectureReading": "ふくしまけん",
+    "capitalEnglish": "Fukushima",
+    "capitalJapanese": "福島市",
+    "capitalReading": "ふくしまし"
+  },
+  {
+    "id": "ibaraki",
+    "prefectureEnglish": "Ibaraki",
+    "prefectureJapanese": "茨城県",
+    "prefectureReading": "いばらきけん",
+    "capitalEnglish": "Mito",
+    "capitalJapanese": "水戸市",
+    "capitalReading": "みとし"
+  },
+  {
+    "id": "tochigi",
+    "prefectureEnglish": "Tochigi",
+    "prefectureJapanese": "栃木県",
+    "prefectureReading": "とちぎけん",
+    "capitalEnglish": "Utsunomiya",
+    "capitalJapanese": "宇都宮市",
+    "capitalReading": "うつのみやし"
+  },
+  {
+    "id": "gunma",
+    "prefectureEnglish": "Gunma",
+    "prefectureJapanese": "群馬県",
+    "prefectureReading": "ぐんまけん",
+    "capitalEnglish": "Maebashi",
+    "capitalJapanese": "前橋市",
+    "capitalReading": "まえばしし"
+  },
+  {
+    "id": "saitama",
+    "prefectureEnglish": "Saitama",
+    "prefectureJapanese": "埼玉県",
+    "prefectureReading": "さいたまけん",
+    "capitalEnglish": "Saitama",
+    "capitalJapanese": "さいたま市",
+    "capitalReading": "さいたまし"
+  },
+  {
+    "id": "chiba",
+    "prefectureEnglish": "Chiba",
+    "prefectureJapanese": "千葉県",
+    "prefectureReading": "ちばけん",
+    "capitalEnglish": "Chiba",
+    "capitalJapanese": "千葉市",
+    "capitalReading": "ちばし"
+  },
+  {
+    "id": "tokyo",
+    "prefectureEnglish": "Tokyo",
+    "prefectureJapanese": "東京都",
+    "prefectureReading": "とうきょうと",
+    "capitalEnglish": "Shinjuku",
+    "capitalJapanese": "新宿区",
+    "capitalReading": "しんじゅくく"
+  },
+  {
+    "id": "kanagawa",
+    "prefectureEnglish": "Kanagawa",
+    "prefectureJapanese": "神奈川県",
+    "prefectureReading": "かながわけん",
+    "capitalEnglish": "Yokohama",
+    "capitalJapanese": "横浜市",
+    "capitalReading": "よこはまし"
+  },
+  {
+    "id": "niigata",
+    "prefectureEnglish": "Niigata",
+    "prefectureJapanese": "新潟県",
+    "prefectureReading": "にいがたけん",
+    "capitalEnglish": "Niigata",
+    "capitalJapanese": "新潟市",
+    "capitalReading": "にいがたし"
+  },
+  {
+    "id": "toyama",
+    "prefectureEnglish": "Toyama",
+    "prefectureJapanese": "富山県",
+    "prefectureReading": "とやまけん",
+    "capitalEnglish": "Toyama",
+    "capitalJapanese": "富山市",
+    "capitalReading": "とやまし"
+  },
+  {
+    "id": "ishikawa",
+    "prefectureEnglish": "Ishikawa",
+    "prefectureJapanese": "石川県",
+    "prefectureReading": "いしかわけん",
+    "capitalEnglish": "Kanazawa",
+    "capitalJapanese": "金沢市",
+    "capitalReading": "かなざわし"
+  },
+  {
+    "id": "fukui",
+    "prefectureEnglish": "Fukui",
+    "prefectureJapanese": "福井県",
+    "prefectureReading": "ふくいけん",
+    "capitalEnglish": "Fukui",
+    "capitalJapanese": "福井市",
+    "capitalReading": "ふくいし"
+  },
+  {
+    "id": "yamanashi",
+    "prefectureEnglish": "Yamanashi",
+    "prefectureJapanese": "山梨県",
+    "prefectureReading": "やまなしけん",
+    "capitalEnglish": "Kofu",
+    "capitalJapanese": "甲府市",
+    "capitalReading": "こうふし"
+  },
+  {
+    "id": "nagano",
+    "prefectureEnglish": "Nagano",
+    "prefectureJapanese": "長野県",
+    "prefectureReading": "ながのけん",
+    "capitalEnglish": "Nagano",
+    "capitalJapanese": "長野市",
+    "capitalReading": "ながのし"
+  },
+  {
+    "id": "gifu",
+    "prefectureEnglish": "Gifu",
+    "prefectureJapanese": "岐阜県",
+    "prefectureReading": "ぎふけん",
+    "capitalEnglish": "Gifu",
+    "capitalJapanese": "岐阜市",
+    "capitalReading": "ぎふし"
+  },
+  {
+    "id": "shizuoka",
+    "prefectureEnglish": "Shizuoka",
+    "prefectureJapanese": "静岡県",
+    "prefectureReading": "しずおかけん",
+    "capitalEnglish": "Shizuoka",
+    "capitalJapanese": "静岡市",
+    "capitalReading": "しずおかし"
+  },
+  {
+    "id": "aichi",
+    "prefectureEnglish": "Aichi",
+    "prefectureJapanese": "愛知県",
+    "prefectureReading": "あいちけん",
+    "capitalEnglish": "Nagoya",
+    "capitalJapanese": "名古屋市",
+    "capitalReading": "なごやし"
+  },
+  {
+    "id": "mie",
+    "prefectureEnglish": "Mie",
+    "prefectureJapanese": "三重県",
+    "prefectureReading": "みえけん",
+    "capitalEnglish": "Tsu",
+    "capitalJapanese": "津市",
+    "capitalReading": "つし"
+  },
+  {
+    "id": "shiga",
+    "prefectureEnglish": "Shiga",
+    "prefectureJapanese": "滋賀県",
+    "prefectureReading": "しがけん",
+    "capitalEnglish": "Otsu",
+    "capitalJapanese": "大津市",
+    "capitalReading": "おおつし"
+  },
+  {
+    "id": "kyoto",
+    "prefectureEnglish": "Kyoto",
+    "prefectureJapanese": "京都府",
+    "prefectureReading": "きょうとふ",
+    "capitalEnglish": "Kyoto",
+    "capitalJapanese": "京都市",
+    "capitalReading": "きょうとし"
+  },
+  {
+    "id": "osaka",
+    "prefectureEnglish": "Osaka",
+    "prefectureJapanese": "大阪府",
+    "prefectureReading": "おおさかふ",
+    "capitalEnglish": "Osaka",
+    "capitalJapanese": "大阪市",
+    "capitalReading": "おおさかし"
+  },
+  {
+    "id": "hyogo",
+    "prefectureEnglish": "Hyogo",
+    "prefectureJapanese": "兵庫県",
+    "prefectureReading": "ひょうごけん",
+    "capitalEnglish": "Kobe",
+    "capitalJapanese": "神戸市",
+    "capitalReading": "こうべし"
+  },
+  {
+    "id": "nara",
+    "prefectureEnglish": "Nara",
+    "prefectureJapanese": "奈良県",
+    "prefectureReading": "ならけん",
+    "capitalEnglish": "Nara",
+    "capitalJapanese": "奈良市",
+    "capitalReading": "ならし"
+  },
+  {
+    "id": "wakayama",
+    "prefectureEnglish": "Wakayama",
+    "prefectureJapanese": "和歌山県",
+    "prefectureReading": "わかやまけん",
+    "capitalEnglish": "Wakayama",
+    "capitalJapanese": "和歌山市",
+    "capitalReading": "わかやまし"
+  },
+  {
+    "id": "tottori",
+    "prefectureEnglish": "Tottori",
+    "prefectureJapanese": "鳥取県",
+    "prefectureReading": "とっとりけん",
+    "capitalEnglish": "Tottori",
+    "capitalJapanese": "鳥取市",
+    "capitalReading": "とっとりし"
+  },
+  {
+    "id": "shimane",
+    "prefectureEnglish": "Shimane",
+    "prefectureJapanese": "島根県",
+    "prefectureReading": "しまねけん",
+    "capitalEnglish": "Matsue",
+    "capitalJapanese": "松江市",
+    "capitalReading": "まつえし"
+  },
+  {
+    "id": "okayama",
+    "prefectureEnglish": "Okayama",
+    "prefectureJapanese": "岡山県",
+    "prefectureReading": "おかやまけん",
+    "capitalEnglish": "Okayama",
+    "capitalJapanese": "岡山市",
+    "capitalReading": "おかやまし"
+  },
+  {
+    "id": "hiroshima",
+    "prefectureEnglish": "Hiroshima",
+    "prefectureJapanese": "広島県",
+    "prefectureReading": "ひろしまけん",
+    "capitalEnglish": "Hiroshima",
+    "capitalJapanese": "広島市",
+    "capitalReading": "ひろしまし"
+  },
+  {
+    "id": "yamaguchi",
+    "prefectureEnglish": "Yamaguchi",
+    "prefectureJapanese": "山口県",
+    "prefectureReading": "やまぐちけん",
+    "capitalEnglish": "Yamaguchi",
+    "capitalJapanese": "山口市",
+    "capitalReading": "やまぐちし"
+  },
+  {
+    "id": "tokushima",
+    "prefectureEnglish": "Tokushima",
+    "prefectureJapanese": "徳島県",
+    "prefectureReading": "とくしまけん",
+    "capitalEnglish": "Tokushima",
+    "capitalJapanese": "徳島市",
+    "capitalReading": "とくしまし"
+  },
+  {
+    "id": "kagawa",
+    "prefectureEnglish": "Kagawa",
+    "prefectureJapanese": "香川県",
+    "prefectureReading": "かがわけん",
+    "capitalEnglish": "Takamatsu",
+    "capitalJapanese": "高松市",
+    "capitalReading": "たかまつし"
+  },
+  {
+    "id": "ehime",
+    "prefectureEnglish": "Ehime",
+    "prefectureJapanese": "愛媛県",
+    "prefectureReading": "えひめけん",
+    "capitalEnglish": "Matsuyama",
+    "capitalJapanese": "松山市",
+    "capitalReading": "まつやまし"
+  },
+  {
+    "id": "kochi",
+    "prefectureEnglish": "Kochi",
+    "prefectureJapanese": "高知県",
+    "prefectureReading": "こうちけん",
+    "capitalEnglish": "Kochi",
+    "capitalJapanese": "高知市",
+    "capitalReading": "こうちし"
+  },
+  {
+    "id": "fukuoka",
+    "prefectureEnglish": "Fukuoka",
+    "prefectureJapanese": "福岡県",
+    "prefectureReading": "ふくおかけん",
+    "capitalEnglish": "Fukuoka",
+    "capitalJapanese": "福岡市",
+    "capitalReading": "ふくおかし"
+  },
+  {
+    "id": "saga",
+    "prefectureEnglish": "Saga",
+    "prefectureJapanese": "佐賀県",
+    "prefectureReading": "さがけん",
+    "capitalEnglish": "Saga",
+    "capitalJapanese": "佐賀市",
+    "capitalReading": "さがし"
+  },
+  {
+    "id": "nagasaki",
+    "prefectureEnglish": "Nagasaki",
+    "prefectureJapanese": "長崎県",
+    "prefectureReading": "ながさきけん",
+    "capitalEnglish": "Nagasaki",
+    "capitalJapanese": "長崎市",
+    "capitalReading": "ながさきし"
+  },
+  {
+    "id": "kumamoto",
+    "prefectureEnglish": "Kumamoto",
+    "prefectureJapanese": "熊本県",
+    "prefectureReading": "くまもとけん",
+    "capitalEnglish": "Kumamoto",
+    "capitalJapanese": "熊本市",
+    "capitalReading": "くまもとし"
+  },
+  {
+    "id": "oita",
+    "prefectureEnglish": "Oita",
+    "prefectureJapanese": "大分県",
+    "prefectureReading": "おおいたけん",
+    "capitalEnglish": "Oita",
+    "capitalJapanese": "大分市",
+    "capitalReading": "おおいたし"
+  },
+  {
+    "id": "miyazaki",
+    "prefectureEnglish": "Miyazaki",
+    "prefectureJapanese": "宮崎県",
+    "prefectureReading": "みやざきけん",
+    "capitalEnglish": "Miyazaki",
+    "capitalJapanese": "宮崎市",
+    "capitalReading": "みやざきし"
+  },
+  {
+    "id": "kagoshima",
+    "prefectureEnglish": "Kagoshima",
+    "prefectureJapanese": "鹿児島県",
+    "prefectureReading": "かごしまけん",
+    "capitalEnglish": "Kagoshima",
+    "capitalJapanese": "鹿児島市",
+    "capitalReading": "かごしまし"
+  },
+  {
+    "id": "okinawa",
+    "prefectureEnglish": "Okinawa",
+    "prefectureJapanese": "沖縄県",
+    "prefectureReading": "おきなわけん",
+    "capitalEnglish": "Naha",
+    "capitalJapanese": "那覇市",
+    "capitalReading": "なはし"
+  }
+]

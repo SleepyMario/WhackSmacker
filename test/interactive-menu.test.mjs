@@ -894,6 +894,7 @@ test("module tree shows renamed learning categories without Games or legacy Cont
     "Yugoslavia (Former)"
   ]);
   assert.deepEqual(country("Japan").children.map((node) => node.label), [
+    "Prefecture Capitals",
     "Prefectures - All - Easy",
     "Prefectures - All - Hard",
     "Prefectures - Regions - Easy",

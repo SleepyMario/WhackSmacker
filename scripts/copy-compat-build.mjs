@@ -131,6 +131,7 @@ await cp("packages/geography/data/world-seven-continents.png", "dist/packages/ge
 await cp("packages/geography/data/paired", "dist/packages/geography/data/paired", { recursive: true });
 
 await cp("packages/geography/data/japan-hard", "dist/packages/geography/data/japan-hard", { recursive: true });
+await cp("packages/geography/data/japan-prefecture-capitals", "dist/packages/geography/data/japan-prefecture-capitals", { recursive: true });
 await cp("packages/geography/data/japan-regions", "dist/packages/geography/data/japan-regions", { recursive: true });
 await cp("packages/geography/data/vietnam-provinces", "dist/packages/geography/data/vietnam-provinces", { recursive: true });
 await cp("packages/geography/data/korea-provinces", "dist/packages/geography/data/korea-provinces", { recursive: true });

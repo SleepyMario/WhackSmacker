@@ -2,6 +2,7 @@ import type { DomainModule } from "../core";
 import { countryDivisionDecks, koreaRegionDecks, runContinentsEasy, vietnamRegionDecks } from "./continents-easy";
 import { runContinentReview } from "./continent-review";
 import { japanRegionDecks } from "./japan-regions";
+import { runJapanPrefectureCapitals } from "./japan-prefecture-capitals";
 
 export interface GeographyDataset {
   readonly id: string;
@@ -23,6 +24,11 @@ export const geographyModule: DomainModule = {
   displayName: "Wandering the World",
   providerFeatures: [],
   register(context) {
+    context.cli.register({
+      path: ["geography", "japan-prefecture-capitals"],
+      summary: "Japan prefectural capitals in both directions",
+      run: async () => { await runJapanPrefectureCapitals(); }
+    });
     for (const mode of ["easy", "hard"] as const) context.cli.register({
       path: ["geography", `japanese-prefectures-${mode}`],
       summary: `Japanese prefectures in kanji (${mode})`,

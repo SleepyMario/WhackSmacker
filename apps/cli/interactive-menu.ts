@@ -1099,6 +1099,13 @@ function geographyReviewTarget(packageId: string, highlightIds: readonly string[
 }
 
 function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | undefined {
+  if (id === "japan-prefecture-capitals") {
+    const itemIds = loadGeographyPrefectureMetadata().flatMap(prefecture => {
+      const slug = prefecture.id.replace(/-highlight$/u, "");
+      return [`${slug}-prefecture-to-capital`, `${slug}-capital-to-prefecture`];
+    });
+    return { packageId: "com.sleepymario.geography.japan-prefecture-capitals", packageVersion: "0.1.0", itemIds, count: itemIds.length };
+  }
   const hard = id.endsWith("-hard");
   if (!hard && !id.endsWith("-easy")) return undefined;
   if (id === `continents-${hard ? "hard" : "easy"}`) {
@@ -2824,6 +2831,10 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                           id: `${deckType.id}:topography-main-vocabulary`, label: "Topography - Main Vocabulary", kind: "review-source" as const,
                           packageId: "com.sleepymario.language.japanese.general.topography-main-vocabulary", packageVersion: "0.1.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 105,
                           contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
+                        }, {
+                          id: `${deckType.id}:prefecture-capitals-vocabulary`, label: "Prefecture Capitals Vocabulary", kind: "review-source" as const,
+                          packageId: "com.sleepymario.language.japanese.general.prefecture-capitals-vocabulary", packageVersion: "0.1.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 282,
+                          contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
                         }, ...(["easy", "hard"] as const).map(mode => ({
                           id: `${deckType.id}:prefectures-${mode}`, label: `Prefectures - All - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
                           commandPath: ["geography", `japanese-prefectures-${mode}`], commandArgs: [],
@@ -3953,6 +3964,10 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
       commandPath: ["geography", "switzerland-divisions-hard"], commandArgs: [], launchTitle: "Cantons - All - Hard",
       previewText: "Cantons - All - Hard\n\nIdentify Switzerland's 26 cantons by typing their English names. Diacritics are optional."
     }] }, { id: `${id}:japan`, label: "Japan", kind: "category", previewText: "Japan", children: [{
+      id: `${id}:japan:prefecture-capitals`, label: "Prefecture Capitals", kind: "command",
+      commandPath: ["geography", "japan-prefecture-capitals"], commandArgs: [], launchTitle: "Prefecture Capitals",
+      previewText: "Prefecture Capitals\n\n94 bidirectional questions: identify each prefecture's capital and identify the prefecture belonging to each capital."
+    }, {
       id: `${id}:japan:prefectures-easy`, label: "Prefectures - All - Easy", kind: "command",
       commandPath: ["geography", "japan-prefectures-easy"], commandArgs: [], launchTitle: "Prefectures - All - Easy",
       previewText: "Prefectures - All - Easy\n\n94 questions: identify highlighted prefectures with choices 1–4, and locate named prefectures by entering map numbers 1–47. Names are revealed after answering."
