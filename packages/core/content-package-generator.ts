@@ -1315,6 +1315,36 @@ const chineseScriptConversionTargets: readonly ContentPackageGeneratorTarget[] =
   ],
   topicDeck: { id: "traditional-chinese-radicals-frequency-xvii", displayName: "XVII", outputFile: "traditional-chinese-radicals-frequency-xvii.json", unitStart: 3201, unitEnd: 3400 }
 }, {
+  id: "chinese-traditional-radicals-frequency-xviii",
+  notesPolicy: "omit",
+  packageId: "com.sleepymario.language.chinese-traditional.radicals.frequency-xviii",
+  displayName: "Traditional Chinese Radicals XVIII",
+  description: "Traditional Chinese common-character sequence positions 3401–3600, tested one-way from character to Kangxi radical.",
+  contentType: "topic-review",
+  capabilities: ["topic-review"],
+  deckFamily: "general",
+  relatedPackageIds: ["com.sleepymario.language.chinese-traditional"],
+  contentSchemaVersion: "2.0.0",
+  deckVersion: "1.0.0",
+  artifactRevision: 1,
+  mediaPolicy: "none",
+  interactionProfile: { ...defaultDeckInteractionProfile, labels: "independent" },
+  packageVersion: "1.0.0",
+  sourcePath: "review-content/chinese-traditional/radicals-frequency-xviii",
+  sourceRepository: "https://github.com/SleepyMario/whacksmacker",
+  languages: ["zh-Hant"],
+  targetLanguage: "zh-Hant",
+  subjects: ["chinese", "traditional", "radicals", "frequency", "character-to-radical", "one-way"],
+  topic: { id: "traditional-chinese-radicals", displayName: "Radicals", deckDisplayName: "XVIII" },
+  dependencies: [],
+  license: curriculumContentLicense,
+  include: ["README.md", "cards.tsv", "sources"],
+  additionalSourceFiles: [
+    { sourcePath: "../../../LICENSE-CONTENT", packagePath: "LICENSE-CONTENT" },
+    { sourcePath: "../../../NOTICE", packagePath: "NOTICE" }
+  ],
+  topicDeck: { id: "traditional-chinese-radicals-frequency-xviii", displayName: "XVIII", outputFile: "traditional-chinese-radicals-frequency-xviii.json", unitStart: 3401, unitEnd: 3600 }
+}, {
   id: "chinese-simplified-radicals",
   notesPolicy: "default",
   packageId: "com.sleepymario.language.chinese-simplified.radicals",
