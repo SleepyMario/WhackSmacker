@@ -3018,7 +3018,11 @@ function buildAvailableCategoryTree(
     .filter((descriptor) => descriptor.category === category && descriptor.moduleId !== "com.sleepymario.geography")
     .map((descriptor) => buildAvailableModuleTreeNode(descriptor, cataloguePath, locale));
 
-  if (category === "Geography") children.unshift(buildWorldGeographyNode("available:geography:world"), buildCountriesGeographyNode("available:geography:countries"));
+  if (category === "Geography") children.unshift(
+    buildWorldGeographyNode("available:geography:world"),
+    buildEmptyContinentsGeographyNode("available:geography:continents"),
+    buildCountriesGeographyNode("available:geography:countries")
+  );
 
   return {
     id: `available:${category.toLowerCase()}`,
@@ -4071,12 +4075,32 @@ function buildWorldGeographyNode(id: string): LanguageTreeNode {
   };
 }
 
+function buildEmptyContinentsGeographyNode(id: string): LanguageTreeNode {
+  return {
+    id,
+    label: "Continents",
+    kind: "category",
+    previewText: "Continents",
+    children: [{
+      id: `${id}:antarctica`,
+      label: "Antarctica",
+      kind: "message",
+      previewArtworkPath: join(__dirname, "../../packages/geography/data/antarctica/antarctica-map.png"),
+      previewText: "Antarctica\n\nA south-polar reference map of Antarctica. This is reference material, not a review deck."
+    }]
+  };
+}
+
 function buildModuleCategoryTree(category: FirstClassModuleDescriptor["category"], descriptors: readonly FirstClassModuleDescriptor[], locale: SourceLocale): LanguageTreeNode {
   const children = descriptors
     .filter((descriptor) => descriptor.category === category && descriptor.moduleId !== "com.sleepymario.geography")
     .map((descriptor) => buildBuiltInModuleTreeNode(descriptor));
 
-  if (category === "Geography") children.unshift(buildWorldGeographyNode("geography:world"), buildCountriesGeographyNode("geography:countries"));
+  if (category === "Geography") children.unshift(
+    buildWorldGeographyNode("geography:world"),
+    buildEmptyContinentsGeographyNode("geography:continents"),
+    buildCountriesGeographyNode("geography:countries")
+  );
 
   return {
     id: category.toLowerCase(),

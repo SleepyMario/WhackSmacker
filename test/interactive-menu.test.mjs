@@ -879,9 +879,14 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   assert.deepEqual(installed.children.map((node) => node.label), ["LingoLand", "Wandering the World"]);
   const geography = installed.children.find((node) => node.label === "Wandering the World");
   assert.equal(geography.kind, installed.children[0].kind, "installed top-level modules share one ordinary colour class");
-  assert.deepEqual(geography.children.map((node) => node.label), ["World", "Countries"]);
+  assert.deepEqual(geography.children.map((node) => node.label), ["World", "Continents", "Countries"]);
   assert.deepEqual(geography.children[0].children.map((node) => node.label), ["Continents - Easy", "Continents - Hard"]);
-  const countries = geography.children[1];
+  assert.deepEqual(geography.children[1].children.map((node) => node.label), ["Antarctica"]);
+  const antarctica = geography.children[1].children[0];
+  assert.equal(antarctica.kind, "message");
+  assert.match(antarctica.previewArtworkPath, /antarctica\/antarctica-map\.png$/u);
+  assert.match(antarctica.previewText, /reference material, not a review deck/iu);
+  const countries = geography.children[2];
   const country = (label) => countries.children.find((node) => node.label === label);
   assert.deepEqual(countries.children.map((node) => node.label), [
     "Australia", "Belgium", "Canada", "China", "China (Taiwan)", "France", "Germany", "India", "Italy", "Japan",
