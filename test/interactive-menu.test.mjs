@@ -938,6 +938,12 @@ test("module tree shows renamed learning categories without Games or legacy Cont
     "Provincial-level Divisions - North - Easy", "Provincial-level Divisions - North - Hard",
     "Provincial-level Divisions - South - Easy", "Provincial-level Divisions - South - Hard"
   ]);
+  assert.deepEqual(country("China").children.slice(0, 3).map((node) => node.label), [
+    "Province Capitals - Vocabulary", "Province Capitals - Map - Easy", "Province Capitals - Map - Hard"
+  ]);
+  assert.deepEqual(country("China (Taiwan)").children.slice(0, 3).map((node) => node.label), [
+    "Province Capitals - Vocabulary", "Province Capitals - Map - Easy", "Province Capitals - Map - Hard"
+  ]);
   assert.deepEqual(country("Germany").children.map((node) => node.label), [
     "States - All - Easy",
     "States - All - Hard"

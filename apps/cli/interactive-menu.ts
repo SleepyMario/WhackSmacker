@@ -1124,6 +1124,18 @@ function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | un
     const itemIds = loadGeographyCountryMetadata("korea-province-capitals", "capitals.json").map(province => `${province.id}-capital-map`);
     return { packageId: `com.sleepymario.geography.${id}`, packageVersion: "0.1.0", itemIds, count: itemIds.length };
   }
+  for (const [prefix, directory] of [["china-province-capitals", "china-province-capitals"], ["china-taiwan-province-capitals", "china-taiwan-province-capitals"]] as const) {
+    if (id === `${prefix}-vocabulary`) {
+      const itemIds = loadGeographyCountryMetadata(directory, "capitals.json").flatMap(province => [
+        `${province.id}-province-to-capital`, `${province.id}-capital-to-province`
+      ]);
+      return { packageId: `com.sleepymario.geography.${prefix}`, packageVersion: "0.1.0", itemIds, count: itemIds.length };
+    }
+    if (id === `${prefix}-map-easy` || id === `${prefix}-map-hard`) {
+      const itemIds = loadGeographyCountryMetadata(directory, "capitals.json").map(province => `${province.id}-capital-map`);
+      return { packageId: `com.sleepymario.geography.${id}`, packageVersion: "0.1.0", itemIds, count: itemIds.length };
+    }
+  }
   const hard = id.endsWith("-hard");
   if (!hard && !id.endsWith("-easy")) return undefined;
   if (id === `continents-${hard ? "hard" : "easy"}`) {
@@ -4092,7 +4104,23 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
       }]
     }, ...groupedCountryDecks.map(([label, decks]) => ({
       id: `${id}:${decks[0]!.dataset}`, label, kind: "category" as const, previewText: label,
-      children: decks.flatMap(country => {
+      children: [...((decks[0]!.dataset === "china" || decks[0]!.dataset === "china-taiwan") ? (() => {
+        const prefix = decks[0]!.dataset === "china" ? "china-province-capitals" : "china-taiwan-province-capitals";
+        const count = decks[0]!.dataset === "china" ? 33 : 22;
+        return [{
+          id: `${id}:${prefix}:vocabulary`, label: "Province Capitals - Vocabulary", kind: "command" as const,
+          commandPath: ["geography", `${prefix}-vocabulary`], commandArgs: [], launchTitle: "Province Capitals - Vocabulary",
+          previewText: `Province Capitals - Vocabulary\n\n${count * 2} bidirectional questions: identify each province's capital and identify the province belonging to each capital.`
+        }, {
+          id: `${id}:${prefix}:map-easy`, label: "Province Capitals - Map - Easy", kind: "command" as const,
+          commandPath: ["geography", `${prefix}-map-easy`], commandArgs: [], launchTitle: "Province Capitals - Map - Easy",
+          previewText: `Province Capitals - Map - Easy\n\n${count} visual questions with four choices: identify the highlighted capital city or administrative seat.`
+        }, {
+          id: `${id}:${prefix}:map-hard`, label: "Province Capitals - Map - Hard", kind: "command" as const,
+          commandPath: ["geography", `${prefix}-map-hard`], commandArgs: [], launchTitle: "Province Capitals - Map - Hard",
+          previewText: `Province Capitals - Map - Hard\n\n${count} visual questions: type the highlighted capital city or administrative seat.`
+        }];
+      })() : []), ...decks.flatMap(country => {
         const scope = "scope" in country ? country.scope : `${country.deck} - All`;
         return ([{
           id: `${id}:${country.dataset}:divisions-easy`, label: `${scope} - Easy`, kind: "command" as const,
@@ -4103,7 +4131,7 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
           commandPath: ["geography", `${country.dataset}-divisions-hard`], commandArgs: [], launchTitle: `${scope} - Hard`,
           previewText: `${scope} - Hard\n\nIdentify all ${country.count} ${country.singular}s by typing their names.`
         }]);
-      })
+      })]
     })), {
       id: `${id}:netherlands`, label: "Netherlands", kind: "category", previewText: "Netherlands", children: [{
         id: `${id}:netherlands:provinces-easy`, label: "Provinces - All - Easy", kind: "command",

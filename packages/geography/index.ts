@@ -4,6 +4,8 @@ import { runContinentReview } from "./continent-review";
 import { japanRegionDecks } from "./japan-regions";
 import { runJapanPrefectureCapitals } from "./japan-prefecture-capitals";
 import { runKoreaProvinceCapitals } from "./korea-province-capitals";
+import { runChinaProvinceCapitals } from "./china-province-capitals";
+import { runChinaTaiwanProvinceCapitals } from "./china-taiwan-province-capitals";
 
 export interface GeographyDataset {
   readonly id: string;
@@ -49,6 +51,16 @@ export const geographyModule: DomainModule = {
       path: ["geography", `korea-province-capitals-${mode}`],
       summary: `Korea province capitals (${mode})`,
       run: async () => { await runKoreaProvinceCapitals({ mode }); }
+    });
+    for (const mode of ["vocabulary", "map-easy", "map-hard"] as const) context.cli.register({
+      path: ["geography", `china-province-capitals-${mode}`],
+      summary: `China province capitals (${mode})`,
+      run: async () => { await runChinaProvinceCapitals({ mode }); }
+    });
+    for (const mode of ["vocabulary", "map-easy", "map-hard"] as const) context.cli.register({
+      path: ["geography", `china-taiwan-province-capitals-${mode}`],
+      summary: `China (Taiwan) province capitals (${mode})`,
+      run: async () => { await runChinaTaiwanProvinceCapitals({ mode }); }
     });
     for (const mode of ["easy", "hard"] as const) context.cli.register({
       path: ["geography", `japanese-prefectures-${mode}`],

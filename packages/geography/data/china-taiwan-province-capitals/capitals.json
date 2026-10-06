@@ -1,0 +1,222 @@
+[
+  {
+    "id": "matsu-islands",
+    "provinceEnglish": "Lienchiang County",
+    "provinceChinese": "連江縣",
+    "capitalEnglish": "Nangan",
+    "capitalChinese": "南竿",
+    "capitalLon": 119.949,
+    "capitalLat": 26.16,
+    "wholeProvince": false
+  },
+  {
+    "id": "keelung",
+    "provinceEnglish": "Keelung City",
+    "provinceChinese": "基隆市",
+    "capitalEnglish": "Keelung",
+    "capitalChinese": "基隆",
+    "capitalLon": 121.74,
+    "capitalLat": 25.13,
+    "wholeProvince": true
+  },
+  {
+    "id": "taipei",
+    "provinceEnglish": "Taipei City",
+    "provinceChinese": "臺北市",
+    "capitalEnglish": "Taipei",
+    "capitalChinese": "臺北",
+    "capitalLon": 121.56,
+    "capitalLat": 25.04,
+    "wholeProvince": true
+  },
+  {
+    "id": "new-taipei",
+    "provinceEnglish": "New Taipei City",
+    "provinceChinese": "新北市",
+    "capitalEnglish": "Banqiao",
+    "capitalChinese": "板橋",
+    "capitalLon": 121.46,
+    "capitalLat": 25.01,
+    "wholeProvince": false
+  },
+  {
+    "id": "taoyuan",
+    "provinceEnglish": "Taoyuan City",
+    "provinceChinese": "桃園市",
+    "capitalEnglish": "Taoyuan",
+    "capitalChinese": "桃園",
+    "capitalLon": 121.3,
+    "capitalLat": 24.99,
+    "wholeProvince": true
+  },
+  {
+    "id": "hsinchu",
+    "provinceEnglish": "Hsinchu City",
+    "provinceChinese": "新竹市",
+    "capitalEnglish": "Hsinchu",
+    "capitalChinese": "新竹",
+    "capitalLon": 120.97,
+    "capitalLat": 24.8,
+    "wholeProvince": true
+  },
+  {
+    "id": "hsinchu-county",
+    "provinceEnglish": "Hsinchu County",
+    "provinceChinese": "新竹縣",
+    "capitalEnglish": "Zhubei",
+    "capitalChinese": "竹北",
+    "capitalLon": 121.01,
+    "capitalLat": 24.84,
+    "wholeProvince": false
+  },
+  {
+    "id": "yilan-county",
+    "provinceEnglish": "Yilan County",
+    "provinceChinese": "宜蘭縣",
+    "capitalEnglish": "Yilan",
+    "capitalChinese": "宜蘭",
+    "capitalLon": 121.75,
+    "capitalLat": 24.76,
+    "wholeProvince": false
+  },
+  {
+    "id": "miaoli-county",
+    "provinceEnglish": "Miaoli County",
+    "provinceChinese": "苗栗縣",
+    "capitalEnglish": "Miaoli",
+    "capitalChinese": "苗栗",
+    "capitalLon": 120.82,
+    "capitalLat": 24.56,
+    "wholeProvince": false
+  },
+  {
+    "id": "kinmen",
+    "provinceEnglish": "Kinmen County",
+    "provinceChinese": "金門縣",
+    "capitalEnglish": "Jincheng",
+    "capitalChinese": "金城",
+    "capitalLon": 118.32,
+    "capitalLat": 24.43,
+    "wholeProvince": false
+  },
+  {
+    "id": "taichung",
+    "provinceEnglish": "Taichung City",
+    "provinceChinese": "臺中市",
+    "capitalEnglish": "Taichung",
+    "capitalChinese": "臺中",
+    "capitalLon": 120.68,
+    "capitalLat": 24.15,
+    "wholeProvince": true
+  },
+  {
+    "id": "changhua-county",
+    "provinceEnglish": "Changhua County",
+    "provinceChinese": "彰化縣",
+    "capitalEnglish": "Changhua",
+    "capitalChinese": "彰化",
+    "capitalLon": 120.54,
+    "capitalLat": 24.08,
+    "wholeProvince": false
+  },
+  {
+    "id": "nantou-county",
+    "provinceEnglish": "Nantou County",
+    "provinceChinese": "南投縣",
+    "capitalEnglish": "Nantou",
+    "capitalChinese": "南投",
+    "capitalLon": 120.68,
+    "capitalLat": 23.91,
+    "wholeProvince": false
+  },
+  {
+    "id": "hualien-county",
+    "provinceEnglish": "Hualien County",
+    "provinceChinese": "花蓮縣",
+    "capitalEnglish": "Hualien",
+    "capitalChinese": "花蓮",
+    "capitalLon": 121.6,
+    "capitalLat": 23.99,
+    "wholeProvince": false
+  },
+  {
+    "id": "yunlin-county",
+    "provinceEnglish": "Yunlin County",
+    "provinceChinese": "雲林縣",
+    "capitalEnglish": "Douliu",
+    "capitalChinese": "斗六",
+    "capitalLon": 120.54,
+    "capitalLat": 23.71,
+    "wholeProvince": false
+  },
+  {
+    "id": "penghu",
+    "provinceEnglish": "Penghu County",
+    "provinceChinese": "澎湖縣",
+    "capitalEnglish": "Magong",
+    "capitalChinese": "馬公",
+    "capitalLon": 119.57,
+    "capitalLat": 23.57,
+    "wholeProvince": false
+  },
+  {
+    "id": "chiayi",
+    "provinceEnglish": "Chiayi City",
+    "provinceChinese": "嘉義市",
+    "capitalEnglish": "Chiayi",
+    "capitalChinese": "嘉義",
+    "capitalLon": 120.45,
+    "capitalLat": 23.48,
+    "wholeProvince": true
+  },
+  {
+    "id": "chiayi-county",
+    "provinceEnglish": "Chiayi County",
+    "provinceChinese": "嘉義縣",
+    "capitalEnglish": "Taibao",
+    "capitalChinese": "太保",
+    "capitalLon": 120.33,
+    "capitalLat": 23.46,
+    "wholeProvince": false
+  },
+  {
+    "id": "tainan",
+    "provinceEnglish": "Tainan City",
+    "provinceChinese": "臺南市",
+    "capitalEnglish": "Tainan",
+    "capitalChinese": "臺南",
+    "capitalLon": 120.21,
+    "capitalLat": 22.99,
+    "wholeProvince": true
+  },
+  {
+    "id": "kaohsiung",
+    "provinceEnglish": "Kaohsiung City",
+    "provinceChinese": "高雄市",
+    "capitalEnglish": "Kaohsiung",
+    "capitalChinese": "高雄",
+    "capitalLon": 120.31,
+    "capitalLat": 22.63,
+    "wholeProvince": true
+  },
+  {
+    "id": "taitung-county",
+    "provinceEnglish": "Taitung County",
+    "provinceChinese": "臺東縣",
+    "capitalEnglish": "Taitung",
+    "capitalChinese": "臺東",
+    "capitalLon": 121.15,
+    "capitalLat": 22.76,
+    "wholeProvince": false
+  },
+  {
+    "id": "pingtung-county",
+    "provinceEnglish": "Pingtung County",
+    "provinceChinese": "屏東縣",
+    "capitalEnglish": "Pingtung",
+    "capitalChinese": "屏東",
+    "capitalLon": 120.49,
+    "capitalLat": 22.67,
+    "wholeProvince": false
+  }
+]
