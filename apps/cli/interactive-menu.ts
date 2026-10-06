@@ -1260,8 +1260,9 @@ export function markLanguagesWithDueDecks(root: LanguageTreeNode, decks: readonl
   const walk = (node: LanguageTreeNode, insideDueAwareTree = false): LanguageTreeNode => {
     const languageId = node.packageId ?? node.moduleId;
     const languageAncestor = languageId?.startsWith("com.sleepymario.language.");
+    const lingolandAncestor = node.id === "languages";
     const geographyAncestor = node.id === "geography" || node.id.startsWith("geography:");
-    const inDueAwareTree = insideDueAwareTree || languageAncestor === true || geographyAncestor;
+    const inDueAwareTree = insideDueAwareTree || languageAncestor === true || lingolandAncestor || geographyAncestor;
     const geographyDeckDue = node.id.startsWith("geography:") ? dueByNode.get(node.id) : undefined;
     return {
       ...node,

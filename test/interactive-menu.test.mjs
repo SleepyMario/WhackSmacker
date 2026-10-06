@@ -2717,6 +2717,44 @@ test("due Wandering the World exercises turn every containing submenu blue", () 
   assert.match(output, /\x1b\[34m[^\n]*Continents - Easy/u);
 });
 
+test("due language cards turn the Installed Modules LingoLand submenu blue", () => {
+  const deck = {
+    id: "korean:general:vocabulary",
+    label: "Vocabulary",
+    kind: "review-source",
+    packageId: "com.sleepymario.language.korean.general.vocabulary",
+    packageVersion: "1.0.0",
+    sourcePath: "cards.tsv"
+  };
+  const tree = {
+    id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
+      id: "installed-modules", label: "Installed modules", kind: "installed-root", children: [{
+        id: "languages", label: "LingoLand", kind: "category", children: [{
+          id: "com.sleepymario.language.korean", label: "Korean", kind: "module",
+          moduleId: "com.sleepymario.language.korean", children: [deck]
+        }]
+      }]
+    }]
+  };
+  const marked = markLanguagesWithDueDecks(tree, [{
+    node: deck,
+    label: "Korean · Vocabulary",
+    due: 3,
+    ancestors: ["whacksmacker", "installed-modules", "languages", "com.sleepymario.language.korean"]
+  }]);
+  const lingoland = marked.children[0].children[0];
+  assert.equal(lingoland.dueCardCount, 1);
+
+  const output = renderTwoPaneLanguageTree(
+    marked,
+    new Set(["whacksmacker", "installed-modules"]),
+    0,
+    "",
+    true
+  );
+  assert.match(output, /\x1b\[34m[^\n]*LingoLand/u);
+});
+
 test("Wandering the World decks use the same four review states and due counts as LingoLand", async () => {
   const command = {
     id: "geography:countries:japan:regions-easy",
