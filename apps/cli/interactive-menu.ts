@@ -1114,6 +1114,16 @@ function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | un
     const itemIds = loadGeographyPrefectureMetadata().map(prefecture => `${prefecture.id.replace(/-highlight$/u, "")}-capital-map`);
     return { packageId: "com.sleepymario.geography.japan-prefecture-capitals-map-hard", packageVersion: "0.1.0", itemIds, count: itemIds.length };
   }
+  if (id === "korea-province-capitals-vocabulary") {
+    const itemIds = loadGeographyCountryMetadata("korea-province-capitals", "capitals.json").flatMap(province => [
+      `${province.id}-province-to-capital`, `${province.id}-capital-to-province`
+    ]);
+    return { packageId: "com.sleepymario.geography.korea-province-capitals", packageVersion: "0.1.0", itemIds, count: itemIds.length };
+  }
+  if (id === "korea-province-capitals-map-easy" || id === "korea-province-capitals-map-hard") {
+    const itemIds = loadGeographyCountryMetadata("korea-province-capitals", "capitals.json").map(province => `${province.id}-capital-map`);
+    return { packageId: `com.sleepymario.geography.${id}`, packageVersion: "0.1.0", itemIds, count: itemIds.length };
+  }
   const hard = id.endsWith("-hard");
   if (!hard && !id.endsWith("-easy")) return undefined;
   if (id === `continents-${hard ? "hard" : "easy"}`) {
@@ -4042,6 +4052,18 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
         previewText: `Provincial-level Divisions - ${region.label} - Hard\n\nIdentify the ${region.count} divisions in ${region.label} Vietnam by typing their Vietnamese names. Diacritics are optional.`
       }]))] }, {
       id: `${id}:korea`, label: "Korea", kind: "category", previewText: "Korea", children: [{
+        id: `${id}:korea:province-capitals-vocabulary`, label: "Province Capitals - Vocabulary", kind: "command",
+        commandPath: ["geography", "korea-province-capitals-vocabulary"], commandArgs: [], launchTitle: "Province Capitals - Vocabulary",
+        previewText: "Province Capitals - Vocabulary\n\n56 bidirectional questions: identify each province's capital and identify the province belonging to each capital."
+      }, {
+        id: `${id}:korea:province-capitals-map-easy`, label: "Province Capitals - Map - Easy", kind: "command",
+        commandPath: ["geography", "korea-province-capitals-map-easy"], commandArgs: [], launchTitle: "Province Capitals - Map - Easy",
+        previewText: "Province Capitals - Map - Easy\n\n28 visual questions with four choices: identify the capital city or administrative seat highlighted within each province."
+      }, {
+        id: `${id}:korea:province-capitals-map-hard`, label: "Province Capitals - Map - Hard", kind: "command",
+        commandPath: ["geography", "korea-province-capitals-map-hard"], commandArgs: [], launchTitle: "Province Capitals - Map - Hard",
+        previewText: "Province Capitals - Map - Hard\n\n28 visual questions: type the capital city or administrative seat highlighted within each province."
+      }, {
         id: `${id}:korea:provincial-divisions-easy`, label: "Provincial-level Divisions - All - Easy", kind: "command",
         commandPath: ["geography", "korea-provincial-divisions-easy"], commandArgs: [], launchTitle: "Provincial-level Divisions - All - Easy",
         previewText: "Provincial-level Divisions - All - Easy\n\n56 questions covering 28 first-level divisions across the Korean peninsula. Identify highlighted divisions with choices 1–4, and locate named divisions by entering map numbers 1–28."

@@ -3,6 +3,7 @@ import { countryDivisionDecks, koreaRegionDecks, runContinentsEasy, vietnamRegio
 import { runContinentReview } from "./continent-review";
 import { japanRegionDecks } from "./japan-regions";
 import { runJapanPrefectureCapitals } from "./japan-prefecture-capitals";
+import { runKoreaProvinceCapitals } from "./korea-province-capitals";
 
 export interface GeographyDataset {
   readonly id: string;
@@ -43,6 +44,11 @@ export const geographyModule: DomainModule = {
       path: ["geography", "japan-prefecture-capitals"],
       summary: "Legacy alias for Japan prefectural-capitals vocabulary",
       run: async () => { await runJapanPrefectureCapitals({ mode: "vocabulary" }); }
+    });
+    for (const mode of ["vocabulary", "map-easy", "map-hard"] as const) context.cli.register({
+      path: ["geography", `korea-province-capitals-${mode}`],
+      summary: `Korea province capitals (${mode})`,
+      run: async () => { await runKoreaProvinceCapitals({ mode }); }
     });
     for (const mode of ["easy", "hard"] as const) context.cli.register({
       path: ["geography", `japanese-prefectures-${mode}`],
