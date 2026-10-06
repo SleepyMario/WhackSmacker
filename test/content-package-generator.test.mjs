@@ -54,6 +54,11 @@ test("content package generator exposes the supported local package targets", ()
       ["thai-core-reviews", "com.sleepymario.language.thai.reviews"],
       ["zulu-core-reviews", "com.sleepymario.language.zulu.reviews"],
       ["chinese-traditional-radicals", "com.sleepymario.language.chinese-traditional.radicals"],
+      ["chinese-traditional-radicals-frequency-i", "com.sleepymario.language.chinese-traditional.radicals.frequency-i"],
+      ["chinese-traditional-radicals-frequency-ii", "com.sleepymario.language.chinese-traditional.radicals.frequency-ii"],
+      ["chinese-traditional-radicals-frequency-iii", "com.sleepymario.language.chinese-traditional.radicals.frequency-iii"],
+      ["chinese-traditional-radicals-frequency-iv", "com.sleepymario.language.chinese-traditional.radicals.frequency-iv"],
+      ["chinese-traditional-radicals-frequency-v", "com.sleepymario.language.chinese-traditional.radicals.frequency-v"],
       ["chinese-simplified-radicals", "com.sleepymario.language.chinese-simplified.radicals"],
       ["chinese-simplified-traditional-level-1", "com.sleepymario.language.chinese-simplified-traditional.level-1"],
       ["chinese-simplified-traditional-level-1-vocabulary", "com.sleepymario.language.chinese-simplified-traditional.level-1-vocabulary"],
@@ -131,7 +136,10 @@ test("Traditional Chinese Radicals presents only A and reveals English plus Hany
   assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
   assert.equal(target?.notesPolicy, "default");
   assert.equal(target?.interactionProfile?.labels, "independent");
-  assert.equal(target?.artifactRevision, 4);
+  assert.equal(target?.artifactRevision, 5);
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "All");
+  assert.equal(target?.topicDeck?.displayName, "All");
 
   const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-"));
   try {
@@ -163,6 +171,174 @@ test("Traditional Chinese Radicals presents only A and reveals English plus Hany
     assert.equal(heart?.notes, "Alternative forms: 忄、⺗\nStrokes: 4");
     assert.equal(document.items[213].prompt.text, "龠");
     assert.equal(document.items[213].notes, "Strokes: 17");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals I tests the first 200 frequency characters one-way against their radical", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-i");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "I");
+  assert.equal(target?.topicDeck?.displayName, "I");
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-i-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-i",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-i.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["的", "白"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["由", "田"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals II tests frequency ranks 201-400 one-way against their radical", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-ii");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "II");
+  assert.equal(target?.topicDeck?.displayName, "II");
+  assert.equal(target?.topicDeck?.unitStart, 201);
+  assert.equal(target?.topicDeck?.unitEnd, 400);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-ii-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-ii",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-ii.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["記", "言"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["紅", "糸"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals III tests frequency ranks 401-600 one-way against their radical", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-iii");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "III");
+  assert.equal(target?.topicDeck?.displayName, "III");
+  assert.equal(target?.topicDeck?.unitStart, 401);
+  assert.equal(target?.topicDeck?.unitEnd, 600);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-iii-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-iii",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-iii.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["留", "田"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["婆", "女"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals IV tests common-character frequency-order positions 601-800 one-way", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-iv");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "IV");
+  assert.equal(target?.topicDeck?.displayName, "IV");
+  assert.equal(target?.topicDeck?.unitStart, 601);
+  assert.equal(target?.topicDeck?.unitEnd, 800);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-iv-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-iv",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-iv.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["綠", "糸"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["搖", "手"]);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("Traditional Chinese Radicals V tests common-character frequency-order positions 801-1000 one-way", async () => {
+  const target = contentPackageGeneratorTargets.find((candidate) => candidate.id === "chinese-traditional-radicals-frequency-v");
+  assert.equal(target?.deckFamily, "general");
+  assert.deepEqual(target?.relatedPackageIds, ["com.sleepymario.language.chinese-traditional"]);
+  assert.equal(target?.notesPolicy, "omit");
+  assert.equal(target?.topic?.displayName, "Radicals");
+  assert.equal(target?.topic?.deckDisplayName, "V");
+  assert.equal(target?.topicDeck?.displayName, "V");
+  assert.equal(target?.topicDeck?.unitStart, 801);
+  assert.equal(target?.topicDeck?.unitEnd, 1000);
+  assert.equal(target?.artifactRevision, 1);
+
+  const directory = await mkdtemp(join(tmpdir(), "wsm-traditional-chinese-radicals-frequency-v-"));
+  try {
+    const result = await generateContentPackage({
+      targetId: "chinese-traditional-radicals-frequency-v",
+      outputDirectory: directory,
+      generatedAt: "2026-10-06T06:00:00Z"
+    });
+    const archive = await readZip(result.filePath);
+    const document = JSON.parse(archive.get("content/memorization/traditional-chinese-radicals-frequency-v.json").toString("utf8"));
+
+    assert.equal(document.items.length, 200);
+    assert.equal(document.items.every((item) => item.cardId.endsWith("/character-to-radical")), true);
+    assert.equal(document.items.every((item) => item.prompt.language === "zh-Hant" && item.answer.language === "zh-Hant"), true);
+    assert.equal(document.items.every((item) => [...item.prompt.text].length === 1 && [...item.answer.text].length === 1), true);
+    assert.equal(document.items.every((item) => !item.notes && (item.examples?.length ?? 0) === 0), true);
+    assert.deepEqual([document.items[0].prompt.text, document.items[0].answer.text], ["貓", "豸"]);
+    assert.deepEqual([document.items[199].prompt.text, document.items[199].answer.text], ["箱", "竹"]);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
