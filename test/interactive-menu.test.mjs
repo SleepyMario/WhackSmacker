@@ -961,6 +961,9 @@ test("module tree shows renamed learning categories without Games or legacy Cont
     "Main Regions - Hard"
   ]);
   assert.deepEqual(country("Netherlands").children.map((node) => node.label), [
+    "Province Capitals - Vocabulary",
+    "Province Capitals - Map - Easy",
+    "Province Capitals - Map - Hard",
     "Provinces - All - Easy",
     "Provinces - All - Hard"
   ]);

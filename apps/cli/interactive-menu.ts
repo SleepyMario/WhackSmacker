@@ -1124,6 +1124,16 @@ function geographyReviewTargetForCommand(id: string): GeographyReviewTarget | un
     const itemIds = loadGeographyCountryMetadata("korea-province-capitals", "capitals.json").map(province => `${province.id}-capital-map`);
     return { packageId: `com.sleepymario.geography.${id}`, packageVersion: "0.1.0", itemIds, count: itemIds.length };
   }
+  if (id === "netherlands-province-capitals-vocabulary") {
+    const itemIds = loadGeographyCountryMetadata("netherlands-province-capitals", "capitals.json").flatMap(province => [
+      `${province.id}-province-to-capital`, `${province.id}-capital-to-province`
+    ]);
+    return { packageId: "com.sleepymario.geography.netherlands-province-capitals", packageVersion: "0.1.0", itemIds, count: itemIds.length };
+  }
+  if (id === "netherlands-province-capitals-map-easy" || id === "netherlands-province-capitals-map-hard") {
+    const itemIds = loadGeographyCountryMetadata("netherlands-province-capitals", "capitals.json").map(province => `${province.id}-capital-map`);
+    return { packageId: `com.sleepymario.geography.${id}`, packageVersion: "0.1.0", itemIds, count: itemIds.length };
+  }
   for (const [prefix, directory] of [["china-province-capitals", "china-province-capitals"], ["china-taiwan-province-capitals", "china-taiwan-province-capitals"]] as const) {
     if (id === `${prefix}-vocabulary`) {
       const itemIds = loadGeographyCountryMetadata(directory, "capitals.json").flatMap(province => [
@@ -4134,6 +4144,18 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
       })]
     })), {
       id: `${id}:netherlands`, label: "Netherlands", kind: "category", previewText: "Netherlands", children: [{
+        id: `${id}:netherlands:province-capitals-vocabulary`, label: "Province Capitals - Vocabulary", kind: "command",
+        commandPath: ["geography", "netherlands-province-capitals-vocabulary"], commandArgs: [], launchTitle: "Province Capitals - Vocabulary",
+        previewText: "Province Capitals - Vocabulary\n\n24 bidirectional questions: identify each province's capital and identify the province belonging to each capital."
+      }, {
+        id: `${id}:netherlands:province-capitals-map-easy`, label: "Province Capitals - Map - Easy", kind: "command",
+        commandPath: ["geography", "netherlands-province-capitals-map-easy"], commandArgs: [], launchTitle: "Province Capitals - Map - Easy",
+        previewText: "Province Capitals - Map - Easy\n\n12 visual questions with four choices: identify the highlighted provincial capital municipality."
+      }, {
+        id: `${id}:netherlands:province-capitals-map-hard`, label: "Province Capitals - Map - Hard", kind: "command",
+        commandPath: ["geography", "netherlands-province-capitals-map-hard"], commandArgs: [], launchTitle: "Province Capitals - Map - Hard",
+        previewText: "Province Capitals - Map - Hard\n\n12 visual questions: type the highlighted provincial capital municipality."
+      }, {
         id: `${id}:netherlands:provinces-easy`, label: "Provinces - All - Easy", kind: "command",
         commandPath: ["geography", "netherlands-provinces-easy"], commandArgs: [], launchTitle: "Provinces - All - Easy",
         previewText: "Provinces - All - Easy\n\n24 questions covering the Netherlands' 12 provinces. Identify highlighted provinces with choices 1–4, and locate named provinces by entering map numbers 1–12."

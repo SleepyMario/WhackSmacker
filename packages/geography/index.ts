@@ -4,6 +4,7 @@ import { runContinentReview } from "./continent-review";
 import { japanRegionDecks } from "./japan-regions";
 import { runJapanPrefectureCapitals } from "./japan-prefecture-capitals";
 import { runKoreaProvinceCapitals } from "./korea-province-capitals";
+import { runNetherlandsProvinceCapitals } from "./netherlands-province-capitals";
 import { runChinaProvinceCapitals } from "./china-province-capitals";
 import { runChinaTaiwanProvinceCapitals } from "./china-taiwan-province-capitals";
 
@@ -51,6 +52,11 @@ export const geographyModule: DomainModule = {
       path: ["geography", `korea-province-capitals-${mode}`],
       summary: `Korea province capitals (${mode})`,
       run: async () => { await runKoreaProvinceCapitals({ mode }); }
+    });
+    for (const mode of ["vocabulary", "map-easy", "map-hard"] as const) context.cli.register({
+      path: ["geography", `netherlands-province-capitals-${mode}`],
+      summary: `Netherlands province capitals (${mode})`,
+      run: async () => { await runNetherlandsProvinceCapitals({ mode }); }
     });
     for (const mode of ["vocabulary", "map-easy", "map-hard"] as const) context.cli.register({
       path: ["geography", `china-province-capitals-${mode}`],

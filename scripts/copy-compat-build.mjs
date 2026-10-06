@@ -136,6 +136,7 @@ await cp("packages/geography/data/japan-regions", "dist/packages/geography/data/
 await cp("packages/geography/data/vietnam-provinces", "dist/packages/geography/data/vietnam-provinces", { recursive: true });
 await cp("packages/geography/data/korea-provinces", "dist/packages/geography/data/korea-provinces", { recursive: true });
 await cp("packages/geography/data/korea-province-capitals", "dist/packages/geography/data/korea-province-capitals", { recursive: true });
+await cp("packages/geography/data/netherlands-province-capitals", "dist/packages/geography/data/netherlands-province-capitals", { recursive: true });
 await cp("packages/geography/data/china-province-capitals", "dist/packages/geography/data/china-province-capitals", { recursive: true });
 await cp("packages/geography/data/china-taiwan-province-capitals", "dist/packages/geography/data/china-taiwan-province-capitals", { recursive: true });
 await cp("packages/geography/data/netherlands-provinces", "dist/packages/geography/data/netherlands-provinces", { recursive: true });

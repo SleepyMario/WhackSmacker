@@ -1,0 +1,98 @@
+[
+  {
+    "id": "groningen",
+    "provinceEnglish": "Groningen",
+    "provinceDutch": "Groningen",
+    "capitalEnglish": "Groningen",
+    "capitalDutch": "Groningen",
+    "capitalFeature": "Groningen"
+  },
+  {
+    "id": "frysl-n",
+    "provinceEnglish": "Fryslân",
+    "provinceDutch": "Fryslân",
+    "capitalEnglish": "Leeuwarden",
+    "capitalDutch": "Leeuwarden",
+    "capitalFeature": "Leeuwarden"
+  },
+  {
+    "id": "drenthe",
+    "provinceEnglish": "Drenthe",
+    "provinceDutch": "Drenthe",
+    "capitalEnglish": "Assen",
+    "capitalDutch": "Assen",
+    "capitalFeature": "Assen"
+  },
+  {
+    "id": "flevoland",
+    "provinceEnglish": "Flevoland",
+    "provinceDutch": "Flevoland",
+    "capitalEnglish": "Lelystad",
+    "capitalDutch": "Lelystad",
+    "capitalFeature": "Lelystad"
+  },
+  {
+    "id": "overijssel",
+    "provinceEnglish": "Overijssel",
+    "provinceDutch": "Overijssel",
+    "capitalEnglish": "Zwolle",
+    "capitalDutch": "Zwolle",
+    "capitalFeature": "Zwolle"
+  },
+  {
+    "id": "noord-holland",
+    "provinceEnglish": "Noord-Holland",
+    "provinceDutch": "Noord-Holland",
+    "capitalEnglish": "Haarlem",
+    "capitalDutch": "Haarlem",
+    "capitalFeature": "Haarlem"
+  },
+  {
+    "id": "utrecht",
+    "provinceEnglish": "Utrecht",
+    "provinceDutch": "Utrecht",
+    "capitalEnglish": "Utrecht",
+    "capitalDutch": "Utrecht",
+    "capitalFeature": "Utrecht"
+  },
+  {
+    "id": "gelderland",
+    "provinceEnglish": "Gelderland",
+    "provinceDutch": "Gelderland",
+    "capitalEnglish": "Arnhem",
+    "capitalDutch": "Arnhem",
+    "capitalFeature": "Arnhem"
+  },
+  {
+    "id": "zuid-holland",
+    "provinceEnglish": "Zuid-Holland",
+    "provinceDutch": "Zuid-Holland",
+    "capitalEnglish": "Den Haag",
+    "capitalDutch": "Den Haag",
+    "capitalFeature": "'s-Gravenhage"
+  },
+  {
+    "id": "noord-brabant",
+    "provinceEnglish": "Noord-Brabant",
+    "provinceDutch": "Noord-Brabant",
+    "capitalEnglish": "'s-Hertogenbosch",
+    "capitalDutch": "'s-Hertogenbosch",
+    "capitalFeature": "'s-Hertogenbosch"
+  },
+  {
+    "id": "zeeland",
+    "provinceEnglish": "Zeeland",
+    "provinceDutch": "Zeeland",
+    "capitalEnglish": "Middelburg",
+    "capitalDutch": "Middelburg",
+    "capitalFeature": "Middelburg"
+  },
+  {
+    "id": "limburg",
+    "provinceEnglish": "Limburg",
+    "provinceDutch": "Limburg",
+    "capitalEnglish": "Maastricht",
+    "capitalDutch": "Maastricht",
+    "capitalFeature": "Maastricht"
+  }
+]
