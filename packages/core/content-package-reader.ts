@@ -1,4 +1,5 @@
 import {
+  installedContentFingerprint,
   listInstalledContentPackages,
   resolveContentDataDirectory,
   type InstalledPackageRecord
@@ -174,7 +175,35 @@ export async function listInstalledReadablePackages(dataDir?: string, locale = "
   );
 }
 
+const readableContentIndexCache = new Map<string, Promise<readonly ReadableContentEntry[]>>();
+const maximumReadableContentIndexCacheSize = 512;
+
 export async function listReadableContentEntries(
+  packageId: string,
+  dataDir?: string,
+  packageVersion?: string,
+  locale = "en-US"
+): Promise<readonly ReadableContentEntry[]> {
+  const dataDirectory = resolveContentDataDirectory(dataDir);
+  const cacheKey = [dataDirectory, await installedContentFingerprint(dataDirectory), packageId, packageVersion ?? "latest", locale].join("\u0000");
+  const cached = readableContentIndexCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+  const pending = listReadableContentEntriesUncached(packageId, dataDir, packageVersion, locale);
+  readableContentIndexCache.set(cacheKey, pending);
+  while (readableContentIndexCache.size > maximumReadableContentIndexCacheSize) {
+    const oldest = readableContentIndexCache.keys().next().value as string | undefined;
+    if (oldest === undefined) break;
+    readableContentIndexCache.delete(oldest);
+  }
+  try {
+    return await pending;
+  } catch (error) {
+    readableContentIndexCache.delete(cacheKey);
+    throw error;
+  }
+}
+
+async function listReadableContentEntriesUncached(
   packageId: string,
   dataDir?: string,
   packageVersion?: string,

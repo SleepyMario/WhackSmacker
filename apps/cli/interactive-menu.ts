@@ -3164,6 +3164,13 @@ async function buildLanguageTreeFromDescriptors(
   const packageNodes: LanguageTreeNode[] = [];
   const progressDir = dataDir === undefined ? undefined : defaultReviewProgressDirectoryForContentDataDirectory(dataDir);
   const progressItems = (await loadReviewProgressStore(progressDir)).items;
+  const progressItemsBySource = new Map<string, ReviewItemState[]>();
+  for (const progressItem of progressItems) {
+    const key = [progressItem.packageId, progressItem.packageVersion, progressItem.sourcePath ?? ""].join("\u0000");
+    const matching = progressItemsBySource.get(key);
+    if (matching === undefined) progressItemsBySource.set(key, [progressItem]);
+    else matching.push(progressItem);
+  }
   const installed = reconcileInstalledDeckFamilyMetadata(
     await listInstalledContentPackages(dataDir),
     currentPackageMetadata
@@ -3172,10 +3179,9 @@ async function buildLanguageTreeFromDescriptors(
     .filter((record) => record.deckFamily !== undefined)
     .map((record) => `${record.packageId}@${record.packageVersion}`));
 
-  for (const descriptor of descriptors) {
-    if (descriptor.packageId === undefined) {
-      continue;
-    }
+  const discoveredPackageNodes = await Promise.all(descriptors
+    .filter((descriptor): descriptor is FirstClassModuleDescriptor & { readonly packageId: string } => descriptor.packageId !== undefined)
+    .map(async (descriptor): Promise<LanguageTreeNode> => {
     const languagePackage = moduleDescriptorToMenuItem(descriptor);
     const entries = await listReadableContentEntries(descriptor.packageId, dataDir, descriptor.packageVersion, locale);
     const labeledEntries = await labelReadableContentEntries(languagePackage, entries, { dataDir, locale });
@@ -3193,7 +3199,11 @@ async function buildLanguageTreeFromDescriptors(
     };
     const reviewStatuses = await Promise.all(rawReviewSources.map((source) => describeReviewSourceMenuStatus(source, { dataDir, locale }, {
       sourceItems: rawReviewItems.filter((item) => item.sourcePath === source.sourcePath),
-      progressItems
+      progressItems: progressItemsBySource.get([
+        source.packageId,
+        source.packageVersion,
+        source.sourcePath
+      ].join("\u0000")) ?? []
     })));
     const reviewSources = reviewSourcesToMenuItems(rawReviewSources).map((item) => {
       const sourceIndex = rawReviewSources.findIndex(
@@ -3265,7 +3275,7 @@ async function buildLanguageTreeFromDescriptors(
       ? contentChildren
       : interleaveReviewSources(contentChildren, reviewChildren, coreChapterPattern);
 
-    packageNodes.push({
+    return {
       id: packageBase,
       label: descriptor.displayName,
       kind: "package",
@@ -3339,10 +3349,10 @@ async function buildLanguageTreeFromDescriptors(
           previewText: renderUninstallPreview(descriptor.displayName, locale)
         }
       ]
-    });
-  }
+    };
+  }));
 
-  packageNodes.push(...builtInLanguageNodes);
+  packageNodes.push(...discoveredPackageNodes, ...builtInLanguageNodes);
   await addInstalledSpecializedReviewBranches(packageNodes, dataDir, locale, installed);
   await addInstalledChineseScriptConversionDecks(packageNodes, dataDir, locale, progressItems, installed);
   await addInstalledDeckFamilyBranches(packageNodes, dataDir, locale, progressItems, installed);

@@ -12,7 +12,7 @@ import {
   type ContentPackageSourceProvenance
 } from "./content-package-spec";
 import { perfCount, perfSpan, perfSpanSync } from "./performance";
-import { invalidateInstalledContent } from "./installed-content-cache";
+import { installedContentGeneration, invalidateInstalledContent } from "./installed-content-cache";
 import { assertCanonicalCastBootstrapSnapshot } from "./language-curriculum-bootstrap";
 import { isLocalizedContentValue, localized } from "./localized-content";
 import {
@@ -63,7 +63,7 @@ declare function require(name: "node:fs/promises"): {
   readFile(path: string): Promise<BufferValue>;
   rename(oldPath: string, newPath: string): Promise<void>;
   rm(path: string, options: { recursive: boolean; force: boolean }): Promise<void>;
-  stat(path: string): Promise<{ isDirectory(): boolean; size: number }>;
+  stat(path: string): Promise<{ isDirectory(): boolean; size: number; mtimeMs: number; ctimeMs: number; ino: number }>;
   writeFile(path: string, data: string | BufferValue): Promise<void>;
 };
 declare function require(name: "node:path"): {
@@ -270,8 +270,50 @@ export async function loadInstalledPackageRegistry(dataDir?: string): Promise<In
   }
 }
 
+const installedPackageListCache = new Map<string, {
+  readonly fingerprint: string;
+  readonly value: Promise<readonly InstalledPackageRecord[]>;
+}>();
+const maximumInstalledPackageListCacheSize = 32;
+
+export async function installedContentFingerprint(dataDir?: string): Promise<string> {
+  const contentDir = resolveContentDataDirectory(dataDir);
+  try {
+    const registryStat = await require("node:fs/promises").stat(join(contentDir, "registry.json"));
+    return [
+      installedContentGeneration(contentDir),
+      registryStat.size,
+      registryStat.mtimeMs,
+      registryStat.ctimeMs,
+      registryStat.ino
+    ].join(":");
+  } catch {
+    return `${installedContentGeneration(contentDir)}:missing`;
+  }
+}
+
 export async function listInstalledContentPackages(dataDir?: string): Promise<readonly InstalledPackageRecord[]> {
-  return (await loadInstalledPackageRegistry(dataDir)).packages;
+  const contentDir = resolveContentDataDirectory(dataDir);
+  const fingerprint = await installedContentFingerprint(contentDir);
+  if (fingerprint.endsWith(":missing")) {
+    return (await loadInstalledPackageRegistry(contentDir)).packages;
+  }
+  const cached = installedPackageListCache.get(contentDir);
+  if (cached?.fingerprint === fingerprint) return cached.value;
+
+  const pending = loadInstalledPackageRegistry(contentDir).then((registry) => registry.packages);
+  installedPackageListCache.set(contentDir, { fingerprint, value: pending });
+  while (installedPackageListCache.size > maximumInstalledPackageListCacheSize) {
+    const oldest = installedPackageListCache.keys().next().value as string | undefined;
+    if (oldest === undefined) break;
+    installedPackageListCache.delete(oldest);
+  }
+  try {
+    return await pending;
+  } catch (error) {
+    installedPackageListCache.delete(contentDir);
+    throw error;
+  }
 }
 
 export async function migrateInstalledPackageRegistryVersionAxes(

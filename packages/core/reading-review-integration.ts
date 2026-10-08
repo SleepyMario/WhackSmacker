@@ -1,4 +1,9 @@
-import { listInstalledContentPackages, type InstalledPackageRecord } from "./content-package-manager";
+import {
+  installedContentFingerprint,
+  listInstalledContentPackages,
+  resolveContentDataDirectory,
+  type InstalledPackageRecord
+} from "./content-package-manager";
 import { listReadableContentEntries } from "./content-package-reader";
 import { isSafeContentPackagePath } from "./content-package-spec";
 import { localized } from "./localized-content";
@@ -183,7 +188,37 @@ export async function findNextReadingReviewSource(options: NextReadingReviewSour
   return currentIndex < 0 ? undefined : sources[currentIndex + 1];
 }
 
+const readingReviewItemCache = new Map<string, Promise<readonly ReadingReviewItem[]>>();
+const maximumReadingReviewItemCacheSize = 512;
+
 export async function listReadingReviewItems(options: ListReadingReviewItemsOptions = {}): Promise<readonly ReadingReviewItem[]> {
+  const dataDirectory = resolveContentDataDirectory(options.dataDir);
+  const cacheKey = [
+    dataDirectory,
+    await installedContentFingerprint(dataDirectory),
+    options.packageId ?? "all",
+    options.packageVersion ?? "latest",
+    options.sourceLocale ?? "en-US",
+    options.sourcePath ?? "all"
+  ].join("\u0000");
+  const cached = readingReviewItemCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+  const pending = listReadingReviewItemsUncached(options);
+  readingReviewItemCache.set(cacheKey, pending);
+  while (readingReviewItemCache.size > maximumReadingReviewItemCacheSize) {
+    const oldest = readingReviewItemCache.keys().next().value as string | undefined;
+    if (oldest === undefined) break;
+    readingReviewItemCache.delete(oldest);
+  }
+  try {
+    return await pending;
+  } catch (error) {
+    readingReviewItemCache.delete(cacheKey);
+    throw error;
+  }
+}
+
+async function listReadingReviewItemsUncached(options: ListReadingReviewItemsOptions): Promise<readonly ReadingReviewItem[]> {
   if (options.sourcePath !== undefined && !isSafeContentPackagePath(options.sourcePath)) {
     throw new Error(`Review source path must be package-relative and safe: ${options.sourcePath}`);
   }
