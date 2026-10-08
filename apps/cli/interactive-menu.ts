@@ -1450,6 +1450,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
     , terminalArtworkBackend: options.terminalArtworkBackend ?? savedSettings.terminalArtworkBackend
   };
   let tree = await buildModuleTree(options);
+  tree = await refreshMenuReviewStatuses(tree, options);
   let expandedIds = new Set<string>(["whacksmacker", "installed-modules", "available-modules"]);
   let selection = Math.min(1, flattenVisibleLanguageTree(tree, expandedIds).length - 1);
   let embeddedReview: EmbeddedReviewSession | null = null;
@@ -1467,7 +1468,6 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
 
   try {
   while (true) {
-    tree = await refreshMenuReviewStatuses(tree, options);
     const visible = flattenVisibleLanguageTree(tree, expandedIds);
     selection = Math.min(selection, visible.length - 1);
     const selectedNode = visible[selection]?.node ?? tree;
@@ -1558,6 +1558,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           pendingDeckFinished = null;
           deckFinishedMode = false;
           tree = await buildModuleTree(options);
+          tree = await refreshMenuReviewStatuses(tree, options);
           expandedIds = keepExistingExpandedIds(tree, expandedIds);
           const finishedVisible = flattenVisibleLanguageTree(tree, expandedIds);
           const finishedSelection = finishedVisible.findIndex((entry) => entry.node.id === finishedNodeId);
@@ -1597,6 +1598,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           pendingDeckProgressReset = null;
           resetDeckProgressMode = false;
           tree = await buildModuleTree(options);
+          tree = await refreshMenuReviewStatuses(tree, options);
           expandedIds = keepExistingExpandedIds(tree, expandedIds);
           const resetVisible = flattenVisibleLanguageTree(tree, expandedIds);
           const resetSelection = resetVisible.findIndex((entry) => entry.node.id === resetNodeId);
@@ -1646,6 +1648,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         embeddedReview = null;
         if (selected?.node.kind === "review-source") {
           tree = await refreshReviewTreeStatus(tree, selected.node, options);
+          tree = await refreshMenuReviewStatuses(tree, options);
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
             ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
@@ -1687,6 +1690,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         const reviewNode = embeddedReview.node;
         embeddedReview = null;
         tree = await refreshReviewTreeStatus(tree, reviewNode, options);
+        tree = await refreshMenuReviewStatuses(tree, options);
         const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
         rightPaneText = refreshedNode?.id === reviewNodeId && refreshedNode.kind === "review-source"
           ? renderEmbeddedReviewStopped(refreshedNode)
@@ -1812,6 +1816,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
           tree = refreshed.tree;
           expandedIds = refreshed.expandedIds;
           selection = refreshed.selection;
+          tree = await refreshMenuReviewStatuses(tree, options);
         }
         rightPaneText = embeddedReview === null
           ? await renderLanguageTreeRightPane(flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node ?? tree, options)
@@ -1863,6 +1868,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       if (isDeleteSavedData(key)) {
         const result = await uninstallInstalledModuleFromTreeNode(pendingUninstall.node, options, { deleteSavedData: true });
         tree = await buildModuleTree(options);
+        tree = await refreshMenuReviewStatuses(tree, options);
         expandedIds = keepExistingExpandedIds(tree, expandedIds);
         selection = selectionAfterRemovedNode(tree, expandedIds, pendingUninstall.node.id);
         rightPaneText = result;
@@ -1874,6 +1880,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       if (isKeepSavedData(key) || isEnter(key)) {
         const result = await uninstallInstalledModuleFromTreeNode(pendingUninstall.node, options, { deleteSavedData: false });
         tree = await buildModuleTree(options);
+        tree = await refreshMenuReviewStatuses(tree, options);
         expandedIds = keepExistingExpandedIds(tree, expandedIds);
         selection = selectionAfterRemovedNode(tree, expandedIds, pendingUninstall.node.id);
         rightPaneText = result;
@@ -1939,6 +1946,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         embeddedReview = await advanceEmbeddedReviewSession(embeddedReview, key, options);
         if (embeddedReview.side === "complete") {
           tree = await refreshReviewTreeStatus(tree, selected.node, options);
+          tree = await refreshMenuReviewStatuses(tree, options);
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
             ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
@@ -1979,6 +1987,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
         }
         if (embeddedReview.side === "complete") {
           tree = await refreshReviewTreeStatus(tree, selected.node, options);
+          tree = await refreshMenuReviewStatuses(tree, options);
           const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
           rightPaneText = refreshedNode?.kind === "review-source"
             ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
@@ -1991,6 +2000,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       }
       const result = await installAvailableModuleFromTreeNode(selected.node, options);
       tree = await buildModuleTree(options);
+      tree = await refreshMenuReviewStatuses(tree, options);
       expandedIds = keepExistingExpandedIds(tree, expandedIds);
       const nextVisible = flattenVisibleLanguageTree(tree, expandedIds);
       selection = Math.max(0, nextVisible.findIndex((entry) => entry.node.id === selected.node.id));
@@ -2016,6 +2026,7 @@ async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal:
       embeddedReview = await startEmbeddedReviewSession(selected.node, options);
       if (embeddedReview.side === "complete") {
         tree = await refreshReviewTreeStatus(tree, selected.node, options);
+        tree = await refreshMenuReviewStatuses(tree, options);
         const refreshedNode = flattenVisibleLanguageTree(tree, expandedIds)[selection]?.node;
         rightPaneText = refreshedNode?.kind === "review-source"
           ? renderReviewDeckPreview(refreshedNode, options.locale, options.displayMode ?? defaultCurriculumDisplayMode)
