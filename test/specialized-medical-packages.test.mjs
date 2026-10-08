@@ -150,11 +150,8 @@ test("specialized packages load beneath Dutch and empty Traditional Chinese with
     assert.match(await renderLanguageTreeRightPane(emptyReading, { dataDir }), /No ordinary curriculum is available/u);
     assert.match(await renderLanguageTreeRightPane(emptyReview, { dataDir }), /No ordinary curriculum is available/u);
     const chineseSpecialized = child(chinese, "Specialized Decks");
-    assert.deepEqual(chineseSpecialized.children.map((node) => node.label), ["Medical I"]);
-    const chineseMedicalPackage = child(chineseSpecialized, "Medical I");
-    const chineseMedical = child(chineseMedicalPackage, "Review deck");
-    assert.equal(chineseMedicalPackage.kind, "package");
-    assert.equal(chineseMedicalPackage.packageVersion, "0.1.0");
+    assert.deepEqual(chineseSpecialized.children.map((node) => node.label), ["Medical"]);
+    const chineseMedical = child(chineseSpecialized, "Medical");
     assert.equal(chineseMedical.kind, "review-source");
     assert.equal(chineseMedical.packageId, packages[1].packageId);
     assert.equal(chineseMedical.itemCount, packages[1].cardCount);
@@ -163,7 +160,8 @@ test("specialized packages load beneath Dutch and empty Traditional Chinese with
     const allLabels = allNodes(tree).map((node) => node.label);
     assert.equal(allLabels.filter((label) => label === "Specialized").length, 0);
     assert.equal(allLabels.filter((label) => label === "Specialized Decks").length, 2);
-    assert.equal(allLabels.filter((label) => label === "Medical I").length, 2);
+    assert.equal(allLabels.filter((label) => label === "Medical I").length, 1);
+    assert.equal(allLabels.filter((label) => label === "Medical").length, 1);
     assert.equal(allLabels.includes("Dutch Specialized Medical I"), false);
     assert.equal(allLabels.includes("Chinese (Traditional) Specialized Medical I"), false);
     assert.equal(allLabels.filter((label) => label === "Reading Decks").length, 2);

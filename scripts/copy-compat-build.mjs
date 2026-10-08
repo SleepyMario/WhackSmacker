@@ -142,9 +142,10 @@ await cp("packages/geography/data/china-taiwan-province-capitals", "dist/package
 await cp("packages/geography/data/netherlands-provinces", "dist/packages/geography/data/netherlands-provinces", { recursive: true });
 await cp("packages/geography/data/germany-states", "dist/packages/geography/data/germany-states", { recursive: true });
 await cp("packages/geography/data/switzerland-language", "dist/packages/geography/data/switzerland-language", { recursive: true });
+await cp("packages/geography/data/belgium-language", "dist/packages/geography/data/belgium-language", { recursive: true });
 await cp("packages/geography/data/antarctica", "dist/packages/geography/data/antarctica", { recursive: true });
 for (const directory of [
-  "united-kingdom-divisions", "belgium-regions", "belgium-provinces", "france-divisions", "spain-divisions", "italy-regions", "switzerland-cantons", "russian-federation-divisions", "russian-federal-districts",
+  "united-kingdom-divisions", "belgium-regions", "belgium-provinces", "france-divisions", "spain-divisions", "italy-regions", "switzerland-cantons", "north-america-countries", "central-america-countries", "south-america-countries", "russian-federation-divisions", "russian-federal-districts",
   "china-divisions", "china-roc-divisions", "india-divisions",
   "australia-divisions", "canada-divisions", "ussr-former-divisions", "united-states-divisions", "yugoslavia-former-divisions"
 ]) await cp(`packages/geography/data/${directory}`, `dist/packages/geography/data/${directory}`, { recursive: true });

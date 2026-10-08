@@ -1,0 +1,38 @@
+[
+  {
+    "id": "canada-highlight",
+    "answer": "Canada",
+    "kind": "Country Or Territory",
+    "sourceCode": "CAN"
+  },
+  {
+    "id": "united-states-highlight",
+    "answer": "United States",
+    "kind": "Country Or Territory",
+    "sourceCode": "USA"
+  },
+  {
+    "id": "mexico-highlight",
+    "answer": "Mexico",
+    "kind": "Country Or Territory",
+    "sourceCode": "MEX"
+  },
+  {
+    "id": "greenland-denmark-highlight",
+    "answer": "Greenland (Denmark)",
+    "kind": "Country Or Territory",
+    "sourceCode": "GRL"
+  },
+  {
+    "id": "bermuda-united-kingdom-highlight",
+    "answer": "Bermuda (United Kingdom)",
+    "kind": "Country Or Territory",
+    "sourceCode": "BMU"
+  },
+  {
+    "id": "saint-pierre-and-miquelon-france-highlight",
+    "answer": "Saint Pierre and Miquelon (France)",
+    "kind": "Country Or Territory",
+    "sourceCode": "SPM"
+  }
+]

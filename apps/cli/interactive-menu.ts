@@ -1335,7 +1335,7 @@ export function markGeographyDeckReviewStatuses(
       cardIdentities,
       savedProgress: progressItems,
       now,
-      manuallyFinished: isReviewDeckManuallyFinished(finishedDecks, target)
+      manuallyFinished: isReviewDeckManuallyFinished(finishedDecks, { packageId: target.packageId })
     });
     const status = localizeReviewDeckMenuStatus(classification, locale);
     return {
@@ -1347,6 +1347,46 @@ export function markGeographyDeckReviewStatuses(
     };
   };
   return walk(root);
+}
+
+export function rollUpFinishedDeckStatuses(
+  root: LanguageTreeNode,
+  locale: SourceLocale = "en-US"
+): LanguageTreeNode {
+  const walk = (node: LanguageTreeNode): {
+    readonly node: LanguageTreeNode;
+    readonly deckStatuses: readonly ReviewDeckMenuStatusKind[];
+  } => {
+    const childResults = node.children?.map(walk);
+    const children = childResults?.map((result) => result.node);
+    const descendantDeckStatuses = childResults?.flatMap((result) => result.deckStatuses) ?? [];
+    const isReviewDeck = node.kind === "review-source"
+      || (node.kind === "command" && node.reviewStatus !== undefined);
+    if (isReviewDeck) {
+      return {
+        node: { ...node, ...(children === undefined ? {} : { children }) },
+        deckStatuses: node.reviewStatus === undefined
+          ? descendantDeckStatuses
+          : [node.reviewStatus, ...descendantDeckStatuses]
+      };
+    }
+    const allDecksFinished = descendantDeckStatuses.length > 0
+      && descendantDeckStatuses.every((status) => status === "finished");
+    const { reviewStatus: _reviewStatus, reviewStatusText: _reviewStatusText, ...nodeWithoutAggregateStatus } = node;
+    return {
+      node: {
+        ...nodeWithoutAggregateStatus,
+        ...(allDecksFinished ? {
+          reviewStatus: "finished" as const,
+          dueCardCount: 0,
+          reviewStatusText: translate(locale, "review.finished")
+        } : {}),
+        ...(children === undefined ? {} : { children })
+      },
+      deckStatuses: descendantDeckStatuses
+    };
+  };
+  return walk(root).node;
 }
 
 async function markManualDeckFinishedStatuses(
@@ -1389,7 +1429,8 @@ async function refreshMenuReviewStatuses(
   const progressDir = join(resolveReviewProgressDirectory(), "wandering-the-world");
   const progress = await loadReviewProgressStore(progressDir);
   const withGeographyStatuses = markGeographyDeckReviewStatuses(withLanguageDueMarkers, progress.items, options.locale ?? "en-US", now, progress.finishedDecks);
-  return markManualDeckFinishedStatuses(withGeographyStatuses, options);
+  const withManualFinishedStatuses = await markManualDeckFinishedStatuses(withGeographyStatuses, options);
+  return rollUpFinishedDeckStatuses(withManualFinishedStatuses, options.locale ?? "en-US");
 }
 
 async function runModuleTreeMenu(registry: InMemoryCliCommandRegistry, terminal: Terminal, options: InteractiveMenuOptions): Promise<boolean> {
@@ -3753,10 +3794,12 @@ async function buildDeckFamilyBranch(
         }
       };
     }
-    if ((family === "custom" || family === "general") && sourceChildren.length === 1) {
+    const flattenedTraditionalChineseMedical = family === "specialized"
+      && record.packageId === "com.sleepymario.language.chinese-traditional.specialized.medical-1";
+    if ((family === "custom" || family === "general" || flattenedTraditionalChineseMedical) && sourceChildren.length === 1) {
       return {
         ...sourceChildren[0],
-        label: record.displayName,
+        label: flattenedTraditionalChineseMedical ? "Medical" : record.displayName,
         packageLabel: record.displayName
       };
     }
@@ -3998,7 +4041,7 @@ function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): Men
 }
 
 function buildCountriesGeographyNode(id: string): LanguageTreeNode {
-  const separatelyAuthoredCountryDatasets = new Set(["switzerland"]);
+  const separatelyAuthoredCountryDatasets = new Set(["north-america-countries", "central-america-countries", "south-america-countries", "switzerland", "belgium-regions", "belgium"]);
   const groupedCountryDecks = [...countryDivisionDecks.filter((country) => !separatelyAuthoredCountryDatasets.has(country.dataset)).reduce((groups, country) => {
     const existing = groups.get(country.label);
     if (existing === undefined) groups.set(country.label, [country]);
@@ -4007,7 +4050,27 @@ function buildCountriesGeographyNode(id: string): LanguageTreeNode {
   }, new Map<string, (typeof countryDivisionDecks[number])[]>()).entries()];
   return {
     id, label: "Countries", kind: "category", previewText: "Countries",
-    children: ([{ id: `${id}:switzerland`, label: "Switzerland", kind: "category", previewText: "Switzerland", children: [{
+    children: ([{ id: `${id}:belgium`, label: "Belgium", kind: "category", previewText: "Belgium", children: [{
+      id: `${id}:belgium:language-map`, label: "Language Map", kind: "message",
+      previewArtworkPath: join(__dirname, "../../packages/geography/data/belgium-language/language-map.png"),
+      previewText: "Belgium - Language\n\nReference map of Belgium's Dutch, French, German, and bilingual Dutch/French Brussels-Capital language areas. This is reference material, not a review deck."
+    }, {
+      id: `${id}:belgium:regions-easy`, label: "Regions - All - Easy", kind: "command",
+      commandPath: ["geography", "belgium-regions-divisions-easy"], commandArgs: [], launchTitle: "Regions - All - Easy",
+      previewText: "Regions - All - Easy\n\nSix questions covering Belgium's three regions. Identify highlighted regions with choices 1–3, and locate named regions by map number."
+    }, {
+      id: `${id}:belgium:regions-hard`, label: "Regions - All - Hard", kind: "command",
+      commandPath: ["geography", "belgium-regions-divisions-hard"], commandArgs: [], launchTitle: "Regions - All - Hard",
+      previewText: "Regions - All - Hard\n\nIdentify Belgium's three regions by typing their English names."
+    }, {
+      id: `${id}:belgium:provinces-easy`, label: "Provinces and Brussels - All - Easy", kind: "command",
+      commandPath: ["geography", "belgium-divisions-easy"], commandArgs: [], launchTitle: "Provinces and Brussels - All - Easy",
+      previewText: "Provinces and Brussels - All - Easy\n\nTwenty-two questions covering Belgium's ten provinces and Brussels. Identify highlighted places with choices and locate named places by map number."
+    }, {
+      id: `${id}:belgium:provinces-hard`, label: "Provinces and Brussels - All - Hard", kind: "command",
+      commandPath: ["geography", "belgium-divisions-hard"], commandArgs: [], launchTitle: "Provinces and Brussels - All - Hard",
+      previewText: "Provinces and Brussels - All - Hard\n\nIdentify Belgium's ten provinces and Brussels by typing their English names."
+    }] }, { id: `${id}:switzerland`, label: "Switzerland", kind: "category", previewText: "Switzerland", children: [{
       id: `${id}:switzerland:language-map`, label: "Language Map", kind: "message",
       previewArtworkPath: join(__dirname, "../../packages/geography/data/switzerland-language/language-map.png"),
       previewText: "Switzerland - Language\n\nReference map of Switzerland's German, French, Italian and Romansh language regions. This is reference material, not a review deck."
@@ -4201,6 +4264,78 @@ function buildEmptyContinentsGeographyNode(id: string): LanguageTreeNode {
     kind: "category",
     previewText: "Continents",
     children: [{
+      id: `${id}:america`,
+      label: "America",
+      kind: "category",
+      previewText: "America",
+      children: [{
+        id: `${id}:america:north`,
+        label: "North",
+        kind: "category",
+        previewText: "North America",
+        children: [{
+          id: `${id}:america:north:easy`,
+          label: "Countries and Territories - Easy",
+          kind: "command",
+          commandPath: ["geography", "north-america-countries-divisions-easy"],
+          commandArgs: [],
+          launchTitle: "North America - Countries and Territories - Easy",
+          previewText: "North America - Countries and Territories - Easy\n\nTwelve questions covering Canada, the United States, Mexico, Greenland, Bermuda, and Saint Pierre and Miquelon: identify highlighted places with choices and locate named places by map number."
+        }, {
+          id: `${id}:america:north:hard`,
+          label: "Countries and Territories - Hard",
+          kind: "command",
+          commandPath: ["geography", "north-america-countries-divisions-hard"],
+          commandArgs: [],
+          launchTitle: "North America - Countries and Territories - Hard",
+          previewText: "North America - Countries and Territories - Hard\n\nIdentify all six countries and territories by typing their English names."
+        }]
+      }, {
+        id: `${id}:america:central`,
+        label: "Central",
+        kind: "category",
+        previewText: "Central America",
+        children: [{
+          id: `${id}:america:central:easy`,
+          label: "Countries and Territories - Easy",
+          kind: "command",
+          commandPath: ["geography", "central-america-countries-divisions-easy"],
+          commandArgs: [],
+          launchTitle: "Central America - Countries and Territories - Easy",
+          previewText: "Central America - Countries and Territories - Easy\n\nSeventy-four questions covering 37 countries and territories across Central America and the Caribbean: identify highlighted places with choices and locate named places by map number."
+        }, {
+          id: `${id}:america:central:hard`,
+          label: "Countries and Territories - Hard",
+          kind: "command",
+          commandPath: ["geography", "central-america-countries-divisions-hard"],
+          commandArgs: [],
+          launchTitle: "Central America - Countries and Territories - Hard",
+          previewText: "Central America - Countries and Territories - Hard\n\nIdentify all 37 countries and territories by typing their English names."
+        }]
+      }, {
+        id: `${id}:america:south`,
+        label: "South",
+        kind: "category",
+        previewText: "South America",
+        children: [{
+        id: `${id}:america:south:easy`,
+        label: "Countries - Easy",
+        kind: "command",
+        commandPath: ["geography", "south-america-countries-divisions-easy"],
+        commandArgs: [],
+        launchTitle: "South America - Countries - Easy",
+        previewText: "South America - Countries - Easy\n\n26 questions covering 13 countries and territories: identify highlighted places with regional choices and locate named places by map number."
+      }, {
+        id: `${id}:america:south:hard`,
+        label: "Countries - Hard",
+        kind: "command",
+        commandPath: ["geography", "south-america-countries-divisions-hard"],
+        commandArgs: [],
+        launchTitle: "South America - Countries - Hard",
+        previewText: "South America - Countries - Hard\n\nIdentify all 13 countries and territories by typing their English names."
+        }]
+      }]
+    }, {
       id: `${id}:antarctica`,
       label: "Antarctica",
       kind: "message",
@@ -6897,7 +7032,7 @@ function styleTreeLine(plain: string, semanticLabel: string, entry: VisibleLangu
   if (entry.node.kind === "content" && hasReviewDeckColoredMenuToken(plain)) {
     return styleReviewDeckColoredMenuToken(plain, selected);
   }
-  if (entry.node.kind === "review-source" || (entry.node.kind === "command" && entry.node.reviewStatus !== undefined)) {
+  if (entry.node.kind === "review-source" || entry.node.reviewStatus !== undefined) {
     return styleReviewSourceLine(plain, semanticLabel, entry.node.reviewStatus, selected);
   }
   const dueHighlightId = entry.node.packageId ?? entry.node.moduleId;

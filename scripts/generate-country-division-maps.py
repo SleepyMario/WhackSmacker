@@ -202,6 +202,67 @@ CONFIGS = {
             "Prince Edward Island": (-59.9, 47.2),
         },
     },
+    "north-america-countries": {
+        "directory": "north-america-countries",
+        "source": "source-natural-earth-map-units.geojson",
+        "title": "North America — Countries and Territories",
+        "unit": "country or territory",
+        "count_label": "6 countries and territories",
+        "wide": True,
+        "compact_wide": True,
+        "right_legend_columns": 2,
+        "right_legend_width": 9,
+        "rename": {"United States of America": "United States", "The Bahamas": "Bahamas"},
+        "order": ["Canada", "United States", "Mexico", "Greenland (Denmark)",
+                  "Bermuda (United Kingdom)", "Saint Pierre and Miquelon (France)"],
+        "margin_x": .10,
+        "margin_y": .06,
+    },
+    "central-america-countries": {
+        "directory": "central-america-countries",
+        "source": "source-natural-earth-map-units.geojson",
+        "title": "Central America — Countries and Territories",
+        "unit": "country or territory",
+        "count_label": "37 countries and territories",
+        "wide": True,
+        "compact_wide": True,
+        "order": [
+            "Belize", "Guatemala", "El Salvador", "Honduras", "Nicaragua", "Costa Rica", "Panama",
+            "Bahamas", "Cuba", "Jamaica", "Haiti", "Dominican Republic",
+            "Antigua and Barbuda", "Saint Kitts and Nevis", "Dominica", "Saint Lucia",
+            "Saint Vincent and the Grenadines", "Barbados", "Grenada", "Trinidad and Tobago",
+            "Puerto Rico (United States)", "Turks and Caicos Islands (United Kingdom)",
+            "Cayman Islands (United Kingdom)", "United States Virgin Islands",
+            "British Virgin Islands (United Kingdom)", "Anguilla (United Kingdom)",
+            "Montserrat (United Kingdom)", "Guadeloupe (France)", "Martinique (France)",
+            "Saint Martin (France)", "Saint Barthelemy (France)", "Sint Maarten (Netherlands)",
+            "Aruba (Netherlands)", "Curacao (Netherlands)", "Bonaire (Netherlands)",
+            "Saba (Netherlands)", "Sint Eustatius (Netherlands)",
+        ],
+        "margin_x": .035,
+        "margin_y": .035,
+    },
+    "south-america-countries": {
+        "directory": "south-america-countries",
+        "source": "source-natural-earth-map-units.geojson",
+        "title": "South America — Countries",
+        "unit": "country",
+        "count_label": "13 countries and territories",
+        "projection": "south-america-albers",
+        "order": [
+            "Argentina", "Bolivia", "Brazil", "Chile", "Colombia", "Ecuador",
+            "Guyana", "Guyana (France)", "Paraguay", "Peru", "Suriname",
+            "Uruguay", "Venezuela",
+        ],
+        "margin_x": .12,
+        "margin_y": .055,
+        "vertical_callouts": ["Guyana", "Suriname", "Guyana (France)"],
+        "vertical_callout_edge": "top",
+        "vertical_callout_offset": .025,
+        "fixed_callouts_lonlat": {
+            "Uruguay": (-49.0, -35.0),
+        },
+    },
     "ussr-former": {
         "source": "source-former-ussr-republics.geojson",
         "title": "USSR (Former) — Union Republics",
@@ -412,6 +473,16 @@ def project_point(point: tuple[float, float] | list[float], projection: str | No
     lon, lat = point[:2]
     if projection == "russia-equirect":
         return (lon + 360 if lon < 0 else lon), lat
+    if projection == "south-america-albers":
+        phi = math.radians(lat); lam = math.radians(lon)
+        phi1, phi2 = math.radians(-5), math.radians(-42)
+        phi0, lam0 = math.radians(-22), math.radians(-60)
+        n = (math.sin(phi1) + math.sin(phi2)) / 2
+        c = math.cos(phi1) ** 2 + 2 * n * math.sin(phi1)
+        rho = math.sqrt(c - 2 * n * math.sin(phi)) / n
+        rho0 = math.sqrt(c - 2 * n * math.sin(phi0)) / n
+        delta = (lam - lam0 + math.pi) % (2 * math.pi) - math.pi
+        return rho * math.sin(n * delta), rho0 - rho * math.cos(n * delta)
     if projection not in {"canada-lambert", "ussr-lambert", "usa-albers"}: return lon, lat
     # Canada uses Statistics Canada's Canada Atlas parameters. The former
     # USSR uses an equivalent Eurasia-centred conic view so its extreme
@@ -451,6 +522,8 @@ def transform_geometry(feature: dict, key: str, config: dict) -> None:
         elif key == "united-states" and name == "Hawaii":
             x = -111.0 + (x + 160) * .60
             y = 23.0 + (y - 18) * .60
+        elif key == "north-america-countries" and x > 0:
+            x -= 360
         x, y = project_point((x, y), config.get("projection"))
         point[0], point[1] = x, y
         return point
@@ -573,6 +646,18 @@ def generate(key: str) -> None:
         answer: project_point(point, config.get("projection"))
         for answer, point in config.get("fixed_callouts_lonlat", {}).items()
     })
+    vertical_callout_offset = config.get("vertical_callout_offset", .075)
+    vertical_callout_y = (
+        max_y + height * vertical_callout_offset
+        if config.get("vertical_callout_edge") == "top"
+        else min_y - height * vertical_callout_offset
+    )
+    for answer in config.get("vertical_callouts", []):
+        feature = next(feature for feature in features if feature["answer"] == answer)
+        callout_positions[answer] = (feature["center"][0], vertical_callout_y)
+    for answer, (x_fraction, y_fraction) in config.get("callout_position_offsets", {}).items():
+        x, y = callout_positions[answer]
+        callout_positions[answer] = (x + width * x_fraction, y + height * y_fraction)
     label_positions = dict(config.get("label_positions", {}))
     label_positions.update({
         answer: project_point(point, config.get("projection"))

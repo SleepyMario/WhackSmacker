@@ -1,0 +1,224 @@
+[
+  {
+    "id": "belize-highlight",
+    "answer": "Belize",
+    "kind": "Country Or Territory",
+    "sourceCode": "BLZ"
+  },
+  {
+    "id": "guatemala-highlight",
+    "answer": "Guatemala",
+    "kind": "Country Or Territory",
+    "sourceCode": "GTM"
+  },
+  {
+    "id": "el-salvador-highlight",
+    "answer": "El Salvador",
+    "kind": "Country Or Territory",
+    "sourceCode": "SLV"
+  },
+  {
+    "id": "honduras-highlight",
+    "answer": "Honduras",
+    "kind": "Country Or Territory",
+    "sourceCode": "HND"
+  },
+  {
+    "id": "nicaragua-highlight",
+    "answer": "Nicaragua",
+    "kind": "Country Or Territory",
+    "sourceCode": "NIC"
+  },
+  {
+    "id": "costa-rica-highlight",
+    "answer": "Costa Rica",
+    "kind": "Country Or Territory",
+    "sourceCode": "CRI"
+  },
+  {
+    "id": "panama-highlight",
+    "answer": "Panama",
+    "kind": "Country Or Territory",
+    "sourceCode": "PAN"
+  },
+  {
+    "id": "bahamas-highlight",
+    "answer": "Bahamas",
+    "kind": "Country Or Territory",
+    "sourceCode": "BHS"
+  },
+  {
+    "id": "cuba-highlight",
+    "answer": "Cuba",
+    "kind": "Country Or Territory",
+    "sourceCode": "CUB"
+  },
+  {
+    "id": "jamaica-highlight",
+    "answer": "Jamaica",
+    "kind": "Country Or Territory",
+    "sourceCode": "JAM"
+  },
+  {
+    "id": "haiti-highlight",
+    "answer": "Haiti",
+    "kind": "Country Or Territory",
+    "sourceCode": "HTI"
+  },
+  {
+    "id": "dominican-republic-highlight",
+    "answer": "Dominican Republic",
+    "kind": "Country Or Territory",
+    "sourceCode": "DOM"
+  },
+  {
+    "id": "antigua-and-barbuda-highlight",
+    "answer": "Antigua and Barbuda",
+    "kind": "Country Or Territory",
+    "sourceCode": "ATG"
+  },
+  {
+    "id": "saint-kitts-and-nevis-highlight",
+    "answer": "Saint Kitts and Nevis",
+    "kind": "Country Or Territory",
+    "sourceCode": "KNA"
+  },
+  {
+    "id": "dominica-highlight",
+    "answer": "Dominica",
+    "kind": "Country Or Territory",
+    "sourceCode": "DMA"
+  },
+  {
+    "id": "saint-lucia-highlight",
+    "answer": "Saint Lucia",
+    "kind": "Country Or Territory",
+    "sourceCode": "LCA"
+  },
+  {
+    "id": "saint-vincent-and-the-grenadines-highlight",
+    "answer": "Saint Vincent and the Grenadines",
+    "kind": "Country Or Territory",
+    "sourceCode": "VCT"
+  },
+  {
+    "id": "barbados-highlight",
+    "answer": "Barbados",
+    "kind": "Country Or Territory",
+    "sourceCode": "BRB"
+  },
+  {
+    "id": "grenada-highlight",
+    "answer": "Grenada",
+    "kind": "Country Or Territory",
+    "sourceCode": "GRD"
+  },
+  {
+    "id": "trinidad-and-tobago-highlight",
+    "answer": "Trinidad and Tobago",
+    "kind": "Country Or Territory",
+    "sourceCode": "TTO"
+  },
+  {
+    "id": "puerto-rico-united-states-highlight",
+    "answer": "Puerto Rico (United States)",
+    "kind": "Country Or Territory",
+    "sourceCode": "PRI"
+  },
+  {
+    "id": "turks-and-caicos-islands-united-kingdom-highlight",
+    "answer": "Turks and Caicos Islands (United Kingdom)",
+    "kind": "Country Or Territory",
+    "sourceCode": "TCA"
+  },
+  {
+    "id": "cayman-islands-united-kingdom-highlight",
+    "answer": "Cayman Islands (United Kingdom)",
+    "kind": "Country Or Territory",
+    "sourceCode": "CYM"
+  },
+  {
+    "id": "united-states-virgin-islands-highlight",
+    "answer": "United States Virgin Islands",
+    "kind": "Country Or Territory",
+    "sourceCode": "VIR"
+  },
+  {
+    "id": "british-virgin-islands-united-kingdom-highlight",
+    "answer": "British Virgin Islands (United Kingdom)",
+    "kind": "Country Or Territory",
+    "sourceCode": "VGB"
+  },
+  {
+    "id": "anguilla-united-kingdom-highlight",
+    "answer": "Anguilla (United Kingdom)",
+    "kind": "Country Or Territory",
+    "sourceCode": "AIA"
+  },
+  {
+    "id": "montserrat-united-kingdom-highlight",
+    "answer": "Montserrat (United Kingdom)",
+    "kind": "Country Or Territory",
+    "sourceCode": "MSR"
+  },
+  {
+    "id": "guadeloupe-france-highlight",
+    "answer": "Guadeloupe (France)",
+    "kind": "Country Or Territory",
+    "sourceCode": "GLP"
+  },
+  {
+    "id": "martinique-france-highlight",
+    "answer": "Martinique (France)",
+    "kind": "Country Or Territory",
+    "sourceCode": "MTQ"
+  },
+  {
+    "id": "saint-martin-france-highlight",
+    "answer": "Saint Martin (France)",
+    "kind": "Country Or Territory",
+    "sourceCode": "MAF"
+  },
+  {
+    "id": "saint-barthelemy-france-highlight",
+    "answer": "Saint Barthelemy (France)",
+    "kind": "Country Or Territory",
+    "sourceCode": "BLM"
+  },
+  {
+    "id": "sint-maarten-netherlands-highlight",
+    "answer": "Sint Maarten (Netherlands)",
+    "kind": "Country Or Territory",
+    "sourceCode": "SXM"
+  },
+  {
+    "id": "aruba-netherlands-highlight",
+    "answer": "Aruba (Netherlands)",
+    "kind": "Country Or Territory",
+    "sourceCode": "ABW"
+  },
+  {
+    "id": "curacao-netherlands-highlight",
+    "answer": "Curacao (Netherlands)",
+    "kind": "Country Or Territory",
+    "sourceCode": "CUW"
+  },
+  {
+    "id": "bonaire-netherlands-highlight",
+    "answer": "Bonaire (Netherlands)",
+    "kind": "Country Or Territory",
+    "sourceCode": "NL-BQ1"
+  },
+  {
+    "id": "saba-netherlands-highlight",
+    "answer": "Saba (Netherlands)",
+    "kind": "Country Or Territory",
+    "sourceCode": "NL-BQ2"
+  },
+  {
+    "id": "sint-eustatius-netherlands-highlight",
+    "answer": "Sint Eustatius (Netherlands)",
+    "kind": "Country Or Territory",
+    "sourceCode": "NL-BQ3"
+  }
+]

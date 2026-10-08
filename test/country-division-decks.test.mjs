@@ -5,7 +5,7 @@ import { countryDivisionDecks } from "../dist/packages/geography/continents-easy
 
 const countries = [
   ["united-kingdom-divisions", 4], ["belgium-regions", 3], ["belgium-provinces", 11], ["france-divisions", 13],
-  ["spain-divisions", 19], ["italy-regions", 20], ["switzerland-cantons", 26],
+  ["spain-divisions", 19], ["italy-regions", 20], ["switzerland-cantons", 26], ["north-america-countries", 6], ["central-america-countries", 37], ["south-america-countries", 13],
   ["russian-federation-divisions", 89], ["russian-federal-districts", 8],
   ["china-divisions", 33], ["china-roc-divisions", 22], ["india-divisions", 36],
   ["australia-divisions", 8],

@@ -38,6 +38,7 @@ import {
   projectionToggleRequiresModuleTreeRefresh,
   renderTwoPaneLanguageTree,
   renderLanguageTreeRightPane,
+  rollUpFinishedDeckStatuses,
   resolveLanguageBackupDataDirectory,
   renderSourceLanguageToggle,
   renderWhackSmackerHeader,
@@ -893,11 +894,16 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   assert.equal(geography.kind, installed.children[0].kind, "installed top-level modules share one ordinary colour class");
   assert.deepEqual(geography.children.map((node) => node.label), ["World", "Continents", "Countries"]);
   assert.deepEqual(geography.children[0].children.map((node) => node.label), ["Continents - Easy", "Continents - Hard"]);
-  assert.deepEqual(geography.children[1].children.map((node) => node.label), ["Antarctica"]);
-  const antarctica = geography.children[1].children[0];
+  assert.deepEqual(geography.children[1].children.map((node) => node.label), ["America", "Antarctica"]);
+  const america = geography.children[1].children.find((node) => node.label === "America");
+  const antarctica = geography.children[1].children.find((node) => node.label === "Antarctica");
   assert.equal(antarctica.kind, "message");
   assert.match(antarctica.previewArtworkPath, /antarctica\/antarctica-map\.png$/u);
   assert.match(antarctica.previewText, /reference material, not a review deck/iu);
+  assert.deepEqual(america.children.map((node) => node.label), ["North", "Central", "South"]);
+  assert.deepEqual(america.children[0].children.map((node) => node.label), ["Countries and Territories - Easy", "Countries and Territories - Hard"]);
+  assert.deepEqual(america.children[1].children.map((node) => node.label), ["Countries and Territories - Easy", "Countries and Territories - Hard"]);
+  assert.deepEqual(america.children[2].children.map((node) => node.label), ["Countries - Easy", "Countries - Hard"]);
   const countries = geography.children[2];
   const country = (label) => countries.children.find((node) => node.label === label);
   assert.deepEqual(countries.children.map((node) => node.label), [
@@ -949,11 +955,16 @@ test("module tree shows renamed learning categories without Games or legacy Cont
     "States - All - Hard"
   ]);
   assert.deepEqual(country("Belgium").children.map((node) => node.label), [
+    "Language Map",
     "Regions - All - Easy",
     "Regions - All - Hard",
     "Provinces and Brussels - All - Easy",
     "Provinces and Brussels - All - Hard"
   ]);
+  const belgiumLanguageMap = country("Belgium").children[0];
+  assert.equal(belgiumLanguageMap.kind, "message");
+  assert.match(belgiumLanguageMap.previewArtworkPath, /belgium-language\/language-map\.png$/u);
+  assert.match(belgiumLanguageMap.previewText, /reference material, not a review deck/iu);
   assert.deepEqual(country("Russia").children.map((node) => node.label), [
     "All - Easy",
     "All - Hard",
@@ -2845,6 +2856,131 @@ test("Wandering the World decks use the same four review states and due counts a
   const finished = markGeographyDeckReviewStatuses(tree, finishedStates, "en-US", now);
   assert.equal(findCommand(finished).reviewStatus, "finished");
   assert.match(renderTwoPaneLanguageTree(finished, new Set(["whacksmacker", "geography"]), 0, "", true), /\x1b\[32m[^\n]*Prefectures - Regions - Easy/u);
+});
+
+test("finished Wandering the World decks recursively turn every completed containing submenu green", () => {
+  const country = (dataset, label) => ({
+    id: `geography:countries:${dataset}`,
+    label,
+    kind: "category",
+    children: ["easy", "hard"].map((mode) => ({
+      id: `geography:countries:${dataset}:${mode}`,
+      label: `${label} - ${mode}`,
+      kind: "command",
+      commandPath: ["geography", `${dataset}-divisions-${mode}`]
+    }))
+  });
+  const china = country("china", "China");
+  const taiwan = country("china-taiwan", "China (Taiwan)");
+  const canada = country("canada", "Canada");
+  const tree = {
+    id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
+      id: "geography", label: "Wandering the World", kind: "category", children: [{
+        id: "geography:countries", label: "Countries", kind: "category", children: [
+          china,
+          taiwan,
+          canada,
+          {
+            id: "geography:countries:switzerland", label: "Switzerland", kind: "category", children: [{
+              id: "geography:countries:switzerland:language-map", label: "Language Map", kind: "command",
+              commandPath: ["geography", "switzerland-language-map"]
+            }]
+          }
+        ]
+      }]
+    }]
+  };
+  const finishedAt = "2026-10-05T00:00:00Z";
+  const finished = (dataset) => ["easy", "hard"].map((mode) => ({
+    packageId: `com.sleepymario.geography.${dataset}-divisions-${mode}`,
+    finishedAt
+  }));
+  const chinaFinished = markGeographyDeckReviewStatuses(
+    tree,
+    [],
+    "en-US",
+    finishedAt,
+    [...finished("china"), ...finished("china-taiwan")]
+  );
+  const chinaFinishedWithParents = rollUpFinishedDeckStatuses(chinaFinished);
+  const geography = chinaFinishedWithParents.children[0];
+  const countries = geography.children[0];
+  assert.equal(countries.children[0].reviewStatus, "finished");
+  assert.equal(countries.children[1].reviewStatus, "finished");
+  assert.equal(countries.children[2].reviewStatus, undefined, "an unfinished deck keeps its submenu unfinished");
+  assert.equal(countries.children[3].reviewStatus, undefined, "a reference-only submenu is not itself a finished deck");
+  assert.equal(countries.reviewStatus, undefined, "one unfinished deck blocks its containing submenu");
+  assert.equal(geography.reviewStatus, undefined, "the unfinished state propagates to higher parents");
+  const partialOutput = renderTwoPaneLanguageTree(
+    chinaFinishedWithParents,
+    new Set(["whacksmacker", "geography", "geography:countries"]),
+    0,
+    "",
+    true
+  );
+  assert.match(partialOutput, /\x1b\[32m[^\n]*China\x1b\[0m/u);
+  assert.match(partialOutput, /\x1b\[32m[^\n]*China \(Taiwan\)\x1b\[0m/u);
+
+  const allDecksFinished = markGeographyDeckReviewStatuses(
+    tree,
+    [],
+    "en-US",
+    finishedAt,
+    [...finished("china"), ...finished("china-taiwan"), ...finished("canada")]
+  );
+  const allDecksFinishedWithParents = rollUpFinishedDeckStatuses(allDecksFinished);
+  const completedGeography = allDecksFinishedWithParents.children[0];
+  const completedCountries = completedGeography.children[0];
+  assert.equal(completedCountries.reviewStatus, "finished");
+  assert.equal(completedGeography.reviewStatus, "finished");
+  assert.equal(allDecksFinishedWithParents.reviewStatus, "finished", "the global rule reaches every completed parent");
+  const completedOutput = renderTwoPaneLanguageTree(
+    allDecksFinishedWithParents,
+    new Set(["whacksmacker", "geography"]),
+    0,
+    "",
+    true
+  );
+  assert.match(completedOutput, /\x1b\[32m[^\n]*Wandering the World\x1b\[0m/u);
+  assert.match(completedOutput, /\x1b\[32m[^\n]*Countries\x1b\[0m/u);
+});
+
+test("finished deck status rolls up globally outside Wandering the World", () => {
+  const tree = {
+    id: "whacksmacker", label: "WhackSmacker", kind: "root", children: [{
+      id: "languages", label: "LingoLand", kind: "category", children: [{
+        id: "korean", label: "Korean", kind: "module", children: [{
+          id: "korean:decks", label: "Decks", kind: "category", children: [{
+            id: "korean:custom", label: "Custom", kind: "category", children: [{
+              id: "korean:custom:vocabulary", label: "Vocabulary", kind: "review-source", reviewStatus: "finished"
+            }, {
+              id: "korean:custom:sentences", label: "Sentences", kind: "review-source", reviewStatus: "finished"
+            }, {
+              id: "korean:custom:reference", label: "Reference", kind: "content"
+            }]
+          }]
+        }]
+      }]
+    }]
+  };
+  const rolledUp = rollUpFinishedDeckStatuses(tree);
+  const languages = rolledUp.children[0];
+  const korean = languages.children[0];
+  const decks = korean.children[0];
+  const custom = decks.children[0];
+  assert.equal(custom.reviewStatus, "finished");
+  assert.equal(decks.reviewStatus, "finished");
+  assert.equal(korean.reviewStatus, "finished");
+  assert.equal(languages.reviewStatus, "finished");
+  assert.equal(rolledUp.reviewStatus, "finished");
+  const output = renderTwoPaneLanguageTree(
+    rolledUp,
+    new Set(["whacksmacker", "languages", "korean", "korean:decks"]),
+    0,
+    "",
+    true
+  );
+  assert.match(output, /\x1b\[32m[^\n]*Custom\x1b\[0m/u);
 });
 
 test("country decks receive the same menu review colours as Japan", () => {

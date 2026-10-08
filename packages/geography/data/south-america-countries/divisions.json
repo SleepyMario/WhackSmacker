@@ -1,0 +1,80 @@
+[
+  {
+    "id": "argentina-highlight",
+    "answer": "Argentina",
+    "kind": "Country",
+    "sourceCode": "ARG"
+  },
+  {
+    "id": "bolivia-highlight",
+    "answer": "Bolivia",
+    "kind": "Country",
+    "sourceCode": "BOL"
+  },
+  {
+    "id": "brazil-highlight",
+    "answer": "Brazil",
+    "kind": "Country",
+    "sourceCode": "BRA"
+  },
+  {
+    "id": "chile-highlight",
+    "answer": "Chile",
+    "kind": "Country",
+    "sourceCode": "CHL"
+  },
+  {
+    "id": "colombia-highlight",
+    "answer": "Colombia",
+    "kind": "Country",
+    "sourceCode": "COL"
+  },
+  {
+    "id": "ecuador-highlight",
+    "answer": "Ecuador",
+    "kind": "Country",
+    "sourceCode": "ECU"
+  },
+  {
+    "id": "guyana-highlight",
+    "answer": "Guyana",
+    "kind": "Country",
+    "sourceCode": "GUY"
+  },
+  {
+    "id": "guyana-france-highlight",
+    "answer": "Guyana (France)",
+    "kind": "Country",
+    "sourceCode": "GUF"
+  },
+  {
+    "id": "paraguay-highlight",
+    "answer": "Paraguay",
+    "kind": "Country",
+    "sourceCode": "PRY"
+  },
+  {
+    "id": "peru-highlight",
+    "answer": "Peru",
+    "kind": "Country",
+    "sourceCode": "PER"
+  },
+  {
+    "id": "suriname-highlight",
+    "answer": "Suriname",
+    "kind": "Country",
+    "sourceCode": "SUR"
+  },
+  {
+    "id": "uruguay-highlight",
+    "answer": "Uruguay",
+    "kind": "Country",
+    "sourceCode": "URY"
+  },
+  {
+    "id": "venezuela-highlight",
+    "answer": "Venezuela",
+    "kind": "Country",
+    "sourceCode": "VEN"
+  }
+]
