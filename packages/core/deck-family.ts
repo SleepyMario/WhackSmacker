@@ -103,7 +103,15 @@ export function packagesForLanguageAndDeckFamily<T extends DeckFamilyPackageReco
       "local.user.decks.korean-kgfil-vii-a-vocabulary",
       "local.user.decks.korean-kgfil-vii-a-sentences",
       "local.user.decks.korean-kgfil-viii-vocabulary",
-      "local.user.decks.korean-kgfil-viii-sentences"
+      "local.user.decks.korean-kgfil-viii-sentences",
+      "local.user.decks.korean-kgfil-ix-a-vocabulary",
+      "local.user.decks.korean-kgfil-ix-a-sentences",
+      "local.user.decks.korean-kgfil-ix-b-vocabulary",
+      "local.user.decks.korean-kgfil-ix-b-sentences",
+      "local.user.decks.korean-kgfil-ix-c-vocabulary",
+      "local.user.decks.korean-kgfil-ix-c-sentences",
+      "local.user.decks.korean-kgfil-x-vocabulary",
+      "local.user.decks.korean-kgfil-x-sentences"
     ];
     const leftKgfilOrder = kgfilOrder.indexOf(left.packageId);
     const rightKgfilOrder = kgfilOrder.indexOf(right.packageId);
