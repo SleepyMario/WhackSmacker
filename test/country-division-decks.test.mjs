@@ -6,6 +6,7 @@ import { countryDivisionDecks } from "../dist/packages/geography/continents-easy
 const countries = [
   ["united-kingdom-divisions", 4], ["belgium-regions", 3], ["belgium-provinces", 11], ["france-divisions", 13],
   ["spain-divisions", 19], ["italy-regions", 20], ["switzerland-cantons", 26], ["north-america-countries", 6], ["central-america-countries", 37], ["south-america-countries", 13],
+  ["europe-countries", 51],
   ["russian-federation-divisions", 89], ["russian-federal-districts", 8],
   ["china-divisions", 33], ["china-roc-divisions", 22], ["india-divisions", 36],
   ["australia-divisions", 8],
@@ -52,5 +53,5 @@ test("only genuinely horizontal country maps use the top-down study layout", () 
   const topDown = countryDivisionDecks
     .filter(deck => deck.mapLayout === "top-down")
     .map(deck => deck.dataset);
-  assert.deepEqual(topDown, ["belgium", "russian-federation", "russian-federal-districts", "china", "canada", "ussr-former", "united-states"]);
+  assert.deepEqual(topDown, ["europe-countries", "belgium", "russian-federation", "russian-federal-districts", "china", "canada", "ussr-former", "united-states"]);
 });

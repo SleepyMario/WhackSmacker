@@ -4062,7 +4062,7 @@ function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): Men
 }
 
 function buildCountriesGeographyNode(id: string): LanguageTreeNode {
-  const separatelyAuthoredCountryDatasets = new Set(["north-america-countries", "central-america-countries", "south-america-countries", "switzerland", "belgium-regions", "belgium"]);
+  const separatelyAuthoredCountryDatasets = new Set(["north-america-countries", "central-america-countries", "south-america-countries", "europe-countries", "switzerland", "belgium-regions", "belgium"]);
   const groupedCountryDecks = [...countryDivisionDecks.filter((country) => !separatelyAuthoredCountryDatasets.has(country.dataset)).reduce((groups, country) => {
     const existing = groups.get(country.label);
     if (existing === undefined) groups.set(country.label, [country]);
@@ -4355,6 +4355,28 @@ function buildEmptyContinentsGeographyNode(id: string): LanguageTreeNode {
         launchTitle: "South America - Countries - Hard",
         previewText: "South America - Countries - Hard\n\nIdentify all 13 countries and territories by typing their English names."
         }]
+      }]
+    }, {
+      id: `${id}:europe`,
+      label: "Europe",
+      kind: "category",
+      previewText: "Europe",
+      children: [{
+        id: `${id}:europe:easy`,
+        label: "Countries and Territories - Easy",
+        kind: "command",
+        commandPath: ["geography", "europe-countries-divisions-easy"],
+        commandArgs: [],
+        launchTitle: "Europe - Countries and Territories - Easy",
+        previewText: "Europe - Countries and Territories - Easy\n\n102 questions covering 51 countries and territories: identify highlighted places with choices and locate named places by map number."
+      }, {
+        id: `${id}:europe:hard`,
+        label: "Countries and Territories - Hard",
+        kind: "command",
+        commandPath: ["geography", "europe-countries-divisions-hard"],
+        commandArgs: [],
+        launchTitle: "Europe - Countries and Territories - Hard",
+        previewText: "Europe - Countries and Territories - Hard\n\nIdentify all 51 countries and territories by typing their English names."
       }]
     }, {
       id: `${id}:antarctica`,

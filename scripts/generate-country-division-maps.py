@@ -16,11 +16,23 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as path_effects
-from matplotlib.patches import Polygon
+from matplotlib.patches import Circle, Polygon
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIGS = {
-    "united-kingdom": {"source": "source-GBR-adm1.geojson", "title": "United Kingdom — Constituent Countries", "unit": "constituent country"},
+    "united-kingdom": {
+        "source": "source-GBR-adm1.geojson",
+        "title": "United Kingdom — Constituent Countries",
+        "unit": "constituent country",
+        # Keep the neighbouring Republic of Ireland visible as neutral context.
+        # It is deliberately excluded from the numbered divisions and questions.
+        "context_sources": [
+            {"source": "context/source-IRL-adm0.geojson", "fill": "#c9cecc", "linewidth": .75},
+        ],
+        "extent": [-11.2, 2.1, 49.5, 61.1],
+        "margin_x": .025,
+        "margin_y": .025,
+    },
     "belgium": {
         "directory": "belgium-provinces",
         "source": "source-BEL-nuts2-2024.geojson",
@@ -241,6 +253,96 @@ CONFIGS = {
         ],
         "margin_x": .035,
         "margin_y": .035,
+    },
+    "europe-countries": {
+        "directory": "europe-countries",
+        "source": "source-natural-earth-countries.geojson",
+        "title": "Europe — Countries and Territories",
+        "unit": "country or territory",
+        "count_label": "51 countries and territories",
+        "wide": True,
+        "compact_wide": True,
+        "numbered_named_asset": True,
+        "suppress_answer_title": True,
+        # Deliberately omit empty ocean west of Iceland and remote Arctic
+        # components north of mainland Scandinavia. The extra eastern extent
+        # shifts the enlarged European landmass slightly left in the frame.
+        "extent_lonlat": [-25.0, 65.0, 34.0, 72.0],
+        "margin_x": .015,
+        "margin_y": .025,
+        "number_font_size": 16,
+        "callout_font_size": 16,
+        "callout_box_pad": .15,
+        "order": [
+            "Albania", "Andorra", "Austria", "Belarus", "Belgium",
+            "Bosnia and Herzegovina", "Bulgaria", "Croatia", "Czechia", "Denmark",
+            "Estonia", "Faroe Islands", "Finland", "France", "Germany", "Gibraltar",
+            "Greece", "Guernsey", "Hungary", "Iceland", "Ireland", "Isle of Man",
+            "Italy", "Jersey", "Kosovo", "Latvia", "Liechtenstein", "Lithuania",
+            "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands",
+            "North Macedonia", "Norway", "Poland", "Portugal", "Romania", "Russia",
+            "San Marino", "Serbia", "Slovakia", "Slovenia", "Spain", "Sweden",
+            "Switzerland", "Ukraine", "United Kingdom", "Vatican City", "Åland",
+        ],
+        "label_positions_lonlat": {
+            "Croatia": (16.25, 45.3),
+            "Russia": (40.0, 58.0),
+            "Sweden": (15.8, 61.2),
+        },
+        "fixed_callouts_lonlat": {
+            # Every external number terminates over water. This keeps small
+            # countries traceable without making an unrelated country look
+            # like the numbered answer.
+            "Faroe Islands": (-20.8, 61.3),
+            "Isle of Man": (-5.2, 53.7),
+            "Guernsey": (-4.8, 49.5),
+            "Jersey": (1.8, 55.5),
+            "Luxembourg": (3.2, 55.5),
+            "Åland": (20.0, 56.4),
+            "Gibraltar": (-12.0, 35.7),
+            "Andorra": (4.7, 39.3),
+            "Monaco": (5.8, 41.0),
+            "Liechtenstein": (7.0, 37.4),
+            "Vatican City": (11.2, 38.0),
+            "Malta": (16.4, 34.8),
+            "San Marino": (16.0, 42.6),
+            "Slovenia": (13.1, 44.9),
+            "Montenegro": (16.7, 41.8),
+            "Kosovo": (27.0, 38.0),
+            "North Macedonia": (27.0, 40.5),
+            "Albania": (19.0, 38.2),
+        },
+        # Kosovo first travels south before turning toward its sea endpoint.
+        # This sharp corner keeps 25 vertically aligned below 35 without the
+        # two straight leader routes intersecting.
+        "fixed_callout_paths_lonlat": {
+            "Kosovo": [(21.0, 39.0)],
+        },
+        # These geometries are geographically tiny but pedagogically
+        # essential. Retain their largest true component even when it falls
+        # below the normal anti-speck rendering threshold.
+        "preserve_tiny_features": [
+            "Andorra", "Gibraltar", "Guernsey", "Isle of Man", "Jersey",
+            "Liechtenstein", "Luxembourg", "Malta", "Monaco", "San Marino",
+            "Vatican City", "Åland",
+        ],
+        # These places keep their exact source geometry. Small translucent
+        # locator circles make their true positions and highlighting visible
+        # at Europe scale without enlarging or moving the land itself.
+        "feature_marker_radius": {
+            "Andorra": .30,
+            "Faroe Islands": .38,
+            "Gibraltar": .30,
+            "Guernsey": .25,
+            "Isle of Man": .28,
+            "Jersey": .35,
+            "Liechtenstein": .30,
+            "Malta": .30,
+            "Monaco": .28,
+            "San Marino": .28,
+            "Vatican City": .28,
+            "Åland": .38,
+        },
     },
     "south-america-countries": {
         "directory": "south-america-countries",
@@ -605,6 +707,10 @@ def generate(key: str) -> None:
     all_points = [p for feature in extent_features for ring in primary_rings(feature) for p in ring]
     min_x,max_x=min(p[0] for p in all_points),max(p[0] for p in all_points)
     min_y,max_y=min(p[1] for p in all_points),max(p[1] for p in all_points)
+    if "extent_lonlat" in config:
+        extent = [project_point((config["extent_lonlat"][i], config["extent_lonlat"][i + 2]), config.get("projection")) for i in (0, 1)]
+        min_x, min_y = extent[0]
+        max_x, max_y = extent[1]
     width,height=max_x-min_x,max_y-min_y
     colors={f["answer"]:colorsys.hsv_to_rgb((i*.61803398875)%1,.38,.84) for i,f in enumerate(features,1)}
     colors.update(config.get("feature_colors", {}))
@@ -663,6 +769,10 @@ def generate(key: str) -> None:
         answer: project_point(point, config.get("projection"))
         for answer, point in config.get("label_positions_lonlat", {}).items()
     })
+    callout_paths = {
+        answer: [project_point(point, config.get("projection")) for point in points]
+        for answer, points in config.get("fixed_callout_paths_lonlat", {}).items()
+    }
 
     def draw(path: Path, target: str|None=None, labels: str|None=None, title: str|None=None):
         aspect=width/max(height,1e-9)
@@ -692,8 +802,20 @@ def generate(key: str) -> None:
             if not feature_rings: continue
             largest = max(polygon_area(ring) for ring in feature_rings)
             for ring in feature_rings:
-                if polygon_area(ring) < max(width * height * 0.000002, largest * 0.00001): continue
+                preserve_tiny = feature["answer"] in config.get("preserve_tiny_features", [])
+                if (not preserve_tiny and
+                        polygon_area(ring) < max(width * height * 0.000002, largest * 0.00001)): continue
                 ax.add_patch(Polygon(display_ring(ring),closed=True,facecolor=fill,edgecolor="#304247",linewidth=.65))
+        for feature in features:
+            radius = config.get("feature_marker_radius", {}).get(feature["answer"])
+            if radius is None:
+                continue
+            selected = feature["answer"] == target
+            fill = "#e98255" if selected else (colors[feature["answer"]] if target is None else "#dce1df")
+            x, y = feature["center"]
+            ax.add_patch(Circle((x, y), radius=radius, facecolor=fill,
+                                edgecolor="#304247", linewidth=1.0,
+                                alpha=.62, zorder=12))
         if inline_names:
             inline_labels = config.get("inline_name_labels", {})
             inline_sizes = config.get("inline_name_font_sizes", {})
@@ -720,10 +842,18 @@ def generate(key: str) -> None:
                 x,y=label_positions.get(feature["answer"], feature["center"])
                 if feature["answer"] in callout_positions:
                     tx,ty=callout_positions[feature["answer"]]
-                    ax.annotate(str(index),xy=(x,y),xytext=(tx,ty),ha="center",va="center",
+                    if feature["answer"] in callout_paths:
+                        route_points = [(x, y), *callout_paths[feature["answer"]], (tx, ty)]
+                        ax.plot([point[0] for point in route_points], [point[1] for point in route_points],
+                                color="#142429", linewidth=1.1, solid_joinstyle="miter", zorder=19)
+                        ax.text(tx,ty,str(index),ha="center",va="center",
                                 fontsize=config.get("callout_font_size",14),fontweight="bold",color="#142429",
-                                bbox=dict(boxstyle=f"round,pad={config.get('callout_box_pad',.18)}",facecolor="#fffdf4",alpha=.92,linewidth=0),
-                                arrowprops=dict(arrowstyle="-",color="#142429",linewidth=1.1,shrinkA=4,shrinkB=2),zorder=20)
+                                bbox=dict(boxstyle=f"round,pad={config.get('callout_box_pad',.18)}",facecolor="#fffdf4",alpha=.92,linewidth=0),zorder=20)
+                    else:
+                        ax.annotate(str(index),xy=(x,y),xytext=(tx,ty),ha="center",va="center",
+                                    fontsize=config.get("callout_font_size",14),fontweight="bold",color="#142429",
+                                    bbox=dict(boxstyle=f"round,pad={config.get('callout_box_pad',.18)}",facecolor="#fffdf4",alpha=.92,linewidth=0),
+                                    arrowprops=dict(arrowstyle="-",color="#142429",linewidth=1.1,shrinkA=4,shrinkB=2),zorder=20)
                 else:
                     ax.text(x,y,str(index),ha="center",va="center",fontsize=config.get("number_font_size",14),fontweight="bold",color="#142429",
                             bbox=dict(boxstyle="round,pad=.18",facecolor="#fffdf4",alpha=.84,linewidth=0),zorder=20)
@@ -933,13 +1063,13 @@ def generate(key: str) -> None:
     draw(data/"divisions-numbered.png",labels="number")
     if config.get("overview_only"):
         return
-    draw(data/"divisions-named.png",labels="name")
+    draw(data/"divisions-named.png",labels="number" if config.get("numbered_named_asset") else "name")
     metadata=[]
     for feature in features:
         stem=feature["idStem"]
         metadata.append({"id":f"{stem}-highlight","answer":feature["answer"],"kind":config["unit"].title(),"sourceCode":feature["properties"].get("shapeISO","")})
         draw(split/f"{stem}-question.png",target=feature["answer"],title=f"Which {config['unit']} is highlighted?")
-        draw(split/f"{stem}-answer.png",target=feature["answer"],title=feature["answer"])
+        draw(split/f"{stem}-answer.png",target=feature["answer"],title=config["title"] if config.get("suppress_answer_title") else feature["answer"])
     (data/"divisions.json").write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 
 

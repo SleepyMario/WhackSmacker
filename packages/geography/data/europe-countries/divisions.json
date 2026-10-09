@@ -1,0 +1,308 @@
+[
+  {
+    "id": "albania-highlight",
+    "answer": "Albania",
+    "kind": "Country Or Territory",
+    "sourceCode": "ALB"
+  },
+  {
+    "id": "andorra-highlight",
+    "answer": "Andorra",
+    "kind": "Country Or Territory",
+    "sourceCode": "AND"
+  },
+  {
+    "id": "austria-highlight",
+    "answer": "Austria",
+    "kind": "Country Or Territory",
+    "sourceCode": "AUT"
+  },
+  {
+    "id": "belarus-highlight",
+    "answer": "Belarus",
+    "kind": "Country Or Territory",
+    "sourceCode": "BLR"
+  },
+  {
+    "id": "belgium-highlight",
+    "answer": "Belgium",
+    "kind": "Country Or Territory",
+    "sourceCode": "BEL"
+  },
+  {
+    "id": "bosnia-and-herzegovina-highlight",
+    "answer": "Bosnia and Herzegovina",
+    "kind": "Country Or Territory",
+    "sourceCode": "BIH"
+  },
+  {
+    "id": "bulgaria-highlight",
+    "answer": "Bulgaria",
+    "kind": "Country Or Territory",
+    "sourceCode": "BGR"
+  },
+  {
+    "id": "croatia-highlight",
+    "answer": "Croatia",
+    "kind": "Country Or Territory",
+    "sourceCode": "HRV"
+  },
+  {
+    "id": "czechia-highlight",
+    "answer": "Czechia",
+    "kind": "Country Or Territory",
+    "sourceCode": "CZE"
+  },
+  {
+    "id": "denmark-highlight",
+    "answer": "Denmark",
+    "kind": "Country Or Territory",
+    "sourceCode": "DNK"
+  },
+  {
+    "id": "estonia-highlight",
+    "answer": "Estonia",
+    "kind": "Country Or Territory",
+    "sourceCode": "EST"
+  },
+  {
+    "id": "faroe-islands-highlight",
+    "answer": "Faroe Islands",
+    "kind": "Country Or Territory",
+    "sourceCode": "FRO"
+  },
+  {
+    "id": "finland-highlight",
+    "answer": "Finland",
+    "kind": "Country Or Territory",
+    "sourceCode": "FIN"
+  },
+  {
+    "id": "france-highlight",
+    "answer": "France",
+    "kind": "Country Or Territory",
+    "sourceCode": "-99"
+  },
+  {
+    "id": "germany-highlight",
+    "answer": "Germany",
+    "kind": "Country Or Territory",
+    "sourceCode": "DEU"
+  },
+  {
+    "id": "gibraltar-highlight",
+    "answer": "Gibraltar",
+    "kind": "Country Or Territory",
+    "sourceCode": "GIB"
+  },
+  {
+    "id": "greece-highlight",
+    "answer": "Greece",
+    "kind": "Country Or Territory",
+    "sourceCode": "GRC"
+  },
+  {
+    "id": "guernsey-highlight",
+    "answer": "Guernsey",
+    "kind": "Country Or Territory",
+    "sourceCode": "GGY"
+  },
+  {
+    "id": "hungary-highlight",
+    "answer": "Hungary",
+    "kind": "Country Or Territory",
+    "sourceCode": "HUN"
+  },
+  {
+    "id": "iceland-highlight",
+    "answer": "Iceland",
+    "kind": "Country Or Territory",
+    "sourceCode": "ISL"
+  },
+  {
+    "id": "ireland-highlight",
+    "answer": "Ireland",
+    "kind": "Country Or Territory",
+    "sourceCode": "IRL"
+  },
+  {
+    "id": "isle-of-man-highlight",
+    "answer": "Isle of Man",
+    "kind": "Country Or Territory",
+    "sourceCode": "IMN"
+  },
+  {
+    "id": "italy-highlight",
+    "answer": "Italy",
+    "kind": "Country Or Territory",
+    "sourceCode": "ITA"
+  },
+  {
+    "id": "jersey-highlight",
+    "answer": "Jersey",
+    "kind": "Country Or Territory",
+    "sourceCode": "JEY"
+  },
+  {
+    "id": "kosovo-highlight",
+    "answer": "Kosovo",
+    "kind": "Country Or Territory",
+    "sourceCode": "-99"
+  },
+  {
+    "id": "latvia-highlight",
+    "answer": "Latvia",
+    "kind": "Country Or Territory",
+    "sourceCode": "LVA"
+  },
+  {
+    "id": "liechtenstein-highlight",
+    "answer": "Liechtenstein",
+    "kind": "Country Or Territory",
+    "sourceCode": "LIE"
+  },
+  {
+    "id": "lithuania-highlight",
+    "answer": "Lithuania",
+    "kind": "Country Or Territory",
+    "sourceCode": "LTU"
+  },
+  {
+    "id": "luxembourg-highlight",
+    "answer": "Luxembourg",
+    "kind": "Country Or Territory",
+    "sourceCode": "LUX"
+  },
+  {
+    "id": "malta-highlight",
+    "answer": "Malta",
+    "kind": "Country Or Territory",
+    "sourceCode": "MLT"
+  },
+  {
+    "id": "moldova-highlight",
+    "answer": "Moldova",
+    "kind": "Country Or Territory",
+    "sourceCode": "MDA"
+  },
+  {
+    "id": "monaco-highlight",
+    "answer": "Monaco",
+    "kind": "Country Or Territory",
+    "sourceCode": "MCO"
+  },
+  {
+    "id": "montenegro-highlight",
+    "answer": "Montenegro",
+    "kind": "Country Or Territory",
+    "sourceCode": "MNE"
+  },
+  {
+    "id": "netherlands-highlight",
+    "answer": "Netherlands",
+    "kind": "Country Or Territory",
+    "sourceCode": "NLD"
+  },
+  {
+    "id": "north-macedonia-highlight",
+    "answer": "North Macedonia",
+    "kind": "Country Or Territory",
+    "sourceCode": "MKD"
+  },
+  {
+    "id": "norway-highlight",
+    "answer": "Norway",
+    "kind": "Country Or Territory",
+    "sourceCode": "-99"
+  },
+  {
+    "id": "poland-highlight",
+    "answer": "Poland",
+    "kind": "Country Or Territory",
+    "sourceCode": "POL"
+  },
+  {
+    "id": "portugal-highlight",
+    "answer": "Portugal",
+    "kind": "Country Or Territory",
+    "sourceCode": "PRT"
+  },
+  {
+    "id": "romania-highlight",
+    "answer": "Romania",
+    "kind": "Country Or Territory",
+    "sourceCode": "ROU"
+  },
+  {
+    "id": "russia-highlight",
+    "answer": "Russia",
+    "kind": "Country Or Territory",
+    "sourceCode": "RUS"
+  },
+  {
+    "id": "san-marino-highlight",
+    "answer": "San Marino",
+    "kind": "Country Or Territory",
+    "sourceCode": "SMR"
+  },
+  {
+    "id": "serbia-highlight",
+    "answer": "Serbia",
+    "kind": "Country Or Territory",
+    "sourceCode": "SRB"
+  },
+  {
+    "id": "slovakia-highlight",
+    "answer": "Slovakia",
+    "kind": "Country Or Territory",
+    "sourceCode": "SVK"
+  },
+  {
+    "id": "slovenia-highlight",
+    "answer": "Slovenia",
+    "kind": "Country Or Territory",
+    "sourceCode": "SVN"
+  },
+  {
+    "id": "spain-highlight",
+    "answer": "Spain",
+    "kind": "Country Or Territory",
+    "sourceCode": "ESP"
+  },
+  {
+    "id": "sweden-highlight",
+    "answer": "Sweden",
+    "kind": "Country Or Territory",
+    "sourceCode": "SWE"
+  },
+  {
+    "id": "switzerland-highlight",
+    "answer": "Switzerland",
+    "kind": "Country Or Territory",
+    "sourceCode": "CHE"
+  },
+  {
+    "id": "ukraine-highlight",
+    "answer": "Ukraine",
+    "kind": "Country Or Territory",
+    "sourceCode": "UKR"
+  },
+  {
+    "id": "united-kingdom-highlight",
+    "answer": "United Kingdom",
+    "kind": "Country Or Territory",
+    "sourceCode": "GBR"
+  },
+  {
+    "id": "vatican-city-highlight",
+    "answer": "Vatican City",
+    "kind": "Country Or Territory",
+    "sourceCode": "VAT"
+  },
+  {
+    "id": "land-highlight",
+    "answer": "Åland",
+    "kind": "Country Or Territory",
+    "sourceCode": "ALA"
+  }
+]

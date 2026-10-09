@@ -894,8 +894,9 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   assert.equal(geography.kind, installed.children[0].kind, "installed top-level modules share one ordinary colour class");
   assert.deepEqual(geography.children.map((node) => node.label), ["World", "Continents", "Countries"]);
   assert.deepEqual(geography.children[0].children.map((node) => node.label), ["Continents - Easy", "Continents - Hard"]);
-  assert.deepEqual(geography.children[1].children.map((node) => node.label), ["America", "Antarctica"]);
+  assert.deepEqual(geography.children[1].children.map((node) => node.label), ["America", "Europe", "Antarctica"]);
   const america = geography.children[1].children.find((node) => node.label === "America");
+  const europe = geography.children[1].children.find((node) => node.label === "Europe");
   const antarctica = geography.children[1].children.find((node) => node.label === "Antarctica");
   assert.equal(antarctica.kind, "message");
   assert.match(antarctica.previewArtworkPath, /antarctica\/antarctica-map\.png$/u);
@@ -904,6 +905,7 @@ test("module tree shows renamed learning categories without Games or legacy Cont
   assert.deepEqual(america.children[0].children.map((node) => node.label), ["Countries and Territories - Easy", "Countries and Territories - Hard"]);
   assert.deepEqual(america.children[1].children.map((node) => node.label), ["Countries and Territories - Easy", "Countries and Territories - Hard"]);
   assert.deepEqual(america.children[2].children.map((node) => node.label), ["Countries - Easy", "Countries - Hard"]);
+  assert.deepEqual(europe.children.map((node) => node.label), ["Countries and Territories - Easy", "Countries and Territories - Hard"]);
   const countries = geography.children[2];
   const country = (label) => countries.children.find((node) => node.label === label);
   assert.deepEqual(countries.children.map((node) => node.label), [
