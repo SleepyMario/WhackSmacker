@@ -1,0 +1,356 @@
+[
+  {
+    "id": "algeria-highlight",
+    "answer": "Algeria",
+    "kind": "Country Or Territory",
+    "sourceCode": "DZA"
+  },
+  {
+    "id": "angola-highlight",
+    "answer": "Angola",
+    "kind": "Country Or Territory",
+    "sourceCode": "AGO"
+  },
+  {
+    "id": "benin-highlight",
+    "answer": "Benin",
+    "kind": "Country Or Territory",
+    "sourceCode": "BEN"
+  },
+  {
+    "id": "botswana-highlight",
+    "answer": "Botswana",
+    "kind": "Country Or Territory",
+    "sourceCode": "BWA"
+  },
+  {
+    "id": "burkina-faso-highlight",
+    "answer": "Burkina Faso",
+    "kind": "Country Or Territory",
+    "sourceCode": "BFA"
+  },
+  {
+    "id": "burundi-highlight",
+    "answer": "Burundi",
+    "kind": "Country Or Territory",
+    "sourceCode": "BDI"
+  },
+  {
+    "id": "cabo-verde-highlight",
+    "answer": "Cabo Verde",
+    "kind": "Country Or Territory",
+    "sourceCode": "CPV"
+  },
+  {
+    "id": "cameroon-highlight",
+    "answer": "Cameroon",
+    "kind": "Country Or Territory",
+    "sourceCode": "CMR"
+  },
+  {
+    "id": "central-african-republic-highlight",
+    "answer": "Central African Republic",
+    "kind": "Country Or Territory",
+    "sourceCode": "CAF"
+  },
+  {
+    "id": "chad-highlight",
+    "answer": "Chad",
+    "kind": "Country Or Territory",
+    "sourceCode": "TCD"
+  },
+  {
+    "id": "comoros-highlight",
+    "answer": "Comoros",
+    "kind": "Country Or Territory",
+    "sourceCode": "COM"
+  },
+  {
+    "id": "democratic-republic-of-the-congo-highlight",
+    "answer": "Democratic Republic of the Congo",
+    "kind": "Country Or Territory",
+    "sourceCode": "COD"
+  },
+  {
+    "id": "djibouti-highlight",
+    "answer": "Djibouti",
+    "kind": "Country Or Territory",
+    "sourceCode": "DJI"
+  },
+  {
+    "id": "egypt-highlight",
+    "answer": "Egypt",
+    "kind": "Country Or Territory",
+    "sourceCode": "EGY"
+  },
+  {
+    "id": "equatorial-guinea-highlight",
+    "answer": "Equatorial Guinea",
+    "kind": "Country Or Territory",
+    "sourceCode": "GNQ"
+  },
+  {
+    "id": "eritrea-highlight",
+    "answer": "Eritrea",
+    "kind": "Country Or Territory",
+    "sourceCode": "ERI"
+  },
+  {
+    "id": "eswatini-highlight",
+    "answer": "Eswatini",
+    "kind": "Country Or Territory",
+    "sourceCode": "SWZ"
+  },
+  {
+    "id": "ethiopia-highlight",
+    "answer": "Ethiopia",
+    "kind": "Country Or Territory",
+    "sourceCode": "ETH"
+  },
+  {
+    "id": "gabon-highlight",
+    "answer": "Gabon",
+    "kind": "Country Or Territory",
+    "sourceCode": "GAB"
+  },
+  {
+    "id": "the-gambia-highlight",
+    "answer": "The Gambia",
+    "kind": "Country Or Territory",
+    "sourceCode": "GMB"
+  },
+  {
+    "id": "ghana-highlight",
+    "answer": "Ghana",
+    "kind": "Country Or Territory",
+    "sourceCode": "GHA"
+  },
+  {
+    "id": "guinea-highlight",
+    "answer": "Guinea",
+    "kind": "Country Or Territory",
+    "sourceCode": "GIN"
+  },
+  {
+    "id": "guinea-bissau-highlight",
+    "answer": "Guinea-Bissau",
+    "kind": "Country Or Territory",
+    "sourceCode": "GNB"
+  },
+  {
+    "id": "ivory-coast-highlight",
+    "answer": "Ivory Coast",
+    "kind": "Country Or Territory",
+    "sourceCode": "CIV"
+  },
+  {
+    "id": "kenya-highlight",
+    "answer": "Kenya",
+    "kind": "Country Or Territory",
+    "sourceCode": "KEN"
+  },
+  {
+    "id": "lesotho-highlight",
+    "answer": "Lesotho",
+    "kind": "Country Or Territory",
+    "sourceCode": "LSO"
+  },
+  {
+    "id": "liberia-highlight",
+    "answer": "Liberia",
+    "kind": "Country Or Territory",
+    "sourceCode": "LBR"
+  },
+  {
+    "id": "libya-highlight",
+    "answer": "Libya",
+    "kind": "Country Or Territory",
+    "sourceCode": "LBY"
+  },
+  {
+    "id": "madagascar-highlight",
+    "answer": "Madagascar",
+    "kind": "Country Or Territory",
+    "sourceCode": "MDG"
+  },
+  {
+    "id": "malawi-highlight",
+    "answer": "Malawi",
+    "kind": "Country Or Territory",
+    "sourceCode": "MWI"
+  },
+  {
+    "id": "mali-highlight",
+    "answer": "Mali",
+    "kind": "Country Or Territory",
+    "sourceCode": "MLI"
+  },
+  {
+    "id": "mauritania-highlight",
+    "answer": "Mauritania",
+    "kind": "Country Or Territory",
+    "sourceCode": "MRT"
+  },
+  {
+    "id": "mauritius-highlight",
+    "answer": "Mauritius",
+    "kind": "Country Or Territory",
+    "sourceCode": "MUS"
+  },
+  {
+    "id": "mayotte-france-highlight",
+    "answer": "Mayotte (France)",
+    "kind": "Country Or Territory",
+    "sourceCode": "FRA"
+  },
+  {
+    "id": "morocco-highlight",
+    "answer": "Morocco",
+    "kind": "Country Or Territory",
+    "sourceCode": "MAR"
+  },
+  {
+    "id": "mozambique-highlight",
+    "answer": "Mozambique",
+    "kind": "Country Or Territory",
+    "sourceCode": "MOZ"
+  },
+  {
+    "id": "namibia-highlight",
+    "answer": "Namibia",
+    "kind": "Country Or Territory",
+    "sourceCode": "NAM"
+  },
+  {
+    "id": "niger-highlight",
+    "answer": "Niger",
+    "kind": "Country Or Territory",
+    "sourceCode": "NER"
+  },
+  {
+    "id": "nigeria-highlight",
+    "answer": "Nigeria",
+    "kind": "Country Or Territory",
+    "sourceCode": "NGA"
+  },
+  {
+    "id": "republic-of-the-congo-highlight",
+    "answer": "Republic of the Congo",
+    "kind": "Country Or Territory",
+    "sourceCode": "COG"
+  },
+  {
+    "id": "r-union-france-highlight",
+    "answer": "Réunion (France)",
+    "kind": "Country Or Territory",
+    "sourceCode": "FRA"
+  },
+  {
+    "id": "rwanda-highlight",
+    "answer": "Rwanda",
+    "kind": "Country Or Territory",
+    "sourceCode": "RWA"
+  },
+  {
+    "id": "saint-helena-united-kingdom-highlight",
+    "answer": "Saint Helena (United Kingdom)",
+    "kind": "Country Or Territory",
+    "sourceCode": "SHN"
+  },
+  {
+    "id": "s-o-tom-and-pr-ncipe-highlight",
+    "answer": "São Tomé and Príncipe",
+    "kind": "Country Or Territory",
+    "sourceCode": "STP"
+  },
+  {
+    "id": "senegal-highlight",
+    "answer": "Senegal",
+    "kind": "Country Or Territory",
+    "sourceCode": "SEN"
+  },
+  {
+    "id": "seychelles-highlight",
+    "answer": "Seychelles",
+    "kind": "Country Or Territory",
+    "sourceCode": "SYC"
+  },
+  {
+    "id": "sierra-leone-highlight",
+    "answer": "Sierra Leone",
+    "kind": "Country Or Territory",
+    "sourceCode": "SLE"
+  },
+  {
+    "id": "somalia-highlight",
+    "answer": "Somalia",
+    "kind": "Country Or Territory",
+    "sourceCode": "SOM"
+  },
+  {
+    "id": "somaliland-highlight",
+    "answer": "Somaliland",
+    "kind": "Country Or Territory",
+    "sourceCode": "-99"
+  },
+  {
+    "id": "south-africa-highlight",
+    "answer": "South Africa",
+    "kind": "Country Or Territory",
+    "sourceCode": "ZAF"
+  },
+  {
+    "id": "south-sudan-highlight",
+    "answer": "South Sudan",
+    "kind": "Country Or Territory",
+    "sourceCode": "SSD"
+  },
+  {
+    "id": "sudan-highlight",
+    "answer": "Sudan",
+    "kind": "Country Or Territory",
+    "sourceCode": "SDN"
+  },
+  {
+    "id": "tanzania-highlight",
+    "answer": "Tanzania",
+    "kind": "Country Or Territory",
+    "sourceCode": "TZA"
+  },
+  {
+    "id": "togo-highlight",
+    "answer": "Togo",
+    "kind": "Country Or Territory",
+    "sourceCode": "TGO"
+  },
+  {
+    "id": "tunisia-highlight",
+    "answer": "Tunisia",
+    "kind": "Country Or Territory",
+    "sourceCode": "TUN"
+  },
+  {
+    "id": "uganda-highlight",
+    "answer": "Uganda",
+    "kind": "Country Or Territory",
+    "sourceCode": "UGA"
+  },
+  {
+    "id": "western-sahara-highlight",
+    "answer": "Western Sahara",
+    "kind": "Country Or Territory",
+    "sourceCode": "ESH"
+  },
+  {
+    "id": "zambia-highlight",
+    "answer": "Zambia",
+    "kind": "Country Or Territory",
+    "sourceCode": "ZMB"
+  },
+  {
+    "id": "zimbabwe-highlight",
+    "answer": "Zimbabwe",
+    "kind": "Country Or Territory",
+    "sourceCode": "ZWE"
+  }
+]

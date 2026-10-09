@@ -4062,7 +4062,7 @@ function moduleDescriptorToMenuItem(descriptor: FirstClassModuleDescriptor): Men
 }
 
 function buildCountriesGeographyNode(id: string): LanguageTreeNode {
-  const separatelyAuthoredCountryDatasets = new Set(["north-america-countries", "central-america-countries", "south-america-countries", "europe-countries", "switzerland", "belgium-regions", "belgium"]);
+  const separatelyAuthoredCountryDatasets = new Set(["north-america-countries", "central-america-countries", "south-america-countries", "africa-countries", "europe-countries", "switzerland", "belgium-regions", "belgium"]);
   const groupedCountryDecks = [...countryDivisionDecks.filter((country) => !separatelyAuthoredCountryDatasets.has(country.dataset)).reduce((groups, country) => {
     const existing = groups.get(country.label);
     if (existing === undefined) groups.set(country.label, [country]);
@@ -4285,6 +4285,28 @@ function buildEmptyContinentsGeographyNode(id: string): LanguageTreeNode {
     kind: "category",
     previewText: "Continents",
     children: [{
+      id: `${id}:africa`,
+      label: "Africa",
+      kind: "category",
+      previewText: "Africa",
+      children: [{
+        id: `${id}:africa:easy`,
+        label: "Countries and Territories - Easy",
+        kind: "command",
+        commandPath: ["geography", "africa-countries-divisions-easy"],
+        commandArgs: [],
+        launchTitle: "Africa - Countries and Territories - Easy",
+        previewText: "Africa - Countries and Territories - Easy\n\n118 questions covering 59 countries and territories: identify highlighted places with choices and locate named places by map number."
+      }, {
+        id: `${id}:africa:hard`,
+        label: "Countries and Territories - Hard",
+        kind: "command",
+        commandPath: ["geography", "africa-countries-divisions-hard"],
+        commandArgs: [],
+        launchTitle: "Africa - Countries and Territories - Hard",
+        previewText: "Africa - Countries and Territories - Hard\n\nIdentify all 59 countries and territories by typing their English names."
+      }]
+    }, {
       id: `${id}:america`,
       label: "America",
       kind: "category",

@@ -344,6 +344,97 @@ CONFIGS = {
             "Åland": .38,
         },
     },
+    "africa-countries": {
+        "directory": "africa-countries",
+        "source": "source-natural-earth-countries-and-territories.geojson",
+        "title": "Africa — Countries and Territories",
+        "unit": "country or territory",
+        "count_label": "59 countries and territories",
+        "numbered_named_asset": True,
+        "suppress_answer_title": True,
+        # Africa is vertically shaped. Keep the map tall so the eventual deck
+        # can place its question pane beside the artwork without shrinking it.
+        "extent_lonlat": [-31.0, 58.0, -36.0, 38.0],
+        "margin_x": .018,
+        "margin_y": .018,
+        "number_font_size": 16,
+        "callout_font_size": 16,
+        "callout_box_pad": .15,
+        "order": [
+            "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso",
+            "Burundi", "Cabo Verde", "Cameroon", "Central African Republic",
+            "Chad", "Comoros", "Democratic Republic of the Congo", "Djibouti",
+            "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia",
+            "Gabon", "The Gambia", "Ghana", "Guinea", "Guinea-Bissau",
+            "Ivory Coast", "Kenya", "Lesotho", "Liberia", "Libya",
+            "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius",
+            "Mayotte (France)", "Morocco", "Mozambique", "Namibia", "Niger",
+            "Nigeria", "Republic of the Congo", "Réunion (France)", "Rwanda",
+            "Saint Helena (United Kingdom)", "São Tomé and Príncipe", "Senegal",
+            "Seychelles", "Sierra Leone", "Somalia", "Somaliland", "South Africa",
+            "South Sudan", "Sudan", "Tanzania", "Togo", "Tunisia", "Uganda",
+            "Western Sahara", "Zambia", "Zimbabwe",
+        ],
+        "preserve_tiny_features": [
+            "Cabo Verde", "Comoros", "Equatorial Guinea", "The Gambia",
+            "Mauritius", "Mayotte (France)", "Réunion (France)",
+            "Saint Helena (United Kingdom)", "São Tomé and Príncipe", "Seychelles",
+        ],
+        "feature_marker_radius": {
+            "Cabo Verde": .38,
+            "Comoros": .32,
+            "Mauritius": .45,
+            "Mayotte (France)": .30,
+            "Réunion (France)": .45,
+            "Saint Helena (United Kingdom)": .34,
+            "São Tomé and Príncipe": .32,
+            "Seychelles": .50,
+        },
+        "label_positions_lonlat": {
+            # Natural Earth's multipolygon centre falls on Bioko. Keep the
+            # learner number inside Equatorial Guinea's mainland component.
+            "Equatorial Guinea": (10.45, 1.65),
+            "Egypt": (28.5, 26.7),
+            # Start Western Sahara's leader clearly inside the territory,
+            # rather than on its northern boundary.
+            "Western Sahara": (-13.1, 25.4),
+        },
+        "inline_number_features": [],
+        "fixed_callouts_lonlat": {
+            # West coast: short, ordered routes into the Atlantic.
+            "Cabo Verde": (-27.0, 16.0),
+            "The Gambia": (-20.5, 13.0),
+            "Guinea-Bissau": (-20.5, 11.0),
+            "Sierra Leone": (-20.5, 7.8),
+            "Liberia": (-20.5, 5.1),
+            "Togo": (0.8, 3.1),
+            "São Tomé and Príncipe": (2.0, -1.2),
+            "Equatorial Guinea": (-0.5, -6.0),
+            "Gabon": (4.0, -6.0),
+            "Saint Helena (United Kingdom)": (-10.0, -16.0),
+            "Western Sahara": (-20.0, 28.0),
+            # East coast and Indian Ocean: vertically ordered endpoints.
+            "Eritrea": (45.2, 17.4),
+            "Djibouti": (47.5, 14.0),
+            "Rwanda": (45.0, -1.6),
+            "Burundi": (45.0, -4.0),
+            "Seychelles": (52.5, -4.7),
+            "Comoros": (50.5, -7.4),
+            "Mayotte (France)": (50.5, -9.8),
+            "Mauritius": (53.0, -19.5),
+            "Réunion (France)": (53.0, -22.8),
+            "Eswatini": (40.0, -26.7),
+            "Lesotho": (40.0, -29.5),
+        },
+        # Draw these island-territory leaders explicitly from their translucent
+        # locator circles.  The direct path keeps the line visible instead of
+        # letting the annotation's endpoint padding consume a short leader.
+        "fixed_callout_paths_lonlat": {
+            "Seychelles": [],
+            "Mauritius": [],
+            "Réunion (France)": [],
+        },
+    },
     "south-america-countries": {
         "directory": "south-america-countries",
         "source": "source-natural-earth-map-units.geojson",
@@ -719,7 +810,10 @@ def generate(key: str) -> None:
         pts=[p for ring in primary_rings(feature) for p in ring]
         if not pts: continue
         fw=max(p[0] for p in pts)-min(p[0] for p in pts); fh=max(p[1] for p in pts)-min(p[1] for p in pts)
-        if not config.get("disable_callouts") and (fw < width*.032 or fh < height*.032 or feature_area(feature) < width*height*.0007): tiny.append(feature)
+        if (not config.get("disable_callouts")
+                and feature["answer"] not in config.get("inline_number_features", [])
+                and (fw < width*.032 or fh < height*.032 or feature_area(feature) < width*height*.0007)):
+            tiny.append(feature)
     left=[(f["center"][1],f) for f in tiny if f["center"][0] < (min_x+max_x)/2]
     right=[(f["center"][1],f) for f in tiny if f["center"][0] >= (min_x+max_x)/2]
     callout_positions: dict[str, tuple[float, float]] = {}
