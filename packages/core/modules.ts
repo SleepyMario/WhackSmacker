@@ -87,6 +87,15 @@ export const firstClassModuleCategoryOrder: readonly FirstClassModuleCategory[] 
 
 export function getBuiltInFirstClassModules(): readonly FirstClassModuleDescriptor[] {
   return [
+    ...["Arabic", "Dutch", "English", "French", "German", "Hindi", "Japanese", "Korean", "Russian", "Spanish", "Thai", "Vietnamese", "Zulu"].map((name): FirstClassModuleDescriptor => ({
+      moduleId: `com.sleepymario.language.${name.toLowerCase()}`,
+      displayName: name,
+      category: "Languages",
+      version: "0.1.0",
+      sourceKind: "built-in-module",
+      description: `Reserved entry for the ${name} curriculum. Installed content takes precedence.`,
+      actions: [{ id: "status", label: "Curriculum planned", kind: "message", previewText: `${name} is awaiting curriculum content.` }]
+    })),
     {
       moduleId: "com.sleepymario.language.chinese-classical",
       displayName: "Chinese (Classical)",
