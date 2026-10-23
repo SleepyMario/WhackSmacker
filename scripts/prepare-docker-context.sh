@@ -5,6 +5,8 @@ APP=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 CONTEXT=$(cd -- "$1" && pwd)
 [[ -z "$(find "$CONTEXT" -mindepth 1 -maxdepth 1 -print -quit)" ]] || { echo 'context must be empty' >&2; exit 1; }
 [[ -z "$(git -C "$APP" status --porcelain)" ]] || { echo 'Docker export requires clean committed application source' >&2; exit 1; }
+[[ -f "$APP/dist/main.js" ]] || { echo "Run the application build before exporting" >&2; exit 1; }
+cp -a "$APP/dist" "$CONTEXT/compiled-runtime"
 mkdir "$CONTEXT/whacksmacker"
 git -C "$APP" archive HEAD | tar -x -C "$CONTEXT/whacksmacker"
 # Git archive excludes all untracked local data and the Git object database.

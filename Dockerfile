@@ -1,9 +1,11 @@
 FROM node:22-bookworm-slim AS build
 WORKDIR /app
 COPY whacksmacker/package*.json ./
-RUN ELECTRON_SKIP_BINARY_DOWNLOAD=1 npm ci
-COPY whacksmacker/ .
-RUN npm run build && npm prune --omit=dev
+RUN npm ci --omit=dev
+COPY whacksmacker/migrations/ ./migrations/
+COPY whacksmacker/COPYING ./COPYING
+COPY whacksmacker/scripts/docker-entrypoint.mjs ./scripts/docker-entrypoint.mjs
+COPY compiled-runtime/ ./dist/
 
 FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production WHACKSMACKER_DATA_DIR=/data WHACKSMACKER_CORE_CATALOGUE=/core-feed/catalogue.json

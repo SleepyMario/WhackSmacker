@@ -1,6 +1,8 @@
 *
 !whacksmacker/
 !whacksmacker/**
+!compiled-runtime/
+!compiled-runtime/**
 !core-feed/
 !core-feed/**
 **/.git

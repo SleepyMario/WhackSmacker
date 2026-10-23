@@ -83,6 +83,8 @@ for repository in dutch-curriculum vietnamese-curriculum japanese-curriculum kor
   content_labels+=(--label "org.whacksmacker.content.${repository%-curriculum}.revision=$revision")
 done
 
+[[ -d "$SOURCE_ROOT/linguistic-terminology/.git" ]] || die "test source checkout missing: linguistic-terminology"
+
 cd "$APP"
 source_revision=$(git rev-parse HEAD)
 source_branch=$(git branch --show-current)
