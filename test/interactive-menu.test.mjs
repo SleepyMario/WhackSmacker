@@ -494,7 +494,7 @@ test("every language groups Reading, General, Specialized, and Custom below one 
 
   assert.deepEqual(languages[0].children.map((node) => node.label), ["Read content", "Exercises", "Decks"]);
   const decks = languages[0].children.find((node) => node.label === "Decks");
-  assert.deepEqual(decks.children.map((node) => node.label), ["Reading", "General", "Specialized", "Custom"]);
+  assert.deepEqual(decks.children.map((node) => node.label), ["Reading", "General", "Specialized", "Private"]);
 });
 
 test("Linguistic Terms menu exposes General before language groups", () => {
@@ -605,7 +605,7 @@ test("module tree lists top-level categories and installed language packages", a
     assert.deepEqual(installedDutch.children.map((node) => node.label), ["Read content", "Exercises", "Decks"]);
     assert.equal(installedDutch.children.every((node) => node.children.length === 1 && node.children[0].label === "No final content yet"), true);
     assert.deepEqual(backupDutch.children.map((node) => node.label), ["Read content", "Exercises", "Decks", "Package info", "Uninstall"]);
-    assert.deepEqual(backupDutch.children.find((node) => node.label === "Decks").children.map((node) => node.label), ["Reading", "General", "Specialized", "Custom"]);
+    assert.deepEqual(backupDutch.children.find((node) => node.label === "Decks").children.map((node) => node.label), ["Reading", "General", "Specialized", "Private"]);
     assert.equal(backupDutch.children.find((node) => node.label === "Read content").children.some((node) => node.label === "No final content yet"), false);
     assert.equal(backupDutch.children.find((node) => node.label === "Uninstall").kind, "message");
   } finally {
@@ -613,7 +613,7 @@ test("module tree lists top-level categories and installed language packages", a
   }
 });
 
-test("Custom is a standard deck family and remains usable during a curriculum reset", () => {
+test("Private is a standard deck family and remains usable during a curriculum reset", () => {
   const tree = languageSubmenuSkeleton({
     id: "languages",
     label: "Languages",
@@ -639,7 +639,7 @@ test("Custom is a standard deck family and remains usable during a curriculum re
           children: [{ id: "old-review", label: "Old review", kind: "message" }]
         }, {
           id: "com.sleepymario.language.vietnamese:deck-family:custom",
-          label: "Custom",
+          label: "Private",
           kind: "category",
           children: [{ id: "custom-topic", label: "Food, Drink & Restaurants", kind: "review-source" }]
         }]
@@ -651,7 +651,7 @@ test("Custom is a standard deck family and remains usable during a curriculum re
   assert.equal(vietnamese.children.find((node) => node.label === "Read content").children[0].label, "No final content yet");
   const decks = vietnamese.children.find((node) => node.label === "Decks");
   assert.equal(decks.children.find((node) => node.label === "Reading").children[0].label, "No final content yet");
-  assert.deepEqual(decks.children.find((node) => node.label === "Custom").children.map((node) => node.label), ["Food, Drink & Restaurants"]);
+  assert.deepEqual(decks.children.find((node) => node.label === "Private").children.map((node) => node.label), ["Food, Drink & Restaurants"]);
 });
 
 test("new General decks survive the curriculum reset without exposing archived decks", () => {
@@ -897,7 +897,7 @@ test("language menu exposes the planned Chinese, Greek Classical, and Latin entr
   for (const language of tree.children.filter((node) => node !== conversion)) {
     assert.equal(language.sourceKind, "built-in-module");
     assert.deepEqual(language.children.map((node) => node.label), ["Curriculum planned", "Exercises", "Decks"]);
-    assert.deepEqual(language.children.find((node) => node.label === "Decks").children.map((node) => node.label), ["Reading", "General", "Specialized", "Custom"]);
+    assert.deepEqual(language.children.find((node) => node.label === "Decks").children.map((node) => node.label), ["Reading", "General", "Specialized", "Private"]);
     assert.match(language.previewText, /No chapters or review decks are installed yet/u);
   }
 });
@@ -1078,7 +1078,7 @@ test("language tree lists installed packages and package sections", async () => 
           ["Reading", "review-section"],
           ["General", "category"],
           ["Specialized", "category"],
-          ["Custom", "category"]
+          ["Private", "category"]
         ]);
         const readContent = languagePackage.children.find((node) => node.label === "Read content");
         const grammarNode = readContent.children.find((node) => node.label === "Grammar");
@@ -1112,7 +1112,7 @@ test("every installed curriculum receives one Exercises entry and one three-part
         assert.equal(labels.includes(legacyLabel), true, `${language.label} retains ${legacyLabel}`);
       }
       const decks = language.children.find((node) => node.label === "Decks");
-      assert.deepEqual(decks.children.map((node) => node.label), ["Reading", "General", "Specialized", "Custom"]);
+      assert.deepEqual(decks.children.map((node) => node.label), ["Reading", "General", "Specialized", "Private"]);
       const general = decks.children.find((node) => node.label === "General");
       const specialized = decks.children.find((node) => node.label === "Specialized");
       assert.equal(general.children[0].previewText, "No General decks are available for this language.");
@@ -2971,7 +2971,7 @@ test("finished deck status rolls up globally outside Wandering the World", () =>
       id: "languages", label: "LingoLand", kind: "category", children: [{
         id: "korean", label: "Korean", kind: "module", children: [{
           id: "korean:decks", label: "Decks", kind: "category", children: [{
-            id: "korean:custom", label: "Custom", kind: "category", children: [{
+            id: "korean:custom", label: "Private", kind: "category", children: [{
               id: "korean:custom:vocabulary", label: "Vocabulary", kind: "review-source", reviewStatus: "finished"
             }, {
               id: "korean:custom:sentences", label: "Sentences", kind: "review-source", reviewStatus: "finished"

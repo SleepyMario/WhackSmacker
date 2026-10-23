@@ -3736,8 +3736,8 @@ async function buildDeckFamilyBranch(
   locale: SourceLocale,
   progressItems: readonly ReviewItemState[]
 ): Promise<LanguageTreeNode> {
-  const label = family === "general" ? "General Decks" : family === "specialized" ? "Specialized Decks" : "Custom";
-  const adjective = family === "general" ? "General" : family === "specialized" ? "Specialized" : "Custom";
+  const label = family === "general" ? "General Decks" : family === "specialized" ? "Specialized Decks" : translate(locale, "menu.custom");
+  const adjective = family === "general" ? "General" : family === "specialized" ? "Specialized" : translate(locale, "menu.custom");
   const packages = packagesForLanguageAndDeckFamily(installed, languagePackageId, family);
   const projections = await Promise.all(packages.map(async (record) => {
     const reviewItems = await listReadingReviewItems({
