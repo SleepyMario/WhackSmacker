@@ -37,6 +37,8 @@ source_revision=$(git rev-parse HEAD)
 source_branch=$(git branch --show-current)
 dutch_revision=$(git -C "$SOURCE_ROOT/dutch-curriculum" rev-parse HEAD)
 vietnamese_revision=$(git -C "$SOURCE_ROOT/vietnamese-curriculum" rev-parse HEAD)
+japanese_revision=$(git -C "$SOURCE_ROOT/japanese-curriculum" rev-parse HEAD)
+korean_revision=$(git -C "$SOURCE_ROOT/korean-curriculum" rev-parse HEAD)
 source_status=$(git status --porcelain)
 if [[ -n "$source_status" && "$ALLOW_DIRTY" != 1 ]]; then
   die 'source checkout is dirty; set WHACKSMACKER_ALLOW_DIRTY=1 only for an explicitly authorized nonstandard run'
@@ -54,15 +56,21 @@ npm audit --audit-level=high
 log 'building and testing application release contract'
 npm run test:docker
 
+build_context=$(mktemp -d)
+trap 'rm -rf -- "$build_context"' EXIT
+bash scripts/prepare-docker-context.sh "$build_context"
+
 log "building $IMAGE_REMOTE"
-docker build \
+docker build --pull \
   --label "org.opencontainers.image.revision=$source_revision" \
   --label 'org.opencontainers.image.version=latest' \
   --label "org.whacksmacker.content.dutch.revision=$dutch_revision" \
   --label "org.whacksmacker.content.vietnamese.revision=$vietnamese_revision" \
+  --label "org.whacksmacker.content.japanese.revision=$japanese_revision" \
+  --label "org.whacksmacker.content.korean.revision=$korean_revision" \
   --tag "$IMAGE_REMOTE" \
-  --file "$APP/Dockerfile" \
-  "$SOURCE_ROOT"
+  --file "$build_context/whacksmacker/Dockerfile" \
+  "$build_context"
 
 built_revision=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$IMAGE_REMOTE")
 built_version=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' "$IMAGE_REMOTE")

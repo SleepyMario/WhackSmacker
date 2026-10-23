@@ -27,6 +27,7 @@ DOCKER_HUB_REPOSITORY="sleepiestmario/whacksmacker"
 DOCKER_HUB_TAG="latest"
 REPOS=(
   whacksmacker
+  whacksmacker-decks-general
   language-learning-curriculum-builder
   linguistic-terminology
   language-curriculum-specialized
