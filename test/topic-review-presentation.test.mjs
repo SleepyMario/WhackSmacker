@@ -95,7 +95,7 @@ test("topic Review bullets reuse Reading learner yellow and wrap beneath bullet 
   assert.match(headwordLine, /\x1b\[33m\s+• razorbill\x1b\[0m/u, "bullet marker and text share one semantic yellow span");
   const strippedSentence = stripAnsi(sentenceLine);
   const strippedContinuation = stripAnsi(continuationLine);
-  assert.equal(strippedContinuation.indexOf("rocky"), strippedSentence.indexOf("The"), "continuation aligns beneath bullet text");
+  assert.equal(strippedContinuation.indexOf("the rocky"), strippedSentence.indexOf("The"), "continuation aligns beneath bullet text");
   assert.doesNotMatch(lines.find((line) => line.includes("Phrase:")) ?? "", /\x1b\[33m/u);
   assert.doesNotMatch(lines.find((line) => line.includes("Answer hidden")) ?? "", /\x1b\[33m/u);
 });

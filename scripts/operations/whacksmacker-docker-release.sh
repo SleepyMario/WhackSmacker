@@ -10,6 +10,8 @@ release_tag=${1:-}
 smoke_container=
 smoke_volume=
 clean_docker_config=
+build_context=
+mode=${2:---build-only}
 
 log() {
   printf '[%s] %s\n' "$(date -Is)" "$*"
@@ -26,6 +28,7 @@ cleanup() {
   if [[ -n "$smoke_container" ]]; then docker rm -f "$smoke_container" >/dev/null 2>&1 || true; fi
   if [[ -n "$smoke_volume" ]]; then docker volume rm "$smoke_volume" >/dev/null 2>&1 || true; fi
   if [[ -n "$clean_docker_config" ]]; then rm -rf -- "$clean_docker_config"; fi
+  if [[ -n "$build_context" ]]; then rm -rf -- "$build_context"; fi
   exit "$status"
 }
 
@@ -64,17 +67,23 @@ fetch("http://127.0.0.1:8787/api/health").then(async response => {
 
 trap cleanup EXIT INT TERM HUP
 
-[[ "$#" -eq 1 ]] || die 'usage: whacksmacker-docker-release.sh RELEASE_TAG'
+[[ "$#" -ge 1 && "$#" -le 2 ]] || die 'usage: whacksmacker-docker-release.sh RELEASE_TAG [--build-only|--publish]'
 [[ "$release_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z][0-9A-Za-z.-]*)?$ ]] || die 'release tag must be an explicit semantic version such as 0.1.0-alpha.3'
 [[ "$release_tag" != latest ]] || die 'manual releases may not use latest'
+[[ "$mode" == --build-only || "$mode" == --publish ]] || die "invalid mode: $mode"
 command -v git >/dev/null || die 'git is required'
 command -v npm >/dev/null || die 'npm is required'
 command -v docker >/dev/null || die 'docker is required'
-[[ -d "$APP/.git" ]] || die "application checkout is missing: $APP"
-for repository in dutch-curriculum vietnamese-curriculum; do
+git -C "$APP" rev-parse --git-dir >/dev/null 2>&1 || die "application checkout is missing: $APP"
+content_labels=()
+for repository in dutch-curriculum vietnamese-curriculum japanese-curriculum korean-curriculum; do
   [[ -d "$SOURCE_ROOT/$repository/.git" ]] || die "required image source checkout is missing: $SOURCE_ROOT/$repository"
   [[ -z "$(git -C "$SOURCE_ROOT/$repository" status --porcelain)" ]] || die "required image source checkout is dirty: $repository"
+  revision=$(git -C "$SOURCE_ROOT/$repository" rev-parse HEAD)
+  content_labels+=(--label "org.whacksmacker.content.${repository%-curriculum}.revision=$revision")
 done
+
+[[ -d "$SOURCE_ROOT/linguistic-terminology/.git" ]] || die "test source checkout missing: linguistic-terminology"
 
 cd "$APP"
 source_revision=$(git rev-parse HEAD)
@@ -87,19 +96,21 @@ clean_docker_config=$(mktemp -d)
 
 log "manual release authorized tag=$release_tag branch=$source_branch revision=$source_revision"
 log "image content sources dutch=$dutch_revision vietnamese=$vietnamese_revision"
-npm ci
+ELECTRON_SKIP_BINARY_DOWNLOAD=1 npm ci
 npm audit --audit-level=high
-npm run build
-npm test
+npm run test:docker
+build_context=$(mktemp -d)
+bash scripts/prepare-docker-context.sh "$build_context"
 
-docker build \
+docker build --pull \
+  "${content_labels[@]}" \
   --label "org.opencontainers.image.revision=$source_revision" \
   --label "org.opencontainers.image.version=$release_tag" \
   --label "org.whacksmacker.content.dutch.revision=$dutch_revision" \
   --label "org.whacksmacker.content.vietnamese.revision=$vietnamese_revision" \
   --tag "$image" \
-  --file "$APP/Dockerfile" \
-  "$SOURCE_ROOT"
+  --file "$build_context/whacksmacker/Dockerfile" \
+  "$build_context"
 
 built_revision=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$image")
 built_version=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' "$image")
@@ -108,7 +119,17 @@ built_version=$(docker image inspect --format '{{ index .Config.Labels "org.open
 image_id=$(docker image inspect --format '{{.Id}}' "$image")
 image_arch=$(docker image inspect --format '{{.Architecture}}/{{.Os}}' "$image")
 log "validated image id=$image_id platform=$image_arch revision=$built_revision release=$built_version"
+docker run --rm "$image" --help
 smoke_image "$image" local
+
+if [[ "$mode" == --build-only ]]; then
+  docker tag "$image" "$REPOSITORY:latest"
+  log "PASS local versioned build image=$image latest=$image_id (not published)"
+  exit 0
+fi
+# Fixed versions are never overwritten. Network/auth failures fail closed.
+registry_status=$(curl -sS -o /dev/null -w "%{http_code}" "https://hub.docker.com/v2/repositories/sleepiestmario/whacksmacker/tags/$release_tag/")
+[[ "$registry_status" == 404 ]] || die "release tag exists or registry lookup failed: HTTP $registry_status"
 
 log "pushing manually authorized release $image"
 push_output=$(docker push "$image")
@@ -123,6 +144,10 @@ DOCKER_CONFIG=$clean_docker_config docker pull "$image"
 pulled_digest=$(docker image inspect --format '{{index .RepoDigests 0}}' "$image")
 [[ "$pulled_digest" == "$REPOSITORY@$registry_digest" ]] || die "clean-pull digest mismatch: pulled=$pulled_digest registry=$REPOSITORY@$registry_digest"
 smoke_image "$image" remote
+
+docker tag "$image" "$REPOSITORY:latest"
+docker push "$REPOSITORY:latest"
+[[ "$(remote_digest "$REPOSITORY:latest")" == "$registry_digest" ]] || die "latest digest mismatch"
 
 log "PASS manual release image=$image digest=$registry_digest revision=$source_revision"
 log 'production deployment was not performed; use scripts/deploy-production.sh as a separate explicit action'

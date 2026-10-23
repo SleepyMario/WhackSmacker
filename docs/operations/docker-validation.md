@@ -1,6 +1,6 @@
-# Daily Docker validation
+# Versioned Docker validation
 
-The daily job builds isolated, clean clones of committed HEADs. Uncommitted
+The release job runs on gentoo-build from clean committed source checkouts. Uncommitted
 curriculum work is neither reset nor exported. The image includes Japanese,
 Korean and Vietnamese reading assets plus any currently authored core Review
 packages; a cast-only/empty review tree does not manufacture an empty package.
@@ -22,6 +22,9 @@ They still need migration if the combined authoring audit is used. The Japanese
 installed contextual-reading content check remains separately available in
 `test/japanese-installed-contextual-reading.test.mjs`.
 
-Validation-only mode builds and smoke-tests but does not push. Production verifies
-source labels and the pushed registry digest. A VM started for the job is shut
-down gracefully; already-running guests are left to their owner.
+The default --build-only mode builds and smoke-tests without pushing. Explicit
+--publish verifies the versioned registry digest and anonymous-pull smoke before
+advancing latest. Legacy daily jobs are retired. The builder stays running.
+The application is compiled and tested on Gentoo; its compiled runtime is copied
+into an isolated image context alongside the generated core feed. Test fixtures
+require the sibling linguistic-terminology checkout.
