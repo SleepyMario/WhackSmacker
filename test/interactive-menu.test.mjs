@@ -782,6 +782,14 @@ test("paired Custom topic decks place each Vocabulary deck before its Sentences 
   const grouped = groupExplicitTopicMenuLeaves("com.sleepymario.language.japanese", "custom", [{
     topicId: "japanese-shokyu-nihongo-shusaku",
     topicLabel: "初級日本語習作",
+    leaf: { id: "iv-vocabulary", label: "IV - Vocabulary", kind: "review-source" }
+  }, {
+    topicId: "japanese-shokyu-nihongo-shusaku",
+    topicLabel: "初級日本語習作",
+    leaf: { id: "iii-sentences", label: "III - Sentences", kind: "review-source" }
+  }, {
+    topicId: "japanese-shokyu-nihongo-shusaku",
+    topicLabel: "初級日本語習作",
     leaf: { id: "ii-sentences", label: "II - Sentences", kind: "review-source" }
   }, {
     topicId: "japanese-shokyu-nihongo-shusaku",
@@ -794,12 +802,20 @@ test("paired Custom topic decks place each Vocabulary deck before its Sentences 
   }, {
     topicId: "japanese-shokyu-nihongo-shusaku",
     topicLabel: "初級日本語習作",
+    leaf: { id: "iii-vocabulary", label: "III - Vocabulary", kind: "review-source" }
+  }, {
+    topicId: "japanese-shokyu-nihongo-shusaku",
+    topicLabel: "初級日本語習作",
+    leaf: { id: "iv-sentences", label: "IV - Sentences", kind: "review-source" }
+  }, {
+    topicId: "japanese-shokyu-nihongo-shusaku",
+    topicLabel: "初級日本語習作",
     leaf: { id: "i-vocabulary", label: "I - Vocabulary", kind: "review-source" }
   }]);
 
   assert.equal(grouped.length, 1);
   assert.equal(grouped[0].label, "初級日本語習作");
-  assert.deepEqual(grouped[0].children.map((node) => node.label), ["I - Vocabulary", "I - Sentences", "II - Vocabulary", "II - Sentences"]);
+  assert.deepEqual(grouped[0].children.map((node) => node.label), ["I - Vocabulary", "I - Sentences", "II - Vocabulary", "II - Sentences", "III - Vocabulary", "III - Sentences", "IV - Vocabulary", "IV - Sentences"]);
 });
 
 test("normal launch resolves the dedicated language backup directory", async () => {
