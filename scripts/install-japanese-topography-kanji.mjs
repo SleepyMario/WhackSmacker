@@ -7,7 +7,7 @@ import { dirname, join } from "node:path";
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const core = createRequire(import.meta.url)(join(root, "dist/packages/core/index.js"));
 const stamp = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-const output = join(root, "../japanese-curriculum/artifacts/packages/japanese-topography-kanji");
+const output = join(root, "../whacksmacker-decks-general/artifacts/packages");
 const requested = new Set(process.argv.slice(2));
 const targetIds = ["regions", "hokkaido", "tohoku", "kanto", "chubu", "kansai", "chugoku", "shikoku", "kyushu"]
   .filter((id) => requested.size === 0 || requested.has(id))

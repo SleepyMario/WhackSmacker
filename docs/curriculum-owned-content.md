@@ -1,4 +1,9 @@
-# Curriculum-owned local content
+# Content source ownership
+
+As of the subsequent October 23 repository split, General source ownership is `../whacksmacker-decks-general/`; Specialized remains `../language-curriculum-specialized/`. Japanese Core reviews remain in the Japanese curriculum. Private book/course decks remain in `whacksmacker-decks-private`. General archives have unchanged bytes and updated catalogue locations. See the main README and `packages/core/general-deck-sources.ts`.
+
+## Earlier October 23 integration record (superseded ownership paths)
+
 
 Current Japanese review blocks and Japanese/Korean/Vietnamese General topography sources belong to their curriculum repositories. Japanese map decks live in `japanese-curriculum/review-content/japanese/`; vocabulary lives in each curriculum's `general/`. Japanese review blocks are in `japanese-curriculum/review-content/japanese/review-decks/`.
 

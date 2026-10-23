@@ -1,5 +1,16 @@
 # WhackSmacker
 
+## Content repository ownership — October 23, 2026
+
+- General decks: private `whacksmacker-decks-general`, a sibling checkout. Its explicit target paths live in `packages/core/general-deck-sources.ts`.
+- Specialized decks: private `language-curriculum-specialized`.
+- Personal Private decks: `~/Projects/whacksmacker-decks-private`.
+- Ordinary readings/Core reviews: their existing curriculum/application owners; General material is no longer authored there.
+- Generated packages: artifacts and catalogues; never the source of learner progress.
+
+Source relocation preserves package/card identities and installed progress. The website stack is deferred: `whacksmacker-site` is the separate public site; `whacksmacker-webfrontend` and the two `whacksmacker-preferred-web-*` directories are application Git worktrees. No website restructuring is part of this change.
+
+
 ## Licensing and content images
 
 WhackSmacker application code and technical tooling are `GPL-3.0-or-later`

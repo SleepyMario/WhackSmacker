@@ -1223,9 +1223,9 @@ test("Level II - Vocabulary contains only new cumulative ABC entries", async () 
     const header = rows.shift();
     return { rows, at: Object.fromEntries(header.map((name, index) => [name, index])) };
   };
-  const levelOne = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-1-vocabulary/sources/vocabulary.tsv"), "utf8"));
-  const levelTwo = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-2-vocabulary/sources/vocabulary.tsv"), "utf8"));
-  const exclusions = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-2-vocabulary/sources/level-1-exclusions.tsv"), "utf8"));
+  const levelOne = parseTsv(await readFile(join(process.cwd(), "../whacksmacker-decks-general/review-content/chinese-simplified-traditional/level-1-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const levelTwo = parseTsv(await readFile(join(process.cwd(), "../whacksmacker-decks-general/review-content/chinese-simplified-traditional/level-2-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const exclusions = parseTsv(await readFile(join(process.cwd(), "../whacksmacker-decks-general/review-content/chinese-simplified-traditional/level-2-vocabulary/sources/level-1-exclusions.tsv"), "utf8"));
   const levelOneWords = new Set(levelOne.rows.map((row) => row[levelOne.at.simplified]));
   assert.equal(levelTwo.rows.length, 1474);
   assert.equal(exclusions.rows.length, 685);
@@ -1268,10 +1268,10 @@ test("Level III - Vocabulary excludes both prior vocabulary levels", async () =>
     const header = rows.shift();
     return { rows, at: Object.fromEntries(header.map((name, index) => [name, index])) };
   };
-  const levelOne = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-1-vocabulary/sources/vocabulary.tsv"), "utf8"));
-  const levelTwo = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-2-vocabulary/sources/vocabulary.tsv"), "utf8"));
-  const levelThree = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-3-vocabulary/sources/vocabulary.tsv"), "utf8"));
-  const exclusions = parseTsv(await readFile(join(process.cwd(), "review-content/chinese-simplified-traditional/level-3-vocabulary/sources/prior-level-exclusions.tsv"), "utf8"));
+  const levelOne = parseTsv(await readFile(join(process.cwd(), "../whacksmacker-decks-general/review-content/chinese-simplified-traditional/level-1-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const levelTwo = parseTsv(await readFile(join(process.cwd(), "../whacksmacker-decks-general/review-content/chinese-simplified-traditional/level-2-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const levelThree = parseTsv(await readFile(join(process.cwd(), "../whacksmacker-decks-general/review-content/chinese-simplified-traditional/level-3-vocabulary/sources/vocabulary.tsv"), "utf8"));
+  const exclusions = parseTsv(await readFile(join(process.cwd(), "../whacksmacker-decks-general/review-content/chinese-simplified-traditional/level-3-vocabulary/sources/prior-level-exclusions.tsv"), "utf8"));
   const priorSimplified = new Set([
     ...levelOne.rows.map((row) => row[levelOne.at.simplified]),
     ...levelTwo.rows.map((row) => row[levelTwo.at.simplified])

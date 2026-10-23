@@ -7,7 +7,7 @@ import { dirname, join } from "node:path";
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const core = createRequire(import.meta.url)(join(root, "dist/packages/core/index.js"));
 const stamp = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-const output = join(root, "../vietnamese-curriculum/artifacts/packages/vietnamese-topography-main-vocabulary");
+const output = join(root, "../whacksmacker-decks-general/artifacts/packages");
 const result = await ensureOwnedContentPackage(core, {
   targetId: "vietnamese-general-topography-main-vocabulary",
   outputDirectory: output,

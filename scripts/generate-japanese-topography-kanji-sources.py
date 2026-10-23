@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BASE = ROOT.parent / "japanese-curriculum/review-content/japanese/prefectures-kanji"
+BASE = ROOT.parent / "whacksmacker-decks-general/review-content/japanese/prefectures-kanji"
 MAPS = ROOT / "packages/geography/data/japan-regions"
 REGIONS = json.loads((MAPS / "regions.json").read_text())
 PREFECTURES = list(csv.DictReader((BASE / "sources/prefectures.tsv").open(), delimiter="\t"))
@@ -12,7 +12,7 @@ PREFECTURE_METADATA = json.loads((ROOT / "packages/geography/data/japan-hard/pre
 
 
 def write_prefecture_deck(slug: str, label: str, names: list[str]) -> None:
-    destination = ROOT.parent / f"japanese-curriculum/review-content/japanese/prefectures-kanji-{slug}"
+    destination = ROOT.parent / f"whacksmacker-decks-general/review-content/japanese/prefectures-kanji-{slug}"
     if destination.exists():
         shutil.rmtree(destination)
     (destination / "sources").mkdir(parents=True)
@@ -40,7 +40,7 @@ def write_prefecture_deck(slug: str, label: str, names: list[str]) -> None:
 
 
 def write_regions_deck() -> None:
-    destination = ROOT.parent / "japanese-curriculum/review-content/japanese/regions-kanji"
+    destination = ROOT.parent / "whacksmacker-decks-general/review-content/japanese/regions-kanji"
     if destination.exists():
         shutil.rmtree(destination)
     (destination / "sources").mkdir(parents=True)

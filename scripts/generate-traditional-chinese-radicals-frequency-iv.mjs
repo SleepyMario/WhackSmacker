@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const deckRoot = join(root, "review-content/chinese-traditional/radicals-frequency-iv");
+const deckRoot = join(root, "../whacksmacker-decks-general/review-content/chinese-traditional/radicals-frequency-iv");
 const sourcePath = join(deckRoot, "sources/characters.tsv");
 const outputPath = join(deckRoot, "cards.tsv");
 const header = [

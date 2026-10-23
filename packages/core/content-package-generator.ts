@@ -1,3 +1,4 @@
+import { generalDeckSourcePaths } from "./general-deck-sources";
 import {
   assertValidContentPackageManifest,
   type ContentPackageFileRecord,
@@ -3353,6 +3354,10 @@ const rawContentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[
 
 export const contentPackageGeneratorTargets: readonly ContentPackageGeneratorTarget[] = rawContentPackageGeneratorTargets.map((target) => ({
   ...target,
+  ...(generalDeckSourcePaths[target.id] ? {
+    sourcePath: generalDeckSourcePaths[target.id],
+    sourceRepository: "https://github.com/SleepyMario/whacksmacker-decks-general"
+  } : {}),
   deckVersion: target.deckVersion ?? "0.0.1",
   artifactRevision: target.artifactRevision ?? 1,
   mediaPolicy: target.mediaPolicy ?? "none",
