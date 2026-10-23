@@ -29,49 +29,23 @@ synchronizes reading packages into `/curricula/managed` on the dedicated
 separate `application-data` volume. The application mounts curricula read-only
 and starts after the init container completes. See `compose.split.local.yaml`.
 
-## Docker publication lanes
+## Docker releases
 
-Docker Hub is the sole registry for the public core image, under
-`docker.io/sleepiestmario/whacksmacker`. The two publication lanes are separate:
+Only versioned builds are supported. `latest` points to the newest successful
+versioned build, including prereleases. Fixed version tags are never overwritten;
+there are no daily or nightly builds and no floating `alpha` publication.
 
-- `scripts/operations/whacksmacker-docker-daily.sh` is the automated snapshot
-  builder and publishes only `docker.io/sleepiestmario/whacksmacker:latest`.
-- `scripts/operations/whacksmacker-docker-release.sh RELEASE_TAG` is a manual,
-  explicitly authorized release action. It requires a semantic version tag,
-  validates and smokes the image before pushing, verifies the remote digest,
-  clean-pulls it without Docker credentials, and performs a second isolated
-  smoke. It does not create Git tags, GitHub releases, or deployments.
+Run `bash scripts/operations/whacksmacker-docker-release.sh 0.1.0-alpha.4`
+on gentoo-build to build, test and smoke the versioned image and update local
+`latest`. Add `--publish` to publish the fixed version, verify an anonymous pull
+and smoke, then update and verify registry `latest`. Registry credentials are
+required for publication. Neither mode deploys production or creates Git tags.
 
-Production Compose defaults to the maintained versioned release
-`docker.io/sleepiestmario/whacksmacker:0.1.0-alpha.3` and continues to support
-the `WHACKSMACKER_IMAGE` override. Production never follows `latest`.
-
-The workstation scheduler installs
-`scripts/operations/whacksmacker-docker-vm-daily.sh` at
-`/usr/local/sbin/whacksmacker-docker-vm-daily.sh`; the validation VM installs
-the daily builder at `/home/ashwin/bin/whacksmacker-docker-daily.sh`. The
-current core image is built entirely from this repository, including its core
-runtime. Its core Review feed is generated during the image build from the
-clean Dutch and Vietnamese source repositories, with all three exact Git
-revisions recorded as image labels. The mandatory full test gate also validates sibling curriculum,
-terminology, specialized-content, and builder sources, so the scheduler syncs
-that exact tested source inventory. It does not sync or mutate package feeds,
-the site, or mathematics content. Replacing these sibling test inputs with a
-centralized, versioned content or package source remains later architectural
-work.
-
-The Docker build context is the parent `whacksmacker-modules` directory because
-the Review-feed build consumes those two sibling sources. The matching command
-shape is `docker build -f whacksmacker/Dockerfile whacksmacker-modules`; the
-Dockerfile-specific ignore rules admit only the application and those sources.
-
-WhackSmacker is a modular learning and utility application. The current command-line application uses native downloadable content packages, native memorization items, native review progress, and terminal review commands.
-
-Milestone: `v0.001`
-
-Package version: `0.0.1`
-
-Future Git tag after manual validation: `v0.0.1`
+The build uses tracked application files and a production-validated core feed
+with container-local package URLs. Git history, untracked work and learner state
+are excluded. Four curriculum revisions are recorded as image labels.
+Legacy daily scripts fail closed. Production Compose remains pinned to a fixed
+version and supports `WHACKSMACKER_IMAGE` overrides.
 
 ## Prerequisites
 

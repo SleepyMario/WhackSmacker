@@ -1,3 +1,4 @@
+import { invalidateInstalledContent } from "../dist/packages/core/installed-content-cache.js";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
@@ -751,6 +752,8 @@ async function writeV2Items(fixture, items) {
   manifest.files = manifest.files.map((file) => file.path === itemPath ? { ...file, size: buffer.length, sha256: sha256(buffer) } : file);
   await writeFileEnsured(join(fixture.packageRoot, itemPath), buffer);
   await writeJson(manifestPath, manifest);
+  // Fixture overwrites immutable installed files directly; real installs invalidate this cache.
+  invalidateInstalledContent(fixture.dataDir);
 }
 
 function v2MemoryItem(id, prompt, answer) {
