@@ -142,7 +142,7 @@ registry_digest=$(remote_digest "$image")
 log 'pulling release with an empty Docker credential context'
 DOCKER_CONFIG=$clean_docker_config docker pull "$image"
 pulled_digest=$(docker image inspect --format '{{index .RepoDigests 0}}' "$image")
-[[ "$pulled_digest" == "$REPOSITORY@$registry_digest" ]] || die "clean-pull digest mismatch: pulled=$pulled_digest registry=$REPOSITORY@$registry_digest"
+[[ "${pulled_digest##*@}" == "$registry_digest" ]] || die "clean-pull digest mismatch: pulled=$pulled_digest registry=$REPOSITORY@$registry_digest"
 smoke_image "$image" remote
 
 docker tag "$image" "$REPOSITORY:latest"
