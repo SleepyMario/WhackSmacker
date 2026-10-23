@@ -22,10 +22,10 @@ function registeredPaths(registry) {
   return registry.list().map((command) => command.path.join(" ")).sort();
 }
 
-test("application CLI registry retains the non-geography command contract", () => {
+test("application CLI registry exposes language commands and the geography prototype", () => {
   const registry = createCommandRegistry();
 
-  assert.deepEqual(registeredPaths(registry).filter(path => !path.startsWith("geography ")), [
+  assert.deepEqual(registeredPaths(registry), [
     "backup create",
     "backup inspect",
     "backup migrate",
@@ -39,6 +39,7 @@ test("application CLI registry retains the non-geography command contract", () =
     "content remove",
     "content update",
     "content updates",
+    "geography continents",
     "language terminology",
     "language terms",
     "mathematics beginner-volume-one",
@@ -116,18 +117,13 @@ test("chess and mathematics expose CLI commands", () => {
   ]);
 });
 
-test("geography registers namespaced, unique commands and retains continents", () => {
+test("geography registers the continents prototype command", () => {
   const cli = new InMemoryCliCommandRegistry();
   const context = createRegistrationContext(cli);
 
   geographyModule.register(context);
 
-  const paths = registeredPaths(cli);
-  assert.ok(paths.includes("geography continents"));
-  assert.ok(paths.includes("geography china-divisions-easy"));
-  assert.ok(paths.includes("geography china-divisions-hard"));
-  assert.ok(paths.every(path => path.startsWith("geography ")));
-  assert.equal(new Set(paths).size, paths.length);
+  assert.deepEqual(registeredPaths(cli), ["geography continents"]);
 });
 
 test("duplicate module identifiers are rejected clearly", () => {

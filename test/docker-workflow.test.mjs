@@ -47,7 +47,7 @@ test("Docker workflows enforce source provenance, clean state, and remote digest
     assert.match(script, /npm audit --audit-level=high/);
     assert.match(script, /org\.whacksmacker\.content\.dutch\.revision/);
     assert.match(script, /org\.whacksmacker\.content\.vietnamese\.revision/);
-    assert.match(script, /--file "\$build_context\/whacksmacker\/Dockerfile"/);
+    assert.match(script, /--file "\$APP\/Dockerfile"/);
   }
   assert.match(daily, /source checkout is dirty/);
   assert.match(release, /manual releases require a clean source checkout/);
@@ -76,24 +76,32 @@ test("Docker workflows enforce source provenance, clean state, and remote digest
   assert.doesNotMatch(orchestrator, /math-curriculum/);
 });
 
-test("Docker context excludes local state and uses a production-validated feed", async () => {
+test("Docker build context supplies both sibling Review sources at legacy generator paths", async () => {
   const dockerfile = await readFile("Dockerfile", "utf8");
   const ignore = await readFile("Dockerfile.dockerignore", "utf8");
-  const prepare = await readFile("scripts/prepare-docker-context.sh", "utf8");
-  assert.match(dockerfile, /COPY core-feed\/ \/core-feed\//);
-  assert.doesNotMatch(dockerfile, /COPY .*curriculum/);
-  for (const excluded of ["**/.git", "**/.local-content", "**/*progress*.json", "**/registry.json", "**/artifacts", "**/.env"]) assert.ok(ignore.includes(excluded));
-  assert.match(prepare, /git -C "\$APP" archive HEAD/);
-  assert.match(prepare, /requires clean committed application source/);
-  assert.match(prepare, /WHACKSMACKER_CORE_PACKAGE_BASE_URL=file:\/\/\/core-feed\/packages\//);
-  const feed = await readFile("scripts/build-core-review-feed.mjs", "utf8");
-  assert.match(feed, /--production/);
-  for (const kind of ["daily", "release"]) {
-    const script = await readFile(`scripts/operations/whacksmacker-docker-${kind}.sh`, "utf8");
-    for (const language of ["dutch", "vietnamese", "japanese", "korean"]) assert.ok(script.includes(`org.whacksmacker.content.${language}.revision`));
-    assert.match(script, /prepare-docker-context.sh/);
-    assert.match(script, /npm run test:docker/);
+  assert.match(dockerfile, /COPY whacksmacker\/ \.\n/);
+  assert.match(dockerfile, /COPY dutch-curriculum\/ \/dutch-curriculum\//);
+  assert.match(dockerfile, /COPY vietnamese-curriculum\/ \/vietnamese-curriculum\//);
+  assert.doesNotMatch(dockerfile, /WHACKSMACKER_PACKAGE_SOURCE_ROOT/);
+  assert.match(ignore, /!dutch-curriculum\/\*\*/);
+  assert.match(ignore, /!vietnamese-curriculum\/\*\*/);
+});
+
+test('Docker gate retains installer safety and supplies all compiled curriculum sources', async () => {
+  const dockerfile = await readFile('Dockerfile','utf8');
+  const ignore = await readFile('Dockerfile.dockerignore','utf8');
+  for (const language of ['japanese','korean']) {
+    assert.ok(dockerfile.includes(`COPY ${language}-curriculum/ /${language}-curriculum/`));
+    assert.ok(ignore.includes(`!${language}-curriculum/**`));
   }
+  const daily = await readFile('scripts/operations/whacksmacker-docker-daily.sh','utf8');
+  assert.match(daily,/npm run test:docker/);
+  assert.match(daily,/docker run --rm "\$IMAGE_REMOTE" --help/);
+  const gate = await readFile('scripts/test-docker.mjs','utf8');
+  for (const name of ['content-package-manager','content-package-spec','review-scheduler','web','postgres-auth']) assert.ok(gate.includes(`'${name}'`));
+  const feed = await readFile('scripts/build-core-review-feed.mjs','utf8');
+  assert.match(feed,/selectCoreReviewTargets/);
+  assert.match(feed,/--production/);
 });
 
 test('publication verifies the top-level registry digest instead of a platform child',async()=>{

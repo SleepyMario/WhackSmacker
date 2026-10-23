@@ -6,7 +6,7 @@ const files = [
   'chess-cli','chess-core','chess-desktop','cli',
   'core-review-feed','content-package-manager','content-package-source-path','content-package-spec',
   'curriculum-display','deck-family','deck-framework','deploy-production',
-  'docker-workflow','docker-entrypoint','east-asian-name-policy','exercise-renderer',
+  'docker-workflow','east-asian-name-policy','exercise-renderer',
   'geography-renderer','geography-review','i18n',
   'language-adaptive-lexicon-policy','language-terms','lexical-identity-policy',
   'linguistic-terminology','mathematics-artifacts','mathematics-pdf','mathematics-workbook',

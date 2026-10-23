@@ -14,4 +14,4 @@ if (targets.length) {
   execFileSync(process.execPath, ['dist/packages/core/content-package-generator-cli.js', ...targets.flatMap(t => ['--target',t]), '--output-dir', `${output}/packages`, '--generated-at', generatedAt, '--production'], {stdio:'inherit'});
 }
 console.log(`Bundled review targets: ${targets.join(', ') || '(none authored)'}`);
-execFileSync(process.execPath, ['dist/packages/core/content-package-catalogue-cli.js','--packages-dir',`${output}/packages`,'--output',`${output}/catalogue.json`,'--generated-at',generatedAt, ...(process.env.WHACKSMACKER_CORE_PACKAGE_BASE_URL ? ['--package-base-url', process.env.WHACKSMACKER_CORE_PACKAGE_BASE_URL] : [])], {stdio:'inherit'});
+execFileSync(process.execPath, ['dist/packages/core/content-package-catalogue-cli.js','--packages-dir',`${output}/packages`,'--output',`${output}/catalogue.json`,'--generated-at',generatedAt], {stdio:'inherit'});

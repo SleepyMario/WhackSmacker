@@ -10,7 +10,6 @@ release_tag=${1:-}
 smoke_container=
 smoke_volume=
 clean_docker_config=
-build_context=
 
 log() {
   printf '[%s] %s\n' "$(date -Is)" "$*"
@@ -27,7 +26,6 @@ cleanup() {
   if [[ -n "$smoke_container" ]]; then docker rm -f "$smoke_container" >/dev/null 2>&1 || true; fi
   if [[ -n "$smoke_volume" ]]; then docker volume rm "$smoke_volume" >/dev/null 2>&1 || true; fi
   if [[ -n "$clean_docker_config" ]]; then rm -rf -- "$clean_docker_config"; fi
-  if [[ -n "$build_context" ]]; then rm -rf -- "$build_context"; fi
   exit "$status"
 }
 
@@ -73,7 +71,7 @@ command -v git >/dev/null || die 'git is required'
 command -v npm >/dev/null || die 'npm is required'
 command -v docker >/dev/null || die 'docker is required'
 [[ -d "$APP/.git" ]] || die "application checkout is missing: $APP"
-for repository in dutch-curriculum vietnamese-curriculum japanese-curriculum korean-curriculum; do
+for repository in dutch-curriculum vietnamese-curriculum; do
   [[ -d "$SOURCE_ROOT/$repository/.git" ]] || die "required image source checkout is missing: $SOURCE_ROOT/$repository"
   [[ -z "$(git -C "$SOURCE_ROOT/$repository" status --porcelain)" ]] || die "required image source checkout is dirty: $repository"
 done
@@ -83,8 +81,6 @@ source_revision=$(git rev-parse HEAD)
 source_branch=$(git branch --show-current)
 dutch_revision=$(git -C "$SOURCE_ROOT/dutch-curriculum" rev-parse HEAD)
 vietnamese_revision=$(git -C "$SOURCE_ROOT/vietnamese-curriculum" rev-parse HEAD)
-japanese_revision=$(git -C "$SOURCE_ROOT/japanese-curriculum" rev-parse HEAD)
-korean_revision=$(git -C "$SOURCE_ROOT/korean-curriculum" rev-parse HEAD)
 [[ -z "$(git status --porcelain)" ]] || die 'manual releases require a clean source checkout'
 image="$REPOSITORY:$release_tag"
 clean_docker_config=$(mktemp -d)
@@ -93,20 +89,17 @@ log "manual release authorized tag=$release_tag branch=$source_branch revision=$
 log "image content sources dutch=$dutch_revision vietnamese=$vietnamese_revision"
 npm ci
 npm audit --audit-level=high
-npm run test:docker
-build_context=$(mktemp -d)
-bash scripts/prepare-docker-context.sh "$build_context"
+npm run build
+npm test
 
-docker build --pull \
+docker build \
   --label "org.opencontainers.image.revision=$source_revision" \
   --label "org.opencontainers.image.version=$release_tag" \
   --label "org.whacksmacker.content.dutch.revision=$dutch_revision" \
   --label "org.whacksmacker.content.vietnamese.revision=$vietnamese_revision" \
-  --label "org.whacksmacker.content.japanese.revision=$japanese_revision" \
-  --label "org.whacksmacker.content.korean.revision=$korean_revision" \
   --tag "$image" \
-  --file "$build_context/whacksmacker/Dockerfile" \
-  "$build_context"
+  --file "$APP/Dockerfile" \
+  "$SOURCE_ROOT"
 
 built_revision=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$image")
 built_version=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' "$image")

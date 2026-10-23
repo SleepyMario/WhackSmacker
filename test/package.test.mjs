@@ -9,7 +9,7 @@ test("npm tarball includes geography map provenance data", async () => {
   const directory = await mkdtemp(join(tmpdir(), "whacksmacker-pack-test-"));
 
   try {
-    const pack = await run("npm", ["pack", "--silent", "--ignore-scripts", "--offline", "--pack-destination", directory], {
+    const pack = await run("npm", ["pack", "--silent", "--ignore-scripts", "--pack-destination", directory], {
       npm_config_cache: join(directory, "npm-cache")
     });
     assert.equal(pack.exitCode, 0, pack.stderr);
@@ -50,7 +50,7 @@ async function run(command, args, env = {}) {
     const timeout = setTimeout(() => {
       child.kill("SIGKILL");
       reject(new Error(`command timed out: ${command} ${args.join(" ")}`));
-    }, 180000);
+    }, 10000);
 
     child.on("error", reject);
     child.on("close", (code) => {

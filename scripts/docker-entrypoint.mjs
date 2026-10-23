@@ -9,15 +9,9 @@ try {
   const require = createRequire(import.meta.url);
   const { installContentPackage, listInstalledContentPackages } = require("/app/dist/packages/core/content-package-manager.js");
   const catalogue = JSON.parse(await readFile(cataloguePath, "utf8"));
-  const { immutableDeckArtifactKey } = require("/app/dist/packages/core/deck-framework.js");
-  const installed = new Set((await listInstalledContentPackages(dataDir)).map(item => immutableDeckArtifactKey(item.packageId, item)));
+  const installed = new Set((await listInstalledContentPackages(dataDir)).map(item => `${item.packageId}@${item.packageVersion}`));
   for (const entry of catalogue.packages) {
-    const key = immutableDeckArtifactKey(entry.packageId, entry);
-    if (!installed.has(key)) {
-      await installContentPackage({ cataloguePath, packageId: entry.packageId, packageVersion: entry.packageVersion,
-        deckVersion: entry.deckVersion, artifactRevision: entry.artifactRevision, dataDir });
-      installed.add(key);
-    }
+    if (!installed.has(`${entry.packageId}@${entry.packageVersion}`)) await installContentPackage({ cataloguePath, packageId: entry.packageId, packageVersion: entry.packageVersion, dataDir });
   }
 } catch (error) {
   console.error(`Unable to initialize bundled core reviews: ${String(error)}`);
