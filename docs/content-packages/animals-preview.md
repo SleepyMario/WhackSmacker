@@ -105,3 +105,7 @@ No matching Review helper should remain.
 ## Future approved source
 
 A future human-approved source can replace this preview by registering a production package identity/version against the same `topic-review` target shape, WSM TSV v2 parser, package-media collector, catalogue propagation, installer, menu family, and artwork controller. Approval may change content bytes or deck boundaries only in that separately authorized source process; it does not require a new package framework or changes to the technical machinery validated here.
+
+## Current source versus historical artifacts
+
+The tarball paths above are historical provenance, not active curriculum roots. Current Animals source lives in `language-curriculum-specialized/topic-content/animals/`. The old archive-based preview is an explicit historical rehearsal only; it must not replace current content or reactivate reset Dutch lessons.

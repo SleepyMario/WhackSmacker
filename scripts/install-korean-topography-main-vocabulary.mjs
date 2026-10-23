@@ -1,24 +1,24 @@
+import { ensureOwnedContentPackage } from "./ensure-owned-content-package.mjs";
 // Build and install the Korean Topography main vocabulary package.
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const privateDeckRoot = join(root, "..", "..", "whacksmacker-decks-private");
 const core = createRequire(import.meta.url)(join(root, "dist/packages/core/index.js"));
 const stamp = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
-const output = join(root, ".local-content/korean-topography-main-vocabulary-artifacts");
-const result = await core.generateContentPackage({
+const output = join(root, "../korean-curriculum/artifacts/packages/korean-topography-main-vocabulary");
+const result = await ensureOwnedContentPackage(core, {
   targetId: "korean-general-topography-main-vocabulary",
   outputDirectory: output,
   generatedAt: stamp,
-  sourceRoot: privateDeckRoot
+  sourceRoot: dirname(root)
 });
 await core.generateLocalContentPackageCatalogue({ packagesDirectory: output, outputPath: join(output, "catalogue.json"), generatedAt: stamp });
 await core.installContentPackage({
   cataloguePath: join(output, "catalogue.json"),
   packageId: result.packageId,
-  dataDir: join(root, ".local-content/korean-topography"),
+  dataDir: core.resolveContentDataDirectory(),
   installedAt: stamp
 });
 console.log("Korean Topography main vocabulary package installed locally.");

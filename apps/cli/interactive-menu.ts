@@ -2869,9 +2869,9 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
           return {
             ...submenu,
             children: (submenu.children ?? []).map((deckType) => {
-              // Rebuilt Korean and Vietnamese review blocks are discovered from installed
+              // Rebuilt language review blocks are discovered from installed
               // package metadata, including their actual card counts and paths.
-              if (["com.sleepymario.language.korean", "com.sleepymario.language.vietnamese"].includes(language.packageId ?? language.moduleId ?? "") && deckType.kind === "review-section") {
+              if (["com.sleepymario.language.japanese", "com.sleepymario.language.korean", "com.sleepymario.language.vietnamese"].includes(language.packageId ?? language.moduleId ?? "") && deckType.kind === "review-section") {
                 const roman = (value: number): string => {
                   if (!Number.isSafeInteger(value) || value < 1 || value > 3999) return String(value);
                   let result = "";
@@ -2883,24 +2883,6 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                 return { ...deckType, children: deckType.children?.map(child => ({ ...child,
                   label: child.label.replace(/^Chapter (\d+)\s*[-–]\s*(\d+)$/u, (_match, first: string, last: string) => `Chapter ${roman(Number(first))} - ${roman(Number(last))}`)
                 })) };
-              }
-              if ((language.packageId === "com.sleepymario.language.japanese" || language.moduleId === "com.sleepymario.language.japanese") && deckType.kind === "review-section") {
-                return { ...deckType, children: [{
-                  id: `${deckType.id}:chapter-001-005`, label: "Chapter I - V", kind: "review-source" as const,
-                  packageId: "com.sleepymario.language.japanese", packageVersion: "0.1.0",
-                  packageLabel: "Japanese", sourcePath: "review-decks/chapter-001-005/cards.tsv", itemCount: 102,
-                  contentDataDir: join(__dirname, "../../../.local-content/japanese-reviews")
-                }, {
-                  id: `${deckType.id}:chapter-006-010`, label: "Chapter VI - X", kind: "review-source" as const,
-                  packageId: "com.sleepymario.language.japanese", packageVersion: "0.1.0",
-                  packageLabel: "Japanese", sourcePath: "review-decks/chapter-006-010/cards.tsv", itemCount: 111,
-                  contentDataDir: join(__dirname, "../../../.local-content/japanese-reviews")
-                }, {
-                  id: `${deckType.id}:chapter-011-015`, label: "Chapter XI - XV", kind: "review-source" as const,
-                  packageId: "com.sleepymario.language.japanese", packageVersion: "0.1.0",
-                  packageLabel: "Japanese", sourcePath: "review-decks/chapter-011-015/cards.tsv", itemCount: 138,
-                  contentDataDir: join(__dirname, "../../../.local-content/japanese-reviews")
-                }] };
               }
               // Custom is a standard, learner-managed deck family. Installed
               // Custom decks remain usable while authored curriculum families
@@ -2925,11 +2907,9 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                         {
                           id: `${deckType.id}:topography-main-vocabulary`, label: "Topography - Main Vocabulary", kind: "review-source" as const,
                           packageId: "com.sleepymario.language.japanese.general.topography-main-vocabulary", packageVersion: "0.1.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 105,
-                          contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
                         }, {
                           id: `${deckType.id}:prefecture-capitals-vocabulary`, label: "Prefecture Capitals Vocabulary", kind: "review-source" as const,
                           packageId: "com.sleepymario.language.japanese.general.prefecture-capitals-vocabulary", packageVersion: "0.1.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 282,
-                          contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
                         }, ...(["easy", "hard"] as const).map(mode => ({
                           id: `${deckType.id}:prefectures-${mode}`, label: `Prefectures - All - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
                           commandPath: ["geography", `japanese-prefectures-${mode}`], commandArgs: [],
@@ -2937,7 +2917,6 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                         })), {
                         id: `${deckType.id}:prefectures-kanji`, label: "Prefectures - All - 漢字", kind: "review-source" as const,
                         packageId: "com.sleepymario.language.japanese.prefectures-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 94,
-                        contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
                       }, ...(["easy", "hard"] as const).map(mode => ({
                         id: `${deckType.id}:regions-${mode}`, label: `Prefectures - Regions - ${mode === "easy" ? "Easy" : "Hard"}`, kind: "command" as const,
                         commandPath: ["geography", `japanese-regions-${mode}`], commandArgs: [],
@@ -2945,7 +2924,6 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                       })), {
                         id: `${deckType.id}:regions-kanji`, label: "Prefectures - Regions - 漢字", kind: "review-source" as const,
                         packageId: "com.sleepymario.language.japanese.regions-kanji", packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: 16,
-                        contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
                       }, ...japanRegionDecks.flatMap(region => {
                         const prefectureCount = loadGeographyRegionMetadata().find(candidate => candidate.id === `${region.slug}-highlight`)?.prefectures.length ?? 0;
                         return [
@@ -2958,7 +2936,6 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                           })), {
                             id: `${deckType.id}:prefectures-${region.slug}-kanji`, label: `Prefectures - ${region.japanese} - 漢字`, kind: "review-source" as const,
                             packageId: `com.sleepymario.language.japanese.${region.slug}-kanji`, packageVersion: "1.0.0", packageLabel: "Japanese", sourcePath: "cards.tsv", itemCount: prefectureCount * 2,
-                            contentDataDir: join(__dirname, "../../../.local-content/japanese-prefectures")
                           }
                         ];
                       })]
@@ -2971,7 +2948,6 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                     {
                       id: `${deckType.id}:topography-main-vocabulary`, label: "Topography - Main Vocabulary", kind: "review-source" as const,
                       packageId: "com.sleepymario.language.korean.general.topography-main-vocabulary", packageVersion: "0.1.0", packageLabel: "Korean", sourcePath: "cards.tsv", itemCount: 70,
-                      contentDataDir: join(__dirname, "../../../.local-content/korean-topography")
                     },
                     ...(["easy", "hard"] as const).map(mode => ({
                       id: `${deckType.id}:korean-provincial-divisions-${mode}`,
@@ -3003,7 +2979,6 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
                     {
                       id: `${deckType.id}:topography-main-vocabulary`, label: "Topography - Main Vocabulary", kind: "review-source" as const,
                       packageId: "com.sleepymario.language.vietnamese.general.topography-main-vocabulary", packageVersion: "0.1.0", packageLabel: "Vietnamese", sourcePath: "cards.tsv", itemCount: 70,
-                      contentDataDir: join(__dirname, "../../../.local-content/vietnamese-topography")
                     },
                     ...(["easy", "hard"] as const).map(mode => ({
                       id: `${deckType.id}:vietnamese-provincial-divisions-${mode}`,

@@ -1,3 +1,4 @@
+import { ensureOwnedContentPackage } from "./ensure-owned-content-package.mjs";
 // Build and install the private 初級日本語習作 decks in the normal local data directory.
 import { createRequire } from "node:module";
 import { homedir } from "node:os";
@@ -11,7 +12,7 @@ const core = createRequire(import.meta.url)(join(root, "dist/packages/core/index
 const existingStamp = "2026-10-01T08:38:05Z";
 const thirdDeckStamp = "2026-10-15T08:00:00Z";
 const fourthDeckStamp = "2026-10-15T12:00:00Z";
-const output = join(root, ".local-content/japanese-shokyu-nihongo-shusaku-artifacts");
+const output = join(root, "../..", "whacksmacker-decks-private/artifacts/packages/japanese-shokyu-nihongo-shusaku");
 const sourceRoot = join(homedir(), "Projects/whacksmacker-decks-private");
 const dataDir = process.env.WHACKSMACKER_DATA_DIR ?? join(homedir(), ".local/share/whacksmacker");
 const targetIds = [
@@ -32,7 +33,7 @@ const installTargetIds = new Set([
 const generated = [];
 for (const targetId of targetIds) {
   const generatedAt = targetId.includes("-iv-") ? fourthDeckStamp : targetId.includes("-iii-") ? thirdDeckStamp : existingStamp;
-  generated.push(await core.generateContentPackage({ targetId, outputDirectory: output, generatedAt, sourceRoot }));
+  generated.push(await ensureOwnedContentPackage(core, { targetId, outputDirectory: output, generatedAt, sourceRoot }));
 }
 await core.generateLocalContentPackageCatalogue({
   packagesDirectory: output,

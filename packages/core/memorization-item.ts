@@ -301,7 +301,8 @@ export async function readInstalledMemorizationItems(
   // including optional one-mora and kana-only B cards. The package generator
   // already validates them outside the canonical curriculum occurrence rules.
   const standaloneJapaneseGeneralTopic = selected.packageId === "com.sleepymario.language.japanese.general.animals-i"
-    || selected.packageId === "com.sleepymario.language.japanese.general.topography-main-vocabulary";
+    || selected.packageId === "com.sleepymario.language.japanese.general.topography-main-vocabulary"
+    || selected.packageId === "com.sleepymario.language.japanese.general.prefecture-capitals-vocabulary";
   if (!japaneseScriptConversion
     && !standaloneJapaneseGeneralTopic
     // Private Custom decks are finite source-based collections rather than
