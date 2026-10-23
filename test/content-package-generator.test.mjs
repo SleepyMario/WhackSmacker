@@ -150,7 +150,7 @@ test("content package generator exposes the supported local package targets", ()
   ]);
   assert.deepEqual(vietnamese123Lessons.map((target) => target.topicDeck?.displayName), vietnamese123Lessons.map((target) => target.topic?.deckDisplayName));
   assert.equal(vietnamese123Lessons.find((target) => target.id === "vietnamese-custom-123-lesson-02")?.artifactRevision, 12);
-  assert.equal(vietnamese123Lessons.filter((target) => target.id !== "vietnamese-custom-123-lesson-02").every((target) => target.artifactRevision === 8), true);
+  assert.equal(vietnamese123Lessons.filter((target) => target.id !== "vietnamese-custom-123-lesson-02").every((target) => target.artifactRevision === 9), true);
 });
 
 test("Traditional Chinese Radicals presents only A and reveals English plus Hanyu Pinyin", async () => {
