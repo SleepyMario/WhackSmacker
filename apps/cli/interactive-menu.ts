@@ -210,6 +210,7 @@ export type LanguageTreeNodeKind =
   | "message";
 
 export interface LanguageTreeNode {
+  readonly emptyContent?: boolean;
   readonly id: string;
   readonly label: string;
   readonly kind: LanguageTreeNodeKind;
@@ -3143,10 +3144,18 @@ function buildAvailableCategoryTree(
 }
 
 function buildAvailableModuleTreeNode(descriptor: FirstClassModuleDescriptor, cataloguePath: string, locale: SourceLocale): LanguageTreeNode {
+  let emptyContent = false;
+  try {
+    const resetIds = JSON.parse(readFileSync(join(dirname(cataloguePath), "launcher-reset-packages.json"), "utf8")) as string[];
+    emptyContent = resetIds.includes(descriptor.packageId ?? descriptor.moduleId);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
   const status = availableStatusForDescriptor(descriptor);
   const label = `${descriptor.displayName} [${availableStatusLabel(status, locale)}]`;
   return {
     id: `available:${descriptor.moduleId}`,
+    emptyContent,
     label,
     kind: "available-module",
     moduleId: descriptor.moduleId,
@@ -7090,9 +7099,21 @@ function renderTreeLines(entry: VisibleLanguageTreeNode, selected: boolean, widt
   return plainLines.map((plain, index) => styleTreeLine(plain, labelLines[index] ?? "", entry, selected, colorsEnabled));
 }
 
+function hasEmptyMenuContent(node: LanguageTreeNode): boolean {
+  if (node.emptyContent === true) return true;
+  if (node.commandPath !== undefined) return false;
+  if (node.kind === "review-source") return node.itemCount === 0;
+  if (!["root", "installed-root", "available-root", "category", "module", "package", "read-section", "review-section"].includes(node.kind)) return false;
+  const content = (node.children ?? []).filter(child => !["message", "package-info", "uninstall"].includes(child.kind));
+  return content.length === 0 || content.every(hasEmptyMenuContent);
+}
+
 function styleTreeLine(plain: string, semanticLabel: string, entry: VisibleLanguageTreeNode, selected: boolean, colorsEnabled: boolean): string {
   if (!colorsEnabled) {
     return plain;
+  }
+  if (hasEmptyMenuContent(entry.node)) {
+    return `${selected ? ansi.inverse + ansi.bold : ""}\x1b[38;2;128;128;128m${plain}${ansi.reset}`;
   }
   if (entry.node.kind === "content" && hasReviewDeckColoredMenuToken(plain)) {
     return styleReviewDeckColoredMenuToken(plain, selected);
