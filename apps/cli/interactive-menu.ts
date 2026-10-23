@@ -2802,6 +2802,7 @@ export function languageSubmenuSkeleton(languages: LanguageTreeNode, archivedLan
         }
         if ((language.packageId === "com.sleepymario.language.vietnamese" || language.moduleId === "com.sleepymario.language.vietnamese") && submenu.kind === "read-section") {
           return { ...submenu, children: [
+            ...(submenu.children ?? []).filter(node => node.filePath?.startsWith("units/vietnamese-foundation/") && node.filePath.endsWith("/chapter.md")),
             ...["Consonants", "Vowels", "Tones"].map(label => ({ id: `${submenu.id}:${label.toLowerCase()}`, label, kind: "message" as const, previewText: "" })),
             { id: `${submenu.id}:cast-introduction-i`, label: "Meet Maria, Minh Anh and Thu Hà", kind: "message" as const,
               previewArtworkPath: join(__dirname, "content/media/vietnamese-cast-introduction-i.png"),

@@ -223,7 +223,7 @@ const legacyGeneratorTargets: readonly ContentPackageGeneratorTarget[] = [
     contentType: "language-curriculum",
     contentSchemaVersion: "1.0.0",
     packageVersion: "0.1.0",
-    artifactRevision: 16,
+    artifactRevision: 17,
     sourcePath: "../vietnamese-curriculum",
     sourceRepository: "https://github.com/SleepyMario/vietnamese-curriculum",
     languages: ["vi", "en"],
@@ -3869,6 +3869,8 @@ function assertChangedSectionAndGrammarContent(
   const strictChapterPaths = new Set<string>();
   const chapters = sourceFiles.filter((file) => isReadableChapterMarkdownPath(file.path));
   for (const chapter of chapters) {
+    // Pronunciation foundations are reference units, not Core grammar lessons.
+    if (/^units\/vietnamese-foundation\//u.test(chapter.path) && /^type: foundation\s*$/mu.test(chapter.text)) continue;
     const directory = dirname(chapter.path);
     if ([...sourceChanges].some((path) => path === chapter.path || path.startsWith(`${directory}/`))) strictChapterPaths.add(chapter.path);
   }
