@@ -1,8 +1,25 @@
 // Preserve historical archives; derive the live feed and reset reminders.
 import fs from 'node:fs';
 import path from 'node:path';
-const [input, output] = process.argv.slice(2);
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+const [input, output, retainedInput] = process.argv.slice(2);
 const feed = JSON.parse(fs.readFileSync(input, 'utf8'));
+// Local recovery packages survive feed regeneration; published entries win.
+if (retainedInput && fs.existsSync(retainedInput)) {
+  const retained = JSON.parse(fs.readFileSync(retainedInput, 'utf8'));
+  const present = new Set(feed.packages.map(entry => entry.packageId));
+  for (const entry of retained.packages) {
+    if (present.has(entry.packageId)) continue;
+    const bytes = fs.readFileSync(fileURLToPath(entry.package.url));
+    if (bytes.length !== entry.package.size
+        || createHash('sha256').update(bytes).digest('hex') !== entry.package.sha256) {
+      throw new Error(`Retained package failed integrity verification: ${entry.packageId}`);
+    }
+    feed.packages.push(entry);
+    present.add(entry.packageId);
+  }
+}
 const root = path.dirname(path.dirname(input));
 const retired = new Set();
 function hasChapters(dir) {

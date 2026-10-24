@@ -24,3 +24,17 @@ archives, private decks and unrelated uncommitted source changes are retained.
 Recovery evidence and previous launcher copies are in the infrastructure task's
 work/wsm-recovery-audit directory. The current launcher still automatically
 installs pending packages on startup, including when passed --help.
+
+## Retained Chinese General decks
+
+The ThinkPad retains all 32 radical, radicals-in-characters, and
+Simplified/Traditional conversion packages in
+`$XDG_DATA_HOME/whacksmacker/retained-content/chinese-general`
+(default `~/.local/share/whacksmacker/retained-content/chinese-general`).
+The launcher merges missing package IDs from its catalogue into the derived
+feed, checking archive size and SHA-256. Entries in the current source feed
+take precedence, allowing newer releases. A missing or corrupt fallback archive
+stops preparation with an error instead of silently dropping the deck.
+Back up this directory with application data; it is not a disposable cache.
+To intentionally retire one of these decks, explicitly remove its retained
+catalogue entry too. This does not modify or migrate learner progress.

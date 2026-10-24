@@ -11,7 +11,7 @@ BUILD_STAMP="$DATA/cache/launcher-build.sha256"
 SOURCE_FEED="$FEED"
 FEED="$DATA/cache/launcher-catalogue.json"
 mkdir -p "$(dirname "$FEED")"
-node "$APP/scripts/prepare-launcher-catalogue.mjs" "$SOURCE_FEED" "$FEED"
+node "$APP/scripts/prepare-launcher-catalogue.mjs" "$SOURCE_FEED" "$FEED" "$DATA/retained-content/chinese-general/catalogue.json"
 
 perf_now() {
   node -e 'process.stdout.write((Number(process.hrtime.bigint()) / 1e6).toString())'
