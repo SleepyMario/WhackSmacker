@@ -11,6 +11,8 @@ const core = createRequire(import.meta.url)(join(root, "dist/packages/core/index
 // source reproduces every current immutable package revision byte for byte.
 const existingStamp = "2026-10-01T08:38:05Z";
 const thirdDeckStamp = "2026-10-15T08:00:00Z";
+const sixthDeckStamp = "2026-11-05T03:00:00Z";
+const fifthDeckStamp = "2026-11-05T02:00:00Z";
 const fourthDeckStamp = "2026-10-15T12:00:00Z";
 const output = join(root, "../..", "whacksmacker-decks-private/artifacts/packages/japanese-shokyu-nihongo-shusaku");
 const sourceRoot = join(homedir(), "Projects/whacksmacker-decks-private");
@@ -23,22 +25,28 @@ const targetIds = [
   "japanese-custom-shokyu-nihongo-shusaku-iii-vocabulary",
   "japanese-custom-shokyu-nihongo-shusaku-iii-sentences",
   "japanese-custom-shokyu-nihongo-shusaku-iv-vocabulary",
-  "japanese-custom-shokyu-nihongo-shusaku-iv-sentences"
+  "japanese-custom-shokyu-nihongo-shusaku-iv-sentences",
+  "japanese-custom-shokyu-nihongo-shusaku-v-vocabulary",
+  "japanese-custom-shokyu-nihongo-shusaku-v-sentences",
+  "japanese-custom-shokyu-nihongo-shusaku-vi-vocabulary",
+  "japanese-custom-shokyu-nihongo-shusaku-vi-sentences"
 ];
 const installTargetIds = new Set([
-  "japanese-custom-shokyu-nihongo-shusaku-iv-vocabulary",
-  "japanese-custom-shokyu-nihongo-shusaku-iv-sentences"
+  "japanese-custom-shokyu-nihongo-shusaku-v-vocabulary",
+  "japanese-custom-shokyu-nihongo-shusaku-v-sentences",
+  "japanese-custom-shokyu-nihongo-shusaku-vi-vocabulary",
+  "japanese-custom-shokyu-nihongo-shusaku-vi-sentences"
 ]);
 
 const generated = [];
 for (const targetId of targetIds) {
-  const generatedAt = targetId.includes("-iv-") ? fourthDeckStamp : targetId.includes("-iii-") ? thirdDeckStamp : existingStamp;
+  const generatedAt = targetId.includes("-vi-") ? sixthDeckStamp : targetId.includes("-v-") ? fifthDeckStamp : targetId.includes("-iv-") ? fourthDeckStamp : targetId.includes("-iii-") ? thirdDeckStamp : existingStamp;
   generated.push(await ensureOwnedContentPackage(core, { targetId, outputDirectory: output, generatedAt, sourceRoot }));
 }
 await core.generateLocalContentPackageCatalogue({
   packagesDirectory: output,
   outputPath: join(output, "catalogue.json"),
-  generatedAt: fourthDeckStamp
+  generatedAt: sixthDeckStamp
 });
 for (const result of generated) {
   if (!installTargetIds.has(result.targetId)) continue;
@@ -46,7 +54,7 @@ for (const result of generated) {
     cataloguePath: join(output, "catalogue.json"),
     packageId: result.packageId,
     dataDir,
-    installedAt: fourthDeckStamp
+    installedAt: sixthDeckStamp
   });
 }
 
