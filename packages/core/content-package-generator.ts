@@ -1820,8 +1820,31 @@ const vietnameseCustomDeckDefinitions = [
   ["classifiers-common-objects", "Classifiers & Common Objects"],
   ["animals", "Animals I"],
   ["descriptions-opposites", "Descriptions & Opposites"],
-  ["common-confusions", "Common Confusions"]
+  ["common-confusions", "Common Confusions"],
+  ["health-body", "Health & Body"],
+  ["education-work", "Education & Work"],
+  ["travel-directions", "Travel & Directions"],
+  ["leisure-media", "Leisure & Media"],
+  ["weather-nature", "Weather & Nature"],
 ] as const;
+
+const vietnameseNotebook2Revisions: Readonly<Record<string, number>> = {
+  "core-sentence-patterns": 3,
+  "food-drink-restaurants": 3,
+  "classifiers-common-objects": 4,
+  "daily-life-common-actions": 3,
+  "numbers-money-dates-time": 3,
+  "conversation-social-phrases": 3,
+  "descriptions-opposites": 3,
+  "people-pronouns-languages": 3,
+  "health-body": 1,
+  "education-work": 1,
+  "shopping-clothing": 3,
+  "travel-directions": 1,
+  "leisure-media": 1,
+  "frequency-preference-comparison": 3,
+  "weather-nature": 1
+};
 
 const vietnameseCustomDeckTargets: readonly ContentPackageGeneratorTarget[] = vietnameseCustomDeckDefinitions.map(([slug, displayName], index) => ({
   id: `vietnamese-custom-${slug}`,
@@ -1837,7 +1860,7 @@ const vietnameseCustomDeckTargets: readonly ContentPackageGeneratorTarget[] = vi
   relatedPackageIds: ["com.sleepymario.language.vietnamese"],
   contentSchemaVersion: "2.0.0",
   deckVersion: "0.1.0",
-  artifactRevision: slug === "animals" ? 5 : slug === "classifiers-common-objects" ? 3 : 2,
+  artifactRevision: vietnameseNotebook2Revisions[slug] ?? (slug === "animals" ? 5 : slug === "classifiers-common-objects" ? 3 : 2),
   mediaPolicy: slug === "animals" ? "required" : "none",
   interactionProfile: defaultDeckInteractionProfile,
   notesPolicy: "omit",
