@@ -281,7 +281,21 @@
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
         "displayName": { "$ref": "#/$defs/localizedContent" },
-        "deckDisplayName": { "$ref": "#/$defs/localizedContent" }
+        "deckDisplayName": { "$ref": "#/$defs/localizedContent" },
+        "ancestors": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "displayName"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+              "displayName": { "$ref": "#/$defs/localizedContent" }
+            }
+          }
+        }
       }
     },
     "localizedContent": {

@@ -91,3 +91,39 @@ To make a future package appear in a family submenu:
 4. Install the package through the package manager.
 
 The interactive CLI then discovers it from the installed registry, selects the newest installed version of each package ID, groups topic packages only by the explicit stable topic identity within their declared family, and exposes each explicit deck label as a directly launchable Review leaf. Package IDs, titles, paths, ranges, and vocabulary are never parsed to infer either family or topic.
+
+## Explicit nested topic categories (optional)
+
+For a learner-specific game or other genuinely nested topic collection, the existing
+`topic.id`, `topic.displayName`, and `topic.deckDisplayName` are extended with the
+optional `topic.ancestors` array. The existing single-level menu remains unchanged
+when `ancestors` is omitted. The declaration is explicit metadata, never parsed
+from package IDs, filenames, or strings containing a slash.
+
+```json
+{
+  "deckFamily": "custom",
+  "topic": {
+    "id": "breath-of-the-wild",
+    "displayName": "Breath of the Wild",
+    "ancestors": [
+      { "id": "video-games", "displayName": "Video Games" },
+      { "id": "the-legend-of-zelda", "displayName": "The Legend of Zelda" }
+    ],
+    "deckDisplayName": "NPC Dialogue"
+  }
+}
+```
+
+This displays **Private → Video Games → The Legend of Zelda → Breath of the Wild
+→ NPC Dialogue** within each explicitly associated language. The `ancestors` field
+contains 1–8 segments, ordered outermost first, with stable lowercase slug IDs
+and localized display names. IDs cannot repeat within one ancestry path or equal
+`topic.id`. Same-ID categories with conflicting display names produce a visible
+metadata-conflict message instead of silent merging. The category ancestors are
+purely a menu presentation concern; they do not alter package ID, card ID,
+review-state key, or source provenance.
+
+The existing package generator still requires a separately authored, explicitly
+registered target and installable content. Menu metadata alone does not create
+or populate decks. Do not publish licensed game dialogue in the public WSM repo.

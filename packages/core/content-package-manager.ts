@@ -858,6 +858,22 @@ function validateInstalledTopicMetadata(value: unknown, field: string, errors: s
   if (typeof value.id !== "string" || !/^[a-z0-9][a-z0-9-]*$/u.test(value.id)) errors.push(`${field}.id must be a stable lowercase slug.`);
   if (!isLocalizedContentValue(value.displayName)) errors.push(`${field}.displayName must be localized learner-facing text.`);
   if (!isLocalizedContentValue(value.deckDisplayName)) errors.push(`${field}.deckDisplayName must be localized learner-facing text.`);
+  if (value.ancestors !== undefined) {
+    if (!Array.isArray(value.ancestors) || value.ancestors.length < 1 || value.ancestors.length > 8) {
+      errors.push(`${field}.ancestors must contain 1–8 explicit parent categories when present.`);
+    } else {
+      const seen = new Set<string>(typeof value.id === "string" ? [value.id] : []);
+      for (const [index, ancestor] of value.ancestors.entries()) {
+        if (!isRecord(ancestor)) { errors.push(`${field}.ancestors[${index}] must be an object.`); continue; }
+        if (typeof ancestor.id !== "string" || !/^[a-z0-9][a-z0-9-]*$/u.test(ancestor.id)) {
+          errors.push(`${field}.ancestors[${index}].id must be a stable lowercase slug.`);
+        } else if (seen.has(ancestor.id)) {
+          errors.push(`${field}.ancestors[${index}].id must not repeat another path segment or topic.id.`);
+        } else seen.add(ancestor.id);
+        if (!isLocalizedContentValue(ancestor.displayName)) errors.push(`${field}.ancestors[${index}].displayName must be localized learner-facing text.`);
+      }
+    }
+  }
 }
 
 function selectCatalogueEntry(

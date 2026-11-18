@@ -3778,10 +3778,15 @@ async function buildDeckFamilyBranch(
     if (record.topic !== undefined) {
       const topicLabel = localized(record.topic.displayName, locale);
       const deckLabel = localized(record.topic.deckDisplayName, locale);
+      const topicAncestors = record.topic.ancestors?.map((ancestor) => ({
+        id: ancestor.id,
+        label: localized(ancestor.displayName, locale)
+      }));
       if (sourceChildren.length !== 1) {
         return {
           topicId: record.topic.id,
           topicLabel,
+          topicAncestors,
           leaf: {
             id: `${languagePackageId}:deck-family:${family}:topic:${record.topic.id}:${record.packageId}@${record.packageVersion}:invalid`,
             label: deckLabel,
@@ -3793,6 +3798,7 @@ async function buildDeckFamilyBranch(
       return {
         topicId: record.topic.id,
         topicLabel,
+        topicAncestors,
         leaf: {
           ...sourceChildren[0],
           label: deckLabel,
@@ -3869,6 +3875,7 @@ async function buildDeckFamilyBranch(
 export interface ExplicitTopicMenuLeafProjection {
   readonly topicId: string;
   readonly topicLabel: string;
+  readonly topicAncestors?: readonly { readonly id: string; readonly label: string }[];
   readonly leaf: LanguageTreeNode;
 }
 
@@ -3877,35 +3884,50 @@ export function groupExplicitTopicMenuLeaves(
   family: DeckFamily,
   projections: readonly ExplicitTopicMenuLeafProjection[]
 ): readonly LanguageTreeNode[] {
-  const topicGroups = new Map<string, { label: string; leaves: LanguageTreeNode[] }>();
+  type Group = { label: string; groups: Map<string, Group>; leaves: LanguageTreeNode[]; conflict: boolean };
+  const roots = new Map<string, Group>();
   for (const projection of projections) {
-    const current = topicGroups.get(projection.topicId);
-    if (current === undefined) {
-      topicGroups.set(projection.topicId, { label: projection.topicLabel, leaves: [projection.leaf] });
-      continue;
+    let groups = roots;
+    const path = [...(projection.topicAncestors ?? []), { id: projection.topicId, label: projection.topicLabel }];
+    for (const [index, segment] of path.entries()) {
+      let group = groups.get(segment.id);
+      if (group === undefined) {
+        group = { label: segment.label, groups: new Map(), leaves: [], conflict: false };
+        groups.set(segment.id, group);
+      } else if (group.label !== segment.label) {
+        group.conflict = true;
+      }
+      if (index === path.length - 1) group.leaves.push(projection.leaf);
+      groups = group.groups;
     }
-    if (current.label !== projection.topicLabel) {
-      current.leaves.push({
-        id: `${languagePackageId}:deck-family:${family}:topic:${projection.topicId}:label-conflict`,
-        label: "Conflicting topic metadata",
-        kind: "message",
-        previewText: "Installed packages with the same stable topic identity must use the same learner-facing category label."
-      });
-      continue;
-    }
-    current.leaves.push(projection.leaf);
   }
-  return [...topicGroups.entries()].sort((left, right) => left[1].label.localeCompare(right[1].label) || left[0].localeCompare(right[0])).map(([topicId, topic]) => {
-    const leaves = topic.leaves.sort(compareExplicitTopicLeafLabels);
-    if (leaves.length === 1 && leaves[0]?.label === topic.label) return leaves[0];
-    return {
-      id: `${languagePackageId}:deck-family:${family}:topic:${topicId}`,
-      label: topic.label,
-      kind: "category",
-      previewText: `${topic.label}\n\nInstalled topic decks explicitly assigned to this category and deck family.`,
-      children: leaves
-    };
-  });
+  function render(groups: Map<string, Group>, ancestors: readonly string[]): LanguageTreeNode[] {
+    return [...groups.entries()]
+      .sort((a, b) => a[1].label.localeCompare(b[1].label) || a[0].localeCompare(b[0]))
+      .map(([id, group]) => {
+        const ids = [...ancestors, id];
+        const nodeId = `${languagePackageId}:deck-family:${family}:topic:${ids.join(":")}`;
+        const leaves = [...group.leaves].sort(compareExplicitTopicLeafLabels);
+        const children = [...render(group.groups, ids), ...leaves];
+        if (group.conflict) children.push({
+          id: `${nodeId}:label-conflict`,
+          label: "Conflicting topic metadata",
+          kind: "message",
+          previewText: "Installed packages with the same stable topic identity must use the same learner-facing category label."
+        });
+        // Preserve the existing direct-leaf presentation for non-nested single-topic decks.
+        if (ancestors.length === 0 && group.groups.size === 0 && !group.conflict
+            && leaves.length === 1 && leaves[0]?.label === group.label) return leaves[0];
+        return {
+          id: nodeId,
+          label: group.label,
+          kind: "category",
+          previewText: `${group.label}\n\nInstalled topic decks explicitly assigned to this category and deck family.`,
+          children
+        };
+      });
+  }
+  return render(roots, []);
 }
 
 function compareExplicitTopicLeafLabels(left: LanguageTreeNode, right: LanguageTreeNode): number {
