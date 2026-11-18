@@ -63,6 +63,8 @@ export interface ContentPackageTopicMetadata {
   readonly id: string;
   readonly displayName: LocalizedContentValue;
   readonly deckDisplayName: LocalizedContentValue;
+  /** Explicit parent categories, outermost first; preserves legacy one-level topics when omitted. */
+  readonly ancestors?: readonly { readonly id: string; readonly displayName: LocalizedContentValue }[];
 }
 export type ContentPackageLocalizationMetadata =
   | { readonly role: "base-curriculum"; readonly schemaVersion: string; readonly targetLanguage: string; readonly defaultSourceLocale: string; readonly defaultSourcePackageId: string }
@@ -181,6 +183,22 @@ function validateTopicMetadata(value: unknown, errors: string[]): void {
   }
   validateLocalizedContentValue(value.displayName, "topic.displayName", errors);
   validateLocalizedContentValue(value.deckDisplayName, "topic.deckDisplayName", errors);
+  if (value.ancestors !== undefined) {
+    if (!Array.isArray(value.ancestors) || value.ancestors.length < 1 || value.ancestors.length > 8) {
+      errors.push("topic.ancestors must contain 1–8 explicit parent categories when present.");
+    } else {
+      const seen = new Set<string>(typeof value.id === "string" ? [value.id] : []);
+      for (const [index, ancestor] of value.ancestors.entries()) {
+        if (!isRecord(ancestor)) { errors.push(`topic.ancestors[${index}] must be an object.`); continue; }
+        if (typeof ancestor.id !== "string" || !/^[a-z0-9][a-z0-9-]*$/u.test(ancestor.id)) {
+          errors.push(`topic.ancestors[${index}].id must be a stable lowercase slug.`);
+        } else if (seen.has(ancestor.id)) {
+          errors.push(`topic.ancestors[${index}].id must not repeat another path segment or topic.id.`);
+        } else seen.add(ancestor.id);
+        validateLocalizedContentValue(ancestor.displayName, `topic.ancestors[${index}].displayName`, errors);
+      }
+    }
+  }
 }
 
 function validateNoReviewMenuStatusColorMetadata(value: unknown, path: string, errors: string[]): void {
