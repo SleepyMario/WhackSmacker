@@ -3922,7 +3922,7 @@ export function groupExplicitTopicMenuLeaves(
           id: nodeId,
           label: group.label,
           kind: "category",
-          previewText: `${group.label}\\n\\nInstalled topic decks explicitly assigned to this category and deck family.`,
+          previewText: `${group.label}\n\nInstalled topic decks explicitly assigned to this category and deck family.`,
           children
         };
       });
