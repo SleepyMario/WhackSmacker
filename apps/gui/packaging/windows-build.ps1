@@ -12,4 +12,5 @@ if($LASTEXITCODE -ne 0){throw 'native build failed'}
 New-Item -ItemType Directory -Force portable | Out-Null
 Copy-Item src-tauri\target\debug\wsm-gui-proof.exe portable\WSM-GUI-Proof.exe
 Set-Content portable\README.txt 'WhackSmacker GUI proof 0.1.0-alpha.5. Requires Microsoft Edge WebView2 runtime. Uses a separate demo profile and does not access existing WSM progress. Unsigned alpha proof.'
+Copy-Item COPYING portable\COPYING
 Compress-Archive portable\* wsm-gui-0.1.0-alpha.5-windows-x64.zip -Force
