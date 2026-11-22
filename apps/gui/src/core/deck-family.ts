@@ -1,0 +1,149 @@
+import { compareDeckFrameworkVersions } from "./deck-framework";
+
+export const knownDeckFamilies = ["general", "specialized", "custom"] as const;
+
+export type DeckFamily = (typeof knownDeckFamilies)[number];
+
+export interface DeckFamilyPackageRecord {
+  readonly packageId: string;
+  readonly packageVersion: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
+  readonly displayName: string;
+  readonly contentType?: string;
+  readonly deckFamily?: DeckFamily;
+  readonly topic?: import("./content-package-spec").ContentPackageTopicMetadata;
+  readonly relatedPackageIds?: readonly string[];
+}
+
+export interface DeckFamilyPackageMetadata {
+  readonly packageId: string;
+  readonly packageVersion: string;
+  readonly deckVersion?: string;
+  readonly artifactRevision?: number;
+  readonly contentType?: string;
+  readonly deckFamily?: DeckFamily;
+  readonly relatedPackageIds?: readonly string[];
+}
+
+export interface DeckFamilyReviewSourceDisplay {
+  readonly authoritativeTitle?: string;
+  readonly fallbackLabel: string;
+}
+
+export interface DeckFamilyPackageMenuPresentation {
+  readonly packageLabel: string;
+  readonly sourceLabels: readonly string[];
+}
+
+export function isDeckFamily(value: unknown): value is DeckFamily {
+  return typeof value === "string" && knownDeckFamilies.includes(value as DeckFamily);
+}
+
+export function reconcileInstalledDeckFamilyMetadata<T extends DeckFamilyPackageRecord>(
+  installedPackages: readonly T[],
+  currentPackageMetadata: readonly DeckFamilyPackageMetadata[]
+): readonly T[] {
+  return installedPackages.map((installed) => {
+    if (installed.deckFamily !== undefined) return installed;
+
+    const matches = currentPackageMetadata.filter((metadata) =>
+      metadata.packageId === installed.packageId
+        && metadata.packageVersion === installed.packageVersion
+        && isDeckFamily(metadata.deckFamily)
+        && hasExactLanguageAssociations(metadata.relatedPackageIds)
+        && (metadata.contentType === undefined || metadata.contentType === installed.contentType)
+    );
+    if (matches.length !== 1) return installed;
+
+    const [metadata] = matches;
+    return {
+      ...installed,
+      deckFamily: metadata.deckFamily,
+      relatedPackageIds: metadata.relatedPackageIds
+    };
+  });
+}
+
+export function packagesForLanguageAndDeckFamily<T extends DeckFamilyPackageRecord>(
+  packages: readonly T[],
+  languagePackageId: string,
+  deckFamily: DeckFamily
+): readonly T[] {
+  const newestByPackageId = new Map<string, T>();
+
+  for (const candidate of packages) {
+    if (candidate.relatedPackageIds?.includes(languagePackageId) !== true) {
+      continue;
+    }
+    const current = newestByPackageId.get(candidate.packageId);
+    if (current === undefined || compareDeckFrameworkVersions(candidate, current) > 0) {
+      newestByPackageId.set(candidate.packageId, candidate);
+    }
+  }
+
+  return [...newestByPackageId.values()].filter((candidate) => candidate.deckFamily === deckFamily).sort((left, right) => {
+    const kgfilOrder = [
+      "local.user.decks.korean-kgfil-i-vocabulary",
+      "local.user.decks.korean-kgfil-i-sentences",
+      "local.user.decks.korean-kgfil-ii-a-vocabulary",
+      "local.user.decks.korean-kgfil-ii-a-sentences",
+      "local.user.decks.korean-kgfil-ii-b-vocabulary",
+      "local.user.decks.korean-kgfil-ii-b-sentences",
+      "local.user.decks.korean-kgfil-iii-vocabulary",
+      "local.user.decks.korean-kgfil-iii-sentences",
+      "local.user.decks.korean-kgfil-iv-vocabulary",
+      "local.user.decks.korean-kgfil-iv-sentences",
+      "local.user.decks.korean-kgfil-v-a-vocabulary",
+      "local.user.decks.korean-kgfil-v-a-sentences",
+      "local.user.decks.korean-kgfil-v-b-vocabulary",
+      "local.user.decks.korean-kgfil-v-b-sentences",
+      "local.user.decks.korean-kgfil-vi-vocabulary",
+      "local.user.decks.korean-kgfil-vi-sentences",
+      "local.user.decks.korean-kgfil-vii-a-vocabulary",
+      "local.user.decks.korean-kgfil-vii-a-sentences",
+      "local.user.decks.korean-kgfil-viii-vocabulary",
+      "local.user.decks.korean-kgfil-viii-sentences",
+      "local.user.decks.korean-kgfil-ix-a-vocabulary",
+      "local.user.decks.korean-kgfil-ix-a-sentences",
+      "local.user.decks.korean-kgfil-ix-b-vocabulary",
+      "local.user.decks.korean-kgfil-ix-b-sentences",
+      "local.user.decks.korean-kgfil-ix-c-vocabulary",
+      "local.user.decks.korean-kgfil-ix-c-sentences",
+      "local.user.decks.korean-kgfil-x-vocabulary",
+      "local.user.decks.korean-kgfil-x-sentences"
+    ];
+    const leftKgfilOrder = kgfilOrder.indexOf(left.packageId);
+    const rightKgfilOrder = kgfilOrder.indexOf(right.packageId);
+    if (leftKgfilOrder >= 0 && rightKgfilOrder >= 0) return leftKgfilOrder - rightKgfilOrder;
+    return left.displayName.localeCompare(right.displayName)
+      || left.packageId.localeCompare(right.packageId)
+      || compareDeckFrameworkVersions(right, left);
+  });
+}
+
+export function deckFamilyPackageMenuPresentation(
+  packageDisplayName: string,
+  reviewSources: readonly DeckFamilyReviewSourceDisplay[],
+  singleSourceActionLabel: string
+): DeckFamilyPackageMenuPresentation {
+  const soleSource = reviewSources.length === 1 ? reviewSources[0] : undefined;
+  if (soleSource?.authoritativeTitle !== undefined && soleSource.authoritativeTitle.length > 0) {
+    return {
+      packageLabel: soleSource.authoritativeTitle,
+      sourceLabels: [singleSourceActionLabel]
+    };
+  }
+
+  return {
+    packageLabel: packageDisplayName,
+    sourceLabels: reviewSources.map((source) => source.authoritativeTitle ?? source.fallbackLabel)
+  };
+}
+
+function hasExactLanguageAssociations(value: readonly string[] | undefined): value is readonly string[] {
+  return value !== undefined
+    && value.length > 0
+    && value.every((packageId) => packageId.trim().length > 0)
+    && new Set(value).size === value.length;
+}

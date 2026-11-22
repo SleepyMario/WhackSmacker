@@ -1,6 +1,6 @@
 {
   "name": "whacksmacker",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha.5",
   "description": "Native terminal learning workflows for WhackSmacker content packages.",
   "private": true,
   "license": "GPL-3.0-or-later",

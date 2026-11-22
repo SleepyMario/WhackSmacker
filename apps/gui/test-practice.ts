@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {now} from './src/clock';
+import {createInitialReviewState,recordReviewOutcome,isReviewDue} from './src/core/review-scheduler';
+const first=createInitialReviewState({packageId:'local.proof.geography',packageVersion:'0.1.0',itemId:'belgium-capital'},now());
+assert.equal(first.reviewCount,0);assert.equal(isReviewDue(first,now()),true);
+const saved=recordReviewOutcome(first,'good',now()).state;
+const restored=JSON.parse(JSON.stringify(saved));
+assert.equal(restored.reviewCount,1);
+assert.equal(recordReviewOutcome(restored,'again',now()).state.reviewCount,2);
+console.log('PASS: initialize, correct answer, serialize/restore, repeat answer using real scheduler and GUI clock');
