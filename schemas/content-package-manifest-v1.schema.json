@@ -69,16 +69,32 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "enum": ["reading-curriculum", "core-review", "topic-review", "specialized-review", "technical"] }
+      "items": {
+        "enum": [
+          "reading-curriculum",
+          "core-review",
+          "topic-review",
+          "specialized-review",
+          "technical"
+        ]
+      }
     },
     "deckFamily": {
-      "enum": ["general", "specialized", "custom"]
+      "enum": [
+        "general",
+        "specialized",
+        "custom"
+      ]
     },
     "topic": {
       "$ref": "#/$defs/topic"
     },
     "mediaPolicy": {
-      "enum": ["none", "optional", "required"]
+      "enum": [
+        "none",
+        "optional",
+        "required"
+      ]
     },
     "interactionProfile": {
       "$ref": "#/$defs/interactionProfile"
@@ -86,10 +102,12 @@
     "relatedPackageIds": {
       "type": "array",
       "uniqueItems": true,
-      "items": { "$ref": "#/$defs/packageId" }
+      "items": {
+        "$ref": "#/$defs/packageId"
+      }
     },
     "minimumWhackSmackerVersion": {
-      "$ref": "#/$defs/semver"
+      "$ref": "#/$defs/applicationVersion"
     },
     "languages": {
       "type": "array",
@@ -110,7 +128,10 @@
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["repository", "commit"],
+      "required": [
+        "repository",
+        "commit"
+      ],
       "properties": {
         "repository": {
           "type": "string",
@@ -135,14 +156,17 @@
     "generator": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "version"],
+      "required": [
+        "name",
+        "version"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "minLength": 1
         },
         "version": {
-          "$ref": "#/$defs/semver"
+          "$ref": "#/$defs/applicationVersion"
         },
         "commit": {
           "$ref": "#/$defs/gitCommit"
@@ -155,7 +179,12 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "mediaType", "path", "role"],
+        "required": [
+          "id",
+          "mediaType",
+          "path",
+          "role"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -169,7 +198,12 @@
             "$ref": "#/$defs/safePath"
           },
           "role": {
-            "enum": ["primary", "index", "search-index", "metadata"]
+            "enum": [
+              "primary",
+              "index",
+              "search-index",
+              "metadata"
+            ]
           }
         }
       }
@@ -179,7 +213,10 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["packageId", "version"],
+        "required": [
+          "packageId",
+          "version"
+        ],
         "properties": {
           "packageId": {
             "$ref": "#/$defs/packageId"
@@ -199,7 +236,12 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["path", "mediaType", "size", "sha256"],
+        "required": [
+          "path",
+          "mediaType",
+          "size",
+          "sha256"
+        ],
         "properties": {
           "path": {
             "$ref": "#/$defs/safePath"
@@ -224,10 +266,16 @@
       "additionalProperties": false,
       "properties": {
         "spdx": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "name": {
-          "type": ["string", "null"]
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "path": {
           "oneOf": [
@@ -264,34 +312,92 @@
     "interactionProfile": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["reveal", "satisfaction", "grading", "reverseCards", "labels", "outputMedia"],
+      "required": [
+        "reveal",
+        "satisfaction",
+        "grading",
+        "reverseCards",
+        "labels",
+        "outputMedia"
+      ],
       "properties": {
-        "reveal": { "enum": ["together", "sequential"] },
-        "satisfaction": { "enum": ["one", "all"] },
-        "grading": { "enum": ["shared", "output-specific"] },
-        "reverseCards": { "enum": ["combined", "per-output", "precomposed"] },
-        "labels": { "enum": ["none", "independent"] },
-        "outputMedia": { "enum": ["none", "shared", "output-specific"] }
+        "reveal": {
+          "enum": [
+            "together",
+            "sequential"
+          ]
+        },
+        "satisfaction": {
+          "enum": [
+            "one",
+            "all"
+          ]
+        },
+        "grading": {
+          "enum": [
+            "shared",
+            "output-specific"
+          ]
+        },
+        "reverseCards": {
+          "enum": [
+            "combined",
+            "per-output",
+            "precomposed"
+          ]
+        },
+        "labels": {
+          "enum": [
+            "none",
+            "independent"
+          ]
+        },
+        "outputMedia": {
+          "enum": [
+            "none",
+            "shared",
+            "output-specific"
+          ]
+        }
       }
     },
     "topic": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "displayName", "deckDisplayName"],
+      "required": [
+        "id",
+        "displayName",
+        "deckDisplayName"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
-        "displayName": { "$ref": "#/$defs/localizedContent" },
-        "deckDisplayName": { "$ref": "#/$defs/localizedContent" }
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "displayName": {
+          "$ref": "#/$defs/localizedContent"
+        },
+        "deckDisplayName": {
+          "$ref": "#/$defs/localizedContent"
+        }
       }
     },
     "localizedContent": {
       "oneOf": [
-        { "type": "string", "minLength": 1 },
+        {
+          "type": "string",
+          "minLength": 1
+        },
         {
           "type": "object",
           "minProperties": 1,
-          "propertyNames": { "minLength": 1 },
-          "additionalProperties": { "type": "string", "minLength": 1 }
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       ]
     },
@@ -329,6 +435,10 @@
           }
         ]
       }
+    },
+    "applicationVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
     }
   }
 }

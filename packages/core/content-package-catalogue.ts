@@ -2,6 +2,7 @@ import {
   assertValidContentPackageManifest,
   isContentPackageId,
   isSemver,
+  isApplicationVersion,
   whackSmackerPackageExtension,
   type ContentPackageDependency,
   type ContentPackageLicense,
@@ -335,7 +336,7 @@ function validateCataloguePackages(value: unknown, errors: string[]): void {
     if (entry.mediaPolicy !== undefined) errors.push(...validateMediaPolicy(entry.mediaPolicy, `packages[${index}].mediaPolicy`).errors);
     if (entry.interactionProfile !== undefined) errors.push(...validateDeckInteractionProfile(entry.interactionProfile, `packages[${index}].interactionProfile`).errors);
     validateSemver(readString(entry.contentSchemaVersion), `packages[${index}].contentSchemaVersion`, errors);
-    validateSemver(readString(entry.minimumWhackSmackerVersion), `packages[${index}].minimumWhackSmackerVersion`, errors);
+    if (!isApplicationVersion(readString(entry.minimumWhackSmackerVersion))) errors.push(`packages[${index}].minimumWhackSmackerVersion must use Semantic Versioning.`);
     validateSource(entry.source, `packages[${index}].source`, errors);
     validatePackageFile(entry.package, `packages[${index}].package`, errors, packageUrls);
     validateDependencies(entry.dependencies, packageId, `packages[${index}].dependencies`, errors);

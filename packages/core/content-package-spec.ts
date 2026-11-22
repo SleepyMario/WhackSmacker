@@ -150,7 +150,7 @@ export function validateContentPackageManifest(manifest: unknown): ContentPackag
   }
   validateRelatedPackageIds(manifest.relatedPackageIds, readString(manifest.packageId), errors);
   validateSemver(readString(manifest.contentSchemaVersion), "contentSchemaVersion", errors);
-  validateSemver(readString(manifest.minimumWhackSmackerVersion), "minimumWhackSmackerVersion", errors);
+  validateApplicationVersion(readString(manifest.minimumWhackSmackerVersion), "minimumWhackSmackerVersion", errors);
   validateSource(manifest.source, errors);
   validateGeneratedAt(manifest.generatedAt, errors);
   validateGenerator(manifest.generator, errors);
@@ -314,7 +314,7 @@ function validateGenerator(value: unknown, errors: string[]): void {
   }
 
   validateNonEmptyString(value.name, "generator.name", errors);
-  validateSemver(readString(value.version), "generator.version", errors);
+  validateApplicationVersion(readString(value.version), "generator.version", errors);
 
   if (value.commit !== undefined && !isGitCommit(readString(value.commit))) {
     errors.push("generator.commit must be a 40-character lowercase hexadecimal Git commit when present.");
@@ -521,3 +521,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 import { isLocalizedContentValue, type LocalizedContentValue } from "./localized-content";
+
+export function isApplicationVersion(value: string): boolean {
+  return /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/u.test(value);
+}
+
+function validateApplicationVersion(value: string, field: string, errors: string[]): void {
+  if (!isApplicationVersion(value)) errors.push(`${field} must use Semantic Versioning, optionally with a prerelease or build suffix.`);
+}

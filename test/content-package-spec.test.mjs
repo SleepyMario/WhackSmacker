@@ -205,3 +205,13 @@ function assertInvalid(manifest, pattern) {
 async function readJson(url) {
   return JSON.parse(await readFile(url, "utf8"));
 }
+
+
+test("application metadata accepts alpha versions without changing deck identities", async () => {
+  const manifest = await readJson(exampleManifestUrl);
+  manifest.minimumWhackSmackerVersion = "0.1.0-alpha.5";
+  manifest.generator.version = "0.1.0-alpha.5+build.1";
+  assertValid(manifest);
+  manifest.generator.version = "0.1.0-alpha.05";
+  assertInvalid(manifest, /generator.version/);
+});
